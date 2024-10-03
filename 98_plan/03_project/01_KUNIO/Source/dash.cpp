@@ -15,9 +15,9 @@
 namespace
 {
 	const std::string TEXTURE_SAMPLE = "data\\TEXTURE\\key\\A.png";	// テクスチャのファイル
-	const float TIME_INTERVAL = 0.3f;
-	const float TIME_DASH = 0.2f;
-	const float MOVE_VELOCITY = 5.0f;
+	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
+	const float TIME_DASH = 0.2f;		// ダッシュ時間
+	const float MOVE_VELOCITY = 5.0f;	// 移動速度
 }
 
 //==========================================================================
