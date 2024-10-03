@@ -48,6 +48,7 @@ private:
 
 	// ƒƒ“ƒo•Ï”
 	CPlayer* m_pParent;	// e‚Ìî•ñ
+	float m_fWaitTime;	// ‘Ò‹@ŠÔ
 };
 
 #endif	// _GUN_H_

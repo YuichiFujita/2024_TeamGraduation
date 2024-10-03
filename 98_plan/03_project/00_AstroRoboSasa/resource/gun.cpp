@@ -19,7 +19,8 @@
 //	コンストラクタ
 //============================================================
 CGun::CGun() : CObject3D(CObject::LABEL_GUN),
-	m_pParent(nullptr)	// 親の情報
+	m_pParent	(nullptr),	// 親の情報
+	m_fWaitTime	(0.0f)		// 待機時間
 {
 
 }
@@ -39,6 +40,7 @@ HRESULT CGun::Init(void)
 {
 	// メンバ変数を初期化
 	m_pParent = nullptr;	// 親の情報
+	m_fWaitTime = 0.0f;		// 待機時間
 
 	// オブジェクト3Dの初期化
 	if (FAILED(CObject3D::Init()))
@@ -70,12 +72,21 @@ void CGun::Uninit(void)
 //============================================================
 void CGun::Update(const float fDeltaTime)
 {
+	// 余韻時間を減算
+	m_fWaitTime -= fDeltaTime;
+
 	// TODO：銃発砲操作
-	if (GET_INPUTMOUSE->IsTrigger(CInputMouse::KEY_LEFT))
+	if (m_fWaitTime <= 0.0f)
 	{
-		float fGunRot = m_pParent->GetGunRotation().z;
-		CBullet::Create(m_pParent->GetVec3Position(), D3DXVECTOR3(sinf(fGunRot + HALF_PI), -cosf(fGunRot + HALF_PI), 0.0f) * 29.0f);
-		m_pParent->MoveGunRecoil(11.5f);
+		if (GET_INPUTMOUSE->IsPress(CInputMouse::KEY_LEFT))
+		{
+			// 待機時間を設定
+			m_fWaitTime = 0.25f;
+
+			float fGunRot = m_pParent->GetGunRotation().z;
+			CBullet::Create(m_pParent->GetVec3Position(), D3DXVECTOR3(sinf(fGunRot + HALF_PI), -cosf(fGunRot + HALF_PI), 0.0f) * 29.0f);
+			m_pParent->MoveGunRecoil(2.5f);
+		}
 	}
 
 	// オブジェクト3Dの更新

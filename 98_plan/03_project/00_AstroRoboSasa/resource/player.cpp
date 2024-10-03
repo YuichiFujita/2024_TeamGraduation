@@ -116,13 +116,14 @@ void CPlayer::Update(const float fDeltaTime)
 	D3DXVECTOR3 posPlayer = GetVec3Position();	// プレイヤー位置
 
 	// 重力を与える
-	m_move.y -= 0.45f;
+	m_move.y -= 0.08f;
 
 	// プレイヤーを移動させる
 	posPlayer += m_move;
 
 	// 移動に完成を与える
-	m_move.x += (0.0f - m_move.x) * 0.08f;
+	m_move.x += (0.0f - m_move.x) * 0.04f;
+	m_move.y += (0.0f - m_move.x) * 0.04f;
 
 	if (posPlayer.y < 50.0f)
 	{ // 位置が地面より下の場合
@@ -220,7 +221,26 @@ void CPlayer::MoveGunRecoil(const float fRecScalar)
 	// 反動スカラーをベクトルに変更
 	D3DXVECTOR3 moveRec = D3DXVECTOR3(sinf(m_rotGun.z - HALF_PI), -cosf(m_rotGun.z - HALF_PI), 0.0f) * fRecScalar;
 
+	float fRot = m_rotGun.z + D3DX_PI;	// 反動向きを0～2πにする
+	if (fRot >= QRTR_PI && fRot <= D3DX_PI - QRTR_PI)
+	{ // 下方向の射撃の場合
+
+		// 重力をリセット
+		m_move.y = 0.0f;
+	}
+	else if (fRot >= D3DX_PI + QRTR_PI && fRot <= (D3DX_PI * 2) - QRTR_PI)
+	{ // 上方向の射撃の場合
+
+		// 重力をさらに与える
+		m_move.y -= 0.3f;	// TODO：方向が左右に向かうにつれて重力プラスを下げる
+	}
+	else
+	{ // それ以外の方向の場合
+
+		// 上方向にジャンプ
+		m_move.y = 0.1f;
+	}
+
 	// 移動量に反映
-	m_move.y = 0.0f;
 	m_move += moveRec;
 }
