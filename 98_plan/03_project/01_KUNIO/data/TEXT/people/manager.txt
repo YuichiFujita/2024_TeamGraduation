@@ -1,0 +1,112 @@
+#===================================================================================================
+#
+# 『人のマネージャ』スクリプトファイル [manager.txt]
+# Author : 相馬 靜雅
+#
+#===================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------
+# キャラクターファイル名
+#------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/mob/setup_person_cherry.txt		# [0]強チェ
+MOTION_FILENAME = data/TEXT/character/mob/setup_person_bell.txt			# [1]ベル
+MOTION_FILENAME = data/TEXT/character/mob/setup_person_replay.txt		# [2]リプレイ
+MOTION_FILENAME = data/TEXT/character/mob/setup_person_watermelon.txt	# [3]スイカ
+MOTION_FILENAME = data/TEXT/character/mob/person_01/setup_humanblue.txt	# [3]スイカ
+MOTION_FILENAME = data/TEXT/character/mob/person_01/setup_humanchild.txt	# [3]スイカ
+MOTION_FILENAME = data/TEXT/character/mob/person_01/setup_humangirl.txt	# [3]スイカ
+MOTION_FILENAME = data/TEXT/character/horse/setup_horse.txt	# [3]馬
+MOTION_FILENAME = data/TEXT/character/kite/setup_kite.txt	# [3]凧
+MOTION_FILENAME = data/TEXT/character/kite/setup_kite2.txt	# [3]凧
+MOTION_FILENAME = data/TEXT/character/kite/setup_kite3.txt	# [3]凧
+
+#===================================================================================================
+# 群情報
+#===================================================================================================
+#------------------------------------------------------------------
+# [0] サンプル
+#------------------------------------------------------------------
+PATTERNSET
+	
+	RANK = 0
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 0.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 200.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 -200.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 200.00 0.00 0.00
+	END_PEOPLESET
+	
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [0] サンプル
+#------------------------------------------------------------------
+PATTERNSET
+	
+	RANK = 1
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 0.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 200.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 -200.00
+	END_PEOPLESET
+	
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [0] サンプル
+#------------------------------------------------------------------
+PATTERNSET
+	
+	RANK = 2
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 0.00
+	END_PEOPLESET
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 200.00
+	END_PEOPLESET
+	
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [0] サンプル
+#------------------------------------------------------------------
+PATTERNSET
+	
+	RANK = 3
+	
+	PEOPLESET
+		TYPE = 0
+		POS = 0.00 0.00 0.00
+	END_PEOPLESET
+END_PATTERNSET
+
+END_SCRIPT		# この行は絶対消さないこと！

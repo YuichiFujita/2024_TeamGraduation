@@ -1,0 +1,46 @@
+#==============================================================================
+#
+# インゲーム初期操作設定情報ファイル [gamepad_in.txt]
+# Author : 奥定 伊吹
+#
+#==============================================================================
+# 0,決定 1,戻る 2,浮上 3,空気 4,チェックポイント 5,スタートから 6,ポーズメニュー
+
+SCRIPT
+	
+	KEYSET
+		PROCESS = 0
+		BUTTON = 12	# Aボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 1
+		BUTTON = 13	# Bボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 2
+		BUTTON = 9	# RBボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 3
+		BUTTON = 11	# RTボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 4
+		BUTTON = 13	# Bボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 5
+		BUTTON = 5	# BACKボタン
+	END_KEYSET
+	
+	KEYSET
+		PROCESS = 6
+		BUTTON = 4	# STARTボタン
+	END_KEYSET
+
+END_SCRIPT
