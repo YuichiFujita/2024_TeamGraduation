@@ -1,0 +1,121 @@
+#====================================================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_player.txt]
+# Author : 相馬 靜雅
+#
+#====================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 6
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/bee/body.x		# [0]腰
+MODEL_FILENAME = data/MODEL/bee/head.x		# [1]体
+MODEL_FILENAME = data/MODEL/bee/tail.x		# [2]頭
+MODEL_FILENAME = data/MODEL/bee/Lwing.x		# [3]髪
+MODEL_FILENAME = data/MODEL/bee/Rwing.x		# [4]右上腕
+MODEL_FILENAME = data/MODEL/bee/busket.x		# [4]右上腕
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+	VELOCITY = 0.5	
+	JUMP = 0.00		
+	RADIUS = 60.00		
+	HEIGHT = 0.00		
+	LIFE = 50		
+
+	PARTSSET
+		INDEX = 0
+		PARENT = -1
+		POS = 0.00 208.40 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 0
+		POS = 0.00 0.00 -24.60
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 0
+		POS = 0.00 0.00 19.20
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 0
+		POS = 16.80 23.10 -1.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 0
+		POS = -16.80 23.10 -1.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 5
+		PARENT = 0
+		POS = 0.00 -93.50 22.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+END_CHARACTERSET
+
+
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/player/bee/sphere_collider.json
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モーション数
+#------------------------------------------------------------------------------
+NUM_MOTION = 10
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_def.txt			# [0]デフォルト
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_walk.txt			# [1]歩き
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_dash.txt			# [2]ダッシュ
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_dmg.txt	# [3]ダメージ
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_knockback.txt	# [4]ノックバック
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_knockback_passive.txt	# [5]ノックバック受け身
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_down.txt			# [6]ダウン
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_deadwait.txt			# [7]死亡
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_dead.txt			# [8]死亡
+MOTION_FILENAME = data/TEXT/character/player/bee/motion_flowering.txt			# [9]開花
+
+
+END_SCRIPT		# この行は絶対消さないこと！

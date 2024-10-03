@@ -1,0 +1,155 @@
+#====================================================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_player.txt]
+# Author : 相馬 靜雅
+#
+#====================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 9
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_body.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_R_shoulder.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_R_hand.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_L_shoulder.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_L_hand.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_R_Uper_leg.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_R_Downer_leg.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_L_Uper_leg.x		# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_replay/person_replay_L_Downer_leg.x		# [0]腰
+
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+
+	CENTERSET
+		PARTS = 0		# 中心にするパーツ
+		OFFSET = 0.00 0.00 0.00		# オフセット位置
+	END_CENTERSET
+
+	VELOCITY = 2.00		# 移動量
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 60.00		# 半径
+	HEIGHT = 0.00		# 高さ
+	LIFE = 5		# 体力
+
+	PARTSSET
+		INDEX = 0
+		PARENT = -1
+		POS = 0.00 95.34 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 0
+		POS = -19.77 66.54 7.83
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 1
+		POS = -44.28 -2.07 0.63
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 0
+		POS = 19.59 67.89 7.83
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 3
+		POS = 44.88 -0.33 -0.54
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5
+		PARENT = 0
+		POS = -9.15 3.27 2.61
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6
+		PARENT = 5
+		POS = 0.78 -42.48 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 0
+		POS = 11.76 4.92 1.29
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8
+		PARENT = 7
+		POS = -1.29 -42.48 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+END_CHARACTERSET
+
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/bird/sphere_collider.json
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モーション数
+#------------------------------------------------------------------------------
+NUM_MOTION = 8
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/mob/motion_def.txt			# [0]デフォルト
+MOTION_FILENAME = data/TEXT/character/mob/motion_walk.txt			# [1]歩く
+MOTION_FILENAME = data/TEXT/character/mob/motion_byebye.txt			# [2]バイバイ
+MOTION_FILENAME = data/TEXT/character/mob/motion_dance.txt			# [3]ダンス
+MOTION_FILENAME = data/TEXT/character/mob/motion_jump.txt			# [4]ジャンプ
+MOTION_FILENAME = data/TEXT/character/mob/motion_backflip.txt		# [5]バク中
+MOTION_FILENAME = data/TEXT/character/mob/motion_cossack_dance.txt	# [6]コサックダンス
+MOTION_FILENAME = data/TEXT/character/mob/motion_comehere.txt		# [7]こっちおいで
+
+
+END_SCRIPT		# この行は絶対消さないこと！

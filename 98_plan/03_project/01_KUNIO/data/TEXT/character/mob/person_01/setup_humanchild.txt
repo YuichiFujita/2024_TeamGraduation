@@ -1,0 +1,166 @@
+#==============================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_boss.txt]
+# Author : 相馬 靜雅
+#
+#==============================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 11
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/mob/person_11/00_waist.x			# [0]腰
+MODEL_FILENAME = data/MODEL/mob/person_11/01_body.x			# [1]体
+MODEL_FILENAME = data/MODEL/mob/person_11/02_head.x			# [2]頭
+MODEL_FILENAME = data/MODEL/mob/person_11/03_R_arm.x			# [3]右腕
+MODEL_FILENAME = data/MODEL/mob/person_11/04_R_hand.x		# [4]右手
+MODEL_FILENAME = data/MODEL/mob/person_11/05_L_arm.x			# [5]左腕
+MODEL_FILENAME = data/MODEL/mob/person_11/06_L_hand.x		# [6]左手
+MODEL_FILENAME = data/MODEL/mob/person_11/07_R_upperleg.x	# [7]右太腿
+MODEL_FILENAME = data/MODEL/mob/person_11/08_R_leg.x			# [8]右足
+MODEL_FILENAME = data/MODEL/mob/person_11/09_L_upperleg.x	# [9]左太腿
+MODEL_FILENAME = data/MODEL/mob/person_11/10_L_leg.x			# [10]左足
+
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+
+	CENTERSET
+		PARTS = 0		# 中心にするパーツ
+		OFFSET = 0.00 0.00 0.00		# オフセット位置
+	END_CENTERSET
+
+	VELOCITY = 0.50		# 移動量
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 300.00		# 半径
+	HEIGHT = 0.00		# 高さ
+	LIFE = 5		# 体力
+
+	PARTSSET
+		INDEX = 0
+		PARENT = -1
+		POS = 0.00 80.70 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 0
+		POS = 0.00 -0.50 1.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 1
+		POS = 0.00 36.90 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 1
+		POS = -14.00 35.70 5.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 3
+		POS = -33.10 -0.90 -1.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5
+		PARENT = 1
+		POS = 12.70 35.60 5.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6
+		PARENT = 5
+		POS = 32.60 -0.10 -1.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 0
+		POS = -9.10 -2.70 0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8
+		PARENT = 7
+		POS = 0.60 -33.40 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 9
+		PARENT = 0
+		POS = 10.10 -3.40 0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 10
+		PARENT = 9
+		POS = -0.50 -33.30 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+END_CHARACTERSET
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/mob/person_01/sphere_collider.json
+
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モーション数
+#------------------------------------------------------------------------------
+NUM_MOTION = 4
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/mob/person_01/motion_def.txt				# [0]デフォルト
+MOTION_FILENAME = data/TEXT/character/mob/person_01/motion_walk.txt			# [1]歩き
+MOTION_FILENAME = data/TEXT/character/mob/person_01/motion_clap.txt			# [1]歩き
+MOTION_FILENAME = data/TEXT/character/mob/person_01/motion_pump.txt			# [1]歩き
+
+
+END_SCRIPT		# この行は絶対消さないこと！

@@ -1,0 +1,22 @@
+#==============================================================================
+#
+# ゲームパッドコマンド情報ファイル [gamepad.txt]
+# Author : 奥定 伊吹
+#
+#==============================================================================
+
+SCRIPT
+
+	SET
+		COMMAND_FILENAME = data/TEXT/command/gamepad/00_hadouken.txt
+		PLAY_MOTION = 6	// モーション再生番号
+		TYPE = 2	// 0, 荷物を回転 1, 荷物を高く飛ばす 2, 自身も飛ぶ
+	END_SET
+	
+	SET
+		COMMAND_FILENAME = data/TEXT/command/gamepad/01_suiton.txt
+		PLAY_MOTION = 7	// モーション再生番号
+		TYPE = 1	// 0, 荷物を回転 1, 荷物を高く飛ばす 2, 自身も飛ぶ
+	END_SET
+
+END_SCRIPT

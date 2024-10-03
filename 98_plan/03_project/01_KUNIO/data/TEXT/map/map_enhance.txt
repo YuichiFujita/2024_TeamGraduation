@@ -1,0 +1,305 @@
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 13
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data/TEXTURE/FIELD/concreat.png		# [0]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/senter.png		# [1]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/senterlong.png		# [2]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/sideL.png		# [3]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/sideR.png		# [4]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/odan.png		# [5]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/walkroad.jpg		# [6]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/walkroad_01.jpg		# [7]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/tile_04.jpg		# [8]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/tile_03.jpg		# [9]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/water_02.jpg		# [10]
+TEXTURE_FILENAME = data/TEXTURE/sky/sky_06.jpg		# [11]
+TEXTURE_FILENAME = data/TEXTURE/FIELD/hiero.jpg		# [10]
+
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 45
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/mark_01.x		# [0]
+MODEL_FILENAME = data/MODEL/map_object/tree_01_small.x		# [1]
+MODEL_FILENAME = data/MODEL/map_object/tree_01_normal.x		# [2]
+MODEL_FILENAME = data/MODEL/map_object/tree_01_big.x		# [3]
+MODEL_FILENAME = data/MODEL/map_object/tree_02_small.x		# [4]
+MODEL_FILENAME = data/MODEL/map_object/tree_02_normal.x		# [5]
+MODEL_FILENAME = data/MODEL/map_object/tree_02_big.x		# [6]
+MODEL_FILENAME = data/MODEL/map_object/tree_03_big.x		# [7]
+MODEL_FILENAME = data/MODEL/map_object/treegroup_02.x		# [8]
+MODEL_FILENAME = data/MODEL/map_object/treegroup_01.x		# [9]
+MODEL_FILENAME = data/MODEL/map_object/rock_01.x		# [10]
+MODEL_FILENAME = data/MODEL/map_object/rock_02.x		# [11]
+MODEL_FILENAME = data/MODEL/map_object/rock_03.x		# [12]
+MODEL_FILENAME = data/MODEL/map_object/rock_04.x		# [13]
+MODEL_FILENAME = data/MODEL/map_object/rock_05.x		# [14]
+MODEL_FILENAME = data/MODEL/map_object/rock_01_huge.x		# [15]
+MODEL_FILENAME = data/MODEL/map_object/rock_02_huge.x		# [16]
+MODEL_FILENAME = data/MODEL/map_object/rock_03_huge.x		# [17]
+MODEL_FILENAME = data/MODEL/map_object/rock_04_huge.x		# [18]
+MODEL_FILENAME = data/MODEL/map_object/rock_05_huge.x		# [19]
+MODEL_FILENAME = data/MODEL/map_object/rock_06_huge.x		# [20]
+MODEL_FILENAME = data/MODEL/map_object/rock_02_superhuge.x		# [21]
+MODEL_FILENAME = data/MODEL/map_object/rock_03_superhuge.x		# [22]
+MODEL_FILENAME = data/MODEL/map_object/rock_04_superhuge.x		# [23]
+MODEL_FILENAME = data/MODEL/map_object/rock_05_superhuge.x		# [24]
+MODEL_FILENAME = data/MODEL/map_object/tree_03_huge.x		# [25]
+MODEL_FILENAME = data/MODEL/stage/tougijo_001.x		# [26]
+MODEL_FILENAME = data/MODEL/arena/redroof_001.x		# [27]
+MODEL_FILENAME = data/MODEL/arena/FRAG000.x		# [28]
+MODEL_FILENAME = data/MODEL/arena/FRAG002.x		# [29]
+MODEL_FILENAME = data/MODEL/arena/FRAG003.x		# [30]
+MODEL_FILENAME = data/MODEL/arena/FRAG004.x		# [31]
+MODEL_FILENAME = data/MODEL/arena/jouheki_hasira.x		# [32]
+MODEL_FILENAME = data/MODEL/arena/jouheki_kabe.x		# [33]
+MODEL_FILENAME = data/MODEL/arena/taimatu_001.x		# [34]
+MODEL_FILENAME = data/MODEL/arena/taimatu_002.x		# [35]
+MODEL_FILENAME = data/MODEL/gallery/gallery_red_wait.x		# [36]
+MODEL_FILENAME = data/MODEL/enemy/gobelin/TModel.x		# [37]
+MODEL_FILENAME = data/MODEL/enhance/stonegate.x		# [38]
+MODEL_FILENAME = data/MODEL/enhance/stoneplane.x		# [39]
+MODEL_FILENAME = data/MODEL/enhance/enhancewall.x		# [40]
+MODEL_FILENAME = data/MODEL/enhance/stonewallobj_02.x		# [41]
+MODEL_FILENAME = data/MODEL/enhance/books.x		# [42]
+MODEL_FILENAME = data/MODEL/enhance/stonebase.x		# [43]
+MODEL_FILENAME = data/MODEL/enhance/stonewallobj_03.x		# [44]
+
+#==============================================================================
+# 空情報
+#==============================================================================
+SKYSET
+	TEXTYPE = 11
+	MOVE = 0.000200
+END_SKYSET
+
+
+#==============================================================================
+# 山情報
+#==============================================================================
+
+#==============================================================================
+# 地面情報
+#==============================================================================
+FIELDSET
+	TEXTYPE = 12
+	POS = 0 1 -0
+	ROT = 0 0 0
+	BLOCK = 100 100
+	SIZE = 400 400
+END_FIELDSET
+
+#==============================================================================
+# モデルの配置
+#==============================================================================
+MODELSET
+	TYPE = 38
+	POS = 0.00 0.00 1155.77
+	ROT = 0.00 -0.00 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = -639.40 0.00 440.66
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = -639.40 0.00 -5361.65
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = -639.40 0.00 6242.31
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = 639.40 0.00 440.66
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = 639.40 0.00 -5361.65
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 41
+	POS = 639.40 0.00 6242.31
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 43
+	POS = -507.50 0.00 1111.20
+	ROT = 0.00 0.00 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 43
+	POS = -378.18 0.00 1112.47
+	ROT = 0.00 0.00 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 43
+	POS = 387.81 0.00 1108.63
+	ROT = 0.00 0.00 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 43
+	POS = 504.81 0.00 1108.05
+	ROT = 0.00 0.00 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 42
+	POS = -511.67 170.00 1108.95
+	ROT = 0.00 0.35 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 42
+	POS = -382.15 170.00 1116.42
+	ROT = 0.00 -0.87 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 42
+	POS = 363.42 170.00 1111.74
+	ROT = 0.00 -0.87 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 42
+	POS = 403.73 170.00 1096.49
+	ROT = 0.00 2.36 0.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 42
+	POS = 506.13 170.00 1105.05
+	ROT = 0.00 1.05 0.00
+	SHADOW = 1
+END_MODELSET
+
+
+MODELSET
+	TYPE = 44
+	POS = -1367.40 470.00 440.66
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = -1367.40 470.00 -5361.65
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = -1367.40 470.00 6242.31
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 1367.40 470.00 440.66
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 1367.40 470.00 -5361.65
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 1367.40 470.00 6242.31
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+
+
+
+MODELSET
+	TYPE = 44
+	POS = -2095.40 940.00 440.66
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = -2095.40 940.00 -5361.65
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = -2095.40 940.00 6242.31
+	ROT = 0.00 -1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 2095.40 940.00 440.66
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 2095.40 940.00 -5361.65
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 44
+	POS = 2095.40 940.00 6242.31
+	ROT = 0.00 1.57 0.00
+	SHADOW = 0
+END_MODELSET
+
+
+END_SCRIPT		# この行は絶対消さないこと！

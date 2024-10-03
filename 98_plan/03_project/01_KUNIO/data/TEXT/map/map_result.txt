@@ -1,0 +1,899 @@
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 1
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data\TEXTURE\sky\sky_02.jpg		# [0]
+
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 74
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data\MODEL\mark_01.x		# [0]
+MODEL_FILENAME = data\MODEL\map_object\tree_01_small.x		# [1]
+MODEL_FILENAME = data\MODEL\map_object\tree_01_normal.x		# [2]
+MODEL_FILENAME = data\MODEL\map_object\tree_01_big.x		# [3]
+MODEL_FILENAME = data\MODEL\map_object\tree_02_small.x		# [4]
+MODEL_FILENAME = data\MODEL\map_object\tree_02_normal.x		# [5]
+MODEL_FILENAME = data\MODEL\map_object\tree_02_big.x		# [6]
+MODEL_FILENAME = data\MODEL\map_object\tree_03_big.x		# [7]
+MODEL_FILENAME = data\MODEL\map_object\treegroup_02.x		# [8]
+MODEL_FILENAME = data\MODEL\map_object\treegroup_01.x		# [9]
+MODEL_FILENAME = data\MODEL\map_object\rock_01.x		# [10]
+MODEL_FILENAME = data\MODEL\map_object\rock_02.x		# [11]
+MODEL_FILENAME = data\MODEL\map_object\rock_03.x		# [12]
+MODEL_FILENAME = data\MODEL\map_object\rock_04.x		# [13]
+MODEL_FILENAME = data\MODEL\map_object\rock_05.x		# [14]
+MODEL_FILENAME = data\MODEL\map_object\rock_01_huge.x		# [15]
+MODEL_FILENAME = data\MODEL\map_object\rock_02_huge.x		# [16]
+MODEL_FILENAME = data\MODEL\map_object\rock_03_huge.x		# [17]
+MODEL_FILENAME = data\MODEL\map_object\rock_04_huge.x		# [18]
+MODEL_FILENAME = data\MODEL\map_object\rock_05_huge.x		# [19]
+MODEL_FILENAME = data\MODEL\map_object\rock_06_huge.x		# [20]
+MODEL_FILENAME = data\MODEL\map_object\rock_02_superhuge.x		# [21]
+MODEL_FILENAME = data\MODEL\map_object\rock_03_superhuge.x		# [22]
+MODEL_FILENAME = data\MODEL\map_object\rock_04_superhuge.x		# [23]
+MODEL_FILENAME = data\MODEL\map_object\rock_05_superhuge.x		# [24]
+MODEL_FILENAME = data\MODEL\map_object\tree_03_huge.x		# [25]
+MODEL_FILENAME = data\MODEL\map_object\tree.x		# [26]
+MODEL_FILENAME = data\MODEL\box.x		# [27]
+MODEL_FILENAME = data\MODEL\map_object\map_mati001.x		# [28]
+MODEL_FILENAME = data\MODEL\map_object\edo_shop000.x		# [29]
+MODEL_FILENAME = data\MODEL\map_object\edo_shop001.x		# [30]
+MODEL_FILENAME = data\MODEL\map_object\build_00.x		# [31]
+MODEL_FILENAME = data\MODEL\map_object\YMD_house.x		# [32]
+MODEL_FILENAME = data\MODEL\map_object\YMD_House_00.x		# [33]
+MODEL_FILENAME = data\MODEL\map_object\dango_store.x		# [34]
+MODEL_FILENAME = data\MODEL\map_object\demise.x		# [35]
+MODEL_FILENAME = data\MODEL\map_object\light.x		# [36]
+MODEL_FILENAME = data\MODEL\map_object\post.x		# [37]
+MODEL_FILENAME = data\MODEL\map_object\post_edo.x		# [38]
+MODEL_FILENAME = data\MODEL\map_object\hikyaku.x		# [39]
+MODEL_FILENAME = data\MODEL\map_object\normal_barrel.x		# [40]
+MODEL_FILENAME = data\MODEL\map_object\spread_barrel.x		# [41]
+MODEL_FILENAME = data\MODEL\map_object\white_signboard.x		# [42]
+MODEL_FILENAME = data\MODEL\map_object\kite.x		# [43]
+MODEL_FILENAME = data\MODEL\map_object\torie.x		# [44]
+MODEL_FILENAME = data\MODEL\map_object\fivetower.x		# [45]
+MODEL_FILENAME = data\MODEL\map_object\TokyoTower.x		# [46]
+MODEL_FILENAME = data\MODEL\map_object\1_fence.x		# [47]
+MODEL_FILENAME = data\MODEL\map_object\3_fence.x		# [48]
+MODEL_FILENAME = data\MODEL\map_object\5_fence.x		# [49]
+MODEL_FILENAME = data\MODEL\map_object\10_fence.x		# [50]
+MODEL_FILENAME = data\MODEL\map_object\woodship.x		# [51]
+MODEL_FILENAME = data\MODEL\map_object\big_boss.x		# [52]
+MODEL_FILENAME = data\MODEL\map_object\XMedium.x		# [53]
+MODEL_FILENAME = data\MODEL\map_object\type_00.x		# [54]
+MODEL_FILENAME = data\MODEL\map_object\castle.x		# [55]
+MODEL_FILENAME = data\MODEL\map_object\basya.x		# [56]
+MODEL_FILENAME = data\MODEL\map_object\horse.x		# [57]
+MODEL_FILENAME = data\MODEL\map_object\ship.x		# [58]
+MODEL_FILENAME = data\MODEL\map_object\matsutree.x		# [59]
+MODEL_FILENAME = data\MODEL\map_object\bell.x		# [60]
+MODEL_FILENAME = data\MODEL\map_object\mordan.x		# [61]
+MODEL_FILENAME = data\MODEL\map_object\prison.x		# [62]
+MODEL_FILENAME = data\MODEL\map_object\sentou.x		# [63]
+MODEL_FILENAME = data\MODEL\map_object\souko.x		# [64]
+MODEL_FILENAME = data\MODEL\map_object\umagoya.x		# [65]
+MODEL_FILENAME = data\MODEL\map_object\big_boss_2nd.x		# [66]
+MODEL_FILENAME = data\MODEL\river_object\bush.x		# [67]
+MODEL_FILENAME = data\MODEL\river_object\crab.x		# [68]
+MODEL_FILENAME = data\MODEL\river_object\hat.x		# [69]
+MODEL_FILENAME = data\MODEL\river_object\rockman.x		# [70]
+MODEL_FILENAME = data\MODEL\river_object\ryohukaruma.x		# [71]
+MODEL_FILENAME = data\MODEL\river_object\frog.x		# [72]
+MODEL_FILENAME = data\MODEL\map_object\sun.x		# [73]
+
+#==============================================================================
+# 空情報
+#==============================================================================
+SKYSET
+	TEXTYPE = 0
+	MOVE = 0.000200
+END_SKYSET
+
+
+#==============================================================================
+# 山情報
+#==============================================================================
+
+#==============================================================================
+# 地面情報
+#==============================================================================
+
+#==============================================================================
+# モデルの配置
+#==============================================================================
+MODELSET
+	TYPE = 53
+	POS = 10910.58 300.00 3467.73
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 15572.55 300.00 4289.75
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 14210.86 300.00 3427.57
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 46
+	POS = 52996.86 300.00 17375.45
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.59
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 34
+	POS = 12720.42 300.00 4531.27
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.21
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 20826.71 300.00 5134.00
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 31
+	POS = 17185.25 300.00 3391.82
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 3672.48 300.00 -846.57
+	ROT = 0.00 0.57 0.00
+	SCALE = 3.48
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 5615.91 300.00 187.52
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.55
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 65202.03 9534.08 12220.29
+	ROT = -0.16 0.00 0.44
+	SCALE = 100.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 0.00 0.00 0.00
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 0.00 0.00 0.00
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 55
+	POS = 67024.56 300.00 12969.35
+	ROT = 0.00 0.00 0.00
+	SCALE = 8.68
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = 63064.41 300.00 8404.34
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.40
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = 62831.67 300.00 3641.99
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.95
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 65
+	POS = 58965.39 300.00 8477.20
+	ROT = 0.00 0.00 0.00
+	SCALE = 5.47
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 56
+	POS = 68167.48 300.00 4029.75
+	ROT = 0.00 -1.63 0.00
+	SCALE = 4.91
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 47842.14 300.00 3791.51
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.33
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 61690.96 300.00 8798.35
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.19
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 60856.37 300.00 4639.77
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.30
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = 42808.58 300.00 3805.88
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.52
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = 52086.17 300.00 3651.80
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.53
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 34
+	POS = 67493.51 300.00 4945.56
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.53
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 31
+	POS = 41219.60 300.00 4082.80
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.98
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 29
+	POS = 58289.66 300.00 4035.99
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.06
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 30
+	POS = 37357.31 300.00 4329.27
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.15
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 39398.85 300.00 7007.68
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 39146.17 300.00 4607.46
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 26222.10 300.00 5890.33
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.88
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 24981.87 300.00 5869.85
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.75
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 23746.18 300.00 5847.17
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.74
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 35
+	POS = 65914.80 300.00 4678.46
+	ROT = 0.00 0.00 0.00
+	SCALE = 7.10
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 45
+	POS = 45454.30 300.00 7504.84
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.92
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 56
+	POS = 27751.87 300.00 4151.22
+	ROT = 0.00 -2.61 0.00
+	SCALE = 4.31
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 30
+	POS = 56839.66 300.00 3528.44
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.59
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 5413.38 300.00 7160.67
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 13676.09 300.00 7775.16
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 24584.22 300.00 9382.63
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 19102.91 300.00 9287.09
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 51371.31 300.00 7533.04
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 70946.74 300.00 8178.86
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.14
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 31
+	POS = 9844.88 300.00 8094.75
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.56
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 607.51 300.00 4437.57
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 65
+	POS = 2168.15 300.00 4093.36
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.97
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 56
+	POS = 2386.23 300.00 3433.98
+	ROT = 0.00 -1.73 0.00
+	SCALE = 2.09
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = -4287.84 300.00 6705.09
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.41
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = -9070.66 300.00 3628.60
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = -7857.66 300.00 6458.07
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = -221.66 300.00 7102.25
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 29
+	POS = -764.50 300.00 3856.60
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 60274.61 300.00 8786.41
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.11
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 7
+	POS = 2415.06 300.00 8673.43
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 6
+	POS = 19584.70 300.00 3292.88
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 6
+	POS = 22678.97 300.00 3327.10
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 6
+	POS = 26130.70 300.00 3304.02
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 23098.61 300.00 3259.52
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 2
+	POS = 22229.07 300.00 3501.16
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 20041.51 300.00 3437.78
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 2
+	POS = 19190.39 300.00 3369.16
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 25534.76 300.00 3290.11
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 26598.45 300.00 3355.85
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 32174.30 300.00 11891.50
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.50
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 66
+	POS = 46321.81 300.00 11866.10
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.74
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 52
+	POS = 58480.67 300.00 10148.42
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.21
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 52
+	POS = 32414.30 300.00 3596.25
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 54988.01 300.00 3467.27
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 7233.76 300.00 3742.77
+	ROT = 0.00 0.00 0.00
+	SCALE = 0.99
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 60
+	POS = 56142.46 300.00 6630.25
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.40
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 60
+	POS = 42996.25 300.00 15360.99
+	ROT = 0.00 0.00 0.00
+	SCALE = 4.61
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 73913.34 300.00 4407.07
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 60
+	POS = 71243.84 300.00 3666.27
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.40
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 72450.45 300.00 3637.10
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.09
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 64
+	POS = 70306.80 300.00 3686.95
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 54
+	POS = 81141.31 369.26 2063.68
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.78
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 78583.38 312.65 1746.29
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.32
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 52
+	POS = 80950.02 295.44 4209.23
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 81680.85 500.00 10506.72
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.63
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 45
+	POS = 86251.35 19.03 5820.73
+	ROT = 0.00 0.00 0.00
+	SCALE = 4.32
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 90385.72 309.93 5802.39
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.79
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 52
+	POS = 85368.38 347.31 9253.75
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.72
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 53
+	POS = 75116.88 556.04 14005.49
+	ROT = 0.00 0.00 0.00
+	SCALE = 3.25
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 35
+	POS = 76325.47 300.00 2913.97
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.90
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 56
+	POS = 76723.97 300.00 3205.34
+	ROT = 0.00 0.25 0.00
+	SCALE = 1.97
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 31
+	POS = 75438.42 324.08 3206.58
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.38
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 30
+	POS = 77681.23 299.47 3760.32
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.54
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 63
+	POS = 75424.34 300.00 7448.28
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.82
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 36
+	POS = 76020.94 300.00 3071.06
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 36
+	POS = 76149.43 495.45 2802.75
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.27
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 36
+	POS = 76507.04 495.45 2781.70
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.27
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 37
+	POS = 76049.20 300.00 2769.53
+	ROT = 0.00 -1.57 0.00
+	SCALE = 2.26
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 68
+	POS = 76184.60 620.54 2826.49
+	ROT = -0.63 0.00 0.00
+	SCALE = 4.49
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 57
+	POS = 76639.12 300.00 3835.94
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.56
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 72
+	POS = 76449.37 417.12 2881.25
+	ROT = 0.00 -2.20 0.00
+	SCALE = 0.85
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 48
+	POS = 76903.42 300.00 2827.61
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.07
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 47
+	POS = 76568.03 300.00 2827.61
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.07
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 47
+	POS = 77174.34 300.00 2827.61
+	ROT = 0.00 0.00 0.00
+	SCALE = 2.07
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 48
+	POS = 0.00 0.00 0.00
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+MODELSET
+	TYPE = 48
+	POS = 0.00 0.00 0.00
+	ROT = 0.00 0.00 0.00
+	SCALE = 1.00
+	SHADOW = 1
+END_MODELSET
+
+
+END_SCRIPT		# この行は絶対消さないこと！
