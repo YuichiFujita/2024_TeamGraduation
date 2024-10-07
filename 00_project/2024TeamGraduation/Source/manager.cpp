@@ -795,7 +795,7 @@ void CManager::Update()
 				}
 
 				// カメラの更新処理
-				m_pCamera->Update();
+				m_pCamera->Update(m_fDeltaTime);
 
 				return;
 			}
@@ -855,7 +855,7 @@ void CManager::Update()
 		m_pLight->Update(m_fDeltaTime);
 
 		// カメラの更新処理
-		m_pCamera->Update();
+		m_pCamera->Update(m_fDeltaTime);
 
 		// デバッグ表示の更新処理
 		m_pDebugProc->Update();
