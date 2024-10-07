@@ -107,13 +107,13 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 
 	if (displayAspect > gameAspect)
 	{//横長
-		m_d3dppFull.BackBufferWidth = displayWidth * ((float)SCREEN_HEIGHT / (float)displayHeight);			//画面サイズ（幅）
+		m_d3dppFull.BackBufferWidth = static_cast<UINT>(displayWidth * ((float)SCREEN_HEIGHT / (float)displayHeight));			//画面サイズ（幅）
 		m_d3dppFull.BackBufferHeight = SCREEN_HEIGHT;		//画面サイズ（高さ）
 	}
 	else
 	{//縦長・変わらない
 		m_d3dppFull.BackBufferWidth = SCREEN_WIDTH;			//画面サイズ（幅）
-		m_d3dppFull.BackBufferHeight = displayHeight * ((float)SCREEN_WIDTH / (float)displayWidth);		//画面サイズ（高さ）
+		m_d3dppFull.BackBufferHeight = static_cast<UINT>(displayHeight * ((float)SCREEN_WIDTH / (float)displayWidth));		//画面サイズ（高さ）
 	}
 
 	//ディスプレイモード設定
@@ -296,8 +296,8 @@ void CRenderer::InitMTRender()
 	else if (m_dispMode == CRenderer::DISPLAYMODE::MODE_FULLSCREEN)
 	{
 		// 現在の画面幅取得
-		float screen_width = m_d3dpp.BackBufferWidth;
-		float screen_height = m_d3dpp.BackBufferHeight;
+		float screen_width = static_cast<float>(m_d3dpp.BackBufferWidth);
+		float screen_height = static_cast<float>(m_d3dpp.BackBufferHeight);
 
 		size = D3DXVECTOR2(screen_width * 0.5f, screen_height * 0.5f);
 	}
