@@ -18,19 +18,13 @@
 
 #include "pause.h"
 #include "fade.h"
-#include "instantfade.h"
 #include "blackframe.h"
 #include "light.h"
 #include "camera.h"
 #include "edit.h"
-#include "resultmanager.h"
-#include "rankingmanager.h"
 #include "loadmanager.h"
 #include "Imguimanager.h"
 #include "fog.h"
-
-
-//#include <vlc/vlc.h>
 
 //==========================================================================
 // 定数定義
@@ -389,24 +383,6 @@ void CManager::Load()
 		return;
 	}
 
-	//**********************************
-	// リザルトマネージャ
-	//**********************************
-	m_pResultManager = CResultManager::Create();
-	if (m_pResultManager == nullptr)
-	{
-		return;
-	}
-
-	//**********************************
-	// ランキングマネージャ
-	//**********************************
-	m_pRankingManager = CRankingManager::Create();
-	if (m_pRankingManager == nullptr)
-	{
-		return;
-	}
-
 	// モード設定
 	NoLoadSetMode(STARTMODE);
 }
@@ -458,14 +434,6 @@ void CManager::Reset(CScene::MODE mode)
 
 	// 前回のモード設定
 	m_OldMode = GetMode();
-
-	if (mode == CScene::MODE_GAME && m_pResultManager != nullptr && m_pRankingManager != nullptr)
-	{// 次のモードがゲームだったら
-
-		// スコア情報リセット
-		m_pResultManager->Reset();
-		m_pRankingManager->Reset();
-	}
 
 	// BGMストップ
 	if (m_pSound != nullptr)
@@ -687,23 +655,6 @@ void CManager::Uninit()
 		m_pPause = nullptr;
 	}
 
-	if (m_pResultManager != nullptr)
-	{// メモリの確保がされていたら
-
-		// 終了処理
-		m_pResultManager->Uninit();
-		m_pResultManager = nullptr;
-	}
-
-	if (m_pRankingManager != nullptr)
-	{// メモリの確保がされていたら
-
-		// 終了処理
-		m_pRankingManager->Uninit();
-		delete m_pRankingManager;
-		m_pRankingManager = nullptr;
-	}
-
 	// ロストするリソース管理マネージャー破棄
 	CLostResourceManager::Release();
 }
@@ -817,8 +768,6 @@ void CManager::Update()
 			(GetMode() == CScene::MODE_GAME || GetMode() == CScene::MODE::MODE_GAMETUTORIAL))
 		{// フェード中じゃないとき
 
-			// サウンド再生
-			m_pSound->PlaySound(CSound::LABEL::LABEL_SE_CURSOR_END);
 			m_pPause->SetPause();
 		}
 
@@ -842,11 +791,9 @@ void CManager::Update()
 				{
 					return;
 				}
-//#if _DEBUG
 
 				// カメラの更新処理
 				m_pCamera->Update();
-//#endif
 
 				return;
 			}
@@ -888,23 +835,6 @@ void CManager::Update()
 		{
 			MyFog::ToggleFogFrag();
 		}
-
-		//if (pInputKeyboard->GetTrigger(DIK_F8))
-		//{// F8でエディットモード切替え
-
-		//	if (m_pEdit == nullptr)
-		//	{// nullptrだったら
-
-		//		// エディットの生成処理
-		//		m_pEdit = CEdit::Create();
-		//	}
-		//	else
-		//	{
-		//		// 終了させる
-		//		m_pEdit->Release();
-		//		m_pEdit = nullptr;
-		//	}
-		//}
 #endif
 
 

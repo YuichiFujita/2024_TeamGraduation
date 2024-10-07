@@ -14,10 +14,6 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CRankingScore;
-class CRankingItem;
-class CPeopleManager;
-class CSpawnEnvironment;
 
 //==========================================================================
 // クラス定義
@@ -55,27 +51,13 @@ public:
 	void Update();
 	void Draw();
 
-	static void SetNowData(SRankdata& nowdata) { m_NowData = nowdata; }
-	static void SetEnableArrival();
 private:
 
 	void Load();
 	void Save();
 	void Sort();
-	void RankIn();
 	void CreateMap();	// マップ生成
-	void ControllScroll(float deltaTime);	// スクロールの操作
 
-	static bool m_bAllArrival;		// 全て到着した判定
-	static CRankingScore *m_pRankingScore;	// ランキングスコアのオブジェクト
-	CRankingItem* m_pRanking[10];
-	SRankdata* m_pRankData;
-	CPeopleManager* m_pPeopleManager;	// 人マネージャ
-	CSpawnEnvironment* m_pSpawn_Air;	// 空気生成
-	CSpawnEnvironment* m_pSpawn_Leaf;	// 降る葉生成
-	MyLib::Vector3 m_ScrollMove;		// スクロールの移動量
-	float m_fNoneScrollTimer;			// スクロールなしの時間
-	static SRankdata m_NowData;
 };
 
 

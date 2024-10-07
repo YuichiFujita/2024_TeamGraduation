@@ -102,7 +102,6 @@ private:
 	bool m_bGravity;			// 重力のフラグ
 	bool m_bChaseDest;			// 目標の位置へ向かうフラグ
 	TYPE m_nType;				// 種類
-	CObject *m_pParent;			// 親のポインタ
 	static const char *m_apTextureFile[];			// テクスチャのファイル
 	static int m_nNumAll;	// 総数
 	static int m_nTexIdx[TYPE_MAX];				// テクスチャのインデックス番号

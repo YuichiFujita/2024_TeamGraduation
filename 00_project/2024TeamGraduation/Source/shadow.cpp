@@ -9,7 +9,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "game.h"
-#include "elevation.h"
 
 //==========================================================================
 // マクロ定義
@@ -56,13 +55,6 @@ CShadow *CShadow::Create()
 
 		// メモリの確保
 		pShadow = DEBUG_NEW CShadow;
-
-		//if (pShadow->GetID() < 0)
-		//{// メモリ確保に失敗していたら
-
-		//	delete pShadow;
-		//	return nullptr;
-		//}
 
 		if (pShadow != nullptr)
 		{// メモリの確保が出来ていたら
@@ -168,29 +160,14 @@ void CShadow::Update()
 		return;
 	}
 
-	/*if (!CGame::GetInstance()->GetElevation()->IsChange())
-	{
-		return;
-	}*/
-
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
-
-	// 高さ取得
-	bool bLand = false;
-	pos.y = CGame::GetInstance()->GetElevation()->GetHeight(pos, &bLand);
 
 	// 位置設定
 	SetPosition(pos);
 
 	// 頂点情報設定
 	CObject3D::SetVtx();
-
-	// テクスチャの割り当て
-	m_nTexIdx = CTexture::GetInstance()->Regist("data\\TEXTURE\\effect\\effect000.jpg");
-
-	// テクスチャの割り当て
-	BindTexture(m_nTexIdx);
 }
 
 //==========================================================================

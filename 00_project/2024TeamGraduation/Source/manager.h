@@ -18,12 +18,6 @@
 #include "input_mouse.h"
 #include "input_keyboard.h"
 #include "input_gamepad.h"
-#include "keyconfig.h"
-
-// マクロ定義
-#define MOVE_LRUP			(0.75f)	// 斜め上移動
-#define MOVE_LR				(0.5f)	// 水平移動
-#define MOVE_LRDW			(0.25f)	// 斜め上移動
 
 // 前方宣言
 class CRenderer;

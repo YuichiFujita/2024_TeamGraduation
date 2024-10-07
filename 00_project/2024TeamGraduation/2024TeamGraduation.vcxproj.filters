@@ -9,9 +9,684 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{d130ff42-1fb1-4aa7-ab20-cdd97731dbbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mode">
+      <UniqueIdentifier>{8ed78e68-f3e7-41dc-9cc0-7b63cd77b384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\game">
+      <UniqueIdentifier>{0eb85750-4561-457b-ae92-f5851bd80364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\title">
+      <UniqueIdentifier>{6381e9fa-3d78-45a2-b137-84ae7778a552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\result">
+      <UniqueIdentifier>{0a99f556-c3f8-45bd-902e-00a3a609794d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\tutorial">
+      <UniqueIdentifier>{1158ac40-16b8-4c57-8562-5ca3e1e55f39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="object">
+      <UniqueIdentifier>{c4e92c77-7c07-4b9f-9fb1-1446c52afc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{4c565aa9-f542-4696-a91e-bd40a00703a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="edit">
+      <UniqueIdentifier>{13b311fc-e62b-41e4-85d8-4d9a470aca1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="handle">
+      <UniqueIdentifier>{00b034a6-ba43-4231-b582-279ce60fd58e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="number">
+      <UniqueIdentifier>{aacfa591-41fc-4721-9668-76abb9b77559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{f05d393f-41f5-4a23-89db-23a3a63a3509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="effect">
+      <UniqueIdentifier>{0c230d62-f74e-4be5-8dfc-334c7639cc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\ranking">
+      <UniqueIdentifier>{3ddc1dc7-e100-4f76-aeae-24d4a8e452e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player">
+      <UniqueIdentifier>{3fbd0f1c-b35a-40db-9b90-06cace47db05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pause">
+      <UniqueIdentifier>{fc5743ad-4684-466c-907f-8c561384ca6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="load">
+      <UniqueIdentifier>{48e287cf-d433-41b9-b663-ce7532f57c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SAMPLE">
+      <UniqueIdentifier>{2f9d7de0-6038-4373-9537-6c74de8f2e2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map">
+      <UniqueIdentifier>{16fc8c4d-80db-41aa-b4a0-e8ed95d5486c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="keyconfig">
+      <UniqueIdentifier>{798ed9c4-d084-4216-885c-c23d994aee58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mesh">
+      <UniqueIdentifier>{1f7adde7-2f38-4f5d-814f-5faf4199524b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="judgezone">
+      <UniqueIdentifier>{ae95b690-57e5-4285-938f-297e3c57799b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="people">
+      <UniqueIdentifier>{351e9aaa-1bfc-4e1d-a9d4-0747c087991a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="direction">
+      <UniqueIdentifier>{bcb387e5-91a8-4710-89c2-85baea526e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="camera">
+      <UniqueIdentifier>{61f2cd6c-2c60-4c7d-9eec-19d2b4f10eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mode\title\option">
+      <UniqueIdentifier>{071c6caf-4a75-4dc3-ba28-3d5004e3a149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lostrssmanager">
+      <UniqueIdentifier>{28071454-2189-45fa-94c3-5874bdcb4372}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\blackframe.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\fade.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\instantfade.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\map.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\model.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\motion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\shadow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\meshcylinder.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\meshdome.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\meshfield.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\meshsphere.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\meshwall.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\targetpoint.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object_circlegauge2D.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object2D.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object2D_Anim.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object2D_gauge.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object3D.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object3D_Anim.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\object3DMesh.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectBillboard.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectBillboard_Anim.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectChara.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectHierarchy.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectX.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tutorial.cpp">
+      <Filter>mode\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tutoriallogo.cpp">
+      <Filter>mode\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\input_gamepad.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\input_keyboard.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\input_mouse.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\edit_map.cpp">
+      <Filter>edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ObjectLine.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\collisionLine_Box.cpp">
+      <Filter>edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\handle_Move.cpp">
+      <Filter>handle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\edithandle.cpp">
+      <Filter>handle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\handle_Scale.cpp">
+      <Filter>handle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_2D.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_3D.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_Billboard.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\multinumber.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\game.cpp">
+      <Filter>mode\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gamemanager.cpp">
+      <Filter>mode\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\2D_effect.cpp">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3D_effect.cpp">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MyEffekseer.cpp">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\precompile.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sound.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\texture.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Xload.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\light.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\mylib.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ranking.cpp">
+      <Filter>mode\ranking</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\result.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\title.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\manager.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\renderer.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\listmanager.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\debugproc.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\impactwave.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\fog.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene.cpp">
+      <Filter>mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\player.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pause.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pause_game.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pause_tutorial.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\loadmanager.cpp">
+      <Filter>load</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\loadscreen.cpp">
+      <Filter>load</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\particle.cpp">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\edit.cpp">
+      <Filter>edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sample_objX.cpp">
+      <Filter>SAMPLE</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sample_obj2D.cpp">
+      <Filter>SAMPLE</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sample_obj3D.cpp">
+      <Filter>SAMPLE</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sample_character.cpp">
+      <Filter>SAMPLE</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Imguimanager.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectQuaternion.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\myassert.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\camera.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\camera_motion.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\camera_motion_trigger.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cameratrigger_pass.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffekseerObj.cpp">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cameratrigger_result.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\lostrssmanager.cpp">
+      <Filter>lostrssmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_demo.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_draw.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_impl_dx9.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_impl_win32.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_tables.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_widgets.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\implot.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\implot_items.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\constans.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\fade.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\map.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\model.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\motion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\shadow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\meshcylinder.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\meshdome.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\meshfield.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\meshsphere.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\meshwall.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\targetpoint.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object_circlegauge2D.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object2D.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object2D_Anim.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object2D_gauge.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object3D.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object3D_Anim.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\object3DMesh.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectBillboard.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectBillboard_Anim.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectChara.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectHierarchy.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectX.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tutorial.h">
+      <Filter>mode\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tutoriallogo.h">
+      <Filter>mode\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\input_gamepad.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\input_keyboard.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\input_mouse.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\edit_map.h">
+      <Filter>edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectLine.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\collisionLine_Box.h">
+      <Filter>edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\handle_Move.h">
+      <Filter>handle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\edithandle.h">
+      <Filter>handle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\handle_Scale.h">
+      <Filter>handle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_2D.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_3D.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_Billboard.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\multinumber.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\game.h">
+      <Filter>mode\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gamemanager.h">
+      <Filter>mode\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\2D_effect.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3D_effect.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MyEffekseer.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\precompile.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\sound.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\texture.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Xload.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\light.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\mylib.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ranking.h">
+      <Filter>mode\ranking</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\result.h">
+      <Filter>mode\result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\title.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\main.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\manager.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\renderer.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\listmanager.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\debugproc.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\impactwave.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\fog.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\calculation.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\scene.h">
+      <Filter>mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\player.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause.h">
+      <Filter>pause</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause_game.h">
+      <Filter>pause</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause_tutorial.h">
+      <Filter>pause</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\loadmanager.h">
+      <Filter>load</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\loadscreen.h">
+      <Filter>load</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\particle.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\edit.h">
+      <Filter>edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\sample_objX.h">
+      <Filter>SAMPLE</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\sample_obj3D.h">
+      <Filter>SAMPLE</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\sample_obj2D.h">
+      <Filter>SAMPLE</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\sample_character.h">
+      <Filter>SAMPLE</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Imguimanager.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectQuaternion.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\myassert.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\camera.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\camera_motion.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\camera_motion_trigger.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cameratrigger_pass.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffekseerObj.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\controlkeydisp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cameratrigger_result.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\lostrssmanager.h">
+      <Filter>lostrssmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\blackframe.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\instantfade.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imconfig.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imgui.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imgui_impl_dx9.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imgui_impl_win32.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imgui_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\implot.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\implot_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imstb_rectpack.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imstb_textedit.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Imgui\imstb_truetype.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

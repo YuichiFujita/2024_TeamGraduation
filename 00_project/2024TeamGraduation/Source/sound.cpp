@@ -14,68 +14,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[LABEL_MAX] =
 {
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
 	{ TYPE_BGM,"data/BGM/BGM_game_000.wav", -1 },	// ゲーム
-	{ TYPE_BGM,"data/BGM/BGM_water_flow.wav", -1 },	// 水流
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
-	{ TYPE_SE,"data/SE/walk01.wav", 0 },			// 歩行1
-	{ TYPE_SE,"data/SE/cursor_move.wav", 0 },		// カーソル移動
-	{ TYPE_SE,"data/SE/cursor_end.wav", 0 },		// カーソル閉じ
-	{ TYPE_SE,"data/SE/cancel01.wav", 0 },			// キャンセル1
-	{ TYPE_SE,"data/SE/cancel02.wav", 0 },			// キャンセル2
-	{ TYPE_SE,"data/SE/SE_drown.wav", -1 },			// 溺れ
-	{ TYPE_SE,"data/SE/SE_collide.wav", 0 },			// ヒット
-	{ TYPE_SE,"data/SE/SE_cracks_grass.wav", 0 },		// 画面割れ
-	{ TYPE_SE,"data/SE/SE_breath_stream.wav", -1 },		// 息ループ
-	{ TYPE_SE,"data/SE/oksd_000.wav", 0 },
-	{ TYPE_SE,"data/SE/oksd_001.wav", 0 },
-	{ TYPE_SE,"data/SE/oksd_002.wav", 0 },
-	{ TYPE_SE,"data/SE/sega_000.wav", 0 },
-	{ TYPE_SE,"data/SE/sega_001.wav", 0 },
-	{ TYPE_SE,"data/SE/sega_002.wav", 0 },
-	{ TYPE_SE,"data/SE/ore_000.wav", 0 },
-	{ TYPE_SE,"data/SE/ore_001.wav", 0 },
-	{ TYPE_SE,"data/SE/ore_002.wav", 0 },
-	{ TYPE_SE,"data/SE/karakurisa-kasu.wav", 0 },
-	{ TYPE_SE,"data/SE/nageru.wav", 0 },
-	{ TYPE_SE,"data/SE/receive.wav", 0 },
-	{ TYPE_SE,"data/SE/oboreru.wav", 0 },
-	{ TYPE_SE,"data/SE/habataku.wav", 0 },
-	{ TYPE_SE,"data/SE/gaya.wav", -1 },
-	{ TYPE_SE,"data/SE/countdown00.wav", 0 },
-	{ TYPE_SE,"data/SE/countdown01.wav", 0 },
-	{ TYPE_SE,"data/SE/start.wav", 0 },
-	{ TYPE_SE,"data/SE/mizusibuki.wav", 0 },
-	{ TYPE_SE,"data/SE/raou.wav", 0 },
-	{ TYPE_SE,"data/SE/shock_wood.wav", 0 },
-	{ TYPE_SE,"data/SE/shock_creature.wav", 0 },
-	{ TYPE_SE,"data/SE/inthewater1.wav", 0 },
-	{ TYPE_SE,"data/SE/inthewater2.wav", 0 },
-	{ TYPE_SE,"data/SE/inthewater3.wav", 0 },
-	{ TYPE_SE,"data/SE/writing.wav", 0 },
-	{ TYPE_SE,"data/SE/writeFinish.wav", 0 },
-	{ TYPE_SE,"data/SE/cluckbubbles.wav", 0 },
-	{ TYPE_SE,"data/SE/open.wav", 0 },
-	{ TYPE_SE,"data/SE/dive.wav", 0 },
-	{ TYPE_SE,"data/SE/good.wav", 0 },
-	{ TYPE_SE,"data/SE/worst.wav", 0 },
-	{ TYPE_SE,"data/SE/bad.wav", 0 },
-	{ TYPE_SE,"data/SE/smashattack.wav", 0 },
-	{ TYPE_SE,"data/SE/pressure.wav", 0 },
-	{ TYPE_SE,"data/SE/teleportation.wav", 0 },
-	{ TYPE_SE,"data/SE/awesome.wav", 0 },
-	{ TYPE_SE,"data/BGM/goal.wav", -1 },
-	{ TYPE_SE,"data/SE/select.wav", 0 },
-	{ TYPE_SE,"data/SE/diction.wav", 0 },
-	{ TYPE_SE,"data/SE/playermove_01.wav", 0 },	// プレイヤー移動01
-	{ TYPE_SE,"data/SE/playermove_02.wav", 0 },	// プレイヤー移動02
-	{ TYPE_SE,"data/SE/playermove_03.wav", 0 },	// プレイヤー移動03
-	{ TYPE_SE,"data/SE/playermove_04.wav", 0 },	// プレイヤー移動04
-	{ TYPE_SE,"data/SE/playermove_05.wav", 0 },	// プレイヤー移動05
-	{ TYPE_SE,"data/SE/playermove_06.wav", 0 },	// プレイヤー移動06
-	{ TYPE_SE,"data/SE/playermove_07.wav", 0 },	// プレイヤー移動07
-	{ TYPE_SE,"data/SE/playermove_08.wav", 0 },	// プレイヤー移動08
-	{ TYPE_SE,"data/SE/toridasu.wav",0},
 	{ TYPE_SE,"data/SE/coin.wav",0},			// コイン取得
 
 };	// サウンドの情報
@@ -107,6 +48,7 @@ CSound* CSound::Create(HWND hWnd)
 		return m_pThisPtr;
 	}
 
+	// メモリ確保
 	m_pThisPtr = DEBUG_NEW CSound;
 	if (m_pThisPtr != nullptr)
 	{
@@ -310,38 +252,8 @@ void CSound::Uninit()
 //==========================================================================
 HRESULT CSound::PlaySound(LABEL label, bool stop)
 {
-#if 0
-	XAUDIO2_VOICE_STATE xa2state;
-	XAUDIO2_BUFFER buffer;
 
-	// バッファの値設定
-	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
-	buffer.AudioBytes = m_aSizeAudio[label];
-	buffer.pAudioData = m_apDataAudio[label];
-	buffer.Flags      = XAUDIO2_END_OF_STREAM;
-	buffer.LoopCount  = m_aSoundInfo[label].nCntLoop;
-
-	// 状態取得
-	m_apSourceVoice[label]->GetState(&xa2state);
-	if(xa2state.BuffersQueued != 0)
-	{// 再生中
-		// 一時停止
-		m_apSourceVoice[label]->Stop(0);
-
-		// オーディオバッファの削除
-		m_apSourceVoice[label]->FlushSourceBuffers();
-	}
-
-	// オーディオバッファの登録
-	m_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
-
-	// 再生
-	m_apSourceVoice[label]->Start(0);
-
-	// 周波数リセット
-	m_apSourceVoice[label]->SetFrequencyRatio(1.0f);
-
-#else
+	// オーディオのバッファ
 	XAUDIO2_BUFFER buffer;
 
 	// バッファの値設定
@@ -387,9 +299,7 @@ HRESULT CSound::PlaySound(LABEL label, bool stop)
 	// 音量リセット
 	m_apSourceVoice[label]->SetVolume(m_aVolume[m_aSoundInfo[label].type]);
 
-#endif
 	return S_OK;
-
 }
 
 //==========================================================================
@@ -418,14 +328,6 @@ void CSound::StopSound(LABEL label)
 		// 周波数リセット
 		m_apSourceVoice[label]->SetFrequencyRatio(1.0f);
 	}
-
-	/*if (m_apSourceVoice[label] != nullptr)
-	{
-		m_apSourceVoice[label]->Stop(0);
-		m_apSourceVoice[label]->FlushSourceBuffers();
-		m_apSourceVoice[label]->DestroyVoice();
-		m_apSourceVoice[label] = nullptr;
-	}*/
 }
 
 //==========================================================================
@@ -444,14 +346,6 @@ void CSound::StopSound()
 			// 周波数リセット
 			m_apSourceVoice[nCntSound]->SetFrequencyRatio(1.0f);
 		}
-
-		/*if (m_apSourceVoice[nCntSound] != nullptr)
-		{
-			m_apSourceVoice[nCntSound]->Stop(0);
-			m_apSourceVoice[nCntSound]->FlushSourceBuffers();
-			m_apSourceVoice[nCntSound]->DestroyVoice();
-			m_apSourceVoice[nCntSound] = nullptr;
-		}*/
 	}
 }
 
@@ -585,22 +479,6 @@ void CSound::VolumeChange(TYPE type, float fVolume)
 			VolumeChange((LABEL)cnt, m_aVolume[type]);
 		}
 	}
-}
-
-//==========================================================================
-// 音量取得(3桁表示, マスターボリューム)
-//==========================================================================
-int CSound::GetVolumeNum()
-{
-	return (int)((m_fMasterVolume + 0.009) * 100);
-}
-
-//==========================================================================
-// 音量取得(3桁表示, 種類別ボリューム)
-//==========================================================================
-int CSound::GetVolumeNum(TYPE type)
-{
-	return (int)((m_aVolume[type] + 0.009) * 100);
 }
 
 //==========================================================================

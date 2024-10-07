@@ -14,10 +14,14 @@
 //==========================================================================
 // マクロ定義
 //==========================================================================
-#define SIZE		(D3DXVECTOR2(640.0f, 50.0f))
-#define START_UP	(MyLib::Vector3(640.0f, -SIZE.y, 0.0f))
-#define START_DOWN	(MyLib::Vector3(640.0f, SCREEN_HEIGHT + SIZE.y, 0.0f))
-#define MOVETIME	(50)
+namespace
+{
+	D3DXVECTOR2 FRAMESIZE = D3DXVECTOR2(640.0f, 50.0f);
+	MyLib::Vector3 START_UP = MyLib::Vector3(640.0f, -FRAMESIZE.y, 0.0f);
+	MyLib::Vector3 START_DOWN = MyLib::Vector3(640.0f, SCREEN_HEIGHT + FRAMESIZE.y, 0.0f);
+	int MOVETIME = 50;
+}
+
 CBlackFrame* CBlackFrame::m_pThisPtr = nullptr;	// 自身のポインタ
 
 //==========================================================================
@@ -25,8 +29,8 @@ CBlackFrame* CBlackFrame::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 const MyLib::Vector3 CBlackFrame::m_DestPosition[VTX_MAX] =	// 目標の位置
 {
-	MyLib::Vector3(640.0f, SIZE.y, 0.0f),
-	MyLib::Vector3(640.0f, SCREEN_HEIGHT - SIZE.y, 0.0f),
+	MyLib::Vector3(640.0f, FRAMESIZE.y, 0.0f),
+	MyLib::Vector3(640.0f, SCREEN_HEIGHT - FRAMESIZE.y, 0.0f),
 };
 
 //==========================================================================
@@ -92,14 +96,14 @@ HRESULT CBlackFrame::Init()
 		{
 		case VTX_UP:
 			// サイズ取得
-			m_pObj2D[nCntSelect]->SetSize(SIZE);	// サイズ
+			m_pObj2D[nCntSelect]->SetSize(FRAMESIZE);	// サイズ
 			m_pObj2D[nCntSelect]->SetPosition(START_UP);	// 位置
 			m_pObj2D[nCntSelect]->SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));	// 色
 			break;
 
 		case VTX_DOWN:
 			// サイズ取得
-			m_pObj2D[nCntSelect]->SetSize(SIZE);	// サイズ
+			m_pObj2D[nCntSelect]->SetSize(FRAMESIZE);	// サイズ
 			m_pObj2D[nCntSelect]->SetPosition(START_DOWN);	// 位置
 			m_pObj2D[nCntSelect]->SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));	// 色
 			break;
@@ -125,7 +129,7 @@ void CBlackFrame::Reset()
 		if (m_pObj2D[nCntVtx] != nullptr)
 		{// nullptrじゃなかったら
 
-			MyLib::Vector3 pos = mylib_const::DEFAULT_VECTOR3;
+			MyLib::Vector3 pos;
 			if (nCntVtx == VTX_UP)
 			{
 				pos = START_UP;
@@ -250,7 +254,7 @@ void CBlackFrame::StateIn(int nCntVtx)
 	MyLib::Vector3 pos = m_pObj2D[nCntVtx]->GetPosition();
 
 	// 初期位置
-	MyLib::Vector3 start = mylib_const::DEFAULT_VECTOR3;
+	MyLib::Vector3 start;
 	if (nCntVtx == VTX_UP)
 	{
 		start = START_UP;
@@ -287,7 +291,7 @@ void CBlackFrame::StateOut(int nCntVtx)
 	MyLib::Vector3 pos = m_pObj2D[nCntVtx]->GetPosition();
 
 	// 初期位置
-	MyLib::Vector3 start = mylib_const::DEFAULT_VECTOR3;
+	MyLib::Vector3 start;
 	if (nCntVtx == VTX_UP)
 	{
 		start = START_UP;

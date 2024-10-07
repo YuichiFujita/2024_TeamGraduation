@@ -15,7 +15,6 @@
 #include "particle.h"
 #include "debugproc.h"
 #include "impactwave.h"
-#include "elevation.h"
 
 //==========================================================================
 // É}ÉNÉçíËã`

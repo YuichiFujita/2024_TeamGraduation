@@ -377,7 +377,7 @@ void CMotion::Update(float fBuff)
 		UtilFunc::Transformation::RotNormalize(rotDiffZ);
 
 		// パーツの向きを設定
-		MyLib::Vector3 rot = mylib_const::DEFAULT_VECTOR3;
+		MyLib::Vector3 rot = MyLib::Vector3();
 
 		// パーツの向きを設定
 		rot.x =
@@ -1000,7 +1000,7 @@ MyLib::Vector3 CMotion::GetAttackPosition(CModel *pModel, AttackInfo attackInfo)
 
 	if (pModel == nullptr)
 	{// nullptrだったら
-		return mylib_const::DEFAULT_VECTOR3;
+		return MyLib::Vector3();
 	}
 
 	// 判定するパーツのマトリックス取得
@@ -1311,12 +1311,6 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 
 							if (nFrag == 0) { m_aLoadAttackData[m_nNumLoad][nIdxMotion][nNowAttackNum].bOnlyOneTime = false; }
 							else { m_aLoadAttackData[m_nNumLoad][nIdxMotion][nNowAttackNum].bOnlyOneTime = true; }
-						}
-
-						if (strcmp(aComment, "ATTACKTYPE") == 0)
-						{// ATTACKTYPEで攻撃の種類読み込み
-							fscanf(pFile, "%s", &aComment[0]);		// =の分
-							fscanf(pFile, "%d", &m_aLoadAttackData[m_nNumLoad][nIdxMotion][nNowAttackNum].AtkType);	// 攻撃の種類
 						}
 					}
 

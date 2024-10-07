@@ -18,7 +18,6 @@
 #include "Imguimanager.h"
 #include "fog.h"
 #include "calculation.h"
-#include "map_ui.h"
 #include "lostrssmanager.h"
 
 namespace

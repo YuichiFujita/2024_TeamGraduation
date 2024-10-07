@@ -145,7 +145,7 @@ void Check()
 	for (int nCntUse = 0; nCntUse < 1; nCntUse++)
 	{
 		// 移動量の設定
-		m_move = mylib_const::DEFAULT_VECTOR3;
+		m_move = MyLib::Vector3();
 
 		m_col = D3DXCOLOR(1.0f, 0.6f, 0.2f, 1.0f);
 
@@ -733,7 +733,7 @@ void FloweringCharge(void)
 		// エフェクトの設定
 		CEffect3D* pEffect = CEffect3D::Create(
 			pos,
-			mylib_const::DEFAULT_VECTOR3,
+			MyLib::Vector3(),
 			m_col,
 			m_fRadius,
 			m_nLife,

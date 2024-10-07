@@ -5,7 +5,6 @@
 // 
 //=============================================================================
 #include "result.h"
-#include "resultManager.h"
 #include "input.h"
 #include "fade.h"
 #include "renderer.h"
@@ -15,9 +14,6 @@
 #include "sound.h"
 #include "game.h"
 
-#include "result_people.h"
-#include "mapmesh.h"
-#include "peoplemanager.h"
 #include "blackframe.h"
 #include "camera.h"
 
@@ -73,26 +69,6 @@ HRESULT CResult::Init()
 	// BGM再生
 	CSound::GetInstance()->PlaySound(CSound::LABEL_BGM_RESULT);
 
-	//=============================
-	// 固定平面街フィールド
-	//=============================
-	CMapMesh::Create(CMapMesh::MeshType::TYPE_TOWNFIELD_FIXEDPLANE_RESULT);
-
-	//=============================
-	// 人マネージャ
-	//=============================
-	m_pPeopleManager = CPeopleManager::Create(CPeopleManager::Type::TYPE_RESULT);
-
-
-	// 黒フレームイン
-	CBlackFrame::GetInstance()->SetState(CBlackFrame::STATE::STATE_INCOMPLETION);
-
-	// カメラモーション再生
-	CManager::GetInstance()->GetCamera()->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_RESULT, CCameraMotion::EASING::Linear);
-
-	// リザルトの人生成
-	CResultPeople::Create(MyLib::Vector3(76325.0f, 300.0f, 3060.0f));
-
 	// 成功
 	return S_OK;
 }
@@ -103,17 +79,6 @@ HRESULT CResult::Init()
 void CResult::Uninit()
 {
 	m_pResultScore = nullptr;
-
-	// 人マネージャ
-	if (m_pPeopleManager != nullptr)
-	{
-		m_pPeopleManager->Uninit();
-		m_pPeopleManager = nullptr;
-	}
-
-	// リザルトマネージャのリセット
-	CResultManager* pResultManager = CResultManager::GetInstance();
-	pResultManager->Reset();
 
 	// 終了処理
 	CScene::Uninit();
@@ -133,18 +98,6 @@ void CResult::Update()
 	// ゲームパッド情報取得
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
 
-	// リザルト画面
-	CResultManager* pResultManager = CResultManager::GetInstance();
-	pResultManager->Update();
-
-	if (pResultManager->GetState() != CResultManager::State::STATE_PRESSENTER) return;
-
-	// 画面遷移
-	if (pInputKeyboard->GetTrigger(DIK_RETURN) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, 0))
-	{
-		// モード設定
-		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_RANKING);
-	}
 
 }
 

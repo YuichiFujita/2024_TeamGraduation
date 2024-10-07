@@ -72,6 +72,8 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
+	virtual void Release();	// 開放処理
+
 	// パラメータ設定
 	virtual void SetVtx();
 	virtual void SetPosition(const MyLib::Vector3& pos);		// 位置設定
@@ -103,13 +105,6 @@ public:
 	bool IsDisp() { return m_bDisp; }									// 描画状況取得
 	void SetEnableHitstopMove() { m_bHitstopMove = true; }				// ヒットストップ中に動くフラグ有効
 
-	// エフェクト関連
-	int SetEffectParent(CEffect3D *pEffect3D);	// エフェクト設定
-	CEffect3D *GetEffectParent(int nIdx);		// 親設定したエフェクト取得
-	int GetEffectParentNum();					// 親設定したエフェクトの数取得
-	void ReleaseEffect(int nIdx);				// エフェクトの解放
-	void UninitEffect();						// エフェクトの解放
-
 	static void ReleaseAll();	// 全開放
 	static void UpdateAll();	// 全更新
 	static void DrawAll();		// 全描画
@@ -121,17 +116,9 @@ public:
 	bool IsDeath();						// 死亡の判定
 	void SetType(const TYPE type);		// 種類設定
 	TYPE GetType() const;				// 種類取得
-	virtual CObject *GetObject();
-	virtual CObject2D *GetObject2D();
-	virtual CObject3D *GetObject3D();
-	virtual CObject3DMesh *GetObject3DMesh();
-	virtual CObjectX *GetObjectX();
-	virtual CObjectChara *GetObjectChara();
 
 protected:
 
-	void Release();	// 開放処理
-	//void Death();	// 死亡処理
 
 private:
 
@@ -160,9 +147,8 @@ private:
 	static std::map<LAYER, std::map<int, std::vector<CObject*>>> m_pObj;	// オブジェクト格納用
 
 	// その他
-	bool m_bDeath;			// 死亡フラグ
-	bool m_bDisp;			// 描画フラグ
-	CEffect3D *m_pEffect[mylib_const::MAX_OBJ];	// エフェクトのポインタ
+	bool m_bDeath;				// 死亡フラグ
+	bool m_bDisp;				// 描画フラグ
 	int m_nNumEffectParent;		// エフェクトの親設定した数
 	bool m_bHitstopMove;		// ヒットストップ時に動くかのフラグ
 	static int m_nNumAll;		// オブジェクトの総数

@@ -11,7 +11,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "texture.h"
-#include "elevation.h"
 #include "game.h"
 
 //==========================================================================
@@ -230,9 +229,7 @@ void CTargetPoint::Control()
 	move.x += (0.0f - move.x) * 0.25f;
 	move.z += (0.0f - move.z) * 0.25f;
 
-	// çÇÇ≥éÊìæ
-	bool bLand = false;
-	pos.y = CGame::GetInstance()->GetElevation()->GetHeight(pos, &bLand);
+	
 
 	// à íuê›íË
 	SetPosition(pos);
