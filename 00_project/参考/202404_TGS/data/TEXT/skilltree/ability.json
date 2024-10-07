@@ -1,0 +1,210 @@
+{
+    "skillcategorys": [
+        {
+            "categorytype": 0,
+            "skilltypes": [
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "AddStamina01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "EnhanceAutoHeal01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "AddStamina02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "EnhanceAutoHeal02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "AddStamina03"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "CounterHeal01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "CounterHeal02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "SubGuard01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "SubGuard02"
+                        }
+                    ],
+                    "typeName": "Stamina"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "AddLife01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "AddLife02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ReaspawnLife01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ReaspawnLife02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ReaspawnLife03"
+                        }
+                    ],
+                    "typeName": "Life"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "SubNeedStamina01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "HealStamina01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "SubNeedStamina02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "HealStamina02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "SubNeedStamina03"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ExtensionFrame01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ExtensionFrame02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "LongerDownTime01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "LongerDownTime02"
+                        }
+                    ],
+                    "typeName": "Counter"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "AddRespawnPercent"
+                        }
+                    ],
+                    "typeName": "respawn"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "SubNeedStamina01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "SubNeedStamina02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "KnockbackMitigation01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "KnockbackMitigation02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "DamageMitigation01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "DamageMitigation02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "DamageMitigation03"
+                        }
+                    ],
+                    "typeName": "Guard"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "AddValue01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ShoterChargeTime01"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "ShoterChargeTime02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "NotFlinch"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "AddValue02"
+                        },
+                        {
+                            "stage": 0,
+                            "stageName": "AddValue03"
+                        }
+                    ],
+                    "typeName": "Attack"
+                }
+            ]
+        },
+        {
+            "categorytype": 0,
+            "skilltypes": [
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "normalATK"
+                        }
+                    ],
+                    "typeName": "AddCombo"
+                },
+                {
+                    "skillstage": [
+                        {
+                            "stage": 0,
+                            "stageName": "UnlockCounter"
+                        }
+                    ],
+                    "typeName": "GetCounter"
+                }
+            ]
+        }
+    ]
+}

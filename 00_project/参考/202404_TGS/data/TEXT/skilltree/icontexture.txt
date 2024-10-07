@@ -1,0 +1,46 @@
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 35
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addlife.png		# [0]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addlife.png		# [0]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_staminaautoheal.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_staminaautoheal.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_counterheal_stamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_counterheal_stamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addstamina.png	# [2]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_subknockback.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_subknockback.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_getchargeatk.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_getcounter.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_dmgmitigation.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_dmgmitigation.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_dmgmitigation.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\skilltree_counter_extension.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\skilltree_counter_extension.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\skilltree_longerdown.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\skilltree_longerdown.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_notflinch_charge.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\skilltree_respawnpercent.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_respawnlife.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_respawnlife.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_respawnlife.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_shotercharge.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_shotercharge.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addpower.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addpower.png	# [1]
+TEXTURE_FILENAME = data\\TEXTURE\\skilltree\\icon_addpower.png	# [1]
+
+
+END_SCRIPT		# この行は絶対消さないこと！

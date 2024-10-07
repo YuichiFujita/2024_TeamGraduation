@@ -1,0 +1,23 @@
+#------------------------------------------------------------------------------
+ テキストファイル名
+#------------------------------------------------------------------------------
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\bridge\\setup.txt		# [0]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\turibashi\\setup.txt	# [1]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\angry_bird\\setup.txt	# [2]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\fallen_tree\\setup.txt	# [3]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\hasu\\setup.txt		# [4]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\koinobori\\setup.txt	# [5]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\washing\\setup.txt		# [6]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\woodleaf\\setup.txt	# [7]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\ship\\setup.txt		# [8]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\torie\\setup.txt		# [9]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\kinobridg\\setup.txt	# [10]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\waterfance\\setup.txt	# [11]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\fish\\setup.txt		# [12]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\bird\\setup.txt		# [13]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\kite\\setup.txt		# [14]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\Light_rope\\setup.txt	# [15]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\ship_aircruise\\setup.txt	# [16]
+TEXT_FILENAME = data\\TEXT\\mapobstacle\\ship_broken\\setup.txt	# [16]
+
+END_SCRIPT		# この行は絶対消さないこと！
