@@ -37,7 +37,7 @@ public:
 	HRESULT Init();
 	HRESULT Init(TYPE type);
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 	void SetVtx();
 	void BindTexture(int nIdx);

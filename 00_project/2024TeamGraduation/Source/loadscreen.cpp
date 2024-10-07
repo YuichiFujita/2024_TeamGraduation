@@ -195,7 +195,7 @@ void CLoadScreen::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CLoadScreen::Update()
+void CLoadScreen::Update(const float fDeltaTime)
 {
 	// 文字生成
 	for (int i = 0; i < NUM_STRING; i++)
@@ -226,14 +226,14 @@ void CLoadScreen::Update()
 		pObj2D->SetRotation(rot);
 
 		// 更新処理
-		pObj2D->Update();
+		pObj2D->Update(fDeltaTime);
 	}
 
 	// 筒の動き
-	MoveCylinder();
+	MoveCylinder(fDeltaTime);
 	if (m_pCylinder != nullptr)
 	{
-		m_pCylinder->Update();
+		m_pCylinder->Update(fDeltaTime);
 	}
 
 	// 文字との判定
@@ -274,7 +274,7 @@ void CLoadScreen::CollisionText()
 //==========================================================================
 // 筒の動き
 //==========================================================================
-void CLoadScreen::MoveCylinder()
+void CLoadScreen::MoveCylinder(const float fDeltaTime)
 {
 	if (m_pCylinder == nullptr) return;
 
@@ -285,7 +285,7 @@ void CLoadScreen::MoveCylinder()
 	pos.x += 5.0f;
 
 	// ぷかぷか
-	m_fBobbingTime += CManager::GetInstance()->GetDeltaTime();
+	m_fBobbingTime += fDeltaTime;
 	pos.y = posOrigin.y + sinf(D3DX_PI * (m_fBobbingTime / 0.8f)) * 10.0f;
 
 	// 折り返し

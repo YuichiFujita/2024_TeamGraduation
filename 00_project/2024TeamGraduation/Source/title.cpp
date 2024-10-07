@@ -129,24 +129,21 @@ void CTitle::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTitle::Update()
+void CTitle::Update(const float fDeltaTime)
 {
-	// デルタタイム取得
-	float deltaTime = CManager::GetInstance()->GetDeltaTime();
-
 	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE_NONE)
 	{// フェード中は抜ける
 		return;
 	}
 
 	// 状態別更新処理
-	(this->*(m_SceneFunc[m_SceneType]))();
+	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime);
 }
 
 //==========================================================================
 // なにもなし
 //==========================================================================
-void CTitle::SceneNone()
+void CTitle::SceneNone(const float fDeltaTime)
 {
 	
 }
@@ -154,7 +151,7 @@ void CTitle::SceneNone()
 //==========================================================================
 // ロゴフェードイン
 //==========================================================================
-void CTitle::SceneFadeInLogo()
+void CTitle::SceneFadeInLogo(const float fDeltaTime)
 {
 
 }
@@ -162,10 +159,10 @@ void CTitle::SceneFadeInLogo()
 //==========================================================================
 // ロゴフェードアウト
 //==========================================================================
-void CTitle::SceneFadeOutLoGo()
+void CTitle::SceneFadeOutLoGo(const float fDeltaTime)
 {
 	// シーンカウンター減算
-	m_fSceneTime -= CManager::GetInstance()->GetDeltaTime();
+	m_fSceneTime -= fDeltaTime;
 
 	// 不透明度更新
 	float alpha = m_fSceneTime / TIME_FADELOGO;

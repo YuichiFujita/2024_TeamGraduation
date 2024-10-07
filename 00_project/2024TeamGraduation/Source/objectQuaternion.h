@@ -25,7 +25,7 @@ public:
 	virtual HRESULT Init() override;
 	virtual HRESULT Init(const std::string& file);
 	virtual void Uninit() override;
-	virtual void Update() override;
+	virtual void Update(const float fDeltaTime) override;
 	virtual void Draw() override;
 
 	// î•ñİ’è

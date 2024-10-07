@@ -45,7 +45,7 @@ public:
 
 	HRESULT Init();		// 初期化処理
 	void Uninit();		// 終了処理
-	void Update();		// 更新処理
+	void Update(const float fDeltaTime);		// 更新処理
 	void SetCamera();	// カメラ設定
 	void Reset(CScene::MODE mode);	// リセット
 

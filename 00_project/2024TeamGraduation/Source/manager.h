@@ -79,10 +79,10 @@ public:
 	CRankingManager *GetRankingManager();	// ランキングマネージャ
 	CScene *GetScene();		// シーン取得
 
-	int GetNumPlayer();			// プレイヤーの数取得
+	int GetNumPlayer();				// プレイヤーの数取得
 	void SetNumPlayer(int nNum);	// プレイヤーの数設定
-	float GetDeltaTime();								// 経過時間取得
-	void SetMode(CScene::MODE mode);					// 次のモード設定
+	float GetDeltaTime() { return m_fDeltaTime; }	// 経過時間取得
+	void SetMode(CScene::MODE mode);				// 次のモード設定
 	CScene::MODE GetMode();							// 現在のモード取得
 	void SetEnableHitStop(int nCntHitStop);			// ヒットストップの設定
 	void ChangePauseMode(CScene::MODE mode);		// ポーズの種類切り替え
@@ -123,22 +123,22 @@ private:
 	CRankingManager *m_pRankingManager;	// ランキングマネージャ
 	CMyEffekseer* m_pMyEffekseer;		// エフェクシア
 
-	bool m_bWireframe;					// ワイヤーフレーム
-	bool m_bHitStop;					// ヒットストップの判定
-	int m_nCntHitStop;					// ヒットストップのカウンター
-	CScene::MODE m_OldMode;				// 前回のモード
-	DWORD m_CurrentTime;				// 現在時間
-	DWORD m_OldTime;					// 過去の時間
-	float m_fDeltaTime;					// 経過時間
-	int m_nNumPlayer;					// プレイヤーの数
-	float m_fLoadTimer;					// ロードのタイマー
-	bool m_bLoadComplete;				// ロード完了のフラグ
-	bool m_bLoadFadeSet;				// ロードのフェード設定フラグ
-	bool m_bNowLoading;				// ロード完了のフラグ
-	bool m_bFirstLoad;				// 初回ロード
-	bool m_bDisp_2D;					// 2Dの表示
-	bool m_bDisp_UI;					// UIの表示
-	bool m_bWindowed;					// ウィンドウモードか
+	bool m_bWireframe;		// ワイヤーフレーム
+	bool m_bHitStop;		// ヒットストップの判定
+	int m_nCntHitStop;		// ヒットストップのカウンター
+	CScene::MODE m_OldMode;	// 前回のモード
+	DWORD m_dwOldTime;		// 前回の処理開始時刻
+	DWORD m_dwCurTime;		// 今回の処理開始時刻
+	float m_fDeltaTime;		// 経過時間
+	int m_nNumPlayer;		// プレイヤーの数
+	float m_fLoadTimer;		// ロードのタイマー
+	bool m_bLoadComplete;	// ロード完了のフラグ
+	bool m_bLoadFadeSet;	// ロードのフェード設定フラグ
+	bool m_bNowLoading;		// ロード完了のフラグ
+	bool m_bFirstLoad;		// 初回ロード
+	bool m_bDisp_2D;		// 2Dの表示
+	bool m_bDisp_UI;		// UIの表示
+	bool m_bWindowed;		// ウィンドウモードか
 
 	static CManager *m_pManager;	// マネージャ
 

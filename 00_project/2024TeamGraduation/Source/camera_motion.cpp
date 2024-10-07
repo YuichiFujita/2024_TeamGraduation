@@ -308,7 +308,7 @@ void CCameraMotion::Uninit()
 //==========================================================================
 // カメラの更新処理
 //==========================================================================
-void CCameraMotion::Update()
+void CCameraMotion::Update(const float fDeltaTime)
 {
 #ifdef _DEBUG
 	// エディット更新
@@ -335,8 +335,8 @@ void CCameraMotion::Update()
 	// モーションタイマー加算
 	if (!m_bPause && !m_bSystemPause)
 	{
-		m_fMotionTimer += CManager::GetInstance()->GetDeltaTime();
-		m_fTriggerTimer += CManager::GetInstance()->GetDeltaTime();
+		m_fMotionTimer +=  fDeltaTime;
+		m_fTriggerTimer += fDeltaTime;
 	}
 	else
 	{

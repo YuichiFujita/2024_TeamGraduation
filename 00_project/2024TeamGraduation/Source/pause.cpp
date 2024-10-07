@@ -173,7 +173,7 @@ void CPause::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPause::Update()
+void CPause::Update(const float fDeltaTime)
 {
 	if (m_bPause == false)
 	{// ポーズ中じゃなかったら
@@ -186,7 +186,7 @@ void CPause::Update()
 	}
 
 	// 点滅時間更新
-	m_fFlashTime += CManager::GetInstance()->GetDeltaTime();
+	m_fFlashTime += fDeltaTime;
 
 	// 色更新
 	UpdateColor();
@@ -200,7 +200,7 @@ void CPause::Update()
 		if (m_aObject2D[nCntVtx] != nullptr)
 		{
 			// 更新処理
-			m_aObject2D[nCntVtx]->Update();
+			m_aObject2D[nCntVtx]->Update(fDeltaTime);
 
 			// 頂点座標更新
 			m_aObject2D[nCntVtx]->SetVtx();

@@ -186,7 +186,7 @@ void CObjectHierarchy::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectHierarchy::Update()
+void CObjectHierarchy::Update(const float fDeltaTime)
 {
 	// 判定するパーツ取得
 	CModel* pModel = m_apModel[m_nCenterPartsIdx];

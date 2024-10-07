@@ -49,7 +49,7 @@ public:
 	HRESULT Init(const std::string& file);
 	HRESULT Init(int nIdxXFile);
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 	void Draw(D3DXCOLOR col);
 	void Draw(float fAlpha);

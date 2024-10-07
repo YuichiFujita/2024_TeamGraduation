@@ -292,7 +292,7 @@ void CEffect3D::Uninit()
 //==========================================================================
 // エフェクトの更新処理
 //==========================================================================
-void CEffect3D::Update()
+void CEffect3D::Update(const float fDeltaTime)
 {
 	// 過去の位置設定
 	SetOldPosition(GetPosition());

@@ -35,7 +35,7 @@ public:
 	//=============================
 	HRESULT Init() override;
 	void Uninit() override;
-	void Update() override;
+	void Update(const float fDeltaTime) override;
 	void Draw() override;
 
 	//=============================

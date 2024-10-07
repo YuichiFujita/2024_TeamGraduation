@@ -24,7 +24,7 @@ public:
 	// オーバーライドされた関数
 	virtual HRESULT Init() override;
 	virtual HRESULT Init(float width, float height, int maxvalue, std::string texturepath = "");
-	virtual void Update() override;
+	virtual void Update(const float fDeltaTime) override;
 	virtual void SetVtx() override;
 
 

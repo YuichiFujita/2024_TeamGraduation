@@ -381,7 +381,7 @@ void CObjectX::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectX::Update()
+void CObjectX::Update(const float fDeltaTime)
 {
 	// 過去の向き設定
 	SetOldRotation(GetRotation());
@@ -392,7 +392,6 @@ void CObjectX::Update()
 	if (m_pShadow != nullptr){
 		m_pShadow->SetPosition(GetPosition());
 	}
-
 
 	// 当たり判定ボックスデータ設定
 	SetCollisionBoxData();

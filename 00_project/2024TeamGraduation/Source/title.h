@@ -47,7 +47,7 @@ public:
 	// オーバーライドされた関数
 	HRESULT Init() override;
 	void Uninit() override;
-	void Update() override;
+	void Update(const float fDeltaTime) override;
 	void Draw() override;
 
 	// シーンの種類
@@ -68,15 +68,15 @@ private:
 	//=============================
 	// 関数ポインタ
 	//=============================
-	typedef void(CTitle::* SCENE_FUNC)();
+	typedef void(CTitle::* SCENE_FUNC)(const float);
 	static SCENE_FUNC m_SceneFunc[];
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void SceneNone();			// なにもなし
-	void SceneFadeInLogo();		// ロゴフェードイン
-	void SceneFadeOutLoGo();		// ロゴフェードアウト
+	void SceneNone(const float fDeltaTime);			// なにもなし
+	void SceneFadeInLogo(const float fDeltaTime);	// ロゴフェードイン
+	void SceneFadeOutLoGo(const float fDeltaTime);	// ロゴフェードアウト
 
 	//=============================
 	// メンバ変数

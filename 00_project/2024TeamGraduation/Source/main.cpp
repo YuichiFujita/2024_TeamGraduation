@@ -46,13 +46,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 		WindowProc,							// ウインドウプロシージャ
 		0,									// 0にする(通常は使用しない)
 		0,									// 0にする(通常は使用しない)
-		g_hInstance,							// インスタンスハンドル
+		g_hInstance,						// インスタンスハンドル
 		LoadIcon(nullptr, IDI_APPLICATION),	// タスクバーのアイコン
 		LoadCursor(nullptr, IDC_ARROW),		// マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 1),			// クライアント領域の背景色
-		nullptr,								// メニューバー
+		nullptr,							// メニューバー
 		CLASS_NAME,							// ウインドウクラスの名前
-		LoadIcon(nullptr, IDI_APPLICATION)		// ファイルのアイコン
+		LoadIcon(nullptr, IDI_APPLICATION)	// ファイルのアイコン
 	};
 
 	MSG msg;	// メッセージを格納する変数
@@ -66,24 +66,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 	// ウインドウの生成
 	ResetWnd();
 
-	DWORD dwCurrentTime;					// 現在時刻
-	DWORD dwExecLastTime;					// 最後に処理した時刻
-	DWORD dwFrameCount;						// フレームカウント
-	DWORD dwFPSLastTime;					// 最後にFPSを計測した時刻
+	DWORD dwCurrentTime;	// 現在時刻
+	DWORD dwExecLastTime;	// 最後に処理した時刻
+	DWORD dwFrameCount;		// フレームカウント
+	DWORD dwFPSLastTime;	// 最後にFPSを計測した時刻
 
 	// 乱数の種を設定
 	srand((unsigned int)time(0));
 
 	// マネージャの生成
-	CManager *pManager = nullptr;
-
-	// マネージャの生成
-	if (pManager == nullptr)
-	{// nullptrだったら
-
-		// メモリ確保
-		pManager = CManager::Create();
-	}
+	CManager *pManager = CManager::Create();
 
 	if (LoadManager != nullptr)
 	{
@@ -114,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 	dwExecLastTime = timeGetTime();	// 現在時刻を取得(保存)
 
 	// ウインドウの表示
-	ShowWindow(hWnd, g_CmbShow);		// ウインドウの表示状態を設定
+	ShowWindow(hWnd, g_CmbShow);	// ウインドウの表示状態を設定
 	UpdateWindow(hWnd);				// クライアント領域を更新
 
 	dwFrameCount = 0;
@@ -163,7 +155,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 					// 描画処理
 					pManager->Draw();
 				}
-				
 
 				// フレームカウントを加算
 				dwFrameCount++;

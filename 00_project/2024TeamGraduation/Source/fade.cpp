@@ -122,7 +122,7 @@ void CFade::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CFade::Update()
+void CFade::Update(const float fDeltaTime)
 {
 	// 色取得
 	D3DXCOLOR col = m_aObject2D->GetColor();
@@ -167,7 +167,7 @@ void CFade::Update()
 	m_aObject2D->SetColor(col);
 
 	// 更新処理
-	m_aObject2D->Update();
+	m_aObject2D->Update(fDeltaTime);
 
 	m_aObject2D->SetVtx();
 

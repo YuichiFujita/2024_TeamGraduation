@@ -195,7 +195,7 @@ void CCamera::Uninit()
 //==========================================================================
 // カメラの更新処理
 //==========================================================================
-void CCamera::Update()
+void CCamera::Update(const float fDeltaTime)
 {
 	// キーボード情報取得
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
@@ -245,7 +245,7 @@ void CCamera::Update()
 	// カメラモーション作成
 	if (m_pCameraMotion != nullptr)
 	{
-		m_pCameraMotion->Update();
+		m_pCameraMotion->Update(fDeltaTime);
 	}
 }
 

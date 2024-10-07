@@ -190,7 +190,7 @@ void CPlayer::Release()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPlayer::Update()
+void CPlayer::Update(const float fDeltaTime)
 {
 	if (IsDeath())
 	{
@@ -213,7 +213,7 @@ void CPlayer::Update()
 	ResetFrag();
 
 	// 親の更新処理
-	CObjectChara::Update();
+	CObjectChara::Update(fDeltaTime);
 
 	// 操作
 	Controll();
@@ -225,7 +225,7 @@ void CPlayer::Update()
 	}
 
 	// 状態更新
-	UpdateState();
+	UpdateState(fDeltaTime);
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -280,10 +280,6 @@ void CPlayer::Controll()
 
 	// ゲームパッド情報取得
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
-
-	// 経過時間取得
-	float deltaTime = CManager::GetInstance()->GetDeltaTime();
-
 
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{// 行動できるとき
@@ -584,13 +580,13 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 //==========================================================================
 // 状態更新
 //==========================================================================
-void CPlayer::UpdateState()
+void CPlayer::UpdateState(const float fDeltaTime)
 {
 	// モーション別の状態設定
 	MotionBySetState();
 
 	// ダメージ受付時間更新
-	UpdateDamageReciveTimer();
+	UpdateDamageReciveTimer(fDeltaTime);
 
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
@@ -599,10 +595,10 @@ void CPlayer::UpdateState()
 //==========================================================================
 // ダメージ受付時間更新
 //==========================================================================
-void CPlayer::UpdateDamageReciveTimer()
+void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime)
 {
 	// ダメージ受け付け時間減算
-	m_sDamageInfo.reciveTime -= CManager::GetInstance()->GetDeltaTime();
+	m_sDamageInfo.reciveTime -= fDeltaTime;
 	if (m_sDamageInfo.reciveTime <= 0.0f)
 	{
 		// スーパーアーマーがない時はダメージモーション終了

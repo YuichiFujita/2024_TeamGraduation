@@ -69,32 +69,32 @@ public:
 	// 派生クラスでオーバーライドされた関数が絶対必要(純粋仮想関数)
 	virtual HRESULT Init() = 0;
 	virtual void Uninit() = 0;
-	virtual void Update() = 0;
+	virtual void Update(const float fDeltaTime) = 0;
 	virtual void Draw() = 0;
 
 	virtual void Release();	// 開放処理
 
 	// パラメータ設定
-	virtual void SetVtx();
-	virtual void SetPosition(const MyLib::Vector3& pos);		// 位置設定
-	virtual MyLib::Vector3 GetPosition() const;					// 位置取得
-	virtual void SetOldPosition(const MyLib::Vector3& posOld);	// 過去の位置設定
-	virtual MyLib::Vector3 GetOldPosition() const;				// 過去の位置取得
-	virtual void SetOriginPosition(const MyLib::Vector3& pos);	// 元の位置設定
-	virtual MyLib::Vector3 GetOriginPosition() const;			// 元の位置取得
-	virtual void SetMove(const MyLib::Vector3& move);			// 移動量設定
-	virtual MyLib::Vector3 GetMove() const;						// 移動量取得
-	virtual void SetRotation(const MyLib::Vector3& rot);		// 向き設定
-	virtual MyLib::Vector3 GetRotation() const;					// 向き取得
-	virtual void SetOldRotation(const MyLib::Vector3& rot) { m_rotOld = rot; }		// 前回の向き設定
-	virtual MyLib::Vector3 GetOldRotation() const { return m_rotOld; }				// 前回の向き取得
-	virtual void SetOriginRotation(const MyLib::Vector3& rot);	// 元の向き設定
-	virtual MyLib::Vector3 GetOriginRotation() const;			// 元の向き取得
+	virtual inline void SetVtx() { assert(false); }	// 頂点情報設定
+	virtual inline void SetPosition(const MyLib::Vector3& pos)			{ m_pos = pos; }		// 位置設定
+	virtual inline MyLib::Vector3 GetPosition() const					{ return m_pos; }		// 位置取得
+	virtual inline void SetOldPosition(const MyLib::Vector3& posOld)	{ m_posOld = posOld; }	// 過去の位置設定
+	virtual inline MyLib::Vector3 GetOldPosition() const				{ return m_posOld; }	// 過去の位置取得
+	virtual inline void SetOriginPosition(const MyLib::Vector3& pos)	{ m_posOrigin = pos; }	// 元の位置設定
+	virtual inline MyLib::Vector3 GetOriginPosition() const				{ return m_posOrigin; }	// 元の位置取得
+	virtual inline void SetMove(const MyLib::Vector3& move)				{ m_move = move; }		// 移動量設定
+	virtual inline MyLib::Vector3 GetMove() const						{ return m_move; }		// 移動量取得
+	virtual inline void SetRotation(const MyLib::Vector3& rot)			{ m_rot = rot; }		// 向き設定
+	virtual inline MyLib::Vector3 GetRotation() const					{ return m_rot; }		// 向き取得
+	virtual inline void SetOldRotation(const MyLib::Vector3& rot)		{ m_rotOld = rot; }		// 前回の向き設定
+	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
+	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
+	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// 元の向き取得
 
 	// 変更処理
-	virtual void AddPosition(const MyLib::Vector3& pos);		// 位置加算
-	virtual void AddMove(const MyLib::Vector3& move);			// 移動量加算
-	virtual void AddRotation(const MyLib::Vector3& rot);		// 向き加算
+	virtual inline void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算
+	virtual inline void AddMove(const MyLib::Vector3& move)		{ m_move += move; }	// 移動量加算
+	virtual inline void AddRotation(const MyLib::Vector3& rot)	{ m_rot += rot; }	// 向き加算
 
 	// 描画・スクリーン関連
 	float ScreenZ() const;												// スクリーン座標
@@ -105,17 +105,17 @@ public:
 	bool IsDisp() { return m_bDisp; }									// 描画状況取得
 	void SetEnableHitstopMove() { m_bHitstopMove = true; }				// ヒットストップ中に動くフラグ有効
 
-	static void ReleaseAll();	// 全開放
-	static void UpdateAll();	// 全更新
-	static void DrawAll();		// 全描画
+	static void ReleaseAll();						// 全開放
+	static void UpdateAll(const float fDeltaTime);	// 全更新
+	static void DrawAll();							// 全描画
 	static const int GetNumAll() { return m_nNumAll; }
 	static const int GetNumPriorityAll(int nPriority) { return m_nNumPriorityAll[nPriority]; }
 	static std::map<LAYER, std::map<int, std::vector<CObject*>>> GetTop() { return m_pObj; }	// 先頭取得
 
 	void SetEnableDeath(bool bDeath) { m_bDeath = bDeath; }
-	bool IsDeath();						// 死亡の判定
-	void SetType(const TYPE type);		// 種類設定
-	TYPE GetType() const;				// 種類取得
+	bool IsDeath();					// 死亡の判定
+	void SetType(const TYPE type);	// 種類設定
+	TYPE GetType() const;			// 種類取得
 
 protected:
 

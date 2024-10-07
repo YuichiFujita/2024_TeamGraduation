@@ -100,10 +100,11 @@ void CObjectQuaternion::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectQuaternion::Update()
+void CObjectQuaternion::Update(const float fDeltaTime)
 {
 	// オブジェクトXの更新処理
-	CObjectX::Update();
+	CObjectX::Update(fDeltaTime);
+
 #if 0
 	// 情報取得
 	MyLib::Vector3 pos = GetPosition();

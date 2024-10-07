@@ -166,13 +166,13 @@ void CGame::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CGame::Update()
+void CGame::Update(const float fDeltaTime)
 {
 	// ゲームマネージャ
 	if (m_pGameManager != nullptr)
 	{
 		// 更新処理
-		m_pGameManager->Update();
+		m_pGameManager->Update(fDeltaTime);
 	}
 
 	// キーボード情報取得
@@ -201,7 +201,7 @@ void CGame::Update()
 #endif
 
 	// シーンの更新
-	CScene::Update();
+	CScene::Update(fDeltaTime);
 }
 
 //==========================================================================

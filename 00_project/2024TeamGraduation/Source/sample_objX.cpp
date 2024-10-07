@@ -115,10 +115,10 @@ void CSample_ObjX::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_ObjX::Update()
+void CSample_ObjX::Update(const float fDeltaTime)
 {
 	// 状態カウンター加算
-	m_fStateTime += CManager::GetInstance()->GetDeltaTime();
+	m_fStateTime += fDeltaTime;
 
 	// 状態別処理
 	(this->*(m_SampleFuncList[m_state]))();

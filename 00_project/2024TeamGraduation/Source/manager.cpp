@@ -73,9 +73,6 @@ CManager::CManager()
 	m_bHitStop = false;				// ヒットストップの判定
 	m_nCntHitStop = 0;				// ヒットストップのカウンター
 	m_OldMode = CScene::MODE_NONE;	// 前回のモード
-	m_CurrentTime = 0;				// 現在時間
-	m_OldTime = 0;					// 過去の時間
-	m_fDeltaTime = 0.0f;			// 経過時間
 	m_nNumPlayer = 0;				// プレイヤーの数
 	m_fLoadTimer = 0.0f;			// ロードのタイマー
 	m_bLoadComplete = false;		// ロード完了のフラグ
@@ -668,12 +665,17 @@ void CManager::Update()
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
 
-	// 過去の時間保存
-	m_OldTime = m_CurrentTime;
+	// 前フレームの開始時刻を保存
+	m_dwOldTime = m_dwCurTime;
 
-	// 経過時間
-	m_CurrentTime = timeGetTime();
-	m_fDeltaTime = (float)(m_CurrentTime - m_OldTime) / 1000;
+	// 現在時刻を開始時刻に保存
+	m_dwCurTime = timeGetTime();
+
+	// 処理開始時刻の差分を計算
+	DWORD dwDiffDeltaTime = m_dwCurTime - m_dwOldTime;
+
+	// 経過時間を計算
+	m_fDeltaTime = dwDiffDeltaTime * 0.001f;
 
 	// Imguiの更新
 	ImguiMgr::Update();
@@ -691,7 +693,7 @@ void CManager::Update()
 		}
 
 		// ロードマネージャの更新
-		GetLoadManager()->Update();
+		GetLoadManager()->Update(m_fDeltaTime);
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
@@ -742,12 +744,12 @@ void CManager::Update()
 		// ロードマネージャの更新
 		if (!m_bLoadComplete)
 		{
-			GetLoadManager()->Update();
+			GetLoadManager()->Update(m_fDeltaTime);
 		}
 	}
 
 	// フェードの更新処理
-	m_pFade->Update();
+	m_pFade->Update(m_fDeltaTime);
 
 	// 遷移なしフェードの更新処理
 	m_pInstantFade->Update();
@@ -785,7 +787,7 @@ void CManager::Update()
 			// ポーズの更新処理
 			if (bPause)
 			{// ポーズ中だったら
-				m_pPause->Update();
+				m_pPause->Update(m_fDeltaTime);
 
 				if (!GetLoadManager()->IsLoadComplete())
 				{
@@ -793,7 +795,7 @@ void CManager::Update()
 				}
 
 				// カメラの更新処理
-				m_pCamera->Update();
+				m_pCamera->Update(m_fDeltaTime);
 
 				return;
 			}
@@ -840,20 +842,20 @@ void CManager::Update()
 
 		if (m_pScene != nullptr)
 		{
-			m_pScene->Update();
+			m_pScene->Update(m_fDeltaTime);
 		}
 
 		// レンダラーの更新処理
 		if (m_pRenderer != nullptr)
 		{
-			m_pRenderer->Update();
+			m_pRenderer->Update(m_fDeltaTime);
 		}
 
 		// ライトの更新処理
-		m_pLight->Update();
+		m_pLight->Update(m_fDeltaTime);
 
 		// カメラの更新処理
-		m_pCamera->Update();
+		m_pCamera->Update(m_fDeltaTime);
 
 		// デバッグ表示の更新処理
 		m_pDebugProc->Update();
@@ -946,14 +948,6 @@ void CManager::ChangePauseMode(CScene::MODE mode)
 	default:
 		break;
 	}
-}
-
-//==========================================================================
-// 経過時間取得
-//==========================================================================
-float CManager::GetDeltaTime()
-{
-	return m_fDeltaTime;
 }
 
 //==========================================================================

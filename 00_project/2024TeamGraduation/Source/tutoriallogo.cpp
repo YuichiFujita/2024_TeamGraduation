@@ -105,7 +105,7 @@ void CTutorialLogo::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTutorialLogo::Update()
+void CTutorialLogo::Update(const float fDeltaTime)
 {
 	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE_NONE)
 	{// フェード中は抜ける
@@ -123,7 +123,7 @@ void CTutorialLogo::Update()
 	}
 
 	// 更新処理
-	CObject2D::Update();
+	CObject2D::Update(fDeltaTime);
 }
 
 //==========================================================================

@@ -25,7 +25,7 @@ public:
 
 	HRESULT Init();
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 
 	void LoadScene(CScene::MODE mode);
