@@ -40,7 +40,6 @@ public:
 		bool bInpactActSet;		// 衝撃カウントの行動設定したか
 		bool bEndAtk;			// 攻撃の終了フラグ
 		bool bOnlyOneTime;		// 1度だけかの判定
-		CGameManager::AttackType AtkType;	// 攻撃の種類
 	}AttackInfo;
 
 	// モーションの構造体

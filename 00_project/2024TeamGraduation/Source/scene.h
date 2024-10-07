@@ -8,7 +8,6 @@
 #ifndef _SCENE_H_
 #define _SCENE_H_	// 二重インクルード防止
 
-#include "elevation.h"
 
 //==========================================================================
 // 前方宣言
@@ -47,9 +46,7 @@ public:
 
 	virtual void Kill();
 
-	void ResetScene();	// シーンのリセット
 	static CScene *Create(MODE mode);
-	static CElevation *GetElevation();	// オブジェクト3Dの取得
 	MODE GetMode();						// 現在のモード取得
 
 protected:
@@ -57,7 +54,6 @@ protected:
 private:
 
 	MODE m_mode;				// 現在のモード
-	static CElevation *m_pObject3DMesh;				// オブジェクト3Dメッシュのオブジェクト
 	CEdit_Map* m_pEditMap;
 };
 

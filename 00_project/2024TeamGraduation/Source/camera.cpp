@@ -12,17 +12,13 @@
 #include "input.h"
 #include "calculation.h"
 #include "player.h"
-#include "elevation.h"
 #include "title.h"
 #include "instantfade.h"
 #include "light.h"
 #include "3D_effect.h"
 #include "calculation.h"
-#include "limitarea.h"
 #include "pause.h"
-
 #include "objectX.h"
-#include "spline.h"
 
 //==========================================================================
 // マクロ定義
@@ -100,18 +96,18 @@ CCamera::CCamera()
 	m_viewport.Height = 0;						// 描画する画面の高さ
 	m_viewport.MinZ = 0.0f;
 	m_viewport.MaxZ = 0.0f;
-	m_posR = mylib_const::DEFAULT_VECTOR3;		// 注視点(見たい場所)
-	m_posV = mylib_const::DEFAULT_VECTOR3;		// 視点(カメラの位置)
-	m_posVDest = mylib_const::DEFAULT_VECTOR3;	// 目標の視点
-	m_posRDest = mylib_const::DEFAULT_VECTOR3;	// 目標の注視点
+	m_posR = MyLib::Vector3();		// 注視点(見たい場所)
+	m_posV = MyLib::Vector3();		// 視点(カメラの位置)
+	m_posVDest = MyLib::Vector3();	// 目標の視点
+	m_posRDest = MyLib::Vector3();	// 目標の注視点
 	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
-	m_move = mylib_const::DEFAULT_VECTOR3;		// 移動量
-	m_rot = mylib_const::DEFAULT_VECTOR3;		// 向き
+	m_move = MyLib::Vector3();		// 移動量
+	m_rot = MyLib::Vector3();		// 向き
 	m_rotDest = 0.0f;							// 目標の向き
 	m_Moverot = 0.0f;							// 向きの移動量
-	m_rotVDest = mylib_const::DEFAULT_VECTOR3;	// 目標の視点の向き
-	m_TargetPos = mylib_const::DEFAULT_VECTOR3;	// 追従目標の位置
-	m_TargetRot = mylib_const::DEFAULT_VECTOR3;	// 追従目標の位置
+	m_rotVDest = MyLib::Vector3();	// 目標の視点の向き
+	m_TargetPos = MyLib::Vector3();	// 追従目標の位置
+	m_TargetRot = MyLib::Vector3();	// 追従目標の位置
 	m_fDistance = 0.0f;							// 距離
 	m_fDestDistance = 0.0f;						// 目標の距離
 	m_fOriginDistance = 0.0f;					// 元の距離
@@ -408,11 +404,11 @@ void CCamera::MoveCameraMouse()
 		pInputMouse->GetPress(CInputMouse::BUTTON_RIGHT))
 	{// 左右同時押し
 
-		m_move.x += (pInputMouse->GetMouseMove().x * sinf(-D3DX_PI * MOVE_LR + m_rot.y) * MOVE) -
-			(pInputMouse->GetMouseMove().y * cosf(-D3DX_PI * MOVE_LR + m_rot.y) * MOVE);
+		m_move.x += (pInputMouse->GetMouseMove().x * sinf(-D3DX_PI * 0.5f + m_rot.y) * MOVE) -
+			(pInputMouse->GetMouseMove().y * cosf(-D3DX_PI * 0.5f + m_rot.y) * MOVE);
 
-		m_move.z += (pInputMouse->GetMouseMove().x * cosf(-D3DX_PI * MOVE_LR + m_rot.y) * MOVE) +
-			(pInputMouse->GetMouseMove().y * sinf(-D3DX_PI * MOVE_LR + m_rot.y) * MOVE);
+		m_move.z += (pInputMouse->GetMouseMove().x * cosf(-D3DX_PI * 0.5f + m_rot.y) * MOVE) +
+			(pInputMouse->GetMouseMove().y * sinf(-D3DX_PI * 0.5f + m_rot.y) * MOVE);
 
 		// 移動量補正
 		MoveCameraVR();
@@ -706,80 +702,7 @@ void CCamera::MoveCameraDistance()
 //==========================================================================
 void CCamera::RockOnStateNormal()
 {
-	CPlayer* pPlayer = CPlayer::GetListObj().GetData(m_nChasePlayerIndex);
-	MyLib::Vector3 playerpos = pPlayer->GetPosition();
-
-	// 目標地点をロックオンとの中心にする
-	m_TargetPosDest = UtilFunc::Calculation::GetCenterPosition3D(m_RockOnPos, playerpos);
-
-	// 慣性補正
-	float factor = 0.2f;
-	UtilFunc::Correction::InertiaCorrection(m_TargetPos.x, m_TargetPosDest.x, factor);
-	UtilFunc::Correction::InertiaCorrection(m_TargetPos.y, m_TargetPosDest.y, factor);
-	UtilFunc::Correction::InertiaCorrection(m_TargetPos.z, m_TargetPosDest.z, factor);
-
-	// 2点間の距離
-	float fLen = UtilFunc::Calculation::GetFabsPosLength3D(m_RockOnPos, playerpos);
-	float ratio = fLen / CGame::GetInstance()->GetRockOnDistance();
-
-	// 最大ロックオン距離
-	float maxRockOnDistance = CGame::GetInstance()->GetRockOnDistance();
-
-	if (ratio <= 1.0f)
-	{
-		// 目標の長さ設定
-		float setDistance = maxRockOnDistance * ratio;
-		if (setDistance <= m_fRockOnDistance)
-		{
-			setDistance = m_fRockOnDistance;
-		}
-
-		SetLenDest(setDistance, 2, 2.0f, 0.1f);
-
-		// 目標の角度を求める
-		m_rotDest.y =
-			D3DX_PI +
-			atan2f((m_TargetPos.x - m_RockOnPos.x), (m_TargetPos.z - m_RockOnPos.z)) +
-			((ROTDISTANCE_ROCKON * 2.0f) * (m_RockOnDir - 1)) + ROTDISTANCE_ROCKON;
-
-		if (m_RockOnPos.y > 150.0f)
-		{
-			// 目標の角度を求める
-			m_rotDest.z = atan2f((m_RockOnPos.y - 150.0f), setDistance) + DEFAULT_GAMEROT.z;
-		}
-		else
-		{
-			m_rotDest.z = DEFAULT_GAMEROT.z;
-		}
-
-		UtilFunc::Transformation::RotNormalize(m_rotDest);
-
-		// 目標の向き
-		float fRotDiff = m_rotDest.y - m_rot.y;
-		UtilFunc::Transformation::RotNormalize(fRotDiff);
-		m_rot.y += fRotDiff * 0.08f;
-
-		fRotDiff = m_rotDest.z - m_rot.z;
-		UtilFunc::Transformation::RotNormalize(fRotDiff);
-		m_rot.z += fRotDiff * 0.08f;
-	}
-	else
-	{
-		// 通常状態
-		SetStateCamraR(DEBUG_NEW CStateCameraR());
-
-		m_bRockON = false;
-
-		// 目標の長さ設定
-		SetLenDest(maxRockOnDistance * 0.5f, 60, 2.0f, 0.1f);
-	}
-
-
-	// テキストの描画
-	CManager::GetInstance()->GetDebugProc()->Print(
-		"---------------- カメラ情報 ----------------\n"
-		"【目標の向き】[X：%f Y：%f Z：%f]\n",
-		m_rotDest.x, m_rotDest.y, m_rotDest.z);
+	
 }
 
 //==========================================================================
@@ -787,7 +710,7 @@ void CCamera::RockOnStateNormal()
 //==========================================================================
 void CCamera::RockOnStateCounter()
 {
-	CPlayer* pPlayer = CPlayer::GetListObj().GetData(m_nChasePlayerIndex);
+	CPlayer* pPlayer = CPlayer::GetList().GetData(m_nChasePlayerIndex);
 	MyLib::Vector3 playerpos = pPlayer->GetPosition();
 
 	// 目標地点をロックオンとの中心にする
@@ -1200,7 +1123,7 @@ void CCamera::SetCamera()
 void CCamera::UpdateSpotLightVec()
 {
 	// 方向ベクトル
-	MyLib::Vector3 vec = mylib_const::DEFAULT_VECTOR3;
+	MyLib::Vector3 vec = MyLib::Vector3();
 
 	// 視点から注視点への向き
 	vec = m_posR - m_posV;
@@ -1565,7 +1488,7 @@ void CCamera::ResetTitle()
 void CCamera::ResetResult()
 {
 	m_posR = MyLib::Vector3(76329.0f, 440.0f, 2989.0f);				// 注視点(見たい場所)
-	m_posV = MyLib::Vector3(76326.0f, 545.27, 2017.0f);	// 視点(カメラの位置)
+	m_posV = MyLib::Vector3(76326.0f, 545.27f, 2017.0f);	// 視点(カメラの位置)
 	m_posVDest = m_posV;									// 目標の視点
 	m_posRDest = m_posR;									// 目標の注視点
 	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
@@ -1895,18 +1818,18 @@ void CStateCameraR::SetCameraR(CCamera* pCamera)
 void CStateCameraV::LimitPos(CCamera* pCamera)
 {
 	return;
-	MyLib::Vector3 posVDest = pCamera->GetPositionVDest();
+	//MyLib::Vector3 posVDest = pCamera->GetPositionVDest();
 
-	if (posVDest.LengthXZ() > mylib_const::RADIUS_STAGE)
-	{// 補正
-		posVDest = posVDest.Normal() * mylib_const::RADIUS_STAGE;
-	}
-	if (posVDest.LengthXZ() > mylib_const::RADIUS_STAGE)
-	{// 補正
-		posVDest = posVDest.Normal() * mylib_const::RADIUS_STAGE;
-	}
+	//if (posVDest.LengthXZ() > mylib_const::RADIUS_STAGE)
+	//{// 補正
+	//	posVDest = posVDest.Normal() * mylib_const::RADIUS_STAGE;
+	//}
+	//if (posVDest.LengthXZ() > mylib_const::RADIUS_STAGE)
+	//{// 補正
+	//	posVDest = posVDest.Normal() * mylib_const::RADIUS_STAGE;
+	//}
 
-	pCamera->SetPositionVDest(posVDest);
+	//pCamera->SetPositionVDest(posVDest);
 }
 
 //==========================================================================
@@ -1936,26 +1859,7 @@ float CStateCameraV::GetDistance(CCamera* pCamera, const float fMultiply)
 //==========================================================================
 void CStateCameraV_Enhance::LimitPos(CCamera* pCamera)
 {
-	CStateCameraV::LimitPos(pCamera);
 
-	MyLib::Vector3 posVDest = pCamera->GetPositionVDest();
-
-	CListManager<CLimitArea> areaList = CLimitArea::GetListObj();
-	CLimitArea* pArea = nullptr;
-
-	float radius = 50.0f;
-
-	while (areaList.ListLoop(&pArea))
-	{
-		CLimitArea::sLimitEreaInfo info = pArea->GetLimitEreaInfo();
-
-		// 大人の壁を適用
-		//if (posVDest.x + radius >= info.fMaxX) { posVDest.x = info.fMaxX - radius; }
-		//if (posVDest.x - radius <= info.fMinX) { posVDest.x = info.fMinX + radius; }
-		if (posVDest.z + radius >= info.fMaxZ) { posVDest.z = info.fMaxZ - radius; }
-		//if (posVDest.z - radius <= info.fMinZ) { posVDest.z = info.fMinZ + radius; }
-	}
-	pCamera->SetPositionVDest(posVDest);
 
 }
 

@@ -44,10 +44,10 @@ int CEffect3D::m_nTexIdx[TYPE_MAX] = {};	// テクスチャのインデックス番号
 CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 {
 	// 値のクリア
-	m_posOrigin = mylib_const::DEFAULT_VECTOR3;			// 原点
-	m_updatePosition = mylib_const::DEFAULT_VECTOR3;	// 更新後の位置
-	m_setupPosition = mylib_const::DEFAULT_VECTOR3;		// セットアップ位置
-	m_posDest = mylib_const::DEFAULT_VECTOR3;			// 目標の位置
+	m_posOrigin = MyLib::Vector3();			// 原点
+	m_updatePosition = MyLib::Vector3();	// 更新後の位置
+	m_setupPosition = MyLib::Vector3();		// セットアップ位置
+	m_posDest = MyLib::Vector3();			// 目標の位置
 	m_colOrigin = mylib_const::DEFAULT_COLOR;	// 色の元
 	m_pMtxParent = nullptr;						// 親マトリックスのポインタ
 	m_fRadius = 0.0f;							// 半径
@@ -59,7 +59,6 @@ CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 	m_nMaxLife = 0;								// 最大寿命(固定)
 	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
 	m_nType = TYPE_NORMAL;						// 種類
-	m_pParent = nullptr;							// 親のポインタ
 	m_bAddAlpha = true;							// 加算合成の判定
 	m_bZSort = false;							// Zソートのフラグ
 	m_bGravity = false;							// 重力のフラグ
@@ -283,27 +282,11 @@ HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, c
 //==========================================================================
 void CEffect3D::Uninit()
 {
-	if (m_pParent != nullptr)
-	{
-		// エフェクトの開放
-		m_pParent->ReleaseEffect(m_nParentIdx);
-		m_pParent = nullptr;
-	}
-
 	// 総数減算
 	m_nNumAll--;
 
 	// 終了処理
 	CObjectBillboard::Uninit();
-}
-
-//==========================================================================
-// 親の破棄
-//==========================================================================
-void CEffect3D::UninitParent()
-{
-	// 親をnullptrにする
-	m_pParent = nullptr;
 }
 
 //==========================================================================
@@ -410,12 +393,6 @@ void CEffect3D::UpdateMove()
 //==========================================================================
 void CEffect3D::SetUp(MyLib::Vector3 setup, D3DXMATRIX *pMtxParent, CObject *pObj, int nParentIdx)
 {
-	// 親のポインタ渡す
-	if (m_pParent == nullptr)
-	{
-		m_pParent = pObj;
-	}
-
 	// 親マトリックスのポインタ
 	m_pMtxParent = pMtxParent;
 

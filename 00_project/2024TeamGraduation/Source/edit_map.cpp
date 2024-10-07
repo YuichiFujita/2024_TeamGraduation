@@ -843,23 +843,23 @@ void CEdit_Map::Save()
 				if (TargetType == CObject::TYPE_MESHDOME)
 				{// メッシュドームだったら
 
-					// Xファイルの情報取得
-					CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
+					//// Xファイルの情報取得
+					//CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
 
-					// テクスチャのインデックス番号
-					int nType = pObjMesh->GetIdxTex();	// 種類
+					//// テクスチャのインデックス番号
+					//int nType = pObjMesh->GetIdxTex();	// 種類
 
-					// テクスチャ名
-					std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
-					nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
+					//// テクスチャ名
+					//std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
+					//nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
 
-					// 出力
-					fprintf(pFile,
-						"SKYSET\n"
-						"\tTEXTYPE = %d\n"
-						"\tMOVE = %f\n"
-						"END_SKYSET\n\n",
-						nType, 0.0002f);
+					//// 出力
+					//fprintf(pFile,
+					//	"SKYSET\n"
+					//	"\tTEXTYPE = %d\n"
+					//	"\tMOVE = %f\n"
+					//	"END_SKYSET\n\n",
+					//	nType, 0.0002f);
 				}
 			}
 		}
@@ -887,21 +887,21 @@ void CEdit_Map::Save()
 				if (TargetType == CObject::TYPE_MESHCYLINDER)
 				{// メッシュシリンダーだったら
 
-					// Xファイルの情報取得
-					CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
+					//// Xファイルの情報取得
+					//CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
 
-					// テクスチャのインデックス番号
-					int nType = pObjMesh->GetIdxTex();	// 種類
+					//// テクスチャのインデックス番号
+					//int nType = pObjMesh->GetIdxTex();	// 種類
 
-					// テクスチャ名
-					std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
-					nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
+					//// テクスチャ名
+					//std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
+					//nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
 
-					// 出力
-					fprintf(pFile,
-						"MOUNTAINSET\n"
-						"\tTEXTYPE = %d\n"
-						"END_MOUNTAINSET\n\n", nType);
+					//// 出力
+					//fprintf(pFile,
+					//	"MOUNTAINSET\n"
+					//	"\tTEXTYPE = %d\n"
+					//	"END_MOUNTAINSET\n\n", nType);
 				}
 			}
 		}
@@ -930,36 +930,36 @@ void CEdit_Map::Save()
 				if (TargetType == CObject::TYPE_MESHFIELD)
 				{// メッシュフィールドだったら
 
-					// Xファイルの情報取得
-					CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
+					//// Xファイルの情報取得
+					//CObject3DMesh* pObjMesh = obj->GetObject3DMesh();
 
-					// テクスチャのインデックス番号
-					int nType = pObjMesh->GetIdxTex();	// 種類
+					//// テクスチャのインデックス番号
+					//int nType = pObjMesh->GetIdxTex();	// 種類
 
-					// テクスチャ名
-					std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
-					nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
+					//// テクスチャ名
+					//std::vector<std::string>::iterator itr = find(TextureFile.begin(), TextureFile.end(), pTexture->GetTextureInfo(nType).filename);
+					//nType = static_cast<int>(std::distance(TextureFile.begin(), itr));
 
-					MyLib::Vector3 pos = pObjMesh->GetPosition();		// 位置
-					MyLib::Vector3 rot = pObjMesh->GetRotation();		// 向き
-					int nWidth = pObjMesh->GetWidthBlock();			// 横分割数
-					int nHeight = pObjMesh->GetHeightBlock();		// 縦分割数
-					float fWidthLen = pObjMesh->GetWidthLen();		// 横長さ
-					float fHeightLen = pObjMesh->GetHeightLen();	// 縦長さ
+					//MyLib::Vector3 pos = pObjMesh->GetPosition();		// 位置
+					//MyLib::Vector3 rot = pObjMesh->GetRotation();		// 向き
+					//int nWidth = pObjMesh->GetWidthBlock();			// 横分割数
+					//int nHeight = pObjMesh->GetHeightBlock();		// 縦分割数
+					//float fWidthLen = pObjMesh->GetWidthLen();		// 横長さ
+					//float fHeightLen = pObjMesh->GetHeightLen();	// 縦長さ
 
-					// 出力
-					fprintf(pFile,
-						"FIELDSET\n"
-						"\tTEXTYPE = %d\n"
-						"\tPOS = %.0f %.0f %.0f\n"
-						"\tROT = %.0f %.0f %.0f\n"
-						"\tBLOCK = %d %d\n"
-						"\tSIZE = %.0f %.0f\n"
-						"END_FIELDSET\n\n",
-						nType, pos.x, pos.y, pos.z,
-						rot.x, rot.y, rot.z,
-						nWidth, nHeight,
-						fWidthLen, fHeightLen);
+					//// 出力
+					//fprintf(pFile,
+					//	"FIELDSET\n"
+					//	"\tTEXTYPE = %d\n"
+					//	"\tPOS = %.0f %.0f %.0f\n"
+					//	"\tROT = %.0f %.0f %.0f\n"
+					//	"\tBLOCK = %d %d\n"
+					//	"\tSIZE = %.0f %.0f\n"
+					//	"END_FIELDSET\n\n",
+					//	nType, pos.x, pos.y, pos.z,
+					//	rot.x, rot.y, rot.z,
+					//	nWidth, nHeight,
+					//	fWidthLen, fHeightLen);
 				}
 			}
 		}
@@ -1417,12 +1417,8 @@ void CEdit_Map::Delete(CObjectX* obj)
 //==========================================================================
 void CEdit_Map::Regist(int idx, MyLib::Vector3 pos, MyLib::Vector3 rot, float scale, bool bShadow)
 {
-
+	// 要素追加
 	m_pObjX.emplace_back();
-
-	if (m_nModelIdx.size() <= idx) {
-		int n = 0;
-	}
 
 	// タイプの物を生成
 	m_pObjX.back() = CObjectX::Create(m_nModelIdx[idx], pos, rot, bShadow, mylib_const::PRIORITY_DEFAULT, CObject::LAYER::LAYER_MAP);

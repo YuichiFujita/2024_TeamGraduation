@@ -203,7 +203,7 @@ void CObjectCircleGauge2D::SetVtx()
 	float fRotDivision = (D3DX_PI * 2.0f) / (m_nNumVertex - 2);	// •ªŠ„–ˆ‚ÌŒü‚«
 	float fOldRot = m_fRate * (D3DX_PI * 2.0f);	// ‘O‰ñ‚ÌŒü‚«
 	float fEndRot = 0.0f;	// ÅŒã‚ÌŒü‚«
-	MyLib::Vector3 EndPos = mylib_const::DEFAULT_VECTOR3;
+	MyLib::Vector3 EndPos = MyLib::Vector3();
 
 	// ’¸“_À•W‚Ìİ’è
 	for (int i = 0; i < m_nNumVertex - 1; i++)

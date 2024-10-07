@@ -24,11 +24,11 @@ int CModel::m_nNumAll = 0;	// 総数
 CModel::CModel(int nPriority)
 {
 	m_mtxParent = nullptr;							// 親マトリックスのポインタ
-	m_pos = mylib_const::DEFAULT_VECTOR3;			// 位置
-	m_posOld = mylib_const::DEFAULT_VECTOR3;		// 前回の位置
-	m_posOrigin = mylib_const::DEFAULT_VECTOR3;		// 元の位置
-	m_rot = mylib_const::DEFAULT_VECTOR3;			// 向き
-	m_rotOrigin = mylib_const::DEFAULT_VECTOR3;		// 向き
+	m_pos = MyLib::Vector3();			// 位置
+	m_posOld = MyLib::Vector3();		// 前回の位置
+	m_posOrigin = MyLib::Vector3();		// 元の位置
+	m_rot = MyLib::Vector3();			// 向き
+	m_rotOrigin = MyLib::Vector3();		// 向き
 	m_scale = mylib_const::DEFAULT_SCALE;			// スケール
 	m_scaleOrigin = mylib_const::DEFAULT_SCALE;			// スケール
 	m_nIdxXFile = 0;								// Xファイルのインデックス番号

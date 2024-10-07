@@ -599,7 +599,7 @@ void CCameraMotion::ChangeMotion()
 	if (ImGui::TreeNode("Change Motion"))
 	{
 		// [ラジオボタン]モーション切り替え
-		for (int i = 0; i < m_MotionFileName.size(); i++)
+		for (int i = 0; i < static_cast<int>(m_MotionFileName.size()); i++)
 		{
 			if (ImGui::RadioButton(m_MotionFileName[i].c_str(), &m_EditInfo.motionIdx, i))
 			{
@@ -681,7 +681,7 @@ void CCameraMotion::ChangeKey()
 		if (ImGui::SliderInt("Key Idx", &m_EditInfo.keyIdx, 0, m_EditInfo.motionInfo.Key.size() - 1))
 		{
 			// 元のデータ
-			if (m_vecMotionInfo[m_EditInfo.motionIdx].Key.size() > m_EditInfo.keyIdx)
+			if (static_cast<int>(m_vecMotionInfo[m_EditInfo.motionIdx].Key.size()) > m_EditInfo.keyIdx)
 			{
 				m_EditInfo.motionInfo.Key[m_EditInfo.keyIdx] = m_vecMotionInfo[m_EditInfo.motionIdx].Key[m_EditInfo.keyIdx];
 
@@ -763,7 +763,7 @@ void CCameraMotion::EditKey()
 
 	if (ImGui::Button("Regist Key"))
 	{
-		if (m_vecMotionInfo[m_EditInfo.motionIdx].Key.size() <= m_EditInfo.keyIdx)
+		if (static_cast<int>(m_vecMotionInfo[m_EditInfo.motionIdx].Key.size()) <= m_EditInfo.keyIdx)
 		{// 編集するキーが元の要素より大きいとき
 			m_vecMotionInfo[m_EditInfo.motionIdx].Key.push_back(*pKey);
 		}
@@ -829,7 +829,7 @@ void CCameraMotion::EditTrigger()
 		if (ImGui::SliderInt("Trigger Idx", &m_EditInfo.triggerIdx, 0, pTrigger->size() - 1))
 		{
 			// 元のデータ
-			if (m_vecMotionInfo[m_EditInfo.motionIdx].trigger.size() > m_EditInfo.triggerIdx)
+			if (static_cast<int>(m_vecMotionInfo[m_EditInfo.motionIdx].trigger.size()) > m_EditInfo.triggerIdx)
 			{
 				m_EditInfo.motionInfo.trigger[m_EditInfo.triggerIdx] = m_vecMotionInfo[m_EditInfo.motionIdx].trigger[m_EditInfo.triggerIdx];
 			}

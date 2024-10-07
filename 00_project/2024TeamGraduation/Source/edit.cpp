@@ -10,11 +10,6 @@
 
 // 派生クラス
 #include "edit_map.h"
-#include "edit_obstacle.h"
-#include "edit_course.h"
-#include "edit_waterstone.h"
-#include "edit_judgezone.h"
-#include "edit_mapblock.h"
 
 //==========================================================================
 // コンストラクタ
@@ -51,22 +46,6 @@ CEdit* CEdit::Create(CGame::EditType type)
 		pMarker = DEBUG_NEW CEdit_Map;
 		break;
 
-	case CGame::EditType::EDITTYPE_OBSTACLE:
-		pMarker = DEBUG_NEW CEdit_Obstacle;
-		break;
-
-	case CGame::EditType::EDITTYPE_COURSE:
-		pMarker = DEBUG_NEW CEdit_Course;
-		break;
-
-	case CGame::EditType::EDITTYPE_WATERSTONE:
-		pMarker = DEBUG_NEW CEdit_WaterStone;
-		break;
-
-	case CGame::EditType::EDITTYPE_JUDGEZONE:
-		pMarker = DEBUG_NEW CEdit_JudgeZone;
-		break;
-
 	default:
 		break;
 	}
@@ -79,12 +58,3 @@ CEdit* CEdit::Create(CGame::EditType type)
 
 	return pMarker;
 }
-
-
-//==========================================================================
-// 終了処理
-//==========================================================================
-//void CEdit::Uninit()
-//{
-//	delete this;
-//}

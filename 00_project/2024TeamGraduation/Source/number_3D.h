@@ -54,7 +54,6 @@ public:
 	void SetVtx() override;
 	void BindTexture(int nIdx) override;
 	void SetType(const CObject::TYPE type) override;
-	CObject3D *GetObject3D() override;
 
 private:
 	CObject3D *m_aObject3D;				// オブジェクト3Dのオブジェクト

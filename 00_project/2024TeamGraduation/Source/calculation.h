@@ -856,7 +856,7 @@ namespace UtilFunc	// 便利関数
 		inline MyLib::Vector3 GetParabola3D(MyLib::Vector3 start, MyLib::Vector3 end, float fMaxHeight, float time)
 		{
 			// 位置
-			MyLib::Vector3 pos = mylib_const::DEFAULT_VECTOR3;
+			MyLib::Vector3 pos;
 
 			// XZ移動
 			pos.x = start.x + (end.x - start.x) * time;
@@ -2693,7 +2693,7 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 WorldMtxChangeToRotation(D3DXMATRIX worldmtx)
 		{
-			MyLib::Vector3 rot = mylib_const::DEFAULT_VECTOR3;
+			MyLib::Vector3 rot;
 
 			rot.x = atan2f(worldmtx._32, worldmtx._33);
 			rot.y = atan2f(-worldmtx._31, sqrtf(worldmtx._32 * worldmtx._32 + worldmtx._33 * worldmtx._33));
@@ -2768,7 +2768,7 @@ namespace UtilFunc	// 便利関数
 		inline MyLib::Vector3 GetRandomVecSphere()
 		{
 			// 球ベクトル
-			MyLib::Vector3 vecSphere = mylib_const::DEFAULT_VECTOR3;
+			MyLib::Vector3 vecSphere;
 
 			// 球の範囲内でランダム生成
 			float fRot = UtilFunc::Transformation::GetRandomPi(), fRotPhi = UtilFunc::Transformation::GetRandomPi();
@@ -2788,7 +2788,7 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 GetRandomPositionSphere(MyLib::Vector3 pos, float fRadius)
 		{
-			MyLib::Vector3 spherepos = mylib_const::DEFAULT_VECTOR3;
+			MyLib::Vector3 spherepos;
 			MyLib::Vector3 vec = GetRandomVecSphere();
 
 			// 引数情報計算

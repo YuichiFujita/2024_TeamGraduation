@@ -10,7 +10,6 @@
 #include "Xload.h"
 #include "map.h"
 #include "fade.h"
-#include "elevation.h"
 #include "player.h"
 #include "camera.h"
 #include "MyEffekseer.h"
@@ -52,7 +51,6 @@ namespace
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-CElevation *CScene::m_pObject3DMesh = nullptr;		// オブジェクト3Dメッシュのオブジェクト
 
 //==========================================================================
 // コンストラクタ
@@ -156,11 +154,6 @@ HRESULT CScene::Init()
 	m_pEditMap = CEdit_Map_Release::Create(MAP_TEXT[m_mode], CManager::BuildMode::MODE_RELEASE);
 #endif
 
-	//**********************************
-	// 起伏の地面
-	//**********************************
-	m_pObject3DMesh = CElevation::Create(ELEVATION_TEXT);
-
 	return S_OK;
 }
 
@@ -178,9 +171,6 @@ void CScene::Uninit()
 		m_pEditMap->Uninit();
 		m_pEditMap = nullptr;
 	}
-
-	// マップ
-	//MyMap::Release();
 
 	if (CBlackFrame::GetInstance() != nullptr)
 	{
@@ -215,64 +205,9 @@ void CScene::Draw()
 }
 
 //==========================================================================
-// シーンのリセット
-//==========================================================================
-void CScene::ResetScene()
-{
-	//**********************************
-	// 破棄フェーズ
-	//**********************************
-	// 起伏の地面
-	if (m_pObject3DMesh != nullptr)
-	{
-		m_pObject3DMesh->Uninit();
-		m_pObject3DMesh = nullptr;
-	}
-
-	// エディットマップ
-	if (m_pEditMap != nullptr)
-	{
-		m_pEditMap->Uninit();
-		delete m_pEditMap;
-		m_pEditMap = nullptr;
-	}
-
-	if (CBlackFrame::GetInstance() != nullptr)
-	{
-		CBlackFrame::GetInstance()->Uninit();
-	}
-
-	// マップ
-	MyMap::Release();
-
-	//**********************************
-	// 生成フェーズ
-	//**********************************
-	// マップ
-	if (FAILED(MyMap::Create(MAP_TEXT[m_mode])))
-	{// 失敗した場合
-		return;
-	}
-#ifdef LOADMAP
-	m_pEditMap = CEdit_Map_Release::Create(MAP_TEXT[m_mode], CManager::BuildMode::MODE_RELEASE);
-#endif
-
-	// ボスステージの起伏生成
-	m_pObject3DMesh = CElevation::Create(ELEVATION_TEXT);
-}
-
-//==========================================================================
 // 現在のモード取得
 //==========================================================================
 CScene::MODE CScene::GetMode()
 {
 	return m_mode;
-}
-
-//==========================================================================
-// 3Dオブジェクトの取得
-//==========================================================================
-CElevation *CScene::GetElevation()
-{
-	return m_pObject3DMesh;
 }

@@ -7,10 +7,7 @@
 #include "cameratrigger_result.h"
 #include "manager.h"
 #include "camera.h"
-#include "subtitle.h"
-#include "serifeffect.h"
 #include "sound.h"
-#include "resultmanager.h"
 
 //==========================================================================
 // 関数ポインタ
@@ -44,11 +41,8 @@ CCameraTrigger_Result::~CCameraTrigger_Result()
 //==========================================================================
 void CCameraTrigger_Result::Subtitle01()
 {
-	CSubTitle* pSubTitle = CSubTitle::Create(MyLib::Vector3(640.0f, 670.0f, 0.0f), 2.0f);
-	pSubTitle->BindSubtitle("data\\TEXTURE\\subtitle\\result_01.png");
-	pSubTitle->SetSizeByHeight(40.0f);
+	
 
-	CSound::GetInstance()->PlaySound(CSound::LABEL::LABEL_SE_HNSW_000);
 }
 
 //==========================================================================
@@ -56,11 +50,8 @@ void CCameraTrigger_Result::Subtitle01()
 //==========================================================================
 void CCameraTrigger_Result::Subtitle02()
 {
-	CSubTitle* pSubTitle = CSubTitle::Create(MyLib::Vector3(640.0f, 670.0f, 0.0f), 2.0f);
-	pSubTitle->BindSubtitle("data\\TEXTURE\\subtitle\\result_02.png");
-	pSubTitle->SetSizeByHeight(40.0f);
+	
 
-	CSound::GetInstance()->PlaySound(CSound::LABEL::LABEL_SE_OKSD_001);
 }
 
 //==========================================================================
@@ -68,10 +59,8 @@ void CCameraTrigger_Result::Subtitle02()
 //==========================================================================
 void CCameraTrigger_Result::CameraShake()
 {
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	
 
-	pCamera->SetShake(18, 25.0f, 25.0f);
-	CSound::GetInstance()->PlaySound(CSound::LABEL::LABEL_SE_SMASHATTACK);
 }
 
 //==========================================================================
@@ -79,7 +68,6 @@ void CCameraTrigger_Result::CameraShake()
 //==========================================================================
 void CCameraTrigger_Result::OpenScroll()
 {
-	// リザルト画面
-	CResultManager* pResultManager = CResultManager::GetInstance();
-	pResultManager->CreateResultScreen();
+	
+
 }

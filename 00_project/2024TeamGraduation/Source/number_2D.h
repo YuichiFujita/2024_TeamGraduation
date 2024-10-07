@@ -54,7 +54,6 @@ public:
 	void SetVtx() override;
 	void BindTexture(int nIdx) override;
 	void SetType(const CObject::TYPE type) override;
-	CObject2D *GetObject2D() override;
 
 private:
 	CObject2D *m_aObject2D;				// オブジェクト2Dのオブジェクト
