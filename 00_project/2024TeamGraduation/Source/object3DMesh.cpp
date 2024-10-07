@@ -547,7 +547,7 @@ void CObject3DMesh::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CObject3DMesh::Update()
+void CObject3DMesh::Update(const float fDeltaTime)
 {
 	// ’¸“_î•ñİ’è
 	SetVtx();

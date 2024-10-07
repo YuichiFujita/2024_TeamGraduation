@@ -87,10 +87,10 @@ void CResult::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CResult::Update()
+void CResult::Update(const float fDeltaTime)
 {
 	// シーンの更新処理
-	CScene::Update();
+	CScene::Update(fDeltaTime);
 
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();

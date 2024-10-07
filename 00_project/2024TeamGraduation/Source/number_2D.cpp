@@ -68,7 +68,7 @@ void CNumber2D::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CNumber2D::Update()
+void CNumber2D::Update(const float fDeltaTime)
 {
 	// 更新処理
 	if (m_aObject2D != nullptr)

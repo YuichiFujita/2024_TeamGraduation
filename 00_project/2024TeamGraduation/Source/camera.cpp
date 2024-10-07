@@ -314,7 +314,8 @@ void CCamera::Update()
 	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“ì¬
 	if (m_pCameraMotion != nullptr)
 	{
-		m_pCameraMotion->Update();
+		//m_pCameraMotion->Update(fDeltaTime);	// TODO
+		m_pCameraMotion->Update(GET_MANAGER->GetDeltaTime());
 	}
 }
 

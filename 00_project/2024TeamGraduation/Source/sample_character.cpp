@@ -136,7 +136,7 @@ void CSample_Character::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_Character::Update()
+void CSample_Character::Update(const float fDeltaTime)
 {
 	
 	// キーボード情報取得
@@ -157,7 +157,7 @@ void CSample_Character::Update()
 	SetOldPosition(GetPosition());
 
 	// 親の更新処理
-	CObjectChara::Update();
+	CObjectChara::Update(fDeltaTime);
 
 	// 状態更新
 	UpdateState();

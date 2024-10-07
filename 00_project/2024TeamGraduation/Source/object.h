@@ -75,26 +75,26 @@ public:
 	virtual void Release();	// 開放処理
 
 	// パラメータ設定
-	virtual void SetVtx() { assert(false); }	// 頂点情報設定
-	virtual void SetPosition(const MyLib::Vector3& pos)			{ m_pos = pos; }		// 位置設定
-	virtual MyLib::Vector3 GetPosition() const					{ return m_pos; }		// 位置取得
-	virtual void SetOldPosition(const MyLib::Vector3& posOld)	{ m_posOld = posOld; }	// 過去の位置設定
-	virtual MyLib::Vector3 GetOldPosition() const				{ return m_posOld; }	// 過去の位置取得
-	virtual void SetOriginPosition(const MyLib::Vector3& pos)	{ m_posOrigin = pos; }	// 元の位置設定
-	virtual MyLib::Vector3 GetOriginPosition() const			{ return m_posOrigin; }	// 元の位置取得
-	virtual void SetMove(const MyLib::Vector3& move)			{ m_move = move; }		// 移動量設定
-	virtual MyLib::Vector3 GetMove() const						{ return m_move; }		// 移動量取得
-	virtual void SetRotation(const MyLib::Vector3& rot)			{ m_rot = rot; }		// 向き設定
-	virtual MyLib::Vector3 GetRotation() const					{ return m_rot; }		// 向き取得
-	virtual void SetOldRotation(const MyLib::Vector3& rot)		{ m_rotOld = rot; }		// 前回の向き設定
-	virtual MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
-	virtual void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
-	virtual MyLib::Vector3 GetOriginRotation() const			{ return m_rotOrigin; }	// 元の向き取得
+	virtual inline void SetVtx() { assert(false); }	// 頂点情報設定
+	virtual inline void SetPosition(const MyLib::Vector3& pos)			{ m_pos = pos; }		// 位置設定
+	virtual inline MyLib::Vector3 GetPosition() const					{ return m_pos; }		// 位置取得
+	virtual inline void SetOldPosition(const MyLib::Vector3& posOld)	{ m_posOld = posOld; }	// 過去の位置設定
+	virtual inline MyLib::Vector3 GetOldPosition() const				{ return m_posOld; }	// 過去の位置取得
+	virtual inline void SetOriginPosition(const MyLib::Vector3& pos)	{ m_posOrigin = pos; }	// 元の位置設定
+	virtual inline MyLib::Vector3 GetOriginPosition() const				{ return m_posOrigin; }	// 元の位置取得
+	virtual inline void SetMove(const MyLib::Vector3& move)				{ m_move = move; }		// 移動量設定
+	virtual inline MyLib::Vector3 GetMove() const						{ return m_move; }		// 移動量取得
+	virtual inline void SetRotation(const MyLib::Vector3& rot)			{ m_rot = rot; }		// 向き設定
+	virtual inline MyLib::Vector3 GetRotation() const					{ return m_rot; }		// 向き取得
+	virtual inline void SetOldRotation(const MyLib::Vector3& rot)		{ m_rotOld = rot; }		// 前回の向き設定
+	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
+	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
+	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// 元の向き取得
 
 	// 変更処理
-	virtual void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算
-	virtual void AddMove(const MyLib::Vector3& move)	{ m_move += move; }	// 移動量加算
-	virtual void AddRotation(const MyLib::Vector3& rot)	{ m_rot += rot; }	// 向き加算
+	virtual inline void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算
+	virtual inline void AddMove(const MyLib::Vector3& move)		{ m_move += move; }	// 移動量加算
+	virtual inline void AddRotation(const MyLib::Vector3& rot)	{ m_rot += rot; }	// 向き加算
 
 	// 描画・スクリーン関連
 	float ScreenZ() const;												// スクリーン座標

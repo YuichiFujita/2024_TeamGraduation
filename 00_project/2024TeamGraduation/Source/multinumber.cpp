@@ -236,7 +236,7 @@ void CMultiNumber::Kill()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CMultiNumber::Update()
+void CMultiNumber::Update(const float fDeltaTime)
 {
 	if (m_bDigitDraw == false)
 	{// Œ…”•`‰æ‚¶‚á‚È‚¢ê‡

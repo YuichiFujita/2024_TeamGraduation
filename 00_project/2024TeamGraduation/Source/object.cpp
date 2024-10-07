@@ -135,7 +135,7 @@ void CObject::UpdateAll(const float fDeltaTime)
 		{
 			auto& vec = priority.second; // イテレータを失わないために参照を取得
 
-			for (int i = 0; i < vec.size(); i++)
+			for (int i = 0; i < (int)vec.size(); i++)
 			{
 				CObject* pObj = priority.second[i];
 
@@ -202,7 +202,7 @@ void CObject::DrawAll()
 				CMyEffekseer* pEffekseer = CMyEffekseer::GetInstance();
 				if (pEffekseer != nullptr)
 				{
-					pEffekseer->Update();
+					pEffekseer->Update(GET_MANAGER->GetDeltaTime());
 					bEfkDraw = true;
 				}
 			}
@@ -215,7 +215,7 @@ void CObject::DrawAll()
 		CMyEffekseer* pEffekseer = CMyEffekseer::GetInstance();
 		if (pEffekseer != nullptr)
 		{
-			pEffekseer->Update();
+			pEffekseer->Update(GET_MANAGER->GetDeltaTime());
 		}
 	}
 }
@@ -309,7 +309,6 @@ void CObject::SetEnableDisp(bool bDisp)
 //==========================================================================
 void CObject::Release()
 {
-
 	// 死亡フラグを立てる
 	m_bDeath = true;
 }

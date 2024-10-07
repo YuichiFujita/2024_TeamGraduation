@@ -659,11 +659,23 @@ void CManager::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CManager::Update(const float fDeltaTime)
+void CManager::Update()
 {
 	// キーボード情報取得
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
+
+	// 前フレームの開始時刻を保存
+	m_dwOldTime = m_dwCurTime;
+
+	// 現在時刻を開始時刻に保存
+	m_dwCurTime = timeGetTime();
+
+	// 処理開始時刻の差分を計算
+	DWORD dwDiffDeltaTime = m_dwCurTime - m_dwOldTime;
+
+	// 経過時間を計算
+	m_fDeltaTime = dwDiffDeltaTime * 0.001f;
 
 	// Imguiの更新
 	ImguiMgr::Update();
@@ -681,7 +693,7 @@ void CManager::Update(const float fDeltaTime)
 		}
 
 		// ロードマネージャの更新
-		GetLoadManager()->Update();
+		GetLoadManager()->Update(m_fDeltaTime);
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
@@ -706,7 +718,7 @@ void CManager::Update(const float fDeltaTime)
 		if (!m_bLoadComplete)
 		{
 			// ロード時間加算
-			m_fLoadTimer += fDeltaTime;
+			m_fLoadTimer += m_fDeltaTime;
 		}
 
 		bool bComplete = GetLoadManager()->IsLoadComplete();
@@ -732,12 +744,12 @@ void CManager::Update(const float fDeltaTime)
 		// ロードマネージャの更新
 		if (!m_bLoadComplete)
 		{
-			GetLoadManager()->Update();
+			GetLoadManager()->Update(m_fDeltaTime);
 		}
 	}
 
 	// フェードの更新処理
-	m_pFade->Update(fDeltaTime);
+	m_pFade->Update(m_fDeltaTime);
 
 	// 遷移なしフェードの更新処理
 	m_pInstantFade->Update();
@@ -775,7 +787,7 @@ void CManager::Update(const float fDeltaTime)
 			// ポーズの更新処理
 			if (bPause)
 			{// ポーズ中だったら
-				m_pPause->Update(fDeltaTime);
+				m_pPause->Update(m_fDeltaTime);
 
 				if (!GetLoadManager()->IsLoadComplete())
 				{
@@ -830,17 +842,17 @@ void CManager::Update(const float fDeltaTime)
 
 		if (m_pScene != nullptr)
 		{
-			m_pScene->Update(fDeltaTime);
+			m_pScene->Update(m_fDeltaTime);
 		}
 
 		// レンダラーの更新処理
 		if (m_pRenderer != nullptr)
 		{
-			m_pRenderer->Update(fDeltaTime);
+			m_pRenderer->Update(m_fDeltaTime);
 		}
 
 		// ライトの更新処理
-		m_pLight->Update(fDeltaTime);
+		m_pLight->Update(m_fDeltaTime);
 
 		// カメラの更新処理
 		m_pCamera->Update();

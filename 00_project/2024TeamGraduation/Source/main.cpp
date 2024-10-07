@@ -112,10 +112,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 	dwFrameCount = 0;
 	dwFPSLastTime = timeGetTime();
 
-	// デルタタイム管理
-	DWORD dwOldTime;	// 前回の処理開始時刻
-	DWORD dwCurTime;	// 今回の処理開始時刻
-
 	// メッセージループ
 	while(1)
 	{
@@ -153,17 +149,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 				if (pManager != nullptr)
 				{// メモリの確保が出来ていたら
 
-					// 前フレームの開始時刻を保存
-					dwOldTime = dwCurTime;
-
-					// 現在時刻を開始時刻に保存
-					dwCurTime = timeGetTime();
-
-					// 処理開始時刻の差分を計算
-					DWORD dwDiffDeltaTime = dwCurTime - dwOldTime;
-
 					// 更新処理
-					pManager->Update(dwDiffDeltaTime * 0.001f);
+					pManager->Update();
 
 					// 描画処理
 					pManager->Draw();

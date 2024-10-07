@@ -53,7 +53,7 @@ public:
 
 	virtual HRESULT Init();
 	virtual void Uninit();
-	virtual void Update();
+	virtual void Update(const float fDeltaTime);
 
 	void SetType(SceneType type);	// シーンの種類設定
 	SceneType GetType();		// シーンの種類取得

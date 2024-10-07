@@ -62,7 +62,7 @@ public:
 	// オーバーライドされた関数
 	virtual HRESULT Init() override;
 	virtual void Uninit() override;
-	virtual void Update() override;
+	virtual void Update(const float fDeltaTime) override;
 	virtual void Draw() override;
 	virtual void Draw(D3DXCOLOR col);
 	virtual void Draw(float fAlpha);

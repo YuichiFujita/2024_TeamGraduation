@@ -167,7 +167,7 @@ void CFade::Update(const float fDeltaTime)
 	m_aObject2D->SetColor(col);
 
 	// XVˆ—
-	m_aObject2D->Update();
+	m_aObject2D->Update(fDeltaTime);
 
 	m_aObject2D->SetVtx();
 

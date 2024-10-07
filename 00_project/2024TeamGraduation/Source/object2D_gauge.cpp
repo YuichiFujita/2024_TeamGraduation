@@ -159,7 +159,7 @@ HRESULT CObject2D_Gauge::Init(float width, float height, int maxvalue, std::stri
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObject2D_Gauge::Update()
+void CObject2D_Gauge::Update(const float fDeltaTime)
 {
 	// 減少処理
 	GaugeDecrement();
@@ -175,7 +175,7 @@ void CObject2D_Gauge::Update()
 	pTex[3] = D3DXVECTOR2(size.x / m_fMaxWidth, 1.0f);
 
 	// 更新処理
-	CObject2D::Update();
+	CObject2D::Update(fDeltaTime);
 }
 
 //==========================================================================

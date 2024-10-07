@@ -39,7 +39,7 @@ public:
 	HRESULT Init();
 	HRESULT Init(int nNumVertex);
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 	void Draw(int nNumVertex);
 	void Draw(LPDIRECT3DTEXTURE9 mutitex);

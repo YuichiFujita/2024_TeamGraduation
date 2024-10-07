@@ -55,7 +55,7 @@ public:
 	HRESULT Init();
 	HRESULT Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type);
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 	void SetVtx();
 

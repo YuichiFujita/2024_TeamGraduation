@@ -67,7 +67,7 @@ void CNumberBillboard::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CNumberBillboard::Update()
+void CNumberBillboard::Update(const float fDeltaTime)
 {
 	// 更新処理
 	if (m_pObjBillboard != nullptr)

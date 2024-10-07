@@ -171,7 +171,7 @@ void CBlackFrame::Uninit()
 //==========================================================================
 // çXêVèàóù
 //==========================================================================
-void CBlackFrame::Update()
+void CBlackFrame::Update(const float fDeltaTime)
 {
 	CManager* pMgr = CManager::GetInstance();
 	if (m_state == STATE::STATE_OUT ||

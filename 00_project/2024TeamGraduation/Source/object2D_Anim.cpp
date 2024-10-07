@@ -121,7 +121,7 @@ HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const i
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObject2D_Anim::Update()
+void CObject2D_Anim::Update(const float fDeltaTime)
 {
 
 	// カウントを更新
@@ -149,7 +149,7 @@ void CObject2D_Anim::Update()
 	}
 
 	// 更新処理
-	CObject2D::Update();
+	CObject2D::Update(fDeltaTime);
 }
 
 //==========================================================================

@@ -112,7 +112,7 @@ void CEffekseerObj::Stop()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CEffekseerObj::Update()
+void CEffekseerObj::Update(const float fDeltaTime)
 {
 	// マネージャ取得
 	CMyEffekseer* pMyEffekseer = CMyEffekseer::GetInstance();
@@ -128,7 +128,7 @@ void CEffekseerObj::Update()
 	// 後で消す
 	if (m_bDeleteLater)
 	{
-		m_fDeleteTimer -= CManager::GetInstance()->GetDeltaTime();
+		m_fDeleteTimer -= fDeltaTime;
 		if (m_fDeleteTimer <= 0.0f)
 		{// 削除
 			m_bDeath = true;

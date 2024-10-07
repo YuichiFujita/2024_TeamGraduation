@@ -129,13 +129,10 @@ void CGameManager::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CGameManager::Update()
+void CGameManager::Update(const float fDeltaTime)
 {
-	// デルタタイム取得
-	float deltaTime = CManager::GetInstance()->GetDeltaTime();
-
 	// 操作状態
-	m_fSceneTimer += deltaTime;		// シーンタイマー
+	m_fSceneTimer += fDeltaTime;		// シーンタイマー
 	switch (m_SceneType)
 	{
 	case CGameManager::SceneType::SCENE_MAIN:

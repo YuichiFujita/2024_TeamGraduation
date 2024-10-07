@@ -200,7 +200,7 @@ void CPause::Update(const float fDeltaTime)
 		if (m_aObject2D[nCntVtx] != nullptr)
 		{
 			// 更新処理
-			m_aObject2D[nCntVtx]->Update();
+			m_aObject2D[nCntVtx]->Update(fDeltaTime);
 
 			// 頂点座標更新
 			m_aObject2D[nCntVtx]->SetVtx();
