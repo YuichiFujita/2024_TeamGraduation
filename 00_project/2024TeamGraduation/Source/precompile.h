@@ -7,7 +7,7 @@
 #ifndef _PRECOMPIRE_H_
 #define _PRECOMPIRE_H_	// 二重インクルード防止
 
-//#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <Windows.h>
 #include <stdio.h>
