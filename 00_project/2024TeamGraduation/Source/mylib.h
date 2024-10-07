@@ -10,6 +10,25 @@
 
 #include <json.hpp>
 
+// メモリ開放マクロ
+#define SAFE_UNINIT(p)		if ((p) != nullptr) { (p)->Uninit();		(p) = nullptr; }	// Uninit関数の破棄マクロ
+#define SAFE_FREE(p)		if ((p) != nullptr) { free((p));			(p) = nullptr; }	// free関数の破棄マクロ
+#define SAFE_RELEASE(p)		if ((p) != nullptr) { (p)->Release();		(p) = nullptr; }	// Release関数の破棄マクロ
+#define SAFE_DEL_OBJECT(p)	if ((p) != nullptr) { DeleteObject((p));	(p) = nullptr; }	// DeleteObject関数の破棄マクロ
+#define SAFE_REF_RELEASE(p)	if ((p) != nullptr) { (p)->Release((p)); }						// 参照ポインタ付きRelease関数の破棄マクロ
+#define SAFE_DELETE(p)		if ((p) != nullptr) { delete	(p);		(p) = nullptr; }	// 配列を使用しないdeleteを使用する破棄マクロ
+#define SAFE_DEL_ARRAY(p)	if ((p) != nullptr) { delete[]	(p);		(p) = nullptr; }	// 配列を使用したdelete[]を使用する破棄マクロ
+
+// マネージャー関係
+#define GET_MANAGER		(CManager::GetInstance())		// マネージャーインスタンス取得
+#define GET_INPUTKEY	(CInputKeyboard::GetInstance())	// キーボード情報取得
+#define GET_INPUTMOUSE	(CInputMouse::GetInstance())	// マウス情報取得
+#define GET_INPUTPAD	(CInputGamepad::GetInstance())	// パッド情報取得
+#define GET_RENDERER	(CManager::GetInstance()->GetRenderer())	// レンダラー情報取得
+
+#define GET_DEVICE			(CManager::GetInstance()->GetRenderer()->GetDevice())		// デバイス情報取得
+#define PLAY_SOUND(label)	(CSound::GetInstance()->PlaySound((CSound::ELabel)(label)))	// サウンド再生
+
 /*
 	@brief	マイライブラリ
 */
