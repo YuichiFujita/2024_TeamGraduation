@@ -111,12 +111,6 @@ HRESULT CTitle::Init()
 	// シーンの種類
 	m_SceneType = SCENETYPE::SCENETYPE_NONE;
 
-	// カメラの初期値設定
-	{
-		CCamera* pCamera = CManager::GetInstance()->GetCamera();
-		pCamera->SetStateCameraV(DEBUG_NEW CStateCameraV);
-	}
-
 	// 成功
 	return S_OK;
 }

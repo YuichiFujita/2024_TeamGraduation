@@ -383,6 +383,9 @@
     <ClCompile Include="Libraries\Imgui\implot_items.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\camera_debug.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -687,6 +690,9 @@
     </ClInclude>
     <ClInclude Include="Libraries\Imgui\imstb_truetype.h">
       <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\camera_debug.h">
+      <Filter>camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

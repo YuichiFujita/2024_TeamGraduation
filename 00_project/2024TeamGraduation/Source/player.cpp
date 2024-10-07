@@ -235,10 +235,9 @@ void CPlayer::Update()
 
 	// カメラの情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	if (pCamera->GetStateCameraR() == CCamera::POSR_STATE_ROCKON)
+	if (pCamera != nullptr)
 	{
 		pCamera->SetTargetPosition(pos);
-		pCamera->SetTargetRotation(rot);
 	}
 
 	// 影の位置更新
@@ -557,8 +556,6 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 
 		// 死亡時の設定
 		DeadSetting(&hitresult);
-		pCamera->SetLenDest(pCamera->GetOriginDistance(), 1800, 0.0025f, 0.0025f);	// 距離を近づける
-		pCamera->SetStateCameraV(DEBUG_NEW CStateCameraV_Distance);
 	}
 
 	// 当たった判定を返す
