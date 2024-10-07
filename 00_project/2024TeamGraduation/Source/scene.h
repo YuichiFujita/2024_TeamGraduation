@@ -41,7 +41,7 @@ public:
 	// オーバーライドする関数
 	virtual HRESULT Init();
 	virtual void Uninit();
-	virtual void Update();
+	virtual void Update(const float fDeltaTime);
 	virtual void Draw();
 
 	virtual void Kill();

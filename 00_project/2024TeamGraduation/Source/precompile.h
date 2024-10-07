@@ -34,7 +34,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <stack>
-#include <filesystem>
 
 #include <d3dx9.h>						// 描画処理に必要
 #define DIRECTINPUT_VERSION	(0x0800)	// ビルド時の警告用マクロ

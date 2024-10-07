@@ -73,9 +73,6 @@ CManager::CManager()
 	m_bHitStop = false;				// ヒットストップの判定
 	m_nCntHitStop = 0;				// ヒットストップのカウンター
 	m_OldMode = CScene::MODE_NONE;	// 前回のモード
-	m_CurrentTime = 0;				// 現在時間
-	m_OldTime = 0;					// 過去の時間
-	m_fDeltaTime = 0.0f;			// 経過時間
 	m_nNumPlayer = 0;				// プレイヤーの数
 	m_fLoadTimer = 0.0f;			// ロードのタイマー
 	m_bLoadComplete = false;		// ロード完了のフラグ
@@ -662,18 +659,11 @@ void CManager::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CManager::Update()
+void CManager::Update(const float fDeltaTime)
 {
 	// キーボード情報取得
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
-
-	// 過去の時間保存
-	m_OldTime = m_CurrentTime;
-
-	// 経過時間
-	m_CurrentTime = timeGetTime();
-	m_fDeltaTime = (float)(m_CurrentTime - m_OldTime) / 1000;
 
 	// Imguiの更新
 	ImguiMgr::Update();
@@ -716,7 +706,7 @@ void CManager::Update()
 		if (!m_bLoadComplete)
 		{
 			// ロード時間加算
-			m_fLoadTimer += m_fDeltaTime;
+			m_fLoadTimer += fDeltaTime;
 		}
 
 		bool bComplete = GetLoadManager()->IsLoadComplete();
@@ -747,7 +737,7 @@ void CManager::Update()
 	}
 
 	// フェードの更新処理
-	m_pFade->Update();
+	m_pFade->Update(fDeltaTime);
 
 	// 遷移なしフェードの更新処理
 	m_pInstantFade->Update();
@@ -785,7 +775,7 @@ void CManager::Update()
 			// ポーズの更新処理
 			if (bPause)
 			{// ポーズ中だったら
-				m_pPause->Update();
+				m_pPause->Update(fDeltaTime);
 
 				if (!GetLoadManager()->IsLoadComplete())
 				{
@@ -840,17 +830,17 @@ void CManager::Update()
 
 		if (m_pScene != nullptr)
 		{
-			m_pScene->Update();
+			m_pScene->Update(fDeltaTime);
 		}
 
 		// レンダラーの更新処理
 		if (m_pRenderer != nullptr)
 		{
-			m_pRenderer->Update();
+			m_pRenderer->Update(fDeltaTime);
 		}
 
 		// ライトの更新処理
-		m_pLight->Update();
+		m_pLight->Update(fDeltaTime);
 
 		// カメラの更新処理
 		m_pCamera->Update();
@@ -946,14 +936,6 @@ void CManager::ChangePauseMode(CScene::MODE mode)
 	default:
 		break;
 	}
-}
-
-//==========================================================================
-// 経過時間取得
-//==========================================================================
-float CManager::GetDeltaTime()
-{
-	return m_fDeltaTime;
 }
 
 //==========================================================================

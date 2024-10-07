@@ -40,7 +40,7 @@ public:
 	// ƒƒ“ƒoŠÖ”
 	HRESULT Init();
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 
 	CObject2D *GetMyObject();

@@ -122,7 +122,7 @@ void CFade::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CFade::Update()
+void CFade::Update(const float fDeltaTime)
 {
 	// FŽæ“¾
 	D3DXCOLOR col = m_aObject2D->GetColor();

@@ -60,7 +60,7 @@ public:
 
 	HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime);
 	void Draw();
 	void Load();// 読み込み
 
@@ -81,7 +81,6 @@ public:
 
 	int GetNumPlayer();			// プレイヤーの数取得
 	void SetNumPlayer(int nNum);	// プレイヤーの数設定
-	float GetDeltaTime();								// 経過時間取得
 	void SetMode(CScene::MODE mode);					// 次のモード設定
 	CScene::MODE GetMode();							// 現在のモード取得
 	void SetEnableHitStop(int nCntHitStop);			// ヒットストップの設定
@@ -127,9 +126,6 @@ private:
 	bool m_bHitStop;					// ヒットストップの判定
 	int m_nCntHitStop;					// ヒットストップのカウンター
 	CScene::MODE m_OldMode;				// 前回のモード
-	DWORD m_CurrentTime;				// 現在時間
-	DWORD m_OldTime;					// 過去の時間
-	float m_fDeltaTime;					// 経過時間
 	int m_nNumPlayer;					// プレイヤーの数
 	float m_fLoadTimer;					// ロードのタイマー
 	bool m_bLoadComplete;				// ロード完了のフラグ
