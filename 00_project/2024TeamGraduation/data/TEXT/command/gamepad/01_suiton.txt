@@ -1,0 +1,24 @@
+#==============================================================================
+#
+# 水団コマンド情報ファイル [suiton.txt]
+# Author : 奥定 伊吹
+#
+#==============================================================================
+
+SCRIPT
+
+	MAX_FRAME = 30
+
+	COMMANDSET
+		KEY = 1
+	END_COMMANDSET
+	
+	COMMANDSET
+		KEY = 5
+	END_COMMANDSET
+	
+	COMMANDSET
+		KEY = 3
+	END_COMMANDSET
+
+END_SCRIPT

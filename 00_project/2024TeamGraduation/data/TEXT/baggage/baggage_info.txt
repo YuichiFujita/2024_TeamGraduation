@@ -1,0 +1,43 @@
+#===================================================================================================
+#
+# 荷物情報スクリプトファイル [baggage_info.txt]
+# Author : 石原颯馬
+#
+#===================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------
+# 荷物情報
+# MODEL  : モデルのファイルパス
+# WEIGHT : 重さ
+# WIDTH  : 振れ幅
+# CYCLE  : 周期（ラジアン単位）
+#------------------------------------------------------------------
+# 石ころ（ふつう）
+BAGGAGESET
+	MODEL = data\\MODEL\\baggage\\japanese_style.x
+	WEIGHT = 1.0
+	WIDTH = 40.0
+	CYCLE = 0.06
+	LIFE = 5
+END_BAGGAGESET
+
+# 家（重たい）
+BAGGAGESET
+	MODEL = data\\MODEL\\map_object\\YMD_house.x
+	WEIGHT = 30.0
+	WIDTH = 50.0
+	CYCLE = 0.02
+	LIFE = 5
+END_BAGGAGESET
+
+# 花（軽い）
+BAGGAGESET
+	MODEL = data\\MODEL\\map_object\\flower_01.x
+	WEIGHT = 1.0
+	WIDTH = 200.0
+	CYCLE = 0.10
+	LIFE = 5
+END_BAGGAGESET
+
+END_SCRIPT		# この行は絶対消さないこと！

@@ -1,0 +1,24 @@
+#==============================================================================
+#
+# 波動拳コマンド情報ファイル [hadouken.txt]
+# Author : 奥定 伊吹
+#
+#==============================================================================
+
+SCRIPT
+
+	MAX_FRAME = 60	// 入力受付フレーム数
+
+	COMMANDSET
+		KEY = 2
+	END_COMMANDSET
+	
+	COMMANDSET
+		KEY = 8
+	END_COMMANDSET
+	
+	COMMANDSET
+		KEY = 4
+	END_COMMANDSET
+
+END_SCRIPT
