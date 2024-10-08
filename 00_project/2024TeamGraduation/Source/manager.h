@@ -30,6 +30,7 @@ class CDebugProc;
 class CPlayer;
 class CMap;
 class CXLoad;
+class CFont;
 class CEdit;
 class CElevation;
 class CEnemyManager;
@@ -72,12 +73,13 @@ public:
 	CLight *GetLight();
 	CCamera *GetCamera();
 	CEdit *GetEdit();
+	CFont *GetFont();	// フォント取得
 	CFade *GetFade();
 	CInstantFade *GetInstantFade();	// 遷移なしフェード取得
 	CPause *GetPause();
-	CResultManager *GetResultManager();	// リザルトマネージャ取得
-	CRankingManager *GetRankingManager();	// ランキングマネージャ
-	CScene *GetScene();		// シーン取得
+	CResultManager *GetResultManager();		// リザルトマネージャ取得
+	CRankingManager *GetRankingManager();	// ランキングマネージャ取得
+	CScene *GetScene();	// シーン取得
 
 	int GetNumPlayer();				// プレイヤーの数取得
 	void SetNumPlayer(int nNum);	// プレイヤーの数設定
@@ -114,6 +116,7 @@ private:
 	CCamera *m_pCamera;					// カメラ
 	CTexture *m_pTexture;				// テクスチャ
 	CXLoad* m_pXLoad;					// Xファイル
+	CFont* m_pFont;						// フォント
 	CEdit *m_pEdit;						// エディット
 	CScene *m_pScene;					// シーン
 	CFade *m_pFade;						// フェード

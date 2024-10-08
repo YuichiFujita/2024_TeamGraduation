@@ -185,6 +185,8 @@
     <ClCompile Include="Source\EffekseerObj.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
+    <ClCompile Include="Source\font.cpp" />
+    <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
     <ClCompile Include="Source\handle_Move.cpp" />
@@ -292,6 +294,8 @@
     <ClInclude Include="Source\EffekseerObj.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
+    <ClInclude Include="Source\font.h" />
+    <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gamemanager.h" />
     <ClInclude Include="Source\handle_Move.h" />

@@ -161,8 +161,68 @@ void CTexture::Unload()
 	m_TexInfo.shrink_to_fit();
 }
 
+//============================================================
+// テクスチャの登録処理 (生成)
+//============================================================
+int CTexture::Regist(const SInfo info)
+{
+	HRESULT hr;// 異常終了の確認用
+	int nIdx = static_cast<int>(m_TexInfo.size());	// テクスチャ読込番号
+
+	// 最後尾に空の要素を追加
+	m_TexInfo.emplace_back();		// テクスチャの情報
+	m_ImageNames.emplace_back();	// 読み込み用文字列
+
+	// マップ情報のポインタを初期化
+	m_TexInfo[nIdx].pTexture = nullptr;	// テクスチャへのポインタ
+
+	// 空のテクスチャを生成
+	hr = D3DXCreateTexture
+	( // 引数
+		GET_DEVICE,		// Direct3Dデバイス
+		info.Width,		// テクスチャ横幅
+		info.Height,	// テクスチャ縦幅
+		info.MipLevels,	// ミップマップレベル
+		info.Usage,		// 性質・確保オプション
+		info.Format,	// ピクセルフォーマット
+		info.Pool,		// 格納メモリ
+		&m_TexInfo[nIdx].pTexture	// テクスチャへのポインタ
+	);
+	if (FAILED(hr))
+	{ // テクスチャの生成に失敗した場合
+
+		// 失敗を返す
+		assert(false);
+		return -1;
+	}
+
+	// テクスチャステータスを設定
+	D3DXIMAGE_INFO *pStatus = &m_TexInfo[nIdx].imageInfo;	// ステータス情報
+	pStatus->Width			 = info.Width;					// テクスチャ横幅
+	pStatus->Height			 = info.Height;					// テクスチャ縦幅
+	pStatus->Depth			 = 1;							// テクスチャ深度
+	pStatus->MipLevels		 = info.MipLevels;				// ミップマップレベル
+	pStatus->Format			 = info.Format;					// ピクセルフォーマット
+	pStatus->ResourceType	 = D3DRTYPE_TEXTURE;			// リソース種類
+	pStatus->ImageFileFormat = (D3DXIMAGE_FILEFORMAT)-1;	// ファイル形式 (作成のため無し)
+
+	// アスペクト比を計算
+	m_TexInfo[nIdx].aspectratio.x = (float)info.Width / (float)info.Height;
+	m_TexInfo[nIdx].aspectratio.y = (float)info.Height / (float)info.Width;
+
+	// ファイル名と長さを空にする
+	m_TexInfo[nIdx].filename = "\0";
+	m_TexInfo[nIdx].nFileNameLen = m_TexInfo[nIdx].filename.length();
+
+	// 読み込み用文字列を空にする
+	m_ImageNames.back() = "\0";
+
+	// 生成したテクスチャの配列番号を返す
+	return nIdx;
+}
+
 //==========================================================================
-// テクスチャの割り当て処理
+// テクスチャの登録処理 (読込)
 //==========================================================================
 int CTexture::Regist(const std::string& file)
 {
@@ -178,6 +238,7 @@ int CTexture::Regist(const std::string& file)
 	transformFile = UtilFunc::Transformation::ReplaceBackslash(transformFile);
 	transformFile = UtilFunc::Transformation::ReplaceForwardSlashes(transformFile);
 
+	// 読み込み用文字列で検索
 	auto itr = std::find(m_ImageNames.begin(), m_ImageNames.end(), transformFile);
 	if (itr != m_ImageNames.end())
 	{
