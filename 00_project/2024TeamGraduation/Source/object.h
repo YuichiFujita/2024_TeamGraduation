@@ -90,6 +90,7 @@ public:
 	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
 	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
 	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// 元の向き取得
+	virtual inline void SetEnableDisp(bool bDisp)						{ m_bDisp = bDisp; }	// 描画設定
 
 	// 変更処理
 	virtual inline void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算
@@ -101,7 +102,6 @@ public:
 	static bool ZSort(const CObject* obj1, const CObject* obj2);		// Zソートの比較関数
 	static bool ZSortInverse(const CObject *obj1, const CObject *obj2);	// 逆Zソートの比較関数
 	int GetPriority() { return m_nPriority; }							// 優先順位取得
-	void SetEnableDisp(bool bDisp);										// 描画設定
 	bool IsDisp() { return m_bDisp; }									// 描画状況取得
 	void SetEnableHitstopMove() { m_bHitstopMove = true; }				// ヒットストップ中に動くフラグ有効
 

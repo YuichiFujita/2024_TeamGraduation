@@ -398,6 +398,12 @@
     <ClCompile Include="Source\char2D.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\string2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\text2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -713,6 +719,12 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Source\char2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\string2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\text2D.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

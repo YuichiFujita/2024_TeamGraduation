@@ -114,7 +114,6 @@ void CObject::ReleaseAll()
 			{
 				// ëçêîå∏éZ
 				m_nNumAll--;
-				obj->Uninit();
 				delete obj;
 			}
 		}
@@ -294,14 +293,6 @@ bool CObject::ZSort(const CObject *obj1, const CObject *obj2)
 bool CObject::ZSortInverse(const CObject* obj1, const CObject* obj2)
 {
 	return obj1->ScreenZ() > obj2->ScreenZ();
-}
-
-//==========================================================================
-// ï`âÊê›íË
-//==========================================================================
-void CObject::SetEnableDisp(bool bDisp)
-{
-	m_bDisp = bDisp;
 }
 
 //==========================================================================
