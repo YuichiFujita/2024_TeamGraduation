@@ -90,6 +90,7 @@ public:
 	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// ‘O‰ñ‚ÌŒü‚«æ“¾
 	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// Œ³‚ÌŒü‚«İ’è
 	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// Œ³‚ÌŒü‚«æ“¾
+	virtual inline void SetType(const TYPE type)						{ m_type = type; }		// í—Şİ’è
 	virtual inline void SetEnableDisp(bool bDisp)						{ m_bDisp = bDisp; }	// •`‰æİ’è
 
 	// •ÏXˆ—
@@ -114,7 +115,6 @@ public:
 
 	void SetEnableDeath(bool bDeath) { m_bDeath = bDeath; }
 	bool IsDeath();					// €–S‚Ì”»’è
-	void SetType(const TYPE type);	// í—Şİ’è
 	TYPE GetType() const;			// í—Şæ“¾
 
 protected:

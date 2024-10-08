@@ -49,6 +49,7 @@ public:
 	void Release(void) override;	// ”jŠü
 	void Update(const float fDeltaTime) override;	// XV
 	void Draw(void) override;						// •`‰æ
+	void SetType(const TYPE type) override;			// í—Şİ’è
 	void SetEnableDisp(const bool bDraw) override;	// •`‰æó‹µİ’è
 	void SetPosition(const MyLib::Vector3& pos) override;	// ˆÊ’uİ’è
 	void SetRotation(const MyLib::Vector3& rot) override;	// Œü‚«İ’è
