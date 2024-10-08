@@ -32,13 +32,35 @@ private:
 
 public:
 
+	// テクスチャ生成情報構造体
+	struct SInfo
+	{
+	public:
+		// コンストラクタ
+		SInfo() {}
+		SInfo(const UINT nWidth, const UINT nHeight, const UINT nMip, const DWORD dwUsage, const D3DFORMAT format, const D3DPOOL pool)
+			: Width(nWidth), Height(nHeight), MipLevels(nMip), Usage(dwUsage), Format(format), Pool(pool) {}
+
+		// デストラクタ
+		~SInfo() {}
+
+		// メンバ変数
+		UINT		Width;		// テクスチャ横幅
+		UINT		Height;		// テクスチャ縦幅
+		UINT		MipLevels;	// ミップマップレベル
+		DWORD		Usage;		// 性質・確保オプション
+		D3DFORMAT	Format;		// ピクセルフォーマット
+		D3DPOOL		Pool;		// 格納メモリ
+	};
+
 	CTexture();
 	~CTexture();
 
 	void Init();	// 初期化処理
 	HRESULT LoadAll();	// 全てのテクスチャ読み込み
 	void Unload();
-	int Regist(const std::string& file);	// 読み込み
+	int Regist(const SInfo info);			// テクスチャ登録 (生成)
+	int Regist(const std::string& file);	// テクスチャ登録 (読込)
 	LPDIRECT3DTEXTURE9 GetAdress(int nIdx);
 	D3DXVECTOR2 GetImageSize(int nIdx);		// テクスチャ素材のサイズ取得
 

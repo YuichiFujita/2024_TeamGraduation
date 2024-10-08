@@ -25,6 +25,7 @@
 #include "loadmanager.h"
 #include "Imguimanager.h"
 #include "fog.h"
+#include "font.h"
 
 //==========================================================================
 // 定数定義
@@ -61,6 +62,7 @@ CManager::CManager()
 	m_pCamera = nullptr;			// カメラ
 	m_pTexture = nullptr;			// テクスチャ
 	m_pXLoad = nullptr;				// Xファイル
+	m_pFont = nullptr;				// フォント
 	m_pEdit = nullptr;				// エディット
 	m_pScene = nullptr;				// シーン
 	m_pFade = nullptr;				// フェード
@@ -285,6 +287,15 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	}
 
 	//**********************************
+	// フォント
+	//**********************************
+	m_pFont = CFont::Create();
+	if (m_pFont == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	//**********************************
 	// フェード
 	//**********************************
 	m_pFade = CFade::Create();
@@ -355,12 +366,14 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 //==========================================================================
 void CManager::Load()
 {
-
 	// 全てのテクスチャ読み込み
 	m_pTexture->LoadAll();
 
 	// 全てのモデル読み込み
 	m_pXLoad->LoadAll();
+
+	// 全てのフォント読み込み
+	m_pFont->LoadAll();
 
 	//**********************************
 	// 遷移なしフェード
@@ -613,6 +626,9 @@ void CManager::Uninit()
 		// メモリの開放
 		m_pXLoad = nullptr;
 	}
+
+	// フォントの破棄
+	SAFE_REF_RELEASE(m_pFont);
 
 	if (m_pScene != nullptr)
 	{// メモリの確保が出来ていたら
@@ -997,6 +1013,14 @@ CCamera *CManager::GetCamera()
 CEdit *CManager::GetEdit()
 {
 	return m_pEdit;
+}
+
+//==========================================================================
+// フォントの取得
+//==========================================================================
+CFont *CManager::GetFont(void)
+{
+	return m_pFont;
 }
 
 //==========================================================================

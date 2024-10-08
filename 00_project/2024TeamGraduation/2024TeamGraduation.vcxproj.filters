@@ -386,6 +386,12 @@
     <ClCompile Include="Source\camera_debug.cpp">
       <Filter>camera</Filter>
     </ClCompile>
+    <ClCompile Include="Source\font.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\fontChar.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -693,6 +699,12 @@
     </ClInclude>
     <ClInclude Include="Source\camera_debug.h">
       <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\font.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\fontChar.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
