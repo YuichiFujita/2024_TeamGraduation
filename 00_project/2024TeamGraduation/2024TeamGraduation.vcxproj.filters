@@ -90,6 +90,9 @@
     <Filter Include="lostrssmanager">
       <UniqueIdentifier>{28071454-2189-45fa-94c3-5874bdcb4372}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{db3b7d5c-8da1-48b2-a374-eb2754691253}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="Source\fontChar.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\char2D.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -705,6 +711,9 @@
     </ClInclude>
     <ClInclude Include="Source\fontChar.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\char2D.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

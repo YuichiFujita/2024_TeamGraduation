@@ -192,8 +192,8 @@ CFont::SFont CFont::Regist(const std::string &rFilePass, const bool bItalic)
 	SFont tempFont;
 
 	// フォント名を設定
-	tempFont.sFontName = rFilePass;					// ファイルパスを設定
-	//UtilFunc::PathToBaseName(&tempFont.sFontName);	// ベースネームのみに変換	// TODO：ここはどうするか相談
+	tempFont.sFontName = rFilePass;	// ファイルパスを設定
+	UtilFunc::Transformation::PathToBaseName(&tempFont.sFontName);	// ベースネームのみに変換
 
 	// フォント属性の設定
 	LOGFONT lf;

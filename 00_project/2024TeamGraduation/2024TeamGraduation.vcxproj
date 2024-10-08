@@ -177,6 +177,7 @@
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
+    <ClCompile Include="Source\char2D.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\edit.cpp" />
@@ -284,6 +285,7 @@
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
+    <ClInclude Include="Source\char2D.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
