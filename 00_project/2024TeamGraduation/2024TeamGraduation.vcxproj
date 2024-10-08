@@ -177,6 +177,7 @@
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
+    <ClCompile Include="Source\char2D.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\edit.cpp" />
@@ -256,7 +257,9 @@
     <ClCompile Include="Source\scene.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
+    <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
+    <ClCompile Include="Source\text2D.cpp" />
     <ClCompile Include="Source\texture.cpp" />
     <ClCompile Include="Source\title.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
@@ -284,6 +287,7 @@
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
+    <ClInclude Include="Source\char2D.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
@@ -362,7 +366,9 @@
     <ClInclude Include="Source\scene.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
+    <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
+    <ClInclude Include="Source\text2D.h" />
     <ClInclude Include="Source\texture.h" />
     <ClInclude Include="Source\title.h" />
     <ClInclude Include="Source\tutorial.h" />

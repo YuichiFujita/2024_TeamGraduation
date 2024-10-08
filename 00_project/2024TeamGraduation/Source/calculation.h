@@ -26,7 +26,21 @@ using namespace DirectX;
 // マクロ定義
 //==========================================================================
 #define MAX_COMMENT		(512)	// コメントの最大数
+#define HALF_PI			(D3DX_PI * 0.5f)	// 二分の一の円周率 (π/２)
+#define QRTR_PI			(D3DX_PI * 0.25f)	// 四分の一の円周率 (π/４)
 #define NUM_ARRAY(a)	(sizeof((a)) / sizeof((a)[0]))	// 配列の要素数計算
+
+// D3DXVECTOR2関係
+#define VEC2_ZERO	(D3DXVECTOR2(0.0f, 0.0f))	// 0クリア
+#define VEC2_ONE	(D3DXVECTOR2(1.0f, 1.0f))	// 1クリア
+#define VEC2_ALL(f)	(D3DXVECTOR2((f), (f))		// 同値クリア
+
+// D3DXVECTOR3関係
+#define VEC3_ZERO	(MyLib::Vector3(0.0f, 0.0f, 0.0f))	// 0クリア
+#define VEC3_ONE	(MyLib::Vector3(1.0f, 1.0f, 1.0f))	// 1クリア
+#define VEC3_ALL(f)	(MyLib::Vector3((f), (f), (f)))		// 同値クリア
+#define SCREEN_CENT	(MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f))	// ウインドウの中央座標
+#define SCREEN_SIZE	(MyLib::Vector3((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f))	// ウインドウの画面サイズ
 
 /**
 @brief	便利関数
@@ -2832,6 +2846,36 @@ namespace UtilFunc	// 便利関数
 		}
 
 		/**
+		@brief	テクスチャ高さを基準に幅を自動計算
+		@param	fWidth		[in]	基準にする縦幅
+		@param	width		[in]	アスペクト比を参照するテクスチャインデックス
+		@return	二次元サイズ
+		*/
+		inline D3DXVECTOR2 GetTexWidthFromAspect(const float fHeight, const int nTexID)
+		{
+			// テクスチャアスペクト比を取得
+			D3DXVECTOR2 aspect = CTexture::GetInstance()->GetTextureInfo(nTexID).aspectratio;
+		
+			// アスペクト比から計算した横幅を返す
+			return D3DXVECTOR2(fHeight * aspect.x, fHeight);
+		}
+
+		/**
+		@brief	テクスチャ幅を基準に高さを自動計算
+		@param	fWidth		[in]	基準にする横幅
+		@param	width		[in]	アスペクト比を参照するテクスチャインデックス
+		@return	二次元サイズ
+		*/
+		inline D3DXVECTOR2 GetTexHeightFromAspect(const float fWidth, const int nTexID)
+		{
+			// テクスチャアスペクト比を取得
+			D3DXVECTOR2 aspect = CTexture::GetInstance()->GetTextureInfo(nTexID).aspectratio;
+
+			// アスペクト比から計算した縦幅を返す
+			return D3DXVECTOR2(fWidth, fWidth * aspect.y);
+		}
+
+		/**
 		@brief	スクリーン座標をワールド座標に変換
 		@param	Sx			[in]	スクリーンX座標
 		@param	Sy			[in]	スクリーンY座標
@@ -3095,7 +3139,6 @@ namespace UtilFunc	// 便利関数
 			return multiString;
 		}
 
-
 		/**
 		@brief	\\\\を\\に置換する
 		@param	str		[in]	文字列
@@ -3151,8 +3194,36 @@ namespace UtilFunc	// 便利関数
 
 			return filePath;
 		}
-	}
 
+		/**
+		@brief	パスのベースネーム変換
+		@param	pPath	[in]	変換するパス
+		*/
+		inline void PathToBaseName(std::string *pPath)
+		{
+			// パス区切りを\\に変換
+			*pPath = UtilFunc::Transformation::ReplaceBackslash(*pPath);
+			*pPath = UtilFunc::Transformation::ReplaceForwardSlashes(*pPath);
+
+			// パス区切りより手前の文字列を削除
+			std::size_t posTop = pPath->rfind("\\");
+			if (posTop != std::string::npos)
+			{ // パス区切りが見つかった場合
+
+				// 文字列の手前を削除
+				pPath->erase(0, posTop + 1);
+			}
+
+			// 拡張子より後の文字列を削除
+			std::size_t posCur = pPath->rfind(".");
+			if (posCur != std::string::npos)
+			{ // 拡張子が見つかった場合
+
+				// 文字列の後を削除
+				pPath->erase(posCur, std::string::npos);
+			}
+		}
+	}
 }
 
 
