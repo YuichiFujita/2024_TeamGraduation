@@ -22,18 +22,13 @@ CObjectBillboard::CObjectBillboard(int nPriority) : CObject(nPriority)
 {
 	m_mtxWorld.Identity();			// ワールドマトリックス
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色
-	m_fSize = D3DXVECTOR2(0.0f, 0.0f);			// サイズ
+	m_size = D3DXVECTOR2(0.0f, 0.0f);			// サイズ
 	m_sizeOrigin = D3DXVECTOR2(0.0f, 0.0f);		// 元のサイズ
 	m_fLength = 0.0f;							// 対角線の長さ
 	m_fAngle = 0.0f;							// 対角線の向き
 	m_nTexIdx = 0;	// テクスチャのインデックス番号
 	m_pVtxBuff = nullptr;		// 頂点バッファ
-
-	for (int nCntVtx = 0; nCntVtx < 32; nCntVtx++)
-	{
-		m_fTex[nCntVtx] = D3DXVECTOR2(0.0f, 0.0f);			// テクスチャ座標
-	}
-
+	m_vecUV.clear();			// テクスチャ座標
 }
 
 //==========================================================================
@@ -43,16 +38,6 @@ CObjectBillboard::~CObjectBillboard()
 {
 
 }
-
-//==========================================================================
-// テクスチャの割り当て
-//==========================================================================
-void CObjectBillboard::BindTexture(int nIdx)
-{
-	// 割り当てる
-	m_nTexIdx = nIdx;
-}
-
 
 //==========================================================================
 // 生成処理
@@ -122,10 +107,12 @@ HRESULT CObjectBillboard::Init()
 		return E_FAIL;
 	}
 
-	m_fTex[0] = D3DXVECTOR2(0.0f, 0.0f);	// テクスチャ座標
-	m_fTex[1] = D3DXVECTOR2(1.0f, 0.0f);	// テクスチャ座標
-	m_fTex[2] = D3DXVECTOR2(0.0f, 1.0f);	// テクスチャ座標
-	m_fTex[3] = D3DXVECTOR2(1.0f, 1.0f);	// テクスチャ座標
+	// テクスチャ座標
+	m_vecUV.resize(POLYGON_TOP);
+	m_vecUV[0] = D3DXVECTOR2(0.0f, 0.0f);
+	m_vecUV[1] = D3DXVECTOR2(1.0f, 0.0f);
+	m_vecUV[2] = D3DXVECTOR2(0.0f, 1.0f);
+	m_vecUV[3] = D3DXVECTOR2(1.0f, 1.0f);
 
 	// 頂点情報設定
 	SetVtx();
@@ -275,137 +262,21 @@ void CObjectBillboard::SetVtx()
 	pVtx[3].col = col;
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = m_fTex[0];
-	pVtx[1].tex = m_fTex[1];
-	pVtx[2].tex = m_fTex[2];
-	pVtx[3].tex = m_fTex[3];
+	pVtx[0].tex = m_vecUV[0];
+	pVtx[1].tex = m_vecUV[1];
+	pVtx[2].tex = m_vecUV[2];
+	pVtx[3].tex = m_vecUV[3];
 
 	// 頂点バッファをアンロックロック
 	m_pVtxBuff->Unlock();
 }
 
-
-//==========================================================================
-// 向き設定
-//==========================================================================
-void CObjectBillboard::SetRotation(const MyLib::Vector3& rot)
-{
-	// 向き設定
-	CObject::SetRotation(rot);
-	m_fLength = sqrtf(m_fSize.x * m_fSize.x + m_fSize.y * m_fSize.y);	// 対角線の長さ
-	m_fAngle = atan2f(m_fSize.x, m_fSize.y);							// 対角線の向き
-}
-
-//==========================================================================
-// マトリックス設定
-//==========================================================================
-void CObjectBillboard::SetWorldMtx(const MyLib::Matrix mtx)
-{
-	m_mtxWorld = mtx;
-}
-
-//==========================================================================
-// マトリックス取得
-//==========================================================================
-MyLib::Matrix CObjectBillboard::GetWorldMtx() const
-{
-	return m_mtxWorld;
-}
-
-//==========================================================================
-// 色設定
-//==========================================================================
-void CObjectBillboard::SetColor(const D3DXCOLOR col)
-{
-	m_col = col;
-}
-
-//==========================================================================
-// 色取得
-//==========================================================================
-D3DXCOLOR CObjectBillboard::GetColor() const
-{
-	return m_col;
-}
-
-//==========================================================================
-// 不透明度設定
-//==========================================================================
-void CObjectBillboard::SetAlpha(const float alpha)
-{
-	m_col.a = alpha;
-}
-
-//==========================================================================
-// 不透明度取得
-//==========================================================================
-float CObjectBillboard::GetAlpha() const
-{
-	return m_col.a;
-}
-
 //==========================================================================
 // サイズ設定
 //==========================================================================
-void CObjectBillboard::SetSize(const D3DXVECTOR2 size)
+void CObjectBillboard::SetSize(const D3DXVECTOR2& size)
 {
-	m_fSize = size;
-	m_fLength = sqrtf(m_fSize.x * m_fSize.x + m_fSize.y * m_fSize.y);	// 対角線の長さ
-	m_fAngle = atan2f(m_fSize.x, m_fSize.y);							// 対角線の向き
-}
-
-//==========================================================================
-// サイズ取得
-//==========================================================================
-D3DXVECTOR2 CObjectBillboard::GetSize() const
-{
-	return m_fSize;
-}
-
-//==========================================================================
-// 元のサイズの設定
-//==========================================================================
-void CObjectBillboard::SetSizeOrigin(const D3DXVECTOR2 size)
-{
-	m_sizeOrigin = size;
-}
-
-//==========================================================================
-// 元のサイズの取得
-//==========================================================================
-D3DXVECTOR2 CObjectBillboard::GetSizeOrigin() const
-{
-	return m_sizeOrigin;
-}
-
-//==========================================================================
-// テクスチャ座標設定
-//==========================================================================
-void CObjectBillboard::SetTex(D3DXVECTOR2 *tex)
-{
-	memcpy(&m_fTex[0], tex, sizeof(m_fTex));
-}
-
-//==========================================================================
-// テクスチャ座標取得
-//==========================================================================
-D3DXVECTOR2 *CObjectBillboard::GetTex()
-{
-	return &m_fTex[0];
-}
-
-//==========================================================================
-// 頂点バッファの取得
-//==========================================================================
-LPDIRECT3DVERTEXBUFFER9 CObjectBillboard::GetVtxBuff() const
-{
-	return m_pVtxBuff;
-}
-
-//==========================================================================
-// ビルボードオブジェクトの取得
-//==========================================================================
-CObjectBillboard *CObjectBillboard::GetObjectBillBoard()
-{
-	return this;
+	m_size = size;		// サイズ
+	SetLength(sqrtf(m_size.x * m_size.x + m_size.y * m_size.y));	// 対角線の長さ
+	SetAngle(atan2f(m_size.x, m_size.y));							// 対角線の向き
 }

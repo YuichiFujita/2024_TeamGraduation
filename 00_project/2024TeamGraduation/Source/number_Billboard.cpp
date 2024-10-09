@@ -235,7 +235,8 @@ D3DXVECTOR2 CNumberBillboard::GetSizeOrigin() const
 //==========================================================================
 void CNumberBillboard::SetTex(D3DXVECTOR2 *tex)
 {
-	m_pObjBillboard->SetTex(tex);
+	// TODOF‘Î‰ž‚·‚é‚æ`
+	//m_pObjBillboard->SetTex(tex);
 }
 
 //==========================================================================
@@ -243,5 +244,7 @@ void CNumberBillboard::SetTex(D3DXVECTOR2 *tex)
 //==========================================================================
 D3DXVECTOR2 *CNumberBillboard::GetTex()
 {
-	return m_pObjBillboard->GetTex();
+	// TODOF‘Î‰ž‚·‚é‚æ`
+	return nullptr;
+	//return m_pObjBillboard->GetTex();
 }

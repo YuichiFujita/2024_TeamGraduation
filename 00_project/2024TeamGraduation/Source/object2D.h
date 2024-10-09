@@ -74,10 +74,10 @@ public:
 	// 頂点情報
 	//--------------------------
 	// UV
-	void SetTex(D3DXVECTOR2* tex) { memcpy(&m_vecTexUV[0], tex, sizeof(m_vecTexUV)); }	// テクスチャ座標の設定
-	void SetTexUV(const std::vector<D3DXVECTOR2>& uv) { m_vecTexUV = uv; }				// テクスチャ座標の設定
-	D3DXVECTOR2* GetTex() { return &m_vecTexUV[0]; }									// テクスチャ座標のポインタ取得
-	std::vector<D3DXVECTOR2> GetVecTexUV() { return m_vecTexUV; }						// テクスチャ座標の取得
+	void SetTex(D3DXVECTOR2* tex) { memcpy(&m_vecUV[0], tex, sizeof(m_vecUV)); }	// テクスチャ座標の設定
+	void SetTexUV(const std::vector<D3DXVECTOR2>& uv) { m_vecUV = uv; }				// テクスチャ座標の設定
+	D3DXVECTOR2* GetTex() { return &m_vecUV[0]; }									// テクスチャ座標のポインタ取得
+	std::vector<D3DXVECTOR2> GetVecTexUV() { return m_vecUV; }						// テクスチャ座標の取得
 	
 	// 頂点座標
 	void SetVecVtxPos(const std::vector<MyLib::Vector3>& vecpos) { m_vecVtxPos = vecpos; }	// 頂点座標設定
@@ -113,7 +113,7 @@ private:
 	float m_fLength;							// 対角線の長さ
 	float m_fAngle;								// 対角線の向き
 	int m_nTexIdx;								// テクスチャのインデックス番号
-	std::vector<D3DXVECTOR2> m_vecTexUV;		// テクスチャ座標
+	std::vector<D3DXVECTOR2> m_vecUV;		// テクスチャ座標
 	std::vector<MyLib::Vector3> m_vecVtxPos;	// 頂点座標
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファ
 };

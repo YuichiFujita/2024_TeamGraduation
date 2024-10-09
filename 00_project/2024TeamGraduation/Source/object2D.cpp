@@ -32,7 +32,7 @@ CObject2D::CObject2D(int nPriority, const LAYER layer) : CObject(nPriority, laye
 	m_fAngle = 0.0f;						// 対角線の向き
 	m_nTexIdx = 0;							// テクスチャのインデックス番号
 	m_pVtxBuff = nullptr;					// 頂点バッファ
-	m_vecTexUV.clear();						// テクスチャ座標
+	m_vecUV.clear();						// テクスチャ座標
 	m_vecVtxPos.clear();					// 頂点座標
 
 }
@@ -57,7 +57,7 @@ CObject2D* CObject2D::Create(int nPriority, int nNumVtx)
 	{
 		// 引数情報設定
 		pObject2D->m_vecVtxPos.resize(nNumVtx);
-		pObject2D->m_vecTexUV.resize(nNumVtx);
+		pObject2D->m_vecUV.resize(nNumVtx);
 
 		// 初期化処理
 		pObject2D->Init();
@@ -77,14 +77,14 @@ HRESULT CObject2D::Init()
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
-	if ((int)m_vecTexUV.size() >= DEF_VTXNUM)
+	if ((int)m_vecUV.size() >= DEF_VTXNUM)
 	{// リサイズ済み
 
 		// テクスチャ座標
-		m_vecTexUV[0] = D3DXVECTOR2(0.0f, 0.0f);
-		m_vecTexUV[1] = D3DXVECTOR2(1.0f, 0.0f);
-		m_vecTexUV[2] = D3DXVECTOR2(0.0f, 1.0f);
-		m_vecTexUV[3] = D3DXVECTOR2(1.0f, 1.0f);
+		m_vecUV[0] = D3DXVECTOR2(0.0f, 0.0f);
+		m_vecUV[1] = D3DXVECTOR2(1.0f, 0.0f);
+		m_vecUV[2] = D3DXVECTOR2(0.0f, 1.0f);
+		m_vecUV[3] = D3DXVECTOR2(1.0f, 1.0f);
 	}
 
 	// 頂点バッファの生成
@@ -309,10 +309,10 @@ void CObject2D::SetVtx()
 	pVtx[3].col = col;
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = m_vecTexUV[0];
-	pVtx[1].tex = m_vecTexUV[1];
-	pVtx[2].tex = m_vecTexUV[2];
-	pVtx[3].tex = m_vecTexUV[3];
+	pVtx[0].tex = m_vecUV[0];
+	pVtx[1].tex = m_vecUV[1];
+	pVtx[2].tex = m_vecUV[2];
+	pVtx[3].tex = m_vecUV[3];
 
 	// 頂点バッファをアンロックロック
 	m_pVtxBuff->Unlock();
@@ -375,7 +375,7 @@ void  CObject2D::SetVtx(int nNumVertex)
 		pVtx[nCntVtx].col = col;
 
 		// テクスチャ座標の設定
-		pVtx[nCntVtx].tex = m_vecTexUV[nCntVtx];
+		pVtx[nCntVtx].tex = m_vecUV[nCntVtx];
 	}
 
 	// 頂点バッファをアンロックロック

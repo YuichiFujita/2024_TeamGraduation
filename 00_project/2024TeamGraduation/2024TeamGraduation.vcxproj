@@ -225,7 +225,6 @@
     <ClCompile Include="Source\object.cpp" />
     <ClCompile Include="Source\object2D.cpp" />
     <ClCompile Include="Source\object2D_Anim.cpp" />
-    <ClCompile Include="Source\object2D_gauge.cpp" />
     <ClCompile Include="Source\object3D.cpp" />
     <ClCompile Include="Source\object3DMesh.cpp" />
     <ClCompile Include="Source\object3D_Anim.cpp" />
@@ -340,7 +339,6 @@
     <ClInclude Include="Source\object.h" />
     <ClInclude Include="Source\object2D.h" />
     <ClInclude Include="Source\object2D_Anim.h" />
-    <ClInclude Include="Source\object2D_gauge.h" />
     <ClInclude Include="Source\object3D.h" />
     <ClInclude Include="Source\object3DMesh.h" />
     <ClInclude Include="Source\object3D_Anim.h" />

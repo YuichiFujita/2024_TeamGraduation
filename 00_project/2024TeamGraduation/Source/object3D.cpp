@@ -23,19 +23,11 @@ CObject3D::CObject3D(int nPriority, const LAYER layer) : CObject(nPriority, laye
 {
 	m_mtxWorld.Identity();				// ワールドマトリックス
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);		// 色
-	m_fSize = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// サイズ
+	m_size = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// サイズ
 	m_pVtxBuff = nullptr;							// 頂点バッファ
 	m_nTexIdx = 0;									// テクスチャのインデックス番号
 
-	m_fTex[0] = D3DXVECTOR2(0.0f, 0.0f);			// テクスチャ座標
-	m_fTex[1] = D3DXVECTOR2(1.0f, 0.0f);			// テクスチャ座標
-	m_fTex[2] = D3DXVECTOR2(0.0f, 1.0f);			// テクスチャ座標
-	m_fTex[3] = D3DXVECTOR2(1.0f, 1.0f);			// テクスチャ座標
-
-	for (int nCntVtx = 4; nCntVtx < 32; nCntVtx++)
-	{
-		m_fTex[0] = D3DXVECTOR2(0.0f, 0.0f);			// テクスチャ座標
-	}
+	m_vecUV.clear();	// テクスチャ座標
 }
 
 //==========================================================================
@@ -76,17 +68,14 @@ CObject3D* CObject3D::Create(int nPriority)
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObject3D* CObject3D::Create(MyLib::Vector3 pos, MyLib::Vector3 rot)
+CObject3D* CObject3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& rot)
 {
 
 	// メモリの確保
-	CObject3D* pObject3D = DEBUG_NEW CObject3D;
+	CObject3D* pObject3D = CObject3D::Create();
 
 	if (pObject3D != nullptr)
 	{// メモリの確保が出来ていたら
-
-		// 初期化処理
-		pObject3D->Init();
 
 		// 位置・向き
 		pObject3D->SetPosition(pos);
@@ -107,13 +96,12 @@ HRESULT CObject3D::Init()
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
-	// 頂点バッファの生成
 	if (m_pVtxBuff != nullptr)
-	{// 既に情報が入ってる場合
-
+	{
 		return E_FAIL;
 	}
 
+	// 頂点バッファの生成
 	hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * POLYGON_TOP,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
@@ -125,6 +113,16 @@ HRESULT CObject3D::Init()
 	{// 失敗したとき
 		return E_FAIL;
 	}
+
+	// 引数情報設定
+	m_vecUV.clear();
+	m_vecUV.resize(POLYGON_TOP);
+
+	// テクスチャ座標
+	m_vecUV[0] = D3DXVECTOR2(0.0f, 0.0f);
+	m_vecUV[1] = D3DXVECTOR2(1.0f, 0.0f);
+	m_vecUV[2] = D3DXVECTOR2(0.0f, 1.0f);
+	m_vecUV[3] = D3DXVECTOR2(1.0f, 1.0f);
 
 	// 頂点情報設定
 	SetVtx();
@@ -288,107 +286,11 @@ void CObject3D::SetVtx()
 	pVtx[3].col = col;
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = m_fTex[0];
-	pVtx[1].tex = m_fTex[1];
-	pVtx[2].tex = m_fTex[2];
-	pVtx[3].tex = m_fTex[3];
+	pVtx[0].tex = m_vecUV[0];
+	pVtx[1].tex = m_vecUV[1];
+	pVtx[2].tex = m_vecUV[2];
+	pVtx[3].tex = m_vecUV[3];
 
 	// 頂点バッファをアンロックロック
 	m_pVtxBuff->Unlock();
-}
-
-//==========================================================================
-// マトリックス設定
-//==========================================================================
-void CObject3D::SetWorldMtx(const MyLib::Matrix mtx)
-{
-	m_mtxWorld = mtx;
-}
-
-//==========================================================================
-// マトリックス取得
-//==========================================================================
-MyLib::Matrix CObject3D::GetWorldMtx() const
-{
-	return m_mtxWorld;
-}
-
-//==========================================================================
-// 色設定
-//==========================================================================
-void CObject3D::SetColor(const D3DXCOLOR col)
-{
-	m_col = col;
-}
-
-//==========================================================================
-// 色取得
-//==========================================================================
-D3DXCOLOR CObject3D::GetColor() const
-{
-	return m_col;
-}
-
-//==========================================================================
-// サイズ設定
-//==========================================================================
-void CObject3D::SetSize(const MyLib::Vector3& size)
-{
-	m_fSize = size;
-}
-
-//==========================================================================
-// サイズ取得
-//==========================================================================
-MyLib::Vector3 CObject3D::GetSize() const
-{
-	return m_fSize;
-}
-
-//==========================================================================
-// 元のサイズ設定
-//==========================================================================
-void CObject3D::SetSizeOrigin(const MyLib::Vector3& size)
-{
-	m_fSize = size;
-}
-
-//==========================================================================
-// 元のサイズ取得
-//==========================================================================
-MyLib::Vector3 CObject3D::GetSizeOrigin() const
-{
-	return m_fSize;
-}
-
-//==========================================================================
-// テクスチャ座標設定
-//==========================================================================
-void CObject3D::SetTex(D3DXVECTOR2 *tex)
-{
-	memcpy(&m_fTex[0], tex, sizeof(m_fTex));
-}
-
-//==========================================================================
-// テクスチャ座標取得
-//==========================================================================
-D3DXVECTOR2 *CObject3D::GetTex()
-{
-	return &m_fTex[0];
-}
-
-//==========================================================================
-// オブジェクト3Dオブジェクトの取得
-//==========================================================================
-CObject3D *CObject3D::GetObject3D()
-{
-	return this;
-}
-
-//==========================================================================
-// オブジェクト3Dメッシュオブジェクトの取得
-//==========================================================================
-CObject3DMesh *CObject3D::GetObject3DMesh()
-{
-	return nullptr;
 }

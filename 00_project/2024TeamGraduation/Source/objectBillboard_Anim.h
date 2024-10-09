@@ -29,7 +29,7 @@ public:
 
 	void SetDesableAutoDeath() { m_bAutoDeath = false; }	// ©“®íœ‚Ì”»’èíœ
 	bool IsFinish() { return m_bFinish; }					// I—¹‚Ì”»’è
-	static CObjectBillboardAnim *Create(MyLib::Vector3 pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath = true);
+	static CObjectBillboardAnim *Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath = true);
 	CObjectBillboardAnim *GetObject3DAnim() { return this; }
 protected:
 

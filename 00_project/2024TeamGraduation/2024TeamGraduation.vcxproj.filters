@@ -146,9 +146,6 @@
     <ClCompile Include="Source\object2D_Anim.cpp">
       <Filter>object</Filter>
     </ClCompile>
-    <ClCompile Include="Source\object2D_gauge.cpp">
-      <Filter>object</Filter>
-    </ClCompile>
     <ClCompile Include="Source\object3D.cpp">
       <Filter>object</Filter>
     </ClCompile>
@@ -461,9 +458,6 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="Source\object2D_Anim.h">
-      <Filter>object</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\object2D_gauge.h">
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="Source\object3D.h">

@@ -80,28 +80,32 @@ public:
 	void Draw() override;
 	void Draw(D3DXCOLOR col) override;
 	void Draw(float fAlpha) override;
+	
+	//--------------------------
+	// キャラ情報
+	//--------------------------
+	void SetHeight(const float fHeight) { m_fHeight = fHeight; }		// 身長設定
+	float GetHeight() { return m_fHeight; }						// 身長取得
+	void SetVelocity(const float fVelocity) { m_fVelocity = fVelocity; }	// 移動速度設定
+	float GetVelocity() const { return m_fVelocity; }				// 移動速度取得
+	void SetRotDest(const float fRotDest) { m_fRotDest = fRotDest; }		// 目標の向き設定
+	float GetRotDest() const { return m_fRotDest; }				// 目標の向き取得
+	void SetLife(const int nLife) { m_nLife = nLife; }				// 体力設定
+	int GetLife() const { return m_nLife; }					// 体力取得
+	void SetLifeOrigin(const int nLife) { m_nLifeOrigin = nLife; }		// 元の体力設定
+	int GetLifeOrigin() const { return m_nLifeOrigin; }				// 元の体力取得
+	int GetMotionStartIdx() const { return m_nMotionStartIdx; }			// モーション開始のインデックス番号取得
 
-	void SetHeight(const float fHeight);		// 身長設定
-	float GetHeight();						// 身長取得
-	void SetVelocity(const float fVelocity);	// 移動速度設定
-	float GetVelocity() const;				// 移動速度取得
-	void SetRotDest(const float fRotDest);		// 目標の向き設定
-	float GetRotDest() const;				// 目標の向き取得
-	void SetLife(const int nLife);				// 体力設定
-	int GetLife() const;					// 体力取得
-	void SetLifeOrigin(const int nLife);		// 元の体力設定
-	int GetLifeOrigin() const;				// 元の体力取得
-	int GetMotionStartIdx() const;			// モーション開始のインデックス番号取得
-	int GetAddScoreValue() const;			// スコア加算量取得
-
+	//--------------------------
 	// コライダー関連
-	int GetSphereColliderNum();						// スフィアコライダーの数取得
-	SphereCollider GetNowSphereCollider(int nIdx);	// コライダー取得
-	std::vector<SphereCollider> GetSphereColliders();	// スフィアコライダー取得
+	//--------------------------
+	int GetSphereColliderNum() { return static_cast<int>(m_SphereColliders.size()); }	// スフィアコライダーの数取得
+	SphereCollider GetNowSphereCollider(int nIdx);										// コライダー取得
+	std::vector<SphereCollider> GetSphereColliders() { return m_SphereColliders; }		// スフィアコライダー取得
 
-	HRESULT SetCharacter(const std::string& file) override;	// キャラクター設定
-	CObjectChara *GetObjectChara();
-	CMotion* GetMotion();	// モーションオブジェクト取得
+	HRESULT SetCharacter(const std::string& file) override;		// キャラクター設定
+	CObjectChara* GetObjectChara() { return this; }				// オブジェクトキャラクターオブジェクトの取得
+	CMotion* GetMotion() { return m_pMotion; }					// モーションオブジェクト取得
 	static CObjectChara *Create(const std::string pTextFile);	// 生成処理
 
 
@@ -136,10 +140,10 @@ public:
 
 protected:
 
-	void LoadObjectData(FILE* pFile, const std::string& file) override;	// オブジェクト毎のデータ読み込み
-	void LoadPartsData(FILE* pFile, const std::string& file, int *pCntParts) override;		// パーツ毎のデータ読み込み
-	void BindObjectData(int nCntData) override;							// オブジェクト毎のデータ割り当て
-	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK);	// 攻撃時処理
+	void LoadObjectData(FILE* pFile, const std::string& file) override;					// オブジェクト毎のデータ読み込み
+	void LoadPartsData(FILE* pFile, const std::string& file, int *pCntParts) override;	// パーツ毎のデータ読み込み
+	void BindObjectData(int nCntData) override;											// オブジェクト毎のデータ割り当て
+	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK);				// 攻撃時処理
 	virtual void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK);			// 攻撃判定中処理
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 
@@ -162,7 +166,6 @@ private:
 	int m_nLife;				// 体力
 	int m_nLifeOrigin;			// 元の体力
 	int m_nMotionStartIdx;		// モーション開始のインデックス番号
-	int m_nAddScore;			// スコア加算量
 	CMotion *m_pMotion;			// モーションの情報
 	std::vector<SphereCollider> m_SphereColliders;	// スフィアコライダー
 	static std::vector<ColliderData> m_LoadColliderData;	// コライダー情報

@@ -247,7 +247,8 @@ D3DXVECTOR2 CNumber3D::GetSizeOrigin() const
 //==========================================================================
 void CNumber3D::SetTex(D3DXVECTOR2 *tex)
 {
-	m_aObject3D->SetTex(tex);
+	// TODOF‘Î‰ž‚·‚é‚æ`
+	//m_aObject3D->SetUV(tex);
 }
 
 //==========================================================================
@@ -255,5 +256,7 @@ void CNumber3D::SetTex(D3DXVECTOR2 *tex)
 //==========================================================================
 D3DXVECTOR2 *CNumber3D::GetTex()
 {
-	return m_aObject3D->GetTex();
+	// TODOF‘Î‰ž‚·‚é‚æ`
+	return nullptr;
+	//return m_aObject3D->GetTex();
 }

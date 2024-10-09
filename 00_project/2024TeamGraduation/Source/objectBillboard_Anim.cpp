@@ -34,36 +34,27 @@ CObjectBillboardAnim::~CObjectBillboardAnim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectBillboardAnim *CObjectBillboardAnim::Create(MyLib::Vector3 pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
+CObjectBillboardAnim* CObjectBillboardAnim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
 {
-	// 生成用のオブジェクト
-	CObjectBillboardAnim *pObject3D = nullptr;
+	// メモリの確保
+	CObjectBillboardAnim* pObject3D = DEBUG_NEW CObjectBillboardAnim;
 
-	if (pObject3D == nullptr)
-	{// nullptrだったら
+	if (pObject3D != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pObject3D = DEBUG_NEW CObjectBillboardAnim;
+		// 引数情報
+		pObject3D->SetPosition(pos);
+		pObject3D->SetOriginPosition(pos);
+		pObject3D->m_nDivisionU = nDivisionU;
+		pObject3D->m_nDivisionV = nDivisionV;
+		pObject3D->m_nIntervalAnim = nInterval;
+		pObject3D->m_bAutoDeath = bAutoDeath;
 
-		if (pObject3D != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 引数情報
-			pObject3D->SetPosition(pos);
-			pObject3D->SetOriginPosition(pos);
-			pObject3D->m_nDivisionU = nDivisionU;
-			pObject3D->m_nDivisionV = nDivisionV;
-			pObject3D->m_nIntervalAnim = nInterval;
-			pObject3D->m_bAutoDeath = bAutoDeath;
-
-			// 初期化処理
-			pObject3D->Init();
-		}
-
-		return pObject3D;
+		// 初期化処理
+		pObject3D->Init();
 	}
 
-	return nullptr;
+	return pObject3D;
 }
 
 //==========================================================================
@@ -155,51 +146,18 @@ void CObjectBillboardAnim::Update(const float fDeltaTime)
 //==========================================================================
 void CObjectBillboardAnim::SetVtx()
 {
-	// 頂点情報へのポインタ
-	VERTEX_3D *pVtx;
+	// テクスチャ座標取得
+	std::vector<D3DXVECTOR2> vecUV = GetUV();
 
-	// 頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	D3DXVECTOR2 size = GetSize();
-	D3DXCOLOR col = GetColor();
-	MyLib::Vector3 rot = GetRotation();
-
-	// 頂点座標の設定
-	pVtx[0].pos.x = sinf(rot.z - D3DX_PI + m_fAngle) * m_fLength;
-	pVtx[0].pos.y = cosf(rot.z - m_fAngle) * m_fLength;
-	pVtx[0].pos.z = 0.0f;
-
-	pVtx[1].pos.x = sinf(rot.z + D3DX_PI - m_fAngle) * m_fLength;
-	pVtx[1].pos.y = cosf(rot.z + m_fAngle) * m_fLength;
-	pVtx[1].pos.z = 0.0f;
-
-	pVtx[2].pos.x = sinf(rot.z - m_fAngle) * m_fLength;
-	pVtx[2].pos.y = cosf(rot.z - D3DX_PI + m_fAngle) * m_fLength;
-	pVtx[2].pos.z = 0.0f;
-
-	pVtx[3].pos.x = sinf(rot.z + m_fAngle) * m_fLength;
-	pVtx[3].pos.y = cosf(rot.z + D3DX_PI - m_fAngle) * m_fLength;
-	pVtx[3].pos.z = 0.0f;
-
-	// 法線ベクトルの設定
-	pVtx[0].nor = MyLib::Vector3(0.0f, 1.0f, 0.0f);
-	pVtx[1].nor = MyLib::Vector3(0.0f, 1.0f, 0.0f);
-	pVtx[2].nor = MyLib::Vector3(0.0f, 1.0f, 0.0f);
-	pVtx[3].nor = MyLib::Vector3(0.0f, 1.0f, 0.0f);
-
-	// 頂点カラーの設定
-	pVtx[0].col = col;
-	pVtx[1].col = col;
-	pVtx[2].col = col;
-	pVtx[3].col = col;
-	
 	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(m_nPatternAnim * m_fSplitValueU,			(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV);
-	pVtx[1].tex = D3DXVECTOR2((m_nPatternAnim + 1) * m_fSplitValueU,	(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV);
-	pVtx[2].tex = D3DXVECTOR2(m_nPatternAnim * m_fSplitValueU,			(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV + m_fSplitValueV);
-	pVtx[3].tex = D3DXVECTOR2((m_nPatternAnim + 1) * m_fSplitValueU,	(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV + m_fSplitValueV);
+	vecUV[0] = D3DXVECTOR2(m_nPatternAnim * m_fSplitValueU,			(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV);
+	vecUV[1] = D3DXVECTOR2((m_nPatternAnim + 1) * m_fSplitValueU,	(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV);
+	vecUV[2] = D3DXVECTOR2(m_nPatternAnim * m_fSplitValueU,			(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV + m_fSplitValueV);
+	vecUV[3] = D3DXVECTOR2((m_nPatternAnim + 1) * m_fSplitValueU,	(m_nPatternAnim / m_nDivisionU) * m_fSplitValueV + m_fSplitValueV);
 
-	// 頂点バッファをアンロックロック
-	m_pVtxBuff->Unlock();
+	// テクスチャ座標設定
+	SetUV(vecUV);
+
+	// 頂点情報設定処理
+	SetVtx();
 }

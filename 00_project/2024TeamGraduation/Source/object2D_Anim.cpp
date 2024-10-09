@@ -34,36 +34,27 @@ CObject2D_Anim::~CObject2D_Anim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObject2D_Anim *CObject2D_Anim::Create(MyLib::Vector3 pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
+CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
 {
-	// 生成用のオブジェクト
-	CObject2D_Anim *pObject2D = nullptr;
+	// メモリの確保
+	CObject2D_Anim* pObject2D = DEBUG_NEW CObject2D_Anim;
 
-	if (pObject2D == nullptr)
-	{// nullptrだったら
+	if (pObject2D != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pObject2D = DEBUG_NEW CObject2D_Anim;
+		// 引数情報
+		pObject2D->SetPosition(pos);
+		pObject2D->SetOriginPosition(pos);
+		pObject2D->m_nDivisionU = nDivisionU;
+		pObject2D->m_nDivisionV = nDivisionV;
+		pObject2D->m_nIntervalAnim = nInterval;
+		pObject2D->m_bAutoDeath = bAutoDeath;
 
-		if (pObject2D != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 引数情報
-			pObject2D->SetPosition(pos);
-			pObject2D->SetOriginPosition(pos);
-			pObject2D->m_nDivisionU = nDivisionU;
-			pObject2D->m_nDivisionV = nDivisionV;
-			pObject2D->m_nIntervalAnim = nInterval;
-			pObject2D->m_bAutoDeath = bAutoDeath;
-
-			// 初期化処理
-			pObject2D->Init();
-		}
-
-		return pObject2D;
+		// 初期化処理
+		pObject2D->Init();
 	}
 
-	return nullptr;
+	return pObject2D;
 }
 
 //==========================================================================

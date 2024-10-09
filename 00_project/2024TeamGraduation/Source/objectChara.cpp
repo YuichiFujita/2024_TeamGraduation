@@ -24,7 +24,6 @@ CObjectChara::CObjectChara(int nPriority) : CObjectHierarchy(nPriority)
 	m_nLife = 0;			// 体力
 	m_nLifeOrigin = 0;		// 元の体力
 	m_nMotionStartIdx = 0;	// モーション開始のインデックス番号
-	m_nAddScore = 0;		// スコア加算量
 	m_bInDicision = false;	// 攻撃判定中フラグ
 }
 
@@ -102,9 +101,6 @@ void CObjectChara::BindObjectData(int nCntData)
 	// 体力
 	m_nLife = m_aLoadData[nCntData].nLife;
 	m_nLifeOrigin = m_nLife;
-
-	// スコア加算量
-	m_nAddScore = m_aLoadData[nCntData].nAddScore;
 
 	// モーションスタートのインデックス
 	m_nMotionStartIdx = m_aLoadData[nCntData].nMotionStartIdx;
@@ -337,14 +333,6 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 		m_nMotionStartIdx = m_aLoadData[m_nNumLoad].nMotionStartIdx;
 	}
 
-	if (file.find("SCORE") != std::string::npos)
-	{// SCORE
-
-		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].nAddScore);	// 体力
-		m_nAddScore = m_aLoadData[m_nNumLoad].nAddScore;
-	}
-
 }
 
 //==========================================================================
@@ -449,154 +437,14 @@ void CObjectChara::SaveSphereColliders()
 }
 
 //==========================================================================
-// スフィアコライダーの数取得
-//==========================================================================
-int CObjectChara::GetSphereColliderNum()
-{
-	return static_cast<int>(m_SphereColliders.size());
-}
-
-//==========================================================================
-// スフィアコライダー取得
-//==========================================================================
-std::vector<CObjectChara::SphereCollider> CObjectChara::GetSphereColliders()
-{ 
-	return m_SphereColliders; 
-}
-
-//==========================================================================
 // コライダー取得
 //==========================================================================
 CObjectChara::SphereCollider CObjectChara::GetNowSphereCollider(int nIdx)
 {
 	if (nIdx >= 0 && nIdx < static_cast<int>(m_SphereColliders.size()))
-	{
-#if 0
-		// 判定するパーツ取得
-		CModel* pModel = GetModel()[m_SphereColliders[nIdx].nParentPartsIdx];
-
-		// 判定するパーツのマトリックス取得
-		D3DXMATRIX mtxTrans;
-		D3DXMATRIX mtxWepon = pModel->GetWorldMtx();
-
-		// 位置を反映する
-		D3DXMatrixTranslation(&mtxTrans, m_SphereColliders[nIdx].offset.x, m_SphereColliders[nIdx].offset.y, m_SphereColliders[nIdx].offset.z);
-		D3DXMatrixMultiply(&mtxWepon, &mtxTrans, &mtxWepon);
-		m_SphereColliders[nIdx].center = UtilFunc::Transformation::WorldMtxChangeToPosition(mtxWepon);
-#endif
+	{// 範囲内
 		return m_SphereColliders[nIdx];
 	}
 	return SphereCollider();
 }
 
-//==========================================================================
-// 身長設定
-//==========================================================================
-void CObjectChara::SetHeight(const float fHeight)
-{
-	m_fHeight = fHeight;
-}
-
-//==========================================================================
-// 身長取得
-//==========================================================================
-float CObjectChara::GetHeight()
-{
-	return m_fHeight;
-}
-
-//==========================================================================
-// 移動速度設定
-//==========================================================================
-void CObjectChara::SetVelocity(const float fVelocity)
-{
-	m_fVelocity = fVelocity;
-}
-
-//==========================================================================
-// 移動速度設定
-//==========================================================================
-float CObjectChara::GetVelocity() const
-{
-	return m_fVelocity;
-}
-
-//==========================================================================
-// 目標の向き設定
-//==========================================================================
-void CObjectChara::SetRotDest(const float fRotDest)
-{
-	m_fRotDest = fRotDest;
-}
-
-//==========================================================================
-// 目標の向き設定
-//==========================================================================
-float CObjectChara::GetRotDest() const
-{
-	return m_fRotDest;
-}
-
-//==========================================================================
-// 体力設定
-//==========================================================================
-void CObjectChara::SetLife(const int nLife)
-{
-	m_nLife = nLife;
-}
-
-//==========================================================================
-// 体力取得
-//==========================================================================
-int CObjectChara::GetLife() const
-{
-	return m_nLife;
-}
-
-//==========================================================================
-// 元の体力設定
-//==========================================================================
-void CObjectChara::SetLifeOrigin(const int nLife)
-{
-	m_nLifeOrigin = nLife;
-}
-
-//==========================================================================
-// 元の体力取得
-//==========================================================================
-int CObjectChara::GetLifeOrigin() const
-{
-	return m_nLifeOrigin;
-}
-
-//==========================================================================
-// モーション開始のインデックス番号取得
-//==========================================================================
-int CObjectChara::GetMotionStartIdx() const
-{
-	return m_nMotionStartIdx;
-}
-
-//==========================================================================
-// スコア加算量取得
-//==========================================================================
-int CObjectChara::GetAddScoreValue() const
-{
-	return m_nAddScore;
-}
-
-//==========================================================================
-// モーションオブジェクト取得
-//==========================================================================
-CMotion* CObjectChara::GetMotion()
-{
-	return m_pMotion;
-}
-
-//==========================================================================
-// オブジェクトキャラクターオブジェクトの取得
-//==========================================================================
-CObjectChara* CObjectChara::GetObjectChara()
-{
-	return this;
-}
