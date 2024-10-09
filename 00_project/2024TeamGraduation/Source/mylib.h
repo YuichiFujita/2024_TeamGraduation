@@ -48,6 +48,7 @@ namespace MyLib
 		// 引数付きコンストラクタ
 		Vector3(const float xyz) : D3DXVECTOR3(xyz, xyz, xyz) {}
 		Vector3(float x, float y, float z) : D3DXVECTOR3(x, y, z) {}
+		Vector3(const D3DXVECTOR2& vec2) : D3DXVECTOR3(vec2.x, vec2.y, 0.0f) {}
 
 		// JSONからの読み込み
 		void from_json(const nlohmann::json& j)
@@ -421,6 +422,240 @@ namespace MyLib
 		{
 			std::stringstream text;
 			text << "(" << x << ", " << y << ", " << z << ")";
+			return text.str();
+		}
+	};
+
+	/*
+		@brief	Vector2 【2次元情報】
+	*/
+	struct Vector2 : public D3DXVECTOR2
+	{
+		using D3DXVECTOR2::D3DXVECTOR2;
+
+		// デフォルトコンストラクタ
+		Vector2() : D3DXVECTOR2(0.0f, 0.0f) {}
+
+		// 引数付きコンストラクタ
+		Vector2(const float xy) : D3DXVECTOR2(xy, xy) {}
+		Vector2(float x, float y) : D3DXVECTOR2(x, y) {}
+		Vector2(const D3DXVECTOR3& vec3) : D3DXVECTOR2(vec3.x, vec3.y) {}
+
+		//--------------------------
+		// 加算
+		//--------------------------
+		inline Vector2 operator + (const float& o) const
+		{
+			return Vector2(x + o, y + o);
+		}
+
+		inline Vector2 operator + (const Vector2& o) const
+		{
+			return Vector2(x + o.x, y + o.y);
+		}
+
+		//--------------------------
+		// 減算
+		//--------------------------
+		inline Vector2 operator - (const float& o) const
+		{
+			return Vector2(x - o, y - o);
+		}
+
+		inline Vector2 operator - () const
+		{
+			return Vector2(-x, -y);
+		}
+
+		inline Vector2 operator - (const Vector2& o) const
+		{
+			return Vector2(x - o.x, y - o.y);
+		}
+
+		//--------------------------
+		// 加算代入
+		//--------------------------
+		inline Vector2& operator += (const float& o)
+		{
+			x += o;
+			y += o;
+			return *this;
+		}
+
+		inline Vector2& operator += (const Vector2& o)
+		{
+			x += o.x;
+			y += o.y;
+			return *this;
+		}
+
+		//--------------------------
+		// 減算代入
+		//--------------------------
+		inline Vector2& operator -= (const float& o)
+		{
+			x -= o;
+			y -= o;
+			return *this;
+		}
+
+		inline Vector2& operator -= (const Vector2& o)
+		{
+			x -= o.x;
+			y -= o.y;
+			return *this;
+		}
+
+		/*
+			@brief	ベクトルの長さ
+			@return	求められた長さ
+		*/
+		inline float Length()
+		{
+			return sqrtf(x * x + y * y);
+		}
+
+		/*
+			@brief	ベクトルの長さの2乗
+			@return	求められた長さ
+		*/
+		inline float LengthSquared() const
+		{
+			return x * x + y * y;
+		}
+
+		/*
+			@brief	向き
+			@return	向き
+		*/
+		inline float Angle(const Vector2& v)
+		{
+			return atan2f(x - v.x, y - v.y);
+		}
+
+		/*
+			@brief	ベクトルの距離
+			@return	2つのベクトルの距離
+		*/
+		float Distance(const Vector2& v) const
+		{
+			return sqrtf((v.x - x) * (v.x - x) + (v.y - y) * (v.y - y));
+		}
+
+		/*
+			@brief	ベクトルの距離の2乗
+			@return	2つのベクトルの距離の2乗
+		*/
+		float DistSquared(const Vector2& v) const
+		{
+			return (v.x - x) * (v.x - x) + (v.y - y) * (v.y - y);
+		}
+
+		/*
+			@brief	単位ベクトル
+			@return	正規化されたベクトル
+		*/
+		inline Vector2 Normal()
+		{
+			Vector2 result;
+			D3DXVec2Normalize(&result, this);
+			return result;
+		}
+
+		/*
+			@brief	ベクトルを反転
+			@return	反転されたベクトル
+		*/
+		inline Vector2 Invert()
+		{
+			return Vector2(-x, -y);
+		}
+
+		/*
+			@brief	指定された許容誤差範囲内にあるか判定
+			@param	target	[in]	目標値
+			@param	range	[in]	許容範囲
+			@return	判定結果
+		*/
+		inline bool IsNearlyTargetX(float target, float range) const
+		{
+			if (abs(x) <= target + range &&
+				abs(x) >= target - range)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		/*
+			@brief	指定された許容誤差範囲内にあるか判定
+			@param	target	[in]	目標値
+			@param	range	[in]	許容範囲
+			@return	判定結果
+		*/
+		inline bool IsNearlyTargetY(float target, float range) const
+		{
+			if (abs(y) <= target + range &&
+				abs(y) >= target - range)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		/*
+			@brief	指定された許容誤差範囲内にあるか判定
+			@param	target	[in]	目標値
+			@param	range	[in]	許容範囲
+			@return	判定結果
+		*/
+		inline bool IsNearlyTarget(float target, float range) const
+		{
+			if (IsNearlyTargetX(target, range) &&
+				IsNearlyTargetY(target, range))
+			{
+				return true;
+			}
+			return false;
+		}
+
+		/*
+			@brief	指定された許容誤差範囲内にあるか判定
+			@param	range	[in]	許容範囲
+			@return	判定結果
+		*/
+		inline bool IsNearlyZero(float range) const
+		{
+			if (abs(x) <= range &&
+				abs(y) <= range)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		/*
+			@brief	要素がゼロか
+			@return	判定結果
+		*/
+		inline bool IsZero() const
+		{
+			if (x == 0.0f &&
+				y == 0.0f)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		/*
+			@brief	文字列変換
+			@return	(x, y, z)の形式で変換された文字列
+		*/
+		inline std::string ToString() const
+		{
+			std::stringstream text;
+			text << "(" << x << ", " << y << ")";
 			return text.str();
 		}
 	};

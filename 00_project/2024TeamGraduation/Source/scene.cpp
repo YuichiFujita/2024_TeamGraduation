@@ -24,12 +24,6 @@
 #include "tutorial.h"
 #include "ranking.h"
 
-// TODO
-#include "char2D.h"
-#include "string2D.h"
-#include "text2D.h"
-#include "timer.h"
-
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -130,32 +124,6 @@ CScene *CScene::Create(CScene::MODE mode)
 //==========================================================================
 HRESULT CScene::Init()
 {
-	// TODO
-#if 0
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'あ', SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 1.0f);
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'a',  SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 2.0f);
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'0',  SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 0.0f);
-#endif
-
-	// TODO
-#if 0
-	CString2D::Create("data\\FONT\\零ゴシック.otf", false, L"abcdefghijklmnopqrstuvwxyz", SCREEN_CENT, 60.0f, CString2D::XALIGN_RIGHT);
-#endif
-
-	// TODO
-#if 0
-	CText2D* p = CText2D::Create("data\\FONT\\零ゴシック.otf", false, SCREEN_CENT, 60.0f, 140.0f, CString2D::XALIGN_LEFT, CText2D::YALIGN_TOP);
-	p->AddString(L"abcdefghijklmnopqrstuvwxyz");
-	p->AddString(L"あいうえおかきくけこさしすせそ");
-	p->AddString(L"さん/ボボボーボ・ボーボボ");
-#endif
-
-	// TODO
-#if 0
-	CTimer::Create(0.0f, 120.0f);
-	CTimer::Create(120.0f, 120.0f);
-#endif
-
 	// エフェクト全て停止
 	CMyEffekseer::GetInstance()->StopAll();
 
