@@ -67,7 +67,7 @@ public:
 	virtual void BindTexture(int nIdx) = 0;	// テクスチャ割り当て
 	virtual void SetType(const CObject::TYPE type);
 
-	void SetNum(int num) { m_nNum = num; }	// 自分の数字設定
+	void SetNum(int num);	// 自分の数字設定
 	int GetNum() { return m_nNum; }			// 自分の数字取得
 
 	static CNumber* Create(EObjectType objtype, int nPriority);

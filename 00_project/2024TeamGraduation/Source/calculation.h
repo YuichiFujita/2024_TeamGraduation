@@ -3112,6 +3112,33 @@ namespace UtilFunc	// 便利関数
 		}
 
 		/**
+		@brief	数値を桁数ごとに分解する関数
+		@param	pNumDivide	[in]	分解結果の格納配列
+		@param	nNum		[in]	分解する数値
+		@param	nMaxDigit	[in]	分解する数字の桁数
+		*/
+		inline void DivideDigitNum(int *pNumDivide, const int nNum, const int nMaxDigit)
+		{
+			int nDigit = 1;	// 各桁の数値の計算用
+			for (int nCntDigit = 0; nCntDigit < nMaxDigit; nCntDigit++)
+			{ // 桁の最大数分繰り返す
+
+				// 桁数分乗算する
+				nDigit *= 10;
+			}
+
+			for (int nCntTex = nMaxDigit - 1; nCntTex >= 0; nCntTex--, pNumDivide++)
+			{ // 桁数の最大から桁数の最小まで繰り返す
+
+				// 桁数ごとの数値を求める
+				*pNumDivide = (nNum % nDigit) / (nDigit / 10);
+
+				// 除算して次の桁数に合わせる
+				nDigit /= 10;
+			}
+		}
+
+		/**
 		@brief	ワイド文字列からマルチバイト文字列に変換する関数
 		@param	wideStr		[in]	ワイド文字列
 		@return	マルチバイト文字列

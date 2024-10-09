@@ -89,6 +89,15 @@ void CTimer::Uninit(void)
 }
 
 //============================================================
+//	破棄処理
+//============================================================
+void CTimer::Release(void)
+{
+	// 自身の終了
+	CTimer::Uninit();
+}
+
+//============================================================
 //	更新処理
 //============================================================
 void CTimer::Update(const float fDeltaTime)
@@ -235,7 +244,7 @@ void CTimer::AddTime(const float fTime)
 	m_fTime += fTime;
 
 	// 時間を補正
-	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MIN, timer::TIME_MAX);
+	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
 }
 
 //============================================================
@@ -247,7 +256,7 @@ void CTimer::SetTime(const float fTime)
 	m_fTime = fTime;
 
 	// 時間を補正
-	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MIN, timer::TIME_MAX);
+	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
 }
 
 //============================================================
@@ -259,7 +268,7 @@ void CTimer::SetLimit(const float fLimit)
 	m_fLimit = fLimit;
 
 	// 制限時間を補正
-	UtilFunc::Transformation::ValueNormalize(m_fLimit, timer::TIME_MIN, timer::TIME_MAX);
+	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
 
 	if (m_fLimit <= 0.0f)
 	{ // 制限時間がない場合
@@ -285,6 +294,9 @@ void CTimer::CountUp(const float fDeltaTime)
 {
 	// デルタタイムを加算
 	m_fTime += fDeltaTime;
+
+	// 時間を補正
+	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
 }
 
 //============================================================
@@ -303,6 +315,9 @@ void CTimer::CountDown(const float fDeltaTime)
 		// 計測を終了
 		End();
 	}
+
+	// 時間を補正
+	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
 }
 
 //============================================================

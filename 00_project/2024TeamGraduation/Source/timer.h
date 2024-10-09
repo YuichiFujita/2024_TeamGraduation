@@ -50,6 +50,7 @@ public:
 	// オーバーライド関数
 	HRESULT Init(void) override;	// 初期化
 	void Uninit(void) override;		// 終了
+	void Release(void) override;	// 破棄
 	void Update(const float fDeltaTime) override;	// 更新
 	void Draw(void) override;		// 描画
 
@@ -77,9 +78,6 @@ public:
 	int GetMSec(void) const		{ return m_nMSec; }		// ミリ秒取得
 
 private:
-	// オーバーライド関数
-	void Release(void) override { CObject::Release(); }	// 破棄
-
 	// メンバ関数
 	void CountUp(const float fDeltaTime);	// カウントアップ
 	void CountDown(const float fDeltaTime);	// カウントダウン

@@ -69,7 +69,6 @@ CNumber* CNumber::Create(EObjectType objtype, int nPriority)
 //==========================================================================
 HRESULT CNumber::Init()
 {
-	
 	return S_OK;
 }
 
@@ -111,4 +110,27 @@ void CNumber::Draw()
 void CNumber::SetType(const CObject::TYPE type)
 {
 	CObject::SetType(type);
+}
+
+//==========================================================================
+// 自分の数字設定
+//==========================================================================
+void CNumber::SetNum(int num)
+{
+	// TODO:ほんとにこんなことして大丈夫？
+
+	float fWidthRate	= 1.0f / 10;		// 横の分割数の割合
+	float fHeightRate	= 1.0f / 1;			// 縦の分割数の割合
+	int nWidthCurrent	= num % 10;			// 現在の横のパターン
+	int nHeightCurrent	= (num / 10) % 1;	// 現在の縦のパターン
+
+	// テクスチャ座標の設定
+	D3DXVECTOR2 tex[4];
+	tex[0] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate *  nHeightCurrent);
+	tex[1] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate *  nHeightCurrent);
+	tex[2] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate * (nHeightCurrent + 1));
+	tex[3] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate * (nHeightCurrent + 1));
+
+	m_nNum = num;
+	SetTex(&tex[0]);
 }

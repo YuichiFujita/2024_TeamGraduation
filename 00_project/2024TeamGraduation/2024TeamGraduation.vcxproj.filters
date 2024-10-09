@@ -407,6 +407,12 @@
     <ClCompile Include="Source\timer.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\timerUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\timeUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -732,6 +738,12 @@
     </ClInclude>
     <ClInclude Include="Source\timer.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\timerUI.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\timeUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

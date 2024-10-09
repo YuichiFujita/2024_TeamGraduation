@@ -34,6 +34,9 @@ HRESULT CNumber2D::Init()
 	// ¶¬ˆ—
 	m_aObject2D = CObject2D::Create(GetPriority());
 
+	// í—Şİ’è
+	SetType(CObject::TYPE::TYPE_OBJECT2D);
+
 	return S_OK;
 }
 
