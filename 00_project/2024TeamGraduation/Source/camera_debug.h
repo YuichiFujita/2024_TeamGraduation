@@ -39,7 +39,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	MyLib::Vector3 m_move;	// 移動量
+	MyLib::Vector3 m_move;		// 移動量
+	MyLib::Vector3 m_moveRot;	// 回転移動量
 	CCamera* m_pCamera;		// カメラのポインタ
 };
 

@@ -28,7 +28,10 @@ class CObject
 {
 public:
 
+	//=============================
 	// 列挙型定義
+	//=============================
+	// 種類
 	enum TYPE
 	{
 		TYPE_NONE = 0,			// 無し
@@ -54,12 +57,12 @@ public:
 		TYPE_MAX
 	};
 
+	// レイヤー
 	enum LAYER
 	{
 		LAYER_TIMER = 0,
 		LAYER_MAP,
 		LAYER_LINE,
-		LAYER_LEAF,
 		LAYER_DEFAULT,
 		LAYER_2D,
 		LAYER_MAX
@@ -68,16 +71,31 @@ public:
 	CObject(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
 	virtual ~CObject();
 
-	// 派生クラスでオーバーライドされた関数が絶対必要(純粋仮想関数)
+	//--------------------------
+	// 純粋仮想関数
+	//--------------------------
 	virtual HRESULT Init() = 0;
 	virtual void Uninit() = 0;
 	virtual void Update(const float fDeltaTime) = 0;
 	virtual void Draw() = 0;
 
+	//--------------------------
+	// 仮想関数
+	//--------------------------
 	virtual void Release();	// 開放処理
-
-	// パラメータ設定
+	// TODO：ここにKill
 	virtual inline void SetVtx() { assert(false); }	// 頂点情報設定
+
+	//--------------------------
+	// 機能
+	//--------------------------
+	static void ReleaseAll();						// 全開放
+	static void UpdateAll(const float fDeltaTime);	// 全更新
+	static void DrawAll();							// 全描画
+
+	//--------------------------
+	// 共通するパラメータ
+	//--------------------------
 	virtual inline void SetPosition(const MyLib::Vector3& pos)			{ m_pos = pos; }		// 位置設定
 	virtual inline MyLib::Vector3 GetPosition() const					{ return m_pos; }		// 位置取得
 	virtual inline void SetOldPosition(const MyLib::Vector3& posOld)	{ m_posOld = posOld; }	// 過去の位置設定
@@ -92,48 +110,47 @@ public:
 	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
 	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
 	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// 元の向き取得
-	virtual inline void SetType(const TYPE type)						{ m_type = type; }		// 種類設定
-	virtual inline void SetEnableDisp(bool bDisp)						{ m_bDisp = bDisp; }	// 描画設定
 
 	// 変更処理
 	virtual inline void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算
 	virtual inline void AddMove(const MyLib::Vector3& move)		{ m_move += move; }	// 移動量加算
 	virtual inline void AddRotation(const MyLib::Vector3& rot)	{ m_rot += rot; }	// 向き加算
 
+	//--------------------------
 	// 描画・スクリーン関連
-	float ScreenZ() const;												// スクリーン座標
+	//--------------------------
+	inline int GetPriority() { return m_nPriority; }					// 優先順位取得
 	static bool ZSort(const CObject* obj1, const CObject* obj2);		// Zソートの比較関数
 	static bool ZSortInverse(const CObject *obj1, const CObject *obj2);	// 逆Zソートの比較関数
-	int GetPriority() { return m_nPriority; }							// 優先順位取得
+	virtual inline void SetEnableDisp(bool bDisp) { m_bDisp = bDisp; }	// 描画状況設定
 	bool IsDisp() { return m_bDisp; }									// 描画状況取得
 	void SetEnableHitstopMove() { m_bHitstopMove = true; }				// ヒットストップ中に動くフラグ有効
 
-	static void ReleaseAll();						// 全開放
-	static void UpdateAll(const float fDeltaTime);	// 全更新
-	static void DrawAll();							// 全描画
-	static const int GetNumAll() { return m_nNumAll; }
-	static const int GetNumPriorityAll(int nPriority) { return m_nNumPriorityAll[nPriority]; }
+	//--------------------------
+	// その他
+	//--------------------------
+	void SetEnableDeath(bool bDeath) { m_bDeath = bDeath; }				// 死亡フラグ設定
+	bool IsDeath() { return m_bDeath; }									// 死亡フラグ取得
+	TYPE GetType() const { return m_type; }								// 種類取得
+	virtual inline void SetType(const TYPE type) { m_type = type; }		// 種類設定
+	static const int GetNumAll() { return m_nNumAll; }					// 総数取得
 	static std::map<LAYER, std::map<int, std::vector<CObject*>>> GetTop() { return m_pObj; }	// 先頭取得
-
-	void SetEnableDeath(bool bDeath) { m_bDeath = bDeath; }
-	bool IsDeath();					// 死亡の判定
-	TYPE GetType() const;			// 種類取得
-
-protected:
-
 
 private:
 
 	//=============================
 	// メンバ関数
 	//=============================
-	static void DrawNone(const LAYER layer, int nPriority);	// 通常描画
+	static void DrawNone(const LAYER layer, int nPriority);		// 通常描画
 	static void DrawZSort(const LAYER layer, int nPriority);	// Zソート描画
+	float ScreenZ() const;										// スクリーンのZ座標取得
 
 	//=============================
 	// メンバ変数
 	//=============================
+	//--------------------------
 	// 共通するパラメータ
+	//--------------------------
 	MyLib::Vector3 m_pos;			// 位置
 	MyLib::Vector3 m_posOld;		// 前回の位置
 	MyLib::Vector3 m_posOrigin;		// 元の位置
@@ -142,19 +159,21 @@ private:
 	MyLib::Vector3 m_rotOrigin;		// 元の向き
 	MyLib::Vector3 m_move;			// 移動量
 
+	//--------------------------
 	// オブジェクト管理用
+	//--------------------------
 	int m_nPriority;		// 優先順位
 	LAYER m_Layer;			// レイヤー名
 	TYPE m_type;			// 種類
 	static std::map<LAYER, std::map<int, std::vector<CObject*>>> m_pObj;	// オブジェクト格納用
 
+	//--------------------------
 	// その他
+	//--------------------------
 	bool m_bDeath;				// 死亡フラグ
 	bool m_bDisp;				// 描画フラグ
-	int m_nNumEffectParent;		// エフェクトの親設定した数
 	bool m_bHitstopMove;		// ヒットストップ時に動くかのフラグ
 	static int m_nNumAll;		// オブジェクトの総数
-	static int m_nNumPriorityAll[mylib_const::PRIORITY_NUM];
 
 };
 

@@ -165,15 +165,8 @@ void CLoadManager::LoadInBackground()
 	// ロードが再び始まるのでフラグをリセット
 	m_bLoadComplete = false;
 
-	try
-	{
-		// 読み込み処理
-		Load();
-	}
-	catch (const std::exception& e)
-	{// 例外
-		return;
-	}
+	// 読み込み処理
+	Load();
 
 	if (m_LoadingThread.joinable())
 	{

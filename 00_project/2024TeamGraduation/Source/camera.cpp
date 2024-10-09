@@ -23,59 +23,26 @@
 #include "camera_debug.h"
 
 //==========================================================================
-// マクロ定義
+// 定数定義
 //==========================================================================
-#define MOVE			(2.5f)				// 移動量
-#define MAX_LENGTH		(50000.0f)			// 最大距離
-#define MIN_LENGTH		(10.0f)				// 最少距離
-#define START_CAMERALEN	(1700.0f)			// 元の距離
-#define ROT_MOVE_MOUSE	(0.01f)				// 回転移動量
-#define ROT_MOVE		(0.025f)			// 回転移動量
-#define MIN_STICKROT			(-D3DX_PI * 0.25f)	// カメラ固定用
-#define MIN_ROT			(-D3DX_PI * 0.49f)	// カメラ固定用
-#define MAX_ROT			(D3DX_PI * 0.49f)	// カメラ固定用
-#define BACKFOLLOW_TIME	(20)				// 背面補正までの時間
-#define TITLESTATE_CHANGE	(60 * 14)
-#define TITLESTATE_CHASE	(60 * 20)
-#define RESULT_LEN	(500.0f)
-//#define RESULT_LEN	(1000.0f)
-#define DECIDECAMERAROT_NONE		(MyLib::Vector3(0.0f, 0.0f, 0.0f))
-#define DECIDECAMERAPOS_NONE		(MyLib::Vector3(0.0f, 230.0f, -50.0f))
-#define DECIDE_LEN	(500.0f)
-
-
 namespace
 {
 	const MyLib::Vector3 TITLE_POSR_DEST = MyLib::Vector3(45271.0f, -34.0f, 591.0f);
 	const MyLib::Vector3 RANKING_POSR_DEST = MyLib::Vector3(625.34f, 503.34f, 2667.39f);	// ランキングの注視点
-	//const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.0f, -0.10f);	// ゲームのデフォルト向き
 	const MyLib::Vector3 DEFAULT_TITLEROT = MyLib::Vector3(0.0f, 0.67f, -0.08f);	// タイトルのデフォルト向き
+	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.38f, -0.05f);		// ゲームのデフォルト向き
 	const MyLib::Vector3 DEFAULT_RESULTROT = MyLib::Vector3(0.0f, 0.0f, -0.15f);	// リザルトのデフォルト向き
 	const MyLib::Vector3 DEFAULT_RANKINGROT = MyLib::Vector3(0.0f, 0.0f, -0.05f);	// ランキングのデフォルト向き
-	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.38f, -0.05f);	// ゲームのデフォルト向き
 	const float DEFAULT_TITLELEN = 1265.0f;		// タイトルのデフォルト長さ
 	const float DEFAULT_RANKINGLEN = 1540.0f;	// ランキングのデフォルト長さ
-	const float MULTIPLY_POSV_CORRECTION = 2.1f;	// (ゲーム時)視点の補正係数倍率
-	const float MULTIPLY_POSR_CORRECTION = 2.1f;	// (ゲーム時)注視点の補正係数倍率
-	const float DISATNCE_POSR_PLAYER = 0.0f;		// (ゲーム時)プレイヤーとの注視点距離
-	const float MIN_ROCKONDISTANCE = 1.0f;
-	const float ROTDISTANCE_ROCKON = D3DX_PI * 0.095f;	// ロックオン向きのズレ
-	const MyLib::Vector3 ROTDISTANCE_COUNTER = MyLib::Vector3(0.0f, D3DX_PI * 0.5f, -D3DX_PI * 0.05f);	// 反撃時の向きズレ
-	const float LENGTH_COUNTER = 400.0f;					// カウンター時のカメラ長さ
-	const MyLib::Vector3 ROTATION_PRAYER = MyLib::Vector3(0.0f, -0.89f, 0.06f);	// 祈り時の向き
-	const float UPDISTANCE_MULTIPLY = (0.25f);
-	const float NOTUPDISTANCE_MULTIPLY = (0.05f);
-	const float MIN_DISNTANCE = (1500.0f);
-	const float DISTANCE_TIMER = (1.0f / 120.0f);
-	const float MAX_AUTODISTANCEHEIGHT = 600.0f;	// 自動高さ制御の最大値
-	const MyLib::Vector3 GOAL_ROT = MyLib::Vector3(0.0f, D3DX_PI * 0.3f, 0.06f);	// 祈り時の向き
-	const float GOAL_MULTI = (0.03f);
-	const float GOAL_LEN = (500.0f);
-	const float MOVE_WASD = 10.0f;
+	const float MIN_DISNTANCE = 1500.0f;		// 最少距離
 
+	const float MULTIPLY_CHASE_POSR = 1.5f;		// 注視点追従の倍率
+	const float MULTIPLY_CHASE_POSV = 1.5f;		// 注視点追従の倍率
 
-	const float  ROT_MOVE_STICK_Y = 0.00040f;	// 回転移動量
-	const float  ROT_MOVE_STICK_Z = 0.00020f;	// 回転移動量
+	const float MIN_STICKROT = -D3DX_PI * 0.25f;	// カメラ固定用
+	const float ROT_MOVE_STICK_Y = 0.00040f;	// 回転移動量
+	const float ROT_MOVE_STICK_Z = 0.00020f;	// 回転移動量
 }
 
 //==========================================================================
@@ -325,7 +292,7 @@ void CCamera::ReflectCameraV()
 		m_posVDest.y = m_posR.y + sinf(m_rot.z) * -m_fDistance;
 
 		// 補正する
-		m_posV += (m_posVDest - m_posV) * 0.15f;
+		m_posV += (m_posVDest - m_posV) * MULTIPLY_CHASE_POSV;
 	}
 }
 
@@ -349,7 +316,7 @@ void CCamera::ReflectCameraR()
 	{// 追従ON
 
 		// 補正する
-		m_posR += (m_posRDest - m_posR) * (0.08f * MULTIPLY_POSR_CORRECTION);
+		m_posR += (m_posRDest - m_posR) * MULTIPLY_CHASE_POSR;
 	}
 
 }
@@ -562,9 +529,9 @@ void CCamera::ResetGame()
 	m_rotOrigin = m_rot;									// 元の向き
 	m_rotDest = DEFAULT_GAMEROT;							// 目標の向き
 	m_TargetPos = MyLib::Vector3(0.0f, 0.0f, 0.0f);			// 目標の位置
-	m_fDistance = START_CAMERALEN;							// 距離
-	m_fDestDistance = START_CAMERALEN;						// 目標の距離
-	m_fOriginDistance = START_CAMERALEN;					// 元の距離
+	m_fDistance = MIN_DISNTANCE;							// 距離
+	m_fDestDistance = MIN_DISNTANCE;						// 目標の距離
+	m_fOriginDistance = MIN_DISNTANCE;						// 元の距離
 	m_state = CAMERASTATE_NONE;								// 状態
 	m_nCntState = 0;							// 状態カウンター
 }

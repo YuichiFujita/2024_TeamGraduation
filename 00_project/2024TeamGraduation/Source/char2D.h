@@ -35,7 +35,7 @@ public:
 	void Release(void) override;	// 破棄
 	void Update(const float fDeltaTime) override;	// 更新
 	void Draw(void) override;						// 描画
-	void SetSize(const D3DXVECTOR2 size) override;	// サイズの設定
+	void SetSize(const D3DXVECTOR2& size) override;	// サイズの設定
 
 	// 静的メンバ関数
 	static CChar2D *Create	// 生成

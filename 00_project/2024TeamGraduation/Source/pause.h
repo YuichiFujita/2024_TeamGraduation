@@ -8,7 +8,6 @@
 #ifndef _PAUSE_H_
 #define _PAUSE_H_	// 二重インクルード防止
 
-#include "main.h"
 #include "object2D.h"
 #include "manager.h"
 
@@ -29,9 +28,9 @@ public:
 	virtual void Update(const float fDeltaTime);
 	virtual void Draw();
 
-	void Kill();	// 削除
-	void SetPause();	// 使用状況変更
-	bool IsPause();		// 使用状況取得
+	void Kill();		// 削除
+	void SetPause(bool bPause) { m_bPause = bPause; }	// 使用状況変更
+	bool IsPause() { return m_bPause; }					// 使用状況取得
 
 	static CPause *Create(CScene::MODE mode);	// 生成
 

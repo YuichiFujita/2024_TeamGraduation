@@ -43,13 +43,13 @@ public:
 	MyLib::Vector3 GetRotation() const override;		// 向き取得
 
 	void SetColor(const D3DXCOLOR col) override;			// 色設定
-	D3DXCOLOR GetColor() const override;				// 色取得
-	void SetSize(const D3DXVECTOR2 size) override;		// サイズの設定
-	D3DXVECTOR2 GetSize() const override;			// サイズの取得
+	D3DXCOLOR GetColor() const override;					// 色取得
+	void SetSize(const D3DXVECTOR2 size) override;			// サイズの設定
+	D3DXVECTOR2 GetSize() const override;					// サイズの取得
 	void SetSizeOrigin(const D3DXVECTOR2 size) override;	// 元のサイズの設定
-	D3DXVECTOR2 GetSizeOrigin() const override;		// 元のサイズの取得
-	void SetTex(D3DXVECTOR2 *tex) override;				// テクスチャ座標の設定
-	D3DXVECTOR2 *GetTex() override;					// テクスチャ座標の取得
+	D3DXVECTOR2 GetSizeOrigin() const override;				// 元のサイズの取得
+	void SetTex(D3DXVECTOR2 *tex) override;					// テクスチャ座標の設定
+	D3DXVECTOR2 *GetTex() override;							// テクスチャ座標の取得
 
 	void SetVtx() override;
 	void BindTexture(int nIdx) override;

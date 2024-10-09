@@ -67,19 +67,25 @@ public:
 	void Uninit();
 	void Update();
 
+	//--------------------------
 	// ボタン系
+	//--------------------------
 	bool GetPress(BUTTON nKey, int nCntPlayer);
 	bool GetTrigger(BUTTON nKey, int nCntPlayer);
 	bool GetRepeat(BUTTON nKey, int nCntPlayer);
 	bool GetRelease(int nKey, int nCntPlayer);
 
+	//--------------------------
 	// トリガー系
+	//--------------------------
 	bool GetPressLT(int nCntPlayer);	// LTのプレス判定
 	bool GetPressRT(int nCntPlayer);	// RTのプレス判定
 	bool GetTriggerLT(int nCntPlayer);	// LTのトリガー判定
 	bool GetTriggerRT(int nCntPlayer);	// RTのトリガー判定
 
+	//--------------------------
 	// スティック系
+	//--------------------------
 	bool GetLStickTrigger(STICK XY);	// スティックのトリガー判定
 	bool GetRStickTrigger(STICK XY);	// スティックのトリガー判定
 	MyLib::Vector3 GetStickMoveL(int nCntPlayer);
@@ -92,7 +98,9 @@ public:
 	float GetVibMulti() { return m_fVibrationMulti; }
 	void SetVibMulti(float fMulti) { m_fVibrationMulti = fMulti; }
 
+	//--------------------------
 	// バイブレーション系
+	//--------------------------
 	void SetEnableVibration(bool bUse) { m_bVibrationUse = bUse; }	// バイブの使用状況切り替え
 	bool IsEnableVibration() { return m_bVibrationUse; }			// バイブの使用状況取得
 	void SetVibration(VIBRATION_STATE VibState, int nCntPlayer);
@@ -122,6 +130,9 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	//--------------------------
+	// 
+	//--------------------------
 	XINPUT_STATE m_aGamepadState[mylib_const::MAX_PLAYER];				// プレス情報
 	XINPUT_STATE m_aGamepadStateTrigger[mylib_const::MAX_PLAYER];		// トリガー情報
 	XINPUT_STATE m_aGamepadStateRepeat[mylib_const::MAX_PLAYER];		// リピート情報
@@ -133,11 +144,15 @@ private:
 	int m_nMaxCntVibration[mylib_const::MAX_PLAYER];					// 振動の時間
 	int m_nCntPadrepeat;									// リピート用カウント
 
+	//--------------------------
 	// トリガー
+	//--------------------------
 	sTrigger m_StateLT[mylib_const::MAX_PLAYER];	// LTの判定
 	sTrigger m_StateRT[mylib_const::MAX_PLAYER];	// RTの判定
 
+	//--------------------------
 	// スティック
+	//--------------------------
 	bool m_bLeftStickSelect[STICK_MAX];						// 左スティックの選択判定
 	bool m_bLeftStickTrigger[STICK_MAX];					// 左スティックのトリガー判定
 	bool m_bRightStickSelect[STICK_MAX];					// 右スティックの選択判定

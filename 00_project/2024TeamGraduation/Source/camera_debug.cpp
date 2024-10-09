@@ -10,10 +10,13 @@
 #include "input.h"
 #include "calculation.h"
 
+//==========================================================================
+// 定数定義
+//==========================================================================
 namespace
 {
 	const float MOVE_SLIDEMOUSE = 2.5f;			// マウスのスライド移動量
-	const float MOVE_ROTATIONMOUSE = 0.01f;		// マウスの回転移動量
+	const float MOVE_ROTATIONMOUSE = 0.005f;		// マウスの回転移動量
 	const float MOVE_WASD = 10.0f;				// WASDの移動量
 	const float MOVE_DISTANCE = 5.0f;			// 距離の移動量
 	const float  MIN_ROT = -D3DX_PI * 0.49f;	// カメラ固定用
@@ -64,18 +67,30 @@ void CCamera_Debug::Update()
 		pMouse->GetPress(CInputMouse::BUTTON_LEFT))
 	{// 左クリックしてるとき,視点回転
 
-		rot.y += pMouse->GetMouseMove().x * MOVE_ROTATIONMOUSE;
-		rot.z += pMouse->GetMouseMove().y * MOVE_ROTATIONMOUSE;
+		m_moveRot.y += pMouse->GetMouseMove().x * MOVE_ROTATIONMOUSE;
+		m_moveRot.z += pMouse->GetMouseMove().y * MOVE_ROTATIONMOUSE;
 
 		// 角度の正規化
 		UtilFunc::Transformation::RotNormalize(rot);
 
 		// 値の正規化
 		UtilFunc::Transformation::ValueNormalize(rot.z, MAX_ROT, MIN_ROT);
-
-		// 向き設定
-		m_pCamera->SetRotation(rot);
 	}
+
+	// 移動量分を加算
+	rot += m_moveRot;
+
+	// 向き設定
+	m_pCamera->SetRotation(rot);
+
+	// 移動量をリセット
+	m_moveRot += (MyLib::Vector3() - m_moveRot) * 0.6f;
+
+	// WASDの更新
+	UpdateWASD();
+
+	// 距離の更新
+	UpdateDistance();
 }
 
 //==========================================================================
@@ -155,6 +170,7 @@ void CCamera_Debug::UpdateWASD()
 
 	// 注視点設定
 	m_pCamera->SetPositionR(posR);
+	m_pCamera->SetPositionRDest(posR);
 }
 
 //==========================================================================
@@ -181,4 +197,5 @@ void CCamera_Debug::UpdateDistance()
 	m_pCamera->SetDistance(distance);
 	m_pCamera->SetDistanceDest(destDistance);
 	m_pCamera->SetOriginDistance(originDistance);
+	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
 }

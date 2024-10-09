@@ -6,17 +6,13 @@
 //=============================================================================
 #include "object.h"
 #include "manager.h"
-#include "3D_effect.h"
 #include "camera.h"
 #include "MyEffekseer.h"
-#include "fog.h"
-#include "game.h"
 
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
 int CObject::m_nNumAll = 0;	// 総数
-int CObject::m_nNumPriorityAll[mylib_const::PRIORITY_NUM] = {};
 std::map<CObject::LAYER, std::map<int, std::vector<CObject*>>> CObject::m_pObj = {};	// オブジェクト格納用
 
 //==========================================================================
@@ -40,10 +36,8 @@ CObject::CObject(int nPriority, const LAYER layer)
 	m_type = TYPE_NONE;			// 種類
 	m_bDeath = false;			// 死亡フラグ
 	m_bDisp = true;				// 描画フラグ
-	m_nNumEffectParent = 0;		// エフェクトの親設定した数
 	m_bHitstopMove = false;		// ヒットストップ時に動くかのフラグ
 	m_nNumAll++;				// 総数加算
-	m_nNumPriorityAll[nPriority]++;
 
 	// オブジェクト格納
 	m_pObj[layer][nPriority].emplace_back();
@@ -105,7 +99,9 @@ void CObject::ReleaseAll()
 		}
 	}
 
-
+	//*******************************
+	// 死亡処理
+	//*******************************
 	for (auto& layer : objectsToRemove)
 	{
 		for (auto& priority : layer.second)
@@ -302,20 +298,4 @@ void CObject::Release()
 {
 	// 死亡フラグを立てる
 	m_bDeath = true;
-}
-
-//==========================================================================
-// 種類の取得
-//==========================================================================
-CObject::TYPE CObject::GetType() const
-{
-	return m_type;
-}
-
-//==========================================================================
-// 死亡の判定
-//==========================================================================
-bool CObject::IsDeath()
-{
-	return m_bDeath;
 }

@@ -464,18 +464,11 @@ void CManager::Reset(CScene::MODE mode)
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
 
-	// マップ
-	//MyMap::Release();
-
 	// ポーズ状況入れ替え
 	if (m_pPause != nullptr)
 	{
+		// 種類切り替え
 		ChangePauseMode(mode);
-
-		if (m_pPause->IsPause())
-		{// ポーズ中だったら
-			m_pPause->SetPause();
-		}
 	}
 
 	// カメラの情報リセット
@@ -776,21 +769,17 @@ void CManager::Update()
 	}
 
 	if (m_bLoadComplete)
-	{
+	{// ロード完了
 
 		// 入力機器の更新処理
 		m_pInput->Update();
 
-		if ((pInputKeyboard->GetTrigger(DIK_P) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_START, 0)) &&
-			m_pFade->GetState() == CFade::STATE_NONE &&
-			(GetMode() == CScene::MODE_GAME || GetMode() == CScene::MODE::MODE_GAMETUTORIAL))
-		{// フェード中じゃないとき
-
-			m_pPause->SetPause();
-		}
-
 		if (m_pPause != nullptr)
 		{
+			// ポーズの更新
+			m_pPause->Update(m_fDeltaTime);
+
+
 			// ポーズ状況取得
 			bool bPause = m_pPause->IsPause();
 			CCameraMotion* pCamMotion = m_pCamera->GetCameraMotion();
@@ -803,7 +792,6 @@ void CManager::Update()
 			// ポーズの更新処理
 			if (bPause)
 			{// ポーズ中だったら
-				m_pPause->Update(m_fDeltaTime);
 
 				if (!GetLoadManager()->IsLoadComplete())
 				{
@@ -812,7 +800,6 @@ void CManager::Update()
 
 				// カメラの更新処理
 				m_pCamera->Update(m_fDeltaTime);
-
 				return;
 			}
 		}
