@@ -49,13 +49,15 @@ public:
 		TYPE_MESHDONUTS,		// メッシュドーナツ
 		TYPE_MESHSPHERE,		// メッシュスフィア
 		TYPE_NUMBER,			// 数字
+		TYPE_TIMER,				// タイマー
 		TYPE_UI,				// UI
 		TYPE_MAX
 	};
 
 	enum LAYER
 	{
-		LAYER_MAP = 0,
+		LAYER_TIMER = 0,
+		LAYER_MAP,
 		LAYER_LINE,
 		LAYER_LEAF,
 		LAYER_DEFAULT,

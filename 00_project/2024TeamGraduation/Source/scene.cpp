@@ -28,6 +28,7 @@
 #include "char2D.h"
 #include "string2D.h"
 #include "text2D.h"
+#include "timer.h"
 
 //==========================================================================
 // 定数定義
@@ -137,7 +138,7 @@ HRESULT CScene::Init()
 #endif
 
 	// TODO
-#if 1
+#if 0
 	CString2D::Create("data\\FONT\\零ゴシック.otf", false, L"abcdefghijklmnopqrstuvwxyz", SCREEN_CENT, 60.0f, CString2D::XALIGN_RIGHT);
 #endif
 
@@ -147,6 +148,12 @@ HRESULT CScene::Init()
 	p->AddString(L"abcdefghijklmnopqrstuvwxyz");
 	p->AddString(L"あいうえおかきくけこさしすせそ");
 	p->AddString(L"さん/ボボボーボ・ボーボボ");
+#endif
+
+	// TODO
+#if 0
+	CTimer::Create(0.0f, 120.0f);
+	CTimer::Create(120.0f, 120.0f);
 #endif
 
 	// エフェクト全て停止
