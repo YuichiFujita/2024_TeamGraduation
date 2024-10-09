@@ -261,6 +261,7 @@
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\text2D.cpp" />
     <ClCompile Include="Source\texture.cpp" />
+    <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\title.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
@@ -370,6 +371,7 @@
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\text2D.h" />
     <ClInclude Include="Source\texture.h" />
+    <ClInclude Include="Source\timer.h" />
     <ClInclude Include="Source\title.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
