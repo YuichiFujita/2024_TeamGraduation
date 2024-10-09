@@ -85,7 +85,7 @@ void CTimer::Uninit(void)
 	m_list.Delete(this);
 
 	// オブジェクトを破棄
-	Release();
+	CObject::Release();
 }
 
 //============================================================
