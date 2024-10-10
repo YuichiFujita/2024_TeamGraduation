@@ -33,7 +33,7 @@ public:
 	HRESULT Init(void) override;	// 初期化
 	void Uninit(void) override;		// 終了
 	void Release(void) override;	// 破棄
-	void Update(const float fDeltaTime) override;	// 更新
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw(void) override;						// 描画
 	void SetTime(const float fTime) override;		// 時間設定
 	float GetTime(void) const override	{ return m_pTimer->GetTime(); }	// 時間取得

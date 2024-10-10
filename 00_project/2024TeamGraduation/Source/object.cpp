@@ -120,7 +120,7 @@ void CObject::ReleaseAll()
 //==========================================================================
 // 全てのオブジェクトの更新処理
 //==========================================================================
-void CObject::UpdateAll(const float fDeltaTime)
+void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 削除する要素
 	std::map<LAYER, std::map<int, std::vector<CObject*>>> objectsToRemove;
@@ -139,7 +139,7 @@ void CObject::UpdateAll(const float fDeltaTime)
 				{// タイプがNONE以外
 
 					// 更新処理
-					pObj->Update(fDeltaTime);
+					pObj->Update(fDeltaTime, fDeltaRate, fSlowRate);
 				}
 
 				if (pObj->m_bDeath)
@@ -197,7 +197,8 @@ void CObject::DrawAll()
 				CMyEffekseer* pEffekseer = CMyEffekseer::GetInstance();
 				if (pEffekseer != nullptr)
 				{
-					pEffekseer->Update(GET_MANAGER->GetDeltaTime());
+					CManager* pManager = GET_MANAGER;
+					pEffekseer->Update(pManager->GetDeltaTime(), pManager->GetDeltaRate(), pManager->GetSlowRate());
 					bEfkDraw = true;
 				}
 			}
@@ -210,7 +211,8 @@ void CObject::DrawAll()
 		CMyEffekseer* pEffekseer = CMyEffekseer::GetInstance();
 		if (pEffekseer != nullptr)
 		{
-			pEffekseer->Update(GET_MANAGER->GetDeltaTime());
+			CManager* pManager = GET_MANAGER;
+			pEffekseer->Update(pManager->GetDeltaTime(), pManager->GetDeltaRate(), pManager->GetSlowRate());
 		}
 	}
 }

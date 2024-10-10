@@ -9,12 +9,13 @@
 #include "texture.h"
 #include "manager.h"
 #include "calculation.h"
+#include "debugproc.h"
 
 //==========================================================================
 // マクロ定義
 //==========================================================================
 #define DEF_RADIUS			(20.0f)
-#define EFFECT_3D_LIFE		(30)
+#define EFFECT_3D_LIFE		(0.5f)
 #define EFFECT_3DSIZE1		(0.97f)
 #define EFFECT_3DSIZE2		(0.98f)
 #define EFFECT_3DSIZE3		(0.99f)
@@ -55,8 +56,8 @@ CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 	m_fAddSizeValue = 0.0f;						// サイズ変更量
 	m_fGravity = 0.0f;							// 重力
 	m_fMoveFactor = 0.0f;						// 移動補正係数
-	m_nLife = 0;								// 寿命
-	m_nMaxLife = 0;								// 最大寿命(固定)
+	m_fLife = 0.0f;								// 寿命
+	m_fMaxLife = 0.0f;							// 最大寿命(固定)
 	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
 	m_nType = TYPE_NORMAL;						// 種類
 	m_bAddAlpha = true;							// 加算合成の判定
@@ -118,7 +119,7 @@ CEffect3D *CEffect3D::Create()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CEffect3D* CEffect3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const int nLife, const int moveType, const TYPE type, const float fAddSizeValue)
+CEffect3D* CEffect3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const float fLife, const int moveType, const TYPE type, const float fAddSizeValue)
 {
 	// メモリの確保
 	CEffect3D* pEffect = DEBUG_NEW CEffect3D;
@@ -128,7 +129,7 @@ CEffect3D* CEffect3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& mo
 
 		// 初期化処理
 		pEffect->m_fAddSizeValue = fAddSizeValue;	// サイズ変更量
-		HRESULT hr = pEffect->Init(pos, move, col, fRadius, nLife, moveType, type);
+		HRESULT hr = pEffect->Init(pos, move, col, fRadius,fLife, moveType, type);
 		if (FAILED(hr))
 		{
 			return nullptr;
@@ -146,17 +147,17 @@ HRESULT CEffect3D::Init()
 	HRESULT hr;
 
 	// 各種変数の初期化
-	m_posOrigin = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// 原点
+	m_posOrigin = MyLib::Vector3(0.0f, 0.0f, 0.0f);			// 原点
 	m_updatePosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 更新後の位置
-	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// セットアップ位置
-	m_colOrigin = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色の元
-	m_fRadius = DEF_RADIUS;						// 半径
-	m_fMaxRadius = m_fRadius;					// 最大半径
-	m_nLife = EFFECT_3D_LIFE;					// 寿命
-	m_nMaxLife = m_nLife;						// 最大寿命(固定)
-	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
-	m_nType = TYPE_NORMAL;						// 種類
-	m_bAddAlpha = true;							// 加算合成の判定
+	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// セットアップ位置
+	m_colOrigin = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);		// 色の元
+	m_fRadius = DEF_RADIUS;				// 半径
+	m_fMaxRadius = m_fRadius;			// 最大半径
+	m_fLife = EFFECT_3D_LIFE;			// 寿命
+	m_fMaxLife = m_fLife;				// 最大寿命(固定)
+	m_moveType = MOVEEFFECT_NONE;		// 移動の種類
+	m_nType = TYPE_NORMAL;				// 種類
+	m_bAddAlpha = true;					// 加算合成の判定
 	m_fGravity = mylib_const::GRAVITY;
 
 	// 種類の設定
@@ -178,25 +179,25 @@ HRESULT CEffect3D::Init()
 //==========================================================================
 // エフェクトの初期化処理
 //==========================================================================
-HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const int nLife, const int moveType, const TYPE type)
+HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const float fLife, const int moveType, const TYPE type)
 {
 	HRESULT hr;
 
 	// 各種変数の初期化
-	m_posOrigin = pos;							// 原点
+	m_posOrigin = pos;	// 原点
 	m_updatePosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 更新後の位置
-	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// セットアップ位置
-	SetPosition(pos);							// 位置
-	SetMove(move);								// 移動量
-	m_colOrigin = col;							// 色の元
-	SetColor(col);								// 色
-	m_fRadius = fRadius;						// 半径
-	m_fMaxRadius = m_fRadius;					// 最大半径
-	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));	// サイズ設定
-	m_nLife = nLife;							// 寿命
-	m_nMaxLife = m_nLife;						// 最大寿命(固定)
-	m_moveType = moveType;						// 移動の種類
-	m_nType = type;								// 種類
+	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// セットアップ位置
+	SetPosition(pos);								// 位置
+	SetMove(move * GET_MANAGER->GetDeltaTime());	// 移動量
+	m_colOrigin = col;								// 色の元
+	SetColor(col);									// 色
+	m_fRadius = fRadius;							// 半径
+	m_fMaxRadius = m_fRadius;						// 最大半径
+	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));		// サイズ設定
+	m_fLife = fLife;								// 寿命
+	m_fMaxLife = m_fLife;							// 最大寿命(固定)
+	m_moveType = moveType;							// 移動の種類
+	m_nType = type;									// 種類
 
 	if (m_nType >= TYPE_MAX)
 	{
@@ -292,30 +293,30 @@ void CEffect3D::Uninit()
 //==========================================================================
 // エフェクトの更新処理
 //==========================================================================
-void CEffect3D::Update(const float fDeltaTime)
+void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 過去の位置設定
 	SetOldPosition(GetPosition());
 
 	// 移動処理
-	UpdateMove();
+	UpdateMove(fDeltaTime, fDeltaRate, fSlowRate);
 
 	switch (m_moveType)
 	{
 	case MOVEEFFECT_ADD:
-		AddSize();
+		AddSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_SUB:
-		SubSize();
+		SubSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_SUPERSUB:
-		SuperSubSize();
+		SuperSubSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_GENSUI:
-		Gensui();
+		Gensui(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 	}
 
@@ -323,18 +324,18 @@ void CEffect3D::Update(const float fDeltaTime)
 	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));
 
 	// 寿命の更新
-	m_nLife--;
+	m_fLife -= fDeltaTime;
 
 	// 色取得
 	D3DXCOLOR col = GetColor();
 
 	// 不透明度の更新
-	col.a = m_colOrigin.a * ((float)m_nLife / (float)m_nMaxLife);
+	col.a = m_colOrigin.a * (m_fLife / m_fMaxLife);
 
 	// 色設定
 	SetColor(col);
 
-	if (m_nLife <= 0)
+	if (m_fLife <= 0.0f)
 	{// 寿命が尽きたら
 
 		// エフェクトの削除
@@ -350,7 +351,7 @@ void CEffect3D::Update(const float fDeltaTime)
 //==========================================================================
 // 移動処理
 //==========================================================================
-void CEffect3D::UpdateMove()
+void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -362,19 +363,22 @@ void CEffect3D::UpdateMove()
 	// 位置更新
 	if (m_bGravity)
 	{
-		move.y -= m_fGravity;
+		move.y -= m_fGravity * fDeltaTime;
 	}
 
 	// 補正別処理
 	if (m_bChaseDest == false)
 	{
+		// TODO：明らかに挙動が変
+		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", move.y);
+		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", pos.y);
 		m_updatePosition += move;
 		pos = m_posOrigin + m_updatePosition;
 	}
 	else
 	{
 		// 等速線形補間
-		float fRatio = 1.0f - ((float)m_nLife / (float)m_nMaxLife);
+		float fRatio = 1.0f - (m_fLife / m_fMaxLife);
 		pos.x = UtilFunc::Correction::EasingLinear(m_posOrigin.x, m_posDest.x, fRatio);
 		pos.y = UtilFunc::Correction::EasingLinear(m_posOrigin.y, m_posDest.y, fRatio);
 		pos.z = UtilFunc::Correction::EasingLinear(m_posOrigin.z, m_posDest.z, fRatio);
@@ -432,57 +436,57 @@ void CEffect3D::UpdatePosition(MyLib::Vector3 rot)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect3D::SubSize()
+void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_3DType = rand() % 3;
 
 	if (nEffect_3DType == 0)
 	{
-		m_fRadius *= EFFECT_3DSIZE1;
+		m_fRadius *= EFFECT_3DSIZE1 * fDeltaTime;
 	}
 	else if (nEffect_3DType == 1)
 	{
-		m_fRadius *= EFFECT_3DSIZE2;
+		m_fRadius *= EFFECT_3DSIZE2 * fDeltaTime;
 	}
 	else if (nEffect_3DType == 2)
 	{
-		m_fRadius *= EFFECT_3DSIZE3;
+		m_fRadius *= EFFECT_3DSIZE3 * fDeltaTime;
 	}
 }
 
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect3D::SuperSubSize()
+void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_fRadius = m_fMaxRadius * (float)m_nLife / (float)m_nMaxLife;
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
 }
 
 //==========================================================================
 // エフェクトの拡大処理
 //==========================================================================
-void CEffect3D::AddSize()
+void CEffect3D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 拡大
-	m_fRadius += m_fAddSizeValue;
+	m_fRadius += m_fAddSizeValue * fDeltaTime;
 }
 
 //==========================================================================
 // エフェクトの減衰処理
 //==========================================================================
-void CEffect3D::Gensui()
+void CEffect3D::Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();
 
-	move.x += (0.0f - move.x) * m_fMoveFactor;
-	move.y += (0.0f - move.y) * m_fMoveFactor;
-	move.z += (0.0f - move.z) * m_fMoveFactor;
+	move.x += ((0.0f - move.x) * m_fMoveFactor) * fDeltaTime;
+	move.y += ((0.0f - move.y) * m_fMoveFactor) * fDeltaTime;
+	move.z += ((0.0f - move.z) * m_fMoveFactor) * fDeltaTime;
 
 	// 移動量設定
 	SetMove(move);
 
-	m_fRadius = m_fMaxRadius * (float)m_nLife / (float)m_nMaxLife;
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
 
 }
 

@@ -81,7 +81,12 @@ CManager::CManager()
 	m_bFirstLoad = false;			// 初回ロード
 	m_bDisp_2D = false;				// 2Dの表示
 	m_bDisp_UI = true;				// UIの表示
-	m_bWindowed = true;
+	m_bWindowed = true;				// ウィンドウモードか
+	m_dwOldTime = 0;				// 前回の処理開始時刻
+	m_dwCurTime = 0;				// 今回の処理開始時刻
+	m_fDeltaTime = 0.0f;			// 経過時間
+	m_fDeltaRate = 0.0f;			// 経過時間の割合
+	m_fSlowRate = 0.0f;				// 速度低下の割合
 
 	// ロードフラグリセット
 	m_bLoadComplete = false;
@@ -366,11 +371,13 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 //==========================================================================
 void CManager::Load()
 {
+#ifndef _DEBUG
 	// 全てのテクスチャ読み込み
 	m_pTexture->LoadAll();
 
 	// 全てのモデル読み込み
 	m_pXLoad->LoadAll();
+#endif
 
 	// 全てのフォント読み込み
 	m_pFont->LoadAll();
@@ -674,17 +681,11 @@ void CManager::Update()
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
 	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
 
-	// 前フレームの開始時刻を保存
-	m_dwOldTime = m_dwCurTime;
+	// 経過時間の更新
+	UpdateDeltaTime();
 
-	// 現在時刻を開始時刻に保存
-	m_dwCurTime = timeGetTime();
-
-	// 処理開始時刻の差分を計算
-	DWORD dwDiffDeltaTime = m_dwCurTime - m_dwOldTime;
-
-	// 経過時間を計算
-	m_fDeltaTime = dwDiffDeltaTime * 0.001f;
+	// 経過時間の割合の更新
+	UpdateDeltaRate();
 
 	// Imguiの更新
 	ImguiMgr::Update();
@@ -702,7 +703,7 @@ void CManager::Update()
 		}
 
 		// ロードマネージャの更新
-		GetLoadManager()->Update(m_fDeltaTime);
+		GetLoadManager()->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
@@ -753,12 +754,12 @@ void CManager::Update()
 		// ロードマネージャの更新
 		if (!m_bLoadComplete)
 		{
-			GetLoadManager()->Update(m_fDeltaTime);
+			GetLoadManager()->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 		}
 	}
 
 	// フェードの更新処理
-	m_pFade->Update(m_fDeltaTime);
+	m_pFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 	// 遷移なしフェードの更新処理
 	m_pInstantFade->Update();
@@ -777,7 +778,7 @@ void CManager::Update()
 		if (m_pPause != nullptr)
 		{
 			// ポーズの更新
-			m_pPause->Update(m_fDeltaTime);
+			m_pPause->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 
 			// ポーズ状況取得
@@ -799,7 +800,7 @@ void CManager::Update()
 				}
 
 				// カメラの更新処理
-				m_pCamera->Update(m_fDeltaTime);
+				m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 				return;
 			}
 		}
@@ -845,20 +846,20 @@ void CManager::Update()
 
 		if (m_pScene != nullptr)
 		{
-			m_pScene->Update(m_fDeltaTime);
+			m_pScene->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 		}
 
 		// レンダラーの更新処理
 		if (m_pRenderer != nullptr)
 		{
-			m_pRenderer->Update(m_fDeltaTime);
+			m_pRenderer->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 		}
 
 		// ライトの更新処理
-		m_pLight->Update(m_fDeltaTime);
+		m_pLight->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 		// カメラの更新処理
-		m_pCamera->Update(m_fDeltaTime);
+		m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 		// デバッグ表示の更新処理
 		m_pDebugProc->Update();
@@ -924,6 +925,33 @@ void CManager::SetNumPlayer(int nNum)
 	UtilFunc::Transformation::ValueNormalize(nNum, mylib_const::MAX_PLAYER, 0);
 
 	m_nNumPlayer = nNum;
+}
+
+//==========================================================================
+// 経過時間更新
+//==========================================================================
+void CManager::UpdateDeltaTime()
+{
+	// 前フレームの開始時刻を保存
+	m_dwOldTime = m_dwCurTime;
+
+	// 現在時刻を開始時刻に保存
+	m_dwCurTime = timeGetTime();
+
+	// 処理開始時刻の差分を計算
+	DWORD dwDiffDeltaTime = m_dwCurTime - m_dwOldTime;
+
+	// 経過時間を計算
+	m_fDeltaTime = dwDiffDeltaTime * 0.001f;
+}
+
+//==========================================================================
+// 経過時間の割合更新
+//==========================================================================
+void CManager::UpdateDeltaRate()
+{
+	// 経過時間の割合を計算
+	m_fDeltaRate = m_fDeltaTime / (1.0f / 60.0f);
 }
 
 //==========================================================================

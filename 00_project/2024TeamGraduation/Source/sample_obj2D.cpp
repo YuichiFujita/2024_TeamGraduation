@@ -96,10 +96,10 @@ void CSample_Obj2D::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_Obj2D::Update(const float fDeltaTime)
+void CSample_Obj2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 更新処理
-	CObject2D::Update(fDeltaTime);
+	CObject2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

@@ -172,7 +172,7 @@ void CPause::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPause::Update(const float fDeltaTime)
+void CPause::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -211,7 +211,7 @@ void CPause::Update(const float fDeltaTime)
 		if (m_aObject2D[nCntVtx] != nullptr)
 		{
 			// 更新処理
-			m_aObject2D[nCntVtx]->Update(fDeltaTime);
+			m_aObject2D[nCntVtx]->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 			// 頂点座標更新
 			m_aObject2D[nCntVtx]->SetVtx();

@@ -240,6 +240,9 @@ void CDebugProc::SetText()
 	CDebugProc *pDebug = CManager::GetInstance()->GetDebugProc();
 
 	pDebug->Print("FPS：%d\n", GetFPS());
+#ifdef _DEBUG
+	pDebug->Print("目標FPS：%d\n", *GetDebugFps());
+#endif
 	pDebug->Print("デルタタイム：%f\n", CManager::GetInstance()->GetDeltaTime());
 	pDebug->Print("オブジェクトの総数：%d\n", CObject::GetNumAll());
 

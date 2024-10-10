@@ -76,7 +76,7 @@ public:
 	// オーバーライドされた関数
 	HRESULT Init() override;
 	void Uninit() override;
-	void Update(const float fDeltaTime) override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
 	void Draw(D3DXCOLOR col) override;
 	void Draw(float fAlpha) override;

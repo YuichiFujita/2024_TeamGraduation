@@ -129,7 +129,7 @@ void CTitle::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTitle::Update(const float fDeltaTime)
+void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE_NONE)
 	{// フェード中は抜ける
@@ -137,13 +137,13 @@ void CTitle::Update(const float fDeltaTime)
 	}
 
 	// 状態別更新処理
-	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime);
+	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // なにもなし
 //==========================================================================
-void CTitle::SceneNone(const float fDeltaTime)
+void CTitle::SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 }
@@ -151,7 +151,7 @@ void CTitle::SceneNone(const float fDeltaTime)
 //==========================================================================
 // ロゴフェードイン
 //==========================================================================
-void CTitle::SceneFadeInLogo(const float fDeltaTime)
+void CTitle::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -159,7 +159,7 @@ void CTitle::SceneFadeInLogo(const float fDeltaTime)
 //==========================================================================
 // ロゴフェードアウト
 //==========================================================================
-void CTitle::SceneFadeOutLoGo(const float fDeltaTime)
+void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// シーンカウンター減算
 	m_fSceneTime -= fDeltaTime;

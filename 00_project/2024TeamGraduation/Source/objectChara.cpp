@@ -136,15 +136,15 @@ void CObjectChara::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectChara::Update(const float fDeltaTime)
+void CObjectChara::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// オブジェクトヒエラルキーの更新
-	CObjectHierarchy::Update(fDeltaTime);
+	CObjectHierarchy::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// モーション更新
 	if (m_pMotion != nullptr)
 	{
-		m_pMotion->Update(fDeltaTime / (1.0f / 60.0f));
+		m_pMotion->Update(fDeltaRate);
 	}
 
 	// コライダーの位置調整

@@ -98,7 +98,7 @@ void CString2D::Release(void)
 //============================================================
 //	更新処理
 //============================================================
-void CString2D::Update(const float fDeltaTime)
+void CString2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 相対位置の設定
 	SetPositionRelative();
@@ -108,7 +108,7 @@ void CString2D::Update(const float fDeltaTime)
 
 		// 文字の更新
 		assert(m_ppChar[i] != nullptr);
-		m_ppChar[i]->Update(fDeltaTime);
+		m_ppChar[i]->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 

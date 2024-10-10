@@ -82,11 +82,11 @@ void CLoadManager::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CLoadManager::Update(const float fDeltaTime)
+void CLoadManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_pLoadScreen != nullptr)
 	{
-		m_pLoadScreen->Update(fDeltaTime);
+		m_pLoadScreen->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 

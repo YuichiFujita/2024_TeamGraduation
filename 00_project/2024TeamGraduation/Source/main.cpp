@@ -10,7 +10,13 @@
 #include "MyEffekseer.h"
 #include "loadmanager.h"
 
-
+//==========================================================================
+// 定数宣言
+//==========================================================================
+namespace
+{
+	const int FPS = 20;	// 目標FPS
+}
 
 //==========================================================================
 // プロトタイプ宣言
@@ -27,6 +33,10 @@ HWND hWnd;	// ウインドウハンドル(識別子)
 HINSTANCE g_hInstance;
 RECT g_Rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };	// 画面サイズの構造体
 int g_CmbShow;
+
+#ifdef _DEBUG
+int g_DebugFps = FPS;
+#endif
 
 //==========================================================================
 // メイン関数
@@ -140,7 +150,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 				dwFrameCount = 0;					// フレームカウントをクリア
 			}
 
-			if ((dwCurrentTime - dwExecLastTime) >= (1000 / 60))
+#ifdef _DEBUG
+			if ((dwCurrentTime - dwExecLastTime) >= (1000 / g_DebugFps))
+#else
+			if ((dwCurrentTime - dwExecLastTime) >= (1000 / FPS))
+#endif
 			{// 60分の1秒経過
 
 				// 処理開始の時刻[現在時刻]を保存
@@ -272,6 +286,10 @@ int GetFPS()
 }
 
 HWND GetWnd() { return hWnd; }
+
+#ifdef _DEBUG
+int *GetDebugFps() { return &g_DebugFps; }
+#endif
 
 void ResetWnd()
 {

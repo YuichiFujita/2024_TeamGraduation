@@ -149,7 +149,7 @@ void CObject3D::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CObject3D::Update(const float fDeltaTime)
+void CObject3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ’¸“_î•ñİ’è
 	SetVtx();

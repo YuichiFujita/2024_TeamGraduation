@@ -92,10 +92,10 @@ void CChar2D::Release(void)
 //============================================================
 //	更新処理
 //============================================================
-void CChar2D::Update(const float fDeltaTime)
+void CChar2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// オブジェクト2Dの更新
-	CObject2D::Update(fDeltaTime);
+	CObject2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================

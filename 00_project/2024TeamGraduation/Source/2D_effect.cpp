@@ -13,7 +13,7 @@
 // マクロ定義
 //==========================================================================
 #define DEF_RADIUS			(20.0f)
-#define EFFECT_2D_LIFE		(30)
+#define EFFECT_2D_LIFE		(0.5f)
 #define EFFECT_2DSIZE1		(0.97f)
 #define EFFECT_2DSIZE2		(0.98f)
 #define EFFECT_2DSIZE3		(0.99f)
@@ -40,13 +40,13 @@ CEffect2D::CEffect2D(int nPriority) : CObject2D(nPriority)
 {
 	// 値のクリア
 	m_colOrigin = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色の元
-	m_fRadius = 0.0f;							// 半径
-	m_fMaxRadius = 0.0f;						// 最大半径
-	m_nLife = 0;								// 寿命
-	m_nMaxLife = 0;								// 最大寿命(固定)
-	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
-	m_nType = TYPE_NORMAL;						// 種類
-	m_bAddAlpha = true;							// 加算合成の判定
+	m_fRadius = 0.0f;				// 半径
+	m_fMaxRadius = 0.0f;			// 最大半径
+	m_fLife = 0.0f;					// 寿命
+	m_fMaxLife = 0.0f;				// 最大寿命(固定)
+	m_moveType = MOVEEFFECT_NONE;	// 移動の種類
+	m_nType = TYPE_NORMAL;			// 種類
+	m_bAddAlpha = true;				// 加算合成の判定
 	
 	// テクスチャデータの配列分繰り返す
 	for (int nCntTex = 0; nCntTex < sizeof(m_apTextureFile) / sizeof(*m_apTextureFile); nCntTex++)
@@ -104,7 +104,7 @@ CEffect2D *CEffect2D::Create()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type)
+CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type)
 {
 	// 生成用のオブジェクト
 	CEffect2D *pEffect = nullptr;
@@ -119,7 +119,7 @@ CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move
 		{// メモリの確保が出来ていたら
 
 			// 初期化処理
-			pEffect->Init(pos, move, col, fRadius, nLife, moveType, type);
+			pEffect->Init(pos, move, col, fRadius, fLife, moveType, type);
 		}
 
 		return pEffect;
@@ -132,7 +132,7 @@ CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move
 //==========================================================================
 // 生成処理
 //==========================================================================
-CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const MyLib::Vector3 rot, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type)
+CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const MyLib::Vector3 rot, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type)
 {
 	// 生成用のオブジェクト
 	CEffect2D *pEffect = nullptr;
@@ -147,7 +147,7 @@ CEffect2D *CEffect2D::Create(const MyLib::Vector3 pos, const MyLib::Vector3 move
 		{// メモリの確保が出来ていたら
 
 			// 初期化処理
-			pEffect->Init(pos, move, col, fRadius, nLife, moveType, type);
+			pEffect->Init(pos, move, col, fRadius, fLife, moveType, type);
 			pEffect->SetRotation(rot);
 		}
 
@@ -168,8 +168,8 @@ HRESULT CEffect2D::Init()
 	m_colOrigin = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色の元
 	m_fRadius = DEF_RADIUS;						// 半径
 	m_fMaxRadius = m_fRadius;					// 最大半径
-	m_nLife = EFFECT_2D_LIFE;					// 寿命
-	m_nMaxLife = m_nLife;						// 最大寿命(固定)
+	m_fLife = EFFECT_2D_LIFE;					// 寿命
+	m_fMaxLife = m_fLife;						// 最大寿命(固定)
 	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
 	m_nType = TYPE_NORMAL;						// 種類
 	m_bAddAlpha = true;							// 加算合成の判定
@@ -202,20 +202,20 @@ HRESULT CEffect2D::Init()
 //==========================================================================
 // エフェクトの初期化処理
 //==========================================================================
-HRESULT CEffect2D::Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type)
+HRESULT CEffect2D::Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type)
 {
 	HRESULT hr;
 
 	// 各種変数の初期化
 	SetPosition(pos);
-	SetMove(move);
+	SetMove(move * GET_MANAGER->GetDeltaTime());
 	m_colOrigin = col;							// 色の元
 	SetColor(col);								// 色
 	m_fRadius = fRadius;						// 半径
 	m_fMaxRadius = m_fRadius;					// 最大半径
 	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));	// サイズ設定
-	m_nLife = nLife;							// 寿命
-	m_nMaxLife = m_nLife;						// 最大寿命(固定)
+	m_fLife = fLife;							// 寿命
+	m_fMaxLife = m_fLife;						// 最大寿命(固定)
 	m_moveType = moveType;						// 移動の種類
 	m_nType = type;								// 種類
 
@@ -288,7 +288,7 @@ void CEffect2D::Uninit()
 //==========================================================================
 // エフェクトの更新処理
 //==========================================================================
-void CEffect2D::Update(const float fDeltaTime)
+void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 	// 位置取得
@@ -314,30 +314,30 @@ void CEffect2D::Update(const float fDeltaTime)
 	{// エフェクトを小さくしていく
 
 		// 縮小処理
-		SubSize();
+		SubSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_SUPERSUB)
 	{// エフェクトを小さくしていく
 
 		// 超縮小処理
-		SuperSubSize();
+		SuperSubSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_ADD)
 	{// エフェクトを大きくしていく
 
 		// 拡大処理
-		AddSize();
+		AddSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_GENSUI)
 	{
-		Gensui();
+		Gensui(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 寿命の更新
-	m_nLife--;
+	m_fLife -= fDeltaTime;
 
 	// 不透明度の更新
-	col.a = m_colOrigin.a * ((float)m_nLife / (float)m_nMaxLife);
+	col.a = m_colOrigin.a * (m_fLife / m_fMaxLife);
 
 	// サイズ設定
 	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));
@@ -345,7 +345,7 @@ void CEffect2D::Update(const float fDeltaTime)
 	// 色設定
 	SetColor(col);
 
-	if (m_nLife <= 0)
+	if (m_fLife <= 0.0f)
 	{// 寿命が尽きたら
 
 		// エフェクトの削除
@@ -361,68 +361,68 @@ void CEffect2D::Update(const float fDeltaTime)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect2D::SubSize()
+void CEffect2D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_2DType = rand() % 3;
 
 	if (nEffect_2DType == 0)
 	{
-		m_fRadius *= EFFECT_2DSIZE1;
+		m_fRadius *= EFFECT_2DSIZE1 * fDeltaTime;
 	}
 	else if (nEffect_2DType == 1)
 	{
-		m_fRadius *= EFFECT_2DSIZE2;
+		m_fRadius *= EFFECT_2DSIZE2 * fDeltaTime;
 	}
 	else if (nEffect_2DType == 2)
 	{
-		m_fRadius *= EFFECT_2DSIZE3;
+		m_fRadius *= EFFECT_2DSIZE3 * fDeltaTime;
 	}
 }
 
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect2D::SuperSubSize()
+void CEffect2D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_fRadius = m_fMaxRadius * (float)m_nLife / (float)m_nMaxLife;
+	m_fRadius = m_fMaxRadius * m_fLife / m_fMaxLife;
 }
 
 //==========================================================================
 // エフェクトの拡大処理
 //==========================================================================
-void CEffect2D::AddSize()
+void CEffect2D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_2DType = rand() % 3;
 
 	if (nEffect_2DType == 0)
 	{
-		m_fRadius += 1.8f;
+		m_fRadius += 1.8f * fDeltaTime;
 	}
 	else if (nEffect_2DType == 1)
 	{
-		m_fRadius += 0.8f;
+		m_fRadius += 0.8f * fDeltaTime;
 	}
 	else if (nEffect_2DType == 2)
 	{
-		m_fRadius += 0.0f;
+		m_fRadius += 0.0f * fDeltaTime;
 	}
 }
 
 //==========================================================================
 // エフェクトの減衰処理
 //==========================================================================
-void CEffect2D::Gensui()
+void CEffect2D::Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();
 
-	move.x += (0.0f - move.x) * 0.15f;
-	move.y += (0.0f - move.y) * 0.15f;
+	move.x += ((0.0f - move.x) * 0.15f) * fDeltaTime;
+	move.y += ((0.0f - move.y) * 0.15f) * fDeltaTime;
 
 	// 移動量設定
 	SetMove(move);
 
-	m_fRadius = m_fMaxRadius * (float)m_nLife / (float)m_nMaxLife;
+	m_fRadius = m_fMaxRadius * m_fLife / m_fMaxLife;
 
 }
 

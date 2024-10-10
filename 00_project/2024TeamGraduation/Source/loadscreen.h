@@ -26,7 +26,7 @@ public:
 	// ƒƒ“ƒoŠÖ”
 	HRESULT Init();
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	void Kill();
 
@@ -38,7 +38,7 @@ private:
 	// ƒƒ“ƒo•Ï”
 	//=============================
 	void CreateCylinder();	// “›¶¬
-	void MoveCylinder(const float fDeltaTime);	// “›‚Ì“®‚«
+	void MoveCylinder(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// “›‚Ì“®‚«
 	void CollisionText();	// •¶š‚Æ‚Ì”»’è
 
 	//=============================

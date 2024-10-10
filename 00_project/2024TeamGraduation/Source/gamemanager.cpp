@@ -129,7 +129,7 @@ void CGameManager::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CGameManager::Update(const float fDeltaTime)
+void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 操作状態
 	m_fSceneTimer += fDeltaTime;		// シーンタイマー

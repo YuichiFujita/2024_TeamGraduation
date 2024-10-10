@@ -61,7 +61,7 @@ public:
 	HRESULT Init();		// 初期化
 	void LoadText();	// テキスト読み込み
 	void Uninit();		// 終了
-	void Update(const float fDeltaTime);			// 更新
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 更新
 	void SetMotion(int motion, EASING EasingType);	// モーション設定
 
 	// 情報操作

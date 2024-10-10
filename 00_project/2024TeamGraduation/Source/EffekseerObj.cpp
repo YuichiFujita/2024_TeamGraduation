@@ -112,7 +112,7 @@ void CEffekseerObj::Stop()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CEffekseerObj::Update(const float fDeltaTime)
+void CEffekseerObj::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// マネージャ取得
 	CMyEffekseer* pMyEffekseer = CMyEffekseer::GetInstance();
@@ -178,6 +178,9 @@ void CEffekseerObj::Update(const float fDeltaTime)
 		Effekseer::Vector3D scale;
 		efkManager->GetMatrix(m_EffekseerInfo.handle).GetScale(scale);
 		efkManager->SetScale(m_EffekseerInfo.handle, m_EffekseerInfo.scale, m_EffekseerInfo.scale, m_EffekseerInfo.scale);
+
+		// タイムスケール
+		efkManager->SetTimeScaleByHandle(m_EffekseerInfo.handle, fDeltaRate);
 	}
 }
 

@@ -45,39 +45,37 @@ public:
 	CEffect2D(int nPriority = 10);
 	~CEffect2D();
 
-	static HRESULT Load();
-	static void Unload();
 	static CEffect2D *Create();
-	static CEffect2D *Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type);
-	static CEffect2D *Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const MyLib::Vector3 rot, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type);
+	static CEffect2D *Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type);
+	static CEffect2D *Create(const MyLib::Vector3 pos, const MyLib::Vector3 move, const MyLib::Vector3 rot, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type);
 
 	//  オーバーライドされた関数
 	HRESULT Init();
-	HRESULT Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const int nLife, const int moveType, const TYPE type);
+	HRESULT Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type);
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	void SetVtx();
 
 	static int GetNumAll();
 
 private:
-	void SubSize();
-	void SuperSubSize();
-	void AddSize();
-	void Gensui();
+	void SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	D3DXCOLOR m_colOrigin;	// 色
 	float m_fRadius;		// 半径
 	float m_fMaxRadius;		// 最大半径
-	int m_nLife;			// 寿命
-	int m_nMaxLife;			// 最大寿命(固定)
+	float m_fLife;			// 寿命
+	float m_fMaxLife;		// 最大寿命(固定)
 	int m_moveType;			// 移動の種類
 	bool m_bAddAlpha;		// 加算合成の判定
 	TYPE m_nType;			// 種類
-	static const char *m_apTextureFile[];			// テクスチャのファイル
-	static int m_nNumAll;	// 総数
-	int m_nTexIdx[TYPE_MAX];				// テクスチャのインデックス番号
+	static const char *m_apTextureFile[];	// テクスチャのファイル
+	static int m_nNumAll;		// 総数
+	int m_nTexIdx[TYPE_MAX];	// テクスチャのインデックス番号
 };
 
 #endif

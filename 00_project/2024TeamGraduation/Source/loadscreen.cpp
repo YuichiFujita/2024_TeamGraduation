@@ -195,7 +195,7 @@ void CLoadScreen::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CLoadScreen::Update(const float fDeltaTime)
+void CLoadScreen::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 文字生成
 	for (int i = 0; i < NUM_STRING; i++)
@@ -208,8 +208,8 @@ void CLoadScreen::Update(const float fDeltaTime)
 		// 情報取得
 		MyLib::Vector3 pos = pObj2D->GetPosition(), move = pObj2D->GetMove(), rot = pObj2D->GetRotation();
 		MyLib::Vector3 posOrigin = pObj2D->GetOriginPosition();
-		pos.y += move.y;
-		move.y += 0.15f;
+		pos.y += move.y * fDeltaRate;
+		move.y += 0.15f * fDeltaRate;
 
 		// 回転
 		rot.z = UtilFunc::Correction::EasingEaseIn(0.0f, D3DX_PI * -0.5f, posOrigin.y, posOrigin.y - 200.0f, pos.y);
@@ -226,14 +226,14 @@ void CLoadScreen::Update(const float fDeltaTime)
 		pObj2D->SetRotation(rot);
 
 		// 更新処理
-		pObj2D->Update(fDeltaTime);
+		pObj2D->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 筒の動き
-	MoveCylinder(fDeltaTime);
+	MoveCylinder(fDeltaTime, fDeltaRate, fSlowRate);
 	if (m_pCylinder != nullptr)
 	{
-		m_pCylinder->Update(fDeltaTime);
+		m_pCylinder->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 文字との判定
@@ -274,7 +274,7 @@ void CLoadScreen::CollisionText()
 //==========================================================================
 // 筒の動き
 //==========================================================================
-void CLoadScreen::MoveCylinder(const float fDeltaTime)
+void CLoadScreen::MoveCylinder(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_pCylinder == nullptr) return;
 

@@ -161,7 +161,7 @@ void CTimeUI::Release(void)
 //============================================================
 //	XVˆ—
 //============================================================
-void CTimeUI::Update(const float fDeltaTime)
+void CTimeUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ‘Š‘ÎˆÊ’u‚Ìİ’è
 	SetPositionRelative();

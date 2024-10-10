@@ -111,7 +111,7 @@ void CObjectLine::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CObjectLine::Update(const float fDeltaTime)
+void CObjectLine::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 	// ’¸“_î•ñİ’è

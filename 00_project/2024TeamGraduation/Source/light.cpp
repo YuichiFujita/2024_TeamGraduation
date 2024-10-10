@@ -117,7 +117,7 @@ void CLight::Uninit()
 //==========================================================================
 // ライトの更新処理
 //==========================================================================
-void CLight::Update(const float fDeltaTime)
+void CLight::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }

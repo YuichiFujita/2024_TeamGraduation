@@ -147,7 +147,7 @@ void CCollisionLine_Box::Kill()
 //==========================================================================
 // çXêVèàóù
 //==========================================================================
-void CCollisionLine_Box::Update(const float fDeltaTime)
+void CCollisionLine_Box::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 rot = GetRotation();

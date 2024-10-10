@@ -69,7 +69,7 @@ public:
 	HRESULT Init(void) override;	// 初期化
 	void Uninit(void) override;		// 終了
 	void Release(void) override;	// 破棄
-	void Update(const float fDeltaTime) override;	// 更新
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw(void) override;						// 描画
 	void SetEnableDisp(const bool bDisp) override;	// 描画状況設定
 	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定

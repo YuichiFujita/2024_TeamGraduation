@@ -44,7 +44,7 @@ CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 CMyEffekseer::CMyEffekseer()
 {
 	// 変数のクリア
-	time = 0;
+	fTime = 0.0f;
 	efkHandle = 0;
 }
 
@@ -84,7 +84,7 @@ CMyEffekseer* CMyEffekseer::Create()
 //==========================================================================
 HRESULT CMyEffekseer::Init()
 {
-	time = 0;
+	fTime = 0.0f;
 	efkHandle = 0;
 
 	// デバイスの取得
@@ -211,13 +211,13 @@ void CMyEffekseer::StopAll()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CMyEffekseer::Update(const float fDeltaTime)
+void CMyEffekseer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bPause = CManager::GetInstance()->GetPause()->IsPause();
 	if (!bPause)
 	{
 		// 全更新
-		UpdateAll(fDeltaTime);
+		UpdateAll(fDeltaTime, fDeltaRate, fSlowRate);
 
 		// レイヤーパラメータの設定
 		Effekseer::Manager::LayerParameter layerParameter;
@@ -236,14 +236,14 @@ void CMyEffekseer::Update(const float fDeltaTime)
 
 	if (!bPause)
 	{
-		time++;
+		fTime += fDeltaTime;
 	}
 }
 
 //==========================================================================
 // 全更新
 //==========================================================================
-void CMyEffekseer::UpdateAll(const float fDeltaTime)
+void CMyEffekseer::UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 障害物のリスト取得
 	CListManager<CEffekseerObj> list = CEffekseerObj::GetListObj();
@@ -255,7 +255,7 @@ void CMyEffekseer::UpdateAll(const float fDeltaTime)
 	// リストループ
 	while (list.ListLoop(itr))
 	{
-		(*itr)->Update(fDeltaTime);
+		(*itr)->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
@@ -265,7 +265,7 @@ void CMyEffekseer::UpdateAll(const float fDeltaTime)
 void CMyEffekseer::Draw()
 {
 	// 時間を更新する
-	efkRenderer->SetTime(time / 60.0f);
+	efkRenderer->SetTime(fTime);
 
 	// 投影行列を設定
 	efkRenderer->SetProjectionMatrix(projectionMatrix);

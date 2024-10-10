@@ -152,7 +152,8 @@ HRESULT CHandle::Init()
 	// 中心のオブジェクト生成
 	m_pCenterSphere = CObjectX::Create(MODEL_CENTER, 0.0f, 0.0f, false);
 
-	Update(GET_MANAGER->GetDeltaTime());
+	CManager* pManager = GET_MANAGER;
+	Update(pManager->GetDeltaTime(), pManager->GetDeltaRate(), pManager->GetSlowRate());
 
 	return S_OK;
 }
@@ -212,7 +213,7 @@ void CHandle::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CHandle::Update(const float fDeltaTime)
+void CHandle::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// カメラに対してリサイズ
 	ReSizeToCamera();

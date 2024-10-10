@@ -100,10 +100,10 @@ void CObjectQuaternion::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectQuaternion::Update(const float fDeltaTime)
+void CObjectQuaternion::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// オブジェクトXの更新処理
-	CObjectX::Update(fDeltaTime);
+	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 #if 0
 	// 情報取得

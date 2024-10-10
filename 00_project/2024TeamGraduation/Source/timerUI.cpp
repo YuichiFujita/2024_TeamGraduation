@@ -90,16 +90,16 @@ void CTimerUI::Release(void)
 //============================================================
 //	更新処理
 //============================================================
-void CTimerUI::Update(const float fDeltaTime)
+void CTimerUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// タイマーの更新
-	m_pTimer->Update(fDeltaTime);
+	m_pTimer->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 表示時間の設定
 	SetTime(m_pTimer->GetTime());
 
 	// タイムUIの更新
-	CTimeUI::Update(fDeltaTime);
+	CTimeUI::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================
