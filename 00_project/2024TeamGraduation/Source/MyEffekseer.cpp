@@ -44,7 +44,7 @@ CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 CMyEffekseer::CMyEffekseer()
 {
 	// 変数のクリア
-	time = 0;
+	fTime = 0.0f;
 	efkHandle = 0;
 }
 
@@ -84,7 +84,7 @@ CMyEffekseer* CMyEffekseer::Create()
 //==========================================================================
 HRESULT CMyEffekseer::Init()
 {
-	time = 0;
+	fTime = 0.0f;
 	efkHandle = 0;
 
 	// デバイスの取得
@@ -236,7 +236,7 @@ void CMyEffekseer::Update(const float fDeltaTime)
 
 	if (!bPause)
 	{
-		time++;
+		fTime += fDeltaTime;
 	}
 }
 
@@ -265,7 +265,7 @@ void CMyEffekseer::UpdateAll(const float fDeltaTime)
 void CMyEffekseer::Draw()
 {
 	// 時間を更新する
-	efkRenderer->SetTime(time / 60.0f);
+	efkRenderer->SetTime(fTime);
 
 	// 投影行列を設定
 	efkRenderer->SetProjectionMatrix(projectionMatrix);

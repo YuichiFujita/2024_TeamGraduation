@@ -105,7 +105,7 @@ private:
 	//=============================
 	// ƒƒ“ƒo•Ï”
 	//=============================
-	int32_t time = 0;
+	float fTime = 0.0f;
 	Effekseer::Handle efkHandle = 0;
 	EffekseerRendererDX9::RendererRef efkRenderer;
 	Effekseer::ManagerRef m_efkManager;

@@ -63,23 +63,8 @@
     <Filter Include="SAMPLE">
       <UniqueIdentifier>{2f9d7de0-6038-4373-9537-6c74de8f2e2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="map">
-      <UniqueIdentifier>{16fc8c4d-80db-41aa-b4a0-e8ed95d5486c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="keyconfig">
-      <UniqueIdentifier>{798ed9c4-d084-4216-885c-c23d994aee58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mesh">
       <UniqueIdentifier>{1f7adde7-2f38-4f5d-814f-5faf4199524b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="judgezone">
-      <UniqueIdentifier>{ae95b690-57e5-4285-938f-297e3c57799b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="people">
-      <UniqueIdentifier>{351e9aaa-1bfc-4e1d-a9d4-0747c087991a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="direction">
-      <UniqueIdentifier>{bcb387e5-91a8-4710-89c2-85baea526e16}</UniqueIdentifier>
     </Filter>
     <Filter Include="camera">
       <UniqueIdentifier>{61f2cd6c-2c60-4c7d-9eec-19d2b4f10eea}</UniqueIdentifier>

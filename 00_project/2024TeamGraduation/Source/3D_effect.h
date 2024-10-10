@@ -49,12 +49,12 @@ public:
 	~CEffect3D();
 
 	static CEffect3D *Create();
-	static CEffect3D *Create(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const int nLife, const int moveType, const TYPE type, const float fAddSizeValue = 0.0f);
+	static CEffect3D *Create(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const float fLife, const int moveType, const TYPE type, const float fAddSizeValue = 0.0f);
 	static void LoadTexture();	// テクスチャ読み込み
 
 	//  オーバーライドされた関数
 	HRESULT Init();
-	HRESULT Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const int nLife, const int moveType, const TYPE type);
+	HRESULT Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const float fLife, const int moveType, const TYPE type);
 	void Uninit();
 	void Update(const float fDeltaTime);
 	void Draw();
@@ -68,17 +68,16 @@ public:
 	void SetMoveFactor(float factor) { m_fMoveFactor = factor; };		// 移動補正係数
 	void SetUp(MyLib::Vector3 setup, D3DXMATRIX *pMtxParent, CObject *pObj, int nParentIdx);	// セットアップ
 	void UpdatePosition(MyLib::Vector3 rot);	// 位置更新
-	void UninitParent();	// 親の破棄
 	static int GetNumAll();	// 総数取得
 
 private:
 
 	// メンバ関数
-	void UpdateMove();	// 移動処理
-	void SubSize();
-	void SuperSubSize();
-	void AddSize();
-	void Gensui();
+	void UpdateMove(const float fDeltaTime);	// 移動処理
+	void SubSize(const float fDeltaTime);
+	void SuperSubSize(const float fDeltaTime);
+	void AddSize(const float fDeltaTime);
+	void Gensui(const float fDeltaTime);
 
 	// メンバ変数
 	MyLib::Vector3 m_posOrigin;		// 原点
@@ -93,8 +92,8 @@ private:
 	float m_fAddSizeValue;		// サイズ変更量
 	float m_fGravity;			// 重力
 	float m_fMoveFactor;		// 移動補正係数
-	int m_nLife;				// 寿命
-	int m_nMaxLife;				// 最大寿命(固定)
+	float m_fLife;				// 寿命
+	float m_fMaxLife;			// 最大寿命(固定)
 	int m_moveType;				// 移動の種類
 	int m_nParentIdx;			// 親のインデックス番号
 	bool m_bAddAlpha;			// 加算合成の判定
@@ -102,9 +101,9 @@ private:
 	bool m_bGravity;			// 重力のフラグ
 	bool m_bChaseDest;			// 目標の位置へ向かうフラグ
 	TYPE m_nType;				// 種類
-	static const char *m_apTextureFile[];			// テクスチャのファイル
-	static int m_nNumAll;	// 総数
-	static int m_nTexIdx[TYPE_MAX];				// テクスチャのインデックス番号
+	static const char *m_apTextureFile[];	// テクスチャのファイル
+	static int m_nNumAll;			// 総数
+	static int m_nTexIdx[TYPE_MAX];	// テクスチャのインデックス番号
 };
 
 #endif

@@ -77,6 +77,9 @@ HRESULT CObject2D::Init()
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
+	if (m_vecVtxPos.empty())	{ m_vecVtxPos.resize(DEF_VTXNUM); }
+	if (m_vecUV.empty())		{ m_vecUV.resize(DEF_VTXNUM); }
+
 	if ((int)m_vecUV.size() >= DEF_VTXNUM)
 	{// リサイズ済み
 
