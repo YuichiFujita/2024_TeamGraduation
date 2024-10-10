@@ -45,7 +45,7 @@ public:
 
 	HRESULT Init();		// 初期化処理
 	void Uninit();		// 終了処理
-	void Update(const float fDeltaTime);		// 更新処理
+	void Update(const float fDeltaTime);	// 更新処理
 	void SetCamera();	// カメラ設定
 	void Reset(CScene::MODE mode);	// リセット
 
@@ -128,8 +128,7 @@ public:
 	void SetViewPort(const MyLib::Vector3& pos, const D3DXVECTOR2& size);		// ビューポートの設定
 	D3DVIEWPORT9 GetViewPort() { return m_viewport; };			// ビューポート
 
-
-	void SetShake(int nTime, float fLength, float fLengthY);	// 振動設定
+	void SetShake(float fTime, float fLength, float fLengthY);	// 振動設定	// TODO：後で検証する
 	void MoveCameraStick(int nIdx = 0);			// スティック操作
 	void WarpCamera(const MyLib::Vector3& pos);	// カメラワープ
 
@@ -146,43 +145,43 @@ private:
 	void Shake();
 
 
-	void UpdateState();			// 状態更新
+	void UpdateState(const float fDeltaTime);			// 状態更新
 	void UpdateSpotLightVec();	// ライトのベクトル更新
 
 	// リセット
 	void ResetGame();
 
-	D3DXMATRIX	m_mtxProjection;		// プロジェクションマトリックス
-	D3DXMATRIX	m_mtxView;				// ビューマトリックス
-	D3DVIEWPORT9 m_viewport;			// ビューポート
-	MyLib::Vector3 m_posV;				// 視点(カメラの位置)
-	MyLib::Vector3 m_posVDest;			// 目標の視点
-	MyLib::Vector3 m_posR;				// 注視点(見たい場所)
-	MyLib::Vector3 m_posRDest;			// 目標の注視点
-	MyLib::Vector3 m_vecU;				// 上方向ベクトル
-	MyLib::Vector3 m_move;				// 移動量
-	MyLib::Vector3 m_rot;				// 向き
-	MyLib::Vector3 m_rotOrigin;			// 元の向き
-	MyLib::Vector3 m_rotDest;			// 目標の向き
-	MyLib::Vector3 m_TargetPos;			// 追従目標の位置
-	MyLib::Vector3 m_TargetPosDest;		// 目標の追従目標の位置
+	D3DXMATRIX	m_mtxProjection;	// プロジェクションマトリックス
+	D3DXMATRIX	m_mtxView;			// ビューマトリックス
+	D3DVIEWPORT9 m_viewport;		// ビューポート
+	MyLib::Vector3 m_posV;			// 視点(カメラの位置)
+	MyLib::Vector3 m_posVDest;		// 目標の視点
+	MyLib::Vector3 m_posR;			// 注視点(見たい場所)
+	MyLib::Vector3 m_posRDest;		// 目標の注視点
+	MyLib::Vector3 m_vecU;			// 上方向ベクトル
+	MyLib::Vector3 m_move;			// 移動量
+	MyLib::Vector3 m_rot;			// 向き
+	MyLib::Vector3 m_rotOrigin;		// 元の向き
+	MyLib::Vector3 m_rotDest;		// 目標の向き
+	MyLib::Vector3 m_TargetPos;		// 追従目標の位置
+	MyLib::Vector3 m_TargetPosDest;	// 目標の追従目標の位置
 
 	float m_fRockOnDistance;
-	float m_fDistance;					// 距離
-	float m_fDestDistance;				// 目標の距離
-	float m_fOriginDistance;			// 元の距離
-	float m_nShakeLength;				// 揺れの長さ
-	float m_nShakeLengthY;				// Yの揺れの長さ
-	float m_fMoveShake;					// 揺れの移動量
-	float m_fMoveShakeY;				// Yの揺れの移動量
+	float m_fDistance;			// 距離
+	float m_fDestDistance;		// 目標の距離
+	float m_fOriginDistance;	// 元の距離
+	float m_nShakeLength;		// 揺れの長さ
+	float m_nShakeLengthY;		// Yの揺れの長さ
+	float m_fMoveShake;			// 揺れの移動量
+	float m_fMoveShakeY;		// Yの揺れの移動量
 	
+	bool m_bFollow;	// 追従判定
+	bool m_bMotion;	// モーション中判定
 	
-	bool m_bFollow;						// 追従判定
-	bool m_bMotion;						// モーション中判定
-	
-	int m_nCntState;					// 状態カウンター
-	STATE m_state;						// 状態
-	CCameraMotion* m_pCameraMotion;		// カメラモーションのポインタ
+	float m_fTimerState;			// 状態カウンター
+	float m_fTimerShake;			// 振動カウンター
+	STATE m_state;					// 状態
+	CCameraMotion* m_pCameraMotion;	// カメラモーションのポインタ
 
 
 	CCameraControlState* m_pControlState;	// 操作の状態ポインタ

@@ -50,12 +50,12 @@ namespace
 //==========================================================================
 CCamera::CCamera()
 {
-	m_viewport.X = 0;							// 描画する画面の左上X座標
-	m_viewport.Y = 0;							// 描画する画面の左上Y座標
-	m_viewport.Width = 0;						// 描画する画面の幅
-	m_viewport.Height = 0;						// 描画する画面の高さ
-	m_viewport.Width = 0;						// 描画する画面の幅
-	m_viewport.Height = 0;						// 描画する画面の高さ
+	m_viewport.X = 0;		// 描画する画面の左上X座標
+	m_viewport.Y = 0;		// 描画する画面の左上Y座標
+	m_viewport.Width = 0;	// 描画する画面の幅
+	m_viewport.Height = 0;	// 描画する画面の高さ
+	m_viewport.Width = 0;	// 描画する画面の幅
+	m_viewport.Height = 0;	// 描画する画面の高さ
 	m_viewport.MinZ = 0.0f;
 	m_viewport.MaxZ = 0.0f;
 	m_posR = MyLib::Vector3();		// 注視点(見たい場所)
@@ -65,23 +65,23 @@ CCamera::CCamera()
 	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
 	m_move = MyLib::Vector3();		// 移動量
 	m_rot = MyLib::Vector3();		// 向き
-	m_rotDest = 0.0f;							// 目標の向き
+	m_rotDest = 0.0f;				// 目標の向き
 	m_TargetPos = MyLib::Vector3();	// 追従目標の位置
-	m_fDistance = 0.0f;							// 距離
-	m_fDestDistance = 0.0f;						// 目標の距離
-	m_fOriginDistance = 0.0f;					// 元の距離
-	m_nShakeLength = 0.0f;						// 揺れの長さ
-	m_nShakeLengthY = 0.0f;						// Yの揺れの長さ
-	m_fMoveShake = 0.0f;						// 揺れの移動量
-	m_fMoveShakeY = 0.0f;						// Yの揺れの移動量
-	m_bFollow = false;							// 追従するかどうか
-	m_bMotion = false;							// モーション中かどうか
-	m_state = CAMERASTATE_NONE;					// 状態
-	m_nCntState = 0;							// 状態カウンター
-	
-	m_pCameraMotion = nullptr;					// カメラモーションのポインタ
-	m_pControlState = nullptr;	// 操作の状態ポインタ
-	m_pDebugControll = nullptr;	// デバッグ処理
+	m_fDistance = 0.0f;				// 距離
+	m_fDestDistance = 0.0f;			// 目標の距離
+	m_fOriginDistance = 0.0f;		// 元の距離
+	m_nShakeLength = 0.0f;			// 揺れの長さ
+	m_nShakeLengthY = 0.0f;			// Yの揺れの長さ
+	m_fMoveShake = 0.0f;			// 揺れの移動量
+	m_fMoveShakeY = 0.0f;			// Yの揺れの移動量
+	m_bFollow = false;				// 追従するかどうか
+	m_bMotion = false;				// モーション中かどうか
+	m_state = CAMERASTATE_NONE;		// 状態
+	m_fTimerState = 0.0f;			// 状態カウンター
+	m_fTimerShake = 0.0f;			// 振動カウンター
+	m_pCameraMotion = nullptr;		// カメラモーションのポインタ
+	m_pControlState = nullptr;		// 操作の状態ポインタ
+	m_pDebugControll = nullptr;		// デバッグ処理
 
 }
 
@@ -184,7 +184,7 @@ void CCamera::Update(const float fDeltaTime)
 	ReflectCameraV();
 
 	// 状態更新
-	UpdateState();
+	UpdateState(fDeltaTime);
 
 
 	CInputMouse* pMouse = CInputMouse::GetInstance();
@@ -380,12 +380,12 @@ void CCamera::UpdateSpotLightVec()
 //==========================================================================
 // カメラの振動設定処理
 //==========================================================================
-void CCamera::SetShake(int nTime, float fLength, float fLengthY)
+void CCamera::SetShake(float fTime, float fLength, float fLengthY)
 {
 	// 振動状態に設定
 	m_state = CAMERASTATE_SHAKE;
 
-	if (m_nCntState > 0)
+	if (m_fTimerState > 0.0f)
 	{
 		if (m_nShakeLength <= fLength)
 		{
@@ -395,23 +395,29 @@ void CCamera::SetShake(int nTime, float fLength, float fLengthY)
 		{
 			m_nShakeLengthY = fLengthY;	// 揺れの大きさ
 		}
-		if (m_nCntState <= nTime)
+		if (m_fTimerState <= fTime)
 		{
-			m_nCntState = nTime;	// 状態遷移カウンター
+			m_fTimerState = fTime;	// 状態遷移カウンター
 		}
+
+		// 振動カウンターの初期化
+		m_fTimerShake = 0.0f;
 	}
 	else
 	{
 		m_nShakeLength = fLength;	// 揺れの大きさ
 		m_nShakeLengthY = fLengthY;	// Yの揺れの大きさ
-		m_nCntState = nTime;		// 状態遷移カウンター
+		m_fTimerState = fTime;		// 状態遷移カウンター
+
+		// 振動カウンターの初期化
+		m_fTimerShake = 0.0f;
 	}
 }
 
 //==========================================================================
 // カメラの状態更新処理
 //==========================================================================
-void CCamera::UpdateState()
+void CCamera::UpdateState(const float fDeltaTime)
 {
 	switch (m_state)
 	{
@@ -420,8 +426,13 @@ void CCamera::UpdateState()
 
 	case CAMERASTATE_SHAKE:
 
-		if (m_nCntState % 3 == 0)
+		// 振動カウンター加算
+		m_fTimerShake += fDeltaTime;
+		if (m_fTimerShake >= 0.05f)
 		{
+			// 振動カウンター初期化
+			m_fTimerShake = 0.0f;
+
 			// 画面揺れ
 			Shake();
 		}
@@ -443,11 +454,12 @@ void CCamera::UpdateState()
 		}
 
 		// 状態遷移カウンター減算
-		m_nCntState--;
+		m_fTimerState -= fDeltaTime;
 
-		if (m_nCntState <= 0)
+		if (m_fTimerState <= 0.0f)
 		{
-			m_nCntState = 0;
+			m_fTimerState = 0.0f;
+			m_fTimerShake = 0.0f;
 			m_state = CAMERASTATE_NONE;
 			m_nShakeLength = 0.0f;	// 揺れの大きさ
 			m_nShakeLengthY = 0.0f;	// Yの揺れの大きさ
@@ -521,19 +533,20 @@ void CCamera::ResetGame()
 {
 	m_posR = MyLib::Vector3(0.0f, 200.0f, 0.0f);				// 注視点(見たい場所)
 	m_posV = MyLib::Vector3(0.0f, 300.0f, m_posR.z + -400.0f);	// 視点(カメラの位置)
-	m_posVDest = m_posV;									// 目標の視点
-	m_posRDest = m_posR;									// 目標の注視点
-	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
-	m_move = MyLib::Vector3(0.0f, 0.0f, 0.0f);				// 移動量
-	m_rot = DEFAULT_GAMEROT;								// 向き
-	m_rotOrigin = m_rot;									// 元の向き
-	m_rotDest = DEFAULT_GAMEROT;							// 目標の向き
-	m_TargetPos = MyLib::Vector3(0.0f, 0.0f, 0.0f);			// 目標の位置
-	m_fDistance = MIN_DISNTANCE;							// 距離
-	m_fDestDistance = MIN_DISNTANCE;						// 目標の距離
-	m_fOriginDistance = MIN_DISNTANCE;						// 元の距離
-	m_state = CAMERASTATE_NONE;								// 状態
-	m_nCntState = 0;							// 状態カウンター
+	m_posVDest = m_posV;							// 目標の視点
+	m_posRDest = m_posR;							// 目標の注視点
+	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
+	m_move = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// 移動量
+	m_rot = DEFAULT_GAMEROT;						// 向き
+	m_rotOrigin = m_rot;							// 元の向き
+	m_rotDest = DEFAULT_GAMEROT;					// 目標の向き
+	m_TargetPos = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 目標の位置
+	m_fDistance = MIN_DISNTANCE;					// 距離
+	m_fDestDistance = MIN_DISNTANCE;				// 目標の距離
+	m_fOriginDistance = MIN_DISNTANCE;				// 元の距離
+	m_state = CAMERASTATE_NONE;						// 状態
+	m_fTimerState = 0.0f;							// 状態カウンター
+	m_fTimerShake = 0.0f;							// 振動カウンター
 }
 
 //==========================================================================
