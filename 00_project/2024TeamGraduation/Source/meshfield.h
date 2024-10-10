@@ -38,11 +38,11 @@ public:
 	~CMeshField();
 
 	// オーバーライドされた関数
-	virtual HRESULT Init();
-	virtual void Uninit();
-	virtual void Update();
-	virtual void Draw();
-	virtual void SetVtx();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void SetVtx() override;
 
 	static CMeshField *Create();
 	static CMeshField *Create(MyLib::Vector3 pos, MyLib::Vector3 rot, float fWidthLen, float fHeightLen, int nWidth = 1, int nHeight = 1, TYPE type = TYPE_CONCREAT, const char *aFileName = nullptr, int nPriority = mylib_const::PRIORITY_DEFAULT);

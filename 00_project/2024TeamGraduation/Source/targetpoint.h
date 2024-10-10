@@ -22,20 +22,18 @@ public:
 	~CTargetPoint();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
-	void SetVtx();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void SetVtx() override;
 
 	void Control();	// 操作
 	static CTargetPoint *Create(MyLib::Vector3 pos, float fWidthLen, float fHeightLen);
 	CTargetPoint *GetObject3DMesh();
 
 private:
-
 	int m_nTexIdx;	// テクスチャのインデックス番号
-	int m_nAlphaCnt;	// 不透明度のカウント
 };
 
 

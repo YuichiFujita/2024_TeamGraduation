@@ -153,7 +153,7 @@ void CMeshSphere::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CMeshSphere::Update()
+void CMeshSphere::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();
@@ -174,8 +174,8 @@ void CMeshSphere::Update()
 	float fHeightLen = GetHeightLen();
 
 	// 慣性補正
-	UtilFunc::Correction::InertiaCorrection(fWidthLen, m_fSizeDest, 0.15f);
-	UtilFunc::Correction::InertiaCorrection(fHeightLen, m_fSizeDest, 0.15f);
+	UtilFunc::Correction::InertiaCorrection(fWidthLen, m_fSizeDest, 0.15f * fDeltaRate);
+	UtilFunc::Correction::InertiaCorrection(fHeightLen, m_fSizeDest, 0.15f * fDeltaRate);
 
 	// 長さ設定
 	SetWidthLen(fWidthLen);

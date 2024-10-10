@@ -29,7 +29,6 @@
 CTargetPoint::CTargetPoint(int nPriority) : CObject3DMesh(nPriority)
 {
 	m_nTexIdx = 0;	// テクスチャのインデックス番号
-	m_nAlphaCnt = 0;	// 不透明度のカウント
 }
 
 //==========================================================================
@@ -123,19 +122,15 @@ void CTargetPoint::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTargetPoint::Update()
+void CTargetPoint::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// 色取得
 	D3DXCOLOR col = GetColor();
-
-	// 二次曲線補正
-	UtilFunc::Correction::CuadricCurveComp(col.a, 100, 0.3f, 1.0f, m_nAlphaCnt);
-	//col.a = 0.3f;
 
 	// 色設定
 	SetColor(col);
 
+	// 操作
 	Control();
 
 	// 頂点情報設定
@@ -147,7 +142,6 @@ void CTargetPoint::Update()
 //==========================================================================
 void CTargetPoint::Control()
 {
-
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 

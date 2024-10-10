@@ -135,7 +135,7 @@ void CMeshCylinder::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CMeshCylinder::Update()
+void CMeshCylinder::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ’¸“_î•ñİ’è
 	SetVtx();

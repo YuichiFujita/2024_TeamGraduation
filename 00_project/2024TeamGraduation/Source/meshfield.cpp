@@ -176,7 +176,7 @@ void CMeshField::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CMeshField::Update()
+void CMeshField::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ’¸“_î•ñİ’è
 	//SetVtx();

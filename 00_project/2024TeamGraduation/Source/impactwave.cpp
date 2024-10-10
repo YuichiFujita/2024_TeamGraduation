@@ -50,10 +50,10 @@ const char *CImpactWave::m_apFilename[] =	//ファイル読み込み
 //==========================================================================
 CImpactWave::CImpactWave(int nPriority) : CObject3DMesh(nPriority)
 {
-	m_nTexIdx = 0;										// テクスチャのインデックス番号
-	m_nLife = 0;										// 寿命
-	m_nMaxLife = 0;										// 最大寿命
-	m_nTexDivision = 0;									// テクスチャ分割
+	m_nTexIdx = 0;			// テクスチャのインデックス番号
+	m_fLife = 0.0f;			// 寿命
+	m_fMaxLife = 0.0f;		// 最大寿命
+	m_nTexDivision = 0;		// テクスチャ分割
 	m_colOrigin = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 元の色
 	m_fOutWidth = 0.0f;		// 横幅(外)
 	m_fInWidth = 0.0f;		// 幅(内)
@@ -74,7 +74,7 @@ CImpactWave::~CImpactWave()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CImpactWave *CImpactWave::Create(MyLib::Vector3 pos, MyLib::Vector3 rot, D3DXCOLOR col, float fWidth, float fHeight, float fCenterDistance, int nLife, float fMove, int nTexType, bool bAddBlend)
+CImpactWave *CImpactWave::Create(MyLib::Vector3 pos, MyLib::Vector3 rot, D3DXCOLOR col, float fWidth, float fHeight, float fCenterDistance, float fLife, float fMove, int nTexType, bool bAddBlend)
 {
 	// 生成用のオブジェクト
 	CImpactWave *pObjMeshCylinder = nullptr;
@@ -101,7 +101,7 @@ CImpactWave *CImpactWave::Create(MyLib::Vector3 pos, MyLib::Vector3 rot, D3DXCOL
 			pObjMeshCylinder->m_fOutWidth = fWidth + fCenterDistance;		// 横幅(外)
 			pObjMeshCylinder->m_fInWidth = fWidth;		// 幅(内)
 			pObjMeshCylinder->m_fHeight = fHeight;		// 高さ
-			pObjMeshCylinder->m_nLife = nLife;			// 寿命
+			pObjMeshCylinder->m_fLife = fLife;			// 寿命
 			pObjMeshCylinder->m_fMove = fMove;			// 広がる速度
 			pObjMeshCylinder->m_bAddBlend = bAddBlend;	// 加算合成の判定
 
@@ -135,7 +135,7 @@ HRESULT CImpactWave::Init()
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
 	m_fRotWidth = (D3DX_PI * 2) / (float)(WIDTH);		//1分割数あたりの角度割合
-	m_nMaxLife = m_nLife;	// 最大寿命
+	m_fMaxLife = m_fLife;	// 最大寿命
 	m_nTexDivision = 4;		// テクスチャ分割
 
 	// オブジェクト3Dメッシュの初期化処理
@@ -197,7 +197,7 @@ void CImpactWave::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CImpactWave::Update()
+void CImpactWave::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 色取得
 	D3DXCOLOR col = GetColor();
@@ -205,19 +205,19 @@ void CImpactWave::Update()
 	MyLib::Vector3 move = GetMove();
 
 	// 位置更新
-	pos += move;
+	pos += move * fDeltaRate;
 
 	SetPosition(pos);
 	SetMove(move);
 
 	// 広げていく
-	m_fOutWidth += m_fMove;
+	m_fOutWidth += m_fMove * fDeltaRate;
 
 	// 寿命更新
-	m_nLife--;
+	m_fLife -= fDeltaTime;
 
 	// 不透明度更新
-	col.a = m_colOrigin.a * (float)m_nLife / (float)m_nMaxLife;
+	col.a = m_colOrigin.a * m_fLife / m_fMaxLife;
 
 	// 色設定
 	SetColor(col);
@@ -225,7 +225,7 @@ void CImpactWave::Update()
 	// 頂点情報設定
 	SetVtx();
 	
-	if (m_nLife <= 0)
+	if (m_fLife <= 0.0f)
 	{// 寿命が尽きた
 
 		// 終了処理
@@ -326,33 +326,33 @@ void CImpactWave::SetVtx()
 //==========================================================================
 // 寿命設定
 //==========================================================================
-void CImpactWave::SetLife(const int nLife)
+void CImpactWave::SetLife(const float fLife)
 {
-	m_nLife = nLife;
+	m_fLife = fLife;
 }
 
 //==========================================================================
 // 寿命取得
 //==========================================================================
-int CImpactWave::GetLife() const
+float CImpactWave::GetLife() const
 {
-	return m_nLife;
+	return m_fLife;
 }
 
 //==========================================================================
 // 最大寿命設定
 //==========================================================================
-void CImpactWave::SetMaxLife(const int nLife)
+void CImpactWave::SetMaxLife(const float fLife)
 {
-	m_nMaxLife = nLife;
+	m_fMaxLife = fLife;
 }
 
 //==========================================================================
 // 最大寿命取得
 //==========================================================================
-int CImpactWave::GetMaxLife() const
+float CImpactWave::GetMaxLife() const
 {
-	return m_nMaxLife;
+	return m_fMaxLife;
 }
 
 //==========================================================================

@@ -120,7 +120,7 @@ CMeshDome *CMeshDome::Create(const float fMove, const char *aFileName, const int
 			{// nullptrだったら
 
 				// テクスチャの割り当て
-				pObjMeshCylinder->m_nTexIdx = CTexture::GetInstance()->Regist(TEXTURE);
+				pObjMeshCylinder->m_nTexIdx = CTexture::GetInstance()->Regist("");
 			}
 			else
 			{// ファイル名が入っていたら
@@ -180,12 +180,12 @@ void CMeshDome::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CMeshDome::Update()
+void CMeshDome::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 rot = GetRotation();	// 向き
 
 	// 回転
-	rot.y += m_fMove;
+	rot.y += m_fMove * fDeltaRate;
 
 	// 角度の正規化
 	UtilFunc::Transformation::RotNormalize(rot.y);

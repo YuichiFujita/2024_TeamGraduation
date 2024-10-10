@@ -120,7 +120,7 @@ void CMeshWall::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CMeshWall::Update()
+void CMeshWall::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ’¸“_î•ñİ’è
 	SetVtx();

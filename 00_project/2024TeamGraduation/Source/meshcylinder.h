@@ -22,11 +22,11 @@ public:
 	~CMeshCylinder();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
-	void SetVtx();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void SetVtx() override;
 
 	static CMeshCylinder *Create();
 	static CMeshCylinder *Create(const char *aFileName = nullptr);

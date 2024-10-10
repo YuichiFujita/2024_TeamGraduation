@@ -49,17 +49,17 @@ public:
 	~CImpactWave();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
-	void SetVtx();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void SetVtx() override;
 
 	// 設定・取得
-	void SetLife(const int nLife);				// 寿命設定
-	int GetLife() const;					// 寿命取得
-	void SetMaxLife(const int nLife);			// 最大寿命設定
-	int GetMaxLife() const;					// 最大寿命取得
+	void SetLife(const float fLife);			// 寿命設定
+	float GetLife() const;					// 寿命取得
+	void SetMaxLife(const float nLife);			// 最大寿命設定
+	float GetMaxLife() const;				// 最大寿命取得
 	void SetColOrigin(const D3DXCOLOR col);		// 元の色設定
 	D3DXCOLOR GetColOrigin() const;			// 元の色取得
 	void SetOutWidth(const float fOutWidth);	// 外周設定
@@ -75,13 +75,13 @@ public:
 	void SetIsAddBlend(bool bAddBlend);			// 加算合成の設定
 
 	static const char *GetFileName(int nTexType);	// ファイル名取得
-	static CImpactWave *Create(MyLib::Vector3 pos, MyLib::Vector3 rot, D3DXCOLOR col, float fWidth, float fHeight, float fCenterDistance, int nLife, float fMove, int nTexType, bool bAddBlend);
+	static CImpactWave *Create(MyLib::Vector3 pos, MyLib::Vector3 rot, D3DXCOLOR col, float fWidth, float fHeight, float fCenterDistance, float fLife, float fMove, int nTexType, bool bAddBlend);
 	CImpactWave *GetMyObject();
 
 private:
-	int m_nTexIdx;	// テクスチャのインデックス番号
-	int m_nLife;	// 寿命
-	int m_nMaxLife;	// 最大寿命
+	int m_nTexIdx;			// テクスチャのインデックス番号
+	float m_fLife;			// 寿命
+	float m_fMaxLife;		// 最大寿命
 	int m_nTexDivision;		// テクスチャ分割
 	D3DXCOLOR m_colOrigin;	// 元の色
 	float m_fOutWidth;		// 横幅(外)

@@ -22,11 +22,11 @@ public:
 	~CMeshDome();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
-	void SetVtx();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void SetVtx() override;
 
 	static CMeshDome *Create();
 	static CMeshDome *Create(const float fMove, const char *aFileName = nullptr, const int nWidth = 16, const int nHeight = 8, int nPriority = mylib_const::PRIORITY_DEFAULT);
