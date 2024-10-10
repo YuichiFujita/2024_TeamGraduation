@@ -100,7 +100,7 @@ void CTimer::Release(void)
 //============================================================
 //	更新処理
 //============================================================
-void CTimer::Update(const float fDeltaTime)
+void CTimer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	switch (m_state)
 	{ // 計測状態ごとの処理
@@ -114,7 +114,7 @@ void CTimer::Update(const float fDeltaTime)
 
 		// タイムを計測
 		assert(m_funcCount != nullptr);
-		m_funcCount(fDeltaTime);
+		m_funcCount(fDeltaTime, fDeltaRate, fSlowRate);
 
 		break;
 
@@ -274,7 +274,7 @@ void CTimer::SetLimit(const float fLimit)
 	{ // 制限時間がない場合
 
 		// カウントアップ関数を設定
-		m_funcCount = std::bind(&CTimer::CountUp, this, std::placeholders::_1);
+		m_funcCount = std::bind(&CTimer::CountUp, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	}
 	else
 	{ // 時間制限がある場合
@@ -283,14 +283,14 @@ void CTimer::SetLimit(const float fLimit)
 		m_fTime = fLimit;
 
 		// カウントダウン関数を設定
-		m_funcCount = std::bind(&CTimer::CountDown, this, std::placeholders::_1);
+		m_funcCount = std::bind(&CTimer::CountDown, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	}
 }
 
 //============================================================
 //	カウントアップ処理
 //============================================================
-void CTimer::CountUp(const float fDeltaTime)
+void CTimer::CountUp(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを加算
 	m_fTime += fDeltaTime;
@@ -302,7 +302,7 @@ void CTimer::CountUp(const float fDeltaTime)
 //============================================================
 //	カウントダウン処理
 //============================================================
-void CTimer::CountDown(const float fDeltaTime)
+void CTimer::CountDown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを減算
 	m_fTime -= fDeltaTime;

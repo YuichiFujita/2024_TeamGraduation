@@ -394,10 +394,10 @@ void CRenderer::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CRenderer::Update(const float fDeltaTime)
+void CRenderer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 全ての更新
-	CObject::UpdateAll(fDeltaTime);
+	CObject::UpdateAll(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

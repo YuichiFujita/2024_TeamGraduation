@@ -308,7 +308,7 @@ void CCameraMotion::Uninit()
 //==========================================================================
 // カメラの更新処理
 //==========================================================================
-void CCameraMotion::Update(const float fDeltaTime)
+void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #ifdef _DEBUG
 	// エディット更新

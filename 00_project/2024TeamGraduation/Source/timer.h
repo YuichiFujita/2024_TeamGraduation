@@ -51,7 +51,7 @@ public:
 	HRESULT Init(void) override;	// 初期化
 	void Uninit(void) override;		// 終了
 	void Release(void) override;	// 破棄
-	void Update(const float fDeltaTime) override;	// 更新
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw(void) override;		// 描画
 
 	// 静的メンバ関数
@@ -79,15 +79,15 @@ public:
 
 private:
 	// メンバ関数
-	void CountUp(const float fDeltaTime);	// カウントアップ
-	void CountDown(const float fDeltaTime);	// カウントダウン
+	void CountUp(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カウントアップ
+	void CountDown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カウントダウン
 	void CalcTime(void);	// 時間計算
 
 	// 静的メンバ変数
 	static CListManager<CTimer> m_list;	// オブジェクトリスト
 
 	// メンバ変数
-	std::function<void(const float)> m_funcCount;	// 計測関数ポインタ
+	std::function<void(const float, const float, const float)> m_funcCount;	// 計測関数ポインタ
 	EState	m_state;	// 計測状態
 	float	m_fTime;	// 計測時間
 	float	m_fLimit;	// 制限時間

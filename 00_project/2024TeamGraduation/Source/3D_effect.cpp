@@ -293,30 +293,30 @@ void CEffect3D::Uninit()
 //==========================================================================
 // エフェクトの更新処理
 //==========================================================================
-void CEffect3D::Update(const float fDeltaTime)
+void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 過去の位置設定
 	SetOldPosition(GetPosition());
 
 	// 移動処理
-	UpdateMove(fDeltaTime);
+	UpdateMove(fDeltaTime, fDeltaRate, fSlowRate);
 
 	switch (m_moveType)
 	{
 	case MOVEEFFECT_ADD:
-		AddSize(fDeltaTime);
+		AddSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_SUB:
-		SubSize(fDeltaTime);
+		SubSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_SUPERSUB:
-		SuperSubSize(fDeltaTime);
+		SuperSubSize(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case MOVEEFFECT_GENSUI:
-		Gensui(fDeltaTime);
+		Gensui(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 	}
 
@@ -351,7 +351,7 @@ void CEffect3D::Update(const float fDeltaTime)
 //==========================================================================
 // 移動処理
 //==========================================================================
-void CEffect3D::UpdateMove(const float fDeltaTime)
+void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -436,7 +436,7 @@ void CEffect3D::UpdatePosition(MyLib::Vector3 rot)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect3D::SubSize(const float fDeltaTime)
+void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_3DType = rand() % 3;
 
@@ -457,7 +457,7 @@ void CEffect3D::SubSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect3D::SuperSubSize(const float fDeltaTime)
+void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
 }
@@ -465,7 +465,7 @@ void CEffect3D::SuperSubSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの拡大処理
 //==========================================================================
-void CEffect3D::AddSize(const float fDeltaTime)
+void CEffect3D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 拡大
 	m_fRadius += m_fAddSizeValue * fDeltaTime;
@@ -474,7 +474,7 @@ void CEffect3D::AddSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの減衰処理
 //==========================================================================
-void CEffect3D::Gensui(const float fDeltaTime)
+void CEffect3D::Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();

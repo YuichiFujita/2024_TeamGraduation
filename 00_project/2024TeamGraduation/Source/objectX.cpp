@@ -381,7 +381,7 @@ void CObjectX::Kill()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CObjectX::Update(const float fDeltaTime)
+void CObjectX::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ‰ß‹‚ÌŒü‚«İ’è
 	SetOldRotation(GetRotation());

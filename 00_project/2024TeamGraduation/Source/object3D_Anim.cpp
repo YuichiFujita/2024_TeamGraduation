@@ -118,7 +118,7 @@ HRESULT CObject3DAnim::Init(const int nDivisionU, const int nDivisionV, const in
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObject3DAnim::Update(const float fDeltaTime)
+void CObject3DAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 	// カウントを更新
@@ -146,7 +146,7 @@ void CObject3DAnim::Update(const float fDeltaTime)
 	}
 
 	// 更新処理
-	CObject3D::Update(fDeltaTime);
+	CObject3D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

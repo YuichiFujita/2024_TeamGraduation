@@ -63,7 +63,7 @@ public:
 	// ƒƒ“ƒoŠÖ”
 	HRESULT Init();
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 
 	void Kill();	// íœˆ—

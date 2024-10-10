@@ -162,7 +162,7 @@ void CCamera::Uninit()
 //==========================================================================
 // カメラの更新処理
 //==========================================================================
-void CCamera::Update(const float fDeltaTime)
+void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// キーボード情報取得
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
@@ -184,7 +184,7 @@ void CCamera::Update(const float fDeltaTime)
 	ReflectCameraV();
 
 	// 状態更新
-	UpdateState(fDeltaTime);
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 
 	CInputMouse* pMouse = CInputMouse::GetInstance();
@@ -212,7 +212,7 @@ void CCamera::Update(const float fDeltaTime)
 	// カメラモーション作成
 	if (m_pCameraMotion != nullptr)
 	{
-		m_pCameraMotion->Update(fDeltaTime);
+		m_pCameraMotion->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
@@ -417,7 +417,7 @@ void CCamera::SetShake(float fTime, float fLength, float fLengthY)
 //==========================================================================
 // カメラの状態更新処理
 //==========================================================================
-void CCamera::UpdateState(const float fDeltaTime)
+void CCamera::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	switch (m_state)
 	{

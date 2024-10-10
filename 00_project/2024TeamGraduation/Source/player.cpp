@@ -190,7 +190,7 @@ void CPlayer::Release()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPlayer::Update(const float fDeltaTime)
+void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (IsDeath())
 	{
@@ -213,7 +213,7 @@ void CPlayer::Update(const float fDeltaTime)
 	ResetFrag();
 
 	// 親の更新処理
-	CObjectChara::Update(fDeltaTime);
+	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 操作
 	Controll();
@@ -225,7 +225,7 @@ void CPlayer::Update(const float fDeltaTime)
 	}
 
 	// 状態更新
-	UpdateState(fDeltaTime);
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -580,13 +580,13 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 //==========================================================================
 // 状態更新
 //==========================================================================
-void CPlayer::UpdateState(const float fDeltaTime)
+void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーション別の状態設定
 	MotionBySetState();
 
 	// ダメージ受付時間更新
-	UpdateDamageReciveTimer(fDeltaTime);
+	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
@@ -595,7 +595,7 @@ void CPlayer::UpdateState(const float fDeltaTime)
 //==========================================================================
 // ダメージ受付時間更新
 //==========================================================================
-void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime)
+void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ダメージ受け付け時間減算
 	m_sDamageInfo.reciveTime -= fDeltaTime;

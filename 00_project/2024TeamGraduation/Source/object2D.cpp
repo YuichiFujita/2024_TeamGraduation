@@ -127,7 +127,7 @@ void CObject2D::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CObject2D::Update(const float fDeltaTime)
+void CObject2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ’¸“_î•ñİ’è
 	SetVtx();

@@ -99,7 +99,7 @@ void CText2D::Release(void)
 //============================================================
 //	更新処理
 //============================================================
-void CText2D::Update(const float fDeltaTime)
+void CText2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 相対位置の設定
 	SetPositionRelative();
@@ -109,7 +109,7 @@ void CText2D::Update(const float fDeltaTime)
 
 		// 文字列の更新
 		assert(rList != nullptr);
-		rList->Update(fDeltaTime);
+		rList->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 

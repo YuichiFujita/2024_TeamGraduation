@@ -23,7 +23,7 @@ public:
 
 	virtual HRESULT Init();
 	virtual void Uninit();
-	virtual void Update(const float fDeltaTime);
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	virtual void Draw();
 
 	void Stop();	// í‚é~

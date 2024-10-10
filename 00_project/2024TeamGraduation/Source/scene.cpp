@@ -239,7 +239,7 @@ void CScene::Kill()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CScene::Update(const float fDeltaTime)
+void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (GET_INPUTKEY->GetTrigger(DIK_0))
 	{

@@ -64,7 +64,7 @@ public:
 
 	HRESULT Init(HWND hWnd, BOOL bWindow);
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	LPDIRECT3DDEVICE9 GetDevice() const;
 	LPDIRECT3D9 GetD3D() const { return m_pD3D; }

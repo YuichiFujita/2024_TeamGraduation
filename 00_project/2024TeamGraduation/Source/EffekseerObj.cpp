@@ -112,7 +112,7 @@ void CEffekseerObj::Stop()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CEffekseerObj::Update(const float fDeltaTime)
+void CEffekseerObj::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// マネージャ取得
 	CMyEffekseer* pMyEffekseer = CMyEffekseer::GetInstance();
@@ -180,7 +180,7 @@ void CEffekseerObj::Update(const float fDeltaTime)
 		efkManager->SetScale(m_EffekseerInfo.handle, m_EffekseerInfo.scale, m_EffekseerInfo.scale, m_EffekseerInfo.scale);
 
 		// タイムスケール
-		efkManager->SetTimeScaleByHandle(m_EffekseerInfo.handle, fDeltaTime / (1.0f / 60.0f));
+		efkManager->SetTimeScaleByHandle(m_EffekseerInfo.handle, fDeltaRate);
 	}
 }
 

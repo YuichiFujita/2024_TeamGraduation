@@ -53,17 +53,17 @@ public:
 	HRESULT Init();
 	HRESULT Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, const D3DXCOLOR col, const float fRadius, const float fLife, const int moveType, const TYPE type);
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	void SetVtx();
 
 	static int GetNumAll();
 
 private:
-	void SubSize(const float fDeltaTime);
-	void SuperSubSize(const float fDeltaTime);
-	void AddSize(const float fDeltaTime);
-	void Gensui(const float fDeltaTime);
+	void SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	D3DXCOLOR m_colOrigin;	// êF
 	float m_fRadius;		// îºåa

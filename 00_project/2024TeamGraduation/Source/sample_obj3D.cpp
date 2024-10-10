@@ -98,10 +98,10 @@ void CSample_Obj3D::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_Obj3D::Update(const float fDeltaTime)
+void CSample_Obj3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 更新処理
-	CObject3D::Update(fDeltaTime);
+	CObject3D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

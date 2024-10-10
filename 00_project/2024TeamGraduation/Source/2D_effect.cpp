@@ -288,7 +288,7 @@ void CEffect2D::Uninit()
 //==========================================================================
 // エフェクトの更新処理
 //==========================================================================
-void CEffect2D::Update(const float fDeltaTime)
+void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 	// 位置取得
@@ -314,23 +314,23 @@ void CEffect2D::Update(const float fDeltaTime)
 	{// エフェクトを小さくしていく
 
 		// 縮小処理
-		SubSize(fDeltaTime);
+		SubSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_SUPERSUB)
 	{// エフェクトを小さくしていく
 
 		// 超縮小処理
-		SuperSubSize(fDeltaTime);
+		SuperSubSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_ADD)
 	{// エフェクトを大きくしていく
 
 		// 拡大処理
-		AddSize(fDeltaTime);
+		AddSize(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else if (m_moveType == MOVEEFFECT_GENSUI)
 	{
-		Gensui(fDeltaTime);
+		Gensui(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 寿命の更新
@@ -361,7 +361,7 @@ void CEffect2D::Update(const float fDeltaTime)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect2D::SubSize(const float fDeltaTime)
+void CEffect2D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_2DType = rand() % 3;
 
@@ -382,7 +382,7 @@ void CEffect2D::SubSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの縮小処理
 //==========================================================================
-void CEffect2D::SuperSubSize(const float fDeltaTime)
+void CEffect2D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_fRadius = m_fMaxRadius * m_fLife / m_fMaxLife;
 }
@@ -390,7 +390,7 @@ void CEffect2D::SuperSubSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの拡大処理
 //==========================================================================
-void CEffect2D::AddSize(const float fDeltaTime)
+void CEffect2D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	int nEffect_2DType = rand() % 3;
 
@@ -411,7 +411,7 @@ void CEffect2D::AddSize(const float fDeltaTime)
 //==========================================================================
 // エフェクトの減衰処理
 //==========================================================================
-void CEffect2D::Gensui(const float fDeltaTime)
+void CEffect2D::Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();

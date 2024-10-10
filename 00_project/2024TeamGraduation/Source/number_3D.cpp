@@ -72,7 +72,7 @@ void CNumber3D::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CNumber3D::Update(const float fDeltaTime)
+void CNumber3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 更新処理
 	if (m_aObject3D != nullptr)

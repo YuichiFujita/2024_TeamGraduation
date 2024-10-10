@@ -83,7 +83,14 @@ public:
 
 	int GetNumPlayer();				// プレイヤーの数取得
 	void SetNumPlayer(int nNum);	// プレイヤーの数設定
+
+	void UpdateDeltaTime();							// 経過時間更新
 	float GetDeltaTime() { return m_fDeltaTime; }	// 経過時間取得
+	void UpdateDeltaRate();							// 経過時間の割合更新
+	float GetDeltaRate() { return m_fDeltaRate; }	// 経過時間の割合取得
+	void UpdateSlowRate();							// 速度低下の割合更新
+	float GetSlowRate() { return m_fSlowRate; }		// 速度低下の割合取得
+
 	void SetMode(CScene::MODE mode);				// 次のモード設定
 	CScene::MODE GetMode();							// 現在のモード取得
 	void SetEnableHitStop(int nCntHitStop);			// ヒットストップの設定
@@ -133,6 +140,8 @@ private:
 	DWORD m_dwOldTime;		// 前回の処理開始時刻
 	DWORD m_dwCurTime;		// 今回の処理開始時刻
 	float m_fDeltaTime;		// 経過時間
+	float m_fDeltaRate;		// 経過時間の割合
+	float m_fSlowRate;		// 速度低下の割合
 	int m_nNumPlayer;		// プレイヤーの数
 	float m_fLoadTimer;		// ロードのタイマー
 	bool m_bLoadComplete;	// ロード完了のフラグ

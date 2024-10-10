@@ -24,7 +24,7 @@ public:
 	// オーバーライドされた関数
 	virtual HRESULT Init() override;
 	virtual HRESULT Init(const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath = true);
-	virtual void Update(const float fDeltaTime) override;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void SetVtx() override;
 
 	void SetDesableAutoDeath() { m_bAutoDeath = false; }	// 自動削除の判定削除

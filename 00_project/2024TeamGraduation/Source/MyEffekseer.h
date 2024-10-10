@@ -78,7 +78,7 @@ public:
 	~CMyEffekseer();
 
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void StopAll();	// 全て停止
 
 	Effekseer::EffectRef LoadEffect(std::string efkpath);	// エフェクト読み込み
@@ -97,7 +97,7 @@ private:
 	//=============================
 	HRESULT Init();
 	void Draw();
-	void UpdateAll(const float fDeltaTime);
+	void UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);	// モジュールのセットアップ
 	Effekseer::EffectRef LoadProcess(const std::u16string& efkpath);	// 読み込み処理

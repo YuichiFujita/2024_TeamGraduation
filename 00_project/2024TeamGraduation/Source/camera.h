@@ -45,7 +45,7 @@ public:
 
 	HRESULT Init();		// 初期化処理
 	void Uninit();		// 終了処理
-	void Update(const float fDeltaTime);	// 更新処理
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新処理
 	void SetCamera();	// カメラ設定
 	void Reset(CScene::MODE mode);	// リセット
 
@@ -145,7 +145,7 @@ private:
 	void Shake();
 
 
-	void UpdateState(const float fDeltaTime);			// 状態更新
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void UpdateSpotLightVec();	// ライトのベクトル更新
 
 	// リセット

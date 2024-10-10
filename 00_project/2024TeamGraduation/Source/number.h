@@ -42,7 +42,7 @@ public:
 	// オーバーライドされた関数
 	virtual HRESULT Init() override;
 	virtual void Uninit() override;
-	virtual void Update(const float fDeltaTime) override;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 
 

@@ -76,7 +76,7 @@ public:
 	//--------------------------
 	virtual HRESULT Init() = 0;
 	virtual void Uninit() = 0;
-	virtual void Update(const float fDeltaTime) = 0;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;
 	virtual void Draw() = 0;
 
 	//--------------------------
@@ -90,7 +90,7 @@ public:
 	// 機能
 	//--------------------------
 	static void ReleaseAll();						// 全開放
-	static void UpdateAll(const float fDeltaTime);	// 全更新
+	static void UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 全更新
 	static void DrawAll();							// 全描画
 
 	//--------------------------

@@ -139,7 +139,7 @@ void CObjectCircleGauge2D::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CObjectCircleGauge2D::Update(const float fDeltaTime)
+void CObjectCircleGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 割合更新
 	m_fRate += (m_fRateDest - m_fRate) * 0.15f;

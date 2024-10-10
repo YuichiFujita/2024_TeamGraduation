@@ -22,7 +22,7 @@ public:
 
 	HRESULT Init();
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	void UpdateSpotLightDirection(MyLib::Vector3 vec);	// スポットライトの向き更新
 private:

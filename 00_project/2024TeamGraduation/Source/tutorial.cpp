@@ -105,7 +105,7 @@ void CTutorial::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTutorial::Update(const float fDeltaTime)
+void CTutorial::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CManager::GetInstance()->GetDebugProc()->Print(
 		"現在のモード：【タイトル】\n"

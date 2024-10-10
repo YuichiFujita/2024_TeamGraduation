@@ -91,7 +91,7 @@ void CNumber::Kill()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CNumber::Update(const float fDeltaTime)
+void CNumber::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }

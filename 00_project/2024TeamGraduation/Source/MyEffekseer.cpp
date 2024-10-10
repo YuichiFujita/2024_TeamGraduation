@@ -211,13 +211,13 @@ void CMyEffekseer::StopAll()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CMyEffekseer::Update(const float fDeltaTime)
+void CMyEffekseer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bPause = CManager::GetInstance()->GetPause()->IsPause();
 	if (!bPause)
 	{
 		// 全更新
-		UpdateAll(fDeltaTime);
+		UpdateAll(fDeltaTime, fDeltaRate, fSlowRate);
 
 		// レイヤーパラメータの設定
 		Effekseer::Manager::LayerParameter layerParameter;
@@ -243,7 +243,7 @@ void CMyEffekseer::Update(const float fDeltaTime)
 //==========================================================================
 // 全更新
 //==========================================================================
-void CMyEffekseer::UpdateAll(const float fDeltaTime)
+void CMyEffekseer::UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 障害物のリスト取得
 	CListManager<CEffekseerObj> list = CEffekseerObj::GetListObj();
@@ -255,7 +255,7 @@ void CMyEffekseer::UpdateAll(const float fDeltaTime)
 	// リストループ
 	while (list.ListLoop(itr))
 	{
-		(*itr)->Update(fDeltaTime);
+		(*itr)->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 

@@ -89,7 +89,7 @@ void CRanking::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CRanking::Update(const float fDeltaTime)
+void CRanking::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE::STATE_NONE)
 	{// フェード中は抜ける

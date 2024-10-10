@@ -24,7 +24,7 @@ public:
 	// オーバーライドされた関数
 	HRESULT Init();
 	void Uninit();
-	void Update(const float fDeltaTime);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	virtual void SetVtx();
 

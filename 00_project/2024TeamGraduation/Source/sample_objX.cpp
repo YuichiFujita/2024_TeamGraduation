@@ -115,7 +115,7 @@ void CSample_ObjX::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_ObjX::Update(const float fDeltaTime)
+void CSample_ObjX::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態カウンター加算
 	m_fStateTime += fDeltaTime;

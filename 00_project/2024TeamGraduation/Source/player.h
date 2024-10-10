@@ -84,7 +84,7 @@ public:
 	// オーバーライドされた関数
 	virtual HRESULT Init() override;
 	virtual void Uninit() override;
-	virtual void Update(const float fDeltaTime) override;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 	virtual void Release() override;	// 死亡処理
 
@@ -134,7 +134,7 @@ private:
 	// メンバ関数
 	//=============================
 	// 状態関数
-	void UpdateState(const float fDeltaTime);		// 状態更新
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新
 	void StateNone();		// なし
 	void StateInvincible();	// 無敵
 	void StateDamage();		// ダメージ
@@ -147,7 +147,7 @@ private:
 	void LimitPos();				// 位置制限
 	void MotionBySetState();		// モーション別の状態設定
 	void ResetFrag();				// フラグリセット
-	void UpdateDamageReciveTimer(const float fDeltaTime);	// ダメージ受付時間更新
+	void UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ダメージ受付時間更新
 	void MotionSet();	// モーションの設定
 
 	// モーション系関数
