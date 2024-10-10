@@ -35,6 +35,8 @@
 #include "timeUI.h"
 #include "3D_effect.h"
 #include "2D_effect.h"
+#include "impactwave.h"
+#include "meshdome.h"
 
 //==========================================================================
 // íËêîíËã`
@@ -262,9 +264,14 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		p->SetGravityValue(10.0f);
 #endif
 
-		// TODOÅF
+		// Ç¢ÇÒÇ¡ÇœÇ≠Ç∆
 #if 0
+		CImpactWave::Create(VEC3_ZERO, VEC3_ZERO, MyLib::color::White(), 300.0f, 300.0f, 0.0f, 5.0f, 10.0f, 0, false);
+#endif
 
+		// Ç«Å[Çﬁ
+#if 0
+		CMeshDome::Create(0.01f, "data\\TEXTURE\\number000.png");
 #endif
 	}
 

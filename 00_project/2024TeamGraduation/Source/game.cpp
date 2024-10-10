@@ -183,13 +183,11 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 
 #if _DEBUG
-
 	// エディット切り替え処理
 	ChangeEdit();
 #endif
 
 #if _DEBUG
-
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
@@ -197,7 +195,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		// ツリー終端
 		ImGui::TreePop();
 	}
-
 #endif
 
 	// シーンの更新
