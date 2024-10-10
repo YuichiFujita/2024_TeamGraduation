@@ -74,6 +74,10 @@ HWND GetWnd();
 void ResetWnd();
 int GetCmbShow();
 
+#ifdef _DEBUG
+int *GetDebugFps();
+#endif
+
 class CMyEffekseer;
 class CLoadManager;
 

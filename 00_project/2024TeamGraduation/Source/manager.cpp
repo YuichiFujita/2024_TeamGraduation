@@ -366,11 +366,13 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 //==========================================================================
 void CManager::Load()
 {
+#ifndef _DEBUG
 	// 全てのテクスチャ読み込み
 	m_pTexture->LoadAll();
 
 	// 全てのモデル読み込み
 	m_pXLoad->LoadAll();
+#endif
 
 	// 全てのフォント読み込み
 	m_pFont->LoadAll();
