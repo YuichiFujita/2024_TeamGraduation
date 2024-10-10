@@ -18,6 +18,7 @@ namespace
 	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
 	const float TIME_DASH = 0.2f;		// ダッシュ時間
 	const float MOVE_VELOCITY = 5.0f;	// 移動速度
+	const float INTERVAL_INPUT = (2.0f / 60.0f);	// 入力
 }
 
 //==========================================================================
@@ -35,6 +36,8 @@ CDash::STATE_FUNC CDash::m_StateFuncList[] =
 CDash::CDash(int nPriority) : CObject2D(nPriority)
 {
 	// 値のクリア
+	m_HoldDashAngle = Angle::ANGLE_UP;			// 保持してるダッシュの移動方向
+	m_fInputInterval = 0.0f;	// 入力の受け付け猶予
 	m_fDashInterval = 0.0f;		// ダッシュのインターバル
 	m_state = State::STATE_NONE;
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
@@ -139,32 +142,6 @@ void CDash::Update()
 }
 
 //==========================================================================
-// トリガー
-//==========================================================================
-CDash::MyStruct CDash::Trigger(Angle angle)
-{
-	MyStruct info;
-	info.bDash = false;
-
-	if (m_nCntTrigger[angle] == 1)
-	{// ダッシュ
-		info.bDash = true;
-		info.angle = angle;
-
-		m_fStateTime = 0.0f;
-		m_state = State::STATE_DASH;
-	}
-
-	// タイマーリセット
-	m_fDashInterval = TIME_INTERVAL;
-
-	// トリガーのカウント
-	m_nCntTrigger[angle] = (m_nCntTrigger[angle] + 1) % 2;
-
-	return info;
-}
-
-//==========================================================================
 // 状態更新
 //==========================================================================
 void CDash::UpdateState()
@@ -193,7 +170,9 @@ void CDash::StateNone()
 	// スティックの向き
 	float stickAngle = pPad->GetStickRotL(0);
 
+	// 移動フラグ
 	bool bMove = false;
+
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) || pPad->GetStickMoveL(0).y > 0)
 	{// 上
 		bMove = true;
@@ -264,7 +243,7 @@ void CDash::StateNone()
 	}
 
 	if (bMove)
-	{
+	{// 移動中
 		MyLib::Vector3 move;
 		float division = (D3DX_PI * 2.0f) / Angle::ANGLE_MAX;
 		move.x += cosf((D3DX_PI * -0.5f) + division * info.angle) * MOVE_VELOCITY;
@@ -272,85 +251,199 @@ void CDash::StateNone()
 		SetMove(move);
 	}
 
-	info = MyStruct();
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
-	{// 上
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x < 0))
-		{// 左上
-			info = Trigger(Angle::ANGLE_LEFTUP);
-		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x > 0))
-		{// 右上
-			info = Trigger(Angle::ANGLE_RIGHTUP);
-		}
-		else
+
+
+
+
+	// 入力フラグ
+	bool bInput = false;
+
+	if (m_fInputInterval <= 0.0f)
+	{// 猶予受け付け終了中
+
+		info = MyStruct();
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 		{// 上
-			info = Trigger(Angle::ANGLE_UP);
-		}
-	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
-	{// 下
+			bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x < 0))
-		{// 左下
-			info = Trigger(Angle::ANGLE_LEFTDW);
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x < 0))
+			{// 左上
+				m_HoldDashAngle = Angle::ANGLE_LEFTUP;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x > 0))
+			{// 右上
+				m_HoldDashAngle = Angle::ANGLE_RIGHTUP;
+			}
+			else
+			{// 上
+				m_HoldDashAngle = Angle::ANGLE_UP;
+			}
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x > 0))
-		{// 右下
-			info = Trigger(Angle::ANGLE_RIGHTDW);
-		}
-		else
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
 		{// 下
-			info = Trigger(Angle::ANGLE_DOWN);
-		}
-	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
-	{// 右
+			bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y < 0))
-		{// 右上
-			info = Trigger(Angle::ANGLE_RIGHTUP);
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x < 0))
+			{// 左下
+				m_HoldDashAngle = Angle::ANGLE_LEFTDW;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_X) && */pPad->GetStickMoveL(0).x > 0))
+			{// 右下
+				m_HoldDashAngle = Angle::ANGLE_RIGHTDW;
+			}
+			else
+			{// 下
+				m_HoldDashAngle = Angle::ANGLE_DOWN;
+			}
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y > 0))
-		{// 右下
-			info = Trigger(Angle::ANGLE_RIGHTDW);
-		}
-		else
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
 		{// 右
-			info = Trigger(Angle::ANGLE_RIGHT);
-		}
-	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
-	{// 左
+			bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y < 0))
-		{// 左上
-			info = Trigger(Angle::ANGLE_LEFTUP);
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y < 0))
+			{// 右上
+				m_HoldDashAngle = Angle::ANGLE_RIGHTUP;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y > 0))
+			{// 右下
+				m_HoldDashAngle = Angle::ANGLE_RIGHTDW;
+			}
+			else
+			{// 右
+				m_HoldDashAngle = Angle::ANGLE_RIGHT;
+			}
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) &&*/ pPad->GetStickMoveL(0).y > 0))
-		{// 左下
-			info = Trigger(Angle::ANGLE_LEFTDW);
-		}
-		else
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
 		{// 左
-			info = Trigger(Angle::ANGLE_LEFT);
+			bInput = true;
+
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && */pPad->GetStickMoveL(0).y < 0))
+			{// 左上
+				m_HoldDashAngle = Angle::ANGLE_LEFTUP;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
+				(/*pPad->GetLStickTrigger(CInputGamepad::STICK_Y) &&*/ pPad->GetStickMoveL(0).y > 0))
+			{// 左下
+				m_HoldDashAngle = Angle::ANGLE_LEFTDW;
+			}
+			else
+			{// 左
+				m_HoldDashAngle = Angle::ANGLE_LEFT;
+			}
 		}
 	}
 
-	
+
+	if (bInput)
+	{// 入力された
+
+		// 入力のインターバル
+		m_fInputInterval = INTERVAL_INPUT;
+	}
+
+	if (m_fInputInterval > 0.0f)
+	{// 受け付け猶予中
+
+		// 次の入力判定
+		bool bNextInput = false;
+		switch (m_HoldDashAngle)
+		{
+		case Angle::ANGLE_LEFT:
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+			{// 上
+				info = Trigger(Angle::ANGLE_LEFTUP);
+				bNextInput = true;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+			{// 下
+				info = Trigger(Angle::ANGLE_LEFTDW);
+				bNextInput = true;
+			}
+			break;
+
+		case Angle::ANGLE_RIGHT:
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+			{// 上
+				info = Trigger(Angle::ANGLE_RIGHTUP);
+				bNextInput = true;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+			{// 下
+				info = Trigger(Angle::ANGLE_RIGHTDW);
+				bNextInput = true;
+			}
+			break;
+
+		case Angle::ANGLE_UP:
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+			{// 左
+				info = Trigger(Angle::ANGLE_LEFTUP);
+				bNextInput = true;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+			{// 右
+				info = Trigger(Angle::ANGLE_RIGHTUP);
+				bNextInput = true;
+			}
+			break;
+
+		case Angle::ANGLE_DOWN:
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+			{// 左
+				info = Trigger(Angle::ANGLE_LEFTDW);
+				bNextInput = true;
+			}
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+			{// 右
+				info = Trigger(Angle::ANGLE_RIGHTDW);
+				bNextInput = true;
+			}
+			break;
+
+		default:
+			info = Trigger(m_HoldDashAngle);
+			bNextInput = true;
+			break;
+		}
+
+		// 受け付けされてるよ
+		if (bNextInput)
+		{
+			// 受け付け猶予終了
+			m_fInputInterval = 0.0f;
+		}
+	}
+
+	// 受け付け猶予減算
+	float oldTime = m_fInputInterval;
+	m_fInputInterval -= CManager::GetInstance()->GetDeltaTime();
+	m_fInputInterval = UtilFunc::Transformation::Clamp(m_fInputInterval, 0.0f, INTERVAL_INPUT);
+
+	if (oldTime > 0.0f &&
+		m_fInputInterval <= 0.0f)
+	{// 前回まだ猶予中 && 今は終了
+		info = Trigger(m_HoldDashAngle);
+	}
 
 	// ダッシュする
 	if (info.bDash)
@@ -382,6 +475,33 @@ void CDash::StateDash()
 		m_fStateTime = 0.0f;
 		m_state = State::STATE_NONE;
 	}
+}
+
+
+//==========================================================================
+// トリガー
+//==========================================================================
+CDash::MyStruct CDash::Trigger(Angle angle)
+{
+	MyStruct info;
+	info.bDash = false;
+
+	if (m_nCntTrigger[angle] == 1)
+	{// ダッシュ
+		info.bDash = true;
+		info.angle = angle;
+
+		m_fStateTime = 0.0f;
+		m_state = State::STATE_DASH;
+	}
+
+	// タイマーリセット
+	m_fDashInterval = TIME_INTERVAL;
+
+	// トリガーのカウント
+	m_nCntTrigger[angle] = (m_nCntTrigger[angle] + 1) % 2;
+
+	return info;
 }
 
 //==========================================================================
