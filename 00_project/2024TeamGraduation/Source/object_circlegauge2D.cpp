@@ -142,7 +142,7 @@ void CObjectCircleGauge2D::Uninit()
 void CObjectCircleGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// Š„‡XV
-	m_fRate += (m_fRateDest - m_fRate) * 0.15f;
+	m_fRate += (m_fRateDest - m_fRate) * 0.15f * fDeltaRate;
 
 	// ’¸“_î•ñİ’è
 	SetVtx();

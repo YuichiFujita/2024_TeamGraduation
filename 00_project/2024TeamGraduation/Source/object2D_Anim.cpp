@@ -6,17 +6,19 @@
 //=============================================================================
 #include "object2D_Anim.h"
 #include "calculation.h"
+#include "debugproc.h"
+#include "manager.h"
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CObject2D_Anim::CObject2D_Anim(int nPriority) : CObject2D(nPriority)
 {
-	m_nCntAnim = 0;			// アニメーションのカウンター
+	m_fTimerAnim = 0.0f;	// アニメーションのカウンター
+	m_fIntervalAnim = 0.0f;	// アニメーションのインターバル
 	m_nPatternAnim = 0;		// アニメーションのパターン
 	m_nDivisionU = 0;		// Uの分割数
 	m_nDivisionV = 0;		// Vの分割数
-	m_nIntervalAnim = 0;	// アニメーションのインターバル
 	m_fSplitValueU = 0.0f;	// Uのスプライト量
 	m_fSplitValueV = 0.0f;	// Vのスプライト量
 	m_bAutoDeath = false;	// 自動削除のフラグ
@@ -34,7 +36,7 @@ CObject2D_Anim::~CObject2D_Anim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
+CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath)
 {
 	// メモリの確保
 	CObject2D_Anim* pObject2D = DEBUG_NEW CObject2D_Anim;
@@ -47,7 +49,7 @@ CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDiv
 		pObject2D->SetOriginPosition(pos);
 		pObject2D->m_nDivisionU = nDivisionU;
 		pObject2D->m_nDivisionV = nDivisionV;
-		pObject2D->m_nIntervalAnim = nInterval;
+		pObject2D->m_fIntervalAnim = fInterval;
 		pObject2D->m_bAutoDeath = bAutoDeath;
 
 		// 初期化処理
@@ -82,12 +84,12 @@ HRESULT CObject2D_Anim::Init()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
+HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath)
 {
 	// 引数情報
 	m_nDivisionU = nDivisionU;
 	m_nDivisionV = nDivisionV;
-	m_nIntervalAnim = nInterval;
+	m_fIntervalAnim = fInterval;
 
 	// 初期化処理
 	HRESULT hr = CObject2D::Init();
@@ -114,22 +116,19 @@ HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const i
 //==========================================================================
 void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// カウントを更新
-	m_nCntAnim = (m_nCntAnim + 1) % m_nIntervalAnim;
+	m_fTimerAnim += fDeltaTime;
 
 	// パターン更新
-	if (m_nCntAnim == 0)
+	if (m_fTimerAnim >= m_fIntervalAnim)
 	{
 		// パターンNo.を更新
 		m_nPatternAnim = (m_nPatternAnim + 1) % (m_nDivisionU * m_nDivisionV);
-
 		if (m_nPatternAnim == 0)
-		{// パターンが一周した時
+		{ // パターンが一周した時
 
 			// 終了状態
 			m_bFinish = true;
-
 			if (m_bAutoDeath)
 			{
 				// オブジェクト破棄
@@ -137,6 +136,9 @@ void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, cons
 				return;
 			}
 		}
+
+		// インターバル分減算
+		m_fTimerAnim -= m_fIntervalAnim;
 	}
 
 	// 更新処理

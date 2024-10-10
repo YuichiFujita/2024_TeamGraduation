@@ -69,9 +69,6 @@
     <Filter Include="camera">
       <UniqueIdentifier>{61f2cd6c-2c60-4c7d-9eec-19d2b4f10eea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mode\title\option">
-      <UniqueIdentifier>{071c6caf-4a75-4dc3-ba28-3d5004e3a149}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lostrssmanager">
       <UniqueIdentifier>{28071454-2189-45fa-94c3-5874bdcb4372}</UniqueIdentifier>
     </Filter>

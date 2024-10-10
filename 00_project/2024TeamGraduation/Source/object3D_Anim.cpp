@@ -12,11 +12,11 @@
 //==========================================================================
 CObject3DAnim::CObject3DAnim(int nPriority) : CObject3D(nPriority)
 {
-	m_nCntAnim = 0;			// アニメーションのカウンター
+	m_fTimerAnim = 0.0f;	// アニメーションのカウンター
+	m_fIntervalAnim = 0.0f;	// アニメーションのインターバル
 	m_nPatternAnim = 0;		// アニメーションのパターン
 	m_nDivisionU = 0;		// Uの分割数
 	m_nDivisionV = 0;		// Vの分割数
-	m_nIntervalAnim = 0;	// アニメーションのインターバル
 	m_fSplitValueU = 0.0f;	// Uのスプライト量
 	m_fSplitValueV = 0.0f;	// Vのスプライト量
 	m_bAutoDeath = false;	// 自動削除のフラグ
@@ -34,7 +34,7 @@ CObject3DAnim::~CObject3DAnim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObject3DAnim *CObject3DAnim::Create(MyLib::Vector3 pos, const int nDivisionU, const int nDivisionV, const int nInterval, bool bAutoDeath)
+CObject3DAnim *CObject3DAnim::Create(MyLib::Vector3 pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath)
 {
 	// 生成用のオブジェクト
 	CObject3DAnim *pObject3D = nullptr;
@@ -53,7 +53,7 @@ CObject3DAnim *CObject3DAnim::Create(MyLib::Vector3 pos, const int nDivisionU, c
 			pObject3D->SetOriginPosition(pos);
 			pObject3D->m_nDivisionU = nDivisionU;
 			pObject3D->m_nDivisionV = nDivisionV;
-			pObject3D->m_nIntervalAnim = nInterval;
+			pObject3D->m_fIntervalAnim = fInterval;
 			pObject3D->m_bAutoDeath = bAutoDeath;
 
 			// 初期化処理
@@ -91,12 +91,12 @@ HRESULT CObject3DAnim::Init()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CObject3DAnim::Init(const int nDivisionU, const int nDivisionV, const int nInterval)
+HRESULT CObject3DAnim::Init(const int nDivisionU, const int nDivisionV, const float fInterval)
 {
 	// 引数情報
 	m_nDivisionU = nDivisionU;
 	m_nDivisionV = nDivisionV;
-	m_nIntervalAnim = nInterval;
+	m_fIntervalAnim = fInterval;
 
 	// 初期化処理
 	HRESULT hr = CObject3D::Init();
@@ -120,22 +120,19 @@ HRESULT CObject3DAnim::Init(const int nDivisionU, const int nDivisionV, const in
 //==========================================================================
 void CObject3DAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// カウントを更新
-	m_nCntAnim = (m_nCntAnim + 1) % m_nIntervalAnim;
+	m_fTimerAnim += fDeltaTime;
 
 	// パターン更新
-	if (m_nCntAnim == 0)
+	if (m_fTimerAnim >= m_fIntervalAnim)
 	{
 		// パターンNo.を更新
 		m_nPatternAnim = (m_nPatternAnim + 1) % (m_nDivisionU * m_nDivisionV);
-
 		if (m_nPatternAnim == 0)
-		{// パターンが一周した時
+		{ // パターンが一周した時
 
 			// 終了状態
 			m_bFinish = true;
-
 			if (m_bAutoDeath)
 			{
 				// オブジェクト破棄
@@ -143,6 +140,9 @@ void CObject3DAnim::Update(const float fDeltaTime, const float fDeltaRate, const
 				return;
 			}
 		}
+
+		// インターバル分減算
+		m_fTimerAnim -= m_fIntervalAnim;
 	}
 
 	// 更新処理

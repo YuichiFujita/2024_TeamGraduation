@@ -37,6 +37,12 @@
 #include "2D_effect.h"
 #include "impactwave.h"
 #include "meshdome.h"
+#include "object_circlegauge2D.h"
+#include "objectBillboard_Anim.h"
+
+// TODO
+CObjectCircleGauge2D* g_pGauge = nullptr;
+CObjectBillboardAnim* g_pAnim = nullptr;
 
 //==========================================================================
 // 定数定義
@@ -175,6 +181,22 @@ HRESULT CScene::Init()
 	CTimeUI::Create(145.0f, SCREEN_CENT, D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 0.0f), D3DXVECTOR2(60.0f, 0.0f));
 #endif
 
+	// TODO
+#if 0
+	g_pGauge = CObjectCircleGauge2D::Create(16, 100.0f);
+	g_pGauge->SetType(CObject::TYPE::TYPE_OBJECT2D);
+	g_pGauge->SetPosition(SCREEN_CENT);
+	g_pGauge->SetRateDest(1.0f);
+#endif
+
+	// TODO
+#if 0
+	g_pAnim = CObjectBillboardAnim::Create(VEC3_ZERO, 10, 1, 0.1f, false);
+	g_pAnim->BindTexture(CTexture::GetInstance()->Regist("data\\TEXTURE\\number000.png"));
+	g_pAnim->SetSize(MyLib::Vector2(100.0f, 100.0f));
+	g_pAnim->SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
+#endif
+
 	// エフェクト全て停止
 	CMyEffekseer::GetInstance()->StopAll();
 
@@ -254,6 +276,13 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 #if 0
 		CEffekseerObj* p = CEffekseerObj::Create(CMyEffekseer::EFKLABEL::EFKLABEL_HIT, VEC3_ZERO, VEC3_ZERO, VEC3_ZERO, 50.0f);
 #endif
+
+		// ◎ゲージ
+#if 0
+		static bool bMax = true;
+		g_pGauge->SetRateDest((bMax) ? 0.0f : 1.0f);
+		bMax = !bMax;
+#endif
 	}
 
 	if (GET_INPUTKEY->GetTrigger(DIK_9))
@@ -275,14 +304,17 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 #endif
 	}
 
-	int* pFps = GetDebugFps();
 	if (GET_INPUTKEY->GetPress(DIK_UP))
 	{
+		int* pFps = GetDebugFps();
 		*pFps += 1;
+		UtilFunc::Transformation::ValueNormalize(*pFps, 144, 1);
 	}
 	if (GET_INPUTKEY->GetPress(DIK_DOWN))
 	{
+		int* pFps = GetDebugFps();
 		*pFps -= 1;
+		UtilFunc::Transformation::ValueNormalize(*pFps, 144, 1);
 	}
 }
 
