@@ -15,7 +15,7 @@
 //==========================================================================
 namespace
 {
-	const int FPS = 20;	// –Ú•WFPS
+	const int FPS = 60;	// –Ú•WFPS
 }
 
 //==========================================================================
@@ -193,7 +193,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 		delete LoadManager;
 		LoadManager = nullptr;
 	}
-	
 
 	// •ª‰ð”\‚ð–ß‚·
 	timeEndPeriod(1);
