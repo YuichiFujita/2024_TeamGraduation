@@ -84,17 +84,17 @@ public:
 	//--------------------------
 	// キャラ情報
 	//--------------------------
-	void SetHeight(const float fHeight) { m_fHeight = fHeight; }		// 身長設定
-	float GetHeight() { return m_fHeight; }						// 身長取得
+	void SetHeight(const float fHeight) { m_fHeight = fHeight; }			// 身長設定
+	float GetHeight() { return m_fHeight; }									// 身長取得
 	void SetVelocity(const float fVelocity) { m_fVelocity = fVelocity; }	// 移動速度設定
-	float GetVelocity() const { return m_fVelocity; }				// 移動速度取得
+	float GetVelocity() const { return m_fVelocity; }						// 移動速度取得
 	void SetRotDest(const float fRotDest) { m_fRotDest = fRotDest; }		// 目標の向き設定
-	float GetRotDest() const { return m_fRotDest; }				// 目標の向き取得
-	void SetLife(const int nLife) { m_nLife = nLife; }				// 体力設定
-	int GetLife() const { return m_nLife; }					// 体力取得
-	void SetLifeOrigin(const int nLife) { m_nLifeOrigin = nLife; }		// 元の体力設定
-	int GetLifeOrigin() const { return m_nLifeOrigin; }				// 元の体力取得
-	int GetMotionStartIdx() const { return m_nMotionStartIdx; }			// モーション開始のインデックス番号取得
+	float GetRotDest() const { return m_fRotDest; }							// 目標の向き取得
+	void SetLife(const int nLife) { m_nLife = nLife; }						// 体力設定
+	int GetLife() const { return m_nLife; }									// 体力取得
+	void SetLifeOrigin(const int nLife) { m_nLifeOrigin = nLife; }			// 元の体力設定
+	int GetLifeOrigin() const { return m_nLifeOrigin; }						// 元の体力取得
+	int GetMotionStartIdx() const { return m_nMotionStartIdx; }				// モーション開始のインデックス番号取得
 
 	//--------------------------
 	// コライダー関連

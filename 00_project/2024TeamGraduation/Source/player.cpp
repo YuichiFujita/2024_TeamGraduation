@@ -59,29 +59,27 @@ CListManager<CPlayer> CPlayer::m_List = {};	// リスト
 CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 {
 	// 値のクリア
-	// 共有変数
-	m_bJump = false;				// ジャンプ中かどうか
-	m_bLandOld = false;				// 過去の着地情報
-	m_bHitStage = false;			// ステージの当たり判定
-	m_bLandField = false;			// フィールドの着地判定
-	m_bHitWall = false;				// 壁の当たり判定
+	// 状態
 	m_state = STATE_NONE;			// 状態
+	m_Oldstate = STATE_NONE;		// 前回の状態
+	m_fStateTime = 0.0f;			// 状態時間
 
-	SMotionFrag initFrag = {};
-	m_sMotionFrag = initFrag;		// モーションのフラグ
-
-	// プライベート変数
-	m_Oldstate = STATE_NONE;						// 前回の状態
-	m_mMatcol = mylib_const::DEFAULT_COLOR;			// マテリアルの色
+	// オブジェクトのパラメータ
+	m_mMatcol = MyLib::Color();			// マテリアルの色
 	m_posKnokBack = MyLib::Vector3();	// ノックバックの位置
-	m_bDash = false;								// ダッシュ判定
-	m_fDashTime = 0.0f;								// ダッシュ時間
-	m_sDamageInfo = sDamageInfo();					// ダメージ情報
 
-	m_nMyPlayerIdx = 0;								// プレイヤーインデックス番号
-	m_pShadow = nullptr;							// 影の情報
+	// 行動フラグ
+	m_bJump = false;				// ジャンプ中かどうか
+	m_bDash = false;				// ダッシュ判定
+	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
-	m_pControlMove = nullptr;						// 移動操作
+	// パターン用インスタンス
+	m_pControlMove = nullptr;	// 移動操作
+
+	// その他
+	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
+	m_pShadow = nullptr;			// 影の情報
+	m_sDamageInfo = sDamageInfo();	// ダメージ情報
 }
 
 //==========================================================================
@@ -125,7 +123,7 @@ HRESULT CPlayer::Init()
 	m_sDamageInfo.reciveTime = 0.0f;
 
 	m_state = STATE_NONE;	// 状態
-	m_bLandOld = true;		// 前回の着地状態
+	m_Oldstate = m_state;
 	m_sMotionFrag.bMove = true;
 
 	// キャラ作成
@@ -192,13 +190,7 @@ void CPlayer::Release()
 //==========================================================================
 void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (IsDeath())
-	{
-		return;
-	}
-
-	// キーボード情報取得
-	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
+	if (IsDeath()) return;
 
 	// エディット中は抜ける
 	if (CGame::GetInstance()->GetEditType() != CGame::GetInstance()->EDITTYPE_OFF)
@@ -216,7 +208,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 操作
-	Controll();
+	Controll(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// モーションの設定処理
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
@@ -262,8 +254,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"移動量：【X：%f, Y：%f, Z：%f】\n"
 		"体力：【%d】\n"
 		"状態：【%d】\n"
-		"ダッシュ時間：【%f】\n"
-		, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state, m_fDashTime);
+		, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
 
 #endif
 
@@ -272,20 +263,20 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 //==========================================================================
 // 操作処理
 //==========================================================================
-void CPlayer::Controll()
+void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 	// キーボード情報取得
-	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();
+	CInputKeyboard *pKey = CInputKeyboard::GetInstance();
 
 	// ゲームパッド情報取得
-	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
+	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{// 行動できるとき
 
 		// 移動操作
-		m_pControlMove->Move(this);
+		m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -294,16 +285,16 @@ void CPlayer::Controll()
 	MyLib::Vector3 rot = GetRotation();
 
 	// 移動量加算
-	pos += move;
+	pos += move * fDeltaRate;
 
 	// 慣性補正
-	move.x += (0.0f - move.x) * 0.1f;
-	move.z += (0.0f - move.z) * 0.1f;
+	move.x += (0.0f - move.x) * (0.1f * fDeltaRate);
+	move.z += (0.0f - move.z) * (0.1f * fDeltaRate);
 
 	// 重力処理
 	if (m_state != STATE_DEAD && m_state != STATE_DEADWAIT)
 	{
-		move.y -= mylib_const::GRAVITY;
+		move.y -= mylib_const::GRAVITY * fDeltaRate;
 	}
 
 	// 位置設定
@@ -315,12 +306,10 @@ void CPlayer::Controll()
 
 	// 現在と目標の差分を求める
 	float fRotDiff = GetRotDest() - rot.y;
-
-	// 角度の正規化
 	UtilFunc::Transformation::RotNormalize(fRotDiff);
 
 	// 角度の補正をする
-	rot.y += fRotDiff * 0.25f;
+	rot.y += fRotDiff * (0.25f * fDeltaRate);
 	UtilFunc::Transformation::RotNormalize(rot.y);
 
 	// 向き設定
@@ -332,7 +321,8 @@ void CPlayer::Controll()
 //==========================================================================
 void CPlayer::DeleteControl()
 {
-	if (m_pControlMove != nullptr) {
+	if (m_pControlMove != nullptr) 
+	{// 移動操作
 		delete m_pControlMove;
 		m_pControlMove = nullptr;
 	}
@@ -364,11 +354,7 @@ void CPlayer::MotionSet()
 		return;
 	}
 
-	if (m_state == STATE_DEAD ||
-		m_state == STATE_DEADWAIT)
-	{
-		return;
-	}
+	if (!m_bPossibleMove) return;
 
 	if (pMotion->IsFinish())
 	{// 終了していたら
@@ -415,36 +401,6 @@ void CPlayer::MotionSet()
 }
 
 //==========================================================================
-// モーション別の状態設定
-//==========================================================================
-void CPlayer::MotionBySetState()
-{
-	// モーション取得
-	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr)
-	{
-		return;
-	}
-	int nType = pMotion->GetType();
-
-	switch (nType)
-	{
-	case MOTION::MOTION_WALK:
-		break;
-
-	default:
-		m_fDashTime = 0.0f;
-		break;
-	}
-	
-
-	// インプット情報取得
-	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
-	CInputGamepad* pInputGamepad = CInputGamepad::GetInstance();
-
-}
-
-//==========================================================================
 // フラグリセット
 //==========================================================================
 void CPlayer::ResetFrag()
@@ -487,11 +443,10 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
 
 	// 武器の位置
 	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
-
-	CEffect3D* pEffect = nullptr;
 
 	if (pATKInfo->fRangeSize == 0.0f)
 	{
@@ -499,11 +454,11 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	}
 
 #if _DEBUG
-	/*CEffect3D::Create(
+	CEffect3D::Create(
 		weponpos,
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-		pATKInfo->fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);*/
+		pATKInfo->fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 #endif
 
 	if (pATKInfo->bEndAtk)
@@ -582,9 +537,6 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 //==========================================================================
 void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// モーション別の状態設定
-	MotionBySetState();
-
 	// ダメージ受付時間更新
 	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -618,7 +570,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 		}
 
 		if (!m_sDamageInfo.bReceived)
-		{
+		{// 受け付け無い時
 
 		}
 
@@ -720,12 +672,5 @@ void CPlayer::Draw()
 void CPlayer::SetState(STATE state)
 {
 	m_state = state;
-}
-
-//==========================================================================
-// 状態取得
-//==========================================================================
-CPlayer::STATE CPlayer::GetState()
-{
-	return m_state;
+	m_fStateTime = 0.0f;
 }

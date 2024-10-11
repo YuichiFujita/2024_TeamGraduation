@@ -666,7 +666,7 @@ namespace MyLib
 	struct Color : public D3DXCOLOR
 	{
 		// デフォルトコンストラクタ
-		Color() : D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f) {}
+		Color() : D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f) {}
 	
 		// 引数付きコンストラクタ
 		Color(const float all) : D3DXCOLOR(all, all, all, all) {}

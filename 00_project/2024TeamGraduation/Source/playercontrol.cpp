@@ -22,20 +22,20 @@ namespace
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerControlMove::Move(CPlayer* player)
+void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (CGame::GetInstance()->GetGameManager()->GetType() == CGameManager::SceneType::SCENE_GOAL) return;
 
 	// インプット情報取得
-	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
-	CInputGamepad* pInputGamepad = CInputGamepad::GetInstance();
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	// ダッシュ判定
 	bool bDash = false;
-	if (pInputGamepad->GetPress(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()) &&
-		pInputGamepad->IsTipStick())
+	if (pPad->GetPress(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()) &&
+		pPad->IsTipStick())
 	{// 左スティックが倒れてる場合
-		//bDash = true;
+		bDash = true;
 	}
 	player->SetEnableDash(bDash);
 
@@ -71,8 +71,7 @@ void CPlayerControlMove::Move(CPlayer* player)
 	int angle = 0;
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		state != CPlayer::STATE::STATE_DEAD &&
-		state != CPlayer::STATE::STATE_DEADWAIT)
+		player->IsPossibleMove())
 	{// 移動可能モーションの時
 
 		
@@ -80,7 +79,7 @@ void CPlayerControlMove::Move(CPlayer* player)
 		// 移動中にする
 		motionFrag.bMove = true;
 
-		if (pInputGamepad->IsTipStick())
+		if (pPad->IsTipStick())
 		{// 左スティックが倒れてる場合
 
 		}
@@ -108,7 +107,7 @@ void CPlayerControlMove::Move(CPlayer* player)
 
 
 		if (!bJump &&
-			(pInputKeyboard->GetTrigger(DIK_SPACE) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx())))
+			(pKey->GetTrigger(DIK_SPACE) || pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx())))
 		{// ジャンプ
 
 			//bJump = true;
@@ -127,16 +126,16 @@ void CPlayerControlMove::Move(CPlayer* player)
 	}
 	else if (
 		pMotion->IsGetMove(nMotionType) == 0 &&	// 移動可能なモーションか取得
-		state != CPlayer::STATE::STATE_DEAD)
+		player->IsPossibleMove())
 	{
-		if (pInputKeyboard->GetPress(DIK_A))
+		if (pKey->GetPress(DIK_A))
 		{//←キーが押された,左移動
 
-			if (pInputKeyboard->GetPress(DIK_W))
+			if (pKey->GetPress(DIK_W))
 			{//A+W,左上移動
 				fRotDest = D3DX_PI * 0.75f + Camerarot.y;
 			}
-			else if (pInputKeyboard->GetPress(DIK_S))
+			else if (pKey->GetPress(DIK_S))
 			{//A+S,左下移動
 				fRotDest = D3DX_PI * 0.25f + Camerarot.y;
 			}
@@ -145,14 +144,14 @@ void CPlayerControlMove::Move(CPlayer* player)
 				fRotDest = D3DX_PI * 0.5f + Camerarot.y;
 			}
 		}
-		else if (pInputKeyboard->GetPress(DIK_D))
+		else if (pKey->GetPress(DIK_D))
 		{//Dキーが押された,右移動
 
-			if (pInputKeyboard->GetPress(DIK_W))
+			if (pKey->GetPress(DIK_W))
 			{//D+W,右上移動
 				fRotDest = -D3DX_PI * 0.75f + Camerarot.y;
 			}
-			else if (pInputKeyboard->GetPress(DIK_S))
+			else if (pKey->GetPress(DIK_S))
 			{//D+S,右下移動
 				fRotDest = -D3DX_PI * 0.25f + Camerarot.y;
 			}
@@ -161,13 +160,18 @@ void CPlayerControlMove::Move(CPlayer* player)
 				fRotDest = -D3DX_PI * 0.5f + Camerarot.y;
 			}
 		}
-		else if (pInputKeyboard->GetPress(DIK_W))
+		else if (pKey->GetPress(DIK_W))
 		{//Wが押された、上移動
 			fRotDest = D3DX_PI * 1.0f + Camerarot.y;
 		}
-		else if (pInputKeyboard->GetPress(DIK_S))
+		else if (pKey->GetPress(DIK_S))
 		{//Sが押された、下移動
 			fRotDest = D3DX_PI * 0.0f + Camerarot.y;
+		}
+
+		if (pPad->IsTipStick())
+		{// 左スティックが倒れてる場合
+			fRotDest = pPad->GetStickRotL(player->GetMyPlayerIdx());
 		}
 	}
 
