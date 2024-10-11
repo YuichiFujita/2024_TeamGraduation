@@ -199,7 +199,7 @@ void CBlackFrame::Update(const float fDeltaTime, const float fDeltaRate, const f
 	}
 
 	// ˆÚ“®ƒJƒEƒ“ƒg‰ÁŽZ
-	m_fTimerMove += fDeltaTime * fSlowRate;
+	m_fTimerMove += fDeltaTime;
 }
 
 //==========================================================================

@@ -25,7 +25,7 @@
 CFade::CFade()
 {
 	// 値のクリア
-	m_aObject2D = nullptr;					// オブジェクト2Dのオブジェクト
+	m_aObject2D = nullptr;				// オブジェクト2Dのオブジェクト
 	m_ModeNext = CScene::MODE_TITLE;	// 次のモード
 	m_state = STATE_NONE;				// 状態
 }
@@ -136,7 +136,7 @@ void CFade::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	case STATE_FADEOUT:
 
 		// 不透明度増加
-		col.a += ALPHAMOVE * fDeltaTime * fSlowRate;
+		col.a += ALPHAMOVE * fDeltaTime;
 		if (col.a >= 1.0f)
 		{// 目標まで行ったら
 			col.a = 1.0f;
@@ -147,7 +147,7 @@ void CFade::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	case STATE_FADEIN:
 
 		// 不透明度減少
-		col.a -= ALPHAMOVE * fDeltaTime * fSlowRate;
+		col.a -= ALPHAMOVE * fDeltaTime;
 		if (col.a <= 0.0f)
 		{// 透明になったら
 			col.a = 0.0f;
