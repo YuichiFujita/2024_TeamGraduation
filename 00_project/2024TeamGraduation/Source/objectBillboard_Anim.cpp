@@ -113,7 +113,7 @@ HRESULT CObjectBillboardAnim::Init(const int nDivisionU, const int nDivisionV, c
 void CObjectBillboardAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// カウントを更新
-	m_fTimerAnim += fDeltaTime;
+	m_fTimerAnim += fDeltaTime * fSlowRate;
 
 	// パターン更新
 	if (m_fTimerAnim >= m_fIntervalAnim)

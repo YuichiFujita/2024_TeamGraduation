@@ -236,7 +236,7 @@ void CMyEffekseer::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	if (!bPause)
 	{
-		fTime += fDeltaTime;
+		fTime += fDeltaTime * fSlowRate;
 	}
 }
 

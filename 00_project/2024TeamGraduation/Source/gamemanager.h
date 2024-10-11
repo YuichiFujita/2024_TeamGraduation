@@ -12,10 +12,7 @@
 #include "instantfade.h"
 #include "scene.h"
 
-class CRequestPeople;
-class CReceiverPeople;
-class CSkip_UI;
-class CGuide;
+class CBall;
 
 //==========================================================================
 // クラス定義
@@ -48,6 +45,14 @@ public:
 		SCENE_MAX
 	};
 
+	// チームサイド列挙
+	enum TeamSide
+	{
+		SIDE_LEFT = 0,	// 左コート
+		SIDE_RIGHT,		// 右コート
+		SIDE_MAX		// この列挙型の総数
+	};
+
 	CGameManager();
 	~CGameManager();
 
@@ -65,8 +70,9 @@ public:
 	void GameClearSettings();	// ゲームクリア時の設定
 	void GameResultSettings();	// ゲームリザルトの設定
 
-	static CGameManager *Create(CScene::MODE mode);	// 生成処理
+	CBall* GetBall();	// ボール取得
 
+	static CGameManager *Create(CScene::MODE mode);	// 生成処理
 
 protected:
 

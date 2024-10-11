@@ -77,7 +77,7 @@ public:
 
 	HRESULT Init();
 	void Uninit();
-	void Update(float fBuff = 1.0f);
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	static CMotion *Create(const std::string& file, CObjectChara* pObjChara);
 	void Set(int nType, bool bBlend = true);	// モーションの設定処理
 	int GetType();							// 現在のモーションタイプ取得
@@ -123,12 +123,12 @@ public:
 
 private:
 	// 列挙型定義
-	typedef enum
+	enum LOOP
 	{
 		LOOP_OFF = 0,	// ループ無し
 		LOOP_ON,		// ループする
 		LOOP_MAX
-	}LOOP;
+	};
 
 	// メンバ関数
 	void ReadText(const std::string& file);

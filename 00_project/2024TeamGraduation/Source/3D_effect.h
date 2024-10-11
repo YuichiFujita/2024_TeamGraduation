@@ -80,10 +80,10 @@ private:
 	void Gensui(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// メンバ変数
-	MyLib::Vector3 m_posOrigin;		// 原点
+	MyLib::Vector3 m_posOrigin;			// 原点
 	MyLib::Vector3 m_updatePosition;	// 更新後の位置
-	MyLib::Vector3 m_setupPosition;	// セットアップ位置
-	MyLib::Vector3 m_setupRotation;	// セットアップ位置
+	MyLib::Vector3 m_setupPosition;		// セットアップ位置
+	MyLib::Vector3 m_setupRotation;		// セットアップ位置
 	MyLib::Vector3 m_posDest;			// 目標の位置
 	D3DXCOLOR m_colOrigin;		// 色
 	D3DXMATRIX *m_pMtxParent;	// 親マトリックスのポインタ

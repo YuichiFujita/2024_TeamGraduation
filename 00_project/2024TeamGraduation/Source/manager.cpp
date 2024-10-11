@@ -88,7 +88,7 @@ CManager::CManager()
 	m_dwCurTime = 0;				// 今回の処理開始時刻
 	m_fDeltaTime = 0.0f;			// 経過時間
 	m_fDeltaRate = 0.0f;			// 経過時間の割合
-	m_fSlowRate = 0.0f;				// 速度低下の割合
+	m_fSlowRate = 1.0f;				// 速度低下の割合
 
 	// ロードフラグリセット
 	m_bLoadComplete = false;
@@ -704,7 +704,7 @@ void CManager::Update()
 		{// フェードが設定されてる状態
 
 			// 遷移なしフェードの更新処理
-			m_pInstantFade->Update();
+			m_pInstantFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 			if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
 			{
@@ -757,7 +757,7 @@ void CManager::Update()
 	m_pFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 	// 遷移なしフェードの更新処理
-	m_pInstantFade->Update();
+	m_pInstantFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 	if (!m_bLoadComplete)
 	{

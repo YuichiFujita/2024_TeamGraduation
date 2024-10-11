@@ -128,7 +128,7 @@ void CEffekseerObj::Update(const float fDeltaTime, const float fDeltaRate, const
 	// 後で消す
 	if (m_bDeleteLater)
 	{
-		m_fDeleteTimer -= fDeltaTime;
+		m_fDeleteTimer -= fDeltaTime * fSlowRate;
 		if (m_fDeleteTimer <= 0.0f)
 		{// 削除
 			m_bDeath = true;
@@ -180,7 +180,7 @@ void CEffekseerObj::Update(const float fDeltaTime, const float fDeltaRate, const
 		efkManager->SetScale(m_EffekseerInfo.handle, m_EffekseerInfo.scale, m_EffekseerInfo.scale, m_EffekseerInfo.scale);
 
 		// タイムスケール
-		efkManager->SetTimeScaleByHandle(m_EffekseerInfo.handle, fDeltaRate);
+		efkManager->SetTimeScaleByHandle(m_EffekseerInfo.handle, fDeltaRate * fSlowRate);
 	}
 }
 

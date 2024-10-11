@@ -24,8 +24,9 @@
 CInstantFade::CInstantFade()
 {
 	// 値のクリア
-	m_nDuration = 0;		// フェードまでの時間
-	m_aObject2D = nullptr;		// オブジェクト2Dのオブジェクト
+	m_fDuration = 0.0f;		// フェードまでの時間
+	m_fTimerMove = 0.0f;	// フェード時間
+	m_aObject2D = nullptr;	// オブジェクト2Dのオブジェクト
 	m_state = STATE_NONE;	// 状態
 }
 
@@ -112,7 +113,7 @@ void CInstantFade::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CInstantFade::Update()
+void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 色取得
 	D3DXCOLOR col = m_aObject2D->GetColor();
@@ -124,24 +125,32 @@ void CInstantFade::Update()
 
 	case STATE_FADEOUT:
 
-		// 不透明度増加
-		col.a += 1.0f / m_nDuration;
+		// 経過時間を加算
+		m_fTimerMove += fDeltaTime;
 
-		if (col.a >= 1.0f)
+		// 不透明度増加
+		col.a = UtilFunc::Correction::EasingLinear(0.0f, 1.0f, 0.0f, m_fDuration, m_fTimerMove);
+
+		if (m_fTimerMove >= m_fDuration)
 		{// 目標まで行ったら
 			col.a = 1.0f;
+			m_fTimerMove = 0.0f;
 			m_state = STATE_FADECOMPLETION;
 		}
 		break;
 
 	case STATE_FADEIN:
 
-		// 不透明度減少
-		col.a -= 1.0f / m_nDuration;
+		// 経過時間を加算
+		m_fTimerMove += fDeltaTime;
 
-		if (col.a <= 0.0f)
+		// 不透明度減少
+		col.a = UtilFunc::Correction::EasingLinear(1.0f, 0.0f, 0.0f, m_fDuration, m_fTimerMove);
+
+		if (m_fTimerMove >= m_fDuration)
 		{// 透明になったら
 			col.a = 0.0f;
+			m_fTimerMove = 0.0f;
 			m_state = STATE_NONE;
 		}
 		break;
@@ -170,12 +179,13 @@ void CInstantFade::Draw()
 //==========================================================================
 // フェード設定
 //==========================================================================
-void CInstantFade::SetFade(D3DXCOLOR FadeColor, int nDuration)
+void CInstantFade::SetFade(D3DXCOLOR FadeColor, float fDuration)
 {
 	if (m_state == STATE_NONE)
 	{// 何もしていないとき
 
-		m_nDuration = nDuration;	// フェードまでの時間
+		m_fDuration = fDuration;	// フェードまでの時間
+		m_fTimerMove = 0.0f;		// フェード時間
 		m_state = STATE_FADEOUT;	// フェードアウト状態に設定
 
 		// 色設定

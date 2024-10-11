@@ -185,7 +185,7 @@ void CMeshDome::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	MyLib::Vector3 rot = GetRotation();	// Œü‚«
 
 	// ‰ñ“]
-	rot.y += m_fMove * fDeltaRate;
+	rot.y += m_fMove * fDeltaRate * fSlowRate;
 
 	// Šp“x‚Ì³‹K‰»
 	UtilFunc::Transformation::RotNormalize(rot.y);

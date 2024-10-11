@@ -118,7 +118,7 @@ void CSample_ObjX::Kill()
 void CSample_ObjX::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態カウンター加算
-	m_fStateTime += fDeltaTime;
+	m_fStateTime += fDeltaTime * fSlowRate;
 
 	// 状態別処理
 	(this->*(m_SampleFuncList[m_state]))();

@@ -18,6 +18,7 @@
 #include "fog.h"
 #include "fade.h"
 #include "input.h"
+#include "ball.h"
 
 //==========================================================================
 // 定数定義
@@ -132,7 +133,7 @@ void CGameManager::Uninit()
 void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 操作状態
-	m_fSceneTimer += fDeltaTime;	// シーンタイマー
+	m_fSceneTimer += fDeltaTime * fSlowRate;	// シーンタイマー
 	switch (m_SceneType)
 	{
 	case CGameManager::SceneType::SCENE_MAIN:
@@ -256,6 +257,16 @@ void CGameManager::SceneStart()
 void CGameManager::GameResultSettings()
 {
 
+}
+
+//==========================================================================
+// ボールの取得
+//==========================================================================
+CBall* CGameManager::GetBall()
+{
+	CListManager<CBall> list = CBall::GetListObj();	// ボールリスト
+	assert(list.GetNumAll() == 1);	// 複数ボールがある場合エラー
+	return *list.GetBegin();		// ボール情報を返す
 }
 
 //==========================================================================

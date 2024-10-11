@@ -174,8 +174,8 @@ void CMeshSphere::Update(const float fDeltaTime, const float fDeltaRate, const f
 	float fHeightLen = GetHeightLen();
 
 	// äµê´ï‚ê≥
-	UtilFunc::Correction::InertiaCorrection(fWidthLen, m_fSizeDest, 0.15f * fDeltaRate);
-	UtilFunc::Correction::InertiaCorrection(fHeightLen, m_fSizeDest, 0.15f * fDeltaRate);
+	UtilFunc::Correction::InertiaCorrection(fWidthLen, m_fSizeDest, 0.15f * fDeltaRate * fSlowRate);
+	UtilFunc::Correction::InertiaCorrection(fHeightLen, m_fSizeDest, 0.15f * fDeltaRate * fSlowRate);
 
 	// í∑Ç≥ê›íË
 	SetWidthLen(fWidthLen);

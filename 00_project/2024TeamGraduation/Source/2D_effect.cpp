@@ -208,7 +208,7 @@ HRESULT CEffect2D::Init(const MyLib::Vector3 pos, const MyLib::Vector3 move, con
 
 	// 各種変数の初期化
 	SetPosition(pos);
-	SetMove(move * GET_MANAGER->GetDeltaTime());
+	SetMove(move);
 	m_colOrigin = col;							// 色の元
 	SetColor(col);								// 色
 	m_fRadius = fRadius;						// 半径
@@ -301,7 +301,7 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	D3DXCOLOR col = GetColor();
 
 	// 位置更新
-	pos += move;
+	pos += move * fDeltaRate * fSlowRate;
 
 	// 位置設定
 	SetPosition(pos);
@@ -334,7 +334,7 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	}
 
 	// 寿命の更新
-	m_fLife -= fDeltaTime;
+	m_fLife -= fDeltaTime * fSlowRate;
 
 	// 不透明度の更新
 	col.a = m_colOrigin.a * (m_fLife / m_fMaxLife);
@@ -355,7 +355,6 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 頂点座標の設定
 	SetVtx();
-
 }
 
 //==========================================================================
@@ -363,20 +362,20 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 void CEffect2D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_2DType = rand() % 3;
+	//int nEffect_2DType = rand() % 3;
 
-	if (nEffect_2DType == 0)
-	{
-		m_fRadius *= EFFECT_2DSIZE1 * fDeltaTime;
-	}
-	else if (nEffect_2DType == 1)
-	{
-		m_fRadius *= EFFECT_2DSIZE2 * fDeltaTime;
-	}
-	else if (nEffect_2DType == 2)
-	{
-		m_fRadius *= EFFECT_2DSIZE3 * fDeltaTime;
-	}
+	//if (nEffect_2DType == 0)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE1 * fDeltaRate * fSlowRate;
+	//}
+	//else if (nEffect_2DType == 1)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE2 * fDeltaRate * fSlowRate;
+	//}
+	//else if (nEffect_2DType == 2)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE3 * fDeltaRate * fSlowRate;
+	//}
 }
 
 //==========================================================================
@@ -392,20 +391,20 @@ void CEffect2D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CEffect2D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_2DType = rand() % 3;
+	//int nEffect_2DType = rand() % 3;
 
-	if (nEffect_2DType == 0)
-	{
-		m_fRadius += 1.8f * fDeltaTime;
-	}
-	else if (nEffect_2DType == 1)
-	{
-		m_fRadius += 0.8f * fDeltaTime;
-	}
-	else if (nEffect_2DType == 2)
-	{
-		m_fRadius += 0.0f * fDeltaTime;
-	}
+	//if (nEffect_2DType == 0)
+	//{
+	//	m_fRadius += 1.8f * fDeltaTime * fSlowRate;
+	//}
+	//else if (nEffect_2DType == 1)
+	//{
+	//	m_fRadius += 0.8f * fDeltaTime * fSlowRate;
+	//}
+	//else if (nEffect_2DType == 2)
+	//{
+	//	m_fRadius += 0.0f * fDeltaTime * fSlowRate;
+	//}
 }
 
 //==========================================================================
@@ -416,14 +415,13 @@ void CEffect2D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();
 
-	move.x += ((0.0f - move.x) * 0.15f) * fDeltaTime;
-	move.y += ((0.0f - move.y) * 0.15f) * fDeltaTime;
+	move.x += (0.0f - move.x) * (0.15f * fDeltaRate * fSlowRate);
+	move.y += (0.0f - move.y) * (0.15f * fDeltaRate * fSlowRate);
 
 	// 移動量設定
 	SetMove(move);
 
 	m_fRadius = m_fMaxRadius * m_fLife / m_fMaxLife;
-
 }
 
 //==========================================================================

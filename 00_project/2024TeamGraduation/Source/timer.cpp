@@ -182,15 +182,13 @@ CTimer *CTimer::Create
 //============================================================
 void CTimer::EnableStopAll(const bool bStop)
 {
-	// TODO：これでループだいじょぶそ？
-
-	std::list<CTimer*>::iterator itr = m_list.GetBegin();	// 先頭イテレーター
-
 	// 全タイマーオブジェクトの計測状況を設定
+	std::list<CTimer*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
-		(*itr)->EnableStop(bStop);
+		CTimer* pObj = (*itr);
+		pObj->EnableStop(bStop);
 	}
 }
 
@@ -293,7 +291,7 @@ void CTimer::SetLimit(const float fLimit)
 void CTimer::CountUp(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを加算
-	m_fTime += fDeltaTime;
+	m_fTime += fDeltaTime * fSlowRate;
 
 	// 時間を補正
 	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
@@ -305,7 +303,7 @@ void CTimer::CountUp(const float fDeltaTime, const float fDeltaRate, const float
 void CTimer::CountDown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを減算
-	m_fTime -= fDeltaTime;
+	m_fTime -= fDeltaTime * fSlowRate;
 	if (m_fTime <= 0.0f)
 	{  // カウント終了した場合
 

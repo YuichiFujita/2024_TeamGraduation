@@ -121,7 +121,7 @@ HRESULT CObject3DAnim::Init(const int nDivisionU, const int nDivisionV, const fl
 void CObject3DAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// カウントを更新
-	m_fTimerAnim += fDeltaTime;
+	m_fTimerAnim += fDeltaTime * fSlowRate;
 
 	// パターン更新
 	if (m_fTimerAnim >= m_fIntervalAnim)

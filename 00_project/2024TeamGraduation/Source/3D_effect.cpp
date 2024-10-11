@@ -9,7 +9,6 @@
 #include "texture.h"
 #include "manager.h"
 #include "calculation.h"
-#include "debugproc.h"
 
 //==========================================================================
 // マクロ定義
@@ -45,25 +44,25 @@ int CEffect3D::m_nTexIdx[TYPE_MAX] = {};	// テクスチャのインデックス番号
 CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 {
 	// 値のクリア
-	m_posOrigin = MyLib::Vector3();			// 原点
-	m_updatePosition = MyLib::Vector3();	// 更新後の位置
-	m_setupPosition = MyLib::Vector3();		// セットアップ位置
-	m_posDest = MyLib::Vector3();			// 目標の位置
+	m_posOrigin = MyLib::Vector3();				// 原点
+	m_updatePosition = MyLib::Vector3();		// 更新後の位置
+	m_setupPosition = MyLib::Vector3();			// セットアップ位置
+	m_posDest = MyLib::Vector3();				// 目標の位置
 	m_colOrigin = mylib_const::DEFAULT_COLOR;	// 色の元
-	m_pMtxParent = nullptr;						// 親マトリックスのポインタ
-	m_fRadius = 0.0f;							// 半径
-	m_fMaxRadius = 0.0f;						// 最大半径
-	m_fAddSizeValue = 0.0f;						// サイズ変更量
-	m_fGravity = 0.0f;							// 重力
-	m_fMoveFactor = 0.0f;						// 移動補正係数
-	m_fLife = 0.0f;								// 寿命
-	m_fMaxLife = 0.0f;							// 最大寿命(固定)
-	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
-	m_nType = TYPE_NORMAL;						// 種類
-	m_bAddAlpha = true;							// 加算合成の判定
-	m_bZSort = false;							// Zソートのフラグ
-	m_bGravity = false;							// 重力のフラグ
-	m_bChaseDest = false;						// 目標の位置へ向かうフラグ
+	m_pMtxParent = nullptr;			// 親マトリックスのポインタ
+	m_fRadius = 0.0f;				// 半径
+	m_fMaxRadius = 0.0f;			// 最大半径
+	m_fAddSizeValue = 0.0f;			// サイズ変更量
+	m_fGravity = 0.0f;				// 重力
+	m_fMoveFactor = 0.0f;			// 移動補正係数
+	m_fLife = 0.0f;					// 寿命
+	m_fMaxLife = 0.0f;				// 最大寿命(固定)
+	m_moveType = MOVEEFFECT_NONE;	// 移動の種類
+	m_nType = TYPE_NORMAL;			// 種類
+	m_bAddAlpha = true;				// 加算合成の判定
+	m_bZSort = false;				// Zソートのフラグ
+	m_bGravity = false;				// 重力のフラグ
+	m_bChaseDest = false;			// 目標の位置へ向かうフラグ
 
 	// 総数加算
 	m_nNumAll++;
@@ -188,7 +187,7 @@ HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, c
 	m_updatePosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 更新後の位置
 	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// セットアップ位置
 	SetPosition(pos);								// 位置
-	SetMove(move * GET_MANAGER->GetDeltaTime());	// 移動量
+	SetMove(move);									// 移動量
 	m_colOrigin = col;								// 色の元
 	SetColor(col);									// 色
 	m_fRadius = fRadius;							// 半径
@@ -324,7 +323,7 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));
 
 	// 寿命の更新
-	m_fLife -= fDeltaTime;
+	m_fLife -= fDeltaTime * fSlowRate;
 
 	// 色取得
 	D3DXCOLOR col = GetColor();
@@ -345,7 +344,6 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 頂点座標の設定
 	SetVtx();
-
 }
 
 //==========================================================================
@@ -363,16 +361,13 @@ void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const
 	// 位置更新
 	if (m_bGravity)
 	{
-		move.y -= m_fGravity * fDeltaTime;
+		move.y -= m_fGravity * fDeltaRate * fSlowRate;
 	}
 
 	// 補正別処理
 	if (m_bChaseDest == false)
 	{
-		// TODO：明らかに挙動が変
-		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", move.y);
-		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", pos.y);
-		m_updatePosition += move;
+		m_updatePosition += move * fDeltaRate * fSlowRate;
 		pos = m_posOrigin + m_updatePosition;
 	}
 	else
@@ -390,7 +385,6 @@ void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const
 	// 移動量設定
 	SetMove(move);
 }
-
 
 //==========================================================================
 // セットアップ
@@ -438,20 +432,20 @@ void CEffect3D::UpdatePosition(MyLib::Vector3 rot)
 //==========================================================================
 void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_3DType = rand() % 3;
+	//int nEffect_3DType = rand() % 3;
 
-	if (nEffect_3DType == 0)
-	{
-		m_fRadius *= EFFECT_3DSIZE1 * fDeltaTime;
-	}
-	else if (nEffect_3DType == 1)
-	{
-		m_fRadius *= EFFECT_3DSIZE2 * fDeltaTime;
-	}
-	else if (nEffect_3DType == 2)
-	{
-		m_fRadius *= EFFECT_3DSIZE3 * fDeltaTime;
-	}
+	//if (nEffect_3DType == 0)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE1 * fDeltaRate * fSlowRate;
+	//}
+	//else if (nEffect_3DType == 1)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE2 * fDeltaRate * fSlowRate;
+	//}
+	//else if (nEffect_3DType == 2)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE3 * fDeltaRate * fSlowRate;
+	//}
 }
 
 //==========================================================================
@@ -459,7 +453,7 @@ void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife);
 }
 
 //==========================================================================
@@ -468,7 +462,7 @@ void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, con
 void CEffect3D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 拡大
-	m_fRadius += m_fAddSizeValue * fDeltaTime;
+	m_fRadius += m_fAddSizeValue * fDeltaRate * fSlowRate;
 }
 
 //==========================================================================
@@ -479,15 +473,14 @@ void CEffect3D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();
 
-	move.x += ((0.0f - move.x) * m_fMoveFactor) * fDeltaTime;
-	move.y += ((0.0f - move.y) * m_fMoveFactor) * fDeltaTime;
-	move.z += ((0.0f - move.z) * m_fMoveFactor) * fDeltaTime;
+	move.x += (0.0f - move.x) * (m_fMoveFactor * fDeltaRate * fSlowRate);
+	move.y += (0.0f - move.y) * (m_fMoveFactor * fDeltaRate * fSlowRate);
+	move.z += (0.0f - move.z) * (m_fMoveFactor * fDeltaRate * fSlowRate);
 
 	// 移動量設定
 	SetMove(move);
 
-	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
-
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife);
 }
 
 //==========================================================================

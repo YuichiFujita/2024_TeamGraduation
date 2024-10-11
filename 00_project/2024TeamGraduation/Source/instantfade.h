@@ -39,17 +39,18 @@ public:
 	// メンバ関数
 	HRESULT Init();
 	void Uninit();
-	void Update();
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 
 	CObject2D *GetMyObject();
 	static CInstantFade *Create();
-	void SetFade(D3DXCOLOR FadeColor = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), int nDuration = 30);	// フェード設定
+	void SetFade(D3DXCOLOR FadeColor = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), float fDuration = 0.5f);	// フェード設定
 	STATE GetState();	// 状態取得
 
 private:
 
-	int m_nDuration;			// フェードまでの時間
+	float m_fDuration;			// フェードまでの時間
+	float m_fTimerMove;			// フェード時間
 	CObject2D *m_aObject2D;		// オブジェクト2Dのオブジェクト
 	STATE m_state;				// 状態
 };

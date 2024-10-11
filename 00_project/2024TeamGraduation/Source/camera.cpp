@@ -427,7 +427,7 @@ void CCamera::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	case CAMERASTATE_SHAKE:
 
 		// 振動カウンター加算
-		m_fTimerShake += fDeltaTime;
+		m_fTimerShake += fDeltaTime * fSlowRate;
 		if (m_fTimerShake >= 0.05f)
 		{
 			// 振動カウンター初期化
@@ -454,7 +454,7 @@ void CCamera::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 		}
 
 		// 状態遷移カウンター減算
-		m_fTimerState -= fDeltaTime;
+		m_fTimerState -= fDeltaTime * fSlowRate;
 
 		if (m_fTimerState <= 0.0f)
 		{

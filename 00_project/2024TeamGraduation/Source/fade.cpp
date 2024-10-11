@@ -8,11 +8,12 @@
 #include "manager.h"
 #include "renderer.h"
 #include "object2D.h"
+#include "debugproc.h"
 
 //==========================================================================
 // マクロ定義
 //==========================================================================
-#define ALPHAMOVE	(0.025f)
+#define ALPHAMOVE	(1.0f)
 
 //==========================================================================
 // 静的メンバ変数宣言
@@ -24,7 +25,7 @@
 CFade::CFade()
 {
 	// 値のクリア
-	m_aObject2D = nullptr;					// オブジェクト2Dのオブジェクト
+	m_aObject2D = nullptr;				// オブジェクト2Dのオブジェクト
 	m_ModeNext = CScene::MODE_TITLE;	// 次のモード
 	m_state = STATE_NONE;				// 状態
 }
@@ -135,8 +136,7 @@ void CFade::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	case STATE_FADEOUT:
 
 		// 不透明度増加
-		col.a += ALPHAMOVE;
-
+		col.a += ALPHAMOVE * fDeltaTime;
 		if (col.a >= 1.0f)
 		{// 目標まで行ったら
 			col.a = 1.0f;
@@ -147,8 +147,7 @@ void CFade::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	case STATE_FADEIN:
 
 		// 不透明度減少
-		col.a -= ALPHAMOVE;
-
+		col.a -= ALPHAMOVE * fDeltaTime;
 		if (col.a <= 0.0f)
 		{// 透明になったら
 			col.a = 0.0f;
@@ -162,15 +161,14 @@ void CFade::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		break;
 	}
 
-
 	// 色設定
 	m_aObject2D->SetColor(col);
 
 	// 更新処理
 	m_aObject2D->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// 頂点設定
 	m_aObject2D->SetVtx();
-
 }
 
 //==========================================================================

@@ -208,8 +208,8 @@ void CLoadScreen::Update(const float fDeltaTime, const float fDeltaRate, const f
 		// èÓïÒéÊìæ
 		MyLib::Vector3 pos = pObj2D->GetPosition(), move = pObj2D->GetMove(), rot = pObj2D->GetRotation();
 		MyLib::Vector3 posOrigin = pObj2D->GetOriginPosition();
-		pos.y += move.y * fDeltaRate;
-		move.y += 0.15f * fDeltaRate;
+		pos.y += move.y * fDeltaRate * fSlowRate;
+		move.y += 0.15f * fDeltaRate * fSlowRate;
 
 		// âÒì]
 		rot.z = UtilFunc::Correction::EasingEaseIn(0.0f, D3DX_PI * -0.5f, posOrigin.y, posOrigin.y - 200.0f, pos.y);
@@ -285,7 +285,7 @@ void CLoadScreen::MoveCylinder(const float fDeltaTime, const float fDeltaRate, c
 	pos.x += 5.0f;
 
 	// Ç’Ç©Ç’Ç©
-	m_fBobbingTime += fDeltaTime;
+	m_fBobbingTime += fDeltaTime * fSlowRate;
 	pos.y = posOrigin.y + sinf(D3DX_PI * (m_fBobbingTime / 0.8f)) * 10.0f;
 
 	// ê‹ÇËï‘Çµ
