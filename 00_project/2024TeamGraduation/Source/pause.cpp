@@ -197,7 +197,7 @@ void CPause::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	}
 
 	// 点滅時間更新
-	m_fFlashTime += fDeltaTime;
+	m_fFlashTime += fDeltaTime * fSlowRate;
 
 	// 色更新
 	UpdateColor();

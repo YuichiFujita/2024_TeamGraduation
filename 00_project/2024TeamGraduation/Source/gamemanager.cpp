@@ -132,7 +132,7 @@ void CGameManager::Uninit()
 void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 操作状態
-	m_fSceneTimer += fDeltaTime;	// シーンタイマー
+	m_fSceneTimer += fDeltaTime * fSlowRate;	// シーンタイマー
 	switch (m_SceneType)
 	{
 	case CGameManager::SceneType::SCENE_MAIN:

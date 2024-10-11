@@ -117,7 +117,7 @@ HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const f
 void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// カウントを更新
-	m_fTimerAnim += fDeltaTime;
+	m_fTimerAnim += fDeltaTime * fSlowRate;
 
 	// パターン更新
 	if (m_fTimerAnim >= m_fIntervalAnim)

@@ -243,7 +243,8 @@ void CDebugProc::SetText()
 #ifdef _DEBUG
 	pDebug->Print("目標FPS：%d\n", *GetDebugFps());
 #endif
-	pDebug->Print("デルタタイム：%f\n", CManager::GetInstance()->GetDeltaTime());
+	pDebug->Print("DeltaTime：%f\n", CManager::GetInstance()->GetDeltaTime());
+	pDebug->Print("SlowRate：%f\n", CManager::GetInstance()->GetSlowRate());
 	pDebug->Print("オブジェクトの総数：%d\n", CObject::GetNumAll());
 
 	pDebug->Print("\n--------------------------------[ F系 ]--------------------------------\n");

@@ -126,7 +126,7 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 	case STATE_FADEOUT:
 
 		// 経過時間を加算
-		m_fTimerMove += fDeltaTime;
+		m_fTimerMove += fDeltaTime * fSlowRate;
 
 		// 不透明度増加
 		col.a = UtilFunc::Correction::EasingLinear(0.0f, 1.0f, 0.0f, m_fDuration, m_fTimerMove);
@@ -142,7 +142,7 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 	case STATE_FADEIN:
 
 		// 経過時間を加算
-		m_fTimerMove += fDeltaTime;
+		m_fTimerMove += fDeltaTime * fSlowRate;
 
 		// 不透明度減少
 		col.a = UtilFunc::Correction::EasingLinear(1.0f, 0.0f, 0.0f, m_fDuration, m_fTimerMove);

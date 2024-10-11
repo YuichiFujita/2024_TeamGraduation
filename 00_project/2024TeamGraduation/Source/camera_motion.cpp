@@ -336,7 +336,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 	if (!m_bPause && !m_bSystemPause)
 	{
 		m_fMotionTimer +=  fDeltaTime;
-		m_fTriggerTimer += fDeltaTime;
+		m_fTriggerTimer += fDeltaTime * fSlowRate;
 	}
 	else
 	{

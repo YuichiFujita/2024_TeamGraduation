@@ -293,7 +293,7 @@ void CTimer::SetLimit(const float fLimit)
 void CTimer::CountUp(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを加算
-	m_fTime += fDeltaTime;
+	m_fTime += fDeltaTime * fSlowRate;
 
 	// 時間を補正
 	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
@@ -305,7 +305,7 @@ void CTimer::CountUp(const float fDeltaTime, const float fDeltaRate, const float
 void CTimer::CountDown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// デルタタイムを減算
-	m_fTime -= fDeltaTime;
+	m_fTime -= fDeltaTime * fSlowRate;
 	if (m_fTime <= 0.0f)
 	{  // カウント終了した場合
 

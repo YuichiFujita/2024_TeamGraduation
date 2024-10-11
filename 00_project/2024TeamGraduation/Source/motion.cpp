@@ -559,8 +559,8 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 	}
 
 	// フレームのカウントを加算
-	m_fCntFrame += 1.0f * fDeltaRate;
-	m_fCntAllFrame += 1.0f * fDeltaRate;
+	m_fCntFrame += 1.0f * fDeltaRate * fSlowRate;
+	m_fCntAllFrame += 1.0f * fDeltaRate * fSlowRate;
 	m_bAllAfterAttack = false;		// 全ての攻撃後フラグ
 
 	// 攻撃の最大フレーム

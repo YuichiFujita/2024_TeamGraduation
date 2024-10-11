@@ -205,16 +205,16 @@ void CImpactWave::Update(const float fDeltaTime, const float fDeltaRate, const f
 	MyLib::Vector3 move = GetMove();
 
 	// 位置更新
-	pos += move * fDeltaRate;
+	pos += move * fDeltaRate * fSlowRate;
 
 	SetPosition(pos);
 	SetMove(move);
 
 	// 広げていく
-	m_fOutWidth += m_fMove * fDeltaRate;
+	m_fOutWidth += m_fMove * fDeltaRate * fSlowRate;
 
 	// 寿命更新
-	m_fLife -= fDeltaTime;
+	m_fLife -= fDeltaTime * fSlowRate;
 
 	// 不透明度更新
 	col.a = m_colOrigin.a * m_fLife / m_fMaxLife;

@@ -162,7 +162,7 @@ void CTitle::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, con
 void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// シーンカウンター減算
-	m_fSceneTime -= fDeltaTime;
+	m_fSceneTime -= fDeltaTime * fSlowRate;
 
 	// 不透明度更新
 	float alpha = m_fSceneTime / TIME_FADELOGO;

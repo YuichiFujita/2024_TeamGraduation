@@ -178,7 +178,7 @@ HRESULT CScene::Init()
 #endif
 
 	// TODO
-#if 0
+#if 1
 	CTimeUI::Create(145.0f, SCREEN_CENT, D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 0.0f), D3DXVECTOR2(60.0f, 0.0f));
 #endif
 
@@ -191,7 +191,7 @@ HRESULT CScene::Init()
 #endif
 
 	// TODO
-#if 0
+#if 1
 	g_pAnim = CObjectBillboardAnim::Create(VEC3_ZERO, 10, 1, 0.1f, false);
 	g_pAnim->BindTexture(CTexture::GetInstance()->Regist("data\\TEXTURE\\number000.png"));
 	g_pAnim->SetSize(MyLib::Vector2(100.0f, 100.0f));
@@ -270,7 +270,7 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	{
 		// エフェクト2D
 #if 0
-		CEffect2D* p = CEffect2D::Create(MyLib::Vector3(0.0f, 200.0f, 0.0f), MyLib::Vector3(250.0f, 0.0f, 0.0f), MyLib::color::White(), 120.0f, 1.0f, 0, CEffect2D::TYPE::TYPE_BLACK);
+		CEffect2D* p = CEffect2D::Create(MyLib::Vector3(0.0f, 200.0f, 0.0f), MyLib::Vector3(10.0f, 0.0f, 0.0f), MyLib::color::White(), 120.0f, 1.0f, 0, CEffect2D::TYPE::TYPE_BLACK);
 #endif
 
 		// エフェクシア
@@ -293,8 +293,8 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 
 	if (GET_INPUTKEY->GetTrigger(DIK_9))
 	{
-		// TODO：エフェクト3D
-#if 1
+		// エフェクト3D
+#if 0
 		CEffect3D* p = CEffect3D::Create(VEC3_ZERO, MyLib::Vector3(0.0f, 30.0f, 0.0f), MyLib::color::White(), 300.0f, 10.0f, 4, CEffect3D::TYPE::TYPE_BLACK, 0.1f);
 		p->SetGravityValue(1.0f);
 #endif
@@ -321,6 +321,16 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		int* pFps = GetDebugFps();
 		*pFps -= 1;
 		UtilFunc::Transformation::ValueNormalize(*pFps, 144, 1);
+	}
+	if (GET_INPUTKEY->GetPress(DIK_LEFT))
+	{
+		GET_MANAGER->SetSlowRate(GET_MANAGER->GetSlowRate() + 0.1f);
+	}
+	if (GET_INPUTKEY->GetPress(DIK_RIGHT))
+	{
+		float fRate = GET_MANAGER->GetSlowRate() - 0.1f;
+		UtilFunc::Transformation::ValueNormalize(fRate, 100.0f, 0.0f);
+		GET_MANAGER->SetSlowRate(fRate);
 	}
 }
 
