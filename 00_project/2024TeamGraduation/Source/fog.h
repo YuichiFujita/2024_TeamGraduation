@@ -52,7 +52,7 @@ namespace MyFog
     */
     inline void ToggleFogFrag()
     {
-        bOnScreen = bOnScreen ? false : true;
+        bOnScreen = !bOnScreen;
     }
 
     /**
