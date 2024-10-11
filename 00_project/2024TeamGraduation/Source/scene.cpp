@@ -145,65 +145,11 @@ CScene *CScene::Create(CScene::MODE mode)
 //==========================================================================
 HRESULT CScene::Init()
 {
-	// TODO
-#if 0
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'あ', SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 1.0f);
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'a',  SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 2.0f);
-	CChar2D::Create("data\\FONT\\零ゴシック.otf", false, L'0',  SCREEN_CENT + D3DXVECTOR3(100.0f, 0.0f, 0.0f) * 0.0f);
-#endif
-
-	// TODO
-#if 0
-	CString2D::Create("data\\FONT\\零ゴシック.otf", false, L"abcdefghijklmnopqrstuvwxyz", SCREEN_CENT, 60.0f, CString2D::XALIGN_RIGHT);
-#endif
-
-	// TODO
-#if 0
-	CText2D* p = CText2D::Create("data\\FONT\\零ゴシック.otf", false, SCREEN_CENT, 60.0f, 140.0f, CString2D::XALIGN_LEFT, CText2D::YALIGN_TOP);
-	p->AddString(L"abcdefghijklmnopqrstuvwxyz");
-	p->AddString(L"あいうえおかきくけこさしすせそ");
-	p->AddString(L"さん/ボボボーボ・ボーボボ");
-#endif
-
-	// TODO
-#if 0
-	CTimer::Create(0.0f, 120.0f);
-	CTimer::Create(120.0f, 120.0f);
-#endif
-
-	// TODO
-#if 0
-	CTimerUI* p = CTimerUI::Create(145.0f, 145.0f, SCREEN_CENT, D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 0.0f), D3DXVECTOR2(60.0f, 0.0f), CTimeUI::XALIGN_LEFT);
-	p->Start();	// TODO：タイマー破棄できないし数字の表示が変
-#endif
-
-	// TODO
-#if 1
-	CTimeUI::Create(145.0f, SCREEN_CENT, D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 60.0f), D3DXVECTOR2(60.0f, 0.0f), D3DXVECTOR2(60.0f, 0.0f));
-#endif
-
-	// TODO
-#if 0
-	g_pGauge = CObjectCircleGauge2D::Create(16, 100.0f);
-	g_pGauge->SetType(CObject::TYPE::TYPE_OBJECT2D);
-	g_pGauge->SetPosition(SCREEN_CENT);
-	g_pGauge->SetRateDest(1.0f);
-#endif
-
-	// TODO
-#if 1
-	g_pAnim = CObjectBillboardAnim::Create(VEC3_ZERO, 10, 1, 0.1f, false);
-	g_pAnim->BindTexture(CTexture::GetInstance()->Regist("data\\TEXTURE\\number000.png"));
-	g_pAnim->SetSize(MyLib::Vector2(100.0f, 100.0f));
-	g_pAnim->SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
-#endif
-
 	// エフェクト全て停止
 	CMyEffekseer::GetInstance()->StopAll();
 
 	// フォグリセット
 	MyFog::ToggleFogFrag(false);
-
 
 	//**********************************
 	// 黒フレーム
@@ -260,56 +206,12 @@ void CScene::Kill()
 	MyMap::Release();
 }
 
-
 //==========================================================================
 // 更新処理
 //==========================================================================
 void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (GET_INPUTKEY->GetTrigger(DIK_0))
-	{
-		// エフェクト2D
-#if 0
-		CEffect2D* p = CEffect2D::Create(MyLib::Vector3(0.0f, 200.0f, 0.0f), MyLib::Vector3(10.0f, 0.0f, 0.0f), MyLib::color::White(), 120.0f, 1.0f, 0, CEffect2D::TYPE::TYPE_BLACK);
-#endif
-
-		// エフェクシア
-#if 0
-		CEffekseerObj* p = CEffekseerObj::Create(CMyEffekseer::EFKLABEL::EFKLABEL_HIT, VEC3_ZERO, VEC3_ZERO, VEC3_ZERO, 50.0f);
-#endif
-
-		// ◎ゲージ
-#if 0
-		static bool bMax = true;
-		g_pGauge->SetRateDest((bMax) ? 0.0f : 1.0f);
-		bMax = !bMax;
-#endif
-
-		// シネマスコープ
-#if 0
-		CBlackFrame::GetInstance()->SetState(CBlackFrame::STATE::STATE_IN);
-#endif
-	}
-
-	if (GET_INPUTKEY->GetTrigger(DIK_9))
-	{
-		// エフェクト3D
-#if 0
-		CEffect3D* p = CEffect3D::Create(VEC3_ZERO, MyLib::Vector3(0.0f, 30.0f, 0.0f), MyLib::color::White(), 300.0f, 10.0f, 4, CEffect3D::TYPE::TYPE_BLACK, 0.1f);
-		p->SetGravityValue(1.0f);
-#endif
-
-		// いんっぱくと
-#if 0
-		CImpactWave::Create(VEC3_ZERO, VEC3_ZERO, MyLib::color::White(), 300.0f, 300.0f, 0.0f, 5.0f, 10.0f, 0, false);
-#endif
-
-		// どーむ
-#if 0
-		CMeshDome::Create(0.01f, "data\\TEXTURE\\number000.png");
-#endif
-	}
-
+#ifdef _DEBUG
 	if (GET_INPUTKEY->GetPress(DIK_UP))
 	{
 		int* pFps = GetDebugFps();
@@ -324,14 +226,15 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	}
 	if (GET_INPUTKEY->GetPress(DIK_LEFT))
 	{
-		GET_MANAGER->SetSlowRate(GET_MANAGER->GetSlowRate() + 0.1f);
+		GET_MANAGER->SetSlowRate(GET_MANAGER->GetSlowRate() + 0.025f);
 	}
 	if (GET_INPUTKEY->GetPress(DIK_RIGHT))
 	{
-		float fRate = GET_MANAGER->GetSlowRate() - 0.1f;
+		float fRate = GET_MANAGER->GetSlowRate() - 0.025f;
 		UtilFunc::Transformation::ValueNormalize(fRate, 100.0f, 0.0f);
 		GET_MANAGER->SetSlowRate(fRate);
 	}
+#endif
 }
 
 //==========================================================================
