@@ -76,8 +76,6 @@ CManager::CManager()
 	m_pRankingManager = nullptr;	// ランキングマネージャ
 	m_pMyEffekseer = nullptr;		// エフェクシア
 	m_bWireframe = false;			// ワイヤーフレーム
-	m_bHitStop = false;				// ヒットストップの判定
-	m_nCntHitStop = 0;				// ヒットストップのカウンター
 	m_OldMode = CScene::MODE_NONE;	// 前回のモード
 	m_nNumPlayer = 0;				// プレイヤーの数
 	m_fLoadTimer = 0.0f;			// ロードのタイマー
@@ -143,8 +141,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
 
 	HRESULT hr;
-	m_bHitStop = false;		// ヒットストップの判定
-	m_nCntHitStop = 0;		// ヒットストップのカウンター
 	m_nNumPlayer = 0;		// プレイヤーの数
 
 	//**********************************
@@ -448,9 +444,6 @@ void CManager::NoLoadSetMode(CScene::MODE mode)
 //==========================================================================
 void CManager::Reset(CScene::MODE mode)
 {
-	m_bHitStop = false;		// ヒットストップの判定
-	m_nCntHitStop = 0;		// ヒットストップのカウンター
-
 	// 前回のモード設定
 	m_OldMode = GetMode();
 
@@ -807,22 +800,6 @@ void CManager::Update()
 			}
 		}
 
-		if (m_bHitStop)
-		{// ヒットストップ中は更新停止
-
-			// ヒットストップカウンター減算
-			m_nCntHitStop--;
-
-			if (m_nCntHitStop <= 0)
-			{// カウンターがなくなったら
-				m_bHitStop = false;
-			}
-		}
-		else
-		{
-			m_nCntHitStop = 20;
-		}
-
 #if _DEBUG
 
 		// 描画判定
@@ -981,15 +958,6 @@ void CManager::ChangePauseMode(CScene::MODE mode)
 	default:
 		break;
 	}
-}
-
-//==========================================================================
-// ヒットストップの設定
-//==========================================================================
-void CManager::SetEnableHitStop(int nCntHitStop)
-{
-	m_bHitStop = true;
-	m_nCntHitStop = nCntHitStop;
 }
 
 //==========================================================================

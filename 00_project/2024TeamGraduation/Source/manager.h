@@ -84,19 +84,17 @@ public:
 	int GetNumPlayer();				// プレイヤーの数取得
 	void SetNumPlayer(int nNum);	// プレイヤーの数設定
 
-	void UpdateDeltaTime();							// 経過時間更新
-	float GetDeltaTime() { return m_fDeltaTime; }	// 経過時間取得
-	void UpdateDeltaRate();							// 経過時間の割合更新
-	float GetDeltaRate() { return m_fDeltaRate; }	// 経過時間の割合取得
-	void UpdateSlowRate();							// 速度低下の割合更新
-	float GetSlowRate() { return m_fSlowRate; }		// 速度低下の割合取得
+	void UpdateDeltaTime();								// 経過時間更新
+	float GetDeltaTime() const { return m_fDeltaTime; }	// 経過時間取得
+	void UpdateDeltaRate();								// 経過時間の割合更新
+	float GetDeltaRate() const { return m_fDeltaRate; }	// 経過時間の割合取得
+	void SetSlowRate(const float fRate) { m_fSlowRate = fRate; }	// 速度低下の割合更新
+	float GetSlowRate() const { return m_fSlowRate; }				// 速度低下の割合取得
 
 	void SetMode(CScene::MODE mode);				// 次のモード設定
 	CScene::MODE GetMode();							// 現在のモード取得
-	void SetEnableHitStop(int nCntHitStop);			// ヒットストップの設定
 	void ChangePauseMode(CScene::MODE mode);		// ポーズの種類切り替え
 	bool IsWireframe() { return m_bWireframe; }		// ワイヤーフレーム
-	bool IsHitStop() { return m_bHitStop; }			// ワイヤーフレーム
 	CScene::MODE GetOldMode() { return m_OldMode; }	// 前回のモード取得
 	bool IsLoadComplete() { return m_bLoadComplete; }
 	bool Is2DDisp() { return m_bDisp_2D; }			// 2D表示の判定
@@ -104,11 +102,11 @@ public:
 	bool IsDisp_UI() { return m_bDisp_UI; }			// UI表示の判定
 
 	bool IsWindowed() { return m_bWindowed; }	// ウィンドウモードか
-	void ChangeDisplayMode(bool bWindow);	// ディスプレイモード変更
+	void ChangeDisplayMode(bool bWindow);		// ディスプレイモード変更
 
-	static bool IsDisp_ImGui() { return m_bDisp_ImGui; }				// ImGuiの描画判定
-	static bool IsDisp_BoxColliders() { return m_bDisp_BoxColliders; }	// 当たり判定ボックスの描画判定
-	static bool IsDisp_CheckPoint() { return m_bDisp_CheckPoint; }		// チェックポイントの描画判定
+	static bool IsDisp_ImGui()			{ return m_bDisp_ImGui; }			// ImGuiの描画判定
+	static bool IsDisp_BoxColliders()	{ return m_bDisp_BoxColliders; }	// 当たり判定ボックスの描画判定
+	static bool IsDisp_CheckPoint()		{ return m_bDisp_CheckPoint; }		// チェックポイントの描画判定
 
 private:
 
@@ -134,8 +132,6 @@ private:
 	CMyEffekseer* m_pMyEffekseer;		// エフェクシア
 
 	bool m_bWireframe;		// ワイヤーフレーム
-	bool m_bHitStop;		// ヒットストップの判定
-	int m_nCntHitStop;		// ヒットストップのカウンター
 	CScene::MODE m_OldMode;	// 前回のモード
 	DWORD m_dwOldTime;		// 前回の処理開始時刻
 	DWORD m_dwCurTime;		// 今回の処理開始時刻
