@@ -266,7 +266,7 @@ void CMotion::ResetPose(int nType)
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CMotion::Update(float fBuff)
+void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if 0
 	// テキストの描画
@@ -505,7 +505,7 @@ void CMotion::Update(float fBuff)
 			float fMoveDiff =
 				sqrtf((m_pInfo[m_nType].aKey[nNextMoveKey].aParts[nCntParts].pos.x - m_pPartsOld[nCntParts].pos.x) * (m_pInfo[m_nType].aKey[nNextMoveKey].aParts[nCntParts].pos.x - m_pPartsOld[nCntParts].pos.x)
 					+ (m_pInfo[m_nType].aKey[nNextMoveKey].aParts[nCntParts].pos.z - m_pPartsOld[nCntParts].pos.z) * (m_pInfo[m_nType].aKey[nNextMoveKey].aParts[nCntParts].pos.z - m_pPartsOld[nCntParts].pos.z));
-			fMoveDiff /= (static_cast<float>(nFrame) / static_cast<float>(fBuff));
+			fMoveDiff /= (static_cast<float>(nFrame) / static_cast<float>(fDeltaRate));
 
 			// 動きの向きを一時代入
 			float fRot = m_pInfo[m_nType].aKey[nNextMoveKey].fRotMove;
@@ -559,8 +559,8 @@ void CMotion::Update(float fBuff)
 	}
 
 	// フレームのカウントを加算
-	m_fCntFrame += 1.0f * fBuff;
-	m_fCntAllFrame += 1.0f * fBuff;
+	m_fCntFrame += 1.0f * fDeltaRate;
+	m_fCntAllFrame += 1.0f * fDeltaRate;
 	m_bAllAfterAttack = false;		// 全ての攻撃後フラグ
 
 	// 攻撃の最大フレーム

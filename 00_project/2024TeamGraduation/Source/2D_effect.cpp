@@ -355,7 +355,6 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// í∏ì_ç¿ïWÇÃê›íË
 	SetVtx();
-
 }
 
 //==========================================================================
@@ -363,20 +362,20 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 void CEffect2D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_2DType = rand() % 3;
+	//int nEffect_2DType = rand() % 3;
 
-	if (nEffect_2DType == 0)
-	{
-		m_fRadius *= EFFECT_2DSIZE1 * fDeltaTime;
-	}
-	else if (nEffect_2DType == 1)
-	{
-		m_fRadius *= EFFECT_2DSIZE2 * fDeltaTime;
-	}
-	else if (nEffect_2DType == 2)
-	{
-		m_fRadius *= EFFECT_2DSIZE3 * fDeltaTime;
-	}
+	//if (nEffect_2DType == 0)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE1 * fDeltaRate;
+	//}
+	//else if (nEffect_2DType == 1)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE2 * fDeltaRate;
+	//}
+	//else if (nEffect_2DType == 2)
+	//{
+	//	m_fRadius *= EFFECT_2DSIZE3 * fDeltaRate;
+	//}
 }
 
 //==========================================================================
@@ -392,20 +391,20 @@ void CEffect2D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CEffect2D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_2DType = rand() % 3;
+	//int nEffect_2DType = rand() % 3;
 
-	if (nEffect_2DType == 0)
-	{
-		m_fRadius += 1.8f * fDeltaTime;
-	}
-	else if (nEffect_2DType == 1)
-	{
-		m_fRadius += 0.8f * fDeltaTime;
-	}
-	else if (nEffect_2DType == 2)
-	{
-		m_fRadius += 0.0f * fDeltaTime;
-	}
+	//if (nEffect_2DType == 0)
+	//{
+	//	m_fRadius += 1.8f * fDeltaTime;
+	//}
+	//else if (nEffect_2DType == 1)
+	//{
+	//	m_fRadius += 0.8f * fDeltaTime;
+	//}
+	//else if (nEffect_2DType == 2)
+	//{
+	//	m_fRadius += 0.0f * fDeltaTime;
+	//}
 }
 
 //==========================================================================
@@ -423,7 +422,6 @@ void CEffect2D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	SetMove(move);
 
 	m_fRadius = m_fMaxRadius * m_fLife / m_fMaxLife;
-
 }
 
 //==========================================================================

@@ -144,7 +144,7 @@ void CObjectChara::Update(const float fDeltaTime, const float fDeltaRate, const 
 	// モーション更新
 	if (m_pMotion != nullptr)
 	{
-		m_pMotion->Update(fDeltaRate);
+		m_pMotion->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// コライダーの位置調整

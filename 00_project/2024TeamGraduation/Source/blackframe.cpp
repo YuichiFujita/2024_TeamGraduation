@@ -19,7 +19,7 @@ namespace
 	D3DXVECTOR2 FRAMESIZE = D3DXVECTOR2(640.0f, 50.0f);
 	MyLib::Vector3 START_UP = MyLib::Vector3(640.0f, -FRAMESIZE.y, 0.0f);
 	MyLib::Vector3 START_DOWN = MyLib::Vector3(640.0f, SCREEN_HEIGHT + FRAMESIZE.y, 0.0f);
-	int MOVETIME = 50;
+	float MOVETIME = 50.0f / 60.0f;
 }
 
 CBlackFrame* CBlackFrame::m_pThisPtr = nullptr;	// 自身のポインタ
@@ -41,7 +41,7 @@ CBlackFrame::CBlackFrame(int nPriority, const LAYER layer) : CObject(nPriority, 
 	// 値のクリア
 	memset(&m_pObj2D[0], 0, sizeof(m_pObj2D));	// オブジェクト2Dのオブジェクト
 	m_state = STATE_NONE;	// 状態
-	m_nCntMove = 0;	// 移動カウント
+	m_fTimerMove = 0.0f;	// 移動カウント
 }
 
 //==========================================================================
@@ -122,7 +122,7 @@ HRESULT CBlackFrame::Init()
 void CBlackFrame::Reset()
 {
 	m_state = STATE_OUTCOMPLETION;
-	m_nCntMove = 0;
+	m_fTimerMove = 0.0f;
 
 	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
 	{
@@ -199,7 +199,7 @@ void CBlackFrame::Update(const float fDeltaTime, const float fDeltaRate, const f
 	}
 
 	// 移動カウント加算
-	m_nCntMove++;
+	m_fTimerMove += fDeltaTime;
 }
 
 //==========================================================================
@@ -243,9 +243,10 @@ void CBlackFrame::UpdateState(int nCntVtx)
 //==========================================================================
 void CBlackFrame::StateIn(int nCntVtx)
 {
-	if (m_nCntMove > MOVETIME)
+	if (m_fTimerMove > MOVETIME)
 	{// 移動時間が規定値超えたら
-		m_nCntMove = MOVETIME;
+
+		m_fTimerMove = MOVETIME;
 		m_state = STATE_INCOMPLETION;
 		return;
 	}
@@ -265,7 +266,7 @@ void CBlackFrame::StateIn(int nCntVtx)
 	}
 
 	// タイム割合
-	float fTime = (float)m_nCntMove / (float)MOVETIME;
+	float fTime = m_fTimerMove / MOVETIME;
 
 	// 位置更新
 	pos.x = UtilFunc::Correction::EasingLinear(start.x, m_DestPosition[nCntVtx].x, fTime);
@@ -280,9 +281,10 @@ void CBlackFrame::StateIn(int nCntVtx)
 //==========================================================================
 void CBlackFrame::StateOut(int nCntVtx)
 {
-	if (m_nCntMove > MOVETIME)
+	if (m_fTimerMove > MOVETIME)
 	{// 移動時間が規定値超えたら
-		m_nCntMove = MOVETIME;
+
+		m_fTimerMove = MOVETIME;
 		m_state = STATE_OUTCOMPLETION;
 		return;
 	}
@@ -302,7 +304,7 @@ void CBlackFrame::StateOut(int nCntVtx)
 	}
 
 	// タイム割合
-	float fTime = (float)m_nCntMove / (float)MOVETIME;
+	float fTime = m_fTimerMove / MOVETIME;
 
 	// 位置更新
 	pos.x = UtilFunc::Correction::EasingLinear(m_DestPosition[nCntVtx].x, start.x, fTime);
@@ -351,6 +353,6 @@ void CBlackFrame::SetState(STATE state)
 		m_state == STATE_OUTCOMPLETION)
 	{
 		m_state = state;
-		m_nCntMove = 0;
+		m_fTimerMove = 0.0f;
 	}
 }

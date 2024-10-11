@@ -19,7 +19,7 @@ class CObject2D;
 // クラス定義
 //==========================================================================
 // 黒フレームクラス定義
-class CBlackFrame : CObject
+class CBlackFrame : public CObject
 {
 public:
 
@@ -67,7 +67,7 @@ private:
 
 	// メンバ変数
 	STATE m_state;	// 状態
-	int m_nCntMove;	// 移動カウント
+	float m_fTimerMove;	// 移動カウント
 	CObject2D *m_pObj2D[VTX_MAX];	// オブジェクト2Dのオブジェクト
 	static const MyLib::Vector3 m_DestPosition[VTX_MAX];	// 目標の位置
 	static CBlackFrame* m_pThisPtr;	// 自身のポインタ

@@ -39,6 +39,7 @@
 #include "meshdome.h"
 #include "object_circlegauge2D.h"
 #include "objectBillboard_Anim.h"
+#include "blackframe.h"
 
 // TODO
 CObjectCircleGauge2D* g_pGauge = nullptr;
@@ -283,14 +284,19 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		g_pGauge->SetRateDest((bMax) ? 0.0f : 1.0f);
 		bMax = !bMax;
 #endif
+
+		// シネマスコープ
+#if 0
+		CBlackFrame::GetInstance()->SetState(CBlackFrame::STATE::STATE_IN);
+#endif
 	}
 
 	if (GET_INPUTKEY->GetTrigger(DIK_9))
 	{
 		// TODO：エフェクト3D
-#if 0
-		CEffect3D* p = CEffect3D::Create(VEC3_ZERO, MyLib::Vector3(0.0f, 600.0f, 0.0f), MyLib::color::White(), 120.0f, 10.0f, 0, CEffect3D::TYPE::TYPE_BLACK, 0.1f);
-		p->SetGravityValue(10.0f);
+#if 1
+		CEffect3D* p = CEffect3D::Create(VEC3_ZERO, MyLib::Vector3(0.0f, 30.0f, 0.0f), MyLib::color::White(), 300.0f, 10.0f, 4, CEffect3D::TYPE::TYPE_BLACK, 0.1f);
+		p->SetGravityValue(1.0f);
 #endif
 
 		// いんっぱくと

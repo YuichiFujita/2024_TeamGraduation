@@ -188,7 +188,7 @@ HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, c
 	m_updatePosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 更新後の位置
 	m_setupPosition = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// セットアップ位置
 	SetPosition(pos);								// 位置
-	SetMove(move * GET_MANAGER->GetDeltaTime());	// 移動量
+	SetMove(move);									// 移動量
 	m_colOrigin = col;								// 色の元
 	SetColor(col);									// 色
 	m_fRadius = fRadius;							// 半径
@@ -346,6 +346,9 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	// 頂点座標の設定
 	SetVtx();
 
+	MyLib::Vector3 move = GetMove();
+	GET_MANAGER->GetDebugProc()->Print("半径：%f\n", m_fRadius);
+	GET_MANAGER->GetDebugProc()->Print("移動量：%f %f %f\n", move.x, move.y, move.z);
 }
 
 //==========================================================================
@@ -363,16 +366,13 @@ void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const
 	// 位置更新
 	if (m_bGravity)
 	{
-		move.y -= m_fGravity * fDeltaTime;
+		move.y -= m_fGravity * fDeltaRate;
 	}
 
 	// 補正別処理
 	if (m_bChaseDest == false)
 	{
-		// TODO：明らかに挙動が変
-		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", move.y);
-		GET_MANAGER->GetDebugProc()->Print("：[%f]\n", pos.y);
-		m_updatePosition += move;
+		m_updatePosition += move * fDeltaRate;
 		pos = m_posOrigin + m_updatePosition;
 	}
 	else
@@ -390,7 +390,6 @@ void CEffect3D::UpdateMove(const float fDeltaTime, const float fDeltaRate, const
 	// 移動量設定
 	SetMove(move);
 }
-
 
 //==========================================================================
 // セットアップ
@@ -438,20 +437,20 @@ void CEffect3D::UpdatePosition(MyLib::Vector3 rot)
 //==========================================================================
 void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	int nEffect_3DType = rand() % 3;
+	//int nEffect_3DType = rand() % 3;
 
-	if (nEffect_3DType == 0)
-	{
-		m_fRadius *= EFFECT_3DSIZE1 * fDeltaTime;
-	}
-	else if (nEffect_3DType == 1)
-	{
-		m_fRadius *= EFFECT_3DSIZE2 * fDeltaTime;
-	}
-	else if (nEffect_3DType == 2)
-	{
-		m_fRadius *= EFFECT_3DSIZE3 * fDeltaTime;
-	}
+	//if (nEffect_3DType == 0)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE1 * fDeltaRate;
+	//}
+	//else if (nEffect_3DType == 1)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE2 * fDeltaRate;
+	//}
+	//else if (nEffect_3DType == 2)
+	//{
+	//	m_fRadius *= EFFECT_3DSIZE3 * fDeltaRate;
+	//}
 }
 
 //==========================================================================
@@ -459,7 +458,7 @@ void CEffect3D::SubSize(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife);
 }
 
 //==========================================================================
@@ -468,7 +467,7 @@ void CEffect3D::SuperSubSize(const float fDeltaTime, const float fDeltaRate, con
 void CEffect3D::AddSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 拡大
-	m_fRadius += m_fAddSizeValue * fDeltaTime;
+	m_fRadius += m_fAddSizeValue * fDeltaRate;
 }
 
 //==========================================================================
@@ -486,8 +485,7 @@ void CEffect3D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	// 移動量設定
 	SetMove(move);
 
-	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife) * fDeltaTime;
-
+	m_fRadius = m_fMaxRadius * (m_fLife / m_fMaxLife);
 }
 
 //==========================================================================
