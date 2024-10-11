@@ -38,8 +38,7 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (CGame::GetInstance()->GetGameManager()->GetType() == CGameManager::SceneType::SCENE_GOAL) return;
-
+	
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
@@ -93,6 +92,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	{// 移動可能モーションの時
 
 		
+		Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
 
 		// 移動中にする
 		motionFrag.bMove = true;

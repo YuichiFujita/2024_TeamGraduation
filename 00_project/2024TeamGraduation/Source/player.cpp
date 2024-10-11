@@ -77,6 +77,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// パターン用インスタンス
 	m_pControlMove = nullptr;	// 移動操作
+	m_pActionPattern = nullptr;	// アクションパターン
 
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
@@ -493,6 +494,12 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 //==========================================================================
 void CPlayer::LimitPos()
 {
+	MyLib::Vector3 pos = GetPosition();
+	if (pos.y <= 0.0f)
+	{
+		pos.y = 0.0f;
+	}
+	SetPosition(pos);
 	return;
 }
 

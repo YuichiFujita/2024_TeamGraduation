@@ -109,7 +109,7 @@ HRESULT CGameManager::Init()
 	m_bControll = true;			// 操作できるか
 
 #if _DEBUG
-	m_SceneType = SceneType::SCENE_START;	// シーンの種類 
+	m_SceneType = SceneType::SCENE_MAIN;	// シーンの種類 
 #else
 	m_SceneType = SceneType::SCENE_START;	// シーンの種類 
 #endif
