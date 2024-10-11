@@ -16,11 +16,7 @@
 // 前方宣言
 //==========================================================================
 class CShadow;
-
 class CPlayerControlMove;		// 移動
-class CPlayerControlBaggage;	// 荷物操作
-class CPlayerControlSurfacing;	// 浮上操作
-class CPlayerControlTrick;		// トリック操作
 
 //==========================================================================
 // クラス定義
@@ -76,6 +72,9 @@ public:
 		bool bKnockBack;	// ノックバック中
 		bool bDead;			// 死亡中
 		bool bMove;			// 移動中
+
+		// コンストラクタ
+		SMotionFrag() : bJump(false), bATK(false), bGuard(false), bCounter(false), bKnockBack(false), bDead(false), bMove(false) {}
 	};
 
 	CPlayer(int nPriority = 2);
@@ -90,20 +89,23 @@ public:
 
 	MyLib::HitResult_Character Hit(const int nValue);	// ヒット処理
 
-	STATE GetState();			// 状態取得
 	void SetState(STATE state);	// 状態設定
+	STATE GetState() { return m_state; }	// 状態取得
 
+	//--------------------------
 	// モーション
-	void SetMotion(int motionIdx);									// モーションの設定
-	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }			// ダッシュ状況設定
-	bool IsDash()					{ return m_bDash; }				// ダッシュ判定
-	void SetEnableJump(bool bJump)	{ m_bJump = bJump; }			// ジャンプ状況設定
-	bool IsJump()					{ return m_bJump; }				// ジャンプ判定
-	float GetDashTime()				{ return m_fDashTime; }			// ダッシュ時間
-	void SetMotionFrag(SMotionFrag frag) { m_sMotionFrag = frag; }	// モーションのフラグ設定
-	SMotionFrag GetMotionFrag() { return m_sMotionFrag; }			// モーションのフラグ取得
-	void SetDamageInfo(sDamageInfo info) { m_sDamageInfo = info; }	// ダメージ情報設定
-	sDamageInfo GetDamageInfo() { return m_sDamageInfo; }			// ダメージ情報取得
+	//--------------------------
+	void SetMotion(int motionIdx);										// モーションの設定
+	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
+	bool IsPossibleMove() { return m_bPossibleMove; }					// 移動可能フラグ取得
+	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
+	bool IsDash()					{ return m_bDash; }					// ダッシュ判定
+	void SetEnableJump(bool bJump)	{ m_bJump = bJump; }				// ジャンプ状況設定
+	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
+	void SetMotionFrag(SMotionFrag frag) { m_sMotionFrag = frag; }		// モーションのフラグ設定
+	SMotionFrag GetMotionFrag() { return m_sMotionFrag; }				// モーションのフラグ取得
+	void SetDamageInfo(sDamageInfo info) { m_sDamageInfo = info; }		// ダメージ情報設定
+	sDamageInfo GetDamageInfo() { return m_sDamageInfo; }				// ダメージ情報取得
 
 	//=============================
 	// 操作
@@ -133,7 +135,9 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	//--------------------------
 	// 状態関数
+	//--------------------------
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新
 	void StateNone();		// なし
 	void StateInvincible();	// 無敵
@@ -141,41 +145,55 @@ private:
 	void StateDead();		// 死亡
 	void StateDeadWait();	// 死亡待機
 
+	//--------------------------
 	// その他関数
-	virtual void Controll();		// 操作
+	//--------------------------
+	virtual void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 操作
 	virtual void DeleteControl();	// 操作削除
 	void LimitPos();				// 位置制限
-	void MotionBySetState();		// モーション別の状態設定
 	void ResetFrag();				// フラグリセット
 	void UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ダメージ受付時間更新
 	void MotionSet();	// モーションの設定
 
+	//--------------------------
 	// モーション系関数
+	//--------------------------
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	//=============================
 	// メンバ変数
 	//=============================
+	//--------------------------
+	// 状態
+	//--------------------------
 	STATE m_Oldstate;			// 前回の状態
 	STATE m_state;				// 状態
-	D3DXCOLOR m_mMatcol;			// マテリアルの色
+	float m_fStateTime;			// 状態時間
+	
+	//--------------------------
+	// オブジェクトのパラメータ
+	//--------------------------
+	MyLib::Color m_mMatcol;			// マテリアルの色
 	MyLib::Vector3 m_posKnokBack;	// ノックバックの位置
+	
+	//--------------------------
+	// 行動フラグ
+	//--------------------------
+	bool m_bPossibleMove;		// 移動可能フラグ
 	bool m_bJump;				// ジャンプ中かどうか
-	bool m_bLandOld;			// 過去の着地情報
 	bool m_bDash;				// ダッシュ判定
-	bool m_bHitStage;			// ステージの当たり判定
-	bool m_bLandField;			// フィールドの着地判定
-	bool m_bHitWall;			// 壁の当たり判定
-	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
-	float m_fDashTime;				// ダッシュ時間
-	CShadow* m_pShadow;			// 影の情報
 	SMotionFrag m_sMotionFrag;	// モーションのフラグ
-	sDamageInfo m_sDamageInfo;		// ダメージ情報
 
+	//--------------------------
 	// パターン用インスタンス
-	CPlayerControlMove* m_pControlMove;			// 移動操作
+	//--------------------------
+	CPlayerControlMove* m_pControlMove;	// 移動操作
 
+	// その他
+	int m_nMyPlayerIdx;						// プレイヤーインデックス番号
+	CShadow* m_pShadow;						// 影の情報
+	sDamageInfo m_sDamageInfo;				// ダメージ情報
 	static CListManager<CPlayer> m_List;	// リスト
 };
 
