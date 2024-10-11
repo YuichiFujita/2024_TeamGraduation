@@ -24,27 +24,6 @@
 #include "tutorial.h"
 #include "ranking.h"
 
-// TODO
-#include "manager.h"
-#include "debugproc.h"
-#include "char2D.h"
-#include "string2D.h"
-#include "text2D.h"
-#include "timer.h"
-#include "timerUI.h"
-#include "timeUI.h"
-#include "3D_effect.h"
-#include "2D_effect.h"
-#include "impactwave.h"
-#include "meshdome.h"
-#include "object_circlegauge2D.h"
-#include "objectBillboard_Anim.h"
-#include "blackframe.h"
-
-// TODO
-CObjectCircleGauge2D* g_pGauge = nullptr;
-CObjectBillboardAnim* g_pAnim = nullptr;
-
 //==========================================================================
 // íËêîíËã`
 //==========================================================================

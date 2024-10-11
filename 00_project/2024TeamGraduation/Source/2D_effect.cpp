@@ -415,8 +415,8 @@ void CEffect2D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	// ˆÚ“®—Êæ“¾
 	MyLib::Vector3 move = GetMove();
 
-	move.x += ((0.0f - move.x) * 0.15f) * fDeltaTime * fSlowRate;
-	move.y += ((0.0f - move.y) * 0.15f) * fDeltaTime * fSlowRate;
+	move.x += (0.0f - move.x) * (0.15f * fDeltaRate * fSlowRate);
+	move.y += (0.0f - move.y) * (0.15f * fDeltaRate * fSlowRate);
 
 	// ˆÚ“®—Êİ’è
 	SetMove(move);

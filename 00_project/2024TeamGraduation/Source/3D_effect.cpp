@@ -44,25 +44,25 @@ int CEffect3D::m_nTexIdx[TYPE_MAX] = {};	// テクスチャのインデックス番号
 CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 {
 	// 値のクリア
-	m_posOrigin = MyLib::Vector3();			// 原点
-	m_updatePosition = MyLib::Vector3();	// 更新後の位置
-	m_setupPosition = MyLib::Vector3();		// セットアップ位置
-	m_posDest = MyLib::Vector3();			// 目標の位置
+	m_posOrigin = MyLib::Vector3();				// 原点
+	m_updatePosition = MyLib::Vector3();		// 更新後の位置
+	m_setupPosition = MyLib::Vector3();			// セットアップ位置
+	m_posDest = MyLib::Vector3();				// 目標の位置
 	m_colOrigin = mylib_const::DEFAULT_COLOR;	// 色の元
-	m_pMtxParent = nullptr;						// 親マトリックスのポインタ
-	m_fRadius = 0.0f;							// 半径
-	m_fMaxRadius = 0.0f;						// 最大半径
-	m_fAddSizeValue = 0.0f;						// サイズ変更量
-	m_fGravity = 0.0f;							// 重力
-	m_fMoveFactor = 0.0f;						// 移動補正係数
-	m_fLife = 0.0f;								// 寿命
-	m_fMaxLife = 0.0f;							// 最大寿命(固定)
-	m_moveType = MOVEEFFECT_NONE;				// 移動の種類
-	m_nType = TYPE_NORMAL;						// 種類
-	m_bAddAlpha = true;							// 加算合成の判定
-	m_bZSort = false;							// Zソートのフラグ
-	m_bGravity = false;							// 重力のフラグ
-	m_bChaseDest = false;						// 目標の位置へ向かうフラグ
+	m_pMtxParent = nullptr;			// 親マトリックスのポインタ
+	m_fRadius = 0.0f;				// 半径
+	m_fMaxRadius = 0.0f;			// 最大半径
+	m_fAddSizeValue = 0.0f;			// サイズ変更量
+	m_fGravity = 0.0f;				// 重力
+	m_fMoveFactor = 0.0f;			// 移動補正係数
+	m_fLife = 0.0f;					// 寿命
+	m_fMaxLife = 0.0f;				// 最大寿命(固定)
+	m_moveType = MOVEEFFECT_NONE;	// 移動の種類
+	m_nType = TYPE_NORMAL;			// 種類
+	m_bAddAlpha = true;				// 加算合成の判定
+	m_bZSort = false;				// Zソートのフラグ
+	m_bGravity = false;				// 重力のフラグ
+	m_bChaseDest = false;			// 目標の位置へ向かうフラグ
 
 	// 総数加算
 	m_nNumAll++;
@@ -473,9 +473,9 @@ void CEffect3D::Gensui(const float fDeltaTime, const float fDeltaRate, const flo
 	// 移動量取得
 	MyLib::Vector3 move = GetMove();
 
-	move.x += ((0.0f - move.x) * m_fMoveFactor) * fDeltaTime * fSlowRate;
-	move.y += ((0.0f - move.y) * m_fMoveFactor) * fDeltaTime * fSlowRate;
-	move.z += ((0.0f - move.z) * m_fMoveFactor) * fDeltaTime * fSlowRate;
+	move.x += (0.0f - move.x) * (m_fMoveFactor * fDeltaRate * fSlowRate);
+	move.y += (0.0f - move.y) * (m_fMoveFactor * fDeltaRate * fSlowRate);
+	move.z += (0.0f - move.z) * (m_fMoveFactor * fDeltaRate * fSlowRate);
 
 	// 移動量設定
 	SetMove(move);
