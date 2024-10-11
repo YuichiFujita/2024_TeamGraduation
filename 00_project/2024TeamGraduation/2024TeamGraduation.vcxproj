@@ -170,6 +170,7 @@
     <ClCompile Include="Libraries\Imgui\implot_items.cpp" />
     <ClCompile Include="Source\2D_effect.cpp" />
     <ClCompile Include="Source\3D_effect.cpp" />
+    <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="Libraries\Imgui\imstb_truetype.h" />
     <ClInclude Include="Source\2D_effect.h" />
     <ClInclude Include="Source\3D_effect.h" />
+    <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />

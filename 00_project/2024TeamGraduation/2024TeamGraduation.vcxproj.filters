@@ -75,6 +75,9 @@
     <Filter Include="ui">
       <UniqueIdentifier>{db3b7d5c-8da1-48b2-a374-eb2754691253}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame">
+      <UniqueIdentifier>{fe8bbf2f-bf3b-4e81-8e27-636f5f5ecac4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="Source\timeUI.cpp">
       <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ball.cpp">
+      <Filter>ingame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -720,6 +726,9 @@
     </ClInclude>
     <ClInclude Include="Source\timeUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ball.h">
+      <Filter>ingame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

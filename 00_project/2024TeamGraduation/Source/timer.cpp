@@ -182,15 +182,13 @@ CTimer *CTimer::Create
 //============================================================
 void CTimer::EnableStopAll(const bool bStop)
 {
-	// TODO：これでループだいじょぶそ？
-
-	std::list<CTimer*>::iterator itr = m_list.GetBegin();	// 先頭イテレーター
-
 	// 全タイマーオブジェクトの計測状況を設定
+	std::list<CTimer*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
-		(*itr)->EnableStop(bStop);
+		CTimer* pObj = (*itr);
+		pObj->EnableStop(bStop);
 	}
 }
 
