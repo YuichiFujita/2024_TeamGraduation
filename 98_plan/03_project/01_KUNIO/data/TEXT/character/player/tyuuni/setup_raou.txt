@@ -35,7 +35,9 @@ MODEL_FILENAME = data/MODEL/ninja/10_L_leg.x		# [10]左脚
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	VELOCITY = 4.00		# 移動量
+	VELOCITY = 4.00				# 移動量
+	BLINK_VELOCITY = 4.00		# 移動量
+	RUN_VELOCITY = 4.00			# 移動量
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00		# 半径
 	HEIGHT = 0.00		# 高さ

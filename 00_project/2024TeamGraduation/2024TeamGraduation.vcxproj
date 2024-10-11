@@ -241,6 +241,7 @@
     <ClCompile Include="Source\pause_game.cpp" />
     <ClCompile Include="Source\pause_tutorial.cpp" />
     <ClCompile Include="Source\player.cpp" />
+    <ClCompile Include="Source\playerAction.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -355,6 +356,7 @@
     <ClInclude Include="Source\pause_game.h" />
     <ClInclude Include="Source\pause_tutorial.h" />
     <ClInclude Include="Source\player.h" />
+    <ClInclude Include="Source\playerAction.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\precompile.h" />
     <ClInclude Include="Source\ranking.h" />

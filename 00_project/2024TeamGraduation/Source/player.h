@@ -17,6 +17,7 @@
 //==========================================================================
 class CShadow;
 class CPlayerControlMove;		// 移動
+class CPlayerAction;		// アクション
 
 //==========================================================================
 // クラス定義
@@ -49,6 +50,29 @@ public:
 		STATE_MAX
 	};
 
+	// アクション
+	enum Action
+	{
+		ACTION_NONE = 0,	// 通常
+		ACTION_BLINK,		// ブリンク
+		ACTION_RUN,			// 走り
+		ACTION_MAX
+	};
+
+	// ダッシュ方向
+	enum DashAngle
+	{
+		ANGLE_UP = 0,
+		ANGLE_RIGHTUP,
+		ANGLE_RIGHT,
+		ANGLE_RIGHTDW,
+		ANGLE_DOWN,
+		ANGLE_LEFTDW,
+		ANGLE_LEFT,
+		ANGLE_LEFTUP,
+		ANGLE_MAX
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -67,14 +91,22 @@ public:
 	{
 		bool bJump;			// ジャンプ中
 		bool bATK;			// 攻撃中
-		bool bGuard;		// ガード
-		bool bCounter;		// カウンター中
 		bool bKnockBack;	// ノックバック中
 		bool bDead;			// 死亡中
 		bool bMove;			// 移動中
+		bool bBlink;		// ブリンク
 
 		// コンストラクタ
-		SMotionFrag() : bJump(false), bATK(false), bGuard(false), bCounter(false), bKnockBack(false), bDead(false), bMove(false) {}
+		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false) {}
+	};
+
+	// ダッシュ情報
+	struct SDashInfo
+	{
+		bool bDash;			// ダッシュ判定
+		DashAngle angle;	// ダッシュ方向
+
+		SDashInfo() : bDash(false), angle(ANGLE_LEFT) {}
 	};
 
 	CPlayer(int nPriority = 2);
@@ -108,9 +140,10 @@ public:
 	sDamageInfo GetDamageInfo() { return m_sDamageInfo; }				// ダメージ情報取得
 
 	//=============================
-	// 操作
+	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
+	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
+	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
 
 	//=============================
 	// その他
@@ -130,7 +163,10 @@ private:
 	// 関数リスト
 	//=============================
 	typedef void(CPlayer::* STATE_FUNC)();
-	static STATE_FUNC m_StateFunc[];
+	static STATE_FUNC m_StateFunc[];	// 状態関数
+
+	typedef void(CPlayer::*ACTION_FUNC)();
+	static ACTION_FUNC m_ActionFunc[];	// 行動関数
 
 	//=============================
 	// メンバ関数
@@ -170,7 +206,7 @@ private:
 	STATE m_Oldstate;			// 前回の状態
 	STATE m_state;				// 状態
 	float m_fStateTime;			// 状態時間
-	
+
 	//--------------------------
 	// オブジェクトのパラメータ
 	//--------------------------
@@ -189,6 +225,7 @@ private:
 	// パターン用インスタンス
 	//--------------------------
 	CPlayerControlMove* m_pControlMove;	// 移動操作
+	CPlayerAction* m_pActionPattern;	// アクションパターン
 
 	// その他
 	int m_nMyPlayerIdx;						// プレイヤーインデックス番号

@@ -26,6 +26,7 @@
 
 // 使用クラス
 #include "playercontrol.h"
+#include "playerAction.h"
 
 //==========================================================================
 // 定数定義
@@ -39,7 +40,7 @@ namespace
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =
+CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 {
 	&CPlayer::StateNone,		// なし
 	&CPlayer::StateInvincible,	// 無敵
@@ -47,6 +48,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =
 	&CPlayer::StateDead,		// 死亡
 	&CPlayer::StateDeadWait,	// 死亡待機
 };
+
 
 //==========================================================================
 // 静的メンバ変数
@@ -139,6 +141,12 @@ HRESULT CPlayer::Init()
 	// 操作関連
 	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
 
+	// アクションパターン
+	if (m_pActionPattern == nullptr)
+	{
+		m_pActionPattern = DEBUG_NEW CPlayerAction(this);
+	}
+
 	return S_OK;
 }
 
@@ -218,6 +226,12 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// アクション更新
+	if (m_pActionPattern != nullptr)
+	{
+		m_pActionPattern->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -326,6 +340,12 @@ void CPlayer::DeleteControl()
 		delete m_pControlMove;
 		m_pControlMove = nullptr;
 	}
+
+	if (m_pActionPattern != nullptr)
+	{// アクションパターン
+		delete m_pActionPattern;
+		m_pActionPattern = nullptr;
+	}
 }
 
 //==========================================================================
@@ -354,49 +374,48 @@ void CPlayer::MotionSet()
 		return;
 	}
 
+	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
 
-	if (pMotion->IsFinish())
-	{// 終了していたら
+	// 再生中
+	if (!pMotion->IsFinish()) return;
 
-		// 現在の種類取得
-		int nType = pMotion->GetType();
-		int nOldType = pMotion->GetOldType();
+	// 現在の種類取得
+	int nType = pMotion->GetType();
+	int nOldType = pMotion->GetOldType();
 
-		if (m_sMotionFrag.bMove && m_sMotionFrag.bKnockBack == false && m_bJump == false &&
-			m_sMotionFrag.bATK == false && m_sMotionFrag.bATK == false)
-		{// 移動していたら
+	if (m_sMotionFrag.bMove)
+	{// 移動していたら
 
-			m_sMotionFrag.bMove = false;	// 移動判定OFF
+		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
-			// 移動モーション
-			if (m_bDash)
-			{// ダッシュモーション
+		// 移動モーション
+		if (m_bDash)
+		{// ダッシュモーション
 
-			}
-			else
-			{// 歩行モーション
-				pMotion->Set(MOTION_WALK);
-			}
-		}
-		else if (m_sMotionFrag.bJump && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中
-
-			// ジャンプのフラグOFF
-			m_sMotionFrag.bJump = false;
-
-			// ジャンプモーション
-		}
-		else if (m_bJump && m_sMotionFrag.bJump == false && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中&&ジャンプモーションが終わってる時
-
-			// 落下モーション
 		}
 		else
-		{
-			// ニュートラルモーション
-			pMotion->Set(MOTION_DEF);
+		{// 歩行モーション
+			pMotion->Set(MOTION_WALK);
 		}
+	}
+	else if (m_sMotionFrag.bJump)
+	{// ジャンプ中
+
+		// ジャンプのフラグOFF
+		m_sMotionFrag.bJump = false;
+
+		// ジャンプモーション
+	}
+	else if (m_bJump && !m_sMotionFrag.bJump)
+	{// ジャンプ中&&ジャンプモーション再生が終わってる時
+
+		// 落下モーション
+	}
+	else
+	{
+		// ニュートラルモーション
+		pMotion->Set(MOTION_DEF);
 	}
 }
 
