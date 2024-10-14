@@ -664,7 +664,7 @@ void CManager::Uninit()
 	}
 
 	// ロストするリソース管理マネージャー破棄
-	CLostResourceManager::Release();
+	//CLostResourceManager::Release();
 }
 
 //==========================================================================

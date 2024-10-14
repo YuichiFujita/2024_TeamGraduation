@@ -192,6 +192,13 @@ void CPlayer::Release()
 
 	// 操作系
 	DeleteControl();
+
+	// アクションパターン
+	if (m_pActionPattern != nullptr)
+	{
+		delete m_pActionPattern;
+		m_pActionPattern = nullptr;
+	}
 }
 
 //==========================================================================

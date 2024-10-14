@@ -30,7 +30,7 @@ namespace
 	const MyLib::Vector3 TITLE_POSR_DEST = MyLib::Vector3(45271.0f, -34.0f, 591.0f);
 	const MyLib::Vector3 RANKING_POSR_DEST = MyLib::Vector3(625.34f, 503.34f, 2667.39f);	// ランキングの注視点
 	const MyLib::Vector3 DEFAULT_TITLEROT = MyLib::Vector3(0.0f, 0.67f, -0.08f);	// タイトルのデフォルト向き
-	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.38f, -0.05f);		// ゲームのデフォルト向き
+	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.0f, -0.05f);		// ゲームのデフォルト向き
 	const MyLib::Vector3 DEFAULT_RESULTROT = MyLib::Vector3(0.0f, 0.0f, -0.15f);	// リザルトのデフォルト向き
 	const MyLib::Vector3 DEFAULT_RANKINGROT = MyLib::Vector3(0.0f, 0.0f, -0.05f);	// ランキングのデフォルト向き
 	const float DEFAULT_TITLELEN = 1265.0f;		// タイトルのデフォルト長さ

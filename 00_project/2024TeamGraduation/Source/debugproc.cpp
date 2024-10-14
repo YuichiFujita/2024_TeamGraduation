@@ -95,7 +95,7 @@ void CDebugProc::Uninit()
 		m_pFont->Release();
 		m_pFont = nullptr;
 	}
-	CLostResourceManager::GetInstance()->Remove(this);
+	//CLostResourceManager::GetInstance()->Remove(this);
 }
 
 //==========================================================================

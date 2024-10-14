@@ -30,7 +30,7 @@ CPlayerControlMove::CPlayerControlMove()
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
 	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
 	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
-	m_fDashInterval = 0.0f;								// ダッシュのインターバル
+	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
 }
 
 //==========================================================================
@@ -45,13 +45,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 
 	// ダッシュ判定
 	bool bDash = false;
-	if (pPad->GetPress(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()) &&
-		pPad->IsTipStick())
-	{// 左スティックが倒れてる場合
-		bDash = true;
-	}
-	player->SetEnableDash(bDash);
-
 
 	// 移動量取得
 	float fMove = player->GetVelocity();
@@ -64,7 +57,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-	Camerarot.y -= pCamera->GetOriginRotation().y;
 
 	// 目標の向き取得
 	float fRotDest = player->GetRotDest();
@@ -80,19 +72,23 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	// 状態取得
 	CPlayer::STATE state = player->GetState();
 
-	// 移動方向
-	int angle = 0;
+	// アクション取得
+	CPlayerAction* pPlayerAction = player->GetActionPattern();
+	if (pPlayerAction == nullptr) return;
+	CPlayer::Action action = pPlayerAction->GetAction();
 
-
-	// ダッシュ判定
-	CPlayer::SDashInfo info;
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
 
-		
-		Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
+		//--------------------------
+		// ブリンク操作
+		//--------------------------
+		if (action != CPlayer::Action::ACTION_BLINK)
+		{
+			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
+		}
 
 		// 移動中にする
 		motionFrag.bMove = true;
@@ -201,7 +197,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ダッシュ
 //==========================================================================
-void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -403,17 +399,21 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	{
 		MyLib::Vector3 move;
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-		move.x += cosf((D3DX_PI * -0.5f) + division * info.angle) * 25.0f;
-		move.z += sinf((D3DX_PI * -0.5f) + division * info.angle) * 25.0f;
+		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle) * 25.0f;
+		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle) * 25.0f;
+
+		// 移動量設定
 		player->SetMove(move);
+
+		// トリガーのカウントリセット
 		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
 	}
 
-	// 猶予減らしていく
-	m_fDashInterval -= fDeltaTime * fDeltaRate * fSlowRate;
-	if (m_fDashInterval <= 0.0f)
+	// トリガーの猶予減らしていく
+	m_fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	if (m_fTriggerInterval <= 0.0f)
 	{
-		// トリガーのカウント
+		// トリガーのカウントリセット
 		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
 	}
 }
@@ -435,8 +435,8 @@ CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAng
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_BLINK);
 	}
 
-	// タイマーリセット
-	m_fDashInterval = TIME_INTERVAL;
+	// トリガーのインターバルリセット
+	m_fTriggerInterval = TIME_INTERVAL;
 
 	// トリガーのカウント
 	m_nCntTrigger[angle] = (m_nCntTrigger[angle] + 1) % 2;

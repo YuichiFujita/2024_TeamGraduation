@@ -16,8 +16,9 @@
 namespace
 {
 	const float MOVE_SLIDEMOUSE = 2.5f;			// マウスのスライド移動量
-	const float MOVE_ROTATIONMOUSE = 0.005f;		// マウスの回転移動量
-	const float MOVE_WASD = 10.0f;				// WASDの移動量
+	const float MOVE_ROTATIONMOUSE = 0.005f;	// マウスの回転移動量
+	const float MOVE_WASD = 5.0f;				// WASDの移動量
+	const float MOVE_UP_DOWN = 10.0f;			// 上下移動量
 	const float MOVE_DISTANCE = 5.0f;			// 距離の移動量
 	const float  MIN_ROT = -D3DX_PI * 0.49f;	// カメラ固定用
 	const float  MAX_ROT = D3DX_PI * 0.49f;		// カメラ固定用
@@ -86,17 +87,17 @@ void CCamera_Debug::Update()
 	// 移動量をリセット
 	m_moveRot += (MyLib::Vector3() - m_moveRot) * 0.6f;
 
-	// WASDの更新
-	UpdateWASD();
+	// キーボード更新
+	UpdateKeyboard();
 
 	// 距離の更新
 	UpdateDistance();
 }
 
 //==========================================================================
-// WASDの更新
+// キーボード更新
 //==========================================================================
-void CCamera_Debug::UpdateWASD()
+void CCamera_Debug::UpdateKeyboard()
 {
 	// 注視点取得
 	MyLib::Vector3 posR = m_pCamera->GetPositionR();
@@ -105,13 +106,16 @@ void CCamera_Debug::UpdateWASD()
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 
-	// キーボード情報取得
+	// マウス情報取得
 	CInputMouse* pMouse = CInputMouse::GetInstance();
 
 	if (pMouse->GetPress(CInputMouse::BUTTON_LEFT) &&
 		!pKey->GetPress(DIK_LALT))
 	{// 左クリック時移動
 
+		//--------------------------
+		// 移動
+		//--------------------------
 		if (pKey->GetPress(DIK_W))
 		{
 			if (pKey->GetPress(DIK_A))
@@ -158,15 +162,25 @@ void CCamera_Debug::UpdateWASD()
 			m_move.x += sinf(D3DX_PI * 0.5f + rot.y) * MOVE_WASD;
 			m_move.z += cosf(D3DX_PI * 0.5f + rot.y) * MOVE_WASD;
 		}
+
+		//--------------------------
+		// 上下
+		//--------------------------
+		if (pKey->GetPress(DIK_E))
+		{// 上
+			m_move.y += MOVE_WASD;
+		}
+		else if (pKey->GetPress(DIK_Q))
+		{// 下
+			m_move.y -= MOVE_WASD;
+		}
 	}
 
 	// 移動量分を加算
-	posR.x += m_move.x;
-	posR.z += m_move.z;
+	posR += m_move;
 
 	// 移動量をリセット
-	m_move.x += (0.0f - m_move.x) * 0.15f;
-	m_move.z += (0.0f - m_move.z) * 0.15f;
+	m_move += (MyLib::Vector3() - m_move) * 0.15f;
 
 	// 注視点設定
 	m_pCamera->SetPositionR(posR);

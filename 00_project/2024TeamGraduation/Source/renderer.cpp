@@ -156,7 +156,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	// マルチターゲットレンダラーの初期化
 	InitMTRender();
 
-	CLostResourceManager::GetInstance()->Regist(this);
+	//CLostResourceManager::GetInstance()->Regist(this);
 
 	return S_OK;
 }
