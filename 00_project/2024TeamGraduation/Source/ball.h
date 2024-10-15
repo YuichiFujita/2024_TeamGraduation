@@ -74,6 +74,10 @@ public:
 	void ThrowJump(CPlayer* pPlayer);		// ジャンプ投げ
 	void ThrowSpecial(CPlayer* pPlayer);	// スペシャル投げ
 
+	CGameManager::TeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
+	EAttack GetTypeAtk() const	{ return m_typeAtk; }	// 攻撃種類取得
+	EState GetState() const		{ return m_state; }		// 状態取得
+
 	//=============================
 	// 静的関数
 	//=============================
