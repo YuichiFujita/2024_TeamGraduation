@@ -47,7 +47,7 @@ END_CHARACTERSET
 # コライダー情報
 #
 #==============================================================================
-COLLIDER_FILENAME = data/TEXT/character/player/tyuuni/sphere_collider.json
+COLLIDER_FILENAME = data/TEXT/character/player/sample/sphere_collider.json
 
 #==============================================================================
 #
@@ -62,10 +62,10 @@ NUM_MOTION = 4
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/player/tyuuni/motion_def.txt			# [0]デフォルト
-MOTION_FILENAME = data/TEXT/character/player/tyuuni/motion_walk.txt			# [1]歩き
-MOTION_FILENAME = data/TEXT/character/player/tyuuni/motion_dead.txt			# [9]死亡
-MOTION_FILENAME = data/TEXT/character/player/tyuuni/motion_start.txt			# [9]死亡
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_def.txt			# [0]デフォルト
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_walk.txt			# [1]歩き
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_dead.txt			# [9]死亡
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_start.txt			# [9]死亡
 
 
 END_SCRIPT		# この行は絶対消さないこと！
