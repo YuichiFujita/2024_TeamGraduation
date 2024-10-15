@@ -20,9 +20,13 @@ namespace
 //==========================================================================
 CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 {
-	&CPlayerAction::ActionNone,	// なし
+	&CPlayerAction::ActionNone,		// なし
 	&CPlayerAction::ActionBlink,	// ブリンク
-	&CPlayerAction::ActionRun,	// 走り
+	&CPlayerAction::ActionRun,		// 走り
+	&CPlayerAction::ActionJump,		// ジャンプ
+	&CPlayerAction::ActionCatch,	// キャッチ
+	&CPlayerAction::ActionThrow,	// 投げ
+	&CPlayerAction::ActionSpecial,	// スペシャル
 };
 
 //==========================================================================
@@ -72,6 +76,34 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
+}
+
+//==========================================================================
+// ジャンプ
+//==========================================================================
+void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+}
+
+//==========================================================================
+// キャッチ
+//==========================================================================
+void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+}
+
+//==========================================================================
+// 投げ
+//==========================================================================
+void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+}
+
+//==========================================================================
+// スペシャル
+//==========================================================================
+void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
 }
 
 //==========================================================================
