@@ -54,7 +54,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		fMove *= MULTIPLIY_DASH;
 	}
 
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -346,7 +345,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	// ダッシュする
 	if (info.bDash)
 	{
-		MyLib::Vector3 move;
+		MyLib::Vector3 move = player->GetMove();
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
 		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
 		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
@@ -387,22 +386,30 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	CPlayer::DashAngle angle;
-	bool bInput = false;
-
 	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) &&
-		!pPad->GetStickMoveL(0).y > 0 &&
 		!pKey->GetPress(DIK_W);
 
-
 	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) &&
-		!pPad->GetStickMoveL(0).y < 0 &&
 		!pKey->GetPress(DIK_S);
 
-	if (pKey->GetRelease(DIK_W) || pKey->GetRelease(DIK_S) || pKey->GetRelease(DIK_D) || pKey->GetRelease(DIK_A))
+	bool bRight = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) &&
+		!pKey->GetPress(DIK_D);
+
+	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) &&
+		!pKey->GetPress(DIK_A);
+
+	bool bStick = pPad->IsTipStick();
+
+	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
 		m_bDash = false;
+
 	}
+
+	ImGui::Checkbox("UP", &bUP);
+	ImGui::Checkbox("Down", &bDown);
+	ImGui::Checkbox("Right", &bRight);
+	ImGui::Checkbox("Left", &bLeft);
 }
 
 //==========================================================================
