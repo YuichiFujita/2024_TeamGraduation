@@ -177,6 +177,11 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 	MoveCameraInput();
 	UpdateSpotLightVec();
 
+	// å¸Ç´ï‚ê≥
+	UtilFunc::Transformation::RotNormalize(m_rot);
+	UtilFunc::Transformation::RotNormalize(m_rotDest);
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
 	// íçéãì_ÇÃîΩâf
 	ReflectCameraR();
 

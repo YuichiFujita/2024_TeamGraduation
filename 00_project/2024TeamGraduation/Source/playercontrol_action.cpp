@@ -176,7 +176,7 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 	{
 		bJump = true;
 		motionFrag.bJump = true;
-		move.y += 17.0f;
+		move.y += 12.0f;
 
 		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
 

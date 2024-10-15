@@ -343,7 +343,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	}
 
 	// ƒ_ƒbƒVƒ…‚·‚é
-	if (info.bDash)
+	if (info.bDash && !m_bDash)
 	{
 		MyLib::Vector3 move = player->GetMove();
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// Œü‚«
@@ -403,7 +403,6 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
 		m_bDash = false;
-
 	}
 
 	ImGui::Checkbox("UP", &bUP);
