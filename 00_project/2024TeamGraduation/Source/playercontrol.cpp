@@ -119,75 +119,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			}
 		}
 
-
-		if (!bJump &&
-			(pKey->GetTrigger(DIK_SPACE) || pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx())))
-		{// ジャンプ
-
-			//bJump = true;
-			//motionFrag.bJump = true;
-			//move.y += 17.0f;
-
-			//pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
-			//// サウンド再生
-			//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
-		}
-
-		// ジャンプ判定設定
-		player->SetEnableJump(bJump);
-
-	}
-	else if (
-		pMotion->IsGetMove(nMotionType) == 0 &&	// 移動可能なモーションか取得
-		player->IsPossibleMove())
-	{// 向きだけ
-
-		if (pKey->GetPress(DIK_A))
-		{//←キーが押された,左移動
-
-			if (pKey->GetPress(DIK_W))
-			{//A+W,左上移動
-				fRotDest = D3DX_PI * 0.75f + Camerarot.y;
-			}
-			else if (pKey->GetPress(DIK_S))
-			{//A+S,左下移動
-				fRotDest = D3DX_PI * 0.25f + Camerarot.y;
-			}
-			else
-			{//A,左移動
-				fRotDest = D3DX_PI * 0.5f + Camerarot.y;
-			}
-		}
-		else if (pKey->GetPress(DIK_D))
-		{//Dキーが押された,右移動
-
-			if (pKey->GetPress(DIK_W))
-			{//D+W,右上移動
-				fRotDest = -D3DX_PI * 0.75f + Camerarot.y;
-			}
-			else if (pKey->GetPress(DIK_S))
-			{//D+S,右下移動
-				fRotDest = -D3DX_PI * 0.25f + Camerarot.y;
-			}
-			else
-			{//D,右移動
-				fRotDest = -D3DX_PI * 0.5f + Camerarot.y;
-			}
-		}
-		else if (pKey->GetPress(DIK_W))
-		{//Wが押された、上移動
-			fRotDest = D3DX_PI * 1.0f + Camerarot.y;
-		}
-		else if (pKey->GetPress(DIK_S))
-		{//Sが押された、下移動
-			fRotDest = D3DX_PI * 0.0f + Camerarot.y;
-		}
-
-		if (pPad->IsTipStick())
-		{// 左スティックが倒れてる場合
-			fRotDest = pPad->GetStickRotL(player->GetMyPlayerIdx());
-		}
 	}
 
 	// モーションフラグ設定
@@ -415,8 +346,8 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	{
 		MyLib::Vector3 move;
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 25.0f;
-		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 25.0f;
+		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
+		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
 
 		// 移動量設定
 		player->SetMove(move);
