@@ -10,6 +10,7 @@
 #include "input.h"
 #include "camera.h"
 #include "game.h"
+#include "ball.h"
 #include "playerAction.h"
 
 //==========================================================================
@@ -178,7 +179,8 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 
-		// FUJITA：ここにボール投げ関数
+		// ボール投げ
+		player->GetBall()->Throw(player);
 	}
 
 }

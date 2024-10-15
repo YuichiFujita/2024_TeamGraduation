@@ -70,6 +70,7 @@ public:
 	//=============================
 	void Kill();	// 削除
 	void Catch(CPlayer* pPlayer);	// キャッチ
+	void Throw(CPlayer* pPlayer);	// 投げ
 
 	//=============================
 	// 静的関数

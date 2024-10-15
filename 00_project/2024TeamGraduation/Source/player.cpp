@@ -583,7 +583,7 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 bool CPlayer::Hit(CBall* pBall)
 {
 	// キャッチ
-	CGame::GetInstance()->GetGameManager()->GetBall()->Catch(this);
+	pBall->Catch(this);
 	return false;
 }
 #endif

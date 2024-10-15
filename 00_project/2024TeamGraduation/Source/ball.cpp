@@ -157,10 +157,13 @@ void CBall::Draw()
 }
 
 //==========================================================================
-//	キャッチ処理
+// キャッチ処理
 //==========================================================================
 void CBall::Catch(CPlayer* pPlayer)
 {
+	// 移動量を初期化
+	SetMove(VEC3_ZERO);
+
 	// 所持状態にする
 	m_state = STATE_CATCH;
 
@@ -169,6 +172,27 @@ void CBall::Catch(CPlayer* pPlayer)
 
 	// プレイヤーにボールを保存
 	pPlayer->SetBall(this);
+}
+
+//==========================================================================
+// 投げ処理
+//==========================================================================
+void CBall::Throw(CPlayer* pPlayer)
+{
+	// TODO：仮
+	SetMove(MyLib::Vector3(0.0f, 100.0f, 0.0f));
+
+	// 持っていたプレイヤーと違う場合エラー
+	assert(m_pPlayer == pPlayer);
+
+	// 攻撃状態にする
+	m_state = STATE_THROW;
+
+	// キャッチしていたプレイヤーを破棄
+	m_pPlayer = nullptr;
+
+	// プレイヤーから保存中のボールを破棄
+	pPlayer->SetBall(nullptr);
 }
 
 //==========================================================================
@@ -307,7 +331,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 			*pPos,
 			pPlayer->GetPosition(),
 			RADIUS,
-			50.0f
+			50.0f	// TODO：プレイヤー半径
 		);
 		if (bHit)
 		{ // 当たっていた場合
