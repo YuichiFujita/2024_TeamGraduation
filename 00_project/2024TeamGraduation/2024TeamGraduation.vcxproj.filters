@@ -401,6 +401,9 @@
     <ClCompile Include="Source\ball.cpp">
       <Filter>ingame</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerStatus.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -735,6 +738,9 @@
     </ClInclude>
     <ClInclude Include="Source\ball.h">
       <Filter>ingame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerStatus.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
