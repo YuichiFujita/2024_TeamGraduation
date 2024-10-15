@@ -647,11 +647,11 @@ void CCameraControlState::Controll(CCamera* pCamera)
 	m_moveRot.y += pInputGamepad->GetStickMoveR(0).x * ROT_MOVE_STICK_Y;
 
 	// c‰ñ“]
-	if (/*rot.z > MIN_STICKROT && */pInputGamepad->GetStickMoveR(0).y < 0.0f)
+	if (pInputGamepad->GetStickMoveR(0).y < 0.0f)
 	{
 		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
 	}
-	else if (/*rot.z <= MIN_STICKROT && */pInputGamepad->GetStickMoveR(0).y > 0.0f)
+	else if (pInputGamepad->GetStickMoveR(0).y > 0.0f)
 	{
 		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
 	}

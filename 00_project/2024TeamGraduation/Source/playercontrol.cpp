@@ -94,6 +94,8 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		// 歩き
 		Walk(player, fDeltaTime, fDeltaRate, fSlowRate);
 
+		Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
+
 		// 移動中にする
 		motionFrag.bMove = true;
 
@@ -119,75 +121,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			}
 		}
 
-
-		if (!bJump &&
-			(pKey->GetTrigger(DIK_SPACE) || pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx())))
-		{// ジャンプ
-
-			//bJump = true;
-			//motionFrag.bJump = true;
-			//move.y += 17.0f;
-
-			//pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
-			//// サウンド再生
-			//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
-		}
-
-		// ジャンプ判定設定
-		player->SetEnableJump(bJump);
-
-	}
-	else if (
-		pMotion->IsGetMove(nMotionType) == 0 &&	// 移動可能なモーションか取得
-		player->IsPossibleMove())
-	{// 向きだけ
-
-		if (pKey->GetPress(DIK_A))
-		{//←キーが押された,左移動
-
-			if (pKey->GetPress(DIK_W))
-			{//A+W,左上移動
-				fRotDest = D3DX_PI * 0.75f + Camerarot.y;
-			}
-			else if (pKey->GetPress(DIK_S))
-			{//A+S,左下移動
-				fRotDest = D3DX_PI * 0.25f + Camerarot.y;
-			}
-			else
-			{//A,左移動
-				fRotDest = D3DX_PI * 0.5f + Camerarot.y;
-			}
-		}
-		else if (pKey->GetPress(DIK_D))
-		{//Dキーが押された,右移動
-
-			if (pKey->GetPress(DIK_W))
-			{//D+W,右上移動
-				fRotDest = -D3DX_PI * 0.75f + Camerarot.y;
-			}
-			else if (pKey->GetPress(DIK_S))
-			{//D+S,右下移動
-				fRotDest = -D3DX_PI * 0.25f + Camerarot.y;
-			}
-			else
-			{//D,右移動
-				fRotDest = -D3DX_PI * 0.5f + Camerarot.y;
-			}
-		}
-		else if (pKey->GetPress(DIK_W))
-		{//Wが押された、上移動
-			fRotDest = D3DX_PI * 1.0f + Camerarot.y;
-		}
-		else if (pKey->GetPress(DIK_S))
-		{//Sが押された、下移動
-			fRotDest = D3DX_PI * 0.0f + Camerarot.y;
-		}
-
-		if (pPad->IsTipStick())
-		{// 左スティックが倒れてる場合
-			fRotDest = pPad->GetStickRotL(player->GetMyPlayerIdx());
-		}
 	}
 
 	// モーションフラグ設定
@@ -415,8 +348,8 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	{
 		MyLib::Vector3 move;
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 25.0f;
-		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 25.0f;
+		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
+		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
 
 		// 移動量設定
 		player->SetMove(move);
@@ -436,18 +369,39 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	}
 }
 
+//==========================================================================
+// 走り
+//==========================================================================
 void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (!m_bDash)
+	{
+		return;
+	}
+
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (m_bDash)
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	CPlayer::DashAngle angle;
+	bool bInput = false;
+
+	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) &&
+		!pPad->GetStickMoveL(0).y > 0 &&
+		!pKey->GetPress(DIK_W);
+
+
+	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) &&
+		!pPad->GetStickMoveL(0).y < 0 &&
+		!pKey->GetPress(DIK_S);
+
+	if (pKey->GetRelease(DIK_W) || pKey->GetRelease(DIK_S) || pKey->GetRelease(DIK_D) || pKey->GetRelease(DIK_A))
 	{
-		if (pKey->GetRelease(DIK_A) || pKey->GetRelease(DIK_A) || pKey->GetRelease(DIK_A) || pKey->GetRelease(DIK_A))
-		{
-			
-		}
+		m_bDash = false;
 	}
 }
 
@@ -569,6 +523,11 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	float fMove = player->GetVelocity();
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
+
+	if (m_bDash)
+	{
+		fMove *= 1.5f;
+	}
 
 	MyLib::Vector3 move = player->GetMove();
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
