@@ -35,7 +35,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\tyuuni\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 }
 
@@ -78,6 +78,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// パターン用インスタンス
 	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
 
@@ -143,6 +144,7 @@ HRESULT CPlayer::Init()
 
 	// 操作関連
 	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
 
 	// アクションパターン
 	if (m_pActionPattern == nullptr)
@@ -166,6 +168,15 @@ void CPlayer::ChangeMoveControl(CPlayerControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayer::ChangeActionControl(CPlayerControlAction* control)
+{
+	delete m_pControlAction;
+	m_pControlAction = control;
 }
 
 //==========================================================================
@@ -307,6 +318,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 移動操作
 		m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+		m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -357,6 +369,12 @@ void CPlayer::DeleteControl()
 		m_pControlMove = nullptr;
 	}
 
+	if (m_pControlAction != nullptr)
+	{// アクション操作
+		delete m_pControlAction;
+		m_pControlAction = nullptr;
+	}
+	
 	if (m_pActionPattern != nullptr)
 	{// アクションパターン
 		delete m_pActionPattern;
@@ -513,6 +531,11 @@ void CPlayer::LimitPos()
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
+
+		// 重力リセット
+		MyLib::Vector3 move = GetMove();
+		move.y = 0.0f;
+		SetMove(move);
 	}
 	SetPosition(pos);
 	return;

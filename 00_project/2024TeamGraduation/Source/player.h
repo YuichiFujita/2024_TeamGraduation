@@ -16,9 +16,11 @@
 // 前方宣言
 //==========================================================================
 class CShadow;
-class CPlayerControlMove;	// 移動
+class CPlayerControlMove;	// 移動(操作)
+class CPlayerControlAction;	// アクション(操作)
 class CPlayerAction;		// アクション
 class CPlayerStatus;		// ステータス
+class CBall;				// ボール
 
 //==========================================================================
 // クラス定義
@@ -57,6 +59,8 @@ public:
 		ACTION_NONE = 0,	// 通常
 		ACTION_BLINK,		// ブリンク
 		ACTION_RUN,			// 走り
+		ACTION_CATCH,		// キャッチ
+		ACTION_THROW,		// 投げ
 		ACTION_MAX
 	};
 
@@ -144,6 +148,7 @@ public:
 	// パターン
 	//=============================
 	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);		// アクションの操作変更
 	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
 
 	//=============================
@@ -151,6 +156,7 @@ public:
 	//=============================
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
+	CBall* GetBall() { return m_pBall; }					// ボールの情報取得
 
 	// 設定系
 	void DeadSetting(MyLib::HitResult_Character* result);
@@ -225,13 +231,15 @@ private:
 	//--------------------------
 	// パターン用インスタンス
 	//--------------------------
-	CPlayerControlMove* m_pControlMove;	// 移動操作
-	CPlayerAction* m_pActionPattern;	// アクションパターン
-	CPlayerStatus* m_pStatus;			// ステータス
+	CPlayerControlMove* m_pControlMove;		// 移動操作
+	CPlayerControlAction* m_pControlAction;	// 移動操作
+	CPlayerAction* m_pActionPattern;		// アクションパターン
+	CPlayerStatus* m_pStatus;				// ステータス
 
 	// その他
 	int m_nMyPlayerIdx;						// プレイヤーインデックス番号
 	CShadow* m_pShadow;						// 影の情報
+	CBall* m_pBall;							// ボールの情報
 	sDamageInfo m_sDamageInfo;				// ダメージ情報
 	static CListManager<CPlayer> m_List;	// リスト
 };
