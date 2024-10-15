@@ -401,6 +401,9 @@
     <ClCompile Include="Source\playercontrol_action.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerUser.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -737,6 +740,9 @@
       <Filter>player</Filter>
     </ClInclude>
     <ClInclude Include="Source\playercontrol_action.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerUser.h">
       <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,0 +1,13 @@
+# Blender 4.2.2 LTS MTL File: 'None'
+# www.blender.org
+
+newmtl N00_000_Hair_00_HAIR_(Instance).001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd C:/_18.png
+map_Ke C:/_19.png
+map_Bump -bm 1.000000 C:/N00_000_Hair_00_nml.001.png

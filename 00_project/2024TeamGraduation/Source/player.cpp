@@ -100,26 +100,6 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
-// 生成処理
-//==========================================================================
-CPlayer* CPlayer::Create(int nIdx)
-{
-	// メモリ確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer;
-
-	if (pPlayer != nullptr)
-	{
-		// プレイヤーインデックス番号
-		pPlayer->m_nMyPlayerIdx = nIdx;
-
-		// 初期化処理
-		pPlayer->Init();
-	}
-
-	return pPlayer;
-}
-
-//==========================================================================
 // 初期化処理
 //==========================================================================
 HRESULT CPlayer::Init()
@@ -489,10 +469,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case MOTION::MOTION_WALK:
 		break;
 
-	case MOTION::MOTION_START:
-
-		break;
-
 	default:
 		break;
 	}
@@ -588,11 +564,38 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	return hitresult;
 }
 #else
-bool CPlayer::Hit(CBall* pBall)
+void CPlayer::Hit(CBall* pBall)
 {
-	// キャッチ
-	pBall->Catch(this);
-	return false;
+	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
+	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
+	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+
+	if (stateBall == CBall::STATE_FALL)
+	{ // ボールが落下している場合
+
+		// ボールをキャッチ
+		pBall->Catch(this);
+		return;
+	}
+
+	// 味方のボールならすり抜ける
+	if (m_pStatus->GetTeam() == sideBall) { return; }
+
+	if (m_pActionPattern->GetAction() == ACTION_CATCH)
+	{ // キャッチアクション中だった場合
+
+		// ボールをキャッチ
+		pBall->Catch(this);
+		return;
+	}
+
+	// TODO：無敵状態が出来たらここで確認
+
+	// ダメージを与える
+	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
+	m_pStatus->LifeDamage(10);
+
+	return;
 }
 #endif
 
