@@ -149,21 +149,19 @@ public:
 	//=============================
 	void SetMotion(int motionIdx);										// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
-	bool IsPossibleMove() { return m_bPossibleMove; }					// 移動可能フラグ取得
+	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
 	bool IsDash()					{ return m_bDash; }					// ダッシュ判定
 	void SetEnableJump(bool bJump)	{ m_bJump = bJump; }				// ジャンプ状況設定
 	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
-	void SetMotionFrag(SMotionFrag frag) { m_sMotionFrag = frag; }		// モーションのフラグ設定
-	SMotionFrag GetMotionFrag() { return m_sMotionFrag; }				// モーションのフラグ取得
-	void SetDamageInfo(sDamageInfo info) { m_sDamageInfo = info; }		// ダメージ情報設定
-	sDamageInfo GetDamageInfo() { return m_sDamageInfo; }				// ダメージ情報取得
+	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
+	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
+	void SetDamageInfo(sDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
+	sDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
 
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);		// アクションの操作変更
 	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
 	CPlayerStatus* GetStatus() { return m_pStatus; }				// ステータス取得
 
@@ -179,7 +177,14 @@ public:
 	CBall* GetBall() { return m_pBall; }						// ボール情報取得
 	void DeadSetting(MyLib::HitResult_Character* result);		// 死亡設定
 	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
-	
+
+protected:
+	//=============================
+	// メンバ関数
+	//=============================
+	virtual void Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 移動
+	virtual void DeleteControl();	// 操作削除
+
 private:
 
 	//=============================
@@ -206,11 +211,10 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	virtual void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
-	virtual void DeleteControl();	// 操作削除
-	void LimitPos();				// 位置制限
-	void ResetFrag();				// フラグリセット
 	void UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ダメージ受付時間更新
+	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
+	void LimitPos();	// 位置制限
+	void ResetFrag();	// フラグリセット
 	void MotionSet();	// モーションの設定
 
 	//-----------------------------
@@ -246,10 +250,8 @@ private:
 	//-----------------------------
 	// パターン用インスタンス
 	//-----------------------------
-	CPlayerControlMove* m_pControlMove;		// 移動操作
-	CPlayerControlAction* m_pControlAction;	// 移動操作
-	CPlayerAction* m_pActionPattern;		// アクションパターン
-	CPlayerStatus* m_pStatus;				// ステータス
+	CPlayerAction* m_pActionPattern;	// アクションパターン
+	CPlayerStatus* m_pStatus;			// ステータス
 
 	//-----------------------------
 	// その他変数

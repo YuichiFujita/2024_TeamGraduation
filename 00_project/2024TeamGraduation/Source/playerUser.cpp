@@ -8,6 +8,10 @@
 #include "manager.h"
 #include "calculation.h"
 
+// 使用クラス
+#include "playercontrol.h"
+#include "playercontrol_action.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -21,7 +25,9 @@ namespace
 //==========================================================================
 CPlayerUser::CPlayerUser()
 {
-
+	// パターン用インスタンス
+	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 }
 
 //==========================================================================
@@ -69,6 +75,10 @@ HRESULT CPlayerUser::Init()
 	HRESULT hr = CPlayer::Init();
 	if (FAILED(hr)) { return E_FAIL; }
 
+	// 操作関連
+	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
+
 	return S_OK;
 }
 
@@ -106,4 +116,53 @@ void CPlayerUser::Draw()
 {
 	// 親クラスの描画
 	CPlayer::Draw();
+}
+
+//==========================================================================
+// 移動処理
+//==========================================================================
+void CPlayerUser::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 移動操作
+	m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
+{
+	delete m_pControlMove;
+	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerUser::ChangeActionControl(CPlayerControlAction* control)
+{
+	delete m_pControlAction;
+	m_pControlAction = control;
+}
+
+//==========================================================================
+// 操作関連削除
+//==========================================================================
+void CPlayerUser::DeleteControl()
+{
+	if (m_pControlMove != nullptr)
+	{// 移動操作
+		delete m_pControlMove;
+		m_pControlMove = nullptr;
+	}
+
+	if (m_pControlAction != nullptr)
+	{// アクション操作
+		delete m_pControlAction;
+		m_pControlAction = nullptr;
+	}
+
+	// 操作関連削除
+	CPlayer::DeleteControl();
 }

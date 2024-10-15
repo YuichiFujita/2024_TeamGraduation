@@ -27,8 +27,6 @@
 #include "edit_map.h"
 
 // 使用クラス
-#include "playercontrol.h"
-#include "playercontrol_action.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 
@@ -79,8 +77,6 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
-	m_pControlMove = nullptr;	// 移動操作
-	m_pControlAction = nullptr;	// アクション操作
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
 
@@ -125,10 +121,6 @@ HRESULT CPlayer::Init()
 	// 割り当て
 	m_List.Regist(this);
 
-	// 操作関連
-	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
-
 	// アクションパターン
 	if (m_pActionPattern == nullptr)
 	{
@@ -142,24 +134,6 @@ HRESULT CPlayer::Init()
 	}
 
 	return S_OK;
-}
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayer::ChangeMoveControl(CPlayerControlMove* control)
-{
-	delete m_pControlMove;
-	m_pControlMove = control;
-}
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayer::ChangeActionControl(CPlayerControlAction* control)
-{
-	delete m_pControlAction;
-	m_pControlAction = control;
 }
 
 //==========================================================================
@@ -295,7 +269,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 //==========================================================================
 void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// キーボード情報取得
 	CInputKeyboard *pKey = CInputKeyboard::GetInstance();
 
@@ -305,9 +278,8 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{// 行動できるとき
 
-		// 移動操作
-		m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-		m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+		// 移動
+		Move(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -334,7 +306,6 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// 移動量設定
 	SetMove(move);
 
-
 	// 現在と目標の差分を求める
 	float fRotDiff = GetRotDest() - rot.y;
 	UtilFunc::Transformation::RotNormalize(fRotDiff);
@@ -352,18 +323,6 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 void CPlayer::DeleteControl()
 {
-	if (m_pControlMove != nullptr) 
-	{// 移動操作
-		delete m_pControlMove;
-		m_pControlMove = nullptr;
-	}
-
-	if (m_pControlAction != nullptr)
-	{// アクション操作
-		delete m_pControlAction;
-		m_pControlAction = nullptr;
-	}
-	
 	if (m_pActionPattern != nullptr)
 	{// アクションパターン
 		delete m_pActionPattern;

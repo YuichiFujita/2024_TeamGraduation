@@ -41,6 +41,12 @@ public:
 	void Kill();	// 削除
 
 	//=============================
+	// パターン
+	//=============================
+	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
+
+	//=============================
 	// 静的関数
 	//=============================
 	/*
@@ -54,12 +60,20 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-
+	//-----------------------------
+	// その他関数
+	//-----------------------------
+	void Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 移動
+	void DeleteControl() override;	// 操作削除
 
 	//=============================
 	// メンバ変数
 	//=============================
-
+	//-----------------------------
+	// パターン用インスタンス
+	//-----------------------------
+	CPlayerControlMove* m_pControlMove;		// 移動操作
+	CPlayerControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif
