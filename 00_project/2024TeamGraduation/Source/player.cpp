@@ -557,7 +557,7 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 #else
 bool Hit(const CBall* pBall)
 {
-
+	return false;
 }
 #endif
 
