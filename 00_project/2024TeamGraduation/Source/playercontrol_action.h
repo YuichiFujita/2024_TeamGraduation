@@ -8,12 +8,7 @@
 #ifndef _PLAYERCONTROL_ACTION_H_
 #define _PLAYERCONTROL_ACTION_H_	// 二重インクルード防止
 
-#define BRESSRANGE (0)
-
 #include "player.h"
-
-class CSuffocation;
-class CEffekseerObj;
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -35,8 +30,11 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ
-	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ
+	void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
+	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ
+	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル
+	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ
 
 	//=============================
 	// メンバ変数
