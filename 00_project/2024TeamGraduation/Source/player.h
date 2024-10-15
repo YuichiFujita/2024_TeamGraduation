@@ -120,7 +120,7 @@ public:
 	virtual void Draw() override;
 	virtual void Release() override;	// 死亡処理
 
-	MyLib::HitResult_Character Hit(const int nValue);	// ヒット処理
+	bool Hit(const CBall* pBall);	// ヒット処理
 
 	void SetState(STATE state);	// 状態設定
 	STATE GetState() { return m_state; }	// 状態取得

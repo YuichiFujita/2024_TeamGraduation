@@ -29,7 +29,9 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void BindPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割当
+	void BindPlayer(CPlayer* pPlayer)	{ m_pPlayer = pPlayer; }	// プレイヤー割当
+	void LifeDamage(const int nDmg);	// 体力減算
+	void LifeHeal(const int nHeal);		// 体力加算
 
 private:
 	
@@ -37,6 +39,7 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pPlayer;	// プレイヤーのポインタ
+	int m_nLife;		// 体力
 };
 
 #endif

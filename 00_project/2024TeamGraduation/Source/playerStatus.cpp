@@ -11,14 +11,16 @@
 //==========================================================================
 namespace
 {
-
+	const int MAX_LIFE = 100;	// 最大体力
+	const int MIN_LIFE = 0;		// 最小体力
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
-	m_pPlayer(pPlayer)	// プレイヤーのポインタ
+	m_pPlayer	(pPlayer),	// プレイヤーのポインタ
+	m_nLife		(MAX_LIFE)	// 体力
 {
 
 }
@@ -29,4 +31,28 @@ CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
 CPlayerStatus::~CPlayerStatus()
 {
 
+}
+
+//==========================================================================
+//	体力減算
+//==========================================================================
+void CPlayerStatus::LifeDamage(const int nDmg)
+{
+	// 体力を減算
+	m_nLife -= nDmg;
+
+	// 体力を補正
+	UtilFunc::Transformation::ValueNormalize(m_nLife, MAX_LIFE, MIN_LIFE);
+}
+
+//==========================================================================
+//	体力加算
+//==========================================================================
+void CPlayerStatus::LifeHeal(const int nHeal)
+{
+	// 体力を加算
+	m_nLife += nHeal;
+
+	// 体力を補正
+	UtilFunc::Transformation::ValueNormalize(m_nLife, MAX_LIFE, MIN_LIFE);
 }
