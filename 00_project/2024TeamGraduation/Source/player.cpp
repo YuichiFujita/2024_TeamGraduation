@@ -521,6 +521,7 @@ void CPlayer::LimitPos()
 //==========================================================================
 // ヒット処理
 //==========================================================================
+#if 0
 MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 {
 	MyLib::HitResult_Character hitresult = {};
@@ -553,6 +554,12 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	// 当たった判定を返す
 	return hitresult;
 }
+#else
+bool Hit(const CBall* pBall)
+{
+	return false;
+}
+#endif
 
 //==========================================================================
 // 死亡時の設定

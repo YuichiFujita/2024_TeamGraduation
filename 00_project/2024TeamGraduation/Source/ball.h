@@ -9,6 +9,7 @@
 #define _BALL_H_	// 二重インクルード防止
 
 #include "objectX.h"
+#include "gamemanager.h"
 #include "listmanager.h"
 
 //==========================================================================
@@ -22,6 +23,7 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
+	// 状態
 	enum EState
 	{
 		STATE_SPAWN = 0,	// 生成状態 (開始時のフリーボール)
@@ -31,6 +33,19 @@ public:
 		STATE_MAX			// この列挙型の総数
 	};
 
+	// 攻撃種類
+	enum EAttack
+	{
+		ATK_NONE = 0,	// 攻撃判定無し
+		ATK_NORMAL,		// 通常攻撃
+		ATK_JUMP,		// ジャンプ攻撃
+		ATK_SPECIAL,	// スペシャリスト攻撃
+		ATK_MAX			// この列挙型の総数
+	};
+
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CBall(int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CBall();
 
@@ -84,7 +99,8 @@ private:
 	//=============================
 	float m_fStateTime;	// 状態カウンター
 	EState m_state;		// 状態
-
+	EAttack m_typeAtk;	// 攻撃種類
+	CGameManager::TeamSide m_typeTeam;	// チームサイド
 };
 
 
