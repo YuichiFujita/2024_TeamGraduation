@@ -220,6 +220,9 @@ void CPlayer::Release()
 		delete m_pActionPattern;
 		m_pActionPattern = nullptr;
 	}
+
+	// ステータス
+	SAFE_DELETE(m_pStatus);
 }
 
 //==========================================================================

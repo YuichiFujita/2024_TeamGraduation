@@ -69,8 +69,10 @@ public:
 	// メンバ関数
 	//=============================
 	void Kill();	// 削除
-	void Catch(CPlayer* pPlayer);	// キャッチ
-	void Throw(CPlayer* pPlayer);	// 投げ
+	void Catch(CPlayer* pPlayer);			// キャッチ
+	void ThrowNormal(CPlayer* pPlayer);		// 通常投げ
+	void ThrowJump(CPlayer* pPlayer);		// ジャンプ投げ
+	void ThrowSpecial(CPlayer* pPlayer);	// スペシャル投げ
 
 	//=============================
 	// 静的関数
@@ -102,7 +104,8 @@ private:
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
-	bool CollisionPlayer(MyLib::Vector3* pPos);
+	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
+	void Throw(CPlayer* pPlayer);	// 投げ
 
 	//=============================
 	// 静的メンバ変数

@@ -175,24 +175,42 @@ void CBall::Catch(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// 投げ処理
+// 通常投げ処理
 //==========================================================================
-void CBall::Throw(CPlayer* pPlayer)
+void CBall::ThrowNormal(CPlayer* pPlayer)
 {
+	// 投げ処理
+	Throw(pPlayer);
+
 	// TODO：仮
-	SetMove(MyLib::Vector3(0.0f, 100.0f, 0.0f));
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot)) * 40.0f);
+}
 
-	// 持っていたプレイヤーと違う場合エラー
-	assert(m_pPlayer == pPlayer);
+//==========================================================================
+// ジャンプ投げ処理
+//==========================================================================
+void CBall::ThrowJump(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
 
-	// 攻撃状態にする
-	m_state = STATE_THROW;
+	// TODO：仮
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), -0.25f, cosf(fRot)) * 80.0f);
+}
 
-	// キャッチしていたプレイヤーを破棄
-	m_pPlayer = nullptr;
+//==========================================================================
+// スペシャル投げ処理
+//==========================================================================
+void CBall::ThrowSpecial(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
 
-	// プレイヤーから保存中のボールを破棄
-	pPlayer->SetBall(nullptr);
+	// TODO：仮
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), 0.01f, cosf(fRot)) * 120.0f);
 }
 
 //==========================================================================
@@ -331,7 +349,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 			*pPos,
 			pPlayer->GetPosition(),
 			RADIUS,
-			50.0f	// TODO：プレイヤー半径
+			10.0f	// TODO：プレイヤー半径
 		);
 		if (bHit)
 		{ // 当たっていた場合
@@ -343,4 +361,22 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 	}
 
 	return false;
+}
+
+//==========================================================================
+// 投げ処理
+//==========================================================================
+void CBall::Throw(CPlayer* pPlayer)
+{
+	// 持っていたプレイヤーと違う場合エラー
+	assert(m_pPlayer == pPlayer);
+
+	// 攻撃状態にする
+	m_state = STATE_THROW;
+
+	// キャッチしていたプレイヤーを破棄
+	m_pPlayer = nullptr;
+
+	// プレイヤーから保存中のボールを破棄
+	pPlayer->SetBall(nullptr);
 }

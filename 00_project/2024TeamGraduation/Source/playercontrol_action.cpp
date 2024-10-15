@@ -115,31 +115,6 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 }
 
 //==========================================================================
-// 投げ
-//==========================================================================
-void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	if (player->GetBall() == nullptr)
-	{
-		return;
-	}
-
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	if (pKey->GetPress(DIK_RETURN) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
-	{
-		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
-
-		// FUJITA：ここにボール投げ関数
-	}
-
-}
-
-//==========================================================================
 // ジャンプ
 //==========================================================================
 void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -208,9 +183,8 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 
 		// ボール投げ
-		player->GetBall()->Throw(player);
+		player->GetBall()->ThrowNormal(player);
 	}
-
 }
 
 //==========================================================================
