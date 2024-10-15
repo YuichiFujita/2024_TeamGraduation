@@ -13,6 +13,7 @@
 namespace
 {
 	const float TIME_BLINK = 0.2f;		// ブリンク時間
+	const float TIME_CATCH = 0.5f;		// キャッチ時間
 }
 
 //==========================================================================
@@ -84,6 +85,7 @@ void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
 }
 
 //==========================================================================
@@ -91,6 +93,10 @@ void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (m_fActionTime >= TIME_CATCH)
+	{// キャッチ猶予
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -98,6 +104,7 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
 }
 
 //==========================================================================
@@ -105,6 +112,7 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
 }
 
 //==========================================================================
@@ -112,6 +120,7 @@ void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRa
 //==========================================================================
 void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
 }
 
 //==========================================================================

@@ -101,7 +101,7 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_RETURN) ||
+	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
@@ -126,7 +126,7 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_RETURN) ||
+	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 
@@ -173,7 +173,7 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
 	//ジャンプ処理
-	if (pKey->GetPress(DIK_SPACE) ||
+	if (pKey->GetTrigger(DIK_SPACE) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
 	{
 		bJump = true;
@@ -213,7 +213,7 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_X) ||
+	if (pKey->GetTrigger(DIK_X) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
 	{
 		pBall->ThrowSpecial(player);
