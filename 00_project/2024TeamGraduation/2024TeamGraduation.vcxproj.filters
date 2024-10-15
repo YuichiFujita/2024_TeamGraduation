@@ -69,9 +69,6 @@
     <Filter Include="camera">
       <UniqueIdentifier>{61f2cd6c-2c60-4c7d-9eec-19d2b4f10eea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lostrssmanager">
-      <UniqueIdentifier>{28071454-2189-45fa-94c3-5874bdcb4372}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ui">
       <UniqueIdentifier>{db3b7d5c-8da1-48b2-a374-eb2754691253}</UniqueIdentifier>
     </Filter>
@@ -337,9 +334,6 @@
     </ClCompile>
     <ClCompile Include="Source\cameratrigger_result.cpp">
       <Filter>camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\lostrssmanager.cpp">
-      <Filter>lostrssmanager</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\Imgui\imgui.cpp">
       <Filter>Imgui</Filter>
@@ -669,9 +663,6 @@
     </ClInclude>
     <ClInclude Include="Source\cameratrigger_result.h">
       <Filter>camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\lostrssmanager.h">
-      <Filter>lostrssmanager</Filter>
     </ClInclude>
     <ClInclude Include="Source\blackframe.h">
       <Filter>ヘッダー ファイル</Filter>

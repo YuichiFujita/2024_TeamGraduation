@@ -262,6 +262,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pActionPattern->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// 位置の制限
+	LimitPos();
+
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
@@ -280,9 +283,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	{
 		m_pShadow->SetPosition(MyLib::Vector3(pos.x, m_pShadow->GetPosition().y, pos.z));
 	}
-
-	// 位置の制限
-	LimitPos();
 
 #if 1
 
@@ -535,6 +535,7 @@ void CPlayer::LimitPos()
 		pos.y = 0.0f;
 
 		// 重力リセット
+		m_bJump = false;
 		MyLib::Vector3 move = GetMove();
 		move.y = 0.0f;
 		SetMove(move);

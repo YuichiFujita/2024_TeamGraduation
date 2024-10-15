@@ -75,8 +75,6 @@ HRESULT CDebugProc::Init(HINSTANCE hInstance, HWND hWnd)
 	m_bDisp = false;
 
 #endif
-
-	CLostResourceManager::GetInstance()->Regist(this);
 	
 	// ON
 	//m_bDisp = true;
