@@ -16,8 +16,9 @@
 // 前方宣言
 //==========================================================================
 class CShadow;
-class CPlayerControlMove;		// 移動
+class CPlayerControlMove;	// 移動
 class CPlayerAction;		// アクション
+class CPlayerStatus;		// ステータス
 
 //==========================================================================
 // クラス定義
@@ -226,6 +227,7 @@ private:
 	//--------------------------
 	CPlayerControlMove* m_pControlMove;	// 移動操作
 	CPlayerAction* m_pActionPattern;	// アクションパターン
+	CPlayerStatus* m_pStatus;			// ステータス
 
 	// その他
 	int m_nMyPlayerIdx;						// プレイヤーインデックス番号
