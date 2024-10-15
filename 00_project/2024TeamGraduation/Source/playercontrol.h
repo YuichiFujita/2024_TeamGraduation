@@ -36,6 +36,8 @@ private:
 	// メンバ関数
 	//=============================
 	void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ブリンク
+	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ブリンク
+	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ウォーク
 	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::DashAngle angle);	// ダッシュ時のトリガー
 
 	//=============================
@@ -45,6 +47,7 @@ private:
 	CPlayer::DashAngle m_HoldDashAngle;					// 保持してるダッシュの移動方向
 	float m_fInputInterval;								// 入力の受け付け猶予
 	float m_fTriggerInterval;							// トリガーのインターバル
+	bool m_bDash;
 };
 
 

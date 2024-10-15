@@ -35,7 +35,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\tyuuni\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 }
 
@@ -531,6 +531,11 @@ void CPlayer::LimitPos()
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
+
+		// 重力リセット
+		MyLib::Vector3 move = GetMove();
+		move.y = 0.0f;
+		SetMove(move);
 	}
 	SetPosition(pos);
 	return;

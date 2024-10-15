@@ -76,8 +76,8 @@ public:
 	//--------------------------
 	// 追従目標値
 	//--------------------------
-	void SetTargetPosition(const MyLib::Vector3& pos) { m_TargetPos = pos; }	// 追従目標の位置設定
-	MyLib::Vector3 GetTargetPosition() { return m_TargetPos; }					// 追従目標の位置取得
+	void SetTargetPosition(const MyLib::Vector3& pos) { m_posTarget = pos; }	// 追従目標の位置設定
+	MyLib::Vector3 GetTargetPosition() { return m_posTarget; }					// 追従目標の位置取得
 
 	//--------------------------
 	// 距離
@@ -163,8 +163,8 @@ private:
 	MyLib::Vector3 m_rot;			// 向き
 	MyLib::Vector3 m_rotOrigin;		// 元の向き
 	MyLib::Vector3 m_rotDest;		// 目標の向き
-	MyLib::Vector3 m_TargetPos;		// 追従目標の位置
-	MyLib::Vector3 m_TargetPosDest;	// 目標の追従目標の位置
+	MyLib::Vector3 m_posTarget;		// 追従目標の位置
+	MyLib::Vector3 m_posTargetDest;	// 目標の追従目標の位置
 
 	float m_fRockOnDistance;
 	float m_fDistance;			// 距離
