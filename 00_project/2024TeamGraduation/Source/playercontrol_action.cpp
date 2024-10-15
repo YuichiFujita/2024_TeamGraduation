@@ -105,11 +105,36 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_L) ||
+	if (pKey->GetPress(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+	}
+
+}
+
+//==========================================================================
+// 投げ
+//==========================================================================
+void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (player->GetBall() == nullptr)
+	{
+		return;
+	}
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pKey->GetPress(DIK_RETURN) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
+	{
+		// アクションパターン変更
+		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+
+		// FUJITA：ここにボール投げ関数
 	}
 
 }
@@ -138,7 +163,7 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
 	//ジャンプ処理
-	if (pKey->GetPress(DIK_K) ||
+	if (pKey->GetPress(DIK_SPACE) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
 	{
 		bJump = true;
@@ -146,6 +171,9 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 		move.y += 17.0f;
 
 		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
+
+		player->SetMove(move);
+		player->SetMotionFrag(motionFrag);
 
 		// ジャンプ判定設定
 		player->SetEnableJump(bJump);
@@ -199,7 +227,7 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_N) ||
+	if (pKey->GetPress(DIK_X) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx())) 
 	{
 		// アクションパターン変更
@@ -217,7 +245,7 @@ void CPlayerControlAction::Charm(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_M) ||
+	if (pKey->GetPress(DIK_C) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx())) 
 	{
 		//モテアクション発動準備状態
