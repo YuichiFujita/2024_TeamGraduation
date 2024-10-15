@@ -39,6 +39,7 @@ public:
 		MOTION_WALK,		// 移動
 		MOTION_DEAD,		// 死亡
 		MOTION_START,		// スタート演出
+		MOTION_JUMP,		// ジャンプ
 		MOTION_MAX
 	};
 
@@ -59,8 +60,10 @@ public:
 		ACTION_NONE = 0,	// 通常
 		ACTION_BLINK,		// ブリンク
 		ACTION_RUN,			// 走り
+		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ
 		ACTION_THROW,		// 投げ
+		ACTION_SPECIAL,		// スペシャル
 		ACTION_MAX
 	};
 
