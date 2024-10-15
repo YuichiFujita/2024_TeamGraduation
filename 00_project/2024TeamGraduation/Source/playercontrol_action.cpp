@@ -38,9 +38,6 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	// 移動量取得
-	float fMove = player->GetVelocity();
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -70,15 +67,13 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 	{// 移動可能モーションの時
 
 		//--------------------------
-		// ブリンク操作
+		// アクション操作
 		//--------------------------
 		if (action != CPlayer::Action::ACTION_BLINK)
 		{
-			//Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
+			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
+			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
 		}
-
-		// 移動中にする
-		motionFrag.bMove = true;
 
 	}
 
@@ -97,7 +92,12 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-
+	if (pKey->GetPress(DIK_L) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
+	{
+		// アクションパターン変更
+		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+	}
 
 }
 
@@ -115,9 +115,11 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pKey->GetPress(DIK_K))
+	if (pKey->GetPress(DIK_K) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx()))
 	{
-
+		// アクションパターン変更
+		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 	}
 
 }

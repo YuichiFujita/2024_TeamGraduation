@@ -78,6 +78,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// パターン用インスタンス
 	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
 
@@ -307,6 +308,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 移動操作
 		m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+		m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -357,6 +359,12 @@ void CPlayer::DeleteControl()
 		m_pControlMove = nullptr;
 	}
 
+	if (m_pControlAction != nullptr)
+	{// アクション操作
+		delete m_pControlAction;
+		m_pControlAction = nullptr;
+	}
+	
 	if (m_pActionPattern != nullptr)
 	{// アクションパターン
 		delete m_pActionPattern;
