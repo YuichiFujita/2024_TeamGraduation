@@ -63,6 +63,7 @@ public:
 		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ
 		ACTION_THROW,		// 投げ
+		ACTION_THROW_JUMP,		// 投げ(ジャンプ)
 		ACTION_SPECIAL,		// スペシャル
 		ACTION_MAX
 	};

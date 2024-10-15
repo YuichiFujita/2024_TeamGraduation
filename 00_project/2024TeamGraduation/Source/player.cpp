@@ -85,6 +85,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
+	m_pBall = nullptr;				// ボールの情報
 	m_sDamageInfo = sDamageInfo();	// ダメージ情報
 }
 
@@ -186,6 +187,9 @@ void CPlayer::Uninit()
 {
 	// 影
 	m_pShadow = nullptr;
+	
+	//ボール
+	m_pBall = nullptr;
 
 	// 操作系
 	DeleteControl();

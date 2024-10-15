@@ -130,8 +130,16 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 	if (pKey->GetPress(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
+
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+		if (player->IsJump())
+		{
+			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
+		}
+		else
+		{
+			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+		}
 
 		// FUJITA：ここにボール投げ関数
 	}
