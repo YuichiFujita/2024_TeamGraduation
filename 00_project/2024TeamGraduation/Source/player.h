@@ -159,6 +159,7 @@ public:
 	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
 	void ChangeActionControl(CPlayerControlAction* control);		// アクションの操作変更
 	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
+	CPlayerStatus* GetStatus() { return m_pStatus; }				// ステータス取得
 
 	//=============================
 	// その他
