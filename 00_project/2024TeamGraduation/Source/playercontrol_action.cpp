@@ -4,7 +4,7 @@
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playercontrol.h"
+#include "playercontrol_action.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -25,7 +25,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerControlMove::CPlayerControlMove()
+CPlayerControlAction::CPlayerControlAction()
 {
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
 	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
@@ -36,7 +36,7 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlAction::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 	// インプット情報取得
@@ -197,7 +197,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ダッシュ
 //==========================================================================
-void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlAction::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -421,7 +421,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
+CPlayer::SDashInfo CPlayerControlAction::Trigger(CPlayer* player, CPlayer::DashAngle angle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;
