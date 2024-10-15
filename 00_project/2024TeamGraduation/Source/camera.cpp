@@ -66,7 +66,7 @@ CCamera::CCamera()
 	m_move = MyLib::Vector3();		// 移動量
 	m_rot = MyLib::Vector3();		// 向き
 	m_rotDest = 0.0f;				// 目標の向き
-	m_TargetPos = MyLib::Vector3();	// 追従目標の位置
+	m_posTarget = MyLib::Vector3();	// 追従目標の位置
 	m_fDistance = 0.0f;				// 距離
 	m_fDestDistance = 0.0f;			// 目標の距離
 	m_fOriginDistance = 0.0f;		// 元の距離
@@ -315,6 +315,9 @@ void CCamera::ReflectCameraR()
 	else
 	{// 追従ON
 
+		// ターゲットみる
+		m_posRDest = m_posTarget;
+
 		// 補正する
 		m_posR += (m_posRDest - m_posR) * MULTIPLY_CHASE_POSR;
 	}
@@ -540,7 +543,7 @@ void CCamera::ResetGame()
 	m_rot = DEFAULT_GAMEROT;						// 向き
 	m_rotOrigin = m_rot;							// 元の向き
 	m_rotDest = DEFAULT_GAMEROT;					// 目標の向き
-	m_TargetPos = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 目標の位置
+	m_posTarget = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 目標の位置
 	m_fDistance = MIN_DISNTANCE;					// 距離
 	m_fDestDistance = MIN_DISNTANCE;				// 目標の距離
 	m_fOriginDistance = MIN_DISNTANCE;				// 元の距離

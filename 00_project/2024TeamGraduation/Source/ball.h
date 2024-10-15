@@ -8,9 +8,17 @@
 #ifndef _BALL_H_
 #define _BALL_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include "objectX.h"
 #include "gamemanager.h"
 #include "listmanager.h"
+
+//==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayer;
 
 //==========================================================================
 // クラス定義
@@ -28,7 +36,7 @@ public:
 	{
 		STATE_SPAWN = 0,	// 生成状態 (開始時のフリーボール)
 		STATE_CATCH,		// 所持状態 (プレイヤーが保持している)
-		STATE_ATTACK,		// 攻撃状態 (攻撃判定を持っている)
+		STATE_THROW,		// 攻撃状態 (攻撃判定を持っている)
 		STATE_FALL,			// 落下状態 (地面に転がっている)
 		STATE_MAX			// この列挙型の総数
 	};
@@ -69,7 +77,7 @@ public:
 		@brief		生成処理
 		@details	必要があれば引数追加
 	*/
-	static CBall *Create();
+	static CBall *Create(const MyLib::Vector3& rPos);
 	static CListManager<CBall> GetListObj() { return m_List; }	// リスト取得
 
 private:
@@ -86,8 +94,11 @@ private:
 	// 状態関数
 	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 生成状態の更新
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 所持状態の更新
-	void UpdateAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 攻撃状態の更新
+	void UpdateThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 攻撃状態の更新
 	void UpdateFall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 落下状態の更新
+
+	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
+	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
 	//=============================
 	// 静的メンバ変数
@@ -97,11 +108,12 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fStateTime;	// 状態カウンター
-	EState m_state;		// 状態
-	EAttack m_typeAtk;	// 攻撃種類
-	CGameManager::TeamSide m_typeTeam;	// チームサイド
-};
+	CPlayer* m_pPlayer;	// プレイヤー情報
 
+	CGameManager::TeamSide m_typeTeam;	// チームサイド
+	EAttack m_typeAtk;	// 攻撃種類
+	EState m_state;		// 状態
+	float m_fStateTime;	// 状態カウンター
+};
 
 #endif
