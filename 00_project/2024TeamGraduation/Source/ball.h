@@ -69,6 +69,8 @@ public:
 	// メンバ関数
 	//=============================
 	void Kill();	// 削除
+	void Catch(CPlayer* pPlayer);	// キャッチ
+	void Throw(CPlayer* pPlayer);	// 投げ
 
 	//=============================
 	// 静的関数
@@ -78,7 +80,7 @@ public:
 		@details	必要があれば引数追加
 	*/
 	static CBall *Create(const MyLib::Vector3& rPos);
-	static CListManager<CBall> GetListObj() { return m_List; }	// リスト取得
+	static CListManager<CBall> GetListObj() { return m_list; }	// リスト取得
 
 private:
 
@@ -100,10 +102,12 @@ private:
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
+	bool CollisionPlayer(MyLib::Vector3* pPos);
+
 	//=============================
 	// 静的メンバ変数
 	//=============================
-	static CListManager<CBall> m_List;	// リスト
+	static CListManager<CBall> m_list;	// リスト
 
 	//=============================
 	// メンバ変数

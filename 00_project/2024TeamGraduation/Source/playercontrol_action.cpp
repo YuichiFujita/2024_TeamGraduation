@@ -10,6 +10,7 @@
 #include "input.h"
 #include "camera.h"
 #include "game.h"
+#include "ball.h"
 #include "playerAction.h"
 
 //==========================================================================
@@ -190,6 +191,32 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 
 		// サウンド再生
 		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+	}
+
+}
+
+//==========================================================================
+// 投げ
+//==========================================================================
+void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (player->GetBall() == nullptr)
+	{
+		return;
+	}
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pKey->GetPress(DIK_L) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
+	{
+		// アクションパターン変更
+		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+
+		// ボール投げ
+		player->GetBall()->Throw(player);
 	}
 
 }

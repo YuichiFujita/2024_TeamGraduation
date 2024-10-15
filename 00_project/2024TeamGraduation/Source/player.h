@@ -128,7 +128,7 @@ public:
 	virtual void Draw() override;
 	virtual void Release() override;	// 死亡処理
 
-	bool Hit(const CBall* pBall);	// ヒット処理
+	bool Hit(CBall* pBall);	// ヒット処理
 
 	void SetState(STATE state);	// 状態設定
 	STATE GetState() { return m_state; }	// 状態取得
@@ -160,7 +160,8 @@ public:
 	//=============================
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
-	CBall* GetBall() { return m_pBall; }					// ボールの情報取得
+	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
+	CBall* GetBall() { return m_pBall; }					// ボール情報取得
 
 	// 設定系
 	void DeadSetting(MyLib::HitResult_Character* result);

@@ -47,7 +47,7 @@ private:
 	CPlayer::DashAngle m_HoldDashAngle;					// 保持してるダッシュの移動方向
 	float m_fInputInterval;								// 入力の受け付け猶予
 	float m_fTriggerInterval;							// トリガーのインターバル
-	bool m_bDash;
+	bool m_bDash;										// 走るフラグ
 };
 
 

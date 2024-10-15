@@ -20,6 +20,7 @@
 #include "sound.h"
 
 #include "player.h"
+#include "ball.h"
 #include "particle.h"
 #include "myeffekseer.h"
 #include "edit_map.h"
@@ -107,6 +108,9 @@ HRESULT CGame::Init()
 	//**********************************
 	// プレイヤー
 	//**********************************
+	// ボール生成
+	CBall::Create(MyLib::Vector3(0.0f, 1000.0f, 0.0f));
+
 	// キャラ生成
 	for (int nCntPlayer = 0; nCntPlayer < 1; nCntPlayer++)
 	{

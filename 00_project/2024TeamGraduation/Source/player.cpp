@@ -20,6 +20,8 @@
 #include "sound.h"
 #include "fade.h"
 #include "listmanager.h"
+#include "gamemanager.h"
+#include "ball.h"
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
@@ -583,8 +585,10 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	return hitresult;
 }
 #else
-bool Hit(const CBall* pBall)
+bool CPlayer::Hit(CBall* pBall)
 {
+	// キャッチ
+	pBall->Catch(this);
 	return false;
 }
 #endif
