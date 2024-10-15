@@ -489,10 +489,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case MOTION::MOTION_WALK:
 		break;
 
-	case MOTION::MOTION_START:
-
-		break;
-
 	default:
 		break;
 	}

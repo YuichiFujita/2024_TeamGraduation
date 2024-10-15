@@ -38,8 +38,13 @@ public:
 		MOTION_DEF = 0,		// ニュートラルモーション
 		MOTION_WALK,		// 移動
 		MOTION_DEAD,		// 死亡
-		MOTION_START,		// スタート演出
+		MOTION_RUN,			// 走り
+		MOTION_BLINK,		// ブリンク
 		MOTION_JUMP,		// ジャンプ
+		MOTION_CATCH,		// キャッチ
+		MOTION_THROW,		// 投げ
+		MOTION_THROW_JUMP,	// 投げ(ジャンプ)
+		MOTION_SPECIAL,		// スペシャル
 		MOTION_MAX
 	};
 

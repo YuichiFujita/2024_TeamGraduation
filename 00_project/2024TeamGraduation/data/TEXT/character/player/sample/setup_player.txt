@@ -62,15 +62,21 @@ COLLIDER_FILENAME = data/TEXT/character/player/sample/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 4
+NUM_MOTION = 10
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/sample/motion_def.txt			# [0]デフォルト
 MOTION_FILENAME = data/TEXT/character/player/sample/motion_walk.txt			# [1]歩き
-MOTION_FILENAME = data/TEXT/character/player/sample/motion_dead.txt			# [9]死亡
-MOTION_FILENAME = data/TEXT/character/player/sample/motion_start.txt			# [9]死亡
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_dead.txt			# [2]死亡
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_run.txt			# [3]走り
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_blink.txt		# [4]ブリンク
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_jump.txt			# [5]ジャンプ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_catch.txt		# [6]キャッチ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_throw.txt		# [7]投げ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_throw_jump.txt	# [8]投げ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_special.txt		# [9]スペシャル
 
 
 END_SCRIPT		# この行は絶対消さないこと！

@@ -34,7 +34,7 @@ CPlayerControlAction::CPlayerControlAction()
 //==========================================================================
 void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
+
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
@@ -78,13 +78,9 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 		}
 
 	}
-	else if (player->IsPossibleMove())
-	{
 
-		Special(player, fDeltaTime, fDeltaRate, fSlowRate);
-		Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
-
-	}
+	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
+	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
@@ -119,7 +115,9 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (player->GetBall() == nullptr)
+	CBall* pBall = player->GetBall();
+
+	if (pBall == nullptr)
 	{
 		return;
 	}
@@ -135,10 +133,14 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		// アクションパターン変更
 		if (player->IsJump())
 		{
+			pBall->ThrowJump(player);
+
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
+			pBall->ThrowNormal(player);
+
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
 
@@ -200,8 +202,10 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 //==========================================================================
 void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (true)
-	{//スペシャルゲージMAXか
+	CBall* pBall = player->GetBall();
+
+	if (pBall == nullptr)
+	{//スペシャルゲージMAX＋ボール所持か
 		return;
 	}
 
@@ -210,8 +214,10 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	if (pKey->GetPress(DIK_X) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx())) 
+		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
 	{
+		pBall->ThrowSpecial(player);
+
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_SPECIAL);
 	}
@@ -228,7 +234,7 @@ void CPlayerControlAction::Charm(CPlayer* player, const float fDeltaTime, const 
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	if (pKey->GetPress(DIK_C) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx())) 
+		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx()))
 	{
 		//モテアクション発動準備状態
 	}
