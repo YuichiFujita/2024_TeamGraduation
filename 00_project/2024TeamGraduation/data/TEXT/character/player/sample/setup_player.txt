@@ -25,7 +25,7 @@ MODEL_FILENAME = data/MODEL/sample/karihuman.x			# [0]腰
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	VELOCITY = 4.00		# 移動量
+	VELOCITY = 1.00		# 移動量
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00		# 半径
 	HEIGHT = 0.00		# 高さ

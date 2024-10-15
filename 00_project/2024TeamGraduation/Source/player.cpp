@@ -26,6 +26,7 @@
 
 // 使用クラス
 #include "playercontrol.h"
+#include "playercontrol_action.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 
@@ -77,6 +78,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// パターン用インスタンス
 	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
 
@@ -142,6 +144,7 @@ HRESULT CPlayer::Init()
 
 	// 操作関連
 	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
 
 	// アクションパターン
 	if (m_pActionPattern == nullptr)
@@ -165,6 +168,15 @@ void CPlayer::ChangeMoveControl(CPlayerControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayer::ChangeActionControl(CPlayerControlAction* control)
+{
+	delete m_pControlAction;
+	m_pControlAction = control;
 }
 
 //==========================================================================
@@ -306,6 +318,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 移動操作
 		m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+		m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -356,6 +369,12 @@ void CPlayer::DeleteControl()
 		m_pControlMove = nullptr;
 	}
 
+	if (m_pControlAction != nullptr)
+	{// アクション操作
+		delete m_pControlAction;
+		m_pControlAction = nullptr;
+	}
+	
 	if (m_pActionPattern != nullptr)
 	{// アクションパターン
 		delete m_pActionPattern;
@@ -525,6 +544,7 @@ void CPlayer::LimitPos()
 //==========================================================================
 // ヒット処理
 //==========================================================================
+#if 0
 MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 {
 	MyLib::HitResult_Character hitresult = {};
@@ -557,6 +577,12 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	// 当たった判定を返す
 	return hitresult;
 }
+#else
+bool Hit(const CBall* pBall)
+{
+	return false;
+}
+#endif
 
 //==========================================================================
 // 死亡時の設定
