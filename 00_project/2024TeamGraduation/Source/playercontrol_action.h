@@ -21,12 +21,12 @@ class CEffekseerObj;
 //=============================
 // 移動
 //=============================
-class CPlayerControlMove
+class CPlayerControlAction
 {
 public:
 
 	// コンストラクタ
-	CPlayerControlMove();
+	CPlayerControlAction();
 
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
 

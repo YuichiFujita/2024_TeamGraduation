@@ -26,6 +26,7 @@
 
 // 使用クラス
 #include "playercontrol.h"
+#include "playercontrol_action.h"
 #include "playerAction.h"
 
 //==========================================================================
