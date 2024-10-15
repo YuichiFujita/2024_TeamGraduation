@@ -14,7 +14,6 @@
 #include "objectX.h"
 #include "texture.h"
 #include "calculation.h"
-#include "lostrssmanager.h"
 
 #include "pause.h"
 #include "fade.h"
@@ -142,11 +141,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	HRESULT hr;
 	m_nNumPlayer = 0;		// プレイヤーの数
-
-	//**********************************
-	// ロストするリソースのマネージャー
-	//**********************************
-	CLostResourceManager::GetInstance();	//取得はしないけど生成はする
 
 	//**********************************
 	// 入力
@@ -852,14 +846,7 @@ void CManager::ChangeDisplayMode(bool bWindow)
 {
 	m_bWindowed = bWindow;
 
-	if (m_bWindowed)
-	{// ウィンドウモード
-		m_pRenderer->SetDisplayMode(CRenderer::DISPLAYMODE::MODE_WINDOW);
-	}
-	else
-	{// ウィンドウレスモード
-		m_pRenderer->SetDisplayMode(CRenderer::DISPLAYMODE::MODE_FULLSCREEN);
-	}
+
 }
 
 //==========================================================================
