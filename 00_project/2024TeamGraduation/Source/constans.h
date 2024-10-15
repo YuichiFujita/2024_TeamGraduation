@@ -25,7 +25,7 @@ namespace mylib_const
 	const int MAX_STRING = 512;			// 最大文字数
 	const int MAX_PARTS = 32;			// パーツ最大数
 	const int MAX_OBJ = 128;			// パーツ最大数
-	const float GRAVITY = 0.7f;			// 重力
+	const float GRAVITY = 0.5f;			// 重力
 	const int MAX_VTX = 51200;			// 頂点の最大数
 	const float KILL_Y = -600.0f;		// 消滅する座標
 	const int MAX_PLAYER = 4;			// プレイヤーの数

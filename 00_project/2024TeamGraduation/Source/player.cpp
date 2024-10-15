@@ -20,6 +20,8 @@
 #include "sound.h"
 #include "fade.h"
 #include "listmanager.h"
+#include "gamemanager.h"
+#include "ball.h"
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
@@ -85,6 +87,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
+	m_pBall = nullptr;				// ボールの情報
 	m_sDamageInfo = sDamageInfo();	// ダメージ情報
 }
 
@@ -186,6 +189,9 @@ void CPlayer::Uninit()
 {
 	// 影
 	m_pShadow = nullptr;
+	
+	//ボール
+	m_pBall = nullptr;
 
 	// 操作系
 	DeleteControl();
@@ -218,6 +224,9 @@ void CPlayer::Release()
 		delete m_pActionPattern;
 		m_pActionPattern = nullptr;
 	}
+
+	// ステータス
+	SAFE_DELETE(m_pStatus);
 }
 
 //==========================================================================
@@ -579,8 +588,10 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	return hitresult;
 }
 #else
-bool Hit(const CBall* pBall)
+bool CPlayer::Hit(CBall* pBall)
 {
+	// キャッチ
+	pBall->Catch(this);
 	return false;
 }
 #endif

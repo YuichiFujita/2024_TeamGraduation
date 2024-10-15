@@ -39,12 +39,13 @@ private:
 	// メンバ関数
 	//=============================
 	// 状態系
-	void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
-	void ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ブリンク
-	void ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 走り
-	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ
+	void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なし
+	void ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ブリンク
+	void ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 走り
+	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ジャンプ
 	void ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
 	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
+	void ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ジャンプ)
 	void ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャル
 
 	//=============================

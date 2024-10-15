@@ -42,7 +42,7 @@ CBall::STATE_FUNC CBall::m_SampleFuncList[] =
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-CListManager<CBall> CBall::m_List = {};	// リスト
+CListManager<CBall> CBall::m_list = {};	// リスト
 
 //==========================================================================
 // コンストラクタ
@@ -96,7 +96,7 @@ CBall *CBall::Create(const MyLib::Vector3& rPos)
 HRESULT CBall::Init()
 {
 	// リストに追加
-	m_List.Regist(this);
+	m_list.Regist(this);
 
 	// 種類の設定
 	CObject::SetType(TYPE_OBJECTX);
@@ -114,7 +114,7 @@ HRESULT CBall::Init()
 void CBall::Uninit()
 {
 	// リストから削除
-	m_List.Delete(this);
+	m_list.Delete(this);
 
 	// 親クラスの終了
 	CObjectX::Uninit();
@@ -126,7 +126,7 @@ void CBall::Uninit()
 void CBall::Kill()
 {
 	// リストから削除
-	m_List.Delete(this);
+	m_list.Delete(this);
 
 	// 親クラスの終了
 	CObjectX::Uninit();
@@ -154,6 +154,63 @@ void CBall::Draw()
 {
 	// 親クラスの描画
 	CObjectX::Draw();
+}
+
+//==========================================================================
+// キャッチ処理
+//==========================================================================
+void CBall::Catch(CPlayer* pPlayer)
+{
+	// 移動量を初期化
+	SetMove(VEC3_ZERO);
+
+	// 所持状態にする
+	m_state = STATE_CATCH;
+
+	// キャッチしたプレイヤーを保存
+	m_pPlayer = pPlayer;
+
+	// プレイヤーにボールを保存
+	pPlayer->SetBall(this);
+}
+
+//==========================================================================
+// 通常投げ処理
+//==========================================================================
+void CBall::ThrowNormal(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// TODO：仮
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot)) * 40.0f);
+}
+
+//==========================================================================
+// ジャンプ投げ処理
+//==========================================================================
+void CBall::ThrowJump(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// TODO：仮
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), -0.25f, cosf(fRot)) * 80.0f);
+}
+
+//==========================================================================
+// スペシャル投げ処理
+//==========================================================================
+void CBall::ThrowSpecial(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// TODO：仮
+	float fRot = pPlayer->GetRotation().y + D3DX_PI;
+	SetMove(MyLib::Vector3(sinf(fRot), 0.01f, cosf(fRot)) * 120.0f);
 }
 
 //==========================================================================
@@ -210,6 +267,9 @@ void CBall::UpdateThrow(const float fDeltaTime, const float fDeltaRate, const fl
 		m_state = STATE_FALL;
 	}
 
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
+
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(move);		// 移動量
@@ -229,6 +289,9 @@ void CBall::UpdateFall(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 地面の着地
 	UpdateLanding(&pos, &move, fDeltaRate, fSlowRate);
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
 
 	// 情報を反映
 	SetPosition(pos);	// 位置
@@ -268,4 +331,52 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 	}
 
 	return false;
+}
+
+//==========================================================================
+// プレイヤーとの当たり判定
+//==========================================================================
+bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
+{
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		bool bHit = UtilFunc::Collision::CircleRange3D
+		( // 引数
+			*pPos,
+			pPlayer->GetPosition(),
+			RADIUS,
+			10.0f	// TODO：プレイヤー半径
+		);
+		if (bHit)
+		{ // 当たっていた場合
+
+			// プレイヤーヒット処理
+			pPlayer->Hit(this);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//==========================================================================
+// 投げ処理
+//==========================================================================
+void CBall::Throw(CPlayer* pPlayer)
+{
+	// 持っていたプレイヤーと違う場合エラー
+	assert(m_pPlayer == pPlayer);
+
+	// 攻撃状態にする
+	m_state = STATE_THROW;
+
+	// キャッチしていたプレイヤーを破棄
+	m_pPlayer = nullptr;
+
+	// プレイヤーから保存中のボールを破棄
+	pPlayer->SetBall(nullptr);
 }
