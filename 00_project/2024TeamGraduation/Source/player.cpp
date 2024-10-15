@@ -533,6 +533,7 @@ void CPlayer::LimitPos()
 		pos.y = 0.0f;
 
 		// 重力リセット
+		m_bJump = false;
 		MyLib::Vector3 move = GetMove();
 		move.y = 0.0f;
 		SetMove(move);
