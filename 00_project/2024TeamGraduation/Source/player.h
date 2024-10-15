@@ -37,9 +37,17 @@ public:
 	{
 		MOTION_DEF = 0,		// ニュートラルモーション
 		MOTION_WALK,		// 移動
-		MOTION_DEAD,		// 死亡
-		MOTION_START,		// スタート演出
+		MOTION_RUN,			// 走り
+		MOTION_BLINK,		// ブリンク
+		MOTION_DODGE,		// 回避成功時
 		MOTION_JUMP,		// ジャンプ
+		MOTION_LAND,		// 着地
+		MOTION_CATCH,		// キャッチ
+		MOTION_THROW,		// 投げ
+		MOTION_THROW_JUMP,	// 投げ(ジャンプ)
+		MOTION_SPECIAL,		// スペシャル
+		MOTION_WIN,			// 勝利
+		MOTION_DEAD,		// 死亡
 		MOTION_MAX
 	};
 
@@ -63,7 +71,7 @@ public:
 		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ
 		ACTION_THROW,		// 投げ
-		ACTION_THROW_JUMP,		// 投げ(ジャンプ)
+		ACTION_THROW_JUMP,	// 投げ(ジャンプ)
 		ACTION_SPECIAL,		// スペシャル
 		ACTION_MAX
 	};
@@ -128,7 +136,7 @@ public:
 	virtual void Draw() override;
 	virtual void Release() override;	// 死亡処理
 
-	bool Hit(CBall* pBall);	// ヒット処理
+	void Hit(CBall* pBall);	// ヒット処理
 
 	void SetState(STATE state);	// 状態設定
 	STATE GetState() { return m_state; }	// 状態取得
@@ -154,6 +162,7 @@ public:
 	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
 	void ChangeActionControl(CPlayerControlAction* control);		// アクションの操作変更
 	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
+	CPlayerStatus* GetStatus() { return m_pStatus; }				// ステータス取得
 
 	//=============================
 	// その他

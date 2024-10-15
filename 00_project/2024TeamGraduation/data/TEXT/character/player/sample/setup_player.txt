@@ -62,15 +62,24 @@ COLLIDER_FILENAME = data/TEXT/character/player/sample/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 4
+NUM_MOTION = 10
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/sample/motion_def.txt			# [0]デフォルト
 MOTION_FILENAME = data/TEXT/character/player/sample/motion_walk.txt			# [1]歩き
-MOTION_FILENAME = data/TEXT/character/player/sample/motion_dead.txt			# [9]死亡
-MOTION_FILENAME = data/TEXT/character/player/sample/motion_start.txt			# [9]死亡
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_run.txt			# [2]走り
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_blink.txt		# [3]ブリンク
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_dodge.txt		# [4]回避成功時
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_jump.txt			# [5]ジャンプ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_land.txt			# [6]着地
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_catch.txt		# [7]キャッチ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_throw.txt		# [8]投げ
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_throw_jump.txt	# [9]投げ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_special.txt		# [10]スペシャル
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_win.txt			# [11]勝利
+MOTION_FILENAME = data/TEXT/character/player/sample/motion_dead.txt			# [12]死亡
 
 
 END_SCRIPT		# この行は絶対消さないこと！
