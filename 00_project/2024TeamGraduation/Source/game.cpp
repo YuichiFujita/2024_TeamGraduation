@@ -19,7 +19,7 @@
 #include "map.h"
 #include "sound.h"
 
-#include "player.h"
+#include "playerUser.h"
 #include "ball.h"
 #include "particle.h"
 #include "myeffekseer.h"
@@ -114,7 +114,7 @@ HRESULT CGame::Init()
 	// ƒLƒƒƒ‰¶¬
 	for (int nCntPlayer = 0; nCntPlayer < 1; nCntPlayer++)
 	{
-		if (CPlayer::Create(nCntPlayer) == nullptr)
+		if (CPlayerUser::Create(nCntPlayer) == nullptr)
 		{
 			return E_FAIL;
 		}
