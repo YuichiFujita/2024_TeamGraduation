@@ -106,6 +106,7 @@ private:
 
 	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
 	void Throw(CPlayer* pPlayer);	// 投げ
+	void Fall(void);	// 落下
 
 	//=============================
 	// 静的メンバ変数

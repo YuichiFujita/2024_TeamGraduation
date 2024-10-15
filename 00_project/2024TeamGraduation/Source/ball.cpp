@@ -6,6 +6,7 @@
 //=============================================================================
 #include "ball.h"
 #include "player.h"
+#include "playerStatus.h"
 #include "manager.h"
 #include "calculation.h"
 #include "debugproc.h"
@@ -167,6 +168,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// 所持状態にする
 	m_state = STATE_CATCH;
 
+	// プレイヤーのチームを保存
+	m_typeTeam = pPlayer->GetStatus()->GetTeam();
+
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
@@ -182,6 +186,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// 投げ処理
 	Throw(pPlayer);
 
+	// 通常攻撃を設定
+	m_typeAtk = ATK_NORMAL;
+
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
 	SetMove(MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot)) * 40.0f);
@@ -195,6 +202,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	// 投げ処理
 	Throw(pPlayer);
 
+	// ジャンプ攻撃を設定
+	m_typeAtk = ATK_JUMP;
+
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
 	SetMove(MyLib::Vector3(sinf(fRot), -0.25f, cosf(fRot)) * 80.0f);
@@ -207,6 +217,9 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 {
 	// 投げ処理
 	Throw(pPlayer);
+
+	// スペシャル攻撃を設定
+	m_typeAtk = ATK_SPECIAL;
 
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
@@ -229,8 +242,8 @@ void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const fl
 	if (UpdateLanding(&pos, &move, fDeltaRate, fSlowRate))
 	{ // 着地した場合
 
-		// 落下状態にする
-		m_state = STATE_FALL;
+		// 落下遷移
+		Fall();
 	}
 
 	// 情報を反映
@@ -244,7 +257,7 @@ void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const fl
 void CBall::UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// TODO：今後手の位置に親子付け
-	SetPosition(m_pPlayer->GetPosition() + MyLib::Vector3(0.0f, 100.0f, 0.0f));	// プレイヤー情報
+	SetPosition(m_pPlayer->GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f));	// プレイヤー情報
 }
 
 //==========================================================================
@@ -263,8 +276,8 @@ void CBall::UpdateThrow(const float fDeltaTime, const float fDeltaRate, const fl
 	if (UpdateLanding(&pos, &move, fDeltaRate, fSlowRate))
 	{ // 着地した場合
 
-		// 落下状態にする
-		m_state = STATE_FALL;
+		// 落下遷移
+		Fall();
 	}
 
 	// プレイヤーとの当たり判定
@@ -379,4 +392,19 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
+}
+
+//==========================================================================
+// 落下処理
+//==========================================================================
+void CBall::Fall(void)
+{
+	// 落下状態にする
+	m_state = STATE_FALL;
+
+	// チームの初期化
+	m_typeTeam = CGameManager::SIDE_NONE;
+
+	// 攻撃の初期化
+	m_typeAtk = ATK_NONE;
 }
