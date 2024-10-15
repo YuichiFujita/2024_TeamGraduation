@@ -51,7 +51,8 @@ public:
 	// チームサイド列挙
 	enum TeamSide
 	{
-		SIDE_LEFT = 0,	// 左コート
+		SIDE_NONE = 0,	// コート不明
+		SIDE_LEFT,		// 左コート
 		SIDE_RIGHT,		// 右コート
 		SIDE_MAX		// この列挙型の総数
 	};
