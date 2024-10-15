@@ -148,6 +148,7 @@ public:
 	// パターン
 	//=============================
 	void ChangeMoveControl(CPlayerControlMove* control);			// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);		// アクションの操作変更
 	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
 
 	//=============================

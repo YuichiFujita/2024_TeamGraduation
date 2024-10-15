@@ -144,6 +144,7 @@ HRESULT CPlayer::Init()
 
 	// 操作関連
 	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
 
 	// アクションパターン
 	if (m_pActionPattern == nullptr)
@@ -167,6 +168,15 @@ void CPlayer::ChangeMoveControl(CPlayerControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayer::ChangeActionControl(CPlayerControlAction* control)
+{
+	delete m_pControlAction;
+	m_pControlAction = control;
 }
 
 //==========================================================================
