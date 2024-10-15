@@ -248,7 +248,7 @@ void CCamera::MoveCameraInput()
 //==========================================================================
 void CCamera::MoveCameraStick(int nIdx)
 {
-#if 0
+#if 1
 	// ëÄçÏèàóù
 	m_pControlState->Controll(this);
 #endif
@@ -647,17 +647,18 @@ void CCameraControlState::Controll(CCamera* pCamera)
 	m_moveRot.y += pInputGamepad->GetStickMoveR(0).x * ROT_MOVE_STICK_Y;
 
 	// ècâÒì]
-	if (rot.z > MIN_STICKROT && pInputGamepad->GetStickMoveR(0).y < 0.0f)
+	if (/*rot.z > MIN_STICKROT && */pInputGamepad->GetStickMoveR(0).y < 0.0f)
 	{
 		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
 	}
-	else if (rot.z <= MIN_STICKROT && pInputGamepad->GetStickMoveR(0).y > 0.0f)
+	else if (/*rot.z <= MIN_STICKROT && */pInputGamepad->GetStickMoveR(0).y > 0.0f)
 	{
 		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
 	}
 
 	// à⁄ìÆÇ∑ÇÈ
 	rot += m_moveRot;
+	rot.z = UtilFunc::Transformation::Clamp(rot.z, (D3DX_PI * -0.5f) + 0.02f, (D3DX_PI * 0.5f) - 0.02f);
 
 	// 0ï‚ê≥
 	m_moveRot += (MyLib::Vector3(0.0f) - m_moveRot) * 0.25f;
