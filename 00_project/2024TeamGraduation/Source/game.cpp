@@ -112,20 +112,24 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 1000.0f, 0.0f));
 
 	// プレイヤーUser生成
-	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-500.0f, 0.0f, 0.0f));
+	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{
 		return E_FAIL;
 	}
+	pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+	pUser->SetRotDest(-HALF_PI);
 
 	// プレイヤーAI生成
 	for (int i = 0; i < 1; i++)
 	{
-		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(500.0f, 0.0f, 0.0f));
+		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 		if (pAI == nullptr)
 		{
 			return E_FAIL;
 		}
+		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pAI->SetRotDest(HALF_PI);
 	}
 
 	// カメラのリセット

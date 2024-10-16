@@ -366,12 +366,13 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
-		bool bHit = UtilFunc::Collision::CircleRange3D
+		bool bHit = UtilFunc::Collision::CylinderCircleCylinder
 		( // 引数
 			*pPos,
 			pPlayer->GetPosition(),
 			RADIUS,
-			pPlayer->GetRadius()
+			pPlayer->GetRadius(),
+			pPlayer->GetHeight()
 		);
 		if (bHit)
 		{ // 当たっていた場合
