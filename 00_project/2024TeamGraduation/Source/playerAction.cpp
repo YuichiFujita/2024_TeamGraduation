@@ -131,7 +131,10 @@ void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->IsJump())
+	{// キャッチ猶予
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -150,7 +153,10 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// 終了
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -158,7 +164,10 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// ジャンプ移行
+		SetAction(CPlayer::Action::ACTION_JUMP);
+	}
 }
 
 //==========================================================================

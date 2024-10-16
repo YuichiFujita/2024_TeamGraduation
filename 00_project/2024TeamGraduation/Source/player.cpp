@@ -41,8 +41,8 @@ namespace
 
 namespace StateTime
 {
-	const float DAMAGE = 0.5f;		// 無敵
-	const float INVINCIBLE = 0.8f;	// ダメージ
+	const float DAMAGE = 0.5f;		// ダメージ
+	const float INVINCIBLE = 0.8f;	// 無敵
 }
 
 //==========================================================================
@@ -564,6 +564,9 @@ void CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
+	SetState(STATE_DMG);
+	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+
 	return;
 }
 #endif
@@ -634,6 +637,9 @@ void CPlayer::StateInvincible()
 {
 	if (m_fStateTime >= StateTime::INVINCIBLE)
 	{
+		m_sDamageInfo.reciveTime = 0.0f;
+		m_sDamageInfo.bReceived = true;
+
 		SetState(STATE_NONE);
 	}
 }
