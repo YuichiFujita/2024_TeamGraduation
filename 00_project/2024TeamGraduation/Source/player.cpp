@@ -37,6 +37,7 @@ namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
+	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
 
 namespace StateTime
@@ -588,6 +589,14 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 
 	// 死んだ
 	result->isdeath = true;
+}
+
+//==========================================================================
+// 回避範囲取得
+//==========================================================================
+float CPlayer::GetDodgeDistance()
+{
+	return 0.0f;
 }
 
 //==========================================================================
