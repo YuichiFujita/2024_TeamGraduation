@@ -1211,7 +1211,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		@param	heightCylinder	[in]	‰~’Œ‚Ì‚‚³
 		@return	“–‚½‚Á‚½‚©‚Ìbool’l
 		*/
-		inline bool CylinderCircleCylinder(
+		inline bool CollisionCircleCylinder(
 			const MyLib::Vector3& posCircle, const MyLib::Vector3& posCylinder,
 			float radiusCircle, float radiusCylinder, float heightCylinder)
 		{
