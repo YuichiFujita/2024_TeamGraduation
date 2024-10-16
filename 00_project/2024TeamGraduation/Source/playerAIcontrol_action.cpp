@@ -34,11 +34,6 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 //==========================================================================
 void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -62,7 +57,6 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 	if (pPlayerAction == nullptr) return;
 	CPlayer::Action action = pPlayerAction->GetAction();
 
-
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -84,7 +78,6 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
-
 }
 
 //==========================================================================
@@ -107,7 +100,6 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
 	}
-
 }
 
 //==========================================================================
@@ -116,7 +108,6 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-
 	if (pBall == nullptr)
 	{
 		return;
@@ -129,7 +120,6 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
-
 		// アクションパターン変更
 		if (player->IsJump())
 		{
@@ -143,10 +133,7 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
-
-		// FUJITA：ここにボール投げ関数
 	}
-
 }
 
 //==========================================================================
@@ -155,7 +142,6 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bJump = player->IsJump();
-
 	if (bJump)
 	{
 		return;
@@ -194,7 +180,6 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 		// サウンド再生
 		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
 	}
-
 }
 
 //==========================================================================
@@ -203,7 +188,6 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-
 	if (pBall == nullptr)
 	{//スペシャルゲージMAX＋ボール所持か
 		return;
@@ -221,7 +205,6 @@ void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, co
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_SPECIAL);
 	}
-
 }
 
 //==========================================================================
@@ -238,5 +221,4 @@ void CPlayerAIControlAction::Charm(CPlayer* player, const float fDeltaTime, cons
 	{
 		//モテアクション発動準備状態
 	}
-
 }

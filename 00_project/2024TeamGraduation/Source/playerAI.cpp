@@ -10,8 +10,8 @@
 
 // 使用クラス
 #include "playerStatus.h"
-#include "playercontrol_move.h"
-#include "playercontrol_action.h"
+#include "playerAIcontrol_move.h"
+#include "playerAIcontrol_action.h"
 
 //==========================================================================
 // 定数定義
@@ -80,8 +80,8 @@ HRESULT CPlayerAI::Init()
 	if (FAILED(hr)) { return E_FAIL; }
 
 	// 操作関連
-	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
+	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
 	return S_OK;
 }
@@ -127,15 +127,15 @@ void CPlayerAI::Draw()
 //==========================================================================
 void CPlayerAI::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 移動操作
+	// 移動操作	// TODO：AIむじ～
 	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	//m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeMoveControl(CPlayerControlMove* control)
+void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
@@ -144,7 +144,7 @@ void CPlayerAI::ChangeMoveControl(CPlayerControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeActionControl(CPlayerControlAction* control)
+void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
 {
 	delete m_pControlAction;
 	m_pControlAction = control;
