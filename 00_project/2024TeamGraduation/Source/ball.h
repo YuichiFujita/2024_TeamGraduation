@@ -84,7 +84,7 @@ public:
 	//=============================
 	/*
 		@brief		生成処理
-		@details	必要があれば引数追加
+		@details	位置
 	*/
 	static CBall *Create(const MyLib::Vector3& rPos);
 	static CListManager<CBall> GetListObj() { return m_list; }	// リスト取得
@@ -124,6 +124,7 @@ private:
 	CPlayer* m_pPlayer;	// プレイヤー情報
 
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
+	CPlayer* m_pTarget;	// ホーミングターゲット情報
 	EAttack m_typeAtk;	// 攻撃種類
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態カウンター

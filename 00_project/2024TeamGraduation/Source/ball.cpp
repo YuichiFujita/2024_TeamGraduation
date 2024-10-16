@@ -368,7 +368,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		CPlayer* pPlayer = (*itr);	// ƒvƒŒƒCƒ„[î•ñ
 		bool bHit = UtilFunc::Collision::CylinderCircleCylinder
 		( // ˆø”
-			*pPos,
+			*pPos + MyLib::Vector3(0.0f, -RADIUS, 0.0f),
 			pPlayer->GetPosition(),
 			RADIUS,
 			pPlayer->GetRadius(),
