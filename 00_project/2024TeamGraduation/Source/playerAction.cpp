@@ -86,7 +86,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pObj = (*itr);
 
-		//if (UtilFunc::Collision::CircleRange3D(m_pPlayer->GetPosition(), pObj->GetPosition(), m_pPlayer->GetRadius(), pObj->GetRadius()))
+		//if (UtilFunc::Collision::CylinderCircleCylinder(m_pPlayer->GetPosition(), pObj->GetPosition(), m_pPlayer->GetRadius(), pObj->GetRadius()))
 		//{
 		//}
 	}

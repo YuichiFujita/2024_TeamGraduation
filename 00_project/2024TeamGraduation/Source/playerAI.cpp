@@ -10,7 +10,7 @@
 
 // 使用クラス
 #include "playerStatus.h"
-#include "playercontrol.h"
+#include "playercontrol_move.h"
 #include "playercontrol_action.h"
 
 //==========================================================================
