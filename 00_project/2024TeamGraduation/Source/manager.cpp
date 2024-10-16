@@ -814,8 +814,8 @@ void CManager::Update()
 		{
 			MyFog::ToggleFogFrag();
 		}
-#endif
 
+#endif
 
 		if (m_pScene != nullptr)
 		{

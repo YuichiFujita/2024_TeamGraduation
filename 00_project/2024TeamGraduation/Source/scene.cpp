@@ -203,16 +203,11 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		*pFps -= 1;
 		UtilFunc::Transformation::ValueNormalize(*pFps, 144, 1);
 	}
-	if (GET_INPUTKEY->GetPress(DIK_LEFT))
-	{
-		GET_MANAGER->SetSlowRate(GET_MANAGER->GetSlowRate() + 0.025f);
-	}
-	if (GET_INPUTKEY->GetPress(DIK_RIGHT))
-	{
-		float fRate = GET_MANAGER->GetSlowRate() - 0.025f;
-		UtilFunc::Transformation::ValueNormalize(fRate, 100.0f, 0.0f);
-		GET_MANAGER->SetSlowRate(fRate);
-	}
+
+	float fRate = GET_MANAGER->GetSlowRate();
+	ImGui::DragFloat("SlowRate", &fRate, 0.01f, 0.0f, 1.0f, "%.2f");
+	GET_MANAGER->SetSlowRate(fRate);
+
 #endif
 }
 

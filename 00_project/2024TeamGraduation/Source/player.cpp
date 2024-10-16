@@ -297,16 +297,16 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	MyLib::Vector3 rot = GetRotation();
 
 	// 移動量加算
-	pos += move * fDeltaRate;
+	pos += move * fDeltaRate * fSlowRate;
 
 	// 慣性補正
-	move.x += (0.0f - move.x) * (0.1f * fDeltaRate);
-	move.z += (0.0f - move.z) * (0.1f * fDeltaRate);
+	move.x += (0.0f - move.x) * (0.1f * fDeltaRate * fSlowRate);
+	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
 
 	// 重力処理
 	if (m_state != STATE_DEAD && m_state != STATE_DEADWAIT)
 	{
-		move.y -= mylib_const::GRAVITY * fDeltaRate;
+		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 	}
 
 	// 位置設定
@@ -320,7 +320,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	UtilFunc::Transformation::RotNormalize(fRotDiff);
 
 	// 角度の補正をする
-	rot.y += fRotDiff * (0.25f * fDeltaRate);
+	rot.y += fRotDiff * (0.25f * fDeltaRate * fSlowRate);
 	UtilFunc::Transformation::RotNormalize(rot.y);
 
 	// 向き設定
