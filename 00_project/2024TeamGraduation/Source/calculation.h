@@ -1211,7 +1211,7 @@ namespace UtilFunc	// 便利関数
 		@param	heightCylinder	[in]	円柱の高さ
 		@return	当たったかのbool値
 		*/
-		inline bool CylinderCircleCylinder(
+		inline bool CollisionCircleCylinder(
 			const MyLib::Vector3& posCircle, const MyLib::Vector3& posCylinder,
 			float radiusCircle, float radiusCylinder, float heightCylinder)
 		{
@@ -1221,8 +1221,8 @@ namespace UtilFunc	// 便利関数
 				return false;
 			}
 
-			if (posCylinder <= posCircle &&
-				posCylinder + heightCylinder >= posCircle)
+			if (posCylinder.y <= posCircle.y &&
+				posCylinder.y + heightCylinder >= posCircle.y)
 			{// シリンダーの高さ以上
 				return true;
 			}
