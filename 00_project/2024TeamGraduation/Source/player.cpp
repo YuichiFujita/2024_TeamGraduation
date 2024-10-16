@@ -267,7 +267,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"移動量：【X：%f, Y：%f, Z：%f】\n"
 		"体力：【%d】\n"
 		"状態：【%d】\n"
-		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
+		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, move.x, move.y, move.z, GetLife(), m_state);
 
 #endif
 

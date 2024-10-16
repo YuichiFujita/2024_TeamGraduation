@@ -22,6 +22,13 @@ namespace
 }
 
 //==========================================================================
+// 静的メンバ変数
+//==========================================================================
+#ifdef _DEBUG
+bool CPlayerAIControlAction::m_bAutoThrow = false;
+#endif
+
+//==========================================================================
 // コンストラクタ
 //==========================================================================
 CPlayerAIControlAction::CPlayerAIControlAction()
@@ -78,6 +85,11 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
 	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
 #else
+
+#ifdef _DEBUG
+	if (ImGui::Button("PlayerAI : Change Auto Throw")) { m_bAutoThrow = !m_bAutoThrow; }
+#endif
+
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -91,6 +103,7 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
 		}
 	}
+
 #endif
 
 	// モーションフラグ設定
@@ -144,10 +157,19 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 #else
+	if (m_bAutoThrow)
+	{
+		fThrowTime += fDeltaTime;
+	}
+
 	// ボタン
-	if (ImGui::Button("PlayerAI : ThrowBall"))
+	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
 #endif
 	{
+#ifdef _DEBUG
+	fThrowTime = 0.0f;
+#endif
+
 		// アクションパターン変更
 		if (player->IsJump())
 		{
