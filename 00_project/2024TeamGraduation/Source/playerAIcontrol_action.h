@@ -40,6 +40,14 @@ private:
 	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ
 
 	//=============================
+	// 静的メンバ変数
+	//=============================
+#ifdef _DEBUG
+	static bool m_bAutoThrow;
+	float fThrowTime = 0.0f;
+#endif
+
+	//=============================
 	// メンバ変数
 	//=============================
 };
