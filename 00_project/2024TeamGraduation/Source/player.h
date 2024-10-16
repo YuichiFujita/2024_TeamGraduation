@@ -18,12 +18,10 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CShadow;				// 影
-class CPlayerControlMove;	// 移動(操作)
-class CPlayerControlAction;	// アクション(操作)
-class CPlayerAction;		// アクション
-class CPlayerStatus;		// ステータス
-class CBall;				// ボール
+class CShadow;			// 影
+class CPlayerAction;	// アクション
+class CPlayerStatus;	// ステータス
+class CBall;			// ボール
 
 //==========================================================================
 // クラス定義

@@ -9,6 +9,7 @@
 #include "calculation.h"
 #include "input.h"
 #include "camera.h"
+#include "ball.h"
 
 namespace
 {
@@ -70,6 +71,26 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{// ƒuƒŠƒ“ƒNŒo‰ß
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
+
+	if (m_pPlayer->GetBall() != nullptr)
+	{
+		return;
+	}
+
+	//‰ñ”ð”»’è
+	CListManager<CBall> sampleList = CBall::GetListObj();
+	std::list<CBall*>::iterator itr = sampleList.GetEnd();
+	CBall* pObj = nullptr;
+
+	while (sampleList.ListLoop(itr))
+	{
+		pObj = (*itr);
+
+		//if (UtilFunc::Collision::CylinderCircleCylinder(m_pPlayer->GetPosition(), pObj->GetPosition(), m_pPlayer->GetRadius(), pObj->GetRadius()))
+		//{
+		//}
+	}
+
 }
 
 //==========================================================================

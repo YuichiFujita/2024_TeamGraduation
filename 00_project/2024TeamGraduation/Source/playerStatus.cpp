@@ -5,6 +5,7 @@
 // 
 //=============================================================================
 #include "playerStatus.h"
+#include "player.h"
 
 //==========================================================================
 // 定数定義
@@ -20,10 +21,11 @@ namespace
 //==========================================================================
 CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
 	m_pPlayer	(pPlayer),					// プレイヤーのポインタ
-	m_typeTeam	(CGameManager::SIDE_LEFT),	// チームサイド	// TODO：CreateでPlayerの引数に追加しよう
-	m_nLife		(MAX_LIFE)					// 体力
+	m_typeTeam	(CGameManager::SIDE_NONE)	// チームサイド
 {
-
+	// 体力を初期化
+	m_pPlayer->SetLife(MAX_LIFE);
+	m_pPlayer->SetLifeOrigin(MAX_LIFE);
 }
 
 //==========================================================================
@@ -39,11 +41,16 @@ CPlayerStatus::~CPlayerStatus()
 //==========================================================================
 void CPlayerStatus::LifeDamage(const int nDmg)
 {
+	int nLife = m_pPlayer->GetLife();	// 体力
+
 	// 体力を減算
-	m_nLife -= nDmg;
+	nLife -= nDmg;
 
 	// 体力を補正
-	UtilFunc::Transformation::ValueNormalize(m_nLife, MAX_LIFE, MIN_LIFE);
+	UtilFunc::Transformation::ValueNormalize(nLife, MAX_LIFE, MIN_LIFE);
+
+	// 体力を反映
+	m_pPlayer->SetLife(nLife);
 }
 
 //==========================================================================
@@ -51,9 +58,14 @@ void CPlayerStatus::LifeDamage(const int nDmg)
 //==========================================================================
 void CPlayerStatus::LifeHeal(const int nHeal)
 {
+	int nLife = m_pPlayer->GetLife();	// 体力
+
 	// 体力を加算
-	m_nLife += nHeal;
+	nLife += nHeal;
 
 	// 体力を補正
-	UtilFunc::Transformation::ValueNormalize(m_nLife, MAX_LIFE, MIN_LIFE);
+	UtilFunc::Transformation::ValueNormalize(nLife, MAX_LIFE, MIN_LIFE);
+
+	// 体力を反映
+	m_pPlayer->SetLife(nLife);
 }

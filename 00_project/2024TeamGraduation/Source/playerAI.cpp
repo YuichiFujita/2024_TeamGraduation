@@ -1,17 +1,17 @@
 //=============================================================================
 // 
-//  ユーザープレイヤー処理 [playerUser.cpp]
+//  AIプレイヤー処理 [playerAI.cpp]
 //  Author : 藤田勇一
 // 
 //=============================================================================
-#include "playerUser.h"
+#include "playerAI.h"
 #include "manager.h"
 #include "calculation.h"
 
 // 使用クラス
 #include "playerStatus.h"
-#include "playercontrol_move.h"
-#include "playercontrol_action.h"
+#include "playerAIcontrol_move.h"
+#include "playerAIcontrol_action.h"
 
 //==========================================================================
 // 定数定義
@@ -24,7 +24,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUser::CPlayerUser()
+CPlayerAI::CPlayerAI()
 {
 	// パターン用インスタンス
 	m_pControlMove = nullptr;	// 移動操作
@@ -34,7 +34,7 @@ CPlayerUser::CPlayerUser()
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerUser::~CPlayerUser()
+CPlayerAI::~CPlayerAI()
 {
 	
 }
@@ -42,10 +42,10 @@ CPlayerUser::~CPlayerUser()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayerUser *CPlayerUser::Create(const int nIdx, const CGameManager::TeamSide team)
+CPlayerAI *CPlayerAI::Create(const int nIdx, const CGameManager::TeamSide team)
 {
 	// メモリの確保
-	CPlayerUser* pPlayer = DEBUG_NEW CPlayerUser;
+	CPlayerAI* pPlayer = DEBUG_NEW CPlayerAI;
 	if (pPlayer != nullptr)
 	{
 		// クラスの初期化
@@ -70,7 +70,7 @@ CPlayerUser *CPlayerUser::Create(const int nIdx, const CGameManager::TeamSide te
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CPlayerUser::Init()
+HRESULT CPlayerAI::Init()
 {
 	// 種類の設定
 	CObject::SetType(TYPE_OBJECTX);
@@ -80,8 +80,8 @@ HRESULT CPlayerUser::Init()
 	if (FAILED(hr)) { return E_FAIL; }
 
 	// 操作関連
-	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
+	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
 	return S_OK;
 }
@@ -89,7 +89,7 @@ HRESULT CPlayerUser::Init()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CPlayerUser::Uninit()
+void CPlayerAI::Uninit()
 {
 	// 親クラスの終了
 	CPlayer::Uninit();
@@ -98,7 +98,7 @@ void CPlayerUser::Uninit()
 //==========================================================================
 // 削除
 //==========================================================================
-void CPlayerUser::Kill()
+void CPlayerAI::Kill()
 {
 	// 親クラスの終了
 	CPlayer::Uninit();
@@ -107,7 +107,7 @@ void CPlayerUser::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPlayerUser::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 親クラスの更新
 	CPlayer::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -116,7 +116,7 @@ void CPlayerUser::Update(const float fDeltaTime, const float fDeltaRate, const f
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CPlayerUser::Draw()
+void CPlayerAI::Draw()
 {
 	// 親クラスの描画
 	CPlayer::Draw();
@@ -125,17 +125,17 @@ void CPlayerUser::Draw()
 //==========================================================================
 // 移動処理
 //==========================================================================
-void CPlayerUser::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAI::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 移動操作
-	m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+	// 移動操作	// TODO：AIむじ～
+	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
 	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
+void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
@@ -144,7 +144,7 @@ void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeActionControl(CPlayerControlAction* control)
+void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
 {
 	delete m_pControlAction;
 	m_pControlAction = control;
@@ -153,7 +153,7 @@ void CPlayerUser::ChangeActionControl(CPlayerControlAction* control)
 //==========================================================================
 // 操作関連削除
 //==========================================================================
-void CPlayerUser::DeleteControl()
+void CPlayerAI::DeleteControl()
 {
 	if (m_pControlMove != nullptr)
 	{// 移動操作

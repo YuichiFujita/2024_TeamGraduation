@@ -1,10 +1,10 @@
 //=============================================================================
 // 
-//  プレイヤーコントロール処理 [playercontrol.cpp]
-//  Author : 相馬靜雅
+//  プレイヤーAIコントロール_移動処理 [playerAIcontrol_move.cpp]
+//  Author : 藤田勇一
 // 
 //=============================================================================
-#include "playercontrol.h"
+#include "playerAIcontrol_move.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -25,7 +25,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerControlMove::CPlayerControlMove()
+CPlayerAIControlMove::CPlayerAIControlMove()
 {
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
 	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
@@ -37,7 +37,7 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 	// インプット情報取得
@@ -129,7 +129,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ダッシュ
 //==========================================================================
-void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -371,7 +371,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 //==========================================================================
 // 走り
 //==========================================================================
-void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (!m_bDash)
 	{
@@ -414,7 +414,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ウォーク
 //==========================================================================
-void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -550,7 +550,7 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
+CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;

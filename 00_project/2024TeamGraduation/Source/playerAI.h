@@ -1,12 +1,12 @@
 //=============================================================================
 // 
-//  ユーザープレイヤーヘッダー [playerUser.h]
+//  AIプレイヤーヘッダー [playerAI.h]
 //  Author : 藤田勇一
 // 
 //=============================================================================
 
-#ifndef _PLAYER_USER_
-#define _PLAYER_USER_		// 二重インクルード防止
+#ifndef _PLAYER_AI_
+#define _PLAYER_AI_		// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -16,22 +16,22 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CPlayerControlMove;	// 移動(操作)
-class CPlayerControlAction;	// アクション(操作)
+class CPlayerAIControlMove;		// 移動(AI)
+class CPlayerAIControlAction;	// アクション(AI)
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// ユーザープレイヤークラス
-class CPlayerUser : public CPlayer
+// AIプレイヤークラス
+class CPlayerAI : public CPlayer
 {
 public:
 	
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerUser();
-	~CPlayerUser();
+	CPlayerAI();
+	~CPlayerAI();
 
 	//=============================
 	// オーバーライド関数
@@ -49,8 +49,8 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
+	void ChangeMoveControl(CPlayerAIControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerAIControlAction* control);	// アクションの操作変更
 
 	//=============================
 	// 静的関数
@@ -60,7 +60,7 @@ public:
 		@details	プレイヤーインデックス
 		@details	チームサイド
 	*/
-	static CPlayerUser *Create(const int nIdx, const CGameManager::TeamSide team);
+	static CPlayerAI *Create(const int nIdx, const CGameManager::TeamSide team);
 
 private:
 
@@ -79,8 +79,8 @@ private:
 	//-----------------------------
 	// パターン用インスタンス
 	//-----------------------------
-	CPlayerControlMove* m_pControlMove;		// 移動操作
-	CPlayerControlAction* m_pControlAction;	// アクション操作
+	CPlayerAIControlMove* m_pControlMove;		// 移動操作
+	CPlayerAIControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif

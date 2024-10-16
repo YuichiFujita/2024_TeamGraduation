@@ -39,6 +39,12 @@ namespace
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 }
 
+namespace StateTime
+{
+	const float DAMAGE = 0.5f;		// 無敵
+	const float INVINCIBLE = 0.8f;	// ダメージ
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -252,13 +258,13 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print(
-		"------------------[プレイヤーの操作]------------------\n"
+		"------------------[プレイヤー%dの操作]------------------\n"
 		"位置：【X：%f, Y：%f, Z：%f】 【W / A / S / D】\n"
 		"向き：【X：%f, Y：%f, Z：%f】 【Z / C】\n"
 		"移動量：【X：%f, Y：%f, Z：%f】\n"
 		"体力：【%d】\n"
 		"状態：【%d】\n"
-		, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
+		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
 
 #endif
 
@@ -540,6 +546,9 @@ void CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return; }
 
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return; }
+
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
 	{ // キャッチアクション中だった場合
 
@@ -547,8 +556,6 @@ void CPlayer::Hit(CBall* pBall)
 		pBall->Catch(this);
 		return;
 	}
-
-	// TODO：無敵状態が出来たらここで確認
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
@@ -584,6 +591,8 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 {
 	// ダメージ受付時間更新
 	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
+
+	m_fStateTime += fDeltaTime * fDeltaRate * fSlowRate;
 
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
@@ -639,7 +648,10 @@ void CPlayer::StateNone()
 //==========================================================================
 void CPlayer::StateInvincible()
 {
-
+	if (m_fStateTime >= StateTime::INVINCIBLE)
+	{
+		SetState(STATE_NONE);
+	}
 }
 
 //==========================================================================
@@ -647,7 +659,10 @@ void CPlayer::StateInvincible()
 //==========================================================================
 void CPlayer::StateDamage()
 {
-	
+	if (m_fStateTime >= StateTime::DAMAGE)
+	{
+		SetState(STATE_INVINCIBLE);
+	}
 }
 
 //==========================================================================

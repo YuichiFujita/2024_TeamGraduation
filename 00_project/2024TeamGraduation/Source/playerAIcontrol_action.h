@@ -1,27 +1,30 @@
 //=============================================================================
 // 
-//  プレイヤーコントロールヘッダー [playercontrol_action.h]
-//  Author : 相馬靜雅
+//  プレイヤーAIコントロール_アクションヘッダー [playerAIcontrol_action.h]
+//  Author : 藤田勇一
 // 
 //=============================================================================
 
-#ifndef _PLAYERCONTROL_ACTION_H_
-#define _PLAYERCONTROL_ACTION_H_	// 二重インクルード防止
+#ifndef _PLAYERAI_CONTROL_ACTION_H_
+#define _PLAYERAI_CONTROL_ACTION_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include "player.h"
 
 //==========================================================================
-// プレイヤーコントロールクラス定義
+// プレイヤーAIコントロール_アクションクラス定義
 //==========================================================================
 //=============================
 // 移動
 //=============================
-class CPlayerControlAction
+class CPlayerAIControlAction
 {
 public:
 
 	// コンストラクタ
-	CPlayerControlAction();
+	CPlayerAIControlAction();
 
 	virtual void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ
 
@@ -40,6 +43,5 @@ private:
 	// メンバ変数
 	//=============================
 };
-
 
 #endif
