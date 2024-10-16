@@ -1221,8 +1221,8 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				return false;
 			}
 
-			if (posCylinder <= posCircle &&
-				posCylinder + heightCylinder >= posCircle)
+			if (posCylinder.y <= posCircle.y &&
+				posCylinder.y + heightCylinder >= posCircle.y)
 			{// ƒVƒŠƒ“ƒ_[‚Ì‚‚³ˆÈã
 				return true;
 			}

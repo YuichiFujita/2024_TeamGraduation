@@ -207,6 +207,7 @@ private:
 	void StateDamage();		// ダメージ
 	void StateDead();		// 死亡
 	void StateDeadWait();	// 死亡待機
+	void StateDodge();		// 回避
 
 	//-----------------------------
 	// その他関数
