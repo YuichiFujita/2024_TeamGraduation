@@ -1190,12 +1190,40 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		@param	fHeight2	[in]	‘ÎÛ2‚Ì‚‚³
 		@return	“–‚½‚Á‚½‚©‚Ìbool’l
 		*/
-		inline bool CylinderRange(MyLib::Vector3 pos1, MyLib::Vector3 pos2, float fRadius1, float fRadius2, float fHeight1, float fHeight2)
+		inline bool CylinderRange(const MyLib::Vector3& pos1, const MyLib::Vector3& pos2, float fRadius1, float fRadius2, float fHeight1, float fHeight2)
 		{
 			if (CircleRange3D(pos1, pos2, fHeight1, fHeight2) &&
 				pos1.y + fHeight1 >= pos2.y &&
 				pos1.y <= pos2.y + fHeight2)
 			{// ‰~‚Ì’†‚É“ü‚é && ‚‚³‚à‚Ô‚Â‚©‚é
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
+		@brief	‰~‚Æ‰~’Œ‚Ì“–‚½‚è”»’è(3D)
+		@param	posCircle		[in]	‰~‚ÌˆÊ’u
+		@param	posCylinder		[in]	‰~’Œ‚ÌˆÊ’u
+		@param	radiusCircle	[in]	‰~‚Ì”¼Œa
+		@param	radiusCylinder	[in]	‰~’Œ‚Ì”¼Œa
+		@param	heightCylinder	[in]	‰~’Œ‚Ì‚‚³
+		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		*/
+		inline bool CylinderCircleCylinder(
+			const MyLib::Vector3& posCircle, const MyLib::Vector3& posCylinder,
+			float radiusCircle, float radiusCylinder, float heightCylinder)
+		{
+			// ‚Ü‚¸‰~
+			if (!CircleRange3D(posCircle, posCylinder, radiusCircle, radiusCylinder))
+			{
+				return false;
+			}
+
+			if (posCylinder <= posCircle &&
+				posCylinder + heightCylinder >= posCircle)
+			{// ƒVƒŠƒ“ƒ_[‚Ì‚‚³ˆÈã
 				return true;
 			}
 

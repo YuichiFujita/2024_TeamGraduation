@@ -39,6 +39,12 @@ namespace
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 }
 
+namespace StateTime
+{
+	const float DAMAGE = 0.5f;		// 無敵
+	const float INVINCIBLE = 0.8f;	// ダメージ
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -585,6 +591,8 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	// ダメージ受付時間更新
 	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
+	m_fStateTime += fDeltaTime * fDeltaRate * fSlowRate;
+
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
 }
@@ -639,7 +647,10 @@ void CPlayer::StateNone()
 //==========================================================================
 void CPlayer::StateInvincible()
 {
-
+	if (m_fStateTime >= StateTime::INVINCIBLE)
+	{
+		SetState(STATE_NONE);
+	}
 }
 
 //==========================================================================
@@ -647,7 +658,10 @@ void CPlayer::StateInvincible()
 //==========================================================================
 void CPlayer::StateDamage()
 {
-	
+	if (m_fStateTime >= StateTime::DAMAGE)
+	{
+		SetState(STATE_INVINCIBLE);
+	}
 }
 
 //==========================================================================
