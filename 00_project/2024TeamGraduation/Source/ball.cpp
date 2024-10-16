@@ -227,6 +227,15 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 }
 
 //==========================================================================
+// 半径の取得処理
+//==========================================================================
+float CBall::GetRadius() const
+{
+	// 半径を返す
+	return RADIUS;
+}
+
+//==========================================================================
 // 生成状態の更新処理
 //==========================================================================
 void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -362,7 +371,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 			*pPos,
 			pPlayer->GetPosition(),
 			RADIUS,
-			10.0f	// TODO：プレイヤー半径
+			pPlayer->GetRadius()
 		);
 		if (bHit)
 		{ // 当たっていた場合
