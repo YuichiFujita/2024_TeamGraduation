@@ -24,6 +24,7 @@ public:
 
 	// 定数
 	static constexpr float FIELD_LIMIT = 0.0f;	// 地面Y座標
+	static constexpr float CENTER_LINE = 0.0f;	// センターラインX座標
 
 	// シーンの種類
 	enum SceneType
