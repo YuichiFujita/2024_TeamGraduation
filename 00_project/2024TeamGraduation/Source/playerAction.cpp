@@ -24,6 +24,7 @@ CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 {
 	&CPlayerAction::ActionNone,			// なし
 	&CPlayerAction::ActionBlink,		// ブリンク
+	&CPlayerAction::ActionDodge,		// 回避
 	&CPlayerAction::ActionRun,			// 走り
 	&CPlayerAction::ActionJump,			// ジャンプ
 	&CPlayerAction::ActionCatch,		// キャッチ
@@ -77,6 +78,11 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 		return;
 	}
 
+	if (!m_pPlayer->GetDamageInfo().bReceived)
+	{
+		return;
+	}
+
 	//回避判定
 	CListManager<CBall> sampleList = CBall::GetListObj();
 	std::list<CBall*>::iterator itr = sampleList.GetEnd();
@@ -86,11 +92,30 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pObj = (*itr);
 
-		//if (UtilFunc::Collision::CylinderCircleCylinder(m_pPlayer->GetPosition(), pObj->GetPosition(), m_pPlayer->GetRadius(), pObj->GetRadius()))
-		//{
-		//}
-	}
+		if (UtilFunc::Collision::CylinderCircleCylinder(
+			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetHeight()))
+		{
+			//ダメージ受付しない時間設定
+			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+			DmgInfo.reciveTime = 0.1f;
+			m_pPlayer->SetDamageInfo(DmgInfo);
 
+			SetAction(CPlayer::Action::ACTION_DODGE);
+			m_pPlayer->SetState(CPlayer::STATE_DODGE);
+			//m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
+		}
+	}
+}
+
+//==========================================================================
+// 回避
+//==========================================================================
+void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// 終了
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -106,7 +131,10 @@ void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->IsJump())
+	{// キャッチ猶予
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -125,7 +153,10 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// 終了
+		SetAction(CPlayer::Action::ACTION_NONE);
+	}
 }
 
 //==========================================================================
@@ -133,7 +164,10 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// ジャンプ移行
+		SetAction(CPlayer::Action::ACTION_JUMP);
+	}
 }
 
 //==========================================================================

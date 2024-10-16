@@ -148,20 +148,20 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	if (m_fInputInterval <= 0.0f)
 	{// 猶予受け付け終了中
 
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0 ||
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 				pKey->GetTrigger(DIK_W)))
 		{// 上
 			bInput = true;
 
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				pPad->GetStickMoveL(0).x < 0 ||
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左上
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				pPad->GetStickMoveL(0).x > 0 ||
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右上
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
@@ -171,20 +171,20 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;
 			}
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0 ||
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 				pKey->GetTrigger(DIK_S)))
 		{// 下
 			bInput = true;
 
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				pPad->GetStickMoveL(0).x < 0 ||
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左下
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				pPad->GetStickMoveL(0).x > 0 ||
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右下
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
@@ -194,20 +194,20 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_DOWN;
 			}
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0 ||
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 				pKey->GetTrigger(DIK_D)))
 		{// 右
 			bInput = true;
 
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				pPad->GetStickMoveL(0).y < 0 ||
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 右上
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				pPad->GetStickMoveL(0).y > 0 ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 右下
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
@@ -217,20 +217,20 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHT;
 			}
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0 ||
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 				pKey->GetTrigger(DIK_A)))
 		{// 左
 			bInput = true;
 
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				pPad->GetStickMoveL(0).y < 0 ||
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 左上
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				pPad->GetStickMoveL(0).y > 0 ||
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+				pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 左下
 				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
@@ -258,14 +258,14 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 		switch (m_HoldDashAngle)
 		{
 		case CPlayer::DashAngle::ANGLE_LEFT:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0))
 			{// 上
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0))
 			{// 下
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
@@ -273,14 +273,14 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 			break;
 
 		case CPlayer::DashAngle::ANGLE_RIGHT:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0))
 			{// 上
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0))
 			{// 下
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
@@ -288,14 +288,14 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 			break;
 
 		case CPlayer::DashAngle::ANGLE_UP:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0))
 			{// 左
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0))
 			{// 右
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
@@ -303,14 +303,14 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 			break;
 
 		case CPlayer::DashAngle::ANGLE_DOWN:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0))
 			{// 左
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
 			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0))
 			{// 右
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
@@ -386,16 +386,16 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) &&
+	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_W);
 
-	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) &&
+	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_S);
 
-	bool bRight = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) &&
+	bool bRight = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_D);
 
-	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) &&
+	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_A);
 
 	bool bStick = pPad->IsTipStick();
@@ -427,20 +427,20 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	CPlayer::DashAngle angle;
 	bool bInput = false;
 
-	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-		pPad->GetStickMoveL(0).y > 0 ||
+	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+		pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 		pKey->GetPress(DIK_W))
 	{// 上
 		bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			pPad->GetStickMoveL(0).x < 0 ||
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 			pKey->GetPress(DIK_A))
 		{// 左上
 			angle = CPlayer::DashAngle::ANGLE_LEFTUP;
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			pPad->GetStickMoveL(0).x > 0 ||
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 			pKey->GetPress(DIK_D))
 		{// 右上
 			angle = CPlayer::DashAngle::ANGLE_RIGHTUP;
@@ -450,20 +450,20 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 			angle = CPlayer::DashAngle::ANGLE_UP;
 		}
 	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-		pPad->GetStickMoveL(0).y < 0 ||
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+		pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 		pKey->GetPress(DIK_S))
 	{// 下
 		bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			pPad->GetStickMoveL(0).x < 0 ||
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 			pKey->GetPress(DIK_A))
 		{// 左下
 			angle = CPlayer::DashAngle::ANGLE_LEFTDW;
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			pPad->GetStickMoveL(0).x > 0 ||
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 			pKey->GetPress(DIK_D))
 		{// 右下
 			angle = CPlayer::DashAngle::ANGLE_RIGHTDW;
@@ -473,20 +473,20 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 			angle = CPlayer::DashAngle::ANGLE_DOWN;
 		}
 	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-		pPad->GetStickMoveL(0).x > 0 ||
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) ||
+		pPad->GetStickMoveL(player->GetMyPlayerIdx()).x > 0 ||
 		pKey->GetPress(DIK_D))
 	{// 右
 		bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			pPad->GetStickMoveL(0).y < 0 ||
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 			pKey->GetPress(DIK_W))
 		{// 右上
 			angle = CPlayer::DashAngle::ANGLE_RIGHTUP;
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			pPad->GetStickMoveL(0).y > 0 ||
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 			pKey->GetPress(DIK_S))
 		{// 右下
 			angle = CPlayer::DashAngle::ANGLE_RIGHTDW;
@@ -496,20 +496,20 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 			angle = CPlayer::DashAngle::ANGLE_RIGHT;
 		}
 	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-		pPad->GetStickMoveL(0).x < 0 ||
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) ||
+		pPad->GetStickMoveL(player->GetMyPlayerIdx()).x < 0 ||
 		pKey->GetPress(DIK_A))
 	{// 左
 		bInput = true;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			pPad->GetStickMoveL(0).y < 0 ||
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).y < 0 ||
 			pKey->GetPress(DIK_W))
 		{// 左上
 			angle = CPlayer::DashAngle::ANGLE_LEFTUP;
 		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			pPad->GetStickMoveL(0).y > 0 ||
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) ||
+			pPad->GetStickMoveL(player->GetMyPlayerIdx()).y > 0 ||
 			pKey->GetPress(DIK_S))
 		{// 左下
 			angle = CPlayer::DashAngle::ANGLE_LEFTDW;

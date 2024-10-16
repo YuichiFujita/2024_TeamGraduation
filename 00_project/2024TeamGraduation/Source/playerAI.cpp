@@ -42,7 +42,7 @@ CPlayerAI::~CPlayerAI()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayerAI *CPlayerAI::Create(const int nIdx, const CGameManager::TeamSide team)
+CPlayerAI *CPlayerAI::Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos)
 {
 	// メモリの確保
 	CPlayerAI* pPlayer = DEBUG_NEW CPlayerAI;
@@ -57,11 +57,11 @@ CPlayerAI *CPlayerAI::Create(const int nIdx, const CGameManager::TeamSide team)
 			return nullptr;
 		}
 
-		// プレイヤーインデックスを設定
-		pPlayer->SetMyPlayerIdx(nIdx);
-
 		// チームサイドを設定
 		pPlayer->GetStatus()->SetTeam(team);
+
+		// 位置を設定
+		pPlayer->SetPosition(rPos);
 	}
 
 	return pPlayer;
@@ -127,9 +127,9 @@ void CPlayerAI::Draw()
 //==========================================================================
 void CPlayerAI::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 移動操作
+	// 移動操作	// TODO：AIむじ～
 	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	//m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
