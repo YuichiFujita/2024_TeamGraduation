@@ -62,6 +62,7 @@ public:
 		STATE_DMG,			// ダメージ
 		STATE_DEAD,			// 死
 		STATE_DEADWAIT,		// 死亡待機
+		STATE_DODGE,		// 回避
 		STATE_MAX
 	};
 
@@ -70,6 +71,7 @@ public:
 	{
 		ACTION_NONE = 0,	// 通常
 		ACTION_BLINK,		// ブリンク
+		ACTION_DODGE,		// 回避
 		ACTION_RUN,			// 走り
 		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ

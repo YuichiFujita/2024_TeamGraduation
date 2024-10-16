@@ -41,6 +41,7 @@ private:
 	// 状態系
 	void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なし
 	void ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ブリンク
+	void ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回避
 	void ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 走り
 	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ジャンプ
 	void ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
