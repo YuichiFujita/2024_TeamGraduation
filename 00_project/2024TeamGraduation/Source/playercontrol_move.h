@@ -1,12 +1,12 @@
 //=============================================================================
 // 
-//  プレイヤーコントロールヘッダー [playercontrol.h]
+//  プレイヤーコントロールヘッダー [playercontrol_move.h]
 //  Author : 相馬靜雅
 // 
 //=============================================================================
 
-#ifndef _PLAYERCONTROL_H_
-#define _PLAYERCONTROL_H_	// 二重インクルード防止
+#ifndef _PLAYERCONTROL_MOVE_H_
+#define _PLAYERCONTROL_MOVE_H_	// 二重インクルード防止
 
 #define BRESSRANGE (0)
 

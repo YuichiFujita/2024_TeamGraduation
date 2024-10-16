@@ -1,10 +1,10 @@
 //=============================================================================
 // 
-//  プレイヤーコントロール処理 [playercontrol.cpp]
+//  プレイヤーコントロール処理 [playercontrol_move.cpp]
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playercontrol.h"
+#include "playercontrol_move.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
