@@ -18,12 +18,10 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CShadow;				// 影
-class CPlayerControlMove;	// 移動(操作)
-class CPlayerControlAction;	// アクション(操作)
-class CPlayerAction;		// アクション
-class CPlayerStatus;		// ステータス
-class CBall;				// ボール
+class CShadow;			// 影
+class CPlayerAction;	// アクション
+class CPlayerStatus;	// ステータス
+class CBall;			// ボール
 
 //==========================================================================
 // クラス定義
@@ -62,6 +60,7 @@ public:
 		STATE_DMG,			// ダメージ
 		STATE_DEAD,			// 死
 		STATE_DEADWAIT,		// 死亡待機
+		STATE_DODGE,		// 回避
 		STATE_MAX
 	};
 
@@ -70,6 +69,7 @@ public:
 	{
 		ACTION_NONE = 0,	// 通常
 		ACTION_BLINK,		// ブリンク
+		ACTION_DODGE,		// 回避
 		ACTION_RUN,			// 走り
 		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ

@@ -14,6 +14,12 @@
 #include "player.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerControlMove;	// 移動(操作)
+class CPlayerControlAction;	// アクション(操作)
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // ユーザープレイヤークラス
@@ -54,7 +60,7 @@ public:
 		@details	プレイヤーインデックス
 		@details	チームサイド
 	*/
-	static CPlayerUser *Create(const int nIdx, const CGameManager::TeamSide team);
+	static CPlayerUser *Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos);
 
 private:
 

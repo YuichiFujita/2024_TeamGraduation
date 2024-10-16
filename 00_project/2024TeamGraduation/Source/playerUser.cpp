@@ -42,7 +42,7 @@ CPlayerUser::~CPlayerUser()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayerUser *CPlayerUser::Create(const int nIdx, const CGameManager::TeamSide team)
+CPlayerUser *CPlayerUser::Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos)
 {
 	// メモリの確保
 	CPlayerUser* pPlayer = DEBUG_NEW CPlayerUser;
@@ -57,11 +57,11 @@ CPlayerUser *CPlayerUser::Create(const int nIdx, const CGameManager::TeamSide te
 			return nullptr;
 		}
 
-		// プレイヤーインデックスを設定
-		pPlayer->SetMyPlayerIdx(nIdx);
-
 		// チームサイドを設定
 		pPlayer->GetStatus()->SetTeam(team);
+
+		// 位置を設定
+		pPlayer->SetPosition(rPos);
 	}
 
 	return pPlayer;

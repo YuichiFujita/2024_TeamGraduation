@@ -124,6 +124,9 @@ HRESULT CPlayer::Init()
 		return E_FAIL;
 	}
 
+	// プレイヤーインデックス番号を設定
+	m_nMyPlayerIdx = m_List.GetNumAll();
+
 	// 割り当て
 	m_List.Regist(this);
 
@@ -546,6 +549,9 @@ void CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return; }
 
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return; }
+
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
 	{ // キャッチアクション中だった場合
 
@@ -553,8 +559,6 @@ void CPlayer::Hit(CBall* pBall)
 		pBall->Catch(this);
 		return;
 	}
-
-	// TODO：無敵状態が出来たらここで確認
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
@@ -602,31 +606,12 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	m_sDamageInfo.bReceived = false;
+
 	// ダメージ受け付け時間減算
 	m_sDamageInfo.reciveTime -= fDeltaTime;
 	if (m_sDamageInfo.reciveTime <= 0.0f)
 	{
-		// スーパーアーマーがない時はダメージモーション終了
-		if (!m_sDamageInfo.bActiveSuperArmor &&
-			!m_sDamageInfo.bReceived)
-		{
-			// なにもない状態にする
-			m_state = STATE_NONE;
-
-			// モーション取得
-			CMotion* pMotion = GetMotion();
-			if (pMotion == nullptr)
-			{
-				return;
-			}
-			pMotion->ToggleFinish(true);
-		}
-
-		if (!m_sDamageInfo.bReceived)
-		{// 受け付け無い時
-
-		}
-
 		// ダメージ受け付け判定
 		m_sDamageInfo.bReceived = true;
 		m_sDamageInfo.reciveTime = 0.0f;

@@ -14,6 +14,12 @@
 #include "player.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerAIControlMove;		// 移動(AI)
+class CPlayerAIControlAction;	// アクション(AI)
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // AIプレイヤークラス
@@ -43,8 +49,8 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
+	void ChangeMoveControl(CPlayerAIControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerAIControlAction* control);	// アクションの操作変更
 
 	//=============================
 	// 静的関数
@@ -54,7 +60,7 @@ public:
 		@details	プレイヤーインデックス
 		@details	チームサイド
 	*/
-	static CPlayerAI *Create(const int nIdx, const CGameManager::TeamSide team);
+	static CPlayerAI *Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos);
 
 private:
 
@@ -73,8 +79,8 @@ private:
 	//-----------------------------
 	// パターン用インスタンス
 	//-----------------------------
-	CPlayerControlMove* m_pControlMove;		// 移動操作
-	CPlayerControlAction* m_pControlAction;	// アクション操作
+	CPlayerAIControlMove* m_pControlMove;		// 移動操作
+	CPlayerAIControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif
