@@ -57,6 +57,8 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 	if (pPlayerAction == nullptr) return;
 	CPlayer::Action action = pPlayerAction->GetAction();
 
+	// TODO：操作はAIにいるのか問題
+#if 0
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -75,6 +77,21 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 
 	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
 	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
+#else
+	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
+		player->IsPossibleMove())
+	{// 移動可能モーションの時
+
+		//--------------------------
+		// アクション操作
+		//--------------------------
+		if (action != CPlayer::Action::ACTION_BLINK)
+		{
+			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
+			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
+		}
+	}
+#endif
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
@@ -94,8 +111,14 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if 0
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
+#else
+	// TODO：全自動キャッチ機構
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
+#endif
 	{
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
@@ -117,8 +140,13 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if 0
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
+#else
+	// ボタン
+	if (ImGui::Button("PlayerAI : ThrowBall"))
+#endif
 	{
 		// アクションパターン変更
 		if (player->IsJump())
