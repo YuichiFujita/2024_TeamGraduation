@@ -546,6 +546,9 @@ void CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return; }
 
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return; }
+
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
 	{ // キャッチアクション中だった場合
 
@@ -553,8 +556,6 @@ void CPlayer::Hit(CBall* pBall)
 		pBall->Catch(this);
 		return;
 	}
-
-	// TODO：無敵状態が出来たらここで確認
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
