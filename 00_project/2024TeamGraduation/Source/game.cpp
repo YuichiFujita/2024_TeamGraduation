@@ -15,11 +15,11 @@
 #include "texture.h"
 
 #include "input.h"
-#include "player.h"
 #include "map.h"
 #include "sound.h"
 
 #include "playerUser.h"
+#include "playerAI.h"
 #include "ball.h"
 #include "particle.h"
 #include "myeffekseer.h"
@@ -112,9 +112,14 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 1000.0f, 0.0f));
 
 	// ÉLÉÉÉâê∂ê¨
-	for (int nCntPlayer = 0; nCntPlayer < 1; nCntPlayer++)
+	if (CPlayerUser::Create(0, CGameManager::SIDE_LEFT) == nullptr)
 	{
-		if (CPlayerUser::Create(nCntPlayer) == nullptr)
+		return E_FAIL;
+	}
+
+	for (int nCntPlayer = 1; nCntPlayer < 2; nCntPlayer++)
+	{
+		if (CPlayerAI::Create(nCntPlayer, CGameManager::SIDE_RIGHT) == nullptr)
 		{
 			return E_FAIL;
 		}

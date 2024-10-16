@@ -242,6 +242,7 @@
     <ClCompile Include="Source\pause_tutorial.cpp" />
     <ClCompile Include="Source\player.cpp" />
     <ClCompile Include="Source\playerAction.cpp" />
+    <ClCompile Include="Source\playerAI.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
@@ -360,6 +361,7 @@
     <ClInclude Include="Source\pause_tutorial.h" />
     <ClInclude Include="Source\player.h" />
     <ClInclude Include="Source\playerAction.h" />
+    <ClInclude Include="Source\playerAI.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />

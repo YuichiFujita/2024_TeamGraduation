@@ -20,7 +20,7 @@ namespace
 //==========================================================================
 CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
 	m_pPlayer	(pPlayer),					// プレイヤーのポインタ
-	m_typeTeam	(CGameManager::SIDE_LEFT),	// チームサイド	// TODO：CreateでPlayerの引数に追加しよう
+	m_typeTeam	(CGameManager::SIDE_NONE),	// チームサイド
 	m_nLife		(MAX_LIFE)					// 体力
 {
 

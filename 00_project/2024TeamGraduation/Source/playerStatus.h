@@ -35,7 +35,9 @@ public:
 	// メンバ関数
 	//=============================
 	void BindPlayer(CPlayer* pPlayer)	{ m_pPlayer = pPlayer; }	// プレイヤー割当
-	CGameManager::TeamSide GetTeam()	{ return m_typeTeam; }		// チームサイド取得
+
+	void SetTeam(const CGameManager::TeamSide team) { m_typeTeam = team; }	// チームサイド設定
+	CGameManager::TeamSide GetTeam()	{ return m_typeTeam; }				// チームサイド取得
 	void LifeDamage(const int nDmg);	// 体力減算
 	void LifeHeal(const int nHeal);		// 体力加算
 
