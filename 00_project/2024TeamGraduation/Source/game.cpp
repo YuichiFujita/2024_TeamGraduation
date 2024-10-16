@@ -111,15 +111,18 @@ HRESULT CGame::Init()
 	// ボール生成
 	CBall::Create(MyLib::Vector3(0.0f, 1000.0f, 0.0f));
 
-	// キャラ生成
-	if (CPlayerUser::Create(0, CGameManager::SIDE_LEFT) == nullptr)
+	// プレイヤーUser生成
+	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-500.0f, 0.0f, 0.0f));
+	if (pUser == nullptr)
 	{
 		return E_FAIL;
 	}
 
-	for (int nCntPlayer = 1; nCntPlayer < 2; nCntPlayer++)
+	// プレイヤーAI生成
+	for (int i = 0; i < 1; i++)
 	{
-		if (CPlayerAI::Create(nCntPlayer, CGameManager::SIDE_RIGHT) == nullptr)
+		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(500.0f, 0.0f, 0.0f));
+		if (pAI == nullptr)
 		{
 			return E_FAIL;
 		}

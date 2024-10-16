@@ -124,6 +124,9 @@ HRESULT CPlayer::Init()
 		return E_FAIL;
 	}
 
+	// プレイヤーインデックス番号を設定
+	m_nMyPlayerIdx = m_List.GetNumAll();
+
 	// 割り当て
 	m_List.Regist(this);
 

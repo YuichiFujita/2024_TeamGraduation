@@ -60,7 +60,7 @@ public:
 		@details	プレイヤーインデックス
 		@details	チームサイド
 	*/
-	static CPlayerAI *Create(const int nIdx, const CGameManager::TeamSide team);
+	static CPlayerAI *Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos);
 
 private:
 
