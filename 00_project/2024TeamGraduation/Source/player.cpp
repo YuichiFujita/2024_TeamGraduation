@@ -252,13 +252,13 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print(
-		"------------------[プレイヤーの操作]------------------\n"
+		"------------------[プレイヤー%dの操作]------------------\n"
 		"位置：【X：%f, Y：%f, Z：%f】 【W / A / S / D】\n"
 		"向き：【X：%f, Y：%f, Z：%f】 【Z / C】\n"
 		"移動量：【X：%f, Y：%f, Z：%f】\n"
 		"体力：【%d】\n"
 		"状態：【%d】\n"
-		, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
+		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.y, move.x, move.y, move.z, GetLife(), m_state);
 
 #endif
 

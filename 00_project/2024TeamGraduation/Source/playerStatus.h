@@ -47,9 +47,7 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pPlayer;	// プレイヤーのポインタ
-
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
-	int m_nLife;	// 体力
 };
 
 #endif

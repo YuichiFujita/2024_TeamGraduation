@@ -75,6 +75,12 @@
     <Filter Include="ingame">
       <UniqueIdentifier>{fe8bbf2f-bf3b-4e81-8e27-636f5f5ecac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerAI">
+      <UniqueIdentifier>{03736502-bcc3-436d-9943-22ede4caa308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player\playerUser">
+      <UniqueIdentifier>{c21ef06f-4c30-4058-9798-68b3ead98ff0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -272,9 +278,6 @@
     <ClCompile Include="Source\player.cpp">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playercontrol.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\pause.cpp">
       <Filter>pause</Filter>
     </ClCompile>
@@ -398,14 +401,20 @@
     <ClCompile Include="Source\playerStatus.cpp">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playercontrol_action.cpp">
-      <Filter>player</Filter>
+    <ClCompile Include="Source\playerAI.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_action.cpp">
+      <Filter>player\playerAI</Filter>
     </ClCompile>
     <ClCompile Include="Source\playerUser.cpp">
-      <Filter>player</Filter>
+      <Filter>player\playerUser</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerAI.cpp">
-      <Filter>player</Filter>
+    <ClCompile Include="Source\playercontrol.cpp">
+      <Filter>player\playerUser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol_action.cpp">
+      <Filter>player\playerUser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -604,9 +613,6 @@
     <ClInclude Include="Source\player.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playercontrol.h">
-      <Filter>player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\pause.h">
       <Filter>pause</Filter>
     </ClInclude>
@@ -742,14 +748,20 @@
     <ClInclude Include="Source\playerStatus.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playercontrol_action.h">
-      <Filter>player</Filter>
+    <ClInclude Include="Source\playerAI.h">
+      <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_action.h">
+      <Filter>player\playerAI</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerUser.h">
-      <Filter>player</Filter>
+      <Filter>player\playerUser</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerAI.h">
-      <Filter>player</Filter>
+    <ClInclude Include="Source\playercontrol_action.h">
+      <Filter>player\playerUser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol.h">
+      <Filter>player\playerUser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
