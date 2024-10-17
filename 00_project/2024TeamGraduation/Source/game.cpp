@@ -109,7 +109,7 @@ HRESULT CGame::Init()
 	// プレイヤー
 	//**********************************
 	// ボール生成
-	CBall::Create(MyLib::Vector3(0.0f, 1000.0f, 0.0f));
+	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
 	// プレイヤーUser生成
 	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));

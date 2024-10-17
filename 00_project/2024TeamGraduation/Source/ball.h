@@ -110,6 +110,7 @@ private:
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
 	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
+	CPlayer* CollisionThrow(void);	// ホーミング対象との当たり判定
 	void Throw(CPlayer* pPlayer);	// 投げ
 	void Fall(void);	// 落下
 
@@ -122,9 +123,11 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pPlayer;	// プレイヤー情報
+	CPlayer* m_pTarget;	// ホーミングターゲット情報
+	float m_fMoveSpeed;	// 移動速度
+	float m_fGravity;	// 重力
 
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
-	CPlayer* m_pTarget;	// ホーミングターゲット情報
 	EAttack m_typeAtk;	// 攻撃種類
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態カウンター
