@@ -79,7 +79,7 @@ void CPlayerAIControlMove::Operate(CPlayer* player, const float fDeltaTime, cons
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		!player->IsPossibleMove())
+		player->IsPossibleMove())
 	{// ˆÚ“®‰Â”\ƒ‚[ƒVƒ‡ƒ“‚ÌŽž
 
 		//--------------------------

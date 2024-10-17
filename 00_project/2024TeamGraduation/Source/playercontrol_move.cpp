@@ -79,7 +79,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		!player->IsPossibleMove())
+		player->IsPossibleMove())
 	{// 移動可能モーションの時
 
 		//--------------------------
@@ -116,13 +116,10 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			}
 		}
 	}
-
-	// モーションフラグ設定
-	player->SetMotionFrag(motionFrag);
 }
 
 //==========================================================================
-// ダッシュ
+// ブリンク
 //==========================================================================
 void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -381,6 +378,8 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
+	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
+
 	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_W);
 
@@ -399,11 +398,18 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	{
 		m_bDash = false;
 	}
+	else
+	{
+		motionFrag.bMove = true;
+		player->SetEnableDash(true);
+	}
 
 	ImGui::Checkbox("UP", &bUP);
 	ImGui::Checkbox("Down", &bDown);
 	ImGui::Checkbox("Right", &bRight);
 	ImGui::Checkbox("Left", &bLeft);
+
+	player->SetMotionFrag(motionFrag);
 }
 
 //==========================================================================
