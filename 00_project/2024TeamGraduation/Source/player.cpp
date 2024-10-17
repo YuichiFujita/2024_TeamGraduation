@@ -568,8 +568,16 @@ void CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	SetState(STATE_DMG);
-	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	if (GetLife() <= 0)
+	{
+		SetState(STATE_DEAD);
+	}
+	else
+	{
+		SetState(STATE_DMG);
+		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	}
+
 
 	return;
 }

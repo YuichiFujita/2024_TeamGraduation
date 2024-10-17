@@ -95,10 +95,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 
 		Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
 
-		// 移動中にする
-		motionFrag.bMove = true;
-
-
 		// ジャンプ状況取得
 		bool bJump = player->IsJump();
 
@@ -119,7 +115,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 				pMotion->Set(CPlayer::MOTION::MOTION_WALK);
 			}
 		}
-
 	}
 
 	// モーションフラグ設定
@@ -424,6 +419,8 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
+	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
+
 	CPlayer::DashAngle angle;
 	bool bInput = false;
 
@@ -524,6 +521,9 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	{
 		return;
 	}
+	
+	// 移動中にする
+	motionFrag.bMove = true;
 
 	// 移動量取得
 	float fMove = player->GetVelocity();
@@ -545,6 +545,11 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 
 	// 向き設定
 	player->SetRotDest(angle * division + D3DX_PI + Camerarot.y);
+
+	player->SetMove(move);
+
+	// モーションフラグ設定
+	player->SetMotionFrag(motionFrag);
 }
 
 //==========================================================================
