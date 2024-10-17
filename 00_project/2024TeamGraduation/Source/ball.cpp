@@ -366,7 +366,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
-		bool bHit = UtilFunc::Collision::CylinderCircleCylinder
+		bool bHit = UtilFunc::Collision::CollisionCircleCylinder
 		( // 引数
 			*pPos + MyLib::Vector3(0.0f, -RADIUS, 0.0f),
 			pPlayer->GetPosition(),
