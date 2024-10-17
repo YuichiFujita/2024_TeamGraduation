@@ -115,9 +115,10 @@ public:
 		bool bDead;			// 死亡中
 		bool bMove;			// 移動中
 		bool bBlink;		// ブリンク
+		bool bCatch;		// キャッチ
 
 		// コンストラクタ
-		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false) {}
+		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false), bCatch(false) {}
 	};
 
 	// ダッシュ情報
