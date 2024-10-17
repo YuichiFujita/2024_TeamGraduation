@@ -143,8 +143,6 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		}
 		else
 		{
-			pBall->ThrowNormal(player);
-		
 			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
