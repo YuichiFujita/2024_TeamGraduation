@@ -35,7 +35,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
@@ -79,6 +79,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_posKnokBack = MyLib::Vector3();	// ノックバックの位置
 
 	// 行動フラグ
+	m_bPossibleMove = false;		// 移動可能フラグ
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
@@ -117,6 +118,7 @@ HRESULT CPlayer::Init()
 	m_state = STATE_NONE;	// 状態
 	m_Oldstate = m_state;
 	m_sMotionFrag.bMove = true;
+	m_bPossibleMove = true;
 
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
@@ -286,11 +288,12 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGame::GetInstance()->GetGameManager()->IsControll())
+	if (CGame::GetInstance()->GetGameManager()->IsControll() &&
+		m_bPossibleMove)
 	{// 行動できるとき
 
-		// 移動
-		Move(fDeltaTime, fDeltaRate, fSlowRate);
+		// 操作
+		Operate(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -385,7 +388,8 @@ void CPlayer::MotionSet()
 		// 移動モーション
 		if (m_bDash)
 		{// ダッシュモーション
-
+			m_bDash = false;
+			pMotion->Set(MOTION_RUN);
 		}
 		else
 		{// 歩行モーション
@@ -436,7 +440,13 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_WALK:
+	case MOTION::MOTION_THROW:
+		
+		if (m_pBall != nullptr)
+		{
+			m_pBall->ThrowNormal(this);
+		}
+
 		break;
 
 	default:
@@ -473,6 +483,9 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 		return;
 	}
+
+
+
 
 	
 }
@@ -555,7 +568,7 @@ void CPlayer::Hit(CBall* pBall)
 	if (!m_sDamageInfo.bReceived) { return; }
 
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
-	{ // キャッチアクション中だった場合
+	{ // キャッチアクション中だった場合		//TODO:TAKADA: キャッチの条件変わる予定
 
 		// ボールをキャッチ
 		pBall->Catch(this);
@@ -566,8 +579,16 @@ void CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	SetState(STATE_DMG);
-	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	if (GetLife() <= 0)
+	{
+		SetState(STATE_DEAD);
+	}
+	else
+	{
+		SetState(STATE_DMG);
+		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	}
+
 
 	return;
 }

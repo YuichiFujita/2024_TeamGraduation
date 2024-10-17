@@ -10,11 +10,17 @@
 #include "input.h"
 #include "camera.h"
 #include "ball.h"
+#include "playerStatus.h"
+
+namespace
+{
+	const float DODGE_SLOW = 0.8f;		//回避時スロー値
+}
 
 namespace ActionTime
 {
 	const float BLINK = 0.2f;		// ブリンク時間
-	const float CATCH = 0.5f;		// キャッチ時間
+	const float DODGE = 0.5f;		// 回避時間
 }
 
 //==========================================================================
@@ -71,6 +77,11 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 {
 	if (m_fActionTime >= ActionTime::BLINK)
 	{// ブリンク経過
+		
+		CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+		DmgInfo.reciveTime = 0.0f;
+		m_pPlayer->SetDamageInfo(DmgInfo);
+
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
 
@@ -79,10 +90,10 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 		return;
 	}
 
-	if (!m_pPlayer->GetDamageInfo().bReceived)
-	{
-		return;
-	}
+	//ダメージ受付しない時間設定
+	CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	DmgInfo.reciveTime = 0.1f;
+	m_pPlayer->SetDamageInfo(DmgInfo);
 
 	//回避判定
 	CListManager<CBall> sampleList = CBall::GetListObj();
@@ -93,8 +104,14 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pObj = (*itr);
 
+		if (pObj->GetState() != CBall::STATE_THROW ||
+			pObj->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())
+		{
+			return;
+		}
+
 		if (UtilFunc::Collision::CollisionCircleCylinder(
-			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetDodgeDistance(), m_pPlayer->GetHeight()))
+			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetHeight()))
 		{
 			//ダメージ受付しない時間設定
 			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
@@ -103,10 +120,11 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 
 			//スロー
 			float fRate = GET_MANAGER->GetSlowRate();
-			fRate -= 0.2f;
+			fRate -= DODGE_SLOW;
 			UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 			GET_MANAGER->SetSlowRate(fRate);
 
+			m_pPlayer->SetEnableMove(true);
 			SetAction(CPlayer::Action::ACTION_DODGE);
 			m_pPlayer->SetState(CPlayer::STATE_DODGE);
 			//m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
@@ -123,14 +141,17 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 	DmgInfo.reciveTime = 0.1f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
-	if (m_pPlayer->GetMotion()->IsFinish())
+	//if (m_pPlayer->GetMotion()->IsFinish())
+	if (m_fActionTime >= ActionTime::DODGE)
 	{// 終了
+
 		//スロー
 		float fRate = GET_MANAGER->GetSlowRate();
-		fRate -= 0.2f;
+		fRate += DODGE_SLOW;
 		UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 		GET_MANAGER->SetSlowRate(fRate);
 
+		m_pPlayer->SetEnableMove(false);
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
 }
@@ -159,7 +180,7 @@ void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fActionTime >= ActionTime::CATCH)
+	if (m_pPlayer->GetMotion()->IsFinish())
 	{// キャッチ猶予
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}

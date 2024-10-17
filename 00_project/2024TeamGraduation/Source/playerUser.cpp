@@ -123,9 +123,9 @@ void CPlayerUser::Draw()
 }
 
 //==========================================================================
-// ˆÚ“®ˆ—
+// ‘€ìˆ—
 //==========================================================================
-void CPlayerUser::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ˆÚ“®‘€ì
 	m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);

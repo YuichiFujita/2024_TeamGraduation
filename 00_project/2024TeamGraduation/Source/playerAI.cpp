@@ -123,9 +123,9 @@ void CPlayerAI::Draw()
 }
 
 //==========================================================================
-// ˆÚ“®ˆ—
+// ‘€ìˆ—
 //==========================================================================
-void CPlayerAI::Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAI::Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ˆÚ“®‘€ì	// TODOFAI‚Þ‚¶`
 	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);

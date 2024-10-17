@@ -34,7 +34,7 @@ public:
 	// コンストラクタ
 	CPlayerAIControlMove();
 
-	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
+	virtual void Operate(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
 
 private:
 	
