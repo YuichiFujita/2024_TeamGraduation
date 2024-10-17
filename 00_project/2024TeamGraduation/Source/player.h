@@ -178,6 +178,11 @@ public:
 	void DeadSetting(MyLib::HitResult_Character* result);		// 死亡設定
 	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
 
+	//=============================
+	// 定数
+	//=============================
+	float GetDodgeDistance();		//回避範囲取得
+
 protected:
 	//=============================
 	// メンバ関数
@@ -207,6 +212,7 @@ private:
 	void StateDamage();		// ダメージ
 	void StateDead();		// 死亡
 	void StateDeadWait();	// 死亡待機
+	void StateDodge();		// 回避
 
 	//-----------------------------
 	// その他関数

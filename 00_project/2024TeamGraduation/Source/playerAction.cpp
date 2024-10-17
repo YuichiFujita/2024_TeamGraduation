@@ -11,11 +11,12 @@
 #include "camera.h"
 #include "ball.h"
 
-namespace
+namespace ActionTime
 {
-	const float TIME_BLINK = 0.2f;		// ブリンク時間
-	const float TIME_CATCH = 0.5f;		// キャッチ時間
+	const float BLINK = 0.2f;		// ブリンク時間
+	const float CATCH = 0.5f;		// キャッチ時間
 }
+
 
 //==========================================================================
 // 関数ポインタ
@@ -68,7 +69,7 @@ void CPlayerAction::ActionNone(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fActionTime >= TIME_BLINK)
+	if (m_fActionTime >= ActionTime::BLINK)
 	{// ブリンク経過
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
@@ -92,12 +93,12 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pObj = (*itr);
 
-		if (UtilFunc::Collision::CylinderCircleCylinder(
-			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetHeight()))
+		if (UtilFunc::Collision::CollisionCircleCylinder(
+			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetDodgeDistance(), m_pPlayer->GetHeight()))
 		{
 			//ダメージ受付しない時間設定
 			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
-			DmgInfo.reciveTime = 0.1f;
+			DmgInfo.reciveTime = 0.5f;
 			m_pPlayer->SetDamageInfo(DmgInfo);
 
 			SetAction(CPlayer::Action::ACTION_DODGE);
@@ -112,6 +113,10 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	DmgInfo.reciveTime = 0.1f;
+	m_pPlayer->SetDamageInfo(DmgInfo);
+
 	if (m_pPlayer->GetMotion()->IsFinish())
 	{// 終了
 		SetAction(CPlayer::Action::ACTION_NONE);
@@ -142,7 +147,7 @@ void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fActionTime >= TIME_CATCH)
+	if (m_fActionTime >= ActionTime::CATCH)
 	{// キャッチ猶予
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}

@@ -37,6 +37,7 @@ namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
+	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
 
 namespace StateTime
@@ -55,8 +56,8 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateDamage,		// ダメージ
 	&CPlayer::StateDead,		// 死亡
 	&CPlayer::StateDeadWait,	// 死亡待機
+	&CPlayer::StateDodge,		// 回避
 };
-
 
 //==========================================================================
 // 静的メンバ変数
@@ -591,6 +592,14 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 }
 
 //==========================================================================
+// 回避範囲取得
+//==========================================================================
+float CPlayer::GetDodgeDistance()
+{
+	return 0.0f;
+}
+
+//==========================================================================
 // 状態更新
 //==========================================================================
 void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -667,6 +676,14 @@ void CPlayer::StateDead()
 // 死亡待機
 //==========================================================================
 void CPlayer::StateDeadWait()
+{
+
+}
+
+//==========================================================================
+// 回避
+//==========================================================================
+void CPlayer::StateDodge()
 {
 
 }
