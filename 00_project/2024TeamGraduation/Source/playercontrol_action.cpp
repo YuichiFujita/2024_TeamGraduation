@@ -63,7 +63,7 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
+		!player->IsPossibleMove())
 	{// 移動可能モーションの時
 
 		//--------------------------
@@ -147,8 +147,6 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
-
-		// FUJITA：ここにボール投げ関数
 	}
 }
 

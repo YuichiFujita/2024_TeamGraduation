@@ -187,7 +187,7 @@ protected:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 移動
+	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
 
 private:
