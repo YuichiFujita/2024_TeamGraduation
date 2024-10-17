@@ -35,7 +35,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
