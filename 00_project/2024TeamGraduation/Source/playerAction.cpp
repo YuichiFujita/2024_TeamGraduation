@@ -12,6 +12,10 @@
 #include "ball.h"
 #include "playerStatus.h"
 
+namespace
+{
+}
+
 namespace ActionTime
 {
 	const float BLINK = 0.2f;		// ƒuƒŠƒ“ƒNŠÔ

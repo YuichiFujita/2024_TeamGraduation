@@ -136,6 +136,7 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		if (player->IsJump())
 		{
 			pBall->ThrowJump(player);
+			
 			pMotion->Set(CPlayer::MOTION::MOTION_THROW_JUMP);
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
@@ -143,6 +144,7 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		else
 		{
 			pBall->ThrowNormal(player);
+		
 			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
