@@ -12,10 +12,14 @@
 #include "ball.h"
 #include "playerStatus.h"
 
+namespace
+{
+	const float DODGE_SLOW = 0.8f;		//回避時スロー値
+}
+
 namespace ActionTime
 {
 	const float BLINK = 0.2f;		// ブリンク時間
-	const float CATCH = 0.5f;		// キャッチ時間
 	const float DODGE = 0.5f;		// 回避時間
 }
 
@@ -116,7 +120,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 
 			//スロー
 			float fRate = GET_MANAGER->GetSlowRate();
-			fRate -= 0.8f;
+			fRate -= DODGE_SLOW;
 			UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 			GET_MANAGER->SetSlowRate(fRate);
 
@@ -143,7 +147,7 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 
 		//スロー
 		float fRate = GET_MANAGER->GetSlowRate();
-		fRate += 0.8f;
+		fRate += DODGE_SLOW;
 		UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 		GET_MANAGER->SetSlowRate(fRate);
 
@@ -176,7 +180,7 @@ void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fActionTime >= ActionTime::CATCH)
+	if (m_pPlayer->GetMotion()->IsFinish())
 	{// キャッチ猶予
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}

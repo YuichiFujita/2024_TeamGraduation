@@ -440,7 +440,13 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_WALK:
+	case MOTION::MOTION_THROW:
+		
+		if (m_pBall != nullptr)
+		{
+			m_pBall->ThrowNormal(this);
+		}
+
 		break;
 
 	default:
@@ -477,6 +483,9 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 		return;
 	}
+
+
+
 
 	
 }
@@ -559,7 +568,7 @@ void CPlayer::Hit(CBall* pBall)
 	if (!m_sDamageInfo.bReceived) { return; }
 
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
-	{ // キャッチアクション中だった場合
+	{ // キャッチアクション中だった場合		//TODO:TAKADA: キャッチの条件変わる予定
 
 		// ボールをキャッチ
 		pBall->Catch(this);
