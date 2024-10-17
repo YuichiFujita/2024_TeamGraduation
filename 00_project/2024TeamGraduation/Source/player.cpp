@@ -118,6 +118,7 @@ HRESULT CPlayer::Init()
 	m_state = STATE_NONE;	// 状態
 	m_Oldstate = m_state;
 	m_sMotionFrag.bMove = true;
+	m_bPossibleMove = true;
 
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
@@ -288,7 +289,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
 	if (CGame::GetInstance()->GetGameManager()->IsControll() &&
-		!m_bPossibleMove)
+		m_bPossibleMove)
 	{// 行動できるとき
 
 		// 操作
@@ -387,7 +388,8 @@ void CPlayer::MotionSet()
 		// 移動モーション
 		if (m_bDash)
 		{// ダッシュモーション
-
+			m_bDash = false;
+			pMotion->Set(MOTION_RUN);
 		}
 		else
 		{// 歩行モーション
@@ -568,8 +570,16 @@ void CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	SetState(STATE_DMG);
-	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	if (GetLife() <= 0)
+	{
+		SetState(STATE_DEAD);
+	}
+	else
+	{
+		SetState(STATE_DMG);
+		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	}
+
 
 	return;
 }
