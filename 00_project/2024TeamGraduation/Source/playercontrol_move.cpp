@@ -112,7 +112,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			}
 			else
 			{
-				pMotion->Set(CPlayer::MOTION::MOTION_WALK);
+				//pMotion->Set(CPlayer::MOTION::MOTION_WALK);
 			}
 		}
 	}

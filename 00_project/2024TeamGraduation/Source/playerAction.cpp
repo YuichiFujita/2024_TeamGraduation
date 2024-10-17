@@ -141,8 +141,8 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 	DmgInfo.reciveTime = 0.1f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
-	//if (m_pPlayer->GetMotion()->IsFinish())
-	if (m_fActionTime >= ActionTime::DODGE)
+	if (m_pPlayer->GetMotion()->IsFinish())
+	//if (m_fActionTime >= ActionTime::DODGE)
 	{// I—¹
 
 		//ƒXƒ[

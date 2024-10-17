@@ -365,9 +365,14 @@ void CPlayer::MotionSet()
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr)
+	if (pMotion == nullptr)	return;
+	// 現在の種類取得
+	int nType = pMotion->GetType();
+	int nOldType = pMotion->GetOldType();
+
+	if (nType == MOTION_THROW)
 	{
-		return;
+		nType = MOTION_THROW;
 	}
 
 	// 移動できないと通さない
@@ -375,10 +380,6 @@ void CPlayer::MotionSet()
 
 	// 再生中
 	if (!pMotion->IsFinish()) return;
-
-	// 現在の種類取得
-	int nType = pMotion->GetType();
-	int nOldType = pMotion->GetOldType();
 
 	if (m_sMotionFrag.bMove)
 	{// 移動していたら
@@ -421,7 +422,21 @@ void CPlayer::MotionSet()
 //==========================================================================
 void CPlayer::ResetFrag()
 {
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	int nType = pMotion->GetType();
 
+	switch (nType)
+	{
+	case MOTION::MOTION_CATCH:
+
+		m_sMotionFrag.bCatch = false;
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 //==========================================================================
@@ -462,6 +477,19 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
+	int nType = pMotion->GetType();
+
+	switch (nType)
+	{
+	case MOTION::MOTION_CATCH:
+
+		m_sMotionFrag.bCatch = true;
+
+		break;
+
+	default:
+		break;
+	}
 
 	// 武器の位置
 	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
@@ -483,11 +511,6 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 		return;
 	}
-
-
-
-
-	
 }
 
 //==========================================================================
@@ -567,8 +590,8 @@ void CPlayer::Hit(CBall* pBall)
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return; }
 
-	if (m_pActionPattern->GetAction() == ACTION_CATCH)
-	{ // キャッチアクション中だった場合		//TODO:TAKADA: キャッチの条件変わる予定
+	if (m_sMotionFrag.bCatch)
+	{ // キャッチアクション中だった中でも受け付け中の場合	
 
 		// ボールをキャッチ
 		pBall->Catch(this);
