@@ -79,7 +79,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
+		!player->IsPossibleMove())
 	{// ˆÚ“®‰Â”\ƒ‚[ƒVƒ‡ƒ“‚ÌŽž
 
 		//--------------------------

@@ -79,6 +79,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_posKnokBack = MyLib::Vector3();	// ノックバックの位置
 
 	// 行動フラグ
+	m_bPossibleMove = false;		// 移動可能フラグ
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
@@ -286,11 +287,12 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGame::GetInstance()->GetGameManager()->IsControll())
+	if (CGame::GetInstance()->GetGameManager()->IsControll() &&
+		!m_bPossibleMove)
 	{// 行動できるとき
 
-		// 移動
-		Move(fDeltaTime, fDeltaRate, fSlowRate);
+		// 操作
+		Operate(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
