@@ -16,9 +16,10 @@
 //==========================================================================
 namespace
 {
-	const char* MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";
-	const float RADIUS = 7.0f;
-	const float REV_MOVE = 0.1f;
+	const char* MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
+	const float RADIUS = 7.0f;		// 半径
+	const float REV_MOVE = 0.1f;	// 移動量の補正係数
+	const float MAX_DIS = 1000.0f;	// ホーミングする最大距離
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
@@ -50,10 +51,13 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam	 (CGameManager::SIDE_NONE),	// チームサイド
+	m_pPlayer	 (nullptr),		// プレイヤー情報
+	m_pTarget	 (nullptr),		// ホーミングターゲット情報
+	m_fMoveSpeed (0.0f),		// 移動速度
+	m_fGravity	 (0.0f),		// 重力
 	m_typeAtk	 (ATK_NONE),	// 攻撃種類
 	m_state		 (STATE_SPAWN),	// 状態
-	m_fStateTime (0.0f),		// 状態カウンター
-	m_pPlayer	 (nullptr)		// プレイヤー情報
+	m_fStateTime (0.0f)			// 状態カウンター
 {
 
 }
@@ -146,6 +150,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 	// ボールの状態表示
 	GET_MANAGER->GetDebugProc()->Print("ボール状態：%s\n", DEBUG_STATE_PRINT[m_state]);
+	GET_MANAGER->GetDebugProc()->Print("ターゲット：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
 }
 
 //==========================================================================
@@ -189,9 +194,14 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// 通常攻撃を設定
 	m_typeAtk = ATK_NORMAL;
 
+	// 移動量を設定
+	m_fMoveSpeed = 30.0f;
+
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	SetMove(MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot)) * 40.0f);
+	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot));
+	vec.Normal();
+	SetMove(vec);
 }
 
 //==========================================================================
@@ -205,9 +215,14 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	// ジャンプ攻撃を設定
 	m_typeAtk = ATK_JUMP;
 
+	// 移動量を設定
+	m_fMoveSpeed = 40.0f;
+
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	SetMove(MyLib::Vector3(sinf(fRot), -0.25f, cosf(fRot)) * 80.0f);
+	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), -0.25f, cosf(fRot));
+	vec.Normal();
+	SetMove(vec);
 }
 
 //==========================================================================
@@ -221,9 +236,14 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 	// スペシャル攻撃を設定
 	m_typeAtk = ATK_SPECIAL;
 
+	// 移動量を設定
+	m_fMoveSpeed = 60.0f;
+
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	SetMove(MyLib::Vector3(sinf(fRot), 0.01f, cosf(fRot)) * 120.0f);
+	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), 0.01f, cosf(fRot));
+	vec.Normal();
+	SetMove(vec);
 }
 
 //==========================================================================
@@ -276,13 +296,43 @@ void CBall::UpdateThrow(const float fDeltaTime, const float fDeltaRate, const fl
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
-	MyLib::Vector3 move = GetMove();	// 移動量
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
 
-	// 移動
-	UpdateMove(&pos, &move, fDeltaRate, fSlowRate);
+	if (m_pTarget == nullptr)
+	{
+		// 移動
+		UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
+	}
+	else
+	{
+		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
+
+		// 現在向きを取得
+		float fCurAngle = vecMove.GetHorizontalAngle(VEC3_ZERO);
+		UtilFunc::Transformation::RotNormalize(fCurAngle);
+
+		// 目標向きを取得
+		float fDestAngle = posTarget.AngleXZ(pos);
+		UtilFunc::Transformation::RotNormalize(fDestAngle);
+
+		// 差分向きを計算
+		float fDiffAngle = fDestAngle - fCurAngle;
+		UtilFunc::Transformation::RotNormalize(fDiffAngle);
+
+		// 現在向きを更新
+		fCurAngle += fDiffAngle * 0.5f;
+		UtilFunc::Transformation::RotNormalize(fCurAngle);
+
+		// 現在向きから移動ベクトルを再計算
+		vecMove = MyLib::Vector3(sinf(fCurAngle), -0.25f, cosf(fCurAngle));
+		vecMove.Normal();
+
+		// 移動
+		UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
+	}
 
 	// 地面の着地
-	if (UpdateLanding(&pos, &move, fDeltaRate, fSlowRate))
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
 	{ // 着地した場合
 
 		// 落下遷移
@@ -294,7 +344,7 @@ void CBall::UpdateThrow(const float fDeltaTime, const float fDeltaRate, const fl
 
 	// 情報を反映
 	SetPosition(pos);	// 位置
-	SetMove(move);		// 移動量
+	SetMove(vecMove);	// 移動量
 }
 
 //==========================================================================
@@ -326,14 +376,14 @@ void CBall::UpdateFall(const float fDeltaTime, const float fDeltaRate, const flo
 void CBall::UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate)
 {
 	// 重力を与える
-	pMove->y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
+	m_fGravity -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 
 	// 位置を移動させる
-	*pPos += *pMove * fDeltaRate * fSlowRate;
+	*pPos += (*pMove * m_fMoveSpeed) * fDeltaRate * fSlowRate;
+	pPos->y += m_fGravity * fDeltaRate * fSlowRate;
 
 	// 移動量を減衰させる
-	pMove->x += (0.0f - pMove->x) * (REV_MOVE * fDeltaRate * fSlowRate);
-	pMove->z += (0.0f - pMove->z) * (REV_MOVE * fDeltaRate * fSlowRate);
+	m_fMoveSpeed += (0.0f - m_fMoveSpeed) * (REV_MOVE * fDeltaRate * fSlowRate);
 }
 
 //==========================================================================
@@ -349,6 +399,9 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 
 		// 縦移動量を初期化	// TODO：後でバウンドするよう変更
 		pMove->y = 0.0f;
+
+		// 重力を初期化
+		m_fGravity = 0.0f;
 		return true;
 	}
 
@@ -368,7 +421,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		bool bHit = UtilFunc::Collision::CollisionCircleCylinder
 		( // 引数
-			*pPos + MyLib::Vector3(0.0f, -RADIUS, 0.0f),
+			*pPos,
 			pPlayer->GetPosition(),
 			RADIUS,
 			pPlayer->GetRadius(),
@@ -387,6 +440,47 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 }
 
 //==========================================================================
+// ホーミング対象との当たり判定
+//==========================================================================
+CPlayer* CBall::CollisionThrow(void)
+{
+	// 持っていたプレイヤーが初期化済みの場合エラー
+	assert(m_pPlayer != nullptr);
+
+	float fMinDis = MAX_DIS;	// ボールから近いプレイヤー
+	CPlayer* pTarget = nullptr;	// 目標ターゲット
+
+	MyLib::Vector3 posBall = GetPosition();	// ボール位置
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		if (pPlayer == m_pPlayer) { continue; }	// 投げたプレイヤー本人の場合次へ
+
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
+
+		// TODO：ここに視界内の判定
+
+		// プレイヤー間の距離の測定
+		float fCurDis = posPlayer.Distance(posBall);
+		if (fCurDis < fMinDis)
+		{ // よりボールに近いプレイヤーがいた場合
+
+			// 距離を保存
+			fMinDis = fCurDis;
+
+			// ターゲットを更新
+			pTarget = pPlayer;
+		}
+	}
+
+	// 投擲ターゲットを返す
+	return pTarget;
+}
+
+//==========================================================================
 // 投げ処理
 //==========================================================================
 void CBall::Throw(CPlayer* pPlayer)
@@ -396,6 +490,9 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// 攻撃状態にする
 	m_state = STATE_THROW;
+
+	// ホーミング対象の設定
+	m_pTarget = CollisionThrow();
 
 	// キャッチしていたプレイヤーを破棄
 	m_pPlayer = nullptr;
@@ -411,6 +508,9 @@ void CBall::Fall(void)
 {
 	// 落下状態にする
 	m_state = STATE_FALL;
+
+	// ホーミング対象の初期化
+	m_pTarget = nullptr;
 
 	// チームの初期化
 	m_typeTeam = CGameManager::SIDE_NONE;

@@ -34,7 +34,6 @@ CPlayerControlAction::CPlayerControlAction()
 //==========================================================================
 void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
@@ -84,7 +83,6 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
-
 }
 
 //==========================================================================
@@ -101,13 +99,15 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+	CMotion* pMotion = player->GetMotion();
+
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
+		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
 	}
-
 }
 
 //==========================================================================
@@ -126,6 +126,8 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+	CMotion* pMotion = player->GetMotion();
+
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
@@ -134,19 +136,20 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		if (player->IsJump())
 		{
 			pBall->ThrowJump(player);
+			pMotion->Set(CPlayer::MOTION::MOTION_THROW_JUMP);
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
 			pBall->ThrowNormal(player);
+			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
 
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
 
 		// FUJITA：ここにボール投げ関数
 	}
-
 }
 
 //==========================================================================
@@ -194,7 +197,6 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 		// サウンド再生
 		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
 	}
-
 }
 
 //==========================================================================
@@ -213,15 +215,18 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+	CMotion* pMotion = player->GetMotion();
+
 	if (pKey->GetTrigger(DIK_X) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
 	{
 		pBall->ThrowSpecial(player);
 
+		pMotion->Set(CPlayer::MOTION::MOTION_SPECIAL);
+
 		// アクションパターン変更
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_SPECIAL);
 	}
-
 }
 
 //==========================================================================
@@ -233,10 +238,12 @@ void CPlayerControlAction::Charm(CPlayer* player, const float fDeltaTime, const 
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+	player->GetActionPattern()->SetEnableCharm(false);
+
 	if (pKey->GetPress(DIK_C) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx()))
 	{
 		//モテアクション発動準備状態
+		player->GetActionPattern()->SetEnableCharm(true);
 	}
-
 }

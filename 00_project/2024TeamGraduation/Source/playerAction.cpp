@@ -17,7 +17,6 @@ namespace ActionTime
 	const float CATCH = 0.5f;		// キャッチ時間
 }
 
-
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -39,6 +38,7 @@ CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 //==========================================================================
 CPlayerAction::CPlayerAction(CPlayer* player)
 {
+	m_bCharm = false;
 	m_Action = CPlayer::Action::ACTION_NONE;	// アクション
 	m_fActionTime = 0.0f;						// アクション時間
 	m_pPlayer = player;							// プレイヤーのポインタ
@@ -101,6 +101,12 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 			DmgInfo.reciveTime = 0.5f;
 			m_pPlayer->SetDamageInfo(DmgInfo);
 
+			//スロー
+			float fRate = GET_MANAGER->GetSlowRate();
+			fRate -= 0.2f;
+			UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
+			GET_MANAGER->SetSlowRate(fRate);
+
 			SetAction(CPlayer::Action::ACTION_DODGE);
 			m_pPlayer->SetState(CPlayer::STATE_DODGE);
 			//m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
@@ -119,6 +125,12 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 
 	if (m_pPlayer->GetMotion()->IsFinish())
 	{// 終了
+		//スロー
+		float fRate = GET_MANAGER->GetSlowRate();
+		fRate -= 0.2f;
+		UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
+		GET_MANAGER->SetSlowRate(fRate);
+
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
 }
@@ -136,7 +148,7 @@ void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_pPlayer->IsJump())
+	if (!m_pPlayer->IsJump())
 	{// キャッチ猶予
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
