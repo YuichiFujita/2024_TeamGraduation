@@ -83,17 +83,19 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	{// 移動可能モーションの時
 
 		//--------------------------
-		// ブリンク操作
+		// 移動操作
 		//--------------------------
 		if (action != CPlayer::Action::ACTION_BLINK)
 		{
+			// ブリンク
 			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
+
+			// 歩き
+			Walk(player, fDeltaTime, fDeltaRate, fSlowRate);
+
+			// ダッシュ
+			Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
 		}
-
-		// 歩き
-		Walk(player, fDeltaTime, fDeltaRate, fSlowRate);
-
-		Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
 
 		// ジャンプ状況取得
 		bool bJump = player->IsJump();
@@ -101,9 +103,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		if (motionFrag.bMove &&
 			!bJump)
 		{// キャンセル可能 && 移動中
-
-			// モーション終了判定
-			pMotion->ToggleFinish(true);
 
 			// 移動モーション
 			if (bDash)
@@ -348,7 +347,11 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 		// トリガーのカウントリセット
 		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
 
+		// ダッシュフラグ
 		m_bDash = true;
+
+		// モーション設定
+		player->SetMotion(CPlayer::MOTION::MOTION_BLINK);
 	}
 
 	// トリガーの猶予減らしていく
@@ -378,8 +381,10 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
+	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
+	// 全ての方向入力チェック
 	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_W);
 
@@ -392,6 +397,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_A);
 
+	// スティックの倒れ判定
 	bool bStick = pPad->IsTipStick();
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
@@ -400,6 +406,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	}
 	else
 	{
+		// ダッシュ継続
 		motionFrag.bMove = true;
 		player->SetEnableDash(true);
 	}
@@ -409,6 +416,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 	ImGui::Checkbox("Right", &bRight);
 	ImGui::Checkbox("Left", &bLeft);
 
+	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
 }
 
@@ -425,6 +433,7 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
+	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
 	CPlayer::DashAngle angle;
@@ -551,8 +560,6 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 
 	// 向き設定
 	player->SetRotDest(angle * division + D3DX_PI + Camerarot.y);
-
-	player->SetMove(move);
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);

@@ -120,17 +120,17 @@ HRESULT CGame::Init()
 	pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
 	pUser->SetRotDest(-HALF_PI);
 
-	// プレイヤーAI生成
-	for (int i = 0; i < 1; i++)
-	{
-		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
-		if (pAI == nullptr)
-		{
-			return E_FAIL;
-		}
-		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-		pAI->SetRotDest(HALF_PI);
-	}
+	//// プレイヤーAI生成
+	//for (int i = 0; i < 1; i++)
+	//{
+	//	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
+	//	if (pAI == nullptr)
+	//	{
+	//		return E_FAIL;
+	//	}
+	//	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	//	pAI->SetRotDest(HALF_PI);
+	//}
 
 	// カメラのリセット
 	CManager::GetInstance()->GetCamera()->Reset(CScene::MODE_GAME);
