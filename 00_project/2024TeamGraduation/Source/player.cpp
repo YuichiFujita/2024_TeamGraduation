@@ -309,7 +309,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
 
 	// 重力処理
-	if (m_state != STATE_DEAD)
+	if (m_state != STATE_DEAD && m_state != STATE_DEADWAIT)
 	{
 		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 	}
@@ -570,61 +570,68 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	return hitresult;
 }
 #else
-void CPlayer::Hit(CBall* pBall)
+bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
 	MyLib::HitResult_Character hitresult = {};
 
-	if (stateBall == CBall::STATE_FALL)
-	{ // ボールが落下している場合
+	if (stateBall == CBall::STATE_LAND)
+	{ // ボールが着地している場合
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return;
+		return false;
 	}
 
 	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return; }
-
-	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return; }
+	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
 	if (m_sMotionFrag.bCatch)
 	{ // キャッチアクション中だった中でも受け付け中の場合	
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return;
+		return false;
 	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return false; }
 
-	// 攻撃判定がない場合すり抜ける
-	if (!pBall->IsAttack()) { return false; }
+	// リバウンドボールの場合すり抜ける
+	if (stateBall == CBall::STATE_REBOUND) { return false; }
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	if (m_state == STATE::STATE_DEAD)
+	if (m_state == STATE::STATE_DEAD ||
+		m_state == STATE::STATE_DEADWAIT)
 	{
 		hitresult.isdeath = true;
 	}
 
 	if (GetLife() <= 0)
-	{
+	{ // 体力がない場合
+
+		// 死亡状態にする
+		SetState(STATE_DEAD);
+
+		// 終活
 		DeadSetting(&hitresult);
 	}
 	else
-	{
+	{ // 体力がある場合
+
+		// ダメージ状態にする
 		SetState(STATE_DMG);
+
+		// ダメージ受付時間を設定
 		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
 	}
 
-	return;
+	return true;
 }
 #endif
 
@@ -636,7 +643,7 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 
 	// 死状態
-	SetState(STATE_DEAD);
+	m_state = STATE_DEAD;
 
 	// ノックバックの位置更新
 	MyLib::Vector3 pos = GetPosition();

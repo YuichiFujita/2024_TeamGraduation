@@ -12,8 +12,7 @@
 //==========================================================================
 namespace
 {
-	const int MAX_LIFE = 100;	// 最大体力
-	const int MIN_LIFE = 0;		// 最小体力
+	const int MIN_LIFE = 0;	// 最小体力
 }
 
 //==========================================================================
@@ -23,9 +22,7 @@ CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
 	m_pPlayer	(pPlayer),					// プレイヤーのポインタ
 	m_typeTeam	(CGameManager::SIDE_NONE)	// チームサイド
 {
-	// 体力を初期化
-	m_pPlayer->SetLife(MAX_LIFE);
-	m_pPlayer->SetLifeOrigin(MAX_LIFE);
+
 }
 
 //==========================================================================
@@ -47,7 +44,7 @@ void CPlayerStatus::LifeDamage(const int nDmg)
 	nLife -= nDmg;
 
 	// 体力を補正
-	UtilFunc::Transformation::ValueNormalize(nLife, MAX_LIFE, MIN_LIFE);
+	UtilFunc::Transformation::ValueNormalize(nLife, m_pPlayer->GetLifeOrigin(), MIN_LIFE);
 
 	// 体力を反映
 	m_pPlayer->SetLife(nLife);
@@ -64,7 +61,7 @@ void CPlayerStatus::LifeHeal(const int nHeal)
 	nLife += nHeal;
 
 	// 体力を補正
-	UtilFunc::Transformation::ValueNormalize(nLife, MAX_LIFE, MIN_LIFE);
+	UtilFunc::Transformation::ValueNormalize(nLife, m_pPlayer->GetLifeOrigin(), MIN_LIFE);
 
 	// 体力を反映
 	m_pPlayer->SetLife(nLife);
