@@ -59,7 +59,6 @@ public:
 		STATE_INVINCIBLE,	// 無敵
 		STATE_DMG,			// ダメージ
 		STATE_DEAD,			// 死
-		STATE_DEADWAIT,		// 死亡待機
 		STATE_DODGE,		// 回避
 		STATE_MAX
 	};

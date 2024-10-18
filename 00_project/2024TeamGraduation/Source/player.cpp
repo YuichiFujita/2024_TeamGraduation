@@ -309,7 +309,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
 
 	// 重力処理
-	if (m_state != STATE_DEAD && m_state != STATE_DEADWAIT)
+	if (m_state != STATE_DEAD)
 	{
 		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 	}
@@ -606,17 +606,13 @@ bool CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	if (m_state == STATE::STATE_DEAD ||
-		m_state == STATE::STATE_DEADWAIT)
+	if (m_state == STATE::STATE_DEAD)
 	{
 		hitresult.isdeath = true;
 	}
 
 	if (GetLife() <= 0)
 	{ // 体力がない場合
-
-		// 死亡状態にする
-		SetState(STATE_DEAD);
 
 		// 終活
 		DeadSetting(&hitresult);
@@ -642,8 +638,8 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 {
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 
-	// 死状態
-	m_state = STATE_DEAD;
+	// 死亡状態にする
+	SetState(STATE_DEAD);
 
 	// ノックバックの位置更新
 	MyLib::Vector3 pos = GetPosition();
