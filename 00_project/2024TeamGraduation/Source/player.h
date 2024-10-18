@@ -169,7 +169,7 @@ public:
 	//=============================
 	// その他
 	//=============================
-	void Hit(CBall* pBall);		// ヒット処理
+	bool Hit(CBall* pBall);		// ヒット処理
 	void SetState(STATE state);	// 状態設定
 	STATE GetState() { return m_state; }						// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }		// 自分のインデックス設定
@@ -244,7 +244,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	MyLib::Vector3 m_posKnokBack;	// ノックバックの位置
+	MyLib::Vector3 m_posKnockBack;	// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ
