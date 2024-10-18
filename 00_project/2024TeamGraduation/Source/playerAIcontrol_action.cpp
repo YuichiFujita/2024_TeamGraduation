@@ -124,6 +124,8 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+	CMotion* pMotion = player->GetMotion();
+
 #if 0
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
@@ -134,6 +136,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 #endif
 	{
 		// アクションパターン変更
+		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
 	}
 }

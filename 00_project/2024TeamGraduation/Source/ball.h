@@ -35,9 +35,11 @@ public:
 	enum EState
 	{
 		STATE_SPAWN = 0,	// 生成状態 (開始時のフリーボール)
-		STATE_CATCH,		// 所持状態 (プレイヤーが保持している)
-		STATE_THROW,		// 攻撃状態 (攻撃判定を持っている)
-		STATE_FALL,			// 落下状態 (地面に転がっている)
+		STATE_CATCH,		// キャッチ状態 (プレイヤーが保持)
+		STATE_HOMING,		// ホーミング状態 (ターゲット追従)
+		STATE_MOVE,			// 移動状態 (慣性移動)
+		STATE_REBOUND,		// リバウンド状態 (ぶつかった時の落下)
+		STATE_LAND,			// 着地状態 (地面に転がっている)
 		STATE_MAX			// この列挙型の総数
 	};
 
@@ -78,6 +80,7 @@ public:
 	EAttack GetTypeAtk() const	{ return m_typeAtk; }	// 攻撃種類取得
 	EState GetState() const		{ return m_state; }		// 状態取得
 	float GetRadius() const;	// 半径取得
+	bool IsAttack() const;		// 攻撃フラグ取得
 
 	//=============================
 	// 静的関数
@@ -102,17 +105,24 @@ private:
 	//=============================
 	// 状態関数
 	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 生成状態の更新
-	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 所持状態の更新
-	void UpdateThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 攻撃状態の更新
-	void UpdateFall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 落下状態の更新
+	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ状態の更新
+	void UpdateHoming(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ホーミング状態の更新
+	void UpdateMove(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 移動状態の更新
+	void UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// リバウンド状態の更新
+	void UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 着地状態の更新
 
+	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
+	void UpdateDecay(const float fDeltaRate, const float fSlowRate);	// 移動量減速
+	void UpdateGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に重力反映
+	void UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に移動量反映
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
 	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
 	CPlayer* CollisionThrow(void);	// ホーミング対象との当たり判定
 	void Throw(CPlayer* pPlayer);	// 投げ
-	void Fall(void);	// 落下
+	void ReBound(MyLib::Vector3* pMove);	// リバウンド
+	void Landing(void);	// 着地
 
 	//=============================
 	// 静的メンバ変数
