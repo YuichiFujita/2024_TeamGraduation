@@ -3,6 +3,7 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+map_Kd UV.jpg
 Ni 1.00
 newmtl bodyparts_setup:chuckSG
 illum 4
@@ -10,14 +11,6 @@ Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd cloth_blue.png
-Ni 1.00
-Ks 0.20 0.20 0.20
-Ns 34.00
-newmtl bottomSG1
-illum 4
-Kd 0.80 0.80 0.80
-Ka 0.00 0.00 0.00
-Tf 1.00 1.00 1.00
 Ni 1.00
 Ks 0.20 0.20 0.20
 Ns 34.00
@@ -32,12 +25,14 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+map_Kd face_uv.jpg
 Ni 1.00
-newmtl lambert3SG
+newmtl lambert7SG
 illum 4
-Kd 0.50 0.50 0.50
+Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+map_Kd UV.jpg
 Ni 1.00
 newmtl pantu:bodyparts_setup:chuckSG
 illum 4
