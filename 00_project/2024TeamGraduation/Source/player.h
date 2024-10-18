@@ -168,7 +168,7 @@ public:
 	//=============================
 	// その他
 	//=============================
-	void Hit(CBall* pBall);		// ヒット処理
+	bool Hit(CBall* pBall);		// ヒット処理
 	void SetState(STATE state);	// 状態設定
 	STATE GetState() { return m_state; }						// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }		// 自分のインデックス設定

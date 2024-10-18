@@ -533,42 +533,48 @@ MyLib::HitResult_Character CPlayer::Hit(const int nValue)
 	return hitresult;
 }
 #else
-void CPlayer::Hit(CBall* pBall)
+bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
 
-	if (stateBall == CBall::STATE_FALL)
-	{ // ボールが落下している場合
+	if (stateBall == CBall::STATE_LAND)
+	{ // ボールが着地している場合
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return;
+		return false;
 	}
 
 	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return; }
-
-	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return; }
+	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
 	if (m_pActionPattern->GetAction() == ACTION_CATCH)
 	{ // キャッチアクション中だった場合
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return;
+		return false;
 	}
+
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return false; }
+
+	// リバウンドボールの場合抜ける
+	if (stateBall == CBall::STATE_REBOUND) { return false; }
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
+	// ダメージ状態にする
 	SetState(STATE_DMG);
+
+	// ダメージ受付時間を設定
 	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
 
-	return;
+	return true;
 }
 #endif
 
