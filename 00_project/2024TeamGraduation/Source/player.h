@@ -244,7 +244,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	MyLib::Vector3 m_posKnokBack;	// ノックバックの位置
+	MyLib::Vector3 m_posKnockBack;	// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ
