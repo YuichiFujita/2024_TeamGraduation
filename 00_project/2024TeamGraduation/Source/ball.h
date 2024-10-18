@@ -80,6 +80,7 @@ public:
 	EAttack GetTypeAtk() const	{ return m_typeAtk; }	// UŒ‚í—Şæ“¾
 	EState GetState() const		{ return m_state; }		// ó‘Ôæ“¾
 	float GetRadius() const;	// ”¼Œaæ“¾
+	bool IsAttack() const;		// UŒ‚ƒtƒ‰ƒOæ“¾
 
 	//=============================
 	// Ã“IŠÖ”
