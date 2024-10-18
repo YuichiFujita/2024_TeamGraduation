@@ -1975,7 +1975,7 @@ namespace UtilFunc	// 便利関数
 		@param	posMain			[in]	中心となる人の位置
 		@param	posTarget		[in]	対象の位置
 		@param	mainRotY		[in]	向き
-		@param	fieldofview		[in]	視野角(弧度法)
+		@param	fieldofview		[in]	視野角
 		@return	衝突したかのbool値
 		*/
 		inline bool CollisionViewRange3D(const MyLib::Vector3& posMain, MyLib::Vector3& posTarget, float mainRotY, float fieldofview)
@@ -2480,28 +2480,6 @@ namespace UtilFunc	// 便利関数
 		inline bool Intersect(const D3DXVECTOR2& projection1, const D3DXVECTOR2& projection2) 
 		{
 			return !(projection1.y < projection2.x || projection1.x > projection2.y);
-		}
-
-		/**
-		@brief	外積の左右判定
-		@param	posLeft		[in]	境界線左座標
-		@param	posRight	[in]	境界線右座標
-		@param	pos			[in]	判定位置
-		@return	float 境界線からの距離
-		*/
-		inline float LineOuterProduct(MyLib::Vector3 posLeft, MyLib::Vector3 posRight, MyLib::Vector3 pos)
-		{
-			MyLib::Vector3 vecLine;		// 境界線ベクトル
-			MyLib::Vector3 vecToPos;	// 左端と位置のベクトル
-
-			// 境界線ベクトルを求める
-			vecLine = posRight - posLeft;
-
-			// 左端と位置のベクトルを求める
-			vecToPos = pos - posLeft;
-
-			// 外積の計算結果を返す
-			return (vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z);
 		}
 
 		/**

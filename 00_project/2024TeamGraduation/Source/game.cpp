@@ -120,32 +120,17 @@ HRESULT CGame::Init()
 	pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
 	pUser->SetRotDest(-HALF_PI);
 
-	// プレイヤーUser二世生成
-#if 0
-	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
-	if (pUser2 == nullptr)
-	{
-		return E_FAIL;
-	}
-	pUser2->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-	pUser2->SetRotDest(HALF_PI);
-#endif
-
-	// プレイヤーAI生成
-#if 1
-	for (int i = 0; i < 4; i++)
-	{
-		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
-		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
-		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos + offset);
-		if (pAI == nullptr)
-		{
-			return E_FAIL;
-		}
-		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-		pAI->SetRotDest(HALF_PI);
-	}
-#endif
+	//// プレイヤーAI生成
+	//for (int i = 0; i < 1; i++)
+	//{
+	//	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
+	//	if (pAI == nullptr)
+	//	{
+	//		return E_FAIL;
+	//	}
+	//	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	//	pAI->SetRotDest(HALF_PI);
+	//}
 
 	// カメラのリセット
 	CManager::GetInstance()->GetCamera()->Reset(CScene::MODE_GAME);
