@@ -104,15 +104,8 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			!bJump)
 		{// キャンセル可能 && 移動中
 
-			// 移動モーション
-			if (bDash)
-			{
-				//pMotion->Set(CPlayer::MOTION::MOTION_DASH);
-			}
-			else
-			{
-				//pMotion->Set(CPlayer::MOTION::MOTION_WALK);
-			}
+		 //TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
+		
 		}
 	}
 }

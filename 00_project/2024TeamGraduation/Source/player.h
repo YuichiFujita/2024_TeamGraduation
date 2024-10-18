@@ -59,7 +59,6 @@ public:
 		STATE_INVINCIBLE,	// 無敵
 		STATE_DMG,			// ダメージ
 		STATE_DEAD,			// 死
-		STATE_DEADWAIT,		// 死亡待機
 		STATE_DODGE,		// 回避
 		STATE_MAX
 	};
@@ -244,7 +243,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	MyLib::Vector3 m_posKnokBack;	// ノックバックの位置
+	MyLib::Vector3 m_posKnockBack;	// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ

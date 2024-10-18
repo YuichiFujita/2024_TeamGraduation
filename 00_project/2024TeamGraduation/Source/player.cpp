@@ -76,7 +76,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
-	m_posKnokBack = MyLib::Vector3();	// ノックバックの位置
+	m_posKnockBack = MyLib::Vector3();	// ノックバックの位置
 
 	// 行動フラグ
 	m_bPossibleMove = false;		// 移動可能フラグ
@@ -309,7 +309,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
 
 	// 重力処理
-	if (m_state != STATE_DEAD && m_state != STATE_DEADWAIT)
+	if (m_state != STATE_DEAD)
 	{
 		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 	}
@@ -575,6 +575,7 @@ void CPlayer::Hit(CBall* pBall)
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+	MyLib::HitResult_Character hitresult = {};
 
 	if (stateBall == CBall::STATE_FALL)
 	{ // ボールが落下している場合
@@ -602,16 +603,20 @@ void CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
+	if (m_state == STATE::STATE_DEAD)
+	{
+		hitresult.isdeath = true;
+	}
+
 	if (GetLife() <= 0)
 	{
-		SetState(STATE_DEAD);
+		DeadSetting(&hitresult);
 	}
 	else
 	{
 		SetState(STATE_DMG);
 		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
 	}
-
 
 	return;
 }
@@ -625,12 +630,12 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 
 	// 死状態
-	m_state = STATE_DEAD;
+	SetState(STATE_DEAD);
 
 	// ノックバックの位置更新
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 rot = GetRotation();
-	m_posKnokBack = pos;
+	m_posKnockBack = pos;
 
 	// 死んだ
 	result->isdeath = true;
