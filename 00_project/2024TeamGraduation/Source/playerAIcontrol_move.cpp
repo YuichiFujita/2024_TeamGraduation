@@ -37,7 +37,7 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Operate(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 	// インプット情報取得

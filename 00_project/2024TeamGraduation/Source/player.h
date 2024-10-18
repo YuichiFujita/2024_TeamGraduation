@@ -115,9 +115,10 @@ public:
 		bool bDead;			// 死亡中
 		bool bMove;			// 移動中
 		bool bBlink;		// ブリンク
+		bool bCatch;		// キャッチ
 
 		// コンストラクタ
-		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false) {}
+		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false), bCatch(false) {}
 	};
 
 	// ダッシュ情報
@@ -187,7 +188,7 @@ protected:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 移動
+	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
 
 private:
@@ -243,7 +244,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	MyLib::Vector3 m_posKnokBack;	// ノックバックの位置
+	MyLib::Vector3 m_posKnockBack;	// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ

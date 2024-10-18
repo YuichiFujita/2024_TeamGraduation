@@ -35,7 +35,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\sample\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
@@ -76,9 +76,10 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
-	m_posKnokBack = MyLib::Vector3();	// ノックバックの位置
+	m_posKnockBack = MyLib::Vector3();	// ノックバックの位置
 
 	// 行動フラグ
+	m_bPossibleMove = false;		// 移動可能フラグ
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
@@ -117,6 +118,7 @@ HRESULT CPlayer::Init()
 	m_state = STATE_NONE;	// 状態
 	m_Oldstate = m_state;
 	m_sMotionFrag.bMove = true;
+	m_bPossibleMove = true;
 
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
@@ -268,7 +270,8 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"移動量：【X：%f, Y：%f, Z：%f】\n"
 		"体力：【%d】\n"
 		"状態：【%d】\n"
-		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, move.x, move.y, move.z, GetLife(), m_state);
+		"行動状態：【%d】\n"
+		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, move.x, move.y, move.z, GetLife(), m_state, m_pActionPattern->GetAction());
 
 #endif
 
@@ -285,11 +288,12 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGame::GetInstance()->GetGameManager()->IsControll())
+	if (CGame::GetInstance()->GetGameManager()->IsControll() &&
+		m_bPossibleMove)
 	{// 行動できるとき
 
-		// 移動
-		Move(fDeltaTime, fDeltaRate, fSlowRate);
+		// 操作
+		Operate(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -361,9 +365,14 @@ void CPlayer::MotionSet()
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr)
+	if (pMotion == nullptr)	return;
+	// 現在の種類取得
+	int nType = pMotion->GetType();
+	int nOldType = pMotion->GetOldType();
+
+	if (nType == MOTION_THROW)
 	{
-		return;
+		nType = MOTION_THROW;
 	}
 
 	// 移動できないと通さない
@@ -371,10 +380,6 @@ void CPlayer::MotionSet()
 
 	// 再生中
 	if (!pMotion->IsFinish()) return;
-
-	// 現在の種類取得
-	int nType = pMotion->GetType();
-	int nOldType = pMotion->GetOldType();
 
 	if (m_sMotionFrag.bMove)
 	{// 移動していたら
@@ -384,7 +389,8 @@ void CPlayer::MotionSet()
 		// 移動モーション
 		if (m_bDash)
 		{// ダッシュモーション
-
+			m_bDash = false;
+			pMotion->Set(MOTION_RUN);
 		}
 		else
 		{// 歩行モーション
@@ -416,7 +422,21 @@ void CPlayer::MotionSet()
 //==========================================================================
 void CPlayer::ResetFrag()
 {
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	int nType = pMotion->GetType();
 
+	switch (nType)
+	{
+	case MOTION::MOTION_CATCH:
+
+		m_sMotionFrag.bCatch = false;
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 //==========================================================================
@@ -435,7 +455,13 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_WALK:
+	case MOTION::MOTION_THROW:
+		
+		if (m_pBall != nullptr)
+		{
+			m_pBall->ThrowNormal(this);
+		}
+
 		break;
 
 	default:
@@ -451,6 +477,19 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
+	int nType = pMotion->GetType();
+
+	switch (nType)
+	{
+	case MOTION::MOTION_CATCH:
+
+		m_sMotionFrag.bCatch = true;
+
+		break;
+
+	default:
+		break;
+	}
 
 	// 武器の位置
 	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
@@ -472,8 +511,6 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 		return;
 	}
-
-	
 }
 
 //==========================================================================
@@ -538,43 +575,52 @@ bool CPlayer::Hit(CBall* pBall)
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+	MyLib::HitResult_Character hitresult = {};
 
-	if (stateBall == CBall::STATE_LAND)
-	{ // ボールが着地している場合
+	if (stateBall == CBall::STATE_FALL)
+	{ // ボールが落下している場合
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return false;
+		return;
 	}
 
 	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return false; }
+	if (m_pStatus->GetTeam() == sideBall) { return; }
 
-	if (m_pActionPattern->GetAction() == ACTION_CATCH)
-	{ // キャッチアクション中だった場合
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return; }
+
+	if (m_sMotionFrag.bCatch)
+	{ // キャッチアクション中だった中でも受け付け中の場合	
 
 		// ボールをキャッチ
 		pBall->Catch(this);
-		return false;
+		return;
 	}
-
-	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return false; }
-
-	// リバウンドボールの場合抜ける
-	if (stateBall == CBall::STATE_REBOUND) { return false; }
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	// ダメージ状態にする
-	SetState(STATE_DMG);
+	if (m_state == STATE::STATE_DEAD ||
+		m_state == STATE::STATE_DEADWAIT)
+	{
+		hitresult.isdeath = true;
+	}
 
-	// ダメージ受付時間を設定
-	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	if (GetLife() <= 0)
+	{
+		SetState(STATE_DEAD);
+		DeadSetting(&hitresult);
+	}
+	else
+	{
+		SetState(STATE_DMG);
+		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	}
 
-	return true;
+	return;
 }
 #endif
 
@@ -591,7 +637,7 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
 	// ノックバックの位置更新
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 rot = GetRotation();
-	m_posKnokBack = pos;
+	m_posKnockBack = pos;
 
 	// 死んだ
 	result->isdeath = true;

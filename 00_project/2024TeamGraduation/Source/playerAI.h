@@ -70,7 +70,7 @@ private:
 	//-----------------------------
 	// ‚»‚Ì‘¼ŠÖ”
 	//-----------------------------
-	void Move(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ˆÚ“®
+	void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ‘€ì
 	void DeleteControl() override;	// ‘€ìíœ
 
 	//=============================
