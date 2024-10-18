@@ -69,7 +69,8 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 		//--------------------------
 		// ÉAÉNÉVÉáÉìëÄçÏ
 		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK)
+		if (action != CPlayer::Action::ACTION_BLINK ||
+			action != CPlayer::Action::ACTION_DODGE)
 		{
 			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
 			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);

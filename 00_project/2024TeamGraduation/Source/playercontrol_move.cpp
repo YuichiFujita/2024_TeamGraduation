@@ -85,7 +85,8 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		//--------------------------
 		// ˆÚ“®‘€ì
 		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK)
+		if (action != CPlayer::Action::ACTION_BLINK ||
+			action != CPlayer::Action::ACTION_DODGE)
 		{
 			// ƒuƒŠƒ“ƒN
 			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
