@@ -104,7 +104,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pObj = (*itr);
 
-		if (!pObj->IsAttack() ||
+		if (pObj->GetState() != CBall::STATE_THROW ||
 			pObj->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())
 		{
 			return;
