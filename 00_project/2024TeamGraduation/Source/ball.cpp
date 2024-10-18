@@ -200,7 +200,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	m_typeAtk = ATK_NORMAL;
 
 	// ˆÚ“®—Ê‚ðÝ’è
-	m_fMoveSpeed = 11.5f;
+	m_fMoveSpeed = 23.0f;
 
 	// TODOF‰¼
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
@@ -221,7 +221,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	m_typeAtk = ATK_JUMP;
 
 	// ˆÚ“®—Ê‚ðÝ’è
-	m_fMoveSpeed = 13.0f;
+	m_fMoveSpeed = 26.0f;
 
 	// TODOF‰¼
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;

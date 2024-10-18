@@ -599,8 +599,8 @@ bool CPlayer::Hit(CBall* pBall)
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return false; }
 
-	// リバウンドボールの場合すり抜ける
-	if (stateBall == CBall::STATE_REBOUND) { return false; }
+	// 攻撃判定がない場合すり抜ける
+	if (!pBall->IsAttack()) { return false; }
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
