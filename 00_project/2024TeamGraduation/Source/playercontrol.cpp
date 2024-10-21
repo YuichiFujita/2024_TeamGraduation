@@ -36,6 +36,6 @@ void CPlayerControl::SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer:
 {
 	CMotion* pMotion = player->GetMotion();
 
-	pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
-	player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+	pMotion->Set(typeM);
+	player->GetActionPattern()->SetAction(typeA);
 }
