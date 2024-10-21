@@ -419,6 +419,9 @@
     <ClCompile Include="Source\playerAIcontrol_move.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playercontrol.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -768,6 +771,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIcontrol_move.h">
       <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
