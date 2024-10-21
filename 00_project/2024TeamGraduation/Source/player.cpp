@@ -817,6 +817,27 @@ void CPlayer::Debug()
 	}
 
 	//-----------------------------
+	// パラメーター
+	//-----------------------------
+	if (ImGui::TreeNode("Parameter"))
+	{
+		// 取得
+		CCharacterStatus* pStatus = GetCharStatus();
+		CCharacterStatus::CharParameter parameter = pStatus->GetParameter();
+
+		ImGui::DragFloat("fVelocityNormal", (float*)&parameter.fVelocityNormal, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityDash", (float*)&parameter.fVelocityDash, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityBlink", (float*)&parameter.fVelocityBlink, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityJump", (float*)&parameter.fVelocityJump, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fRadius", (float*)&parameter.fRadius, 0.5f, 0.0f, 100.0f, "%.2f");
+
+		// 設定
+		SetRadius(parameter.fRadius);
+		pStatus->SetParameter(parameter);
+		ImGui::TreePop();
+	}
+
+	//-----------------------------
 	// 情報表示
 	//-----------------------------
 	if (ImGui::TreeNode("Transform Info"))
