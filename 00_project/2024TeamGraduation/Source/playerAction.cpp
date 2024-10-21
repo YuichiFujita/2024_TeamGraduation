@@ -19,7 +19,7 @@ namespace
 
 namespace ActionTime
 {
-	const float BLINK = 0.2f;		// ブリンク時間
+	const float BLINK = 0.3f;		// ブリンク時間
 	const float DODGE = 0.5f;		// 回避時間
 }
 
@@ -111,7 +111,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 		}
 
 		if (UtilFunc::Collision::CollisionCircleCylinder(
-			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetHeight()))
+			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetParameter().fHeight))
 		{
 			//ダメージ受付しない時間設定
 			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();

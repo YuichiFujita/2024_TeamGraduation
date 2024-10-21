@@ -8,8 +8,15 @@
 #ifndef _OBJECTHIERARCHY_H_
 #define _OBJECTHIERARCHY_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include "object.h"
+#include "characterStatus.h"
 
+//==========================================================================
+// 前方宣言
+//==========================================================================
 class CModel;
 
 //==========================================================================
@@ -20,7 +27,10 @@ class CObjectHierarchy : public CObject
 {
 public:
 
+	//=============================
 	// 構造体定義
+	//=============================
+	// 読み込む子データ
 	struct LoadData
 	{
 		std::string pModelFile;	// モデルファイル名
@@ -33,28 +43,24 @@ public:
 		MyLib::Vector3 rot;		// 向き
 	};
 
+	// 読み込む親データ
 	struct Load
 	{
-		std::string sTextFile;	// テキストファイル名
-		int nCenterIdx;				// 中心にするパーツインデックス
-		MyLib::Vector3 centerOffSet;	// 中心位置のオフセット
-		int nNumModel;			// モデル数
-		float fVelocity;		// 移動速度
-		float fRadius;			// 半径
-		float fHeight;			// 身長
-		int nLife;				// 体力
-		int nMotionStartIdx;	// モーション開始のインデックス番号
-		int nAddScore;			// スコア加算量
-		MyLib::Vector3 posOrigin;	// 最初の位置
-		std::vector<LoadData> LoadData;
+		std::string sTextFile;						// テキストファイル名
+		int nCenterIdx;								// 中心にするパーツインデックス
+		MyLib::Vector3 centerOffSet;				// 中心位置のオフセット
+		int nNumModel;								// モデル数
+		MyLib::Vector3 posOrigin;					// 最初の位置
+		CCharacterStatus::CharParameter parameter;	// パラメーター
+		std::vector<LoadData> LoadData;	// 読み込む子データ
 	};
 
 	// 列挙型定義
-	typedef enum
+	enum STATE
 	{
 		STATE_NONE = 0,	// なにもない
 		STATE_MAX
-	}STATE;
+	};
 
 	CObjectHierarchy(int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CObjectHierarchy();
@@ -101,20 +107,22 @@ protected:
 	virtual void BindObjectData(int nCntData);	// オブジェクト毎のデータ割り当て
 
 	std::vector<CModel*> m_apModel;		// モデル(パーツ)のポインタ
+	int m_nIdxFile;					// ファイルのインデックス番号
 	static std::vector<Load> m_aLoadData;
 	static int m_nNumLoad;	// 読み込んだ数
 private:
 
+	//=============================
 	// メンバ変数
+	//=============================
 	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
 	MyLib::Vector3 m_posOrigin;	// 最初の位置
 	MyLib::Vector3 m_posCenter;	// 中心位置
 
 	int m_nCenterPartsIdx;			// 中心にするパーツのインデックス
 	MyLib::Vector3 m_CenterOffset;	// 中心のオフセット
-	float m_fRadius;			// 半径
-	int m_nNumModel;			// モデルの数
-	int m_nIdxFile;				// ファイルのインデックス番号
+	float m_fRadius;				// 半径
+	int m_nNumModel;				// モデルの数
 
 };
 

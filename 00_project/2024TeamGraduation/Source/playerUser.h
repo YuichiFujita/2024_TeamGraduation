@@ -16,8 +16,8 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CPlayerControlMove;	// 移動(操作)
-class CPlayerControlAction;	// アクション(操作)
+class CPlayerUserControlMove;	// 移動(操作)
+class CPlayerUserControlAction;	// アクション(操作)
 
 //==========================================================================
 // クラス定義
@@ -49,8 +49,8 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
+	void ChangeMoveControl(CPlayerUserControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerUserControlAction* control);	// アクションの操作変更
 
 	//=============================
 	// 静的関数
@@ -79,8 +79,8 @@ private:
 	//-----------------------------
 	// パターン用インスタンス
 	//-----------------------------
-	CPlayerControlMove* m_pControlMove;		// 移動操作
-	CPlayerControlAction* m_pControlAction;	// アクション操作
+	CPlayerUserControlMove* m_pControlMove;		// 移動操作
+	CPlayerUserControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif

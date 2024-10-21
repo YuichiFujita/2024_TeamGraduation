@@ -24,19 +24,52 @@ class CCharacterStatus
 {
 public:
 
+	//=============================
+	// 構造体定義
+	//=============================
+	/**
+	@brief	ステータス
+	*/
+	struct CharParameter
+	{
+		float fVelocityNormal;	// 通常移動速度
+		float fVelocityDash;	// ダッシュ移動速度
+		float fVelocityBlink;	// ブリンク移動速度
+		float fVelocityJump;	// ジャンプ量
+		float fRadius;			// 半径
+		float fHeight;			// 身長
+		int nLife;				// 体力
+
+		// コンストラクタ
+		CharParameter() :
+			fVelocityNormal(0.0f),	// 通常移動速度
+			fVelocityDash(0.0f),	// ダッシュ移動速度
+			fVelocityBlink(0.0f),	// ブリンク移動速度
+			fVelocityJump(0.0f),	// ジャンプ量
+			fRadius(0.0f),			// 半径
+			fHeight(0.0f),			// 身長
+			nLife(0)				// 体力
+		{}
+
+		// パラメーター付きコンストラクタ
+		CharParameter(float _fVelocityNormal, float _fVelocityDash, float _fVelocityBlink,
+			float _fVelocityJump, float _fRadius, float _fHeight, int _nLife) :
+			fVelocityNormal(_fVelocityNormal),	// 通常移動速度
+			fVelocityDash(_fVelocityDash),		// ダッシュ移動速度
+			fVelocityBlink(_fVelocityBlink),	// ブリンク移動速度
+			fVelocityJump(_fVelocityJump),		// ジャンプ量
+			fRadius(_fRadius),					// 半径
+			fHeight(_fHeight),					// 身長
+			nLife(_nLife)						// 体力
+		{}
+	};
+
 	// コンストラクタ
 	CCharacterStatus();
 
 	// コンストラクタ
-	CCharacterStatus(float _fVelocityNormal, float _fVelocityDash, float _fVelocityBlink,
-		float _fVelocityJump, float _fRadius, float _fHeight, int _nLife) :
-		m_fVelocityNormal(_fVelocityNormal),	// 通常移動速度
-		m_fVelocityDash(_fVelocityDash),		// ダッシュ移動速度
-		m_fVelocityBlink(_fVelocityBlink),		// ブリンク移動速度
-		m_fVelocityJump(_fVelocityJump),		// ジャンプ量
-		m_fRadius(_fRadius),					// 半径
-		m_fHeight(_fHeight),					// 身長
-		m_nLife(_nLife),						// 体力
+	CCharacterStatus(CharParameter status) :
+		m_Parameter(status),					// パラメーター
 		m_typeTeam(CGameManager::SIDE_NONE) {}	// チームサイド
 
 	// デストラクタ
@@ -47,26 +80,18 @@ public:
 	//=============================
 	void SetTeam(const CGameManager::TeamSide team) { m_typeTeam = team; }	// チームサイド設定
 	CGameManager::TeamSide GetTeam()	{ return m_typeTeam; }				// チームサイド取得
-	float GetVelocityNormal()			{ return m_fVelocityNormal; }		// 通常移動速度
-	float GetVelocityDash()				{ return m_fVelocityDash; }			// ダッシュ移動速度
-	float GetVelocityBlink()			{ return m_fVelocityBlink; }		// ブリンク移動速度
-	float GetVelocityJump()				{ return m_fVelocityJump; }			// ジャンプ量
-	float GetRadius()					{ return m_fRadius; }				// 半径
-	float GetHeight()					{ return m_fHeight; }				// 身長
-	int GetLife()						{ return m_nLife; }					// 体力
+	CharParameter GetParameter() { return m_Parameter; }					// パラメーター取得
+
+#if _DEBUG
+	void SetParameter(const CharParameter& parameter) { m_Parameter = parameter; }	// パラメーター設定
+#endif
 
 private:
 	
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fVelocityNormal;	// 通常移動速度
-	float m_fVelocityDash;		// ダッシュ移動速度
-	float m_fVelocityBlink;		// ブリンク移動速度
-	float m_fVelocityJump;		// ジャンプ量
-	float m_fRadius;			// 半径
-	float m_fHeight;			// 身長
-	int m_nLife;				// 体力
+	CharParameter m_Parameter;			// パラメーター
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
 };
 

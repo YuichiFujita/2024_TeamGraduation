@@ -1,38 +1,32 @@
 //=============================================================================
 // 
-//  プレイヤーAIコントロール_移動ヘッダー [playerAIcontrol_move.h]
-//  Author : 藤田勇一
+//  プレイヤーコントロールヘッダー [playerUsercontrol_move.h]
+//  Author : 相馬靜雅
 // 
 //=============================================================================
 
-#ifndef _PLAYERAI_CONTROL_MOVE_H_
-#define _PLAYERAI_CONTROL_MOVE_H_	// 二重インクルード防止
+#ifndef _PLAYERUSER_CONTROL_MOVE_H_
+#define _PLAYERUSER_CONTROL_MOVE_H_	// 二重インクルード防止
 
 #define BRESSRANGE (0)
 
-//==========================================================================
-// インクルードファイル
-//==========================================================================
 #include "playercontrol_move.h"
 
-//==========================================================================
-// 前方宣言
-//==========================================================================
 class CSuffocation;
 class CEffekseerObj;
 
 //==========================================================================
-// プレイヤーAIコントロール_移動クラス定義
+// プレイヤーコントロールクラス定義
 //==========================================================================
 //=============================
 // 移動
 //=============================
-class CPlayerAIControlMove : public CPlayerControlMove
+class CPlayerUserControlMove : public CPlayerControlMove
 {
 public:
 
 	// コンストラクタ
-	CPlayerAIControlMove();
+	CPlayerUserControlMove();
 
 	void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 移動
 
@@ -49,7 +43,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-};
 
+};
 
 #endif

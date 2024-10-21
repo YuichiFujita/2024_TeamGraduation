@@ -295,7 +295,7 @@ void CModel::DrawShadowMtx()
 	D3DXMatrixIdentity(&mtxShadow);
 
 	// ïΩñ èÓïÒÇê∂ê¨
-	pos = MyLib::Vector3(0.0f, 3.0f, 0.0f);
+	pos = MyLib::Vector3(0.0f, 0.01f, 0.0f);
 	normal = MyLib::Vector3(0.0f, 1.0f, 0.0f);
 	D3DXPlaneFromPointNormal(&plane, &pos, &normal);
 

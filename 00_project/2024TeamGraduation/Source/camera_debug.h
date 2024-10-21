@@ -35,6 +35,7 @@ private:
 	//=============================
 	void UpdateKeyboard();	// キーボード更新
 	void UpdateDistance();	// 距離の更新
+	void UpdateGUI();		// GUI操作
 
 	//=============================
 	// メンバ変数

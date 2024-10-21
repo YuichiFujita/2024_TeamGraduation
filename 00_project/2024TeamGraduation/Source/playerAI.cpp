@@ -170,3 +170,20 @@ void CPlayerAI::DeleteControl()
 	// 操作関連削除
 	CPlayer::DeleteControl();
 }
+
+
+//==========================================================================
+// デバッグ処理
+//==========================================================================
+void CPlayerAI::Debug()
+{
+	// デバッグ処理
+	CPlayer::Debug();
+
+	// 自動投げフラグ設定
+	bool autoThrow = m_pControlAction->IsAutoThrow();
+	if (ImGui::Checkbox("Change Auto Throw", &autoThrow))
+	{ 
+		m_pControlAction->SetEnableAutoThrow(autoThrow);
+	}
+}

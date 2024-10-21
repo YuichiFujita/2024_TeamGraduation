@@ -400,10 +400,10 @@ void ImguiMgr::Draw()
 {
 #if _DEBUG
 
-	if (!CManager::IsDisp_ImGui())
+	/*if (!CManager::IsDisp_ImGui())
 	{
 		ImGui::ShowDemoWindow();
-	}
+	}*/
 #endif
 
 	// ImGuiƒtƒŒ[ƒ€‚ÌI—¹

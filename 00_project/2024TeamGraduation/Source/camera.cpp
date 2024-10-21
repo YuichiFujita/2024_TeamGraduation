@@ -62,6 +62,7 @@ CCamera::CCamera()
 	m_posV = MyLib::Vector3();		// 視点(カメラの位置)
 	m_posVDest = MyLib::Vector3();	// 目標の視点
 	m_posRDest = MyLib::Vector3();	// 目標の注視点
+	m_posROrigin = MyLib::Vector3();	// 元の注視点
 	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
 	m_move = MyLib::Vector3();		// 移動量
 	m_rot = MyLib::Vector3();		// 向き
@@ -109,11 +110,13 @@ HRESULT CCamera::Init()
 	// 操作の状態設定
 	SetControlState(DEBUG_NEW CCameraControlState_Normal(this));
 
+#if _DEBUG
 	// デバッグ専用処理
 	if (m_pDebugControll == nullptr)
 	{
 		m_pDebugControll = DEBUG_NEW CCamera_Debug(this);
 	}
+#endif
 
 	// カメラモーション作成
 	m_pCameraMotion = CCameraMotion::Create();
@@ -312,10 +315,10 @@ void CCamera::ReflectCameraR()
 		(m_bMotion && m_bFollow))
 	{// 追従しないとき
 
-		// 注視点の代入処理
-		m_posR.x = m_posV.x + cosf(m_rot.z) * sinf(m_rot.y) * m_fDistance;
-		m_posR.z = m_posV.z + cosf(m_rot.z) * cosf(m_rot.y) * m_fDistance;
-		m_posR.y = m_posV.y + sinf(m_rot.z) * m_fDistance;
+		//// 注視点の代入処理
+		//m_posR.x = m_posV.x + cosf(m_rot.z) * sinf(m_rot.y) * m_fDistance;
+		//m_posR.z = m_posV.z + cosf(m_rot.z) * cosf(m_rot.y) * m_fDistance;
+		//m_posR.y = m_posV.y + sinf(m_rot.z) * m_fDistance;
 	}
 	else
 	{// 追従ON
@@ -512,7 +515,7 @@ void CCamera::Reset(CScene::MODE mode)
 	// 操作の状態設定
 	SetControlState(DEBUG_NEW CCameraControlState_Normal(this));
 
-	m_bFollow = true;	// 追従するかどうか
+	m_bFollow = false;	// 追従するかどうか
 
 	// カメラモーションの位置リセット
 	if (m_pCameraMotion != nullptr)
@@ -539,10 +542,11 @@ void CCamera::Reset(CScene::MODE mode)
 //==========================================================================
 void CCamera::ResetGame()
 {
-	m_posR = MyLib::Vector3(0.0f, 200.0f, 0.0f);				// 注視点(見たい場所)
+	m_posR = MyLib::Vector3(0.0f, 200.0f, -560.0f);				// 注視点(見たい場所)
 	m_posV = MyLib::Vector3(0.0f, 300.0f, m_posR.z + -400.0f);	// 視点(カメラの位置)
 	m_posVDest = m_posV;							// 目標の視点
 	m_posRDest = m_posR;							// 目標の注視点
+	m_posROrigin = m_posR;							// 元の注視点
 	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
 	m_move = MyLib::Vector3(0.0f, 0.0f, 0.0f);		// 移動量
 	m_rot = DEFAULT_GAMEROT;						// 向き
