@@ -12,6 +12,11 @@
 #include "motion.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CCharacterStatus;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // オブジェクトキャラクタークラス定義
@@ -84,17 +89,14 @@ public:
 	//--------------------------
 	// キャラ情報
 	//--------------------------
-	void SetHeight(const float fHeight) { m_fHeight = fHeight; }			// 身長設定
-	float GetHeight() { return m_fHeight; }									// 身長取得
-	void SetVelocity(const float fVelocity) { m_fVelocity = fVelocity; }	// 移動速度設定
-	float GetVelocity() const { return m_fVelocity; }						// 移動速度取得
 	void SetRotDest(const float fRotDest) { m_fRotDest = fRotDest; }		// 目標の向き設定
 	float GetRotDest() const { return m_fRotDest; }							// 目標の向き取得
 	void SetLife(const int nLife) { m_nLife = nLife; }						// 体力設定
 	int GetLife() const { return m_nLife; }									// 体力取得
 	void SetLifeOrigin(const int nLife) { m_nLifeOrigin = nLife; }			// 元の体力設定
 	int GetLifeOrigin() const { return m_nLifeOrigin; }						// 元の体力取得
-	int GetMotionStartIdx() const { return m_nMotionStartIdx; }				// モーション開始のインデックス番号取得
+	CCharacterStatus* GetCharStatus() { return m_pStatus; }					// キャラクターステータス取得
+	CCharacterStatus::CharParameter GetParameter() { return m_pStatus->GetParameter(); }	// キャラクターパラメーター取得
 
 	//--------------------------
 	// コライダー関連
@@ -156,17 +158,16 @@ private:
 	void LoadSphereColliders(const std::string& textfile);
 	void SaveSphereColliders();
 	void MotionInProgressAction();	// モーション中の行動処理
+	void CreateStatus(const CCharacterStatus::CharParameter& parameter);	// ステータス生成
 
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fHeight;			// 身長
-	float m_fVelocity;			// 移動速度
-	float m_fRotDest;			// 目標の向き
-	int m_nLife;				// 体力
-	int m_nLifeOrigin;			// 元の体力
-	int m_nMotionStartIdx;		// モーション開始のインデックス番号
-	CMotion *m_pMotion;			// モーションの情報
+	float m_fRotDest;				// 目標の向き
+	int m_nLife;					// 体力
+	int m_nLifeOrigin;				// 元の体力
+	CCharacterStatus* m_pStatus;	// ステータス
+	CMotion *m_pMotion;				// モーションの情報
 	std::vector<SphereCollider> m_SphereColliders;	// スフィアコライダー
 	static std::vector<ColliderData> m_LoadColliderData;	// コライダー情報
 

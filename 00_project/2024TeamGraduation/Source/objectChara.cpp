@@ -10,6 +10,7 @@
 #include "renderer.h"
 #include "model.h"
 #include "3D_effect.h"
+#include "characterStatus.h"
 
 //==========================================================================
 // 静的メンバ変数
@@ -22,11 +23,10 @@ std::vector<CObjectChara::ColliderData> CObjectChara::m_LoadColliderData = {};	/
 CObjectChara::CObjectChara(int nPriority) : CObjectHierarchy(nPriority)
 {
 	// 値のクリア
-	m_fVelocity = 0.0f;		// 移動速度
 	m_fRotDest = 0.0f;		// 目標の向き
 	m_nLife = 0;			// 体力
 	m_nLifeOrigin = 0;		// 元の体力
-	m_nMotionStartIdx = 0;	// モーション開始のインデックス番号
+	m_pStatus = nullptr;	// ステータス
 	m_bInDicision = false;	// 攻撃判定中フラグ
 }
 
@@ -91,22 +91,30 @@ HRESULT CObjectChara::SetCharacter(const std::string& file)
 //==========================================================================
 void CObjectChara::BindObjectData(int nCntData)
 {
-
 	// オブジェクト毎のデータ割り当て
 	CObjectHierarchy::BindObjectData(nCntData);
 
-	// 身長
-	m_fHeight = m_aLoadData[nCntData].fHeight;
-
-	// 移動速度
-	m_fVelocity = m_aLoadData[nCntData].fVelocity;
+	// ステータス生成
+	CreateStatus(m_aLoadData[m_nIdxFile].parameter);
 
 	// 体力
-	m_nLife = m_aLoadData[nCntData].nLife;
+	m_nLife = m_aLoadData[m_nIdxFile].parameter.nLife;
 	m_nLifeOrigin = m_nLife;
+}
 
-	// モーションスタートのインデックス
-	m_nMotionStartIdx = m_aLoadData[nCntData].nMotionStartIdx;
+//==========================================================================
+// ステータス生成
+//==========================================================================
+void CObjectChara::CreateStatus(const CCharacterStatus::CharParameter& parameter)
+{
+	if (m_pStatus != nullptr)
+	{
+		delete m_pStatus;
+		m_pStatus = nullptr;
+	}
+
+	// 生成
+	m_pStatus = DEBUG_NEW CCharacterStatus(parameter);
 }
 
 //==========================================================================
@@ -303,39 +311,47 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 
 	char hoge[MAX_COMMENT];	// コメント
 
-	if (file.find("HEIGHT") != std::string::npos)
-	{// HEIGHTで身長
+	if (file.find("VELOCITY_NORMAL") != std::string::npos)
+	{// 通常移動量
 
 		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].fHeight);	// 身長
-		m_fHeight = m_aLoadData[m_nNumLoad].fHeight;
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fVelocityNormal);	// 通常移動量
 	}
 
-	if (file.find("VELOCITY") != std::string::npos)
-	{// VELOCITYで移動速度
+	if (file.find("VELOCITY_RUN") != std::string::npos)
+	{// ダッシュ移動量
 
 		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].fVelocity);	// 移動速度
-		m_fVelocity = m_aLoadData[m_nNumLoad].fVelocity;
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fVelocityDash);	// ダッシュ移動量
+	}
+
+	if (file.find("VELOCITY_BLINK") != std::string::npos)
+	{// ブリンク移動量
+
+		fscanf(pFile, "%s", &hoge[0]);	// =の分
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fVelocityBlink);	// ブリンク移動量
+	}
+
+	if (file.find("JUMP") != std::string::npos)
+	{// ジャンプ量
+
+		fscanf(pFile, "%s", &hoge[0]);	// =の分
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fVelocityJump);	// ジャンプ量
+	}
+
+	if (file.find("HEIGHT") != std::string::npos)
+	{// 身長
+
+		fscanf(pFile, "%s", &hoge[0]);	// =の分
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fHeight);	// 身長
 	}
 
 	if (file.find("LIFE") != std::string::npos)
 	{// LIFEで体力
 
 		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].nLife);	// 体力
-		m_nLife = m_aLoadData[m_nNumLoad].nLife;
-		m_nLifeOrigin = m_nLife;	// 元の体力
+		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].parameter.nLife);	// 体力
 	}
-
-	if (file.find("MOTION_STARTPARTS") != std::string::npos)
-	{// MOTION_STARTPARTSでモーション開始のインデックス番号
-
-		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].nMotionStartIdx);	// モーション開始のインデックス番号
-		m_nMotionStartIdx = m_aLoadData[m_nNumLoad].nMotionStartIdx;
-	}
-
 }
 
 //==========================================================================

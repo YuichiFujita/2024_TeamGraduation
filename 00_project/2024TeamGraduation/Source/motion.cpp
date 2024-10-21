@@ -217,18 +217,10 @@ void CMotion::SetModel(CModel **pModel, int nNumModel)
 //==========================================================================
 void CMotion::ResetPose(int nType)
 {
-	
-
-	int nStartIdx = m_pObjChara->GetMotionStartIdx();
-	for (int nCntParts = nStartIdx; nCntParts < m_nNumModel + nStartIdx + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
 	{// 全パーツ分繰り返す
 
 		int nCntModel = nCntParts;
-		if (nStartIdx != 0)
-		{
-			nCntModel = nCntParts - nStartIdx;
-		}
-
 		if (nCntModel >= m_nNumModel)
 		{
 			break;
@@ -341,16 +333,10 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		nNextKey = m_pInfo[m_nType].nNumKey - 1;
 	}
 
-	int nStartIdx = m_pObjChara->GetMotionStartIdx();
-	for (int nCntParts = nStartIdx; nCntParts < m_nNumModel + nStartIdx + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
 	{// 全パーツ分繰り返す
 
 		int nCntModel = nCntParts;
-		if (nStartIdx != 0)
-		{
-			nCntModel = nCntParts - nStartIdx;
-		}
-
 		if (nCntModel >= m_nNumModel)
 		{
 			break;
@@ -633,17 +619,10 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// パターンNO.更新
 		m_nPatternKey = (m_nPatternKey + 1) % m_pInfo[m_nType].nNumKey;
 
-		int nStartIdx = m_pObjChara->GetMotionStartIdx();
-		for (int nCntParts = nStartIdx; nCntParts < m_nNumModel + nStartIdx + 1; nCntParts++)
+		for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
 		{// 全パーツ分繰り返す
 
-			int nCntModel = nCntParts;
-			if (nStartIdx != 0)
-			{
-				nCntModel = nCntParts - nStartIdx;
-			}
-
-			if (nCntModel >= m_nNumModel)
+			if (nCntParts >= m_nNumModel)
 			{
 				break;
 			}
@@ -741,54 +720,41 @@ void CMotion::Set(int nType, bool bBlend)
 		m_pInfo[m_nType].AttackInfo[nCntAttack]->bEndAtk = false;
 	}
 
-	int nStartIdx = m_pObjChara->GetMotionStartIdx();
-	for (int nCntParts = nStartIdx; nCntParts < m_nNumModel + nStartIdx + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
 	{// 全パーツ分繰り返す
 
-		int nCntModel = nCntParts;
-		if (nStartIdx != 0)
+		if (m_ppModel[nCntParts] == nullptr)
 		{
-			nCntModel = nCntParts - nStartIdx;
-		}
-
-		if (nCntModel >= m_nNumModel)
-		{
-			break;
-		}
-
-		if (m_ppModel[nCntModel] == nullptr)
-		{// nullptrだったら
 			continue;
 		}
 
 		// 過去の位置・向きを保存
 		if (bBlend)
 		{
-			m_pPartsOld[nCntParts].rot = m_ppModel[nCntModel]->GetRotation();
-			m_pPartsOld[nCntParts].scale = m_ppModel[nCntModel]->GetScale();
+			m_pPartsOld[nCntParts].rot = m_ppModel[nCntParts]->GetRotation();
+			m_pPartsOld[nCntParts].scale = m_ppModel[nCntParts]->GetScale();
 
-			if (nStartIdx == nCntParts)
+			if (nCntParts == 0)
 			{
-				m_pPartsOld[nCntParts].pos = m_ppModel[nCntModel]->GetPosition() - m_pObjChara->GetOriginPosition();
+				m_pPartsOld[nCntParts].pos = m_ppModel[nCntParts]->GetPosition() - m_pObjChara->GetOriginPosition();
 			}
 			else
 			{
-				m_pPartsOld[nCntParts].pos = m_ppModel[nCntModel]->GetPosition() - m_ppModel[nCntModel]->GetOriginPosition();
+				m_pPartsOld[nCntParts].pos = m_ppModel[nCntParts]->GetPosition() - m_ppModel[nCntParts]->GetOriginPosition();
 			}
 		}
 		else
 		{
 			m_pPartsOld[nCntParts].rot = m_pInfo[m_nType].aKey[0].aParts[nCntParts].rot;
 
-			if (nStartIdx == nCntParts)
+			if (nCntParts == 0)
 			{
-				m_pPartsOld[nCntParts].pos = m_pInfo[m_nType].aKey[0].aParts[nCntParts].pos + m_pObjChara->GetOriginPosition() - m_ppModel[nCntModel]->GetOriginPosition();
+				m_pPartsOld[nCntParts].pos = m_pInfo[m_nType].aKey[0].aParts[nCntParts].pos + m_pObjChara->GetOriginPosition() - m_ppModel[nCntParts]->GetOriginPosition();
 			}
 			else
 			{
 				m_pPartsOld[nCntParts].pos = m_pInfo[m_nType].aKey[0].aParts[nCntParts].pos;
 			}
-			//m_pPartsOld[nCntParts].pos = m_pInfo[m_nType].aKey[0].aParts[nCntParts].pos + m_pObjChara->GetOriginPosition();
 
 			m_pPartsOld[nCntParts].scale = m_pInfo[m_nType].aKey[0].aParts[nCntParts].scale;
 		}
