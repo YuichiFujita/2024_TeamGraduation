@@ -294,8 +294,14 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	pos += move * fDeltaRate * fSlowRate;
 
 	// 慣性補正
-	move.x += (0.0f - move.x) * (0.1f * fDeltaRate * fSlowRate);
-	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
+	Action act = m_pActionPattern->GetAction();
+	float ratio = 0.25f;
+	if (act == Action::ACTION_CATCH)
+	{
+		ratio = 1.0f;
+	}
+	move.x += (0.0f - move.x) * (ratio * fDeltaRate * fSlowRate);
+	move.z += (0.0f - move.z) * (ratio * fDeltaRate * fSlowRate);
 
 	// 重力処理
 	if (m_state != STATE_DEAD)
