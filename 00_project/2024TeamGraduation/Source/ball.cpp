@@ -179,7 +179,7 @@ void CBall::Catch(CPlayer* pPlayer)
 	SetMove(VEC3_ZERO);
 
 	// キャッチ状態にする
-	m_state = STATE_CATCH;
+	SetState(STATE_CATCH);
 
 	// プレイヤーのチームを保存
 	m_typeTeam = pPlayer->GetStatus()->GetTeam();
@@ -198,8 +198,8 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 {
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_NOR; }	// ターゲットがいる場合ホーミング状態に
-	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に
+	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -224,8 +224,8 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 {
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_JUMP; }	// ターゲットがいる場合ホーミング状態に
-	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_JUMP); }	// ターゲットがいる場合ホーミング状態に
+	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -250,8 +250,8 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 {
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_NOR; }	// ターゲットがいる場合ホーミング状態に	// TODO：スペシャルに後々変更
-	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に	// TODO：スペシャルに後々変更
+	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -347,12 +347,14 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
-	MyLib::Vector3 vecTarget = posTarget - pos;
-	if (vecTarget.Length() <= 80.0f)
-	{ // 目標ベクトル (ターゲット位置とボール位置のベクトル) の長さが短い場合
+	// 経過時間を加算
+	m_fStateTime += fDeltaTime;
 
+	MyLib::Vector3 vecTarget = posTarget - pos;
+	if (m_fStateTime >= 1.2f || vecTarget.Length() <= 150.0f)
+	{
 		// 移動状態にする
-		m_state = STATE_MOVE;
+		SetState(STATE_MOVE);
 	}
 
 	// 地面の着地
@@ -394,8 +396,6 @@ void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, con
 	const float fTargetAngle = posTarget.AngleXZ(pos);
 	posTarget.x += sinf(fTargetAngle) * 150.0f;
 	posTarget.z += cosf(fTargetAngle) * 150.0f;
-
-	CEffect3D::Create(posTarget, VEC3_ZERO, MyLib::color::White(), 20.0f, 0.5f, 0, CEffect3D::TYPE::TYPE_JUJI);
 
 	// 目標ベクトルを取得
 	MyLib::Vector3 vecDest = posTarget - pos;
@@ -452,12 +452,10 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
-	// 移動量の減速
-	UpdateDecay(fDeltaRate, fSlowRate);
-
-	if (m_fMoveSpeed <= 5.5f)
-	{ // 移動量が下がった場合
-
+	// 経過時間を加算
+	m_fStateTime += fDeltaTime;
+	if (m_fStateTime >= 0.8f)
+	{
 		// 重力の加速
 		UpdateGravity(fDeltaRate, fSlowRate);
 
@@ -702,6 +700,18 @@ CPlayer* CBall::CollisionThrow(void)
 }
 
 //==========================================================================
+// 状態設定
+//==========================================================================
+void CBall::SetState(const EState state)
+{
+	// 引数の状態にする
+	m_state = state;
+
+	// カウンターを初期化
+	m_fStateTime = 0.0f;
+}
+
+//==========================================================================
 // 投げ処理
 //==========================================================================
 void CBall::Throw(CPlayer* pPlayer)
@@ -731,7 +741,7 @@ void CBall::ReBound(MyLib::Vector3* pMove)
 	m_fMoveSpeed = 2.5f;
 
 	// リバウンド状態にする
-	m_state = STATE_REBOUND;
+	SetState(STATE_REBOUND);
 }
 
 //==========================================================================
@@ -740,7 +750,7 @@ void CBall::ReBound(MyLib::Vector3* pMove)
 void CBall::Landing(void)
 {
 	// 着地状態にする
-	m_state = STATE_LAND;
+	SetState(STATE_LAND);
 
 	// ホーミング対象の初期化
 	m_pTarget = nullptr;

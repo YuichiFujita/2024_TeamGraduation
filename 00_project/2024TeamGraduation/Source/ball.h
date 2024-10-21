@@ -121,10 +121,11 @@ private:
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
 	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
-	CPlayer* CollisionThrow(void);	// ホーミング対象との当たり判定
-	void Throw(CPlayer* pPlayer);	// 投げ
-	void ReBound(MyLib::Vector3* pMove);	// リバウンド
-	void Landing(void);	// 着地
+	CPlayer* CollisionThrow(void);				// ホーミング対象との当たり判定
+	void SetState(const EState state);			// 状態設定
+	void Throw(CPlayer* pPlayer);				// 投げ
+	void ReBound(MyLib::Vector3* pMove);		// リバウンド
+	void Landing(void);							// 着地
 
 	//=============================
 	// 静的メンバ変数
