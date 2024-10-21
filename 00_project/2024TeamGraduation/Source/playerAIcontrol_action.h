@@ -26,7 +26,7 @@ public:
 	// コンストラクタ
 	CPlayerAIControlAction();
 
-	virtual void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ
+	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// キャッチ
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }

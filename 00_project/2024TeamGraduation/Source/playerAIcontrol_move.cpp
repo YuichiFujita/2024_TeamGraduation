@@ -27,17 +27,13 @@ namespace
 //==========================================================================
 CPlayerAIControlMove::CPlayerAIControlMove()
 {
-	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
-	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
-	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
-	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
-	m_bDash = false;
+
 }
 
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerAIControlMove::Operate(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 	// インプット情報取得
@@ -135,7 +131,14 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	if (m_fInputInterval <= 0.0f)
+	//コントロール系取得
+	int* nCntTrigger = GetCntTrigger();						//トリガーのカウント取得
+	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
+	float fInputInterval = GetInputInterval();				//入力の受け付け猶予取得
+	float fTriggerInterval = GetTriggerInterval();			//トリガーのインターバル取得
+	bool bDash = GetDash();									//走るフラグ取得
+
+	if (fInputInterval <= 0.0f)
 	{// 猶予受け付け終了中
 
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
@@ -148,17 +151,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左上
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				pPad->GetStickMoveL(0).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右上
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
 			}
 			else
 			{// 上
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
@@ -171,17 +174,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左下
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				pPad->GetStickMoveL(0).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右下
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
 			}
 			else
 			{// 下
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_DOWN;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_DOWN;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
@@ -194,17 +197,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 右上
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				pPad->GetStickMoveL(0).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 右下
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
 			}
 			else
 			{// 右
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHT;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHT;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
@@ -217,17 +220,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 左上
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				pPad->GetStickMoveL(0).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 左下
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
 			}
 			else
 			{// 左
-				m_HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFT;
+				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFT;
 			}
 		}
 	}
@@ -237,15 +240,15 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	{// 入力された
 
 		// 入力のインターバル
-		m_fInputInterval = INTERVAL_INPUT;
+		fInputInterval = INTERVAL_INPUT;
 	}
 
-	if (m_fInputInterval > 0.0f)
+	if (fInputInterval > 0.0f)
 	{// 受け付け猶予中
 
 		// 次の入力判定
 		bool bNextInput = false;
-		switch (m_HoldDashAngle)
+		switch (HoldDashAngle)
 		{
 		case CPlayer::DashAngle::ANGLE_LEFT:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
@@ -308,7 +311,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 			break;
 
 		default:
-			info = Trigger(player, m_HoldDashAngle);
+			info = Trigger(player, HoldDashAngle);
 			bNextInput = true;
 			break;
 		}
@@ -317,23 +320,23 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 		if (bNextInput)
 		{
 			// 受け付け猶予終了
-			m_fInputInterval = 0.0f;
+			fInputInterval = 0.0f;
 		}
 	}
 
 	// 受け付け猶予減算
-	float oldTime = m_fInputInterval;
-	m_fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
-	m_fInputInterval = UtilFunc::Transformation::Clamp(m_fInputInterval, 0.0f, INTERVAL_INPUT);
+	float oldTime = fInputInterval;
+	fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
 
 	if (oldTime > 0.0f &&
-		m_fInputInterval <= 0.0f)
+		fInputInterval <= 0.0f)
 	{// 前回まだ猶予中 && 今は終了
-		info = Trigger(player, m_HoldDashAngle);
+		info = Trigger(player, HoldDashAngle);
 	}
 
 	// ダッシュする
-	if (info.bDash && !m_bDash)
+	if (info.bDash && !bDash)
 	{
 		MyLib::Vector3 move = player->GetMove();
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
@@ -344,18 +347,25 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 		player->SetMove(move);
 
 		// トリガーのカウントリセット
-		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
+		memset(nCntTrigger, 0, sizeof(nCntTrigger));
 
-		m_bDash = true;
+		bDash = true;
 	}
 
 	// トリガーの猶予減らしていく
-	m_fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
-	if (m_fTriggerInterval <= 0.0f)
+	fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	if (fTriggerInterval <= 0.0f)
 	{
 		// トリガーのカウントリセット
-		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
+		memset(nCntTrigger, 0, sizeof(nCntTrigger));
 	}
+
+	//コントロール系
+	SetCntTrigger(nCntTrigger);				//トリガーのカウント設定
+	SetHoldDashAngle(HoldDashAngle);		//ダッシュ方向設定
+	SetInputInterval(fInputInterval);		//入力の受け付け猶予設定
+	SetTriggerInterval(fTriggerInterval);	//トリガーのインターバル設定
+	SetDash(bDash);							//走るフラグ設定
 }
 
 //==========================================================================
@@ -363,7 +373,9 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!m_bDash)
+	bool bDash = GetDash();	//走るフラグ取得
+
+	if (!bDash)
 	{
 		return;
 	}
@@ -392,8 +404,10 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
-		m_bDash = false;
+		bDash = false;
 	}
+
+	SetDash(bDash);	//走るフラグ設定
 
 	ImGui::Checkbox("UP", &bUP);
 	ImGui::Checkbox("Down", &bDown);
@@ -413,6 +427,8 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	bool bDash = GetDash();	//走るフラグ
 
 	CPlayer::DashAngle angle;
 	bool bInput = false;
@@ -517,7 +533,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// 移動量取得
 	float fMove = player->GetParameter().fVelocityNormal;
-	if (m_bDash)
+	if (bDash)
 	{// ダッシュは変更
 		fMove = player->GetParameter().fVelocityDash;
 	}
@@ -544,7 +560,10 @@ CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::DashA
 	CPlayer::SDashInfo info;
 	info.bDash = false;
 
-	if (m_nCntTrigger[angle] == 1)
+	float fTriggerInterval = GetTriggerInterval();	//トリガーのインターバル
+	int* nCntTrigger = GetCntTrigger();				//トリガーのカウント
+
+	if (nCntTrigger[angle] == 1)
 	{// ダッシュ
 		info.bDash = true;
 		info.angle = angle;
@@ -554,10 +573,14 @@ CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::DashA
 	}
 
 	// トリガーのインターバルリセット
-	m_fTriggerInterval = TIME_INTERVAL;
+	fTriggerInterval = TIME_INTERVAL;
 
 	// トリガーのカウント
-	m_nCntTrigger[angle] = (m_nCntTrigger[angle] + 1) % 2;
+	nCntTrigger[angle] = (nCntTrigger[angle] + 1) % 2;
+
+	//コントロール系
+	SetCntTrigger(nCntTrigger);				//トリガーのカウント
+	SetTriggerInterval(fTriggerInterval);	//トリガーのインターバル
 
 	return info;
 }

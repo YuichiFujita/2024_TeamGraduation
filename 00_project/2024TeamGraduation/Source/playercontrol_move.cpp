@@ -578,3 +578,21 @@ CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAng
 
 	return info;
 }
+
+//==========================================================================
+// トリガーのカウント設定
+//==========================================================================
+void CPlayerControlMove::SetCntTrigger(int* nTrigger)
+{
+	while(true)
+	{
+		if (nTrigger != nullptr)
+		{
+			break;
+		}
+
+		int a = *nTrigger;
+
+		nTrigger++;
+	}
+}
