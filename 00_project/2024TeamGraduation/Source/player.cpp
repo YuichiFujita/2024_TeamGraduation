@@ -241,9 +241,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
-	// 向き取得
-	MyLib::Vector3 rot = GetRotation();
-
 	// カメラの情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	if (pCamera != nullptr)
@@ -257,22 +254,14 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pShadow->SetPosition(MyLib::Vector3(pos.x, m_pShadow->GetPosition().y, pos.z));
 	}
 
-#if 1
+#if _DEBUG	// デバッグ処理
 
-	// 移動量取得
-	MyLib::Vector3 move = GetMove();
-
-	// デバッグ表示
-	CManager::GetInstance()->GetDebugProc()->Print(
-		"------------------[プレイヤー%dの操作]------------------\n"
-		"位置：【X：%f, Y：%f, Z：%f】 【W / A / S / D】\n"
-		"向き：【X：%f, Y：%f, Z：%f】 【Z / C】\n"
-		"移動量：【X：%f, Y：%f, Z：%f】\n"
-		"体力：【%d】\n"
-		"状態：【%d】\n"
-		"行動状態：【%d】\n"
-		, m_nMyPlayerIdx, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, move.x, move.y, move.z, GetLife(), m_state, m_pActionPattern->GetAction());
-
+	std::string treename = "Player" + std::to_string(m_nMyPlayerIdx);	// ツリー名
+	if (ImGui::TreeNode(treename.c_str()))
+	{
+		Debug();
+		ImGui::TreePop();
+	}
 #endif
 
 }
@@ -603,7 +592,7 @@ bool CPlayer::Hit(CBall* pBall)
 	if (stateBall == CBall::STATE_REBOUND) { return false; }
 
 	// ダメージを与える
-	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO：後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
+	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
 	if (m_state == STATE::STATE_DEAD)
@@ -799,4 +788,50 @@ void CPlayer::SetState(STATE state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+}
+
+
+//==========================================================================
+// デバッグ処理
+//==========================================================================
+void CPlayer::Debug()
+{
+
+	//-----------------------------
+	// 位置
+	//-----------------------------
+	if (ImGui::TreeNode("SetPosition"))
+	{
+		// 位置取得
+		MyLib::Vector3 pos = GetPosition();
+
+		if (ImGui::Button("Reset"))
+		{// リセット
+			pos = MyLib::Vector3();
+		}
+		ImGui::DragFloat3("pos", (float*)&pos, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		// 位置設定
+		SetPosition(pos);
+		ImGui::TreePop();
+	}
+
+	//-----------------------------
+	// 情報表示
+	//-----------------------------
+	if (ImGui::TreeNode("Transform Info"))
+	{
+		MyLib::Vector3 pos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		MyLib::Vector3 move = GetMove();
+
+		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
+		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
+		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
+		ImGui::Text("Life : [%d]", GetLife());
+		ImGui::Text("State : [%d]", m_state);
+		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+
+		ImGui::TreePop();
+	}
 }

@@ -28,6 +28,12 @@ public:
 
 	virtual void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ƒLƒƒƒbƒ`
 
+#ifdef _DEBUG
+	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
+	void SetEnableAutoThrow(bool bAuto) { m_bAutoThrow = bAuto; }
+	bool IsAutoThrow() { return m_bAutoThrow; }
+#endif
+
 private:
 	
 	//=============================
@@ -44,6 +50,7 @@ private:
 	//=============================
 #ifdef _DEBUG
 	static bool m_bAutoThrow;
+
 	float fThrowTime = 0.0f;
 #endif
 
