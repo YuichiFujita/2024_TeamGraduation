@@ -87,6 +87,24 @@ void CPlayerControl::Action(CPlayer* player, const float fDeltaTime, const float
 }
 
 //==========================================================================
+// アクション＆モーションの一括設定
+//==========================================================================
+void CPlayerControl::SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA)
+{
+	CMotion* pMotion = player->GetMotion();
+
+	pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
+	player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+}
+
+//==========================================================================
+// ジャンプ設定
+//==========================================================================
+void CPlayerControl::SetJump(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA)
+{
+}
+
+//==========================================================================
 // キャッチ
 //==========================================================================
 void CPlayerControl::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -106,8 +124,7 @@ void CPlayerControl::Catch(CPlayer* player, const float fDeltaTime, const float 
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
-		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+		SetPattern(player, CPlayer::MOTION::MOTION_CATCH, CPlayer::Action::ACTION_CATCH);
 	}
 }
 
@@ -138,15 +155,11 @@ void CPlayerControl::Throw(CPlayer* player, const float fDeltaTime, const float 
 		{
 			pBall->ThrowJump(player);
 			
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW_JUMP);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW_JUMP, CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW, CPlayer::Action::ACTION_THROW);
 		}
 	}
 }
@@ -182,8 +195,6 @@ void CPlayerControl::Jump(CPlayer* player, const float fDeltaTime, const float f
 		motionFrag.bJump = true;
 		move.y += 12.0f;
 
-		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
 		player->SetMove(move);
 		player->SetMotionFrag(motionFrag);
 
@@ -191,7 +202,7 @@ void CPlayerControl::Jump(CPlayer* player, const float fDeltaTime, const float f
 		player->SetEnableJump(bJump);
 
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_JUMP);
+		SetPattern(player, CPlayer::MOTION::MOTION_JUMP, CPlayer::Action::ACTION_JUMP);
 
 		// サウンド再生
 		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);

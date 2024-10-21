@@ -24,6 +24,8 @@ public:
 	CPlayerControl();
 
 	virtual void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ƒLƒƒƒbƒ`
+	void SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA);
+	void SetJump(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA);
 
 private:
 	

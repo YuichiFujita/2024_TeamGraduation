@@ -108,6 +108,19 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 		// アクションパターン変更
 		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+
+		CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+
+		if (pBall == nullptr)
+		{
+			return;
+		}
+		
+		float fAngle = player->GetPosition().AngleXZ(pBall->GetPosition());
+		UtilFunc::Transformation::RotNormalize(fAngle);
+
+		//ボールに向く
+		player->SetRotDest(fAngle);
 	}
 }
 
