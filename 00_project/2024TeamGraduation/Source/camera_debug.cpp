@@ -243,6 +243,8 @@ void CCamera_Debug::UpdateGUI()
 	{// リセット
 		posR = m_pCamera->GetPositionROrigin();
 	}
+	ImGui::SameLine();
+
 	ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
 
 	// 注視点設定
