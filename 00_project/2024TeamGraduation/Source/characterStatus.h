@@ -82,6 +82,10 @@ public:
 	CGameManager::TeamSide GetTeam()	{ return m_typeTeam; }				// チームサイド取得
 	CharParameter GetParameter() { return m_Parameter; }					// パラメーター取得
 
+#if _DEBUG
+	void SetParameter(const CharParameter& parameter) { m_Parameter = parameter; }	// パラメーター設定
+#endif
+
 private:
 	
 	//=============================

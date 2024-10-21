@@ -62,6 +62,10 @@ public:
 	*/
 	static CPlayerAI *Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos);
 
+protected:
+
+	virtual void Debug() override;	// デバッグ処理
+
 private:
 
 	//=============================

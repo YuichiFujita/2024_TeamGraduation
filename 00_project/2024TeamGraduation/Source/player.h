@@ -189,6 +189,7 @@ protected:
 	//=============================
 	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
+	virtual void Debug();			// デバッグ処理
 
 private:
 

@@ -86,10 +86,6 @@ void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, con
 	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
 #else
 
-#ifdef _DEBUG
-	if (ImGui::Button("PlayerAI : Change Auto Throw")) { m_bAutoThrow = !m_bAutoThrow; }
-#endif
-
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// ˆÚ“®‰Â”\ƒ‚[ƒVƒ‡ƒ“‚ÌŽž
