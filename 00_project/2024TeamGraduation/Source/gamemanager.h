@@ -73,6 +73,8 @@ public:
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
 	void PosLimit(MyLib::Vector3& pos);	// コート移動制限
 
+	void Debug();	// デバッグ
+
 	void StartSetting();		// スタート時の設定
 	void GameClearSettings();	// ゲームクリア時の設定
 	void GameResultSettings();	// ゲームリザルトの設定

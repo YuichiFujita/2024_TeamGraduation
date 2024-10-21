@@ -226,6 +226,16 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	default:
 		break;
 	}
+
+#if _DEBUG	// デバッグ処理
+
+	std::string treename = "GameManager";	// ツリー名
+	if (ImGui::TreeNode(treename.c_str()))
+	{
+		Debug();
+		ImGui::TreePop();
+	}
+#endif
 }
 
 //==========================================================================
@@ -384,5 +394,27 @@ void CGameManager::PosLimit(MyLib::Vector3& pos)
 	else if (pos.z < -m_courtSize.z)
 	{
 		pos.z = -m_courtSize.z;
+	}
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CGameManager::Debug()
+{
+
+	//-----------------------------
+	// コート
+	//-----------------------------
+	if (ImGui::TreeNode("Court"))
+	{
+		if (ImGui::Button("Reset"))
+		{// リセット
+			m_courtSize = Court::SIZE;
+		}
+		ImGui::DragFloat3("size", (float*)&m_courtSize, 10.0f, 0.0f, 10000.0f, "%.2f");
+
+		// 位置設定
+		ImGui::TreePop();
 	}
 }
