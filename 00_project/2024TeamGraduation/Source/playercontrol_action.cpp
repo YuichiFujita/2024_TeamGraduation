@@ -106,21 +106,7 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
-		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
-
-		CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
-
-		if (pBall == nullptr)
-		{
-			return;
-		}
-		
-		float fAngle = player->GetPosition().AngleXZ(pBall->GetPosition());
-		UtilFunc::Transformation::RotNormalize(fAngle);
-
-		//ボールに向く
-		player->SetRotDest(fAngle);
+		SetPattern(player, CPlayer::MOTION::MOTION_CATCH, CPlayer::Action::ACTION_CATCH);
 	}
 }
 
@@ -145,21 +131,16 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
-
 		// アクションパターン変更
 		if (player->IsJump())
 		{
 			pBall->ThrowJump(player);
-			
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW_JUMP);
 
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW_JUMP, CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW, CPlayer::Action::ACTION_THROW);
 		}
 	}
 }
@@ -180,34 +161,11 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
-	// モーション情報取得
-	CMotion* pMotion = player->GetMotion();
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
 	//ジャンプ処理
 	if (pKey->GetTrigger(DIK_SPACE) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
 	{
-		bJump = true;
-		motionFrag.bJump = true;
-		move.y += 12.0f;
-
-		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
-		player->SetMove(move);
-		player->SetMotionFrag(motionFrag);
-
-		// ジャンプ判定設定
-		player->SetEnableJump(bJump);
-
-		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_JUMP);
-
-		// サウンド再生
-		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+		SetJump(player);
 	}
 }
 
@@ -227,17 +185,13 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	CMotion* pMotion = player->GetMotion();
-
 	if (pKey->GetTrigger(DIK_X) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
 	{
 		pBall->ThrowSpecial(player);
 
-		pMotion->Set(CPlayer::MOTION::MOTION_SPECIAL);
-
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_SPECIAL);
+		SetPattern(player, CPlayer::MOTION::MOTION_SPECIAL, CPlayer::Action::ACTION_SPECIAL);
 	}
 }
 
