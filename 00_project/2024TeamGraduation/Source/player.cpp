@@ -296,18 +296,15 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// 慣性補正
 	Action act = m_pActionPattern->GetAction();
 	float ratio = 0.25f;
-	if (act == Action::ACTION_CATCH)
+	if (act == Action::ACTION_BLINK)
 	{
-		ratio = 1.0f;
+		ratio = 0.1f;
 	}
 	move.x += (0.0f - move.x) * (ratio * fDeltaRate * fSlowRate);
 	move.z += (0.0f - move.z) * (ratio * fDeltaRate * fSlowRate);
 
 	// 重力処理
-	if (m_state != STATE_DEAD)
-	{
-		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
-	}
+	move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 
 	// 位置設定
 	SetPosition(pos);
