@@ -18,7 +18,7 @@
 namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
-	const float	RADIUS = 7.0f;			// 半径
+	const float	RADIUS = 12.0f;			// 半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
@@ -407,25 +407,14 @@ void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, con
 
 	// 移動ベクトルを更新
 	vecMove += vecDiff * 0.24f;
+	if (vecMove.y >= -0.3f)
+	{
+		// 最大値に補正
+		vecMove.y = -0.3f;
+	}
+
+	// ベクトルを正規化
 	vecMove = vecMove.Normal();
-
-	//// 移動ベクトルの仰角を制限
-	//float fPhi, fTheta;
-	//UtilFunc::Transformation::VecToRot(vecMove, &fPhi, &fTheta);
-
-
-
-
-	////UtilFunc::Transformation::ValueNormalize(fTheta, )
-
-	//static float fOhiAAA = 0.0f;
-	//if (GET_INPUTKEY->GetPress(DIK_0)) { fOhiAAA += 0.01f; }
-	//if (GET_INPUTKEY->GetPress(DIK_9)) { fOhiAAA -= 0.01f; }
-	//UtilFunc::Transformation::RotToVec(fOhiAAA, fTheta, &vecMove);
-	//vecMove = vecMove.Normal();
-
-
-
 
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
@@ -613,8 +602,11 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 		// ボールの位置を補正
 		pPos->y = CGameManager::FIELD_LIMIT + RADIUS;
 
-		// 縦移動量を初期化	// TODO：後でバウンドするよう変更
-		pMove->y = 0.0f;
+		// 縦移動量を与える
+		pMove->y = m_fMoveSpeed;
+
+		// 上限に補正
+		UtilFunc::Transformation::ValueNormalize(pMove->y, 1.0f, 0.0f);
 
 		// 重力を初期化
 		m_fGravity = 0.0f;
