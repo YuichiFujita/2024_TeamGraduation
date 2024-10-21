@@ -10,8 +10,8 @@
 
 // 使用クラス
 #include "playerStatus.h"
-#include "playercontrol_move.h"
-#include "playercontrol_action.h"
+#include "playerUsercontrol_move.h"
+#include "playerUsercontrol_action.h"
 
 //==========================================================================
 // 定数定義
@@ -80,8 +80,8 @@ HRESULT CPlayerUser::Init()
 	if (FAILED(hr)) { return E_FAIL; }
 
 	// 操作関連
-	ChangeMoveControl(DEBUG_NEW CPlayerControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerControlAction());
+	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
 
 	return S_OK;
 }
@@ -135,7 +135,7 @@ void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
+void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 {
 	delete m_pControlMove;
 	m_pControlMove = control;
@@ -144,7 +144,7 @@ void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeActionControl(CPlayerControlAction* control)
+void CPlayerUser::ChangeActionControl(CPlayerUserControlAction* control)
 {
 	delete m_pControlAction;
 	m_pControlAction = control;

@@ -1,19 +1,16 @@
 //=============================================================================
 // 
 //  プレイヤーコントロールヘッダー [playercontrol_move.h]
-//  Author : 相馬靜雅
+//  Author : Kai Takada
 // 
 //=============================================================================
 
-#ifndef _PLAYERCONTROL_MOVE_H_
-#define _PLAYERCONTROL_MOVE_H_	// 二重インクルード防止
+#ifndef _PLAYER_CONTROL_MOVE_H_
+#define _PLAYER_CONTROL_MOVE_H_	// 二重インクルード防止
 
 #define BRESSRANGE (0)
 
-#include "player.h"
-
-class CSuffocation;
-class CEffekseerObj;
+#include "playercontrol.h"
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -21,7 +18,7 @@ class CEffekseerObj;
 //=============================
 // 移動
 //=============================
-class CPlayerControlMove
+class CPlayerControlMove : public CPlayerControl
 {
 public:
 

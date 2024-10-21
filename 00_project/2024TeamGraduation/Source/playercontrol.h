@@ -24,7 +24,6 @@ public:
 	CPlayerControl();
 
 	void SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA);
-	void SetJump(CPlayer* player);
 
 private:
 	
