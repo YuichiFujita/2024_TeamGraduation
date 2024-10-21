@@ -200,7 +200,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 13
+NUM_MOTION = 14
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -218,6 +218,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt	# [9]
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt		# [10]スペシャル
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt			# [11]勝利
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt			# [12]死亡
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt	# [13]前グリップ
 
 
 END_SCRIPT		# この行は絶対消さないこと！

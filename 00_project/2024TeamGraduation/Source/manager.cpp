@@ -49,7 +49,7 @@ namespace
 //==========================================================================
 CManager *CManager::m_pManager = nullptr;		// マネージャのオブジェクト
 bool CManager::m_bDisp_ImGui = false;			// ImGuiの描画判定
-bool CManager::m_bDisp_BoxColliders = false;	// 当たり判定ボックスの描画判定
+bool CManager::m_bDisp_BoxColliders = true;	// 当たり判定ボックスの描画判定
 bool CManager::m_bDisp_CheckPoint = true;		// チェックポイントの描画判定
 
 //==========================================================================

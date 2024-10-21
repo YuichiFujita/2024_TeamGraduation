@@ -86,9 +86,12 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 		// ジャンプ状況取得
 		bool bJump = player->IsJump();
 
-		if (motionFrag.bMove &&
+		if (player->GetMotionFrag().bMove && !GetDash() &&
 			!bJump)
 		{// キャンセル可能 && 移動中
+
+			// モーションキャンセル
+			pMotion->ToggleFinish(true);
 
 		 //TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
 		
@@ -410,8 +413,13 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	bool bStick = pPad->IsTipStick();
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
-	{
+	{// ダッシュ解除
 		bDash = false;
+
+		if (player->GetMotion()->GetType() == CPlayer::MOTION::MOTION_RUN)
+		{// ダッシュからは派生
+			player->SetMotion(CPlayer::MOTION::MOTION_GRIP_FRONT);
+		}
 	}
 	else
 	{
