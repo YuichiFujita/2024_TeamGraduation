@@ -10,13 +10,7 @@
 // コンストラクタ
 //==========================================================================
 CCharacterStatus::CCharacterStatus() :
-	m_fVelocityNormal(0.0f),	// 通常移動速度
-	m_fVelocityDash(0.0f),		// ダッシュ移動速度
-	m_fVelocityBlink(0.0f),		// ブリンク移動速度
-	m_fVelocityJump(0.0f),		// ジャンプ量
-	m_fRadius(0.0f),			// 半径
-	m_fHeight(0.0f),			// 身長
-	m_nLife(0),					// 体力
+	m_Parameter(CharParameter()),		// パラメーター
 	m_typeTeam(CGameManager::SIDE_NONE)	// チームサイド
 {
 

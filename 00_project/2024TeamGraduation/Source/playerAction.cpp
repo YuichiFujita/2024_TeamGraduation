@@ -111,7 +111,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 		}
 
 		if (UtilFunc::Collision::CollisionCircleCylinder(
-			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetHeight()))
+			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetParameter().fHeight))
 		{
 			//ダメージ受付しない時間設定
 			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();

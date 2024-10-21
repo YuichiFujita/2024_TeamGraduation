@@ -179,6 +179,7 @@
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
     <ClCompile Include="Source\char2D.cpp" />
+    <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\edit.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Source\playerAI.cpp" />
     <ClCompile Include="Source\playerAIcontrol_action.cpp" />
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
+    <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
@@ -298,6 +300,7 @@
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
     <ClInclude Include="Source\char2D.h" />
+    <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
@@ -366,6 +369,7 @@
     <ClInclude Include="Source\playerAI.h" />
     <ClInclude Include="Source\playerAIcontrol_action.h" />
     <ClInclude Include="Source\playerAIcontrol_move.h" />
+    <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />

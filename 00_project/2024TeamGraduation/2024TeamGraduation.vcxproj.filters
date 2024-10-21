@@ -81,6 +81,9 @@
     <Filter Include="player\playerUser">
       <UniqueIdentifier>{c21ef06f-4c30-4058-9798-68b3ead98ff0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="character">
+      <UniqueIdentifier>{62f5c653-6cf7-4947-b0e2-882bf8019514}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -93,12 +96,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\map.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\model.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\motion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\shadow.cpp">
@@ -419,6 +416,18 @@
     <ClCompile Include="Source\playerAIcontrol_move.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\motion.cpp">
+      <Filter>character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\model.cpp">
+      <Filter>character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\characterStatus.cpp">
+      <Filter>character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -428,12 +437,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\map.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\model.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\motion.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\shadow.h">
@@ -768,6 +771,18 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIcontrol_move.h">
       <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\model.h">
+      <Filter>character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\motion.h">
+      <Filter>character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\characterStatus.h">
+      <Filter>character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

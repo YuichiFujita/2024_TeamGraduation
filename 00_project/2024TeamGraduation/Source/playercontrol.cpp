@@ -4,7 +4,7 @@
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playercontrol_action.h"
+#include "playercontrol.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -24,7 +24,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerControlAction::CPlayerControlAction()
+CPlayerControl::CPlayerControl()
 {
 
 }
@@ -32,7 +32,7 @@ CPlayerControlAction::CPlayerControlAction()
 //==========================================================================
 // 統括
 //==========================================================================
-void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -87,9 +87,27 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 }
 
 //==========================================================================
+// アクション＆モーションの一括設定
+//==========================================================================
+void CPlayerControl::SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA)
+{
+	CMotion* pMotion = player->GetMotion();
+
+	pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
+	player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+}
+
+//==========================================================================
+// ジャンプ設定
+//==========================================================================
+void CPlayerControl::SetJump(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA)
+{
+}
+
+//==========================================================================
 // キャッチ
 //==========================================================================
-void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (player->GetBall() != nullptr)
 	{
@@ -106,28 +124,14 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
-		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
-
-		CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
-
-		if (pBall == nullptr)
-		{
-			return;
-		}
-		
-		float fAngle = player->GetPosition().AngleXZ(pBall->GetPosition());
-		UtilFunc::Transformation::RotNormalize(fAngle);
-
-		//ボールに向く
-		player->SetRotDest(fAngle);
+		SetPattern(player, CPlayer::MOTION::MOTION_CATCH, CPlayer::Action::ACTION_CATCH);
 	}
 }
 
 //==========================================================================
 // 投げ
 //==========================================================================
-void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
 
@@ -151,15 +155,11 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 		{
 			pBall->ThrowJump(player);
 			
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW_JUMP);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW_JUMP, CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
-			pMotion->Set(CPlayer::MOTION::MOTION_THROW);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW, CPlayer::Action::ACTION_THROW);
 		}
 	}
 }
@@ -167,7 +167,7 @@ void CPlayerControlAction::Throw(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 // ジャンプ
 //==========================================================================
-void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bJump = player->IsJump();
 
@@ -195,8 +195,6 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 		motionFrag.bJump = true;
 		move.y += 12.0f;
 
-		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
 		player->SetMove(move);
 		player->SetMotionFrag(motionFrag);
 
@@ -204,7 +202,7 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 		player->SetEnableJump(bJump);
 
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_JUMP);
+		SetPattern(player, CPlayer::MOTION::MOTION_JUMP, CPlayer::Action::ACTION_JUMP);
 
 		// サウンド再生
 		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
@@ -214,7 +212,7 @@ void CPlayerControlAction::Jump(CPlayer* player, const float fDeltaTime, const f
 //==========================================================================
 // スペシャル
 //==========================================================================
-void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
 
@@ -244,7 +242,7 @@ void CPlayerControlAction::Special(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 // モテボタン
 //==========================================================================
-void CPlayerControlAction::Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControl::Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();

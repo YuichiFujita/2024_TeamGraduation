@@ -17,7 +17,6 @@
 //==========================================================================
 namespace
 {
-	const float MULTIPLIY_DASH = 1.5f;		// ダッシュの倍率
 	const float INTERVAL_INPUT = (2.0f / 60.0f);	// 入力
 	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
 }
@@ -43,16 +42,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	// ダッシュ判定
-	bool bDash = false;
-
-	// 移動量取得
-	float fMove = player->GetVelocity();
-	if (bDash){
-		// ダッシュ倍率掛ける
-		fMove *= MULTIPLIY_DASH;
-	}
 
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
@@ -331,9 +320,10 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	if (info.bDash && !m_bDash)
 	{
 		MyLib::Vector3 move = player->GetMove();
+		float velocityBlink = player->GetParameter().fVelocityBlink;
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
-		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
+		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
 
 		// 移動量設定
 		player->SetMove(move);
@@ -535,15 +525,15 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	motionFrag.bMove = true;
 
 	// 移動量取得
-	float fMove = player->GetVelocity();
+	float fMove = player->GetParameter().fVelocityNormal;
+	if (m_bDash)
+	{// ダッシュは変更
+		fMove = player->GetParameter().fVelocityDash;
+	}
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
 
-	if (m_bDash)
-	{
-		fMove *= 1.5f;
-	}
-
+	// 移動量更新
 	MyLib::Vector3 move = player->GetMove();
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
 	move.x += sinf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove ;

@@ -645,7 +645,7 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 			pPlayer->GetPosition(),
 			RADIUS,
 			pPlayer->GetRadius(),
-			pPlayer->GetHeight()
+			pPlayer->GetParameter().fHeight
 		);
 		if (bHit)
 		{ // “–‚½‚Á‚Ä‚¢‚½ê‡
