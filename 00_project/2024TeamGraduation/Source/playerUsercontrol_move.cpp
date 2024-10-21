@@ -74,7 +74,7 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 		//--------------------------
 		// 移動操作
 		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK ||
+		if (action != CPlayer::Action::ACTION_BLINK &&
 			action != CPlayer::Action::ACTION_DODGE)
 		{
 			// ブリンク
@@ -324,8 +324,8 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 
-		move.x += sinf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
-		move.z += cosf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		move.x += sinf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * velocityBlink;
+		move.z += cosf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * velocityBlink;
 
 		// 移動量設定
 		player->SetMove(move);
@@ -396,11 +396,6 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 		motionFrag.bMove = true;
 		player->SetEnableDash(true);
 	}
-
-	ImGui::Checkbox("UP", &bUP);
-	ImGui::Checkbox("Down", &bDown);
-	ImGui::Checkbox("Right", &bRight);
-	ImGui::Checkbox("Left", &bLeft);
 
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
@@ -540,8 +535,8 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	MyLib::Vector3 rot = player->GetRotation();
 
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-	move.x += sinf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
-	move.z += cosf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
+	move.x += sinf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * fMove;
+	move.z += cosf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * fMove;
 
 	// 移動量設定
 	player->SetMove(move);

@@ -294,14 +294,17 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	pos += move * fDeltaRate * fSlowRate;
 
 	// 慣性補正
-	move.x += (0.0f - move.x) * (0.1f * fDeltaRate * fSlowRate);
-	move.z += (0.0f - move.z) * (0.1f * fDeltaRate * fSlowRate);
+	Action act = m_pActionPattern->GetAction();
+	float ratio = 0.25f;
+	if (act == Action::ACTION_BLINK)
+	{
+		ratio = 0.1f;
+	}
+	move.x += (0.0f - move.x) * (ratio * fDeltaRate * fSlowRate);
+	move.z += (0.0f - move.z) * (ratio * fDeltaRate * fSlowRate);
 
 	// 重力処理
-	if (m_state != STATE_DEAD)
-	{
-		move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
-	}
+	move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
 
 	// 位置設定
 	SetPosition(pos);
@@ -813,6 +816,27 @@ void CPlayer::Debug()
 
 		// 位置設定
 		SetPosition(pos);
+		ImGui::TreePop();
+	}
+
+	//-----------------------------
+	// パラメーター
+	//-----------------------------
+	if (ImGui::TreeNode("Parameter"))
+	{
+		// 取得
+		CCharacterStatus* pStatus = GetCharStatus();
+		CCharacterStatus::CharParameter parameter = pStatus->GetParameter();
+
+		ImGui::DragFloat("fVelocityNormal", (float*)&parameter.fVelocityNormal, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityDash", (float*)&parameter.fVelocityDash, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityBlink", (float*)&parameter.fVelocityBlink, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fVelocityJump", (float*)&parameter.fVelocityJump, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("fRadius", (float*)&parameter.fRadius, 0.5f, 0.0f, 100.0f, "%.2f");
+
+		// 設定
+		SetRadius(parameter.fRadius);
+		pStatus->SetParameter(parameter);
 		ImGui::TreePop();
 	}
 
