@@ -92,6 +92,9 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 		return E_FAIL;
 	}
 
+	// オブジェクト毎のデータ割り当て
+	BindObjectData(m_nNumLoad);
+
 	return S_OK;
 }
 
@@ -100,6 +103,7 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 //==========================================================================
 void CObjectHierarchy::BindObjectData(int nCntData)
 {
+	// 読み込みデータ
 	Load loadData = m_aLoadData[nCntData];
 
 	// 中心にするパーツのインデックス
@@ -115,7 +119,7 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 	m_posOrigin = loadData.posOrigin;
 
 	// 半径
-	m_fRadius = loadData.fRadius;
+	m_fRadius = loadData.parameter.fRadius;
 
 	// ファイルのインデックス番号
 	m_nIdxFile = nCntData;
@@ -123,11 +127,13 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 	for (int nCntParts = 0; nCntParts < loadData.nNumModel; nCntParts++)
 	{// パーツ分繰り返し
 
+		// 読み込みデータ
 		LoadData modelInfo = loadData.LoadData[nCntParts];
 
 		// モデルの生成
 		m_apModel.emplace_back();
 
+		// モデルの生成
 		m_apModel[nCntParts] = CModel::Create(
 			loadData.LoadData[modelInfo.nType].pModelFile.c_str(),
 			modelInfo.pos,
@@ -148,7 +154,7 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 			m_apModel[nCntParts]->SetMtxParent(&m_mtxWorld);
 		}
 
-		// 初期配置の判定
+		// 初期配置なし
 		if (modelInfo.nStart != 1)
 		{
 			ChangeObject(nCntParts, -1);
@@ -621,8 +627,8 @@ void CObjectHierarchy::LoadObjectData(FILE *pFile, const std::string& file)
 	{// RADIUSで半径
 
 		fscanf(pFile, "%s", &hoge[0]);	// =の分
-		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].fRadius);	// 半径
-		m_fRadius = m_aLoadData[m_nNumLoad].fRadius;
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fRadius);	// 半径
+		m_fRadius = m_aLoadData[m_nNumLoad].parameter.fRadius;
 	}
 
 	if (file.find("CENTERSET") != std::string::npos)

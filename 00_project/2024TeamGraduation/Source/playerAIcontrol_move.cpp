@@ -44,16 +44,6 @@ void CPlayerAIControlMove::Operate(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	// ダッシュ判定
-	bool bDash = false;
-
-	// 移動量取得
-	float fMove = player->GetVelocity();
-	if (bDash){
-		// ダッシュ倍率掛ける
-		fMove *= MULTIPLIY_DASH;
-	}
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -110,9 +100,9 @@ void CPlayerAIControlMove::Operate(CPlayer* player, const float fDeltaTime, cons
 			pMotion->ToggleFinish(true);
 
 			// 移動モーション
-			if (bDash)
+			if (player->IsDash())
 			{
-				//pMotion->Set(CPlayer::MOTION::MOTION_DASH);
+				pMotion->Set(CPlayer::MOTION::MOTION_RUN);
 			}
 			else
 			{
@@ -526,18 +516,17 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	}
 
 	// 移動量取得
-	float fMove = player->GetVelocity();
+	float fMove = player->GetParameter().fVelocityNormal;
+	if (m_bDash)
+	{// ダッシュは変更
+		fMove = player->GetParameter().fVelocityDash;
+	}
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
 
-	if (m_bDash)
-	{
-		fMove *= 1.5f;
-	}
-
 	MyLib::Vector3 move = player->GetMove();
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-	move.x += sinf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove ;
+	move.x += sinf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
 	move.z += cosf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
 
 	// 移動量設定
