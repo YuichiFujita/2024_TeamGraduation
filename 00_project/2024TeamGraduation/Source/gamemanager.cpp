@@ -49,6 +49,12 @@ namespace SceneTime
 	const float RequestStart = 3.5f;	// 依頼開始
 }
 
+namespace Court
+{//ドッジボールコート情報
+
+	const D3DXVECTOR3 SIZE = D3DXVECTOR3(600.0f, 0.0f, 800.0f);		// サイズ
+}
+
 //==========================================================================
 // コンストラクタ
 //==========================================================================
@@ -59,6 +65,8 @@ CGameManager::CGameManager()
 	m_OldSceneType = SCENE_MAIN;	// シーンの種類
 	m_bControll = false;		// 操作できるか
 	m_fSceneTimer = 0.0f;		// シーンタイマー
+
+	m_courtSize = MyLib::Vector3();
 }
 
 //==========================================================================
@@ -115,6 +123,8 @@ HRESULT CGameManager::Init()
 #endif
 
 	m_OldSceneType = m_SceneType;
+
+	m_courtSize = Court::SIZE;
 
 	return S_OK;
 }
@@ -216,6 +226,16 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	default:
 		break;
 	}
+
+#if _DEBUG	// デバッグ処理
+
+	std::string treename = "GameManager";	// ツリー名
+	if (ImGui::TreeNode(treename.c_str()))
+	{
+		Debug();
+		ImGui::TreePop();
+	}
+#endif
 }
 
 //==========================================================================
@@ -353,5 +373,48 @@ CGameManager::SceneType CGameManager::GetType()
 	return m_SceneType;
 }
 
+//==========================================================================
+// コート移動制限
+//==========================================================================
+void CGameManager::PosLimit(MyLib::Vector3& pos)
+{
+	if (pos.x > m_courtSize.x)
+	{
+		pos.x = m_courtSize.x;
+	}
+	else if (pos.x < -m_courtSize.x)
+	{
+		pos.x = -m_courtSize.x;
+	}
 
+	if (pos.z > m_courtSize.z)
+	{
+		pos.z = m_courtSize.z;
+	}
+	else if (pos.z < -m_courtSize.z)
+	{
+		pos.z = -m_courtSize.z;
+	}
+}
 
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CGameManager::Debug()
+{
+
+	//-----------------------------
+	// コート
+	//-----------------------------
+	if (ImGui::TreeNode("Court"))
+	{
+		if (ImGui::Button("Reset"))
+		{// リセット
+			m_courtSize = Court::SIZE;
+		}
+		ImGui::DragFloat3("size", (float*)&m_courtSize, 10.0f, 0.0f, 10000.0f, "%.2f");
+
+		// 位置設定
+		ImGui::TreePop();
+	}
+}

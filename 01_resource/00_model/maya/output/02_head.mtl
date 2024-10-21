@@ -10,7 +10,6 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd cloth_blue.png
 Ni 1.00
 Ks 0.20 0.20 0.20
 Ns 34.00
@@ -34,18 +33,53 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd UV.jpg
 Ni 1.00
-newmtl lambert8SG
+newmtl lambert11SG
 illum 4
-Kd 0.15 0.04 0.14
+Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+map_Kd 00_hair.jpg
+Ni 1.00
+newmtl lambert12SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 01_hair.jpg
+Ni 1.00
+newmtl lambert15SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 02_hair.jpg
+Ni 1.00
+newmtl lambert18SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 03_hair.jpg
+Ni 1.00
+newmtl lambert20SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 05_hair.jpg
+Ni 1.00
+newmtl lambert22SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 03_hair.jpg
 Ni 1.00
 newmtl pantu:bodyparts_setup:chuckSG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd cloth_blue.png
 Ni 1.00
 Ks 0.20 0.20 0.20
 Ns 34.00

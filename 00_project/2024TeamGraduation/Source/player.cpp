@@ -511,6 +511,8 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 void CPlayer::LimitPos()
 {
 	MyLib::Vector3 pos = GetPosition();
+	CGame::GetInstance()->GetGameManager()->PosLimit(pos);
+
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
@@ -592,7 +594,11 @@ bool CPlayer::Hit(CBall* pBall)
 	if (!m_sDamageInfo.bReceived) { return false; }
 
 	// リバウンドボールの場合すり抜ける
-	if (stateBall == CBall::STATE_REBOUND) { return false; }
+	if (stateBall == CBall::STATE_REBOUND)
+	{
+		pBall->Catch(this);
+		return false;
+	}
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成

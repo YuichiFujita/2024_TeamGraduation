@@ -66,10 +66,14 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	void SetType(SceneType type);	// シーンの種類設定
-	SceneType GetType();		// シーンの種類取得
+	SceneType GetType();			// シーンの種類取得
 	SceneType GetOldType() { return m_OldSceneType; }		// 前回のシーンの種類取得
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
+	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
+	void PosLimit(MyLib::Vector3& pos);	// コート移動制限
+
+	void Debug();	// デバッグ
 
 	void StartSetting();		// スタート時の設定
 	void GameClearSettings();	// ゲームクリア時の設定
@@ -112,6 +116,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	MyLib::Vector3 m_courtSize;		//コートのサイズ
 };
 
 
