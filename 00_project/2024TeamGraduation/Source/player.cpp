@@ -511,6 +511,8 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 void CPlayer::LimitPos()
 {
 	MyLib::Vector3 pos = GetPosition();
+	CGame::GetInstance()->GetGameManager()->PosLimit(pos);
+
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
