@@ -119,7 +119,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	int* nCntTrigger = GetCntTrigger();						//トリガーのカウント取得
 	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
 	float fInputInterval = GetInputInterval();				//入力の受け付け猶予取得
-	float fTriggerInterval = GetTriggerInterval();			//トリガーのインターバル取得
 	bool bDash = GetDash();									//走るフラグ取得
 
 	if (fInputInterval <= 0.0f)
@@ -307,11 +306,15 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 			fInputInterval = 0.0f;
 		}
 	}
+	SetHoldDashAngle(HoldDashAngle);		// ダッシュ方向設定
 
 	// 受け付け猶予減算
 	float oldTime = fInputInterval;
 	fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
 	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
+
+	// 入力の受け付け猶予設定
+	SetInputInterval(fInputInterval);
 
 	if (oldTime > 0.0f &&
 		fInputInterval <= 0.0f)
@@ -327,14 +330,17 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 
-		move.x += sinf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * velocityBlink;
-		move.z += cosf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * velocityBlink;
+		move.x += sinf(division * info.angle + Camerarot.y) * velocityBlink;
+		move.z += cosf(division * info.angle + Camerarot.y) * velocityBlink;
 
 		// 移動量設定
 		player->SetMove(move);
 
 		// トリガーのカウントリセット
-		memset(nCntTrigger, 0, sizeof(nCntTrigger));
+		memset(nCntTrigger, 0, sizeof(nCntTrigger) * CPlayer::DashAngle::ANGLE_MAX);
+
+		// トリガーのカウント設定
+		SetCntTrigger(nCntTrigger);
 
 		// ダッシュフラグ
 		bDash = true;
@@ -343,20 +349,25 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		player->SetMotion(CPlayer::MOTION::MOTION_BLINK);
 	}
 
+	// トリガーのインターバル取得
+	float fTriggerInterval = GetTriggerInterval();
+
 	// トリガーの猶予減らしていく
 	fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
 	if (fTriggerInterval <= 0.0f)
 	{
 		// トリガーのカウントリセット
-		memset(nCntTrigger, 0, sizeof(nCntTrigger));
+		memset(nCntTrigger, 0, sizeof(nCntTrigger) * CPlayer::DashAngle::ANGLE_MAX);
+
+		// トリガーのカウント設定
+		SetCntTrigger(nCntTrigger);
 	}
 
-	//コントロール系
-	SetCntTrigger(nCntTrigger);				//トリガーのカウント設定
-	SetHoldDashAngle(HoldDashAngle);		//ダッシュ方向設定
-	SetInputInterval(fInputInterval);		//入力の受け付け猶予設定
-	SetTriggerInterval(fTriggerInterval);	//トリガーのインターバル設定
-	SetDash(bDash);							//走るフラグ設定
+	// トリガーのインターバル設定
+	SetTriggerInterval(fTriggerInterval);
+
+	// コントロール系
+	SetDash(bDash);							// 走るフラグ設定
 }
 
 //==========================================================================
@@ -551,8 +562,8 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	MyLib::Vector3 rot = player->GetRotation();
 
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-	move.x += sinf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * fMove;
-	move.z += cosf(rot.y + (D3DX_PI * 1.0f) + Camerarot.y) * fMove;
+	move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+	move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
 
 	// 移動量設定
 	player->SetMove(move);
@@ -593,8 +604,8 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::Das
 	nCntTrigger[angle] = (nCntTrigger[angle] + 1) % 2;
 
 	//コントロール系
-	SetCntTrigger(nCntTrigger);				//トリガーのカウント
-	SetTriggerInterval(fTriggerInterval);	//トリガーのインターバル
+	SetCntTrigger(nCntTrigger);				// トリガーのカウント
+	SetTriggerInterval(fTriggerInterval);	// トリガーのインターバル
 
 	return info;
 }
