@@ -118,13 +118,9 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 			DmgInfo.reciveTime = 0.5f;
 			m_pPlayer->SetDamageInfo(DmgInfo);
 
-			//スロー
-			float fRate = GET_MANAGER->GetSlowRate();
-			fRate -= DODGE_SLOW;
-			UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
-			GET_MANAGER->SetSlowRate(fRate);
-
-			m_pPlayer->SetEnableMove(true);
+			// 回避状態に移行
+			// 操作不能状態
+			m_pPlayer->SetEnableMove(false);
 			SetAction(CPlayer::Action::ACTION_DODGE);
 			m_pPlayer->SetState(CPlayer::STATE_DODGE);
 			//m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
@@ -151,7 +147,7 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 		UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 		GET_MANAGER->SetSlowRate(fRate);
 
-		m_pPlayer->SetEnableMove(false);
+		m_pPlayer->SetEnableMove(true);
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}
 }
