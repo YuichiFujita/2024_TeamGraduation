@@ -234,7 +234,7 @@ void CCamera_Debug::UpdateGUI()
 	m_pCamera->SetEnableFollow(bFollow);
 
 	//--------------------------
-	// ’Ž‹“_Ø‚è‘Ö‚¦
+	// ’Ž‹“_‘€ì
 	//--------------------------
 	// ’Ž‹“_Žæ“¾
 	MyLib::Vector3 posR = m_pCamera->GetPositionR();

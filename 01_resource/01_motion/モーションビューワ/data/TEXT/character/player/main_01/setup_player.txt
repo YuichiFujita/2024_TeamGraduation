@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 15
+NUM_MODEL = 16
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -34,16 +34,15 @@ MODEL_FILENAME = data/MODEL/player/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/14_shoes_L.x	# [14]左足
+MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪(悟空)
 
 #------------------------------------------------------------------------------
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	VELOCITY_NORMAL = 1.00	# 通常移動量
-	VELOCITY_RUN = 1.00		# ダッシュ移動量
-	VELOCITY_BLINK = 1.00	# ブリンク移動量
-	
-	VELOCITY = 0.50	# 移動量
+	VELOCITY_NORMAL = 1.6	# 通常移動量
+	VELOCITY_RUN = 2.67		# ダッシュ移動量
+	VELOCITY_BLINK = 19.00	# ブリンク移動量
 	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
@@ -174,6 +173,15 @@ CHARACTERSET
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 15
+		PARENT = 2
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
 END_CHARACTERSET
 
 
