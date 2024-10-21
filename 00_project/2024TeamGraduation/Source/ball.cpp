@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "calculation.h"
 #include "debugproc.h"
+#include "3D_Effect.h"
 
 //==========================================================================
 // 定数定義
@@ -20,16 +21,17 @@ namespace
 	const float	RADIUS = 7.0f;			// 半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
-	const int	VIEW_ANGLE = 135;		// 視野角
+	const int	VIEW_ANGLE = 104;		// 視野角
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
-		"SPAWN   生成状態       (フリーボール)",
-		"CATCH   キャッチ状態   (プレイヤー所持)",
-		"HOMING  ホーミング状態 (攻撃判定ON)",
-		"MOVE    移動状態       (攻撃判定ON)",
-		"REBOUND リバウンド状態 (ぶつかった時の落下)",
-		"LAND    着地状態       (地面落下)",
+		"SPAWN    生成状態               (フリーボール)",
+		"CATCH    キャッチ状態           (プレイヤー所持)",
+		"HOM_NOR  通常ホーミング状態     (攻撃判定ON)",
+		"HOM_JUMP ジャンプホーミング状態 (攻撃判定ON)",
+		"MOVE     移動状態               (攻撃判定ON)",
+		"REBOUND  リバウンド状態         (ぶつかった時の落下)",
+		"LAND     着地状態               (地面落下)",
 	};
 }
 
@@ -38,12 +40,13 @@ namespace
 //==========================================================================
 CBall::STATE_FUNC CBall::m_SampleFuncList[] =
 {
-	&CBall::UpdateSpawn,	// 生成状態の更新
-	&CBall::UpdateCatch,	// キャッチ状態の更新
-	&CBall::UpdateHoming,	// ホーミング状態の更新
-	&CBall::UpdateMove,		// 移動状態の更新
-	&CBall::UpdateReBound,	// リバウンド状態の更新
-	&CBall::UpdateLand,		// 着地状態の更新
+	&CBall::UpdateSpawn,		// 生成状態の更新
+	&CBall::UpdateCatch,		// キャッチ状態の更新
+	&CBall::UpdateHomingNormal,	// 通常ホーミング状態の更新
+	&CBall::UpdateHomingJump,	// ジャンプホーミング状態の更新
+	&CBall::UpdateMove,			// 移動状態の更新
+	&CBall::UpdateReBound,		// リバウンド状態の更新
+	&CBall::UpdateLand,			// 着地状態の更新
 };
 
 //==========================================================================
@@ -193,6 +196,11 @@ void CBall::Catch(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowNormal(CPlayer* pPlayer)
 {
+	// ホーミング対象の設定
+	m_pTarget = CollisionThrow();
+	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_NOR; }	// ターゲットがいる場合ホーミング状態に
+	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+
 	// 投げ処理
 	Throw(pPlayer);
 
@@ -200,7 +208,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	m_typeAtk = ATK_NORMAL;
 
 	// 移動量を設定
-	m_fMoveSpeed = 11.5f;
+	m_fMoveSpeed = 15.5f;
 
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
@@ -214,6 +222,11 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowJump(CPlayer* pPlayer)
 {
+	// ホーミング対象の設定
+	m_pTarget = CollisionThrow();
+	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_JUMP; }	// ターゲットがいる場合ホーミング状態に
+	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+
 	// 投げ処理
 	Throw(pPlayer);
 
@@ -221,7 +234,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	m_typeAtk = ATK_JUMP;
 
 	// 移動量を設定
-	m_fMoveSpeed = 13.0f;
+	m_fMoveSpeed = 21.0f;
 
 	// TODO：仮
 	float fRot = pPlayer->GetRotation().y + D3DX_PI;
@@ -235,6 +248,11 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowSpecial(CPlayer* pPlayer)
 {
+	// ホーミング対象の設定
+	m_pTarget = CollisionThrow();
+	if (m_pTarget != nullptr)	{ m_state = STATE_HOM_NOR; }	// ターゲットがいる場合ホーミング状態に	// TODO：スペシャルに後々変更
+	else						{ m_state = STATE_MOVE; }		// ターゲットがいない場合移動状態に
+
 	// 投げ処理
 	Throw(pPlayer);
 
@@ -266,7 +284,7 @@ float CBall::GetRadius() const
 bool CBall::IsAttack() const
 {
 	// 攻撃フラグを返す
-	return (m_state == STATE_HOMING || m_state == STATE_MOVE);	// TODO：攻撃状態が増えたら追加
+	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE);	// TODO：攻撃状態が増えたら追加
 }
 
 //==========================================================================
@@ -304,14 +322,14 @@ void CBall::UpdateCatch(const float fDeltaTime, const float fDeltaRate, const fl
 }
 
 //==========================================================================
-// ホーミング状態の更新処理
+// 通常ホーミング状態の更新処理
 //==========================================================================
-void CBall::UpdateHoming(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 vecMove = GetMove();	// 移動量
-	MyLib::Vector3 posTarget = m_pTarget->GetCenterPosition();	// ターゲット位置
+	MyLib::Vector3 posTarget = m_pTarget->GetCenterPosition();	// ターゲット中心位置
 
 	// 目標ベクトルを取得
 	MyLib::Vector3 vecDest = posTarget - pos;
@@ -336,6 +354,81 @@ void CBall::UpdateHoming(const float fDeltaTime, const float fDeltaRate, const f
 		// 移動状態にする
 		m_state = STATE_MOVE;
 	}
+
+	// 地面の着地
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+
+	// プレイヤーとの当たり判定
+	if (CollisionPlayer(&pos))
+	{ // 当たった場合
+
+		// リバウンド遷移
+		ReBound(&vecMove);
+	}
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(vecMove);	// 移動量
+}
+
+//==========================================================================
+// ジャンプホーミング状態の更新処理
+//==========================================================================
+void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
+	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
+	MyLib::Vector3 rotTarget = m_pTarget->GetRotation();	// ターゲット向き
+
+	// ターゲット位置のY座標は地面固定にする
+	posTarget.y = CGameManager::FIELD_LIMIT;
+
+	// ターゲットの少し後ろにする
+	const float fTargetAngle = posTarget.AngleXZ(pos);
+	posTarget.x += sinf(fTargetAngle) * 150.0f;
+	posTarget.z += cosf(fTargetAngle) * 150.0f;
+
+	CEffect3D::Create(posTarget, VEC3_ZERO, MyLib::color::White(), 20.0f, 0.5f, 0, CEffect3D::TYPE::TYPE_JUJI);
+
+	// 目標ベクトルを取得
+	MyLib::Vector3 vecDest = posTarget - pos;
+	vecDest = vecDest.Normal();
+
+	// 差分ベクトルを計算
+	MyLib::Vector3 vecDiff = vecDest - vecMove;
+	vecDiff = vecDiff.Normal();
+
+	// 移動ベクトルを更新
+	vecMove += vecDiff * 0.24f;
+	vecMove = vecMove.Normal();
+
+	//// 移動ベクトルの仰角を制限
+	//float fPhi, fTheta;
+	//UtilFunc::Transformation::VecToRot(vecMove, &fPhi, &fTheta);
+
+
+
+
+	////UtilFunc::Transformation::ValueNormalize(fTheta, )
+
+	//static float fOhiAAA = 0.0f;
+	//if (GET_INPUTKEY->GetPress(DIK_0)) { fOhiAAA += 0.01f; }
+	//if (GET_INPUTKEY->GetPress(DIK_9)) { fOhiAAA -= 0.01f; }
+	//UtilFunc::Transformation::RotToVec(fOhiAAA, fTheta, &vecMove);
+	//vecMove = vecMove.Normal();
+
+
+
+
+	// 位置に移動量を反映
+	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// 地面の着地
 	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
@@ -623,11 +716,6 @@ void CBall::Throw(CPlayer* pPlayer)
 {
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
-
-	// ホーミング対象の設定
-	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ m_state = STATE_HOMING; }	// ターゲットがいる場合ホーミング状態に
-	else						{ m_state = STATE_MOVE; }	// ターゲットがいない場合移動状態に
 
 	// キャッチしていたプレイヤーを破棄
 	m_pPlayer = nullptr;
