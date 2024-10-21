@@ -217,7 +217,7 @@ void CMotion::SetModel(CModel **pModel, int nNumModel)
 //==========================================================================
 void CMotion::ResetPose(int nType)
 {
-	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel; nCntParts++)
 	{// 全パーツ分繰り返す
 
 		int nCntModel = nCntParts;
@@ -333,7 +333,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		nNextKey = m_pInfo[m_nType].nNumKey - 1;
 	}
 
-	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel; nCntParts++)
 	{// 全パーツ分繰り返す
 
 		int nCntModel = nCntParts;
@@ -619,7 +619,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// パターンNO.更新
 		m_nPatternKey = (m_nPatternKey + 1) % m_pInfo[m_nType].nNumKey;
 
-		for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
+		for (int nCntParts = 0; nCntParts < m_nNumModel; nCntParts++)
 		{// 全パーツ分繰り返す
 
 			if (nCntParts >= m_nNumModel)
@@ -720,7 +720,7 @@ void CMotion::Set(int nType, bool bBlend)
 		m_pInfo[m_nType].AttackInfo[nCntAttack]->bEndAtk = false;
 	}
 
-	for (int nCntParts = 0; nCntParts < m_nNumModel + 1; nCntParts++)
+	for (int nCntParts = 0; nCntParts < m_nNumModel; nCntParts++)
 	{// 全パーツ分繰り返す
 
 		if (m_ppModel[nCntParts] == nullptr)

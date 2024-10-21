@@ -124,6 +124,11 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 	// ファイルのインデックス番号
 	m_nIdxFile = nCntData;
 
+	if (!m_apModel.empty())
+	{
+		return;
+	}
+
 	for (int nCntParts = 0; nCntParts < loadData.nNumModel; nCntParts++)
 	{// パーツ分繰り返し
 
