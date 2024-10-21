@@ -64,6 +64,7 @@ public:
 	MyLib::Vector3 GetPositionR() { return m_posR; }						// 注視点取得
 	void SetPositionRDest(const MyLib::Vector3& pos) { m_posRDest = pos; }	// 注視点の目標値設定
 	MyLib::Vector3 GetPositionRDest() { return m_posRDest; }				// 注視点の目標値取得
+	MyLib::Vector3 GetPositionROrigin() { return m_posROrigin; }			// 元の注視点
 
 	//--------------------------
 	// 視点
@@ -158,6 +159,7 @@ private:
 	MyLib::Vector3 m_posVDest;		// 目標の視点
 	MyLib::Vector3 m_posR;			// 注視点(見たい場所)
 	MyLib::Vector3 m_posRDest;		// 目標の注視点
+	MyLib::Vector3 m_posROrigin;	// 元の注視点
 	MyLib::Vector3 m_vecU;			// 上方向ベクトル
 	MyLib::Vector3 m_move;			// 移動量
 	MyLib::Vector3 m_rot;			// 向き
