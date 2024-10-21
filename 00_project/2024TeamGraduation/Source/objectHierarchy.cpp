@@ -93,7 +93,7 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 	}
 
 	// オブジェクト毎のデータ割り当て
-	BindObjectData(m_nNumLoad);
+	BindObjectData(m_nNumLoad - 1);
 
 	return S_OK;
 }
