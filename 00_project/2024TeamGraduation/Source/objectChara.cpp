@@ -133,11 +133,19 @@ HRESULT CObjectChara::Init()
 //==========================================================================
 void CObjectChara::Uninit()
 {
+	// モーション削除
 	if (m_pMotion != nullptr)
 	{
 		m_pMotion->Uninit();
 		delete m_pMotion;
 		m_pMotion = nullptr;
+	}
+
+	// ステータス削除
+	if (m_pStatus != nullptr)
+	{
+		delete m_pStatus;
+		m_pStatus = nullptr;
 	}
 
 	// 終了処理

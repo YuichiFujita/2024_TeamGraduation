@@ -92,6 +92,13 @@ void CCamera_Debug::Update()
 
 	// 距離の更新
 	UpdateDistance();
+
+	// GUI操作
+	if (ImGui::TreeNode("Camera Debug"))
+	{
+		UpdateGUI();
+		ImGui::TreePop();
+	}
 }
 
 //==========================================================================
@@ -212,4 +219,33 @@ void CCamera_Debug::UpdateDistance()
 	m_pCamera->SetDistanceDest(destDistance);
 	m_pCamera->SetOriginDistance(originDistance);
 	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
+}
+
+//==========================================================================
+// GUI操作
+//==========================================================================
+void CCamera_Debug::UpdateGUI()
+{
+	//--------------------------
+	// 追従切り替え
+	//--------------------------
+	bool bFollow = m_pCamera->IsFollow();
+	ImGui::Checkbox("Follow", &bFollow);
+	m_pCamera->SetEnableFollow(bFollow);
+
+	//--------------------------
+	// 注視点切り替え
+	//--------------------------
+	// 注視点取得
+	MyLib::Vector3 posR = m_pCamera->GetPositionR();
+
+	if (ImGui::Button("Reset"))
+	{// リセット
+		posR = m_pCamera->GetPositionROrigin();
+	}
+	ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
+
+	// 注視点設定
+	m_pCamera->SetPositionR(posR);
+	m_pCamera->SetPositionRDest(posR);
 }
