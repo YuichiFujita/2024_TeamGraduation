@@ -322,8 +322,10 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 		MyLib::Vector3 move = player->GetMove();
 		float velocityBlink = player->GetParameter().fVelocityBlink;
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// Œü‚«
-		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
-		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		MyLib::Vector3 rot = player->GetRotation();
+
+		move.x += sinf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		move.z += cosf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
 
 		// ˆÚ“®—ÊÝ’è
 		player->SetMove(move);
@@ -535,9 +537,11 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 
 	// ˆÚ“®—ÊXV
 	MyLib::Vector3 move = player->GetMove();
+	MyLib::Vector3 rot = player->GetRotation();
+
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// Œü‚«
-	move.x += sinf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove ;
-	move.z += cosf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
+	move.x += sinf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
+	move.z += cosf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
 
 	// ˆÚ“®—ÊÝ’è
 	player->SetMove(move);

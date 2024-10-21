@@ -93,7 +93,7 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 	}
 
 	// オブジェクト毎のデータ割り当て
-	BindObjectData(m_nNumLoad);
+	BindObjectData(m_nNumLoad - 1);
 
 	return S_OK;
 }
@@ -123,6 +123,11 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 
 	// ファイルのインデックス番号
 	m_nIdxFile = nCntData;
+
+	if (!m_apModel.empty())
+	{
+		return;
+	}
 
 	for (int nCntParts = 0; nCntParts < loadData.nNumModel; nCntParts++)
 	{// パーツ分繰り返し
