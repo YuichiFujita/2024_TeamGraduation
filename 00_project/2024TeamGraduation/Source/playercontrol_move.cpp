@@ -584,15 +584,10 @@ CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAng
 //==========================================================================
 void CPlayerControlMove::SetCntTrigger(int* nTrigger)
 {
-	while(true)
+	if (nTrigger == nullptr) return;
+
+	for (int i = 0; i < CPlayer::DashAngle::ANGLE_MAX; i++)
 	{
-		if (nTrigger != nullptr)
-		{
-			break;
-		}
-
-		int a = *nTrigger;
-
-		nTrigger++;
+		m_nCntTrigger[i] = nTrigger[i];
 	}
 }
