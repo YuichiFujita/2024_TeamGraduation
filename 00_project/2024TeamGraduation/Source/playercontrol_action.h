@@ -9,6 +9,7 @@
 #define _PLAYERCONTROL_ACTION_H_	// 二重インクルード防止
 
 #include "player.h"
+#include "playercontrol.h"
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -16,7 +17,7 @@
 //=============================
 // 移動
 //=============================
-class CPlayerControlAction
+class CPlayerControlAction : public CPlayerControl
 {
 public:
 
