@@ -61,7 +61,6 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 	if (pPlayerAction == nullptr) return;
 	CPlayer::Action action = pPlayerAction->GetAction();
 
-
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -107,6 +106,18 @@ void CPlayerControlAction::Catch(CPlayer* player, const float fDeltaTime, const 
 	{
 		// アクションパターン変更
 		SetPattern(player, CPlayer::MOTION::MOTION_CATCH, CPlayer::Action::ACTION_CATCH);
+	
+		//ボールに向く
+		CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+		if (pBall == nullptr)
+		{
+			return;
+		}
+
+		float fAngle = player->GetPosition().AngleXZ(pBall->GetPosition());
+		UtilFunc::Transformation::RotNormalize(fAngle);
+		
+		player->SetRotDest(fAngle);
 	}
 }
 
