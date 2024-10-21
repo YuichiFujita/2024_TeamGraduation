@@ -1,10 +1,10 @@
 //=============================================================================
 // 
-//  プレイヤーコントロール処理 [playercontrol_move.cpp]
-//  Author : Kai Takada
+//  プレイヤーコントロール処理 [playerUsercontrol_move.cpp]
+//  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playercontrol_move.h"
+#include "playerUsercontrol_move.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -24,7 +24,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerControlMove::CPlayerControlMove()
+CPlayerUserControlMove::CPlayerUserControlMove()
 {
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
 	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
@@ -36,7 +36,7 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 // 通常移動
 //==========================================================================
-void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	
 	// インプット情報取得
@@ -103,7 +103,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ブリンク
 //==========================================================================
-void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -324,8 +324,8 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 
-		move.x += sinf(/*rot.y + */(D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
-		move.z += cosf(/*rot.y + */(D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		move.x += sinf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
+		move.z += cosf(rot.y + (D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * velocityBlink;
 
 		// 移動量設定
 		player->SetMove(move);
@@ -352,7 +352,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 //==========================================================================
 // 走り
 //==========================================================================
-void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (!m_bDash)
 	{
@@ -409,7 +409,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // ウォーク
 //==========================================================================
-void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -540,8 +540,8 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 	MyLib::Vector3 rot = player->GetRotation();
 
 	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-	move.x += sinf(/*rot.y + */(D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
-	move.z += cosf(/*rot.y + */(D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
+	move.x += sinf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
+	move.z += cosf(rot.y + (D3DX_PI * 1.0f) + division * angle + Camerarot.y) * fMove;
 
 	// 移動量設定
 	player->SetMove(move);
@@ -556,7 +556,7 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
+CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;

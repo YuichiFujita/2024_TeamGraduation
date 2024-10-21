@@ -191,6 +191,7 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bJump = player->IsJump();
+
 	if (bJump)
 	{
 		return;
@@ -200,34 +201,11 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
-	// モーション情報取得
-	CMotion* pMotion = player->GetMotion();
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
 	//ジャンプ処理
 	if (pKey->GetTrigger(DIK_SPACE) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
 	{
-		bJump = true;
-		motionFrag.bJump = true;
-		move.y += 12.0f;
-
-		pMotion->Set(CPlayer::MOTION::MOTION_JUMP);
-
-		player->SetMove(move);
-		player->SetMotionFrag(motionFrag);
-
-		// ジャンプ判定設定
-		player->SetEnableJump(bJump);
-
-		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_JUMP);
-
-		// サウンド再生
-		//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+		SetJump(player);
 	}
 }
 

@@ -1,14 +1,13 @@
 //=============================================================================
 // 
 //  プレイヤーコントロールヘッダー [playercontrol_action.h]
-//  Author : 相馬靜雅
+//  Author : Kai Takada
 // 
 //=============================================================================
 
-#ifndef _PLAYERCONTROL_ACTION_H_
-#define _PLAYERCONTROL_ACTION_H_	// 二重インクルード防止
+#ifndef _PLAYER_CONTROL_ACTION_H_
+#define _PLAYER_CONTROL_ACTION_H_	// 二重インクルード防止
 
-#include "player.h"
 #include "playercontrol.h"
 
 //==========================================================================
@@ -25,17 +24,18 @@ public:
 	CPlayerControlAction();
 
 	virtual void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ
+	void SetJump(CPlayer* player);
 
 private:
 	
 	//=============================
 	// メンバ関数
 	//=============================
-	void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
-	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
-	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ
-	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル
-	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ
+	virtual void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+	virtual void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
+	virtual void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ
+	virtual void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル
+	virtual void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ
 
 	//=============================
 	// メンバ変数

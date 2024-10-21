@@ -247,8 +247,10 @@
     <ClCompile Include="Source\playerAIcontrol_action.cpp" />
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
-    <ClCompile Include="Source\playercontrol_move.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
+    <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerUsercontrol_move.cpp" />
+    <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
     <ClCompile Include="Source\playerUser.cpp" />
     <ClCompile Include="Source\precompile.cpp">
@@ -370,8 +372,10 @@
     <ClInclude Include="Source\playerAIcontrol_action.h" />
     <ClInclude Include="Source\playerAIcontrol_move.h" />
     <ClInclude Include="Source\playercontrol.h" />
-    <ClInclude Include="Source\playercontrol_move.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
+    <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerUsercontrol_move.h" />
+    <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />
     <ClInclude Include="Source\playerUser.h" />
     <ClInclude Include="Source\precompile.h" />
