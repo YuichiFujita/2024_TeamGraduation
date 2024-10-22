@@ -35,7 +35,6 @@ CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, lay
 	m_mtxWorld.Identity();						// ワールドマトリックス
 	m_scale = MyLib::Vector3(1.0f);				// スケール
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色
-	m_fSize = MyLib::Vector3();					// サイズ
 	m_AABB = MyLib::AABB();						// AABB情報
 	m_OriginAABB = MyLib::AABB();				// 元のAABB情報
 	m_state = STATE::STATE_NONE;				// 状態

@@ -15,7 +15,6 @@
 namespace
 {
 	const float DODGE_SLOW = 0.8f;			//回避時スロー値
-	const float JUMPTHROW_HOVER = 10.0f;		//ジャンプ投げ時フワッと値
 }
 
 namespace ActionTime
@@ -74,6 +73,12 @@ void CPlayerAction::Update(const float fDeltaTime, const float fDeltaRate, const
 
 	// 行動更新
 	(this->*(m_ActionFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
+
+#if _DEBUG //デバッグ
+
+	Debug();
+
+#endif //デバッグ
 }
 
 //==========================================================================
@@ -212,6 +217,13 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
+	MyLib::Vector3 move = m_pPlayer->GetMove();
+
+	move.y += param.fJumpUpdateMove;
+	m_pPlayer->SetMove(move);
+
 	if (m_pPlayer->GetMotion()->IsFinish())
 	{// ジャンプ移行
 		SetAction(CPlayer::Action::ACTION_JUMP);
@@ -232,13 +244,10 @@ void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate
 void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
-	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-
-	pos.y += JUMPTHROW_HOVER;
-	move.y = 0.0f;
+	move.y = param.fJumpStartMove;
 	m_pPlayer->SetMove(move);
-	m_pPlayer->SetPosition(pos);
 }
 
 //==========================================================================
@@ -246,8 +255,8 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAction::SetAction(CPlayer::Action action)
 {
-	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
 	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();
+	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
 	float fSlowRate = CManager::GetInstance()->GetSlowRate();
 
 	m_Action = action;
@@ -259,3 +268,12 @@ void CPlayerAction::SetAction(CPlayer::Action action)
 		(this->*(m_StartFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CPlayerAction::Debug()
+{
+
+}
+
