@@ -25,7 +25,6 @@ CObjectX::STATE_FUNC CObjectX::m_StateFunc[] =
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-int CObjectX::m_nNumAll = 0;	// 総数
 CListManager<CObjectX> CObjectX::m_List = {};	// リスト
 
 //==========================================================================
@@ -33,19 +32,18 @@ CListManager<CObjectX> CObjectX::m_List = {};	// リスト
 //==========================================================================
 CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, layer)
 {
-	m_mtxWorld.Identity();							// ワールドマトリックス
-	m_scale = MyLib::Vector3(1.0f, 1.0f, 1.0f);		// スケール
-	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);		// 色
-	m_fSize = MyLib::Vector3();						// サイズ
-	m_AABB = MyLib::AABB();							// AABB情報
-	m_OriginAABB = MyLib::AABB();					// 元のAABB情報
-	m_state = STATE::STATE_NONE;					// 状態
-	m_bShadow = false;								// 影を使っているかどうか
-	m_nIdxTexure = 0;								// テクスチャのインデックス番号
-	m_nIdxXFile = 0;								// Xファイルのインデックス番号
-	m_pShadow = nullptr;							// 影の情報
-	m_pCollisionLineBox = nullptr;					// 当たり判定ボックス
-	m_nNumAll++;									// 総数加算
+	m_mtxWorld.Identity();						// ワールドマトリックス
+	m_scale = MyLib::Vector3();					// スケール
+	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色
+	m_fSize = MyLib::Vector3();					// サイズ
+	m_AABB = MyLib::AABB();						// AABB情報
+	m_OriginAABB = MyLib::AABB();				// 元のAABB情報
+	m_state = STATE::STATE_NONE;				// 状態
+	m_nIdxTexure = 0;							// テクスチャのインデックス番号
+	m_nIdxXFile = 0;							// Xファイルのインデックス番号
+	m_pShadow = nullptr;						// 影の情報
+	m_bShadow = false;							// 影を使っているかどうか
+	m_pCollisionLineBox = nullptr;				// 当たり判定ボックス
 }
 
 //==========================================================================
@@ -66,167 +64,117 @@ void CObjectX::BindTexture(int *nIdx)
 }
 
 //==========================================================================
-// Xファイルのデータ割り当て
-//==========================================================================
-void CObjectX::BindXData(int nIdxXFile)
-{
-	// 情報割り当て
-	m_nIdxXFile = nIdxXFile;
-}
-
-//==========================================================================
 // 生成処理
 //==========================================================================
-CObjectX *CObjectX::Create()
+CObjectX* CObjectX::Create()
 {
-	// 生成用のオブジェクト
-	CObjectX *pObjectX = nullptr;
+	// メモリの確保
+	CObjectX* pObjectX = DEBUG_NEW CObjectX;
 
-	if (pObjectX == nullptr)
-	{// nullptrだったら
-
-		// メモリの確保
-		pObjectX = DEBUG_NEW CObjectX;
-
-		if (pObjectX != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 初期化処理
-			pObjectX->Init();
+	if (pObjectX != nullptr)
+	{
+		// 初期化処理
+		if (FAILED(pObjectX->Init()))
+		{
+			return nullptr;
 		}
-
-		return pObjectX;
 	}
 
-	return nullptr;
+	return pObjectX;
 }
 
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectX *CObjectX::Create(const std::string& file)
+CObjectX* CObjectX::Create(const std::string& file)
 {
-	// 生成用のオブジェクト
-	CObjectX *pObjectX = nullptr;
+	// メモリの確保
+	CObjectX* pObjectX = DEBUG_NEW CObjectX;
 
-	if (pObjectX == nullptr)
-	{// nullptrだったら
+	if (pObjectX != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pObjectX = DEBUG_NEW CObjectX;
-
-		if (pObjectX != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 初期化処理
-			HRESULT hr = pObjectX->Init(file);
-
-			if (FAILED(hr))
-			{// 失敗していたら
-				return nullptr;
-			}
-
-			// 種類設定
-			pObjectX->SetType(TYPE_XFILE);
+		// 初期化処理
+		if (FAILED(pObjectX->Init(file)))
+		{
+			return nullptr;
 		}
 
-		return pObjectX;
+		// 種類設定
+		pObjectX->SetType(TYPE_XFILE);
 	}
 
-	return nullptr;
+	return pObjectX;
 }
 
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectX *CObjectX::Create(const std::string& file, const MyLib::Vector3& pos, const MyLib::Vector3& rot, bool bShadow)
+CObjectX* CObjectX::Create(const std::string& file, const MyLib::Vector3& pos, const MyLib::Vector3& rot, bool bShadow)
 {
-	// 生成用のオブジェクト
-	CObjectX *pObjectX = nullptr;
+	// メモリの確保
+	CObjectX* pObjectX = DEBUG_NEW CObjectX;
 
-	if (pObjectX == nullptr)
-	{// nullptrだったら
+	if (pObjectX != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pObjectX = DEBUG_NEW CObjectX;
+		// 位置・向き
+		pObjectX->SetPosition(pos);
+		pObjectX->SetRotation(rot);
+		pObjectX->m_bShadow = bShadow;
 
-		if (pObjectX != nullptr)
-		{// メモリの確保が出来ていたら
+		// 初期化処理
+		HRESULT hr = pObjectX->Init(file);
 
-			// 位置・向き
-			pObjectX->SetPosition(pos);
-			pObjectX->SetRotation(rot);
-			pObjectX->m_bShadow = bShadow;
-
-			// 初期化処理
-			HRESULT hr = pObjectX->Init(file);
-
-			if (FAILED(hr))
-			{// 失敗していたら
-				return nullptr;
-			}
-
-			if (bShadow)
-			{
-				// 影設定
-				float f = pObjectX->GetVtxMax().x * 0.5f;
-				pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
-			}
+		if (FAILED(hr))
+		{// 失敗していたら
+			return nullptr;
 		}
 
-		return pObjectX;
+		if (bShadow)
+		{
+			// 影設定
+			float f = pObjectX->GetVtxMax().x * 0.5f;
+			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
+		}
 	}
 
-	return nullptr;
+	return pObjectX;
 }
 
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectX *CObjectX::Create(int nIdxXFile, const MyLib::Vector3& pos, const MyLib::Vector3& rot, bool bShadow,
+CObjectX* CObjectX::Create(int nIdxXFile, const MyLib::Vector3& pos, const MyLib::Vector3& rot, bool bShadow,
 	int nPriority,
 	CObject::LAYER layer)
 {
 	// 生成用のオブジェクト
-	CObjectX *pObjectX = nullptr;
+	CObjectX* pObjectX = DEBUG_NEW CObjectX(nPriority, layer);
 
-	if (pObjectX == nullptr)
-	{// nullptrだったら
+	if (pObjectX != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pObjectX = DEBUG_NEW CObjectX(nPriority, layer);
+		// 位置・向き
+		pObjectX->SetPosition(pos);
+		pObjectX->SetRotation(rot);
+		pObjectX->m_bShadow = bShadow;
 
-		if (pObjectX != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 位置・向き
-			pObjectX->SetPosition(pos);
-			pObjectX->SetRotation(rot);
-			pObjectX->m_bShadow = bShadow;
-
-			// 初期化処理
-			HRESULT hr = pObjectX->Init(nIdxXFile);
-
-			if (FAILED(hr))
-			{// 失敗していたら
-				return nullptr;
-			}
-
-			// 種類設定
-			//pObjectX->SetType(TYPE_XFILE);
-
-			if (bShadow)
-			{
-				// 影設定
-				float f = pObjectX->GetVtxMax().x * 0.5f;
-				pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
-			}
+		// 初期化処理
+		if (FAILED(pObjectX->Init(nIdxXFile)))
+		{
+			return nullptr;
 		}
 
-		return pObjectX;
+		if (bShadow)
+		{
+			// 影設定
+			float f = pObjectX->GetVtxMax().x * 0.5f;
+			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
+		}
 	}
 
-	return nullptr;
+	return pObjectX;
 }
 
 //==========================================================================
@@ -338,21 +286,14 @@ HRESULT CObjectX::Init(int nIdxXFile)
 //==========================================================================
 void CObjectX::Uninit()
 {
-	// 影を消す
-	if (m_pShadow != nullptr)
-	{
-		//m_pShadow->Uninit();
-		m_pShadow = nullptr;
-	}
-
+	// リストから削除
 	m_List.Delete(this);
 
-	m_nIdxTexure = 0;
+	// 影を消す
+	m_pShadow = nullptr;
 
 	// オブジェクトの破棄
 	Release();
-
-	m_nNumAll--;	// 総数減算
 }
 
 //==========================================================================
@@ -360,6 +301,9 @@ void CObjectX::Uninit()
 //==========================================================================
 void CObjectX::Kill()
 {
+	// リストから削除
+	m_List.Delete(this);
+
 	// 影を消す
 	if (m_pShadow != nullptr)
 	{
@@ -367,9 +311,9 @@ void CObjectX::Kill()
 		m_pShadow = nullptr;
 	}
 
-	m_List.Delete(this);
-
-	if (m_pCollisionLineBox != nullptr) {
+	// 当たり判定ボックス
+	if (m_pCollisionLineBox != nullptr) 
+	{
 		m_pCollisionLineBox->Kill();
 		m_pCollisionLineBox = nullptr;
 	}
@@ -389,7 +333,8 @@ void CObjectX::Update(const float fDeltaTime, const float fDeltaRate, const floa
 	// 状態別処理
 	(this->*(m_StateFunc[m_state]))();
 
-	if (m_pShadow != nullptr){
+	if (m_pShadow != nullptr)
+	{
 		m_pShadow->SetPosition(GetPosition());
 	}
 
@@ -402,7 +347,8 @@ void CObjectX::Update(const float fDeltaTime, const float fDeltaRate, const floa
 //==========================================================================
 void CObjectX::StateNone()
 {
-	if (m_pCollisionLineBox != nullptr) {
+	if (m_pCollisionLineBox != nullptr) 
+	{
 		m_pCollisionLineBox->SetEnableDisp(false);
 	}
 }
@@ -412,7 +358,8 @@ void CObjectX::StateNone()
 //==========================================================================
 void CObjectX::StateEdit()
 {
-	if (m_pCollisionLineBox != nullptr) {
+	if (m_pCollisionLineBox != nullptr) 
+	{
 		m_pCollisionLineBox->SetEnableDisp(true);
 	}
 }
@@ -436,7 +383,8 @@ void CObjectX::CreateCollisionBox()
 //==========================================================================
 void CObjectX::SetCollisionBoxData()
 {
-	if (m_pCollisionLineBox != nullptr) {
+	if (m_pCollisionLineBox != nullptr) 
+	{
 
 		MyLib::AABB aabb;
 		aabb.vtxMin.x = m_OriginAABB.vtxMin.x * m_scale.x;
@@ -447,6 +395,7 @@ void CObjectX::SetCollisionBoxData()
 		aabb.vtxMax.y = m_OriginAABB.vtxMax.y * m_scale.y;
 		aabb.vtxMax.z = m_OriginAABB.vtxMax.z * m_scale.z;
 
+		// AABB設定
 		m_pCollisionLineBox->SetAABB(aabb);
 
 		// 位置・向き設定
@@ -458,13 +407,13 @@ void CObjectX::SetCollisionBoxData()
 //==========================================================================
 // 高さ取得
 //==========================================================================
-float CObjectX::GetHeight(MyLib::Vector3 pos, bool &bLand)
+float CObjectX::GetHeight(const MyLib::Vector3& pos, bool &bLand)
 {
 	// Xファイルのデータ取得
 	CXLoad::SXFile *pXData = CXLoad::GetInstance()->GetMyObject(m_nIdxXFile);
 
 	if (pXData == nullptr)
-	{// nullptrだったら
+	{
 		return 0.0f;
 	}
 
@@ -607,7 +556,6 @@ void CObjectX::DrawOnly()
 //==========================================================================
 void CObjectX::Draw()
 {
-
 	// ワールドマトリックスの計算処理
 	CalWorldMtx();
 
@@ -618,7 +566,7 @@ void CObjectX::Draw()
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CObjectX::Draw(D3DXCOLOR col)
+void CObjectX::Draw(const D3DXCOLOR& col)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
@@ -740,124 +688,4 @@ void CObjectX::Draw(float fAlpha)
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
-}
-
-//==========================================================================
-// マトリックス設定
-//==========================================================================
-void CObjectX::SetWorldMtx(const MyLib::Matrix mtx)
-{
-	m_mtxWorld = mtx;
-}
-
-//==========================================================================
-// マトリックス取得
-//==========================================================================
-MyLib::Matrix CObjectX::GetWorldMtx() const
-{
-	return m_mtxWorld;
-}
-
-//==========================================================================
-// スケール設定
-//==========================================================================
-void CObjectX::SetScale(const MyLib::Vector3 scale)
-{
-	m_scale = scale;
-}
-
-//==========================================================================
-// スケール取得
-//==========================================================================
-MyLib::Vector3 CObjectX::GetScale() const
-{
-	return m_scale;
-}
-
-//==========================================================================
-// 色設定
-//==========================================================================
-void CObjectX::SetColor(const D3DXCOLOR col)
-{
-	m_col = col;
-}
-
-//==========================================================================
-// 色取得
-//==========================================================================
-D3DXCOLOR CObjectX::GetColor() const
-{
-	return m_col;
-}
-
-//==========================================================================
-// サイズ設定
-//==========================================================================
-void CObjectX::SetSize(const MyLib::Vector3 size)
-{
-	m_fSize = size;
-}
-
-//==========================================================================
-// サイズ取得
-//==========================================================================
-MyLib::Vector3 CObjectX::GetSize() const
-{
-	return m_fSize;
-}
-
-//==========================================================================
-// 頂点の最大値取得
-//==========================================================================
-MyLib::Vector3 CObjectX::GetVtxMax() const
-{
-	return m_AABB.vtxMax;
-}
-
-//==========================================================================
-// 頂点の最小値取得
-//==========================================================================
-MyLib::Vector3 CObjectX::GetVtxMin() const
-{
-	return m_AABB.vtxMin;
-}
-
-//==========================================================================
-// AABB情報取得
-//==========================================================================
-MyLib::AABB CObjectX::GetAABB() const
-{
-	return m_AABB;
-}
-
-//==========================================================================
-// Xファイルのインデックス取得
-//==========================================================================
-int CObjectX::GetIdxXFile() const
-{
-	return m_nIdxXFile;
-}
-
-//==========================================================================
-// 影を使っているかどうか
-//==========================================================================
-bool CObjectX::GetUseShadow() const
-{
-	return m_bShadow;
-}
-
-//==========================================================================
-// オブジェクトXオブジェクトの取得
-//==========================================================================
-CObjectX *CObjectX::GetObjectX()
-{
-	return this;
-}
-
-//==========================================================================
-// 総数取得
-//==========================================================================
-int CObjectX::GetNumAll()
-{
-	return m_nNumAll;
 }

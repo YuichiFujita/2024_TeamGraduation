@@ -42,7 +42,7 @@ MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪(悟空)
 CHARACTERSET
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
-	VELOCITY_BLINK = 19.00	# ブリンク移動量
+	VELOCITY_BLINK = 29.61	# ブリンク移動量
 	
 	THROWJUMP_STARTMOVE = 0.0	# ジャンプ投げ時の開始上移動量
 	THROWJUMP_UPDATEMOVE = 0.0	# ジャンプ投げ時の常時上移動量
@@ -177,7 +177,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 14
 		PARENT = 13
-		POS = -1.00 -22.50 1.00
+		POS = 0.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
