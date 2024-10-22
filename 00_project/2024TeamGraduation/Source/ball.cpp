@@ -8,6 +8,8 @@
 #include "player.h"
 #include "playerStatus.h"
 #include "manager.h"
+#include "game.h"
+#include "gamemanager.h"
 #include "calculation.h"
 #include "debugproc.h"
 #include "3D_Effect.h"
@@ -23,6 +25,9 @@ namespace
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
 
+	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
+	const float MAX_BOUND_MOVE = 1.0f;	// バウンド時の上移動量最大値
+
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
 		"SPAWN    生成状態               (フリーボール)",
@@ -33,6 +38,37 @@ namespace
 		"REBOUND  リバウンド状態         (ぶつかった時の落下)",
 		"LAND     着地状態               (地面落下)",
 	};
+
+	namespace normal
+	{
+		const float THROW_MOVE = 15.5f;	// 通常投げ移動速度
+		const float REV_HOMING = 0.3f;	// ホーミングの慣性補正係数
+		const float TIME_HOMING = 1.2f;	// ホーミングが切れるまでの時間
+	}
+
+	namespace jump
+	{
+		const float THROW_MOVE = 21.0f;		// ジャンプ投げ移動速度
+		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
+		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
+		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
+	}
+
+	namespace special
+	{
+		const float THROW_MOVE = 60.0f;	// スペシャル投げ移動速度
+	}
+
+	namespace move
+	{
+		const float TIME_GRAVITY = 0.8f;	// 重力がかかり始めるまでの時間
+	}
+
+	namespace rebound
+	{
+		const float MOVE_UP = 2.5f;		// 上移動量
+		const float MOVE_SPEED = 2.5f;	// 移動速度
+	}
 }
 
 //==========================================================================
@@ -58,14 +94,15 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 // コンストラクタ
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
-	m_typeTeam	 (CGameManager::SIDE_NONE),	// チームサイド
-	m_pPlayer	 (nullptr),		// プレイヤー情報
-	m_pTarget	 (nullptr),		// ホーミングターゲット情報
-	m_fMoveSpeed (0.0f),		// 移動速度
-	m_fGravity	 (0.0f),		// 重力
-	m_typeAtk	 (ATK_NONE),	// 攻撃種類
-	m_state		 (STATE_SPAWN),	// 状態
-	m_fStateTime (0.0f)			// 状態カウンター
+	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
+	m_pPlayer		(nullptr),		// プレイヤー情報
+	m_pTarget		(nullptr),		// ホーミングターゲット情報
+	m_fMoveSpeed	(0.0f),			// 移動速度
+	m_fGravity		(0.0f),			// 重力
+	m_oldOverLine	(VEC3_ZERO),	// ホーミング終了ライン
+	m_typeAtk		(ATK_NONE),		// 攻撃種類
+	m_state			(STATE_SPAWN),	// 状態
+	m_fStateTime	(0.0f)			// 状態カウンター
 {
 
 }
@@ -150,6 +187,9 @@ void CBall::Kill()
 //==========================================================================
 void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 前回の位置を更新
+	SetOldPosition(GetPosition());
+
 	// 状態別処理
 	(this->*(m_SampleFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -196,6 +236,9 @@ void CBall::Catch(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowNormal(CPlayer* pPlayer)
 {
+	// キャッチしていないボールを投げようとした場合エラー
+	assert(m_state == STATE_CATCH);
+
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
 	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に
@@ -208,13 +251,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	m_typeAtk = ATK_NORMAL;
 
 	// 移動量を設定
-	m_fMoveSpeed = 15.5f;
-
-	// TODO：仮
-	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot));
-	vec = vec.Normal();
-	SetMove(vec);
+	m_fMoveSpeed = normal::THROW_MOVE;
 }
 
 //==========================================================================
@@ -222,6 +259,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowJump(CPlayer* pPlayer)
 {
+	// キャッチしていないボールを投げようとした場合エラー
+	assert(m_state == STATE_CATCH);
+
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
 	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_JUMP); }	// ターゲットがいる場合ホーミング状態に
@@ -234,13 +274,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	m_typeAtk = ATK_JUMP;
 
 	// 移動量を設定
-	m_fMoveSpeed = 21.0f;
-
-	// TODO：仮
-	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot));
-	vec = vec.Normal();
-	SetMove(vec);
+	m_fMoveSpeed = jump::THROW_MOVE;
 }
 
 //==========================================================================
@@ -248,6 +282,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 //==========================================================================
 void CBall::ThrowSpecial(CPlayer* pPlayer)
 {
+	// キャッチしていないボールを投げようとした場合エラー
+	assert(m_state == STATE_CATCH);
+
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
 	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に	// TODO：スペシャルに後々変更
@@ -260,13 +297,7 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 	m_typeAtk = ATK_SPECIAL;
 
 	// 移動量を設定
-	m_fMoveSpeed = 60.0f;
-
-	// TODO：仮
-	float fRot = pPlayer->GetRotation().y + D3DX_PI;
-	MyLib::Vector3 vec = MyLib::Vector3(sinf(fRot), 0.0f, cosf(fRot));
-	vec = vec.Normal();
-	SetMove(vec);
+	m_fMoveSpeed = special::THROW_MOVE;
 }
 
 //==========================================================================
@@ -340,8 +371,8 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 	vecDiff = vecDiff.Normal();
 
 	// 移動ベクトルを更新
-	vecMove.x += vecDiff.x * 0.3f;
-	vecMove.z += vecDiff.z * 0.3f;
+	vecMove.x += vecDiff.x * normal::REV_HOMING;
+	vecMove.z += vecDiff.z * normal::REV_HOMING;
 	vecMove = vecMove.Normal();
 
 	// 位置に移動量を反映
@@ -349,9 +380,7 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime;
-
-	MyLib::Vector3 vecTarget = posTarget - pos;
-	if (m_fStateTime >= 1.2f || vecTarget.Length() <= 150.0f)
+	if (m_fStateTime >= normal::TIME_HOMING)
 	{
 		// 移動状態にする
 		SetState(STATE_MOVE);
@@ -394,8 +423,8 @@ void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, con
 
 	// ターゲットの少し後ろにする
 	const float fTargetAngle = posTarget.AngleXZ(pos);
-	posTarget.x += sinf(fTargetAngle) * 150.0f;
-	posTarget.z += cosf(fTargetAngle) * 150.0f;
+	posTarget.x += sinf(fTargetAngle) * jump::OFFSET_TARGET_BACK;
+	posTarget.z += cosf(fTargetAngle) * jump::OFFSET_TARGET_BACK;
 
 	// 目標ベクトルを取得
 	MyLib::Vector3 vecDest = posTarget - pos;
@@ -406,11 +435,11 @@ void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, con
 	vecDiff = vecDiff.Normal();
 
 	// 移動ベクトルを更新
-	vecMove += vecDiff * 0.24f;
-	if (vecMove.y >= -0.3f)
+	vecMove += vecDiff * jump::REV_HOMING;
+	if (vecMove.y >= jump::MIN_MOVE_DOWN)
 	{
 		// 最大値に補正
-		vecMove.y = -0.3f;
+		vecMove.y = jump::MIN_MOVE_DOWN;
 	}
 
 	// ベクトルを正規化
@@ -454,7 +483,7 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime;
-	if (m_fStateTime >= 0.8f)
+	if (m_fStateTime >= move::TIME_GRAVITY)
 	{
 		// 重力の加速
 		UpdateGravity(fDeltaRate, fSlowRate);
@@ -541,7 +570,7 @@ void CBall::UpdateLand(const float fDeltaTime, const float fDeltaRate, const flo
 void CBall::UpdateGravity(const float fDeltaRate, const float fSlowRate)
 {
 	// 重力を与える
-	m_fGravity -= (mylib_const::GRAVITY * 0.6f) * fDeltaRate * fSlowRate;
+	m_fGravity -= GRAVITY * fDeltaRate * fSlowRate;
 }
 
 //==========================================================================
@@ -569,6 +598,9 @@ void CBall::UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, cons
 {
 	// 位置に移動量を反映
 	*pPos += (*pMove * m_fMoveSpeed) * fDeltaRate * fSlowRate;
+
+	// 場外の補正
+	CGame::GetInstance()->GetGameManager()->PosLimit(*pPos);
 }
 
 //==========================================================================
@@ -604,7 +636,7 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 		pMove->y = m_fMoveSpeed;
 
 		// 上限に補正
-		UtilFunc::Transformation::ValueNormalize(pMove->y, 1.0f, 0.0f);
+		UtilFunc::Transformation::ValueNormalize(pMove->y, MAX_BOUND_MOVE, 0.0f);
 
 		// 重力を初期化
 		m_fGravity = 0.0f;
@@ -724,6 +756,13 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
+
+	// ボールの移動ベクトルを作成
+	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き
+	MyLib::Vector3 vecMove = MyLib::Vector3(sinf(fRotY), 0.0f, cosf(fRotY));	// 移動ベクトル
+
+	// 移動ベクトルを正規化して設定
+	SetMove(vecMove.Normal());
 }
 
 //==========================================================================
@@ -735,10 +774,10 @@ void CBall::ReBound(MyLib::Vector3* pMove)
 	*pMove = pMove->Invert();
 
 	// 上移動量を追加
-	pMove->y = 2.5f;
+	pMove->y = rebound::MOVE_UP;
 
 	// 移動速度を低下
-	m_fMoveSpeed = 2.5f;
+	m_fMoveSpeed = rebound::MOVE_SPEED;
 
 	// リバウンド状態にする
 	SetState(STATE_REBOUND);

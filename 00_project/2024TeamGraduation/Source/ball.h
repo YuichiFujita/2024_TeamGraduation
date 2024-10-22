@@ -139,6 +139,7 @@ private:
 	CPlayer* m_pTarget;	// ホーミングターゲット情報
 	float m_fMoveSpeed;	// 移動速度
 	float m_fGravity;	// 重力
+	MyLib::Vector3 m_oldOverLine;	// ホーミング終了ライン
 
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
 	EAttack m_typeAtk;	// 攻撃種類
