@@ -44,6 +44,9 @@ CHARACTERSET
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 19.00	# ブリンク移動量
 	
+	THROWJUMP_STARTMOVE = 0.0	# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.0	# ジャンプ投げ時の常時上移動量
+	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
 	HEIGHT = 100.00	# 高さ
@@ -53,6 +56,11 @@ CHARACTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
 	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
 
 	PARTSSET
 		INDEX = 0
