@@ -8,7 +8,6 @@
 #ifndef _OBJECTX_H_
 #define _OBJECTX_H_	// 二重インクルード防止
 
-#include "main.h"
 #include "object.h"
 #include "Xload.h"
 #include "listmanager.h"
@@ -16,7 +15,6 @@
 // 前方宣言
 class CShadow;
 class CCollisionLine_Box;
-class CHandle_Move;
 
 //==========================================================================
 // クラス定義
@@ -36,56 +34,64 @@ public:
 		STATE_MAX
 	};
 
-	// マクロ定義
-#define MAX_MAT				(512)		// マテリアルサイズ
-#define MAX_TX				(96)		// テクスチャサイズ
-
-	CObjectX(int nPriority = mylib_const::PRIORITY_DEFAULT,
-		CObject::LAYER layer = CObject::LAYER::LAYER_DEFAULT);
+	CObjectX(int nPriority = mylib_const::PRIORITY_DEFAULT,	CObject::LAYER layer = CObject::LAYER::LAYER_DEFAULT);
 	~CObjectX();
 
 	// オーバーライドされた関数
-	HRESULT Init();
+	HRESULT Init() override;
 	HRESULT Init(const std::string& file);
 	HRESULT Init(int nIdxXFile);
-	void Uninit();
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void Draw();
-	void Draw(D3DXCOLOR col);
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	void Draw(const D3DXCOLOR& col);
 	void Draw(float fAlpha);
 
+	//--------------------------
+	// 操作
+	//--------------------------
+	void Kill();		// 削除
 	void DrawOnly();	// 描画のみ
+	void CalWorldMtx();	// ワールドマトリックスの計算処理
 
-	void BindTexture(int *nIdx);
-	void BindXData(int nIdxXFile);
+	//--------------------------
+	// 要素
+	//--------------------------
+	void BindTexture(int *nIdx);								// テクスチャ割り当て
+	void BindXData(int nIdxXFile) { m_nIdxXFile = nIdxXFile; }	// Xファイルデータ割り当て
+	int GetIdxXFile() const { return m_nIdxXFile; }				// Xファイルのインデックス取得
+	std::string GetFileName() const { return m_fileName; }		// Xファイルのファイル名取得
 
-	void CalWorldMtx();							// ワールドマトリックスの計算処理
-	void SetWorldMtx(const MyLib::Matrix mtx);	// マトリックス設定
-	MyLib::Matrix GetWorldMtx() const;			// マトリックス取得
-	void SetScale(const MyLib::Vector3 scale);	// スケール設定
-	MyLib::Vector3 GetScale() const;			// スケール取得
-	void SetColor(const D3DXCOLOR col);			// 色設定
-	D3DXCOLOR GetColor() const;					// 色取得
-	void SetSize(const MyLib::Vector3 size);	// サイズの設定
-	void SetAABB(const MyLib::AABB& aabb) { m_AABB = aabb; }
-	MyLib::Vector3 GetSize() const;				// サイズの取得
-	MyLib::Vector3 GetVtxMax() const;			// 頂点の最大値取得
-	MyLib::Vector3 GetVtxMin() const;			// 頂点の最小値取得
-	MyLib::AABB GetAABB() const;				// AABB情報取得
-	int GetIdxXFile() const;					// Xファイルのインデックス取得
-	std::string GetFileName() const { return m_fileName; }					// Xファイルのファイル名取得
-	bool GetUseShadow() const;					// 影を使っているかどうか
-
+	//--------------------------
+	// パラメーター
+	//--------------------------
+	void SetWorldMtx(const MyLib::Matrix& mtx) { m_mtxWorld = mtx; }	// マトリックス設定
+	MyLib::Matrix GetWorldMtx() const { return m_mtxWorld; }			// マトリックス取得
+	void SetScale(const MyLib::Vector3& scale) { m_scale = scale; }		// スケール設定
+	MyLib::Vector3 GetScale() const { return m_scale; }					// スケール取得
+	void SetColor(const D3DXCOLOR& col) { m_col = col; }				// 色設定
+	D3DXCOLOR GetColor() const { return m_col; }						// 色取得
+	void SetAABB(const MyLib::AABB& aabb) { m_AABB = aabb; }			// AABB設定
+	MyLib::AABB GetAABB() const { return m_AABB; }						// AABB情報取得
+	MyLib::Vector3 GetVtxMax() const { return m_AABB.vtxMax; }			// 頂点の最大値取得
+	MyLib::Vector3 GetVtxMin() const { return m_AABB.vtxMin; }			// 頂点の最小値取得
+	
+	//--------------------------
+	// 状態
+	//--------------------------
 	void SetState(STATE state) { m_state = state; }		// 状態設定
 	STATE GetState() { return m_state; }				// 状態取得
 
-	float GetHeight(MyLib::Vector3 pos, bool &bLand);	// 高さ取得
-
-	void Kill();
+	//--------------------------
+	// 当たり判定ボックス
+	//--------------------------
 	void CreateCollisionBox();	// 当たり判定ボックス生成
 	CCollisionLine_Box* GetCollisionLineBox() { return m_pCollisionLineBox; }	// 当たり判定ボックス取得
 	static CListManager<CObjectX> GetListObj() { return m_List; }				// リスト取得
 
+	//--------------------------
+	// 生成
+	//--------------------------
 	static CObjectX *Create();
 	static CObjectX *Create(const std::string& file);
 	static CObjectX *Create(const std::string& file, const MyLib::Vector3& pos, const MyLib::Vector3& rot = 0.0f, bool bShadow = false);
@@ -96,18 +102,15 @@ public:
 		bool bShadow = false,
 		int nPriority = mylib_const::PRIORITY_DEFAULT,
 		CObject::LAYER layer = CObject::LAYER::LAYER_DEFAULT);
-	CObjectX *GetObjectX();
-	static int GetNumAll();
+
+	//--------------------------
+	// その他
+	//--------------------------
+	float GetHeight(const MyLib::Vector3& pos, bool& bLand);	// 高さ取得
+	bool IsUseShadow() const { return m_bShadow; }				// 影を使っているかどうか
+	CObjectX* GetObjectX() { return this; }						// オブジェクトXの要素取得
 
 private:
-
-
-	struct VertexFormat
-	{
-		D3DXVECTOR3 position; // 頂点の位置
-		D3DXVECTOR3 normal;   // 頂点の法線
-		D3DXVECTOR2 texCoord; // テクスチャ座標
-	};
 
 	//=============================
 	// 関数リスト
@@ -135,16 +138,15 @@ private:
 	MyLib::AABB m_AABB;			// AABB情報
 	MyLib::AABB m_OriginAABB;	// 元のAABB情報
 	STATE m_state;				// 状態
-	bool m_bShadow;				// 影を使うかどうか
 	int m_nIdxTexure;			// テクスチャのインデックス番号
 	int m_nIdxXFile;			// Xファイルのインデックス番号
-	std::string m_fileName;
-	static int m_nNumAll;		// 総数
+	std::string m_fileName;		// ファイル名
 	CShadow *m_pShadow;			// 影の情報
+	bool m_bShadow;				// 影を使うかどうか
+	LPD3DXMESH m_pMesh;			// メッシュ(頂点情報)へのポインタ
 	CCollisionLine_Box* m_pCollisionLineBox;	// 当たり判定ボックス
 	static CListManager<CObjectX> m_List;		// リスト
 
-	LPD3DXMESH m_pMesh;			// メッシュ(頂点情報)へのポインタ
 
 };
 
