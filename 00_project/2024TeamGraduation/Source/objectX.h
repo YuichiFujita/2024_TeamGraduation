@@ -52,7 +52,6 @@ public:
 	//--------------------------
 	void Kill();		// 削除
 	void DrawOnly();	// 描画のみ
-	void CalWorldMtx();	// ワールドマトリックスの計算処理
 
 	//--------------------------
 	// 要素
@@ -109,6 +108,10 @@ public:
 	float GetHeight(const MyLib::Vector3& pos, bool& bLand);	// 高さ取得
 	bool IsUseShadow() const { return m_bShadow; }				// 影を使っているかどうか
 	CObjectX* GetObjectX() { return this; }						// オブジェクトXの要素取得
+
+protected:
+	// 仮想関数
+	virtual void CalWorldMtx();	// ワールドマトリックスの計算処理
 
 private:
 

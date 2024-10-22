@@ -373,9 +373,8 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bDash = IsBlink();	//走るフラグ取得
-
-	if (!bDash)
+	bool bBlink = IsBlink();	//走るフラグ取得
+	if (!bBlink)
 	{
 		return;
 	}
@@ -404,10 +403,10 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
-		bDash = false;
+		bBlink = false;
 	}
 
-	SetBlink(bDash);	//走るフラグ設定
+	SetBlink(bBlink);	//走るフラグ設定
 
 	ImGui::Checkbox("UP", &bUP);
 	ImGui::Checkbox("Down", &bDown);

@@ -230,8 +230,8 @@ void CPlayerControlAction::Charm(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 void CPlayerControlAction::SetJump(CPlayer* player)
 {
+	// ƒWƒƒƒ“ƒv”»’èŽæ“¾
 	bool bJump = player->IsJump();
-
 	if (bJump)
 	{
 		return;

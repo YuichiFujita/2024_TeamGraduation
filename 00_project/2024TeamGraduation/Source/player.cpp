@@ -368,11 +368,6 @@ void CPlayer::MotionSet()
 	int nType = pMotion->GetType();
 	int nOldType = pMotion->GetOldType();
 
-	if (nType == MOTION_THROW)
-	{
-		nType = MOTION_THROW;
-	}
-
 	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
 
@@ -402,11 +397,6 @@ void CPlayer::MotionSet()
 		m_sMotionFrag.bJump = false;
 
 		// ジャンプモーション
-	}
-	else if (m_bJump && !m_sMotionFrag.bJump)
-	{// ジャンプ中&&ジャンプモーション再生が終わってる時
-
-		// 落下モーション
 	}
 	else
 	{
@@ -532,6 +522,11 @@ void CPlayer::LimitPos()
 	{
 		pos.y = 0.0f;
 
+		if (m_bJump)
+		{// ジャンプ中着地
+			GetMotion()->Set(MOTION::MOTION_LAND);
+		}
+
 		// 重力リセット
 		m_bJump = false;
 		MyLib::Vector3 move = GetMove();
@@ -590,7 +585,7 @@ bool CPlayer::Hit(CBall* pBall)
 	{ // ボールが着地している場合
 
 		// ボールをキャッチ
-		pBall->Catch(this);
+		pBall->CatchLand(this);
 		return false;
 	}
 
@@ -601,17 +596,17 @@ bool CPlayer::Hit(CBall* pBall)
 	{ // キャッチアクション中だった中でも受け付け中の場合	
 
 		// ボールをキャッチ
-		pBall->Catch(this);
+		pBall->CatchAttack(this);
 		return false;
 	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return false; }
 
-	// リバウンドボールの場合すり抜ける
+	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
-		pBall->Catch(this);
+		pBall->CatchAttack(this);
 		return false;
 	}
 
