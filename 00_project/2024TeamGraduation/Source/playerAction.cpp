@@ -15,7 +15,12 @@
 namespace
 {
 	const float DODGE_SLOW = 0.8f;			//回避時スロー値
-	const float JUMPTHROW_HOVER = 10.0f;		//ジャンプ投げ時フワッと値
+}
+
+namespace JumpThrow
+{
+	const float START_HOVER = 3.76;		//フワッと値(スタート)
+	const float UPDATE_HOVER = 0.212f;		//フワッと値(更新)
 }
 
 namespace ActionTime
@@ -23,6 +28,10 @@ namespace ActionTime
 	const float BLINK = 0.2f;		// ブリンク時間
 	const float DODGE = 0.5f;		// 回避時間
 }
+
+// 静的
+static float s_fStartHover = JumpThrow::START_HOVER;
+static float s_fUpdateHover = JumpThrow::UPDATE_HOVER;
 
 //==========================================================================
 // 関数ポインタ
@@ -74,6 +83,16 @@ void CPlayerAction::Update(const float fDeltaTime, const float fDeltaRate, const
 
 	// 行動更新
 	(this->*(m_ActionFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
+
+#if _DEBUG //デバッグ
+
+	if (ImGui::TreeNode("PlayerAction"))
+	{
+		Debug();
+		ImGui::TreePop();
+	}
+
+#endif //デバッグ
 }
 
 //==========================================================================
@@ -212,6 +231,11 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	//フワッと
+	MyLib::Vector3 move = m_pPlayer->GetMove();
+	move.y += s_fUpdateHover;
+	m_pPlayer->SetMove(move);
+
 	if (m_pPlayer->GetMotion()->IsFinish())
 	{// ジャンプ移行
 		SetAction(CPlayer::Action::ACTION_JUMP);
@@ -233,12 +257,8 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 {
 	//フワッと
 	MyLib::Vector3 move = m_pPlayer->GetMove();
-	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-
-	pos.y += JUMPTHROW_HOVER;
-	move.y = 0.0f;
+	move.y = s_fStartHover;
 	m_pPlayer->SetMove(move);
-	m_pPlayer->SetPosition(pos);
 }
 
 //==========================================================================
@@ -246,8 +266,8 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAction::SetAction(CPlayer::Action action)
 {
-	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
 	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();
+	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
 	float fSlowRate = CManager::GetInstance()->GetSlowRate();
 
 	m_Action = action;
@@ -259,3 +279,21 @@ void CPlayerAction::SetAction(CPlayer::Action action)
 		(this->*(m_StartFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CPlayerAction::Debug()
+{
+	//-----------------------------
+	// パラメーター
+	//-----------------------------
+	if (ImGui::TreeNode("ThrowJump"))
+	{
+		ImGui::DragFloat("s_fStart", &s_fStartHover, 0.001f, 0.0f, 100.0f, "%.3f");
+		ImGui::DragFloat("s_fUpdate", &s_fUpdateHover, 0.0001f, 0.0f, 100.0f, "%.3f");
+		
+		ImGui::TreePop();
+	}
+}
+

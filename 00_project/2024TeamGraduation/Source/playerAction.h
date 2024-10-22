@@ -57,6 +57,8 @@ private:
 	// 状態スタート系
 	void StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ(ジャンプ)
 
+	void Debug();
+
 	//=============================
 	// メンバ変数
 	//=============================
