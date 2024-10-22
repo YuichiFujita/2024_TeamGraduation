@@ -100,6 +100,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
 	m_pPlayer		(nullptr),		// プレイヤー情報
 	m_pTarget		(nullptr),		// ホーミングターゲット情報
+	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
 	m_oldOverLine	(VEC3_ZERO),	// ホーミング終了ライン
@@ -202,6 +203,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// ボールの状態表示
 	GET_MANAGER->GetDebugProc()->Print("ボール状態：%s\n", DEBUG_STATE_PRINT[m_state]);
 	GET_MANAGER->GetDebugProc()->Print("ターゲット：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print("カバー対象：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
 }
 
 //==========================================================================
@@ -214,24 +216,28 @@ void CBall::Draw()
 }
 
 //==========================================================================
-// キャッチ処理
+// 攻撃キャッチ処理
 //==========================================================================
-void CBall::Catch(CPlayer* pPlayer)
+void CBall::CatchAttack(CPlayer* pPlayer)
 {
-	// 移動量を初期化
-	SetMove(VEC3_ZERO);
+	MyLib::Vector3 oldPosBall = GetOldPosition();				// ボール過去位置
+	MyLib::Vector3 posPlayer = pPlayer->GetPosition();			// プレイヤー位置
+	float fAngleY = oldPosBall.AngleXZ(posPlayer) - D3DX_PI;	// ボール方向
 
-	// キャッチ状態にする
-	SetState(STATE_CATCH);
+	// キャッチ処理
+	Catch(pPlayer);
 
-	// プレイヤーのチームを保存
-	m_typeTeam = pPlayer->GetStatus()->GetTeam();
+	// 目標向きをボール方向にする
+	m_pPlayer->SetRotDest(fAngleY);
+}
 
-	// キャッチしたプレイヤーを保存
-	m_pPlayer = pPlayer;
-
-	// プレイヤーにボールを保存
-	pPlayer->SetBall(this);
+//==========================================================================
+// 着地キャッチ処理
+//==========================================================================
+void CBall::CatchLand(CPlayer* pPlayer)
+{
+	// キャッチ処理
+	Catch(pPlayer);
 }
 
 //==========================================================================
@@ -244,8 +250,26 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に
-	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)
+	{ // ターゲットがいる場合
+
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+		// ホーミング状態にする
+		SetState(STATE_HOM_NOR);
+
+		// 目標向き/向きをボール方向にする
+		m_pPlayer->SetRotDest(fAngleY);
+		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+	}
+	else
+	{ // ターゲットがいない場合
+
+		// 移動状態にする
+		SetState(STATE_MOVE);
+	}
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -267,8 +291,26 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_JUMP); }	// ターゲットがいる場合ホーミング状態に
-	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)
+	{ // ターゲットがいる場合
+
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+		// ホーミング状態にする
+		SetState(STATE_HOM_JUMP);
+
+		// 目標向き/向きをボール方向にする
+		m_pPlayer->SetRotDest(fAngleY);
+		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+	}
+	else
+	{ // ターゲットがいない場合
+
+		// 移動状態にする
+		SetState(STATE_MOVE);
+	}
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -290,8 +332,26 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)	{ SetState(STATE_HOM_NOR); }	// ターゲットがいる場合ホーミング状態に	// TODO：スペシャルに後々変更
-	else						{ SetState(STATE_MOVE); }		// ターゲットがいない場合移動状態に
+	if (m_pTarget != nullptr)
+	{ // ターゲットがいる場合
+
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+		// ホーミング状態にする
+		SetState(STATE_HOM_NOR);	// TODO：スペシャルに後々変更
+
+		// 目標向き/向きをボール方向にする
+		m_pPlayer->SetRotDest(fAngleY);
+		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+	}
+	else
+	{ // ターゲットがいない場合
+
+		// 移動状態にする
+		SetState(STATE_MOVE);
+	}
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -448,11 +508,12 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 	}
 
 	// プレイヤーとの当たり判定
-	if (CollisionPlayer(&pos))
+	CPlayer* pHit = CollisionPlayer(&pos);
+	if (pHit != nullptr)
 	{ // 当たった場合
 
 		// リバウンド遷移
-		ReBound(&vecMove);
+		ReBound(pHit, &vecMove);
 	}
 
 	// 情報を反映
@@ -510,11 +571,12 @@ void CBall::UpdateHomingJump(const float fDeltaTime, const float fDeltaRate, con
 	}
 
 	// プレイヤーとの当たり判定
-	if (CollisionPlayer(&pos))
+	CPlayer* pHit = CollisionPlayer(&pos);
+	if (pHit != nullptr)
 	{ // 当たった場合
 
 		// リバウンド遷移
-		ReBound(&vecMove);
+		ReBound(pHit, &vecMove);
 	}
 
 	// 情報を反映
@@ -559,11 +621,12 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 	}
 
 	// プレイヤーとの当たり判定
-	if (CollisionPlayer(&pos))
+	CPlayer* pHit = CollisionPlayer(&pos);
+	if (pHit != nullptr)
 	{ // 当たった場合
 
 		// リバウンド遷移
-		ReBound(&vecMove);
+		ReBound(pHit, &vecMove);
 	}
 
 	// 情報を反映
@@ -707,7 +770,7 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 //==========================================================================
 // プレイヤーとの当たり判定
 //==========================================================================
-bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
+CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 {
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -731,11 +794,19 @@ bool CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		{ // 当たっていた場合
 
 			// プレイヤーヒット処理
-			if (pPlayer->Hit(this)) { return true; }	// ヒット処理内でダメージを受けた場合
+			if (pPlayer->Hit(this))
+			{ // ヒット処理内でダメージを受けた場合
+
+				// ホーミング対象の初期化
+				m_pTarget = nullptr;
+
+				// ヒットしたプレイヤーを返す
+				return pPlayer;
+			}
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 //==========================================================================
@@ -799,6 +870,30 @@ void CBall::SetState(const EState state)
 
 	// カウンターを初期化
 	m_fStateTime = 0.0f;
+
+	// カバー対象プレイヤーの初期化
+	m_pCover = nullptr;
+}
+
+//==========================================================================
+// キャッチ処理
+//==========================================================================
+void CBall::Catch(CPlayer* pPlayer)
+{
+	// 移動量を初期化
+	SetMove(VEC3_ZERO);
+
+	// キャッチ状態にする
+	SetState(STATE_CATCH);
+
+	// プレイヤーのチームを保存
+	m_typeTeam = pPlayer->GetStatus()->GetTeam();
+
+	// キャッチしたプレイヤーを保存
+	m_pPlayer = pPlayer;
+
+	// プレイヤーにボールを保存
+	pPlayer->SetBall(this);
 }
 
 //==========================================================================
@@ -824,24 +919,6 @@ void CBall::Throw(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// リバウンド処理
-//==========================================================================
-void CBall::ReBound(MyLib::Vector3* pMove)
-{
-	// 移動ベクトルを反転
-	*pMove = pMove->Invert();
-
-	// 上移動量を追加
-	pMove->y = rebound::MOVE_UP;
-
-	// 移動速度を低下
-	m_fMoveSpeed = rebound::MOVE_SPEED;
-
-	// リバウンド状態にする
-	SetState(STATE_REBOUND);
-}
-
-//==========================================================================
 // 着地処理
 //==========================================================================
 void CBall::Landing(void)
@@ -857,4 +934,25 @@ void CBall::Landing(void)
 
 	// 攻撃の初期化
 	m_typeAtk = ATK_NONE;
+}
+
+//==========================================================================
+// リバウンド処理
+//==========================================================================
+void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
+{
+	// 移動ベクトルを反転
+	*pMove = pMove->Invert();
+
+	// 上移動量を追加
+	pMove->y = rebound::MOVE_UP;
+
+	// 移動速度を低下
+	m_fMoveSpeed = rebound::MOVE_SPEED;
+
+	// リバウンド状態にする
+	SetState(STATE_REBOUND);
+
+	// カバー対象プレイヤーを保存
+	m_pCover = pHitPlayer;
 }

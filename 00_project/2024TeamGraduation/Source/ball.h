@@ -72,7 +72,8 @@ public:
 	// メンバ関数
 	//=============================
 	void Kill();	// 削除
-	void Catch(CPlayer* pPlayer);			// キャッチ
+	void CatchAttack(CPlayer* pPlayer);		// 攻撃キャッチ
+	void CatchLand(CPlayer* pPlayer);		// 着地キャッチ
 	void ThrowNormal(CPlayer* pPlayer);		// 通常投げ
 	void ThrowJump(CPlayer* pPlayer);		// ジャンプ投げ
 	void ThrowSpecial(CPlayer* pPlayer);	// スペシャル投げ
@@ -123,12 +124,13 @@ private:
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
-	bool CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
-	CPlayer* CollisionThrow(void);				// ホーミング対象との当たり判定
-	void SetState(const EState state);			// 状態設定
-	void Throw(CPlayer* pPlayer);				// 投げ
-	void ReBound(MyLib::Vector3* pMove);		// リバウンド
-	void Landing(void);							// 着地
+	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
+	CPlayer* CollisionThrow(void);		// ホーミング対象との当たり判定
+	void SetState(const EState state);	// 状態設定
+	void Catch(CPlayer* pPlayer);		// キャッチ
+	void Throw(CPlayer* pPlayer);		// 投げ
+	void Landing(void);					// 着地
+	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
 
 	//=============================
 	// 静的メンバ変数
@@ -140,6 +142,7 @@ private:
 	//=============================
 	CPlayer* m_pPlayer;	// プレイヤー情報
 	CPlayer* m_pTarget;	// ホーミングターゲット情報
+	CPlayer* m_pCover;	// カバー対象プレイヤー情報
 	float m_fMoveSpeed;	// 移動速度
 	float m_fGravity;	// 重力
 	MyLib::Vector3 m_oldOverLine;	// ホーミング終了ライン

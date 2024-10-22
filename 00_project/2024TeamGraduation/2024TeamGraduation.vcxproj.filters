@@ -84,6 +84,12 @@
     <Filter Include="character">
       <UniqueIdentifier>{62f5c653-6cf7-4947-b0e2-882bf8019514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\ball">
+      <UniqueIdentifier>{b2e5a271-3e8c-49d8-8dd8-a0e6de48531a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ingame\audience">
+      <UniqueIdentifier>{176f1eab-e812-4d0e-a46e-102b65fbc017}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -392,9 +398,6 @@
     <ClCompile Include="Source\playerAction.cpp">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ball.cpp">
-      <Filter>ingame</Filter>
-    </ClCompile>
     <ClCompile Include="Source\playerStatus.cpp">
       <Filter>player</Filter>
     </ClCompile>
@@ -433,6 +436,15 @@
     </ClCompile>
     <ClCompile Include="Source\playercontrol_move.cpp">
       <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ball.cpp">
+      <Filter>ingame\ball</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audience.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audienceAnim.cpp">
+      <Filter>ingame\audience</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -754,9 +766,6 @@
     <ClInclude Include="Source\playerAction.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ball.h">
-      <Filter>ingame</Filter>
-    </ClInclude>
     <ClInclude Include="Source\playerStatus.h">
       <Filter>player</Filter>
     </ClInclude>
@@ -795,6 +804,15 @@
     </ClInclude>
     <ClInclude Include="Source\playercontrol_move.h">
       <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ball.h">
+      <Filter>ingame\ball</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audience.h">
+      <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceAnim.h">
+      <Filter>ingame\audience</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
