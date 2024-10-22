@@ -134,7 +134,6 @@ private:
 	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
 	MyLib::Vector3 m_scale;		// スケール
 	D3DXCOLOR m_col;			// 色
-	MyLib::Vector3 m_fSize;		// サイズ
 	MyLib::AABB m_AABB;			// AABB情報
 	MyLib::AABB m_OriginAABB;	// 元のAABB情報
 	STATE m_state;				// 状態

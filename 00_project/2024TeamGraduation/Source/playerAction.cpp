@@ -17,21 +17,11 @@ namespace
 	const float DODGE_SLOW = 0.8f;			//回避時スロー値
 }
 
-namespace JumpThrow
-{
-	const float START_HOVER = 3.76;		//フワッと値(スタート)
-	const float UPDATE_HOVER = 0.212f;		//フワッと値(更新)
-}
-
 namespace ActionTime
 {
 	const float BLINK = 0.2f;		// ブリンク時間
 	const float DODGE = 0.5f;		// 回避時間
 }
-
-// 静的
-static float s_fStartHover = JumpThrow::START_HOVER;
-static float s_fUpdateHover = JumpThrow::UPDATE_HOVER;
 
 //==========================================================================
 // 関数ポインタ
@@ -86,11 +76,7 @@ void CPlayerAction::Update(const float fDeltaTime, const float fDeltaRate, const
 
 #if _DEBUG //デバッグ
 
-	if (ImGui::TreeNode("PlayerAction"))
-	{
-		Debug();
-		ImGui::TreePop();
-	}
+	Debug();
 
 #endif //デバッグ
 }
@@ -232,8 +218,10 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
-	move.y += s_fUpdateHover;
+
+	move.y += param.fJumpUpdateMove;
 	m_pPlayer->SetMove(move);
 
 	if (m_pPlayer->GetMotion()->IsFinish())
@@ -256,8 +244,9 @@ void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate
 void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
-	move.y = s_fStartHover;
+	move.y = param.fJumpStartMove;
 	m_pPlayer->SetMove(move);
 }
 
@@ -285,15 +274,6 @@ void CPlayerAction::SetAction(CPlayer::Action action)
 //==========================================================================
 void CPlayerAction::Debug()
 {
-	//-----------------------------
-	// パラメーター
-	//-----------------------------
-	if (ImGui::TreeNode("ThrowJump"))
-	{
-		ImGui::DragFloat("s_fStart", &s_fStartHover, 0.001f, 0.0f, 100.0f, "%.3f");
-		ImGui::DragFloat("s_fUpdate", &s_fUpdateHover, 0.0001f, 0.0f, 100.0f, "%.3f");
-		
-		ImGui::TreePop();
-	}
+
 }
 

@@ -44,8 +44,8 @@ CHARACTERSET
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 29.61	# ブリンク移動量
 	
-	THROWJUMP_STARTMOVE = 0.0	# ジャンプ投げ時の開始上移動量
-	THROWJUMP_UPDATEMOVE = 0.0	# ジャンプ投げ時の常時上移動量
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
