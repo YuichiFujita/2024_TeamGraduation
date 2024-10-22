@@ -575,7 +575,7 @@ bool CPlayer::Hit(CBall* pBall)
 	{ // ボールが着地している場合
 
 		// ボールをキャッチ
-		pBall->Catch(this);
+		pBall->CatchLand(this);
 		return false;
 	}
 
@@ -586,17 +586,17 @@ bool CPlayer::Hit(CBall* pBall)
 	{ // キャッチアクション中だった中でも受け付け中の場合	
 
 		// ボールをキャッチ
-		pBall->Catch(this);
+		pBall->CatchAttack(this);
 		return false;
 	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return false; }
 
-	// リバウンドボールの場合すり抜ける
+	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
-		pBall->Catch(this);
+		pBall->CatchAttack(this);
 		return false;
 	}
 
