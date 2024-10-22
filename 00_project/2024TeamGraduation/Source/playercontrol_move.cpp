@@ -30,7 +30,7 @@ CPlayerControlMove::CPlayerControlMove()
 	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
 	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
 	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
-	m_bDash = false;
+	m_bBlink = false;
 }
 
 //==========================================================================
@@ -317,7 +317,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 	}
 
 	// ダッシュする
-	if (info.bDash && !m_bDash)
+	if (info.bDash && !m_bBlink)
 	{
 		MyLib::Vector3 move = player->GetMove();
 		float velocityBlink = player->GetParameter().fVelocityBlink;
@@ -334,7 +334,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 		memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));
 
 		// ダッシュフラグ
-		m_bDash = true;
+		m_bBlink = true;
 
 		// モーション設定
 		player->SetMotion(CPlayer::MOTION::MOTION_BLINK);
@@ -354,7 +354,7 @@ void CPlayerControlMove::Blink(CPlayer* player, const float fDeltaTime, const fl
 //==========================================================================
 void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!m_bDash)
+	if (!m_bBlink)
 	{
 		return;
 	}
@@ -388,7 +388,7 @@ void CPlayerControlMove::Dash(CPlayer* player, const float fDeltaTime, const flo
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
-		m_bDash = false;
+		m_bBlink = false;
 	}
 	else
 	{
@@ -528,7 +528,7 @@ void CPlayerControlMove::Walk(CPlayer* player, const float fDeltaTime, const flo
 
 	// 移動量取得
 	float fMove = player->GetParameter().fVelocityNormal;
-	if (m_bDash)
+	if (m_bBlink)
 	{// ダッシュは変更
 		fMove = player->GetParameter().fVelocityDash;
 	}

@@ -86,7 +86,8 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 		// ジャンプ状況取得
 		bool bJump = player->IsJump();
 
-		if (player->GetMotionFrag().bMove && !GetDash() &&
+		if (player->GetMotionFrag().bMove && 
+			pMotion->IsGetCancelable() &&
 			!bJump)
 		{// キャンセル可能 && 移動中
 
@@ -119,10 +120,10 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
 	//コントロール系取得
-	int* nCntTrigger = GetCntTrigger();						//トリガーのカウント取得
-	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
-	float fInputInterval = GetInputInterval();				//入力の受け付け猶予取得
-	bool bDash = GetDash();									//走るフラグ取得
+	int* nCntTrigger = GetCntTrigger();						// トリガーのカウント取得
+	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	// ダッシュ方向取得
+	float fInputInterval = GetInputInterval();				// 入力の受け付け猶予取得
+	bool bDash = IsBlink();									// 走るフラグ取得
 
 	if (fInputInterval <= 0.0f)
 	{// 猶予受け付け終了中
@@ -370,7 +371,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	SetTriggerInterval(fTriggerInterval);
 
 	// コントロール系
-	SetDash(bDash);							// 走るフラグ設定
+	SetBlink(bDash);							// 走るフラグ設定
 }
 
 //==========================================================================
@@ -378,7 +379,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bDash = GetDash();	//走るフラグ取得
+	bool bDash = IsBlink();	//走るフラグ取得
 	
 	if (!bDash)
 	{
@@ -431,7 +432,7 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
 	
-	SetDash(bDash);	//走るフラグ設定
+	SetBlink(bDash);	//走るフラグ設定
 }
 
 //==========================================================================
@@ -450,7 +451,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	bool bDash = GetDash();	//走るフラグ
+	bool bDash = IsBlink();	//走るフラグ
 
 	CPlayer::DashAngle angle;
 	bool bInput = false;
@@ -582,7 +583,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
 
-	SetDash(bDash);	//走るフラグ設定
+	SetBlink(bDash);	//走るフラグ設定
 }
 
 //==========================================================================
