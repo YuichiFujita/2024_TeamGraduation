@@ -209,7 +209,7 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 	CMotion* pMotion = m_pPlayer->GetMotion();
 	
 	//途中で変更アサ―ト
-#if false
+#if 0
 	MyAssert::CustomAssert(pMotion->GetType() == CPlayer::MOTION_THROW, "投げちゃうやん");
 #endif
 
