@@ -14,7 +14,8 @@
 
 namespace
 {
-	const float DODGE_SLOW = 0.8f;		//回避時スロー値
+	const float DODGE_SLOW = 0.8f;			//回避時スロー値
+	const float JUMPTHROW_HOVER = 10.0f;		//ジャンプ投げ時フワッと値
 }
 
 namespace ActionTime
@@ -37,6 +38,19 @@ CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 	&CPlayerAction::ActionThrow,		// 投げ
 	&CPlayerAction::ActionThrowJump,	// 投げ(ジャンプ)
 	&CPlayerAction::ActionSpecial,		// スペシャル
+};
+
+CPlayerAction::START_FUNC CPlayerAction::m_StartFunc[] =	// 行動関数
+{
+	nullptr,								// なし
+	nullptr,								// ブリンク
+	nullptr,								// 回避
+	nullptr,								// 走り
+	nullptr,								// ジャンプ
+	nullptr,								// キャッチ
+	nullptr,								// 投げ
+	&CPlayerAction::StartThrowJump,			// 投げ(ジャンプ)
+	nullptr,								// スペシャル
 };
 
 //==========================================================================
@@ -123,7 +137,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 			m_pPlayer->SetEnableMove(false);
 			SetAction(CPlayer::Action::ACTION_DODGE);
 			m_pPlayer->SetState(CPlayer::STATE_DODGE);
-			//m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
+			m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
 		}
 	}
 }
@@ -213,10 +227,35 @@ void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
+// ジャンプ投げ(スタート)
+//==========================================================================
+void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	//フワッと
+	MyLib::Vector3 move = m_pPlayer->GetMove();
+	MyLib::Vector3 pos = m_pPlayer->GetPosition();
+
+	pos.y += JUMPTHROW_HOVER;
+	move.y = 0.0f;
+	m_pPlayer->SetMove(move);
+	m_pPlayer->SetPosition(pos);
+}
+
+//==========================================================================
 // アクション設定
 //==========================================================================
 void CPlayerAction::SetAction(CPlayer::Action action)
 {
+	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
+	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();
+	float fSlowRate = CManager::GetInstance()->GetSlowRate();
+
 	m_Action = action;
 	m_fActionTime = 0.0f;		// アクション時間
+
+	// 行動開始
+	if (m_StartFunc[m_Action] != nullptr)
+	{
+		(this->*(m_StartFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
