@@ -868,7 +868,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		@param	time		[in]	•â³Š„‡(0.0f ` 1.0f)
 		@return	•ú•¨üã‚ÌˆÊ’uæ“¾
 		*/
-		inline MyLib::Vector3 GetParabola3D(MyLib::Vector3 start, MyLib::Vector3 end, float fMaxHeight, float time)
+		inline MyLib::Vector3 GetParabola3D(const MyLib::Vector3& start, const MyLib::Vector3& end, float fMaxHeight, float time)
 		{
 			// ˆÊ’u
 			MyLib::Vector3 pos;
