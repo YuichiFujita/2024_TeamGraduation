@@ -20,7 +20,7 @@ namespace
 
 namespace ActionTime
 {
-	const float BLINK = 0.3f;		// ブリンク時間
+	const float BLINK = 0.2f;		// ブリンク時間
 	const float DODGE = 0.5f;		// 回避時間
 }
 

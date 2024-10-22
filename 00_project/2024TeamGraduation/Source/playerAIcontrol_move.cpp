@@ -136,7 +136,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
 	float fInputInterval = GetInputInterval();				//入力の受け付け猶予取得
 	float fTriggerInterval = GetTriggerInterval();			//トリガーのインターバル取得
-	bool bDash = GetDash();									//走るフラグ取得
+	bool bDash = IsBlink();									//走るフラグ取得
 
 	if (fInputInterval <= 0.0f)
 	{// 猶予受け付け終了中
@@ -365,7 +365,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	SetHoldDashAngle(HoldDashAngle);		//ダッシュ方向設定
 	SetInputInterval(fInputInterval);		//入力の受け付け猶予設定
 	SetTriggerInterval(fTriggerInterval);	//トリガーのインターバル設定
-	SetDash(bDash);							//走るフラグ設定
+	SetBlink(bDash);							//走るフラグ設定
 }
 
 //==========================================================================
@@ -373,7 +373,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 //==========================================================================
 void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bDash = GetDash();	//走るフラグ取得
+	bool bDash = IsBlink();	//走るフラグ取得
 
 	if (!bDash)
 	{
@@ -407,7 +407,7 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 		bDash = false;
 	}
 
-	SetDash(bDash);	//走るフラグ設定
+	SetBlink(bDash);	//走るフラグ設定
 
 	ImGui::Checkbox("UP", &bUP);
 	ImGui::Checkbox("Down", &bDown);
@@ -428,7 +428,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	bool bDash = GetDash();	//走るフラグ
+	bool bDash = IsBlink();	//走るフラグ
 
 	CPlayer::DashAngle angle;
 	bool bInput = false;
