@@ -26,7 +26,8 @@ namespace
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
-
+	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
+	const float REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
 	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
 	const float MAX_BOUND_MOVE = 1.0f;	// バウンド時の上移動量最大値
 
@@ -427,6 +428,9 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
+	// Y座標を慣性補正
+	UtilFunc::Correction::InertiaCorrection(pos.y, DEST_POSY, REV_POSY);
+
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime;
 	if (m_fStateTime >= normal::TIME_HOMING)
@@ -539,6 +543,11 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 位置に重力反映
 		UpdateGravityPosition(&pos, &vecMove, fDeltaRate, fSlowRate);
+	}
+	else
+	{
+		// Y座標を慣性補正
+		UtilFunc::Correction::InertiaCorrection(pos.y, DEST_POSY, REV_POSY);
 	}
 
 	// 地面の着地
