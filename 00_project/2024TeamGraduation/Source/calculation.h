@@ -868,7 +868,7 @@ namespace UtilFunc	// 便利関数
 		@param	time		[in]	補正割合(0.0f ～ 1.0f)
 		@return	放物線上の位置取得
 		*/
-		inline MyLib::Vector3 GetParabola3D(MyLib::Vector3 start, MyLib::Vector3 end, float fMaxHeight, float time)
+		inline MyLib::Vector3 GetParabola3D(const MyLib::Vector3& start, const MyLib::Vector3& end, float fMaxHeight, float time)
 		{
 			// 位置
 			MyLib::Vector3 pos;
@@ -2712,7 +2712,7 @@ namespace UtilFunc	// 便利関数
 
 		/**
 		@brief	値の正規化処理
-		@param	Value		[inout]	補正したい値
+		@param	Value		[in]	補正したい値
 		@param	MinValue	[in]	最小値
 		@param	MaxValue	[in]	最大値
 		@return	void
