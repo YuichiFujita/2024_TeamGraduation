@@ -49,6 +49,7 @@ public:
 		MOTION_SPECIAL,		// スペシャル
 		MOTION_WIN,			// 勝利
 		MOTION_DEAD,		// 死亡
+		MOTION_GRIP_FRONT,	// 前グリップ
 		MOTION_MAX
 	};
 

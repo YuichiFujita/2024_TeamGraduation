@@ -229,23 +229,54 @@ void CCamera_Debug::UpdateGUI()
 	//--------------------------
 	// 追従切り替え
 	//--------------------------
-	bool bFollow = m_pCamera->IsFollow();
-	ImGui::Checkbox("Follow", &bFollow);
-	m_pCamera->SetEnableFollow(bFollow);
-
-	//--------------------------
-	// 注視点切り替え
-	//--------------------------
-	// 注視点取得
-	MyLib::Vector3 posR = m_pCamera->GetPositionR();
-
-	if (ImGui::Button("Reset"))
-	{// リセット
-		posR = m_pCamera->GetPositionROrigin();
+	{
+		bool bFollow = m_pCamera->IsFollow();
+		ImGui::Checkbox("Follow", &bFollow);
+		m_pCamera->SetEnableFollow(bFollow);
 	}
-	ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
 
-	// 注視点設定
-	m_pCamera->SetPositionR(posR);
-	m_pCamera->SetPositionRDest(posR);
+	//--------------------------
+	// 注視点操作
+	//--------------------------
+	{
+		// 注視点取得
+		MyLib::Vector3 posR = m_pCamera->GetPositionR();
+
+		ImGui::PushID(0); // ウィジェットごとに異なるIDを割り当てる
+		if (ImGui::Button("Reset"))
+		{// リセット
+			posR = m_pCamera->GetPositionROrigin();
+		}
+		ImGui::PopID();
+
+		// 詰める
+		ImGui::SameLine();
+
+		ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		// 注視点設定
+		m_pCamera->SetPositionR(posR);
+		m_pCamera->SetPositionRDest(posR);
+	}
+
+	//--------------------------
+	// 向き操作
+	//--------------------------
+	{
+		// 向き取得
+		MyLib::Vector3 rot = m_pCamera->GetRotation();
+
+		ImGui::PushID(1); // ウィジェットごとに異なるIDを割り当てる
+		if (ImGui::Button("Reset"))
+		{// リセット
+			rot = m_pCamera->GetOriginRotation();
+		}
+		ImGui::PopID();
+		ImGui::SameLine();
+
+		ImGui::DragFloat3("rot", (float*)&rot, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		// 向き設定
+		m_pCamera->SetRotation(rot);
+	}
 }

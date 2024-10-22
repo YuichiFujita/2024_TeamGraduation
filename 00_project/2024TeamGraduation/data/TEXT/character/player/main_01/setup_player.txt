@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 15
+NUM_MODEL = 16
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -34,6 +34,7 @@ MODEL_FILENAME = data/MODEL/player/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/14_shoes_L.x	# [14]左足
+MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪(悟空)
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -172,6 +173,15 @@ CHARACTERSET
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 15
+		PARENT = 2
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
 END_CHARACTERSET
 
 
@@ -190,7 +200,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 13
+NUM_MOTION = 14
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -208,6 +218,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt	# [9]
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt		# [10]スペシャル
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt			# [11]勝利
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt			# [12]死亡
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt	# [13]前グリップ
 
 
 END_SCRIPT		# この行は絶対消さないこと！

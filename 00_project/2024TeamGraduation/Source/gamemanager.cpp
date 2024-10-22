@@ -19,40 +19,20 @@
 #include "fade.h"
 #include "input.h"
 #include "ball.h"
+#include "collisionLine_Box.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const int POINT_WAVECLEAR = 5;		// ウェーブクリアのポイント
-	const float POSR_Y_APPROACH_COEF = 0.3f;	//カメラが近づく際の慣性
-	const float POSR_Y_PULL_SCREEN_POS = 210.0f;	// カメラが引き始めるスクリーン座標
-	const float POSR_Y_APPROACH_SCREEN_POS = SCREEN_HEIGHT * 0.5f;	// カメラが近づき始めるスクリーン座標
-	const float POSR_YDEST_BAGGTOPLAYER_RATIO = 0.4f;	// 荷物とプレイヤー距離の割合（posRYDest）
-	const int GUIDE_NUM = 100;
 
-	const int CHANGE_BASEPOINT[] =	// ポイント変更する基準
-	{
-		40,	// AAA
-		20,	// BBB
-		10,	// CCC
-		1,	// DDD
-	};
-	const float DEFAULT_INTERVAL_AIRSPAWN = 2.3f;	// デフォの空気生成間隔
-	const float DEFAULT_INTERVAL_FLOWLEAFSPAWN = 0.8f;	// デフォの流れる葉生成間隔
-	const float DEFAULT_INTERVAL_LEAFSPAWN = 2.0f;		// デフォの降る葉生成間隔
-}
-
-namespace SceneTime
-{
-	const float RequestStart = 3.5f;	// 依頼開始
 }
 
 namespace Court
 {//ドッジボールコート情報
 
-	const D3DXVECTOR3 SIZE = D3DXVECTOR3(600.0f, 0.0f, 800.0f);		// サイズ
+	const D3DXVECTOR3 SIZE = D3DXVECTOR3(600.0f, 100.0f, 800.0f);		// サイズ
 }
 
 //==========================================================================
@@ -116,15 +96,24 @@ HRESULT CGameManager::Init()
 {
 	m_bControll = true;			// 操作できるか
 
+
+	// コートサイズ
+	m_courtSize = Court::SIZE;
+
 #if _DEBUG
 	m_SceneType = SceneType::SCENE_MAIN;	// シーンの種類 
+
+	// コートサイズのボックス
+	if (m_pCourtSizeBox == nullptr)
+	{
+		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
 #else
 	m_SceneType = SceneType::SCENE_START;	// シーンの種類 
 #endif
 
 	m_OldSceneType = m_SceneType;
-
-	m_courtSize = Court::SIZE;
 
 	return S_OK;
 }
@@ -134,7 +123,13 @@ HRESULT CGameManager::Init()
 //==========================================================================
 void CGameManager::Uninit()
 {
-	
+#if _DEBUG
+	// 終了
+	if (m_pCourtSizeBox != nullptr)
+	{
+		m_pCourtSizeBox = nullptr;
+	}
+#endif
 }
 
 //==========================================================================
@@ -229,8 +224,7 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 #if _DEBUG	// デバッグ処理
 
-	std::string treename = "GameManager";	// ツリー名
-	if (ImGui::TreeNode(treename.c_str()))
+	if (ImGui::TreeNode("GameManager"))
 	{
 		Debug();
 		ImGui::TreePop();
@@ -408,11 +402,24 @@ void CGameManager::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Court"))
 	{
+		if (m_pCourtSizeBox == nullptr)
+		{
+			m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+
 		if (ImGui::Button("Reset"))
 		{// リセット
 			m_courtSize = Court::SIZE;
 		}
+		ImGui::SameLine();
+
 		ImGui::DragFloat3("size", (float*)&m_courtSize, 10.0f, 0.0f, 10000.0f, "%.2f");
+
+		// サイズ設定
+		if (m_pCourtSizeBox != nullptr)
+		{
+			m_pCourtSizeBox->SetAABB(MyLib::AABB(-m_courtSize, m_courtSize));
+		}
 
 		// 位置設定
 		ImGui::TreePop();
