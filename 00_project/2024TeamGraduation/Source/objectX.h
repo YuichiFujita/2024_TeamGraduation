@@ -52,7 +52,6 @@ public:
 	//--------------------------
 	void Kill();		// 削除
 	void DrawOnly();	// 描画のみ
-	void CalWorldMtx();	// ワールドマトリックスの計算処理
 
 	//--------------------------
 	// 要素
@@ -110,6 +109,10 @@ public:
 	bool IsUseShadow() const { return m_bShadow; }				// 影を使っているかどうか
 	CObjectX* GetObjectX() { return this; }						// オブジェクトXの要素取得
 
+protected:
+	// 仮想関数
+	virtual void CalWorldMtx();	// ワールドマトリックスの計算処理
+
 private:
 
 	//=============================
@@ -134,7 +137,6 @@ private:
 	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
 	MyLib::Vector3 m_scale;		// スケール
 	D3DXCOLOR m_col;			// 色
-	MyLib::Vector3 m_fSize;		// サイズ
 	MyLib::AABB m_AABB;			// AABB情報
 	MyLib::AABB m_OriginAABB;	// 元のAABB情報
 	STATE m_state;				// 状態

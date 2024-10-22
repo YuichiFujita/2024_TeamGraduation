@@ -891,7 +891,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\2024_TeamGraduation\\00_project\\2024TeamGraduation\\data\\TEXTURE\\player\\03_hair.jpg";
+    "data\\TEXTURE\\player\\03_hair.jpg";
    }
   }
  }

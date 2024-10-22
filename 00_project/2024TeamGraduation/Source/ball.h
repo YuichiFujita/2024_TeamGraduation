@@ -104,6 +104,9 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	// オーバーライド関数
+	void CalWorldMtx();	// ワールドマトリックスの計算
+
 	// 状態関数
 	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 生成状態の更新
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ状態の更新
