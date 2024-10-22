@@ -33,7 +33,7 @@ CListManager<CObjectX> CObjectX::m_List = {};	// リスト
 CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, layer)
 {
 	m_mtxWorld.Identity();						// ワールドマトリックス
-	m_scale = MyLib::Vector3();					// スケール
+	m_scale = MyLib::Vector3(1.0f);				// スケール
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色
 	m_fSize = MyLib::Vector3();					// サイズ
 	m_AABB = MyLib::AABB();						// AABB情報
@@ -472,9 +472,6 @@ float CObjectX::GetHeight(const MyLib::Vector3& pos, bool &bLand)
 //==========================================================================
 void CObjectX::CalWorldMtx()
 {
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-
 	// 情報取得
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 rot = GetRotation();
@@ -494,10 +491,6 @@ void CObjectX::CalWorldMtx()
 	// 位置を反映する
 	mtxTrans.Translation(pos);
 	m_mtxWorld.Multiply(m_mtxWorld, mtxTrans);
-
-	// ワールドマトリックスの設定
-	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();
-	pDevice->SetTransform(D3DTS_WORLD, &mtx);
 }
 
 //==========================================================================
@@ -556,8 +549,15 @@ void CObjectX::DrawOnly()
 //==========================================================================
 void CObjectX::Draw()
 {
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
 	// ワールドマトリックスの計算処理
 	CalWorldMtx();
+
+	// ワールドマトリックスの設定
+	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();
+	pDevice->SetTransform(D3DTS_WORLD, &mtx);
 
 	// 描画のみ
 	DrawOnly();
@@ -583,6 +583,10 @@ void CObjectX::Draw(const D3DXCOLOR& col)
 
 	// ワールドマトリックスの計算処理
 	CalWorldMtx();
+
+	// ワールドマトリックスの設定
+	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();
+	pDevice->SetTransform(D3DTS_WORLD, &mtx);
 
 	// 現在のマテリアルを取得
 	pDevice->GetMaterial(&matDef);

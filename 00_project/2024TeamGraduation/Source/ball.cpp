@@ -11,6 +11,8 @@
 #include "game.h"
 #include "gamemanager.h"
 #include "calculation.h"
+#include "model.h"
+
 #include "debugproc.h"
 #include "3D_Effect.h"
 
@@ -41,14 +43,14 @@ namespace
 
 	namespace normal
 	{
-		const float THROW_MOVE = 15.5f;	// 通常投げ移動速度
+		const float THROW_MOVE = 19.5f;	// 通常投げ移動速度
 		const float REV_HOMING = 0.3f;	// ホーミングの慣性補正係数
 		const float TIME_HOMING = 1.2f;	// ホーミングが切れるまでの時間
 	}
 
 	namespace jump
 	{
-		const float THROW_MOVE = 21.0f;		// ジャンプ投げ移動速度
+		const float THROW_MOVE = 24.0f;		// ジャンプ投げ移動速度
 		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
 		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
@@ -319,6 +321,54 @@ bool CBall::IsAttack() const
 }
 
 //==========================================================================
+// ワールドマトリックスの計算処理
+//==========================================================================
+void CBall::CalWorldMtx()
+{
+	if (m_state == STATE_CATCH)
+	{ // キャッチ中の場合
+
+		const int nPartsIdx = m_pPlayer->GetParameter().nBallPartsIdx;		// ボールパーツインデックス
+		const MyLib::Vector3 offset = m_pPlayer->GetParameter().ballOffset;	// ボールオフセット
+		MyLib::Matrix* pMtxParts = m_pPlayer->GetModel(nPartsIdx)->GetPtrWorldMtx();	// パーツマトリックス
+		MyLib::Vector3 rot = GetRotation();			// 自身の向き
+		MyLib::Vector3 scale = GetScale();			// 自身の拡大率
+		MyLib::Matrix mtxWorld = GetWorldMtx();		// 自身のワールドマトリックス
+		MyLib::Matrix mtxRot, mtxTrans, mtxScale;	// 計算用マトリックス宣言
+
+		// ワールドマトリックスの初期化
+		mtxWorld.Identity();
+
+		// スケールを反映する
+		mtxScale.Scaling(scale);
+		mtxWorld.Multiply(mtxWorld, mtxScale);
+
+		// 向きを反映する
+		mtxRot.RotationYawPitchRoll(rot.y, rot.x, rot.z);
+		mtxWorld.Multiply(mtxWorld, mtxRot);
+
+		// 位置を反映する
+		mtxTrans.Translation(offset);
+		mtxWorld.Multiply(mtxWorld, mtxTrans);
+
+		// くっつけるプレイヤーパーツのマトリックスと掛け合わせる
+		mtxWorld.Multiply(*pMtxParts, mtxWorld);
+
+		// マトリックスを反映
+		SetWorldMtx(*pMtxParts);
+
+		// キャッチ時のマトリックスから位置を反映
+		SetPosition(pMtxParts->GetWorldPosition());
+	}
+	else
+	{ // キャッチしていない場合
+
+		// 親クラスのワールドマトリックス計算
+		CObjectX::CalWorldMtx();
+	}
+}
+
+//==========================================================================
 // 生成状態の更新処理
 //==========================================================================
 void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -348,8 +398,7 @@ void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CBall::UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// TODO：今後手の位置に親子付け
-	SetPosition(m_pPlayer->GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f));	// プレイヤー情報
+
 }
 
 //==========================================================================
