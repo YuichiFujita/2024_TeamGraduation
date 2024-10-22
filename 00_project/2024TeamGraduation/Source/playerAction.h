@@ -37,6 +37,9 @@ private:
 	typedef void(CPlayerAction::* ACTION_FUNC)(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	static ACTION_FUNC m_ActionFunc[];	// 行動関数
 
+	typedef void(CPlayerAction::* START_FUNC)(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	static START_FUNC m_StartFunc[];	// 行動関数
+
 	//=============================
 	// メンバ関数
 	//=============================
@@ -50,6 +53,11 @@ private:
 	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
 	void ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ジャンプ)
 	void ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャル
+
+	// 状態スタート系
+	void StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ(ジャンプ)
+
+	void Debug();
 
 	//=============================
 	// メンバ変数

@@ -104,6 +104,9 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	// オーバーライド関数
+	void CalWorldMtx();	// ワールドマトリックスの計算
+
 	// 状態関数
 	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 生成状態の更新
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ状態の更新
@@ -139,6 +142,7 @@ private:
 	CPlayer* m_pTarget;	// ホーミングターゲット情報
 	float m_fMoveSpeed;	// 移動速度
 	float m_fGravity;	// 重力
+	MyLib::Vector3 m_oldOverLine;	// ホーミング終了ライン
 
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
 	EAttack m_typeAtk;	// 攻撃種類

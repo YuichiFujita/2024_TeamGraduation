@@ -43,7 +43,10 @@ MODEL_FILENAME = data/MODEL/player/acce_bobobo.x	# [16]アクセサリー
 CHARACTERSET
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
-	VELOCITY_BLINK = 19.00	# ブリンク移動量
+	VELOCITY_BLINK = 29.61	# ブリンク移動量
+	
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
@@ -54,6 +57,11 @@ CHARACTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
 	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
 
 	PARTSSET
 		INDEX = 0
@@ -170,7 +178,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 14
 		PARENT = 13
-		POS = -1.00 -22.50 1.00
+		POS = 0.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
