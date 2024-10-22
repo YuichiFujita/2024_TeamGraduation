@@ -50,6 +50,7 @@ public:
 		MOTION_WIN,			// 勝利
 		MOTION_DEAD,		// 死亡
 		MOTION_GRIP_FRONT,	// 前グリップ
+		MOTION_DAMAGE,		// ダメージ
 		MOTION_MAX
 	};
 
@@ -130,6 +131,15 @@ public:
 		SDashInfo() : bDash(false), angle(ANGLE_LEFT) {}
 	};
 
+	// ノックバック情報
+	struct SKnockbackInfo
+	{
+		MyLib::Vector3 fPosStart;	// 始点
+		MyLib::Vector3 fPosEnd;	// 終点
+
+		SKnockbackInfo() : fPosStart(MyLib::Vector3()), fPosEnd(MyLib::Vector3()) {}
+	};
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
@@ -176,7 +186,8 @@ public:
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }				// 自分のインデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }				// ボール情報設定
 	CBall* GetBall() { return m_pBall; }						// ボール情報取得
-	void DeadSetting(MyLib::HitResult_Character* result);		// 死亡設定
+	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);		// 死亡設定
+	void DamageSetting(CBall* pBall);										// ダメージ発生時設定
 	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
 
 	//=============================
@@ -213,7 +224,6 @@ private:
 	void StateInvincible();	// 無敵
 	void StateDamage();		// ダメージ
 	void StateDead();		// 死亡
-	void StateDeadWait();	// 死亡待機
 	void StateDodge();		// 回避
 
 	//-----------------------------
@@ -245,7 +255,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	MyLib::Vector3 m_posKnockBack;	// ノックバックの位置
+	SKnockbackInfo m_sKnockback;		// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ

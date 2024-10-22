@@ -17,7 +17,7 @@ namespace MyAssert
 {
 	/**
 	@brief	エラー表示
-	@param	frag	[in]	フラグ
+	@param	frag	[in]	正常な条件式
 	@param	message	[in]	エラーメッセージ
 	@return	void
 	*/
@@ -27,7 +27,7 @@ namespace MyAssert
 		{
 			MessageBoxA(NULL, message.c_str(), "Assertion Failed", MB_OK | MB_ICONERROR);
 
-			 exit(EXIT_FAILURE);
+			 //exit(EXIT_FAILURE);
 			__debugbreak();  // デバッグ中に停止する
 		}
 	}

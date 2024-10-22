@@ -134,8 +134,6 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 		// アクションパターン変更
 		if (player->IsJump())
 		{
-			pBall->ThrowJump(player);
-
 			SetPattern(player, CPlayer::MOTION::MOTION_THROW_JUMP, CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else

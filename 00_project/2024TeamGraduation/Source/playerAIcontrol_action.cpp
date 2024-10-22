@@ -172,14 +172,10 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 		// アクションパターン変更
 		if (player->IsJump())
 		{
-			pBall->ThrowJump(player);
-
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
-			pBall->ThrowNormal(player);
-
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
 	}
