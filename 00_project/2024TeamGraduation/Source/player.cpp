@@ -362,11 +362,6 @@ void CPlayer::MotionSet()
 	int nType = pMotion->GetType();
 	int nOldType = pMotion->GetOldType();
 
-	if (nType == MOTION_THROW)
-	{
-		nType = MOTION_THROW;
-	}
-
 	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
 
@@ -396,11 +391,6 @@ void CPlayer::MotionSet()
 		m_sMotionFrag.bJump = false;
 
 		// ジャンプモーション
-	}
-	else if (m_bJump && !m_sMotionFrag.bJump)
-	{// ジャンプ中&&ジャンプモーション再生が終わってる時
-
-		// 落下モーション
 	}
 	else
 	{
@@ -516,6 +506,11 @@ void CPlayer::LimitPos()
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
+
+		if (m_bJump)
+		{// ジャンプ中着地
+			GetMotion()->Set(MOTION::MOTION_LAND);
+		}
 
 		// 重力リセット
 		m_bJump = false;

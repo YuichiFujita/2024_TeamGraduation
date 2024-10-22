@@ -551,6 +551,11 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	if (!bInput)
 	{
+		// 移動中にする
+		motionFrag.bMove = false;
+
+		// モーションフラグ設定
+		player->SetMotionFrag(motionFrag);
 		return;
 	}
 	
