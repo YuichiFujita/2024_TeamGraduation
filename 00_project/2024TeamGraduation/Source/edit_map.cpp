@@ -985,7 +985,7 @@ void CEdit_Map::Save()
 		int nShadow = 0;							// ‰eŽg‚¤‚©‚Ç‚¤‚©
 		int nType = 0;								// Ží—Þ
 
-		if (pObj->GetUseShadow())
+		if (pObj->IsUseShadow())
 		{// Žg‚Á‚Ä‚¢‚éê‡
 			nShadow = 1;
 		}
