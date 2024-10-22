@@ -48,6 +48,7 @@ namespace MyLib
 		// 引数付きコンストラクタ
 		Vector3(const float xyz) : D3DXVECTOR3(xyz, xyz, xyz) {}
 		Vector3(float x, float y, float z) : D3DXVECTOR3(x, y, z) {}
+		Vector3(const D3DXVECTOR3& vec3) : D3DXVECTOR3(vec3.x, vec3.y, vec3.z) {}
 		Vector3(const D3DXVECTOR2& vec2) : D3DXVECTOR3(vec2.x, vec2.y, 0.0f) {}
 
 		// JSONからの読み込み
@@ -439,6 +440,7 @@ namespace MyLib
 		// 引数付きコンストラクタ
 		Vector2(const float xy) : D3DXVECTOR2(xy, xy) {}
 		Vector2(float x, float y) : D3DXVECTOR2(x, y) {}
+		Vector2(const D3DXVECTOR2& vec2) : D3DXVECTOR2(vec2.x, vec2.y) {}
 		Vector2(const D3DXVECTOR3& vec3) : D3DXVECTOR2(vec3.x, vec3.y) {}
 
 		//--------------------------

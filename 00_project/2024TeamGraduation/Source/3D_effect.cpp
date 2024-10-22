@@ -297,6 +297,7 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	// 過去の位置設定
 	SetOldPosition(GetPosition());
 
+#if 0
 	// 移動処理
 	UpdateMove(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -333,7 +334,9 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 色設定
 	SetColor(col);
-
+#endif
+	// 不透明度の更新
+	SetAlpha(1.0f);
 	if (m_fLife <= 0.0f)
 	{// 寿命が尽きたら
 
