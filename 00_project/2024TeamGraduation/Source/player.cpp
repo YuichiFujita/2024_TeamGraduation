@@ -52,7 +52,7 @@ namespace StateTime
 	const float DAMAGE = 0.5f;		// ダメージ
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
-	const float CATCH = 0.8f;		// キャッチ
+	const float CATCH = 0.5f;		// キャッチ
 }
 
 //==========================================================================
@@ -695,11 +695,58 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
 
-	// モーション設定
-	SetMotion(MOTION::MOTION_CATCH_SUCCESS);
+	// ジャストキャッチフラグ
+	bool bJust = false;
 
-	// ジャストキャッチ状態
-	SetState(STATE::STATE_CATCH_JUST);
+	// モーション設定
+	if (bJust)
+	{// ジャストキャッチ
+
+		switch (atkBall)
+		{
+		case CBall::ATK_NORMAL:
+			SetMotion(MOTION::MOTION_JUSTCATCH_NORMAL);
+			break;
+
+		case CBall::ATK_JUMP:
+			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			break;
+
+		case CBall::ATK_SPECIAL:
+			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			break;
+
+		default:
+			break;
+		}
+
+		// ジャストキャッチ状態
+		SetState(STATE::STATE_CATCH_JUST);
+	}
+	else
+	{// 通常キャッチ
+
+		switch (atkBall)
+		{
+		case CBall::ATK_NORMAL:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		case CBall::ATK_JUMP:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		case CBall::ATK_SPECIAL:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		default:
+			break;
+		}
+
+		// キャッチ状態
+		SetState(STATE::STATE_CATCH_NORMAL);
+	}
 
 }
 
@@ -816,7 +863,14 @@ void CPlayer::StateDodge()
 void CPlayer::StateCatch_Normal()
 {
 	// TODO : ずざざーとする
+	MyLib::Vector3 rot = GetRotation();
 
+	MyLib::Vector3 pos = GetPosition();
+
+	pos.x += sinf(rot.y) * 2.0f;
+	pos.z += cosf(rot.y) * 2.0f;
+
+	SetPosition(pos);
 
 
 	if (m_fStateTime >= StateTime::CATCH)

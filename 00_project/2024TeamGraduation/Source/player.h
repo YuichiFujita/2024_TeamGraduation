@@ -43,8 +43,11 @@ public:
 		MOTION_DODGE,			// 回避成功時
 		MOTION_JUMP,			// ジャンプ
 		MOTION_LAND,			// 着地
-		MOTION_CATCH_STANCE,	// キャッチの構え
-		MOTION_CATCH_SUCCESS,	// キャッチ時
+		MOTION_CATCH_STANCE,		// キャッチの構え
+		MOTION_CATCH_NORMAL,		// キャッチ(通常)
+		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
+		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
+		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
 		MOTION_THROW,			// 投げ
 		MOTION_THROW_JUMP,		// 投げ(ジャンプ)
 		MOTION_SPECIAL,			// スペシャル
