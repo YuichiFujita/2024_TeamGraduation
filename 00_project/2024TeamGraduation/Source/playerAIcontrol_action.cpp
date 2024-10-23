@@ -25,7 +25,7 @@ namespace
 // Ã“Iƒƒ“ƒo•Ï”
 //==========================================================================
 #ifdef _DEBUG
-bool CPlayerAIControlAction::m_bAutoThrow = false;
+bool CPlayerAIControlAction::m_bAutoThrow = true;
 #endif
 
 //==========================================================================
