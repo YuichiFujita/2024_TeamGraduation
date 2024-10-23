@@ -22,6 +22,12 @@ class CAudience : public CObject
 public:
 
 	//=============================
+	// 定数
+	//=============================
+	static constexpr float MAX_LEFT_LINE = -1000.0f;	// 左の生成位置上限
+	static constexpr float MAX_RIGHT_LINE = 1000.0f;	// 右の生成位置上限
+
+	//=============================
 	// 列挙型定義
 	//=============================
 	enum EObjType
