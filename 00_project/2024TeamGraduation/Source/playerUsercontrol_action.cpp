@@ -106,7 +106,7 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
-		SetPattern(player, CPlayer::MOTION::MOTION_CATCH, CPlayer::Action::ACTION_CATCH);
+		SetPattern(player, CPlayer::MOTION::MOTION_CATCH_STANCE, CPlayer::Action::ACTION_CATCH);
 	}
 }
 

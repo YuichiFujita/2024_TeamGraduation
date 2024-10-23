@@ -1,29 +1,32 @@
-#if 0
-//=============================================================================
+//==========================================================================
 // 
-//  数字(2D)処理 [number_2D.cpp]
-//  Author : 相馬靜雅
+//  観客_アニメーション3D処理 [audienceAnim.cpp]
+//  Author : 藤田勇一
 // 
-//=============================================================================
-#include "number_3D.h"
-#include "manager.h"
-#include "renderer.h"
-#include "object3D.h"
+//==========================================================================
+#include "audienceAnim.h"
+#include "gameManager.h"
+
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;	// 優先順位
+}
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CNumber3D::CNumber3D(int nPriority) : CNumber(nPriority)
+CAudienceAnim::CAudienceAnim() : CAudience(PRIORITY, CObject::LAYER_DEFAULT),
+	m_pAnim3D	(nullptr)	// アニメーション3D情報
 {
-	// 値のクリア
-	m_aObject3D = nullptr;			// オブジェクト2Dのオブジェクト
-	m_bAddAlpha = true;
 }
 
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CNumber3D::~CNumber3D()
+CAudienceAnim::~CAudienceAnim()
 {
 
 }
@@ -31,13 +34,38 @@ CNumber3D::~CNumber3D()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CNumber3D::Init()
+HRESULT CAudienceAnim::Init()
 {
-	// 生成処理
-	m_aObject3D = CObject3D::Create(GetPriority());
+	// 親クラスの初期化
+	if (FAILED(CAudience::Init()))
+	{ // 初期化に失敗した場合
 
-	// 種類設定
-	SetType(CObject::TYPE_NUMBER);
+		return E_FAIL;
+	}
+
+	// ランダムに生成位置を設定
+	MyLib::Vector3 posRandom;
+	posRandom.x = (float)UtilFunc::Transformation::Random(MAX_LEFT_LINE, MAX_RIGHT_LINE);
+	posRandom.y = CGameManager::FIELD_LIMIT;
+	posRandom.z = (float)UtilFunc::Transformation::Random(START_LINE, END_LINE);
+
+	// アニメーション3Dの生成
+	m_pAnim3D = CObject3DAnim::Create(posRandom, 1, 1, 0.0f, false);
+	if (m_pAnim3D == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
+	m_pAnim3D->SetType(CObject::TYPE::TYPE_NONE);
+
+	// TODO：大きさ定数必要
+	m_pAnim3D->SetSizeOrigin(MyLib::Vector3(100.0f, 100.0f, 0.0f));
+	m_pAnim3D->SetSize(MyLib::Vector3(100.0f, 100.0f, 0.0f));
+
+	// 種類の設定
+	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
 	return S_OK;
 }
@@ -45,220 +73,50 @@ HRESULT CNumber3D::Init()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CNumber3D::Uninit()
+void CAudienceAnim::Uninit()
 {
-	// 終了処理
-	if (m_aObject3D != nullptr)
-	{
-		m_aObject3D = nullptr;
-	}
+	// 親クラスの終了
+	CAudience::Uninit();
 
-	CNumber::Uninit();
+	// アニメーション3Dの終了
+	SAFE_UNINIT(m_pAnim3D);
 }
 
 //==========================================================================
 // 削除処理
 //==========================================================================
-void CNumber3D::Kill()
+void CAudienceAnim::Kill()
 {
-	if (m_aObject3D != nullptr)
-	{
-		m_aObject3D->Uninit();
-		m_aObject3D = nullptr;
-	}
+	// 親クラスの削除
+	CAudience::Kill();
 
-	CNumber::Kill();
+	// アニメーション3Dの終了
+	SAFE_UNINIT(m_pAnim3D);
 }
 
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CNumber3D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 更新処理
-	if (m_aObject3D != nullptr)
+	if (m_pAnim3D != nullptr)
 	{
-		m_aObject3D->SetEnableDisp(IsDisp());
+		// アニメーション3Dの更新
+		m_pAnim3D->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// 親クラスの更新
+	CAudience::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CNumber3D::Draw()
+void CAudienceAnim::Draw()
 {
-	//// デバイスの取得
-	//LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	// アニメーション3Dの描画
+	m_pAnim3D->Draw();
 
-	//// 描画処理
-	//if (m_aObject3D != nullptr)
-	//{
-	//	// アルファテストを有効にする
-	//	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	//	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	//	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-
-	//	// αブレンディングを加算合成に設定
-	//	if (m_bAddAlpha)
-	//	{
-	//		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	//		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	//		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-	//	}
-
-	//	m_aObject3D->Draw();
-
-	//	// αブレンディングを元に戻す
-	//	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	//	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	//	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	//	// アルファテストを無効にする
-	//	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-	//	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
-	//	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	//}
+	// 親クラスの描画
+	CAudience::Draw();
 }
-
-//==========================================================================
-// 頂点情報設定処理
-//==========================================================================
-void CNumber3D::SetVtx()
-{
-	m_aObject3D->SetVtx();
-}
-
-//==========================================================================
-// テクスチャの割り当て
-//==========================================================================
-void CNumber3D::BindTexture(int nIdx)
-{
-	m_aObject3D->BindTexture(nIdx);
-}
-
-//==========================================================================
-// 種類設定
-//==========================================================================
-void CNumber3D::SetType(const CObject::TYPE type)
-{
-	m_aObject3D->SetType(type);
-	CNumber::SetType(type);
-}
-
-//==========================================================================
-// 位置設定
-//==========================================================================
-void CNumber3D::SetPosition(const MyLib::Vector3& pos)
-{
-	m_aObject3D->SetPosition(pos);
-}
-
-//==========================================================================
-// 位置取得
-//==========================================================================
-MyLib::Vector3 CNumber3D::GetPosition() const
-{
-	return m_aObject3D->GetPosition();
-}
-
-//==========================================================================
-// 移動量設定
-//==========================================================================
-void CNumber3D::SetMove(const MyLib::Vector3& move)
-{
-	m_aObject3D->SetMove(move);
-}
-
-//==========================================================================
-// 移動量取得
-//==========================================================================
-MyLib::Vector3 CNumber3D::GetMove() const
-{
-	return m_aObject3D->GetMove();
-}
-
-//==========================================================================
-// 向き設定
-//==========================================================================
-void CNumber3D::SetRotation(const MyLib::Vector3& rot)
-{
-	m_aObject3D->SetRotation(rot);
-}
-
-//==========================================================================
-// 向き取得
-//==========================================================================
-MyLib::Vector3 CNumber3D::GetRotation() const
-{
-	return m_aObject3D->GetRotation();
-}
-
-//==========================================================================
-// 色設定
-//==========================================================================
-void CNumber3D::SetColor(const D3DXCOLOR col)
-{
-	m_aObject3D->SetColor(col);
-}
-
-//==========================================================================
-// 色取得
-//==========================================================================
-D3DXCOLOR CNumber3D::GetColor() const
-{
-	return m_aObject3D->GetColor();
-}
-
-//==========================================================================
-// サイズ設定
-//==========================================================================
-void CNumber3D::SetSize(const D3DXVECTOR2 size)
-{
-	m_aObject3D->SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
-}
-
-//==========================================================================
-// サイズ取得
-//==========================================================================
-D3DXVECTOR2 CNumber3D::GetSize() const
-{
-	MyLib::Vector3 size = m_aObject3D->GetSize();
-	return D3DXVECTOR2(size.x, size.z);
-}
-
-//==========================================================================
-// 元のサイズの設定
-//==========================================================================
-void CNumber3D::SetSizeOrigin(const D3DXVECTOR2 size)
-{
-	m_aObject3D->SetSizeOrigin(MyLib::Vector3(size.x, 0.0f, size.y));
-}
-
-//==========================================================================
-// 元のサイズの取得
-//==========================================================================
-D3DXVECTOR2 CNumber3D::GetSizeOrigin() const
-{
-	MyLib::Vector3 size = m_aObject3D->GetSizeOrigin();
-	return D3DXVECTOR2(size.x, size.z);
-}
-
-//==========================================================================
-// テクスチャ座標設定
-//==========================================================================
-void CNumber3D::SetTex(D3DXVECTOR2 *tex)
-{
-	// TODO：対応するよ～
-	//m_aObject3D->SetUV(tex);
-}
-
-//==========================================================================
-// テクスチャ座標取得
-//==========================================================================
-D3DXVECTOR2 *CNumber3D::GetTex()
-{
-	// TODO：対応するよ～
-	return nullptr;
-	//return m_aObject3D->GetTex();
-}
-#endif

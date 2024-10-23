@@ -25,7 +25,7 @@ namespace
 // 静的メンバ変数
 //==========================================================================
 #ifdef _DEBUG
-bool CPlayerAIControlAction::m_bAutoThrow = false;
+bool CPlayerAIControlAction::m_bAutoThrow = true;
 #endif
 
 //==========================================================================
@@ -132,7 +132,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 #endif
 	{
 		// アクションパターン変更
-		pMotion->Set(CPlayer::MOTION::MOTION_CATCH);
+		pMotion->Set(CPlayer::MOTION::MOTION_CATCH_STANCE);
 		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
 	}
 }

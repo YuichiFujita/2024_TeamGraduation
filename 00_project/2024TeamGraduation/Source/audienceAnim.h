@@ -1,65 +1,60 @@
-#if 0
-//=============================================================================
+//==========================================================================
 // 
-//  数字(3D)ヘッダー [number_3D.h]
-//  Author : 相馬靜雅
+//  観客_アニメーション3Dヘッダー [audienceAnim.h]
+//  Author : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 
-#ifndef _NUMBER_3D_H_
-#define _NUMBER_3D_H_	// 二重インクルード防止
-
-#include "number.h"
-#include "object3D.h"
+#ifndef _AUDIENCE_ANIM_H_
+#define _AUDIENCE_ANIM_H_	// 二重インクルード防止
 
 //==========================================================================
-// 前方宣言
+// インクルードファイル
 //==========================================================================
-class CObject3D;
+#include "audience.h"
+#include "object3D_Anim.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// 背景クラス定義
-class CNumber3D : public CNumber
+// 観客_アニメーション3Dクラス定義
+class CAudienceAnim : public CAudience
 {
 public:
 
-	CNumber3D(int nPriority = 6);
-	~CNumber3D();
+	//=============================
+	// 定数
+	//=============================
+	static constexpr float START_LINE = 300.0f;
+	static constexpr float END_LINE = 600.0f;
 
-	// メンバ関数
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
+	CAudienceAnim();
+	~CAudienceAnim();
+
+	//=============================
+	// オーバーライド関数
+	//=============================
 	HRESULT Init() override;
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
-
 	void Kill() override;	// 削除処理
-
-	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
-	MyLib::Vector3 GetPosition() const override;		// 位置取得
-	void SetMove(const MyLib::Vector3& move) override;		// 移動量設定
-	MyLib::Vector3 GetMove() const override;			// 移動量取得
-	void SetRotation(const MyLib::Vector3& rot) override;	// 向き設定
-	MyLib::Vector3 GetRotation() const override;		// 向き取得
-
-	void SetColor(const D3DXCOLOR col) override;			// 色設定
-	D3DXCOLOR GetColor() const override;				// 色取得
-	void SetSize(const D3DXVECTOR2 size) override;		// サイズの設定
-	D3DXVECTOR2 GetSize() const override;			// サイズの取得
-	void SetSizeOrigin(const D3DXVECTOR2 size) override;	// 元のサイズの設定
-	D3DXVECTOR2 GetSizeOrigin() const override;		// 元のサイズの取得
-	void SetTex(D3DXVECTOR2 *tex) override;				// テクスチャ座標の設定
-	D3DXVECTOR2 *GetTex() override;					// テクスチャ座標の取得
-
-	void SetVtx() override;
-	void BindTexture(int nIdx) override;
-	void SetType(const CObject::TYPE type) override;
+	inline void SetPosition(const MyLib::Vector3& pos) override	{ m_pAnim3D->SetPosition(pos); }		// 位置設定
+	inline MyLib::Vector3 GetPosition() const override			{ return m_pAnim3D->GetPosition(); }	// 位置取得
+	inline void SetMove(const MyLib::Vector3& move) override	{ m_pAnim3D->SetMove(move); }			// 移動量設定
+	inline MyLib::Vector3 GetMove() const override				{ return m_pAnim3D->GetMove(); }		// 移動量取得
+	inline void SetRotation(const MyLib::Vector3& rot) override	{ m_pAnim3D->SetRotation(rot); }		// 向き設定
+	inline MyLib::Vector3 GetRotation() const override			{ return m_pAnim3D->GetRotation(); }	// 向き取得
 
 private:
-	CObject3D *m_aObject3D;				// オブジェクト3Dのオブジェクト
-	bool m_bAddAlpha;
+
+	//=============================
+	// メンバ変数
+	//=============================
+	CObject3DAnim* m_pAnim3D;	// アニメーション3D情報
 };
 
-#endif
 #endif

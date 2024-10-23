@@ -18,9 +18,6 @@
 #include "map.h"
 #include "sound.h"
 
-#include "playerUser.h"
-#include "playerAI.h"
-#include "ball.h"
 #include "particle.h"
 #include "myeffekseer.h"
 #include "edit_map.h"
@@ -28,6 +25,11 @@
 
 #include "2D_Effect.h"
 #include "controlkeydisp.h"
+
+#include "playerUser.h"
+#include "playerAI.h"
+#include "ball.h"
+#include "audience.h"
 
 namespace
 {
@@ -131,8 +133,8 @@ HRESULT CGame::Init()
 	pUser2->SetRotDest(HALF_PI);
 #endif
 
-	// プレイヤーAI生成
-#if 1
+	// プレイヤーAI四人生成
+#if 0
 	for (int i = 0; i < 4; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
@@ -145,6 +147,18 @@ HRESULT CGame::Init()
 		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
 		pAI->SetRotDest(HALF_PI);
 	}
+#endif
+
+	// プレイヤーAI一人生成
+#if 1
+	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
+	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
+	if (pAI == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI->SetRotDest(HALF_PI);
 #endif
 
 	// カメラのリセット
@@ -222,7 +236,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
-		
+		if (ImGui::Button("Audience : Anim"))
+		{
+			// オーディエンス生成
+			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM);
+		}
+
 		// ツリー終端
 		ImGui::TreePop();
 	}

@@ -34,7 +34,7 @@ MODEL_FILENAME = data/MODEL/player/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪(悟空)
+MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -42,9 +42,10 @@ MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪(悟空)
 CHARACTERSET
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
-	VELOCITY_BLINK = 19.00	# ブリンク移動量
+	VELOCITY_BLINK = 29.61	# ブリンク移動量
 	
-	VELOCITY = 1.0	# 通常移動量
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
@@ -55,6 +56,11 @@ CHARACTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
 	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
 
 	PARTSSET
 		INDEX = 0
@@ -202,25 +208,27 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 14
+NUM_MOTION = 16
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt			# [0]デフォルト
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt		# [1]歩き
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt			# [2]走り
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt		# [3]ブリンク
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt		# [4]回避成功時
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt		# [5]ジャンプ
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_land.txt		# [6]着地
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch.txt		# [7]キャッチ
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt		# [8]投げ
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt	# [9]投げ(ジャンプ)
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt		# [10]スペシャル
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt			# [11]勝利
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt		# [12]死亡
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt	# [13]前グリップ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt				# デフォルト
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt			# 歩き
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt				# 走り
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt			# ブリンク
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt			# 回避成功時
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt			# ジャンプ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_land.txt			# 着地
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance.txt	# キャッチ構え
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_success.txt	# キャッチ成功
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt			# 投げ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt		# 投げ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt			# スペシャル
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt				# 勝利
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt			# ダメージ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt			# 死亡
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt		# 前グリップ
 
 
 END_SCRIPT		# この行は絶対消さないこと！

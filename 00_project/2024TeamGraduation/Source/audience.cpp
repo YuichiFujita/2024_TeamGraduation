@@ -1,30 +1,27 @@
-#if 0
-//=============================================================================
+//==========================================================================
 // 
-//  数字処理 [number.cpp]
-//  Author : 相馬靜雅
+//  観客処理 [audience.cpp]
+//  Author : 藤田勇一
 // 
-//=============================================================================
-#include "number.h"
+//==========================================================================
+#include "audience.h"
 
 // 派生先
-#include "number_2D.h"
-#include "number_3D.h"
-#include "number_Billboard.h"
+#include "audienceAnim.h"
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CNumber::CNumber(int nPriority, const LAYER layer) : CObject(nPriority, layer)
+CAudience::CAudience(int nPriority, const LAYER layer) : CObject(nPriority, layer),
+	m_type	(OBJTYPE_ANIM)	// オブジェクト種類
 {
-	// 値のクリア
-	m_objType = OBJECTTYPE_2D;	// オブジェクトの種類
+
 }
 
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CNumber::~CNumber()
+CAudience::~CAudience()
 {
 
 }
@@ -32,43 +29,43 @@ CNumber::~CNumber()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CNumber* CNumber::Create(EObjectType objtype, int nPriority)
+CAudience* CAudience::Create(EObjType type)
 {
-	// 生成用のオブジェクト
-	CNumber* pNumber = nullptr;
-
 	// メモリの確保
-	switch (objtype)
-	{
-	case CNumber::OBJECTTYPE_2D:
-		pNumber = DEBUG_NEW CNumber2D(nPriority);
+	CAudience* pAudience = nullptr;
+	switch (type)
+	{ // オブジェクト種類ごとの処理
+	case CAudience::OBJTYPE_ANIM:
+		pAudience = DEBUG_NEW CAudienceAnim;
 		break;
 
-	case CNumber::OBJECTTYPE_3D:
-		pNumber = DEBUG_NEW CNumber3D(nPriority);
-		break;
-
-	case CNumber::OBJECTTYPE_BILLBOARD:
-		pNumber = DEBUG_NEW CNumberBillboard(nPriority);
+	default:
+		assert(false);
 		break;
 	}
 
-	if (pNumber != nullptr)
+	if (pAudience != nullptr)
 	{
+		// クラスの初期化
+		if (FAILED(pAudience->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pAudience);
+			return nullptr;
+		}
+
 		// オブジェクトの種類
-		pNumber->m_objType = objtype;
-
-		// 初期化処理
-		pNumber->Init();
+		pAudience->m_type = type;
 	}
 
-	return pNumber;
+	return pAudience;
 }
 
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CNumber::Init()
+HRESULT CAudience::Init()
 {
 	return S_OK;
 }
@@ -76,63 +73,44 @@ HRESULT CNumber::Init()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CNumber::Uninit()
+void CAudience::Uninit()
 {
+	// オブジェクトの破棄
 	Release();
 }
 
 //==========================================================================
-// 削除
+// 削除処理
 //==========================================================================
-void CNumber::Kill()
+void CAudience::Kill()
 {
-	Release();
+	// 自身の終了
+	Uninit();
 }
 
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CNumber::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CAudience::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 rot = GetRotation();
+	static float fRotSin = 0.0f;
 
+	fRotSin += 0.035f;
+	UtilFunc::Transformation::RotNormalize(fRotSin);
+
+	pos.y = sinf(fRotSin) * 250.0f + 250.0f;
+	rot.z = fRotSin;
+
+	SetPosition(pos);
+	SetRotation(rot);
 }
 
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CNumber::Draw()
+void CAudience::Draw()
 {
-	
+
 }
-
-//==========================================================================
-// 種類設定
-//==========================================================================
-void CNumber::SetType(const CObject::TYPE type)
-{
-	CObject::SetType(type);
-}
-
-//==========================================================================
-// 自分の数字設定
-//==========================================================================
-void CNumber::SetNum(int num)
-{
-	// TODO:ほんとにこんなことして大丈夫？
-
-	float fWidthRate	= 1.0f / 10;		// 横の分割数の割合
-	float fHeightRate	= 1.0f / 1;			// 縦の分割数の割合
-	int nWidthCurrent	= num % 10;			// 現在の横のパターン
-	int nHeightCurrent	= (num / 10) % 1;	// 現在の縦のパターン
-
-	// テクスチャ座標の設定
-	D3DXVECTOR2 tex[4];
-	tex[0] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate *  nHeightCurrent);
-	tex[1] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate *  nHeightCurrent);
-	tex[2] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate * (nHeightCurrent + 1));
-	tex[3] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate * (nHeightCurrent + 1));
-
-	m_nNum = num;
-	SetTex(&tex[0]);
-}
-#endif
