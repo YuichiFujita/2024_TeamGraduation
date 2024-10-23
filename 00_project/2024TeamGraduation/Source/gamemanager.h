@@ -20,6 +20,7 @@
 //==========================================================================
 class CBall;
 class CCollisionLine_Box;
+class CTeamStatus;
 
 //==========================================================================
 // クラス定義
@@ -65,6 +66,14 @@ public:
 		SIDE_MAX		// この列挙型の総数
 	};
 
+	// チーム種類列挙
+	enum TeamType
+	{
+		TYPE_LEFT = 0,	// 左コート
+		TYPE_RIGHT,		// 右コート
+		TYPE_MAX		// この列挙型の総数
+	};
+
 	CGameManager();
 	~CGameManager();
 
@@ -79,6 +88,8 @@ public:
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
 	void PosLimit(MyLib::Vector3& pos);	// コート移動制限
+
+	void CreateTeamStatus();	// チームステータス生成
 
 	void Debug();	// デバッグ
 
@@ -123,10 +134,11 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	MyLib::Vector3 m_courtSize;		//コートのサイズ
+	MyLib::Vector3 m_courtSize;							//コートのサイズ
+	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];		// チームステータス
 
 #if _DEBUG
-	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
+	CCollisionLine_Box* m_pCourtSizeBox = nullptr;		// コートサイズのボックス
 #endif
 };
 

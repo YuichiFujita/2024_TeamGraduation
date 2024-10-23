@@ -57,7 +57,7 @@ namespace
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
 	}
 
-	namespace special
+	namespace Special
 	{
 		const float THROW_MOVE = 60.0f;	// スペシャル投げ移動速度
 	}
@@ -360,7 +360,7 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 	m_typeAtk = ATK_SPECIAL;
 
 	// 移動量を設定
-	m_fMoveSpeed = special::THROW_MOVE;
+	m_fMoveSpeed = Special::THROW_MOVE;
 }
 
 //==========================================================================
