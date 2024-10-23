@@ -129,6 +129,16 @@ HRESULT CGameManager::Init()
 //==========================================================================
 void CGameManager::Uninit()
 {
+	// チームステータス
+	for (int i = 0; i < TeamType::TYPE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->Uninit();
+			m_pTeamStatus[i] = nullptr;
+		}
+	}
+
 #if _DEBUG
 	// 終了
 	if (m_pCourtSizeBox != nullptr)
@@ -253,7 +263,6 @@ void CGameManager::GameClearSettings()
 {
 
 }
-
 
 //==========================================================================
 // スキップ
@@ -402,6 +411,8 @@ void CGameManager::PosLimit(MyLib::Vector3& pos)
 //==========================================================================
 void CGameManager::CreateTeamStatus()
 {
+	CGameManager::TeamSide side = CGameManager::SIDE_NONE;
+
 	for (int i = 0; i < TYPE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] != nullptr)
@@ -410,7 +421,23 @@ void CGameManager::CreateTeamStatus()
 			m_pTeamStatus[i] = nullptr;
 		}
 
-		m_pTeamStatus[i] = DEBUG_NEW CTeamStatus;
+		m_pTeamStatus[i] = CTeamStatus::Create();
+
+		switch (static_cast<CGameManager::TeamType>(i))
+		{
+		case TYPE_LEFT:
+			side = CGameManager::SIDE_LEFT;
+			break;
+
+		case TYPE_RIGHT:
+			side = CGameManager::SIDE_RIGHT;
+			break;
+
+		default:
+			break;
+		}
+		
+		m_pTeamStatus[i]->TeamSetting(side);
 
 	}
 }

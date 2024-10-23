@@ -49,7 +49,7 @@ public:
 	// デストラクタ
 	~CTeamStatus();
 
-	void Init();		// 初期化
+	HRESULT Init();		// 初期化
 	void Uninit();		// 終了
 
 	//=============================
@@ -58,6 +58,7 @@ public:
 
 	void SetTeam(const CGameManager::TeamSide team) { m_typeTeam = team; }	// チームサイド設定
 	CGameManager::TeamSide GetTeam() { return m_typeTeam; }					// チームサイド取得
+	void TeamSetting(const CGameManager::TeamSide team);	// チームサイドからなる設定
 
 	//-----------------------------
 	// モテ情報
