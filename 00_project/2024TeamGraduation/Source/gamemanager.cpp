@@ -20,6 +20,7 @@
 #include "input.h"
 #include "ball.h"
 #include "collisionLine_Box.h"
+#include "teamStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -42,9 +43,11 @@ CGameManager::CGameManager()
 {
 	// 値のクリア
 	m_SceneType = SCENE_MAIN;	// シーンの種類
-	m_OldSceneType = SCENE_MAIN;	// シーンの種類
+	m_OldSceneType = SCENE_MAIN;	// シーンの種類(過去)
 	m_bControll = false;		// 操作できるか
 	m_fSceneTimer = 0.0f;		// シーンタイマー
+
+	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 
 	m_courtSize = MyLib::Vector3();
 }
@@ -108,6 +111,9 @@ HRESULT CGameManager::Init()
 	{
 		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	}
+
+	//チームステータス
+	CreateTeamStatus();
 
 #else
 	m_SceneType = SceneType::SCENE_START;	// シーンの種類 
@@ -388,6 +394,24 @@ void CGameManager::PosLimit(MyLib::Vector3& pos)
 	else if (pos.z < -m_courtSize.z)
 	{
 		pos.z = -m_courtSize.z;
+	}
+}
+
+//==========================================================================
+// チームステータス生成
+//==========================================================================
+void CGameManager::CreateTeamStatus()
+{
+	for (int i = 0; i < TYPE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->Uninit();
+			m_pTeamStatus[i] = nullptr;
+		}
+
+		m_pTeamStatus[i] = DEBUG_NEW CTeamStatus;
+
 	}
 }
 
