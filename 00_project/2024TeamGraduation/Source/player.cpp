@@ -865,16 +865,31 @@ void CPlayer::StateCatch_Normal()
 	// TODO : ずざざーとする
 	MyLib::Vector3 rot = GetRotation();
 
+	// 割合
+	float ratio = m_fStateTime / StateTime::CATCH;
+	ratio = UtilFunc::Transformation::Clamp(ratio, 0.3f, 1.0f);
+	ratio -= 1.0f;
+
+	// 後退する
 	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 move = GetMove();
 
-	pos.x += sinf(rot.y) * 2.0f;
-	pos.z += cosf(rot.y) * 2.0f;
+	// 移動量更新
+	move.x += sinf(D3DX_PI + rot.y) * (1.0f * ratio);
+	move.z += cosf(D3DX_PI + rot.y) * (1.0f * ratio);
 
+	// 位置更新
+	pos.x += move.x;
+	pos.z += move.z;
 	SetPosition(pos);
+	SetMove(move);
 
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
 
-	if (m_fStateTime >= StateTime::CATCH)
-	{// 時間経過
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
 		SetState(STATE::STATE_NONE);
 	}
 
