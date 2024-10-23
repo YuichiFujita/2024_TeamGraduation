@@ -98,13 +98,13 @@ public:
 	// 構造体
 	//=============================
 	// ダメージ情報
-	struct sDamageInfo
+	struct SDamageInfo
 	{
 		bool bActiveSuperArmor;	// スーパーアーマー
 		bool bReceived;			// ダメージ受け付け判定
 		float reciveTime;		// ダメージ受付時間
 
-		sDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f) {}
+		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f) {}
 	};
 
 	// モーションの判定
@@ -167,8 +167,8 @@ public:
 	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
 	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
 	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
-	void SetDamageInfo(sDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
-	sDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
+	void SetDamageInfo(SDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
+	SDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
 
 	//=============================
 	// パターン
@@ -277,7 +277,7 @@ private:
 	int m_nMyPlayerIdx;	// プレイヤーインデックス番号
 	CShadow* m_pShadow;	// 影の情報
 	CBall* m_pBall;		// ボールの情報
-	sDamageInfo m_sDamageInfo;	// ダメージ情報
+	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	static CListManager<CPlayer> m_List;	// リスト
 };
 
