@@ -176,6 +176,8 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 		}
 		else
 		{
+			pBall->ThrowNormal(player);
+
 			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
 		}
 	}

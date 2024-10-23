@@ -38,18 +38,19 @@ namespace
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
-	const float KNOCKBACK_HEIGHT = 100.0f;		// ノックバック最大高度
 }
 
 namespace Knockback
 {
-	const float DAMAGE = 10.0f;		// ダメージ
+	const float HEIGHT = 50.0f;		// 最大高度
+	const float DAMAGE = 50.0f;		// ダメージ
 	const float DEAD = 100.0f;		// 死亡
 }
 
 namespace StateTime
 {
 	const float DAMAGE = 0.5f;		// ダメージ
+	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
 }
 
@@ -581,6 +582,12 @@ bool CPlayer::Hit(CBall* pBall)
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
 	MyLib::HitResult_Character hitresult = {};
 
+	//死亡状態ならすり抜け
+	if (m_state == STATE::STATE_DEAD)
+	{
+		return true;
+	}
+
 	if (stateBall == CBall::STATE_LAND)
 	{ // ボールが着地している場合
 
@@ -614,11 +621,6 @@ bool CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	if (m_state == STATE::STATE_DEAD)
-	{
-		hitresult.isdeath = true;
-	}
-
 	if (GetLife() <= 0)
 	{ // 体力がない場合
 
@@ -643,6 +645,7 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 {
 	// 死亡状態にする
 	SetState(STATE_DEAD);
+	SetMotion(MOTION_DEAD);
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -662,8 +665,9 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 //==========================================================================
 void CPlayer::DamageSetting(CBall* pBall)
 {
-	// 死亡状態にする
-	SetState(STATE_DMG);
+	// ダメージ状態にする
+	SetState(STATE::STATE_DMG);
+	SetMotion(MOTION::MOTION_DAMAGE);
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -748,8 +752,9 @@ void CPlayer::StateDamage()
 	MyLib::Vector3 pos = GetPosition();
 	
 	float time = m_fStateTime / StateTime::DAMAGE;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos += UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, KNOCKBACK_HEIGHT,time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT,time);
 
 	SetPosition(pos);
 
@@ -766,9 +771,10 @@ void CPlayer::StateDead()
 {
 	MyLib::Vector3 pos = GetPosition();
 
-	float time = m_fStateTime / StateTime::DAMAGE;
+	float time = m_fStateTime / StateTime::DEAD;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos += UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, KNOCKBACK_HEIGHT, time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT, time);
 
 	SetPosition(pos);
 }

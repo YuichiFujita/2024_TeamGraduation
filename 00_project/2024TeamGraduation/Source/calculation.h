@@ -2712,7 +2712,7 @@ namespace UtilFunc	// 便利関数
 
 		/**
 		@brief	値の正規化処理
-		@param	Value		[inout]	補正したい値
+		@param	Value		[in]	補正したい値
 		@param	MinValue	[in]	最小値
 		@param	MaxValue	[in]	最大値
 		@return	void
