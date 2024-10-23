@@ -41,7 +41,8 @@ CListManager<CAudience> CAudience::m_list = {};	// リスト
 CAudience::CAudience(EObjType type, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel (UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
 	m_type		 (type),		// オブジェクト種類
-	m_state		 (STATE_SPAWN)	// 状態
+	m_state		 (STATE_SPAWN),	// 状態
+	m_fTimeState (0.0f)			// 状態管理時間
 {
 
 }
@@ -145,7 +146,23 @@ void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 move = GetMove();	// 移動量
 
+	// 
+	MyLib::Vector3 posStart = m_posWatch;
+	posStart.x = CAudience::SPAWN_SIDE_LINE;
 
+	// 
+	m_fTimeState += fDeltaTime;
+
+	// 
+	pos = UtilFunc::Correction::EasingLinear(posStart, m_posWatch, 0.0f, 2.0f, m_fTimeState);
+
+	// 
+	if (m_fTimeState >= 2.0f)
+	{
+		pos = m_posWatch;
+		m_state = STATE_JUMP;
+		m_fTimeState = 0.0f;
+	}
 
 	// 情報を反映
 	SetPosition(pos);	// 位置

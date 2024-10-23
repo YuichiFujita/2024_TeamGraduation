@@ -27,7 +27,7 @@ public:
 	//=============================
 	static constexpr float MAX_LEFT_LINE = -1000.0f;	// 左の生成位置上限
 	static constexpr float MAX_RIGHT_LINE = 1000.0f;	// 右の生成位置上限
-	static constexpr float SPAWN_SIDE_LINE = 3000.0f;	// 生成する横位置
+	static constexpr float SPAWN_SIDE_LINE = 2200.0f;	// 生成する横位置
 
 	//=============================
 	// 列挙型定義
@@ -126,7 +126,8 @@ private:
 	const EObjType m_type;		// オブジェクト種類
 	const float m_fJumpLevel;	// ジャンプ量
 	MyLib::Vector3 m_posWatch;	// 観戦位置
-	EState m_state;	// 状態
+	EState m_state;		// 状態
+	float m_fTimeState;	// 状態管理時間
 };
 
 #endif
