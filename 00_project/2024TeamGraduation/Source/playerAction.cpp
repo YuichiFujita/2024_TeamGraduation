@@ -206,7 +206,14 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_pPlayer->GetMotion()->IsFinish())
+	CMotion* pMotion = m_pPlayer->GetMotion();
+	
+	//途中で変更アサ―ト
+#if 0
+	MyAssert::CustomAssert(pMotion->GetType() == CPlayer::MOTION_THROW, "投げちゃうやん");
+#endif
+
+	if (pMotion->IsFinish())
 	{// 終了
 		SetAction(CPlayer::Action::ACTION_NONE);
 	}

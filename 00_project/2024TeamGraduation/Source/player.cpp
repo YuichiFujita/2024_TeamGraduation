@@ -40,9 +40,17 @@ namespace
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
 
+namespace Knockback
+{
+	const float HEIGHT = 50.0f;		// 最大高度
+	const float DAMAGE = 50.0f;		// ダメージ
+	const float DEAD = 100.0f;		// 死亡
+}
+
 namespace StateTime
 {
 	const float DAMAGE = 0.5f;		// ダメージ
+	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
 }
 
@@ -55,7 +63,6 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateInvincible,	// 無敵
 	&CPlayer::StateDamage,		// ダメージ
 	&CPlayer::StateDead,		// 死亡
-	&CPlayer::StateDeadWait,	// 死亡待機
 	&CPlayer::StateDodge,		// 回避
 };
 
@@ -76,7 +83,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
-	m_posKnockBack = MyLib::Vector3();	// ノックバックの位置
+	m_sKnockback = SKnockbackInfo();		// ノックバック情報
 
 	// 行動フラグ
 	m_bPossibleMove = false;		// 移動可能フラグ
@@ -446,6 +453,15 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 		break;
 
+	case MOTION::MOTION_THROW_JUMP:
+
+		if (m_pBall != nullptr)
+		{
+			m_pBall->ThrowJump(this);
+		}
+
+		break;
+
 	default:
 		break;
 	}
@@ -566,6 +582,12 @@ bool CPlayer::Hit(CBall* pBall)
 	CBall::EState stateBall	= pBall->GetState();	// ボール状態
 	MyLib::HitResult_Character hitresult = {};
 
+	//死亡状態ならすり抜け
+	if (m_state == STATE::STATE_DEAD)
+	{
+		return true;
+	}
+
 	if (stateBall == CBall::STATE_LAND)
 	{ // ボールが着地している場合
 
@@ -599,25 +621,17 @@ bool CPlayer::Hit(CBall* pBall)
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
-	if (m_state == STATE::STATE_DEAD)
-	{
-		hitresult.isdeath = true;
-	}
-
 	if (GetLife() <= 0)
 	{ // 体力がない場合
 
 		// 終活
-		DeadSetting(&hitresult);
+		DeadSetting(&hitresult, pBall);
 	}
 	else
 	{ // 体力がある場合
 
 		// ダメージ状態にする
-		SetState(STATE_DMG);
-
-		// ダメージ受付時間を設定
-		m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+		DamageSetting(pBall);
 	}
 
 	return true;
@@ -627,20 +641,45 @@ bool CPlayer::Hit(CBall* pBall)
 //==========================================================================
 // 死亡時の設定
 //==========================================================================
-void CPlayer::DeadSetting(MyLib::HitResult_Character* result)
+void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 {
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-
 	// 死亡状態にする
 	SetState(STATE_DEAD);
+	SetMotion(MOTION_DEAD);
 
-	// ノックバックの位置更新
-	MyLib::Vector3 pos = GetPosition();
-	MyLib::Vector3 rot = GetRotation();
-	m_posKnockBack = pos;
+	// ノックバックの位置設定
+	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+	MyLib::Vector3 posS = GetPosition();
+	MyLib::Vector3 posE = posS;
+	posE.x += vecBall.x * Knockback::DAMAGE;
+	posE.z += vecBall.z * Knockback::DAMAGE;
+	m_sKnockback.fPosStart = posS;
+	m_sKnockback.fPosEnd = posE;
 
 	// 死んだ
 	result->isdeath = true;
+}
+
+//==========================================================================
+// ダメージ発生時設定
+//==========================================================================
+void CPlayer::DamageSetting(CBall* pBall)
+{
+	// ダメージ状態にする
+	SetState(STATE::STATE_DMG);
+	SetMotion(MOTION::MOTION_DAMAGE);
+
+	// ノックバックの位置設定
+	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+	MyLib::Vector3 posS = GetPosition();
+	MyLib::Vector3 posE = posS;
+	posE.x += vecBall.x * Knockback::DAMAGE;
+	posE.z += vecBall.z * Knockback::DAMAGE;
+	m_sKnockback.fPosStart = posS;
+	m_sKnockback.fPosEnd = posE;
+
+	// ダメージ受付時間を設定
+	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
 }
 
 //==========================================================================
@@ -710,6 +749,15 @@ void CPlayer::StateInvincible()
 //==========================================================================
 void CPlayer::StateDamage()
 {
+	MyLib::Vector3 pos = GetPosition();
+	
+	float time = m_fStateTime / StateTime::DAMAGE;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT,time);
+
+	SetPosition(pos);
+
 	if (m_fStateTime >= StateTime::DAMAGE)
 	{
 		SetState(STATE_INVINCIBLE);
@@ -721,15 +769,14 @@ void CPlayer::StateDamage()
 //==========================================================================
 void CPlayer::StateDead()
 {
-	
-}
+	MyLib::Vector3 pos = GetPosition();
 
-//==========================================================================
-// 死亡待機
-//==========================================================================
-void CPlayer::StateDeadWait()
-{
+	float time = m_fStateTime / StateTime::DEAD;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT, time);
+
+	SetPosition(pos);
 }
 
 //==========================================================================
