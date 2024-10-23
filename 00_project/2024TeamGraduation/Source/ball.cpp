@@ -77,7 +77,7 @@ namespace
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CBall::STATE_FUNC CBall::m_SampleFuncList[] =
+CBall::STATE_FUNC CBall::m_StateFuncList[] =
 {
 	&CBall::UpdateSpawn,		// 生成状態の更新
 	&CBall::UpdateCatch,		// キャッチ状態の更新
@@ -195,7 +195,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	SetOldPosition(GetPosition());
 
 	// 状態別処理
-	(this->*(m_SampleFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);

@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "object.h"
+#include "listmanager.h"
 
 //==========================================================================
 // クラス定義
@@ -30,6 +31,7 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
+	// オブジェクト種類
 	enum EObjType
 	{
 		OBJTYPE_ANIM = 0,	// 3Dポリゴン
@@ -38,10 +40,20 @@ public:
 		OBJTYPE_MAX			// この列挙型の総数
 	};
 
+	// 状態
+	enum EState
+	{
+		STATE_SPAWN = 0,	// 入場状態
+		STATE_NORMAL,		// 通常状態
+		STATE_JUMP,			// 盛り上がり状態
+		STATE_DESPAWN,		// 退場状態
+		STATE_MAX			// この列挙型の総数
+	};
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudience(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
+	CAudience(EObjType type, int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
 	~CAudience();
 
 	//=============================
@@ -81,9 +93,31 @@ public:
 private:
 
 	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CAudience::*STATE_FUNC)(const float, const float, const float);
+	static STATE_FUNC m_StateFuncList[];	// 関数のリスト
+
+	//=============================
+	// メンバ関数
+	//=============================
+	// 状態関数
+	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 入場状態の更新
+	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
+	void UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり状態の更新
+	void UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 退場状態の更新
+
+	//=============================
+	// 静的メンバ変数
+	//=============================
+	static CListManager<CAudience> m_list;	// リスト
+
+	//=============================
 	// メンバ変数
 	//=============================
-	EObjType m_type;	// オブジェクト種類
+	const EObjType m_type;		// オブジェクト種類
+	const float m_fJumpLevel;	// ジャンプ量
+	EState m_state;	// 状態
 };
 
 #endif
