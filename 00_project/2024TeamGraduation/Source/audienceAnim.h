@@ -23,6 +23,12 @@ class CAudienceAnim : public CAudience
 public:
 
 	//=============================
+	// 定数
+	//=============================
+	static constexpr float START_LINE = 300.0f;
+	static constexpr float END_LINE = 600.0f;
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
 	CAudienceAnim();

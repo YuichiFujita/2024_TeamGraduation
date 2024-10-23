@@ -5,6 +5,7 @@
 // 
 //==========================================================================
 #include "audienceAnim.h"
+#include "gameManager.h"
 
 //==========================================================================
 // 定数定義
@@ -42,8 +43,14 @@ HRESULT CAudienceAnim::Init()
 		return E_FAIL;
 	}
 
+	// ランダムに生成位置を設定
+	MyLib::Vector3 posRandom;
+	posRandom.x = (float)UtilFunc::Transformation::Random(MAX_LEFT_LINE, MAX_RIGHT_LINE);
+	posRandom.y = CGameManager::FIELD_LIMIT;
+	posRandom.z = (float)UtilFunc::Transformation::Random(START_LINE, END_LINE);
+
 	// アニメーション3Dの生成
-	m_pAnim3D = CObject3DAnim::Create(VEC3_ZERO, 1, 1, 0.0f, false);
+	m_pAnim3D = CObject3DAnim::Create(posRandom, 1, 1, 0.0f, false);
 	if (m_pAnim3D == nullptr)
 	{ // 生成に失敗した場合
 
