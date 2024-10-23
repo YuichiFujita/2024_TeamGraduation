@@ -52,6 +52,7 @@ namespace StateTime
 	const float DAMAGE = 0.5f;		// ダメージ
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
+	const float CATCH = 0.5f;		// キャッチ
 }
 
 //==========================================================================
@@ -59,11 +60,13 @@ namespace StateTime
 //==========================================================================
 CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 {
-	&CPlayer::StateNone,		// なし
-	&CPlayer::StateInvincible,	// 無敵
-	&CPlayer::StateDamage,		// ダメージ
-	&CPlayer::StateDead,		// 死亡
-	&CPlayer::StateDodge,		// 回避
+	&CPlayer::StateNone,			// なし
+	&CPlayer::StateInvincible,		// 無敵
+	&CPlayer::StateDamage,			// ダメージ
+	&CPlayer::StateDead,			// 死亡
+	&CPlayer::StateDodge,			// 回避
+	&CPlayer::StateCatch_Normal,	// 通常キャッチ
+	&CPlayer::StateCatch_Just,		// ジャストキャッチ
 };
 
 //==========================================================================
@@ -447,7 +450,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case MOTION::MOTION_THROW:
 		
 		if (m_pBall != nullptr)
-		{
+		{// 通常投げ
 			m_pBall->ThrowNormal(this);
 		}
 
@@ -456,7 +459,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case MOTION::MOTION_THROW_JUMP:
 
 		if (m_pBall != nullptr)
-		{
+		{// ジャンプ投げ
 			m_pBall->ThrowJump(this);
 		}
 
@@ -593,7 +596,6 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
-
 		return false;
 	}
 
@@ -603,8 +605,8 @@ bool CPlayer::Hit(CBall* pBall)
 	if (m_sMotionFrag.bCatch)
 	{ // キャッチアクション中だった中でも受け付け中の場合	
 
-		// ボールをキャッチ
-		pBall->CatchAttack(this);
+		// キャッチ時処理
+		CatchSetting(pBall);
 		return false;
 	}
 
@@ -681,6 +683,71 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+}
+
+//==========================================================================
+// キャッチ時処理
+//==========================================================================
+void CPlayer::CatchSetting(CBall* pBall)
+{
+	// ボールをキャッチ
+	pBall->CatchAttack(this);
+
+	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
+
+	// ジャストキャッチフラグ
+	bool bJust = false;
+
+	// モーション設定
+	if (bJust)
+	{// ジャストキャッチ
+
+		switch (atkBall)
+		{
+		case CBall::ATK_NORMAL:
+			SetMotion(MOTION::MOTION_JUSTCATCH_NORMAL);
+			break;
+
+		case CBall::ATK_JUMP:
+			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			break;
+
+		case CBall::ATK_SPECIAL:
+			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			break;
+
+		default:
+			break;
+		}
+
+		// ジャストキャッチ状態
+		SetState(STATE::STATE_CATCH_JUST);
+	}
+	else
+	{// 通常キャッチ
+
+		switch (atkBall)
+		{
+		case CBall::ATK_NORMAL:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		case CBall::ATK_JUMP:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		case CBall::ATK_SPECIAL:
+			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			break;
+
+		default:
+			break;
+		}
+
+		// キャッチ状態
+		SetState(STATE::STATE_CATCH_NORMAL);
+	}
+
 }
 
 //==========================================================================
@@ -788,6 +855,59 @@ void CPlayer::StateDead()
 void CPlayer::StateDodge()
 {
 
+}
+
+//==========================================================================
+// 通常キャッチ
+//==========================================================================
+void CPlayer::StateCatch_Normal()
+{
+	// TODO : ずざざーとする
+	MyLib::Vector3 rot = GetRotation();
+
+	// 割合
+	float ratio = m_fStateTime / StateTime::CATCH;
+	ratio = UtilFunc::Transformation::Clamp(ratio, 0.3f, 1.0f);
+	ratio -= 1.0f;
+
+	// 後退する
+	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 move = GetMove();
+
+	// 移動量更新
+	move.x += sinf(D3DX_PI + rot.y) * (1.0f * ratio);
+	move.z += cosf(D3DX_PI + rot.y) * (1.0f * ratio);
+
+	// 位置更新
+	pos.x += move.x;
+	pos.z += move.z;
+	SetPosition(pos);
+	SetMove(move);
+
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(STATE::STATE_NONE);
+	}
+
+}
+
+//==========================================================================
+// ジャストキャッチ
+//==========================================================================
+void CPlayer::StateCatch_Just()
+{
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(STATE::STATE_NONE);
+	}
 }
 
 //==========================================================================

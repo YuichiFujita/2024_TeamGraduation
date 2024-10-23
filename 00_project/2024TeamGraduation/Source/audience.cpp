@@ -41,7 +41,7 @@ CListManager<CAudience> CAudience::m_list = {};	// リスト
 CAudience::CAudience(EObjType type, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel (UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
 	m_type		 (type),		// オブジェクト種類
-	m_state		 (STATE_JUMP)	// 状態
+	m_state		 (STATE_SPAWN)	// 状態
 {
 
 }
