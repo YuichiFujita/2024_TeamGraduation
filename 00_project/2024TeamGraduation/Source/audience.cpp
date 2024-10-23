@@ -5,15 +5,43 @@
 // 
 //==========================================================================
 #include "audience.h"
-
-// 派生先
 #include "audienceAnim.h"
+#include "gameManager.h"
+
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const int MIN_JUMP = 6;		// 最低ジャンプ量
+	const int MAX_JUMP = 12;	// 最大ジャンプ量
+
+	const float RADIUS = 60.0f;	// TODO：いらん
+}
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+CAudience::STATE_FUNC CAudience::m_StateFuncList[] =
+{
+	&CAudience::UpdateSpawn,	// 入場状態の更新
+	&CAudience::UpdateNormal,	// 通常状態の更新
+	&CAudience::UpdateJump,		// 盛り上がり状態の更新
+	&CAudience::UpdateDespawn,	// 退場状態の更新
+};
+
+//==========================================================================
+// 静的メンバ変数
+//==========================================================================
+CListManager<CAudience> CAudience::m_list = {};	// リスト
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudience::CAudience(int nPriority, const LAYER layer) : CObject(nPriority, layer),
-	m_type	(OBJTYPE_ANIM)	// オブジェクト種類
+CAudience::CAudience(EObjType type, int nPriority, const LAYER layer) : CObject(nPriority, layer),
+	m_fJumpLevel (UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
+	m_type		 (type),		// オブジェクト種類
+	m_state		 (STATE_SPAWN)	// 状態
 {
 
 }
@@ -36,7 +64,7 @@ CAudience* CAudience::Create(EObjType type)
 	switch (type)
 	{ // オブジェクト種類ごとの処理
 	case CAudience::OBJTYPE_ANIM:
-		pAudience = DEBUG_NEW CAudienceAnim;
+		pAudience = DEBUG_NEW CAudienceAnim(type);
 		break;
 
 	default:
@@ -54,9 +82,6 @@ CAudience* CAudience::Create(EObjType type)
 			SAFE_UNINIT(pAudience);
 			return nullptr;
 		}
-
-		// オブジェクトの種類
-		pAudience->m_type = type;
 	}
 
 	return pAudience;
@@ -67,6 +92,9 @@ CAudience* CAudience::Create(EObjType type)
 //==========================================================================
 HRESULT CAudience::Init()
 {
+	// リストに追加
+	m_list.Regist(this);
+
 	return S_OK;
 }
 
@@ -75,6 +103,9 @@ HRESULT CAudience::Init()
 //==========================================================================
 void CAudience::Uninit()
 {
+	// リストから削除
+	m_list.Delete(this);
+
 	// オブジェクトの破棄
 	Release();
 }
@@ -93,18 +124,8 @@ void CAudience::Kill()
 //==========================================================================
 void CAudience::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	MyLib::Vector3 pos = GetPosition();
-	MyLib::Vector3 rot = GetRotation();
-	static float fRotSin = 0.0f;
-
-	fRotSin += 0.035f;
-	UtilFunc::Transformation::RotNormalize(fRotSin);
-
-	pos.y = sinf(fRotSin) * 250.0f + 250.0f;
-	rot.z = fRotSin;
-
-	SetPosition(pos);
-	SetRotation(rot);
+	// 状態別処理
+	(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -113,4 +134,74 @@ void CAudience::Update(const float fDeltaTime, const float fDeltaRate, const flo
 void CAudience::Draw()
 {
 
+}
+
+//==========================================================================
+// 入場状態の更新処理
+//==========================================================================
+void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 move = GetMove();	// 移動量
+
+
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(move);		// 移動量
+}
+
+//==========================================================================
+// 通常状態の更新処理
+//==========================================================================
+void CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// 盛り上がり状態の更新処理
+//==========================================================================
+void CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 move = GetMove();	// 移動量
+
+	// 重力を与える
+	move.y -= mylib_const::GRAVITY * fDeltaRate * fSlowRate;
+
+	// 位置に重力を反映
+	pos.y += move.y * fDeltaRate * fSlowRate;
+
+	if (pos.y - RADIUS < CGameManager::FIELD_LIMIT)
+	{ // ボールが地面に埋もれている場合
+
+		// ボールの位置を補正
+		pos.y = CGameManager::FIELD_LIMIT + RADIUS;
+
+		// 縦移動量を与える
+		move.y = m_fJumpLevel;
+	}
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(move);		// 移動量
+}
+
+//==========================================================================
+// 退場状態の更新処理
+//==========================================================================
+void CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 move = GetMove();	// 移動量
+
+
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(move);		// 移動量
 }

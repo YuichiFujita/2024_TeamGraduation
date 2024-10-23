@@ -100,7 +100,7 @@ private:
 	// 関数リスト
 	//=============================
 	typedef void(CBall::*STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_SampleFuncList[];	// 関数のリスト
+	static STATE_FUNC m_StateFuncList[];	// 関数のリスト
 
 	//=============================
 	// メンバ関数

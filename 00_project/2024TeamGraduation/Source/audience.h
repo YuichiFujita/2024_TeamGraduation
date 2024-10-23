@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "object.h"
+#include "listmanager.h"
 
 //==========================================================================
 // クラス定義
@@ -26,10 +27,12 @@ public:
 	//=============================
 	static constexpr float MAX_LEFT_LINE = -1000.0f;	// 左の生成位置上限
 	static constexpr float MAX_RIGHT_LINE = 1000.0f;	// 右の生成位置上限
+	static constexpr float SPAWN_SIDE_LINE = 3000.0f;	// 生成する横位置
 
 	//=============================
 	// 列挙型定義
 	//=============================
+	// オブジェクト種類
 	enum EObjType
 	{
 		OBJTYPE_ANIM = 0,	// 3Dポリゴン
@@ -38,10 +41,20 @@ public:
 		OBJTYPE_MAX			// この列挙型の総数
 	};
 
+	// 状態
+	enum EState
+	{
+		STATE_SPAWN = 0,	// 入場状態
+		STATE_NORMAL,		// 通常状態
+		STATE_JUMP,			// 盛り上がり状態
+		STATE_DESPAWN,		// 退場状態
+		STATE_MAX			// この列挙型の総数
+	};
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudience(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
+	CAudience(EObjType type, int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
 	~CAudience();
 
 	//=============================
@@ -78,12 +91,42 @@ public:
 	//=============================
 	static CAudience* Create(EObjType type);
 
+protected:
+	//=============================
+	// メンバ関数
+	//=============================
+	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}	// 観戦位置設定
+	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }	// 観戦位置取得
+
 private:
+
+	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CAudience::*STATE_FUNC)(const float, const float, const float);
+	static STATE_FUNC m_StateFuncList[];	// 関数のリスト
+
+	//=============================
+	// メンバ関数
+	//=============================
+	// 状態関数
+	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 入場状態の更新
+	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
+	void UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり状態の更新
+	void UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 退場状態の更新
+
+	//=============================
+	// 静的メンバ変数
+	//=============================
+	static CListManager<CAudience> m_list;	// リスト
 
 	//=============================
 	// メンバ変数
 	//=============================
-	EObjType m_type;	// オブジェクト種類
+	const EObjType m_type;		// オブジェクト種類
+	const float m_fJumpLevel;	// ジャンプ量
+	MyLib::Vector3 m_posWatch;	// 観戦位置
+	EState m_state;	// 状態
 };
 
 #endif

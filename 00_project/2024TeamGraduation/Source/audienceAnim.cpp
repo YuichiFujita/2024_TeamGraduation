@@ -18,7 +18,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnim::CAudienceAnim() : CAudience(PRIORITY, CObject::LAYER_DEFAULT),
+CAudienceAnim::CAudienceAnim(EObjType type) : CAudience(type, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pAnim3D	(nullptr)	// アニメーション3D情報
 {
 }
@@ -43,14 +43,20 @@ HRESULT CAudienceAnim::Init()
 		return E_FAIL;
 	}
 
-	// ランダムに生成位置を設定
-	MyLib::Vector3 posRandom;
-	posRandom.x = (float)UtilFunc::Transformation::Random(MAX_LEFT_LINE, MAX_RIGHT_LINE);
-	posRandom.y = CGameManager::FIELD_LIMIT;
-	posRandom.z = (float)UtilFunc::Transformation::Random(START_LINE, END_LINE);
+	// ランダムに観戦位置を設定
+	MyLib::Vector3 posWatch;
+	posWatch.x = (float)UtilFunc::Transformation::Random((int)MAX_LEFT_LINE, (int)MAX_RIGHT_LINE);
+	posWatch.y = CGameManager::FIELD_LIMIT;
+	posWatch.z = (float)UtilFunc::Transformation::Random((int)NEAR_LINE, (int)FAR_LINE);
+	SetWatchPosition(posWatch);
+
+	// ランダムに入場位置を設定
+	MyLib::Vector3 posSpawn = posWatch;
+	float fTurn = ((bool)(rand() % 2)) ? 1.0f : -1.0f;
+	posSpawn.x = CAudience::SPAWN_SIDE_LINE * fTurn;
 
 	// アニメーション3Dの生成
-	m_pAnim3D = CObject3DAnim::Create(posRandom, 1, 1, 0.0f, false);
+	m_pAnim3D = CObject3DAnim::Create(posSpawn, 1, 1, 0.0f, false);
 	if (m_pAnim3D == nullptr)
 	{ // 生成に失敗した場合
 
@@ -61,8 +67,8 @@ HRESULT CAudienceAnim::Init()
 	m_pAnim3D->SetType(CObject::TYPE::TYPE_NONE);
 
 	// TODO：大きさ定数必要
-	m_pAnim3D->SetSizeOrigin(MyLib::Vector3(100.0f, 100.0f, 0.0f));
-	m_pAnim3D->SetSize(MyLib::Vector3(100.0f, 100.0f, 0.0f));
+	m_pAnim3D->SetSizeOrigin(MyLib::Vector3(40.0f, 60.0f, 0.0f));
+	m_pAnim3D->SetSize(MyLib::Vector3(40.0f, 60.0f, 0.0f));
 
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);

@@ -25,13 +25,13 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float START_LINE = 300.0f;
-	static constexpr float END_LINE = 600.0f;
+	static constexpr float NEAR_LINE = 300.0f;	// 手前の生成位置上限
+	static constexpr float FAR_LINE = 600.0f; 	// 奥の生成位置上限
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudienceAnim();
+	CAudienceAnim(EObjType type);
 	~CAudienceAnim();
 
 	//=============================

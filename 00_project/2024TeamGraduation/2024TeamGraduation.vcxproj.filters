@@ -90,6 +90,9 @@
     <Filter Include="ingame\audience">
       <UniqueIdentifier>{176f1eab-e812-4d0e-a46e-102b65fbc017}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\team">
+      <UniqueIdentifier>{6c47d80e-0f75-4d2b-8c6a-de499b03a323}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -445,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Source\audienceAnim.cpp">
       <Filter>ingame\audience</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\teamStatus.cpp">
+      <Filter>ingame\team</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -813,6 +819,9 @@
     </ClInclude>
     <ClInclude Include="Source\audienceAnim.h">
       <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\teamStatus.h">
+      <Filter>ingame\team</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
