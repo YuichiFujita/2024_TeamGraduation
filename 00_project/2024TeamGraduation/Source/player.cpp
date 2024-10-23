@@ -417,7 +417,7 @@ void CPlayer::ResetFrag()
 
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH:
+	case MOTION::MOTION_CATCH_STANCE:
 
 		m_sMotionFrag.bCatch = false;
 
@@ -479,7 +479,7 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH:
+	case MOTION::MOTION_CATCH_STANCE:
 
 		m_sMotionFrag.bCatch = true;
 
@@ -593,6 +593,7 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
+
 		return false;
 	}
 
