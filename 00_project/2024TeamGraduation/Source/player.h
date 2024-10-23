@@ -63,6 +63,8 @@ public:
 		STATE_DMG,			// ダメージ
 		STATE_DEAD,			// 死
 		STATE_DODGE,		// 回避
+		STATE_CATCH_NORMAL,	// 通常キャッチ
+		STATE_CATCH_JUST,	// ジャストキャッチ
 		STATE_MAX
 	};
 
@@ -189,6 +191,7 @@ public:
 	CBall* GetBall() { return m_pBall; }						// ボール情報取得
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);		// 死亡設定
 	void DamageSetting(CBall* pBall);										// ダメージ発生時設定
+	void CatchSetting(CBall* pBall);										// キャッチ時処理
 	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
 
 	//=============================
@@ -211,6 +214,7 @@ private:
 	//=============================
 	typedef void(CPlayer::* STATE_FUNC)();
 	static STATE_FUNC m_StateFunc[];	// 状態関数
+	
 	typedef void(CPlayer::*ACTION_FUNC)();
 	static ACTION_FUNC m_ActionFunc[];	// 行動関数
 
@@ -221,11 +225,13 @@ private:
 	// 状態関数
 	//-----------------------------
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone();		// なし
-	void StateInvincible();	// 無敵
-	void StateDamage();		// ダメージ
-	void StateDead();		// 死亡
-	void StateDodge();		// 回避
+	void StateNone();			// なし
+	void StateInvincible();		// 無敵
+	void StateDamage();			// ダメージ
+	void StateDead();			// 死亡
+	void StateDodge();			// 回避
+	void StateCatch_Normal();	// 通常キャッチ
+	void StateCatch_Just();		// ジャストキャッチ
 
 	//-----------------------------
 	// その他関数
