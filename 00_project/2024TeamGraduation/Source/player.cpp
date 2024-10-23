@@ -99,7 +99,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
 	m_pBall = nullptr;				// ボールの情報
-	m_sDamageInfo = sDamageInfo();	// ダメージ情報
+	m_sDamageInfo = SDamageInfo();	// ダメージ情報
 }
 
 //==========================================================================
@@ -417,7 +417,7 @@ void CPlayer::ResetFrag()
 
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH:
+	case MOTION::MOTION_CATCH_STANCE:
 
 		m_sMotionFrag.bCatch = false;
 
@@ -479,7 +479,7 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH:
+	case MOTION::MOTION_CATCH_STANCE:
 
 		m_sMotionFrag.bCatch = true;
 
@@ -593,6 +593,7 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
+
 		return false;
 	}
 
@@ -750,6 +751,7 @@ void CPlayer::StateInvincible()
 void CPlayer::StateDamage()
 {
 	MyLib::Vector3 pos = GetPosition();
+	CMotion* pMotion = GetMotion();
 	
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
@@ -760,6 +762,7 @@ void CPlayer::StateDamage()
 
 	if (m_fStateTime >= StateTime::DAMAGE)
 	{
+		pMotion->ToggleFinish(true);
 		SetState(STATE_INVINCIBLE);
 	}
 }

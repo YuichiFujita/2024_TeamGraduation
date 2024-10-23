@@ -36,21 +36,22 @@ public:
 	// モーション列挙
 	enum MOTION
 	{
-		MOTION_DEF = 0,		// ニュートラルモーション
-		MOTION_WALK,		// 移動
-		MOTION_RUN,			// 走り
-		MOTION_BLINK,		// ブリンク
-		MOTION_DODGE,		// 回避成功時
-		MOTION_JUMP,		// ジャンプ
-		MOTION_LAND,		// 着地
-		MOTION_CATCH,		// キャッチ
-		MOTION_THROW,		// 投げ
-		MOTION_THROW_JUMP,	// 投げ(ジャンプ)
-		MOTION_SPECIAL,		// スペシャル
-		MOTION_WIN,			// 勝利
-		MOTION_DEAD,		// 死亡
-		MOTION_GRIP_FRONT,	// 前グリップ
-		MOTION_DAMAGE,		// ダメージ
+		MOTION_DEF = 0,			// ニュートラルモーション
+		MOTION_WALK,			// 移動
+		MOTION_RUN,				// 走り
+		MOTION_BLINK,			// ブリンク
+		MOTION_DODGE,			// 回避成功時
+		MOTION_JUMP,			// ジャンプ
+		MOTION_LAND,			// 着地
+		MOTION_CATCH_STANCE,	// キャッチの構え
+		MOTION_CATCH_SUCCESS,	// キャッチ時
+		MOTION_THROW,			// 投げ
+		MOTION_THROW_JUMP,		// 投げ(ジャンプ)
+		MOTION_SPECIAL,			// スペシャル
+		MOTION_WIN,				// 勝利
+		MOTION_DAMAGE,			// ダメージ
+		MOTION_DEAD,			// 死亡
+		MOTION_GRIP_FRONT,		// 前グリップ
 		MOTION_MAX
 	};
 
@@ -98,13 +99,13 @@ public:
 	// 構造体
 	//=============================
 	// ダメージ情報
-	struct sDamageInfo
+	struct SDamageInfo
 	{
 		bool bActiveSuperArmor;	// スーパーアーマー
 		bool bReceived;			// ダメージ受け付け判定
 		float reciveTime;		// ダメージ受付時間
 
-		sDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f) {}
+		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f) {}
 	};
 
 	// モーションの判定
@@ -167,8 +168,8 @@ public:
 	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
 	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
 	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
-	void SetDamageInfo(sDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
-	sDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
+	void SetDamageInfo(SDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
+	SDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
 
 	//=============================
 	// パターン
@@ -277,7 +278,7 @@ private:
 	int m_nMyPlayerIdx;	// プレイヤーインデックス番号
 	CShadow* m_pShadow;	// 影の情報
 	CBall* m_pBall;		// ボールの情報
-	sDamageInfo m_sDamageInfo;	// ダメージ情報
+	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	static CListManager<CPlayer> m_List;	// リスト
 };
 

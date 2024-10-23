@@ -19,12 +19,12 @@ MOTIONSET
 		ATTACKRANGE = 0.00
 		OFFSET = 0.00 0.00 0.00
 		ATTACKCOUNT = 0 0
-		INPACTCOUNT = 22
+		INPACTCOUNT = 10
 		DAMAGE = 0
 	END_ATTACKINFO
 
 	KEYSET			# --- << KEY : 0 / 6 >> ---
-		FRAME = 8
+		FRAME = 4
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.54 0.50 -0.45
 			POS = 0.00 0.00 0.00
@@ -124,7 +124,7 @@ MOTIONSET
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 1 / 6 >> ---
-		FRAME = 10
+		FRAME = 6
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.54 0.50 -0.45
 			POS = 0.00 0.00 0.00
@@ -324,7 +324,7 @@ MOTIONSET
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 3 / 6 >> ---
-		FRAME = 6
+		FRAME = 3
 		PARTS	# ----- [ 0 ] -----
 			ROT = -1.41 -0.53 0.53
 			POS = 0.00 0.00 0.00

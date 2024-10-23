@@ -97,7 +97,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	if (m_fActionTime >= ActionTime::BLINK)
 	{// ブリンク経過
 		
-		CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+		CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
 		DmgInfo.reciveTime = 0.0f;
 		m_pPlayer->SetDamageInfo(DmgInfo);
 
@@ -110,7 +110,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	}
 
 	//ダメージ受付しない時間設定
-	CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
 	DmgInfo.reciveTime = 0.1f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
@@ -133,7 +133,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetParameter().fHeight))
 		{
 			//ダメージ受付しない時間設定
-			CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+			CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
 			DmgInfo.reciveTime = 0.5f;
 			m_pPlayer->SetDamageInfo(DmgInfo);
 
@@ -152,7 +152,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CPlayer::sDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
 	DmgInfo.reciveTime = 0.1f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
