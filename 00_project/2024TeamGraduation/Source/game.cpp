@@ -220,8 +220,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pGameManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-
-
 #if _DEBUG
 	// エディット切り替え処理
 	ChangeEdit();
@@ -231,10 +229,16 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
-		if (ImGui::Button("Audience : Anim"))
+		if (ImGui::Button("Audience : AnimLeft"))
 		{
 			// オーディエンス生成
-			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM);
+			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_LEFT);
+		}
+
+		if (ImGui::Button("Audience : AnimRight"))
+		{
+			// オーディエンス生成
+			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_RIGHT);
 		}
 
 		// ツリー終端
@@ -244,22 +248,36 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
-		if (ImGui::Button("Audience : Normal"))
+		if (ImGui::Button("Audience : NormalLeft"))
 		{
 			// オーディエンス全通常
-			CAudience::SetEnableJumpAll(false);
+			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
 		}
-
-		if (ImGui::Button("Audience : Jump"))
+		if (ImGui::Button("Audience : JumpLeft"))
 		{
 			// オーディエンス全盛り上がり
-			CAudience::SetEnableJumpAll(true);
+			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_LEFT);
 		}
-
-		if (ImGui::Button("Audience : Despawn"))
+		if (ImGui::Button("Audience : DespawnLeft"))
 		{
 			// オーディエンス全退場
-			CAudience::SetDespawnAll();
+			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
+		}
+
+		if (ImGui::Button("Audience : NormalRight"))
+		{
+			// オーディエンス全通常
+			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
+		}
+		if (ImGui::Button("Audience : JumpRight"))
+		{
+			// オーディエンス全盛り上がり
+			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_RIGHT);
+		}
+		if (ImGui::Button("Audience : DespawnRight"))
+		{
+			// オーディエンス全退場
+			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_RIGHT);
 		}
 
 		// ツリー終端

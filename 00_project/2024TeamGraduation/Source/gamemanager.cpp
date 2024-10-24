@@ -160,6 +160,7 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 	case CGameManager::ESceneType::SCENE_MAIN:
 		m_bControll = true;
+		UpdateAudience();
 		break;
 
 	case CGameManager::ESceneType::SCENE_START:
@@ -208,6 +209,14 @@ void CGameManager::StartSetting()
 void CGameManager::SceneStart()
 {
 	
+}
+
+//==========================================================================
+// äœãqçXêV
+//==========================================================================
+void CGameManager::UpdateAudience()
+{
+
 }
 
 //==========================================================================
