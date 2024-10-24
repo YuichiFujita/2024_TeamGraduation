@@ -78,6 +78,8 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamStatus* pTeamStatus)
 {
 	pBall->ThrowSpecial(player);
+
+	//スペシャルゲージ消費
 	pTeamStatus->ZeroSpecialValue();
 
 	// アクションパターン変更
