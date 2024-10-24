@@ -484,6 +484,7 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 	case MOTION::MOTION_CATCH_STANCE:
 
+		// キャッチフラグON
 		m_sMotionFrag.bCatch = true;
 
 		break;
@@ -867,7 +868,7 @@ void CPlayer::StateCatch_Normal()
 
 	// 割合
 	float ratio = m_fStateTime / StateTime::CATCH;
-	ratio = UtilFunc::Transformation::Clamp(ratio, 0.3f, 1.0f);
+	ratio = UtilFunc::Transformation::Clamp(ratio, 0.4f, 1.0f);
 	ratio -= 1.0f;
 
 	// 後退する
