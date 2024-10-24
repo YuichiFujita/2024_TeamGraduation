@@ -123,7 +123,7 @@ HRESULT CGame::Init()
 	pUser->SetRotDest(-HALF_PI);
 
 	// プレイヤーUser二世生成
-#if 0
+#if 1
 	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
@@ -335,7 +335,7 @@ void CGame::ChangeEdit()
 					if (i != 0)
 					{
 						// デバッグモード
-						m_pGameManager->SetType(CGameManager::SceneType::SCENE_DEBUG);
+						m_pGameManager->SetType(CGameManager::ESceneType::SCENE_DEBUG);
 					}
 					else
 					{

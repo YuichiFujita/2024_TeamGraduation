@@ -103,7 +103,7 @@ HRESULT CGameManager::Init()
 	m_courtSize = Court::SIZE;
 
 #if _DEBUG
-	m_SceneType = SceneType::SCENE_MAIN;	// シーンの種類 
+	m_SceneType = ESceneType::SCENE_MAIN;	// シーンの種類 
 
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
@@ -115,7 +115,7 @@ HRESULT CGameManager::Init()
 	CreateTeamStatus();
 
 #else
-	m_SceneType = SceneType::SCENE_START;	// シーンの種類 
+	m_SceneType = ESceneType::SCENE_START;	// シーンの種類 
 #endif
 
 	m_OldSceneType = m_SceneType;
@@ -152,84 +152,30 @@ void CGameManager::Uninit()
 //==========================================================================
 void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 操作状態
+	// TODO : UpdateScene的なのでまとめたい
 	m_fSceneTimer += fDeltaTime * fSlowRate;	// シーンタイマー
+	
+	// TODO : 関数リストにしたい
 	switch (m_SceneType)
 	{
-	case CGameManager::SceneType::SCENE_MAIN:
+	case CGameManager::ESceneType::SCENE_MAIN:
 		m_bControll = true;
-		CheckJudgeZone();
-		ContainPlayerBaggage();
-		TurnAway();
 		break;
 
-	case CGameManager::SceneType::SCENE_START:
+	case CGameManager::ESceneType::SCENE_START:
 		m_bControll = false;
 		SceneStart();
 		break;
 
-	case CGameManager::SceneType::SCENE_SKIP:
-		m_bControll = false;
-		SceneSkip();
-		break;
-
-	case CGameManager::SceneType::SCENE_COUNTDOWN:		// カウントダウン
-		TurnAway();
-		break;
-
-	case CGameManager::SceneType::SCENE_MAINCLEAR:
-		m_bControll = false;
-		SceneGoal();
-		break;
-
-	case SceneType::SCENE_MAINRESULT:
+	case ESceneType::SCENE_BEFOREBATTLE:
 		m_bControll = false;
 		break;
 
-	case SceneType::SCENE_DURING_MAINRESULT:
+	case ESceneType::SCENE_BATTLESTART:
 		m_bControll = false;
 		break;
 
-	case SceneType::SCENE_BEFOREBATTLE:
-		m_bControll = false;
-		break;
-
-	case SceneType::SCENE_BATTLESTART:
-		m_bControll = false;
-		break;
-
-	case SceneType::SCENE_SKILLTREE:	// スキルツリー
-		m_bControll = false;
-		break;
-
-	case CGameManager::SceneType::SCENE_BOSS:
-		m_bControll = true;
-		break;
-
-	case CGameManager::SceneType::SCENE_TRANSITIONWAIT:
-		m_bControll = false;
-		break;
-
-	case CGameManager::SceneType::SCENE_TRANSITION:
-		m_bControll = false;
-		SceneTransition();
-		break;
-
-	case SceneType::SCENE_RESULT:
-		m_bControll = false;
-		break;
-
-	case SceneType::SCENE_WAIT_AIRPUSH:
-		m_bControll = false;
-		SceneWaitAirPush();
-		TurnAway();
-		break;
-
-	case SceneType::SCENE_GOAL:			// ゴール
-		SceneGoal();
-		break;
-
-	case SceneType::SCENE_DEBUG:
+	case ESceneType::SCENE_DEBUG:
 		m_bControll = true;
 		break;
 
@@ -255,21 +201,6 @@ void CGameManager::StartSetting()
 	
 }
 
-//==========================================================================
-// ゲームクリア時の設定
-//==========================================================================
-void CGameManager::GameClearSettings()
-{
-
-}
-
-//==========================================================================
-// スキップ
-//==========================================================================
-void CGameManager::SceneSkip()
-{
-	
-}
 
 //==========================================================================
 // 開始演出
@@ -277,14 +208,6 @@ void CGameManager::SceneSkip()
 void CGameManager::SceneStart()
 {
 	
-}
-
-//==========================================================================
-// ゲームリザルトの設定
-//==========================================================================
-void CGameManager::GameResultSettings()
-{
-
 }
 
 //==========================================================================
@@ -298,93 +221,18 @@ CBall* CGameManager::GetBall()
 }
 
 //==========================================================================
-// メイン遷移中
-//==========================================================================
-void CGameManager::SceneTransition()
-{
-	
-}
-
-//==========================================================================
-// 空気送り待ち
-//==========================================================================
-void CGameManager::SceneWaitAirPush()
-{
-	
-}
-
-//==========================================================================
-// ゴール状態
-//==========================================================================
-void CGameManager::SceneGoal()
-{
-
-}
-
-//==========================================================================
-// プレイヤーと荷物を画面内に収める
-//==========================================================================
-void CGameManager::ContainPlayerBaggage()
-{
-	
-}
-
-//==========================================================================
-// カメラが常に横を向くようにする
-//==========================================================================
-void CGameManager::TurnAway()
-{
-	
-}
-
-//==========================================================================
-// 判定ゾーン確認
-//==========================================================================
-void CGameManager::CheckJudgeZone()
-{
-	
-
-}
-
-//==========================================================================
-// ボス設定
-//==========================================================================
-void CGameManager::SetBoss()
-{
-
-}
-
-//==========================================================================
-// 敵設定
-//==========================================================================
-void CGameManager::SetEnemy()
-{
-
-	
-
-}
-
-//==========================================================================
 // シーンの種類設定
 //==========================================================================
-void CGameManager::SetType(SceneType type)
+void CGameManager::SetType(ESceneType type)
 {
 	m_OldSceneType = m_SceneType;
 	m_SceneType = type;
 }
 
 //==========================================================================
-// シーンの種類取得
-//==========================================================================
-CGameManager::SceneType CGameManager::GetType()
-{
-	return m_SceneType;
-}
-
-//==========================================================================
 // コート移動制限
 //==========================================================================
-void CGameManager::PosLimit(MyLib::Vector3& pos)
+void CGameManager::SetPosLimit(MyLib::Vector3& pos)
 {
 	if (pos.x > m_courtSize.x)
 	{
