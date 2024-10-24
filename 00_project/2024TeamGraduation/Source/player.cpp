@@ -430,14 +430,11 @@ void CPlayer::ResetFrag()
 	CMotion* pMotion = GetMotion();
 	int nType = pMotion->GetType();
 
+	//キャッチできない状態
+	m_sMotionFrag.bCatch = false;
+
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH_STANCE:
-
-		m_sMotionFrag.bCatch = false;
-
-		break;
-
 	default:
 		break;
 	}
