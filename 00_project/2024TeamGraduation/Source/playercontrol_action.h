@@ -23,14 +23,13 @@ public:
 	// コンストラクタ
 	CPlayerControlAction();
 
-	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ
+	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
 	void SetJump(CPlayer* player);
 
 protected:
 	//=============================
 	// メンバ関数
 	//=============================
-	void ConditionalAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 基本アクション操作
 	void SpecialSetting(CPlayer* player, CBall* pBall, CTeamStatus* pTeamStatus);		// スペシャル発動
 
 private:
@@ -38,6 +37,8 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	void ConditionalAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 基本アクション操作
+
 	virtual void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// キャッチ
 	virtual void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 投げ
 	virtual void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// ジャンプ
