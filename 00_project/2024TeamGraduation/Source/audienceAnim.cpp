@@ -50,13 +50,11 @@ HRESULT CAudienceAnim::Init()
 	posWatch.z = (float)UtilFunc::Transformation::Random((int)NEAR_LINE, (int)FAR_LINE);
 	SetWatchPosition(posWatch);
 
-	// ランダムに入場位置を設定
+	// ランダムに生成位置を設定
 	MyLib::Vector3 posSpawn = posWatch;
 	float fTurn = ((bool)(rand() % 2)) ? 1.0f : -1.0f;
 	posSpawn.x = CAudience::SPAWN_SIDE_LINE * fTurn;
-
-	// TODO
-	posSpawn.y += 60.0f;
+	SetSpawnPosition(posSpawn);
 
 	// アニメーション3Dの生成
 	m_pAnim3D = CObject3DAnim::Create(posSpawn, 1, 1, 0.0f, false);
