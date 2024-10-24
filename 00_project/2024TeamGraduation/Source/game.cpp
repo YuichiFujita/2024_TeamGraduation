@@ -220,8 +220,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pGameManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-
-
 #if _DEBUG
 	// エディット切り替え処理
 	ChangeEdit();
