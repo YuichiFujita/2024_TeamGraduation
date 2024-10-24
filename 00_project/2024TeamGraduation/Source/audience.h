@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "object.h"
+#include "gamemanager.h"
 #include "listmanager.h"
 
 //==========================================================================
@@ -54,7 +55,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudience(EObjType type, int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
+	CAudience(EObjType type, CGameManager::TeamSide team, int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
 	~CAudience();
 
 	//=============================
@@ -90,10 +91,10 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CAudience* Create(EObjType type);		// 生成
-	static void SetEnableJumpAll(const bool bJump);	// 全盛り上がり設定
-	static void SetDespawnAll();					// 全退場設定
-	static int GetNumWatchAll();					// 全観戦中の人数取得
+	static CAudience* Create(EObjType type, CGameManager::TeamSide team);			// 生成
+	static int GetNumWatchAll(CGameManager::TeamSide team);							// 全観戦中の人数取得
+	static void SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team);	// 全盛り上がり設定
+	static void SetDespawnAll(CGameManager::TeamSide team);							// 全退場設定
 
 protected:
 	//=============================
@@ -103,6 +104,7 @@ protected:
 	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }	// 入場位置取得
 	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}	// 観戦位置設定
 	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }	// 観戦位置取得
+	inline CGameManager::TeamSide GetTeam() const				{ return m_team; }		// 応援チーム取得
 
 private:
 
@@ -128,10 +130,12 @@ private:
 	// 静的メンバ変数
 	//=============================
 	static CListManager<CAudience> m_list;	// リスト
+	static int m_aNumWatchAll[2];			// 観戦中の人数
 
 	//=============================
 	// メンバ変数
 	//=============================
+	const CGameManager::TeamSide m_team;	// 応援チーム
 	const EObjType m_type;		// オブジェクト種類
 	const float m_fJumpLevel;	// ジャンプ量
 	MyLib::Vector3 m_posSpawn;	// 入場位置

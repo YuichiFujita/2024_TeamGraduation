@@ -14,6 +14,7 @@
 #include "gamemanager.h"
 #include "objectChara.h"
 #include "listmanager.h"
+#include "ball.h"
 
 //==========================================================================
 // 前方宣言
@@ -106,11 +107,12 @@ public:
 	// ダメージ情報
 	struct SDamageInfo
 	{
-		bool bActiveSuperArmor;	// スーパーアーマー
-		bool bReceived;			// ダメージ受け付け判定
-		float reciveTime;		// ダメージ受付時間
+		bool bActiveSuperArmor;		// スーパーアーマー
+		bool bReceived;				// ダメージ受け付け判定
+		float reciveTime;			// ダメージ受付時間
+		CBall::EAttack reiveType;	// 受けた種類
 
-		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f) {}
+		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f), reiveType(CBall::EAttack::ATK_NONE) {}
 	};
 
 	// モーションの判定

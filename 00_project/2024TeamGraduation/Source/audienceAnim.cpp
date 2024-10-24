@@ -13,12 +13,15 @@
 namespace
 {
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;	// 優先順位
+
+	const int LEFT_LINE[]  = { (int)CAudienceAnim::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };		// チームサイドごとの左ライン
+	const int RIGHT_LINE[] = { (int)CGameManager::CENTER_LINE, (int)CAudienceAnim::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnim::CAudienceAnim(EObjType type) : CAudience(type, PRIORITY, CObject::LAYER_DEFAULT),
+CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pAnim3D	(nullptr)	// アニメーション3D情報
 {
 }
@@ -44,8 +47,9 @@ HRESULT CAudienceAnim::Init()
 	}
 
 	// ランダムに観戦位置を設定
+	int nIdxTeam = GetTeam() - 1;
 	MyLib::Vector3 posWatch;
-	posWatch.x = (float)UtilFunc::Transformation::Random((int)MAX_LEFT_LINE, (int)MAX_RIGHT_LINE);
+	posWatch.x = (float)UtilFunc::Transformation::Random(LEFT_LINE[nIdxTeam], RIGHT_LINE[nIdxTeam]);
 	posWatch.y = CGameManager::FIELD_LIMIT;
 	posWatch.z = (float)UtilFunc::Transformation::Random((int)NEAR_LINE, (int)FAR_LINE);
 	SetWatchPosition(posWatch);

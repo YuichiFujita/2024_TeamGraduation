@@ -727,7 +727,7 @@ void CBall::UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, cons
 	*pPos += (*pMove * m_fMoveSpeed) * fDeltaRate * fSlowRate;
 
 	// êŠO‚Ì•â³
-	CGame::GetInstance()->GetGameManager()->PosLimit(*pPos);
+	CGame::GetInstance()->GetGameManager()->SetPosLimit(*pPos);
 }
 
 //==========================================================================

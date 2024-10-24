@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "audience.h"
+#include "gamemanager.h"
 #include "object3D_Anim.h"
 
 //==========================================================================
@@ -31,7 +32,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudienceAnim(EObjType type);
+	CAudienceAnim(EObjType type, CGameManager::TeamSide team);
 	~CAudienceAnim();
 
 	//=============================
