@@ -12,6 +12,7 @@
 #include "game.h"
 #include "ball.h"
 #include "playerAction.h"
+#include "teamStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -37,99 +38,17 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 }
 
 //==========================================================================
-// 統括
-//==========================================================================
-void CPlayerAIControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 目標の向き取得
-	float fRotDest = player->GetRotDest();
-
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
-	// モーション情報取得
-	CMotion* pMotion = player->GetMotion();
-	int nMotionType = pMotion->GetType();
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	// 状態取得
-	CPlayer::STATE state = player->GetState();
-
-	// アクション取得
-	CPlayerAction* pPlayerAction = player->GetActionPattern();
-	if (pPlayerAction == nullptr) return;
-	CPlayer::Action action = pPlayerAction->GetAction();
-
-	// TODO：操作はAIにいるのか問題
-#if 0
-	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
-	{// 移動可能モーションの時
-
-		//--------------------------
-		// アクション操作
-		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK)
-		{
-			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
-			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
-			Jump(player, fDeltaTime, fDeltaRate, fSlowRate);
-		}
-
-	}
-
-	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
-	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
-#else
-
-	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
-	{// 移動可能モーションの時
-
-		//--------------------------
-		// アクション操作
-		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK)
-		{
-			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
-			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
-		}
-	}
-
-#endif
-
-	// モーションフラグ設定
-	player->SetMotionFrag(motionFrag);
-}
-
-//==========================================================================
 // キャッチ
 //==========================================================================
 void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (player->GetBall() != nullptr)
-	{
-		return;
-	}
-
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (player->GetBall() != nullptr) return;
 
 	CMotion* pMotion = player->GetMotion();
 
-#if 0
-	if (pKey->GetTrigger(DIK_RETURN) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
-#else
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
 	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
-#endif
 	{
 		// アクションパターン変更
 		pMotion->Set(CPlayer::MOTION::MOTION_CATCH_STANCE);
@@ -143,19 +62,9 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-	if (pBall == nullptr)
-	{
-		return;
-	}
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (pBall == nullptr) return;
 
-#if 0
-	if (pKey->GetTrigger(DIK_RETURN) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
-#else
 	if (m_bAutoThrow)
 	{
 		fThrowTime += fDeltaTime;
@@ -163,8 +72,8 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 
 	// ボタン
 	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
-#endif
 	{
+
 #ifdef _DEBUG
 	fThrowTime = 0.0f;
 #endif
@@ -190,18 +99,10 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 {
 	bool bJump = player->IsJump();
 
-	if (bJump)
-	{
-		return;
-	}
+	if (bJump) return;
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	//ジャンプ処理
-	if (pKey->GetTrigger(DIK_SPACE) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
+	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
+	if (false)
 	{
 		SetJump(player);
 	}
@@ -213,22 +114,17 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-	if (pBall == nullptr)
-	{//スペシャルゲージMAX＋ボール所持か
-		return;
-	}
+	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	//スペシャルゲージMAX＋ボール所持か
+	if (pBall == nullptr || !pTeamStatus->IsMaxSpecial()) return;
 
-	if (pKey->GetTrigger(DIK_X) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
+	//TODO: フラグか何かで発動操作
+	if (false)
 	{
-		pBall->ThrowSpecial(player);
-
-		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_SPECIAL);
+		//発動
+		SpecialSetting(player, pBall, pTeamStatus);
 	}
 }
 
@@ -237,13 +133,12 @@ void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 void CPlayerAIControlAction::Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	player->GetActionPattern()->SetEnableCharm(false);
 
-	if (pKey->GetPress(DIK_C) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_RB, player->GetMyPlayerIdx()))
+	//TODO: フラグか何かで操作
+	if (false)
 	{
 		//モテアクション発動準備状態
+		player->GetActionPattern()->SetEnableCharm(true);
 	}
 }
