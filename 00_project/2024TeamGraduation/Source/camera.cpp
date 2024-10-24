@@ -40,9 +40,9 @@ namespace
 	const float MULTIPLY_CHASE_POSR = 1.5f;		// ’Ž‹“_’Ç]‚Ì”{—¦
 	const float MULTIPLY_CHASE_POSV = 1.5f;		// ’Ž‹“_’Ç]‚Ì”{—¦
 
-	const float MIN_STICKROT = -D3DX_PI * 0.25f;	// ƒJƒƒ‰ŒÅ’è—p
-	const float ROT_MOVE_STICK_Y = 0.00040f;	// ‰ñ“]ˆÚ“®—Ê
-	const float ROT_MOVE_STICK_Z = 0.00020f;	// ‰ñ“]ˆÚ“®—Ê
+	const float MIN_STICKROT = -D3DX_PI * 0.25f;		// ƒJƒƒ‰ŒÅ’è—p
+	const float ROT_MOVE_STICK_Y = D3DX_PI * 0.003f;	// ‰ñ“]ˆÚ“®—Ê
+	const float ROT_MOVE_STICK_Z = D3DX_PI * 0.003f;	// ‰ñ“]ˆÚ“®—Ê
 }
 
 //==========================================================================
@@ -653,16 +653,16 @@ void CCameraControlState::Controll(CCamera* pCamera)
 	MyLib::Vector3 rot = pCamera->GetRotation();
 
 	// ‰¡‰ñ“]
-	m_moveRot.y += pInputGamepad->GetStickMoveR(0).x * ROT_MOVE_STICK_Y;
+	m_moveRot.y += pInputGamepad->GetStickPositionRatioR(0).x * ROT_MOVE_STICK_Y;
 
 	// c‰ñ“]
-	if (pInputGamepad->GetStickMoveR(0).y < 0.0f)
+	if (pInputGamepad->GetStickPositionRatioR(0).y < 0.0f)
 	{
-		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
+		m_moveRot.z += pInputGamepad->GetStickPositionRatioR(0).y * ROT_MOVE_STICK_Z;
 	}
-	else if (pInputGamepad->GetStickMoveR(0).y > 0.0f)
+	else if (pInputGamepad->GetStickPositionRatioR(0).y > 0.0f)
 	{
-		m_moveRot.z += pInputGamepad->GetStickMoveR(0).y * ROT_MOVE_STICK_Z;
+		m_moveRot.z += pInputGamepad->GetStickPositionRatioR(0).y * ROT_MOVE_STICK_Z;
 	}
 
 	// ˆÚ“®‚·‚é
