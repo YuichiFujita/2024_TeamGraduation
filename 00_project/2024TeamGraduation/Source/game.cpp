@@ -337,7 +337,7 @@ void CGame::ChangeEdit()
 					if (i != 0)
 					{
 						// デバッグモード
-						m_pGameManager->SetType(CGameManager::SceneType::SCENE_DEBUG);
+						m_pGameManager->SetType(CGameManager::ESceneType::SCENE_DEBUG);
 					}
 					else
 					{
