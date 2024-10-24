@@ -15,6 +15,7 @@
 namespace
 {
 	const float DODGE_SLOW = 0.8f;			//回避時スロー値
+	const float JUMPTHROW_DOWN_COR = 0.5f;	//下降時ジャンプ投げ移動量補正値
 }
 
 namespace ActionTime
@@ -227,8 +228,14 @@ void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRa
 	//フワッと
 	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
+	float fMoveY = param.fJumpUpdateMove;
 
-	move.y += param.fJumpUpdateMove;
+	//下降中
+	if (move.y < 0.0f)
+	{
+		fMoveY *= JUMPTHROW_DOWN_COR;
+	}
+	move.y += fMoveY;
 	m_pPlayer->SetMove(move);
 
 	if (m_pPlayer->GetMotion()->IsFinish())
@@ -253,13 +260,16 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 	//フワッと
 	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
+	float fMoveY = param.fJumpStartMove;
 
-	//上昇中
-	if (move.y > 0)
+	//下降中
+	if (move.y < 0.0f)
 	{
-		move.y = param.fJumpStartMove;
-		m_pPlayer->SetMove(move);
+		fMoveY *= JUMPTHROW_DOWN_COR;
 	}
+
+	move.y = fMoveY;
+	m_pPlayer->SetMove(move);
 }
 
 //==========================================================================

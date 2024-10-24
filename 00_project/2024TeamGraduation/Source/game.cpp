@@ -124,7 +124,7 @@ HRESULT CGame::Init()
 	pUser->SetRotDest(-HALF_PI);
 
 	// ƒvƒŒƒCƒ„[User“ñ¢¶¬
-#if 1
+#if 0
 	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
