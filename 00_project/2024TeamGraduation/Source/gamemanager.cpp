@@ -475,4 +475,13 @@ void CGameManager::Debug()
 		// 位置設定
 		ImGui::TreePop();
 	}
+
+	// チームステータス
+	for (int i = 0; i < TeamType::TYPE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->Debug();
+		}
+	}
 }
