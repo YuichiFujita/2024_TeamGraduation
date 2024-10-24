@@ -112,6 +112,7 @@ public:
 	void SetInfoData(int nType, Info info);	// モーション情報の登録
 	void SetAttackInfo(AttackInfo info);	// 攻撃情報の登録
 	Info GetInfo(int nType);	// モーション情報の取得
+	Info GetNowInfo();			// 現在のモーション情報の取得
 	Info *GetInfoPtr(int nType);	// モーション情報の取得
 	void SetInfoSave(int nType, int nKey, int nParts, MyLib::Vector3 rot);	// モーション情報の登録
 	void ChangeKeyNum(int nType, int nNum);	// キー総数変更
