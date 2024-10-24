@@ -58,7 +58,11 @@ public:
 
 protected:
 
+	// メンバ変数
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// 頂点バッファ
+
+	// 仮想関数
+	virtual void CalWorldMtx();	// ワールドマトリックスの計算処理
 
 private:
 

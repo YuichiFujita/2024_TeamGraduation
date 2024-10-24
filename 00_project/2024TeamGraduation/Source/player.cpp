@@ -21,7 +21,6 @@
 #include "fade.h"
 #include "listmanager.h"
 #include "gamemanager.h"
-#include "ball.h"
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
@@ -36,7 +35,6 @@
 namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
-	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 }
 
@@ -45,6 +43,19 @@ namespace Knockback
 	const float HEIGHT = 50.0f;		// 最大高度
 	const float DAMAGE = 50.0f;		// ダメージ
 	const float DEAD = 100.0f;		// 死亡
+}
+
+namespace Catch
+{
+	const float Impact[CBall::EAttack::ATK_MAX] =	// 衝撃
+	{
+		0.0f,	// なし
+		0.5f,	// 通常
+		1.0f,	// ジャンプ
+		5.0,	// スペシャル
+	};
+
+	const float ANGLE = 160;	// キャッチ判定角度(度数法)
 }
 
 namespace StateTime
@@ -418,14 +429,11 @@ void CPlayer::ResetFrag()
 	CMotion* pMotion = GetMotion();
 	int nType = pMotion->GetType();
 
+	//キャッチできない状態
+	m_sMotionFrag.bCatch = false;
+
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH_STANCE:
-
-		m_sMotionFrag.bCatch = false;
-
-		break;
-
 	default:
 		break;
 	}
@@ -521,7 +529,7 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 void CPlayer::LimitPos()
 {
 	MyLib::Vector3 pos = GetPosition();
-	CGame::GetInstance()->GetGameManager()->PosLimit(pos);
+	CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
 
 	if (pos.y <= 0.0f)
 	{
@@ -583,7 +591,8 @@ bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
-	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+	CBall::EState stateBall = pBall->GetState();	// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
 
 	//死亡状態ならすり抜け
@@ -603,8 +612,9 @@ bool CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
-	if (m_sMotionFrag.bCatch)
-	{ // キャッチアクション中だった中でも受け付け中の場合	
+	if (m_sMotionFrag.bCatch &&
+		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
+	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理
 		CatchSetting(pBall);
@@ -730,7 +740,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 		switch (atkBall)
 		{
 		case CBall::ATK_NORMAL:
-			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			SetMotion(MOTION::MOTION_CATCH_NORMAL);
 			break;
 
 		case CBall::ATK_JUMP:
@@ -748,6 +758,10 @@ void CPlayer::CatchSetting(CBall* pBall)
 		// キャッチ状態
 		SetState(STATE::STATE_CATCH_NORMAL);
 	}
+
+
+	// 受けた種類
+	m_sDamageInfo.reiveType = atkBall;
 
 }
 
@@ -866,6 +880,14 @@ void CPlayer::StateDodge()
 //==========================================================================
 void CPlayer::StateCatch_Normal()
 {
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	// キャンセル可能フレーム取得
+	CMotion::Info motionInfo = pMotion->GetNowInfo();
+	float fCancelableTime = static_cast<float>(motionInfo.nCancelableFrame);
+
 	// TODO : ずざざーとする
 	MyLib::Vector3 rot = GetRotation();
 
@@ -879,18 +901,14 @@ void CPlayer::StateCatch_Normal()
 	MyLib::Vector3 move = GetMove();
 
 	// 移動量更新
-	move.x += sinf(D3DX_PI + rot.y) * (1.0f * ratio);
-	move.z += cosf(D3DX_PI + rot.y) * (1.0f * ratio);
+	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.reiveType] * ratio);
+	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.reiveType] * ratio);
 
 	// 位置更新
 	pos.x += move.x;
 	pos.z += move.z;
 	SetPosition(pos);
 	SetMove(move);
-
-	// モーションのキャンセルで管理
-	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr) return;
 
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
@@ -1032,6 +1050,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+		ImGui::Text("bCatch : [%d]", m_sMotionFrag.bCatch);
 
 		ImGui::TreePop();
 	}

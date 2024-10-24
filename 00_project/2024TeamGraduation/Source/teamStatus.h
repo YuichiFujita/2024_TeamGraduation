@@ -18,7 +18,7 @@
 //==========================================================================
 
 //==========================================================================
-// プレイヤーステータスクラス
+// チームステータスクラス
 //==========================================================================
 class CTeamStatus
 {
@@ -64,8 +64,8 @@ public:
 	// モテ情報
 	//-----------------------------
 	void InitCharmInfo();													//モテ情報初期化
-	void AddCharmValue(float fValue) { m_sCharmInfo.fValue += fValue; }		//モテゲージ値増加
-	void SubCharmValue(float fValue) { m_sCharmInfo.fValue -= fValue; }		//モテゲージ値減少
+	void AddCharmValue(float fValue);										//モテゲージ値増加
+	void SubCharmValue(float fValue);										//モテゲージ値減少
 	void SetCharmInfo(SCharmInfo sInfo) { m_sCharmInfo = sInfo; }			//モテ情報設定
 	SCharmInfo GetCharmInfo() { return m_sCharmInfo; }						//モテ情報取得
 

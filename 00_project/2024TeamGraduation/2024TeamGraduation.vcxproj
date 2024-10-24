@@ -181,6 +181,7 @@
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
     <ClCompile Include="Source\char2D.cpp" />
+    <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
@@ -234,6 +235,7 @@
     <ClCompile Include="Source\objectBillboard.cpp" />
     <ClCompile Include="Source\objectBillboard_Anim.cpp" />
     <ClCompile Include="Source\objectChara.cpp" />
+    <ClCompile Include="Source\objectCharaAnim.cpp" />
     <ClCompile Include="Source\objectHierarchy.cpp" />
     <ClCompile Include="Source\ObjectLine.cpp" />
     <ClCompile Include="Source\objectQuaternion.cpp" />
@@ -307,6 +309,7 @@
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
     <ClInclude Include="Source\char2D.h" />
+    <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
@@ -362,6 +365,7 @@
     <ClInclude Include="Source\objectBillboard.h" />
     <ClInclude Include="Source\objectBillboard_Anim.h" />
     <ClInclude Include="Source\objectChara.h" />
+    <ClInclude Include="Source\objectCharaAnim.h" />
     <ClInclude Include="Source\objectHierarchy.h" />
     <ClInclude Include="Source\ObjectLine.h" />
     <ClInclude Include="Source\objectQuaternion.h" />

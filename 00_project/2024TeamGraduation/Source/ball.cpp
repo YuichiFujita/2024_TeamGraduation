@@ -220,6 +220,9 @@ void CBall::Draw()
 //==========================================================================
 void CBall::CatchAttack(CPlayer* pPlayer)
 {
+	// 誰かがすでに持っているボールの場合抜ける
+	if (m_pPlayer != nullptr) { return; }
+
 	MyLib::Vector3 oldPosBall = GetOldPosition();				// ボール過去位置
 	MyLib::Vector3 posPlayer = pPlayer->GetPosition();			// プレイヤー位置
 	float fAngleY = oldPosBall.AngleXZ(posPlayer) - D3DX_PI;	// ボール方向
@@ -236,6 +239,9 @@ void CBall::CatchAttack(CPlayer* pPlayer)
 //==========================================================================
 void CBall::CatchLand(CPlayer* pPlayer)
 {
+	// 誰かがすでに持っているボールの場合抜ける
+	if (m_pPlayer != nullptr) { return; }
+
 	// キャッチ処理
 	Catch(pPlayer);
 }
@@ -721,7 +727,7 @@ void CBall::UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, cons
 	*pPos += (*pMove * m_fMoveSpeed) * fDeltaRate * fSlowRate;
 
 	// 場外の補正
-	CGame::GetInstance()->GetGameManager()->PosLimit(*pPos);
+	CGame::GetInstance()->GetGameManager()->SetPosLimit(*pPos);
 }
 
 //==========================================================================
