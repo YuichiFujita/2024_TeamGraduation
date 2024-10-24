@@ -55,7 +55,7 @@ namespace Catch
 		5.0,	// スペシャル
 	};
 
-
+	const float ANGLE = 160;	// キャッチ判定角度(度数法)
 }
 
 namespace StateTime
@@ -429,14 +429,11 @@ void CPlayer::ResetFrag()
 	CMotion* pMotion = GetMotion();
 	int nType = pMotion->GetType();
 
+	//キャッチできない状態
+	m_sMotionFrag.bCatch = false;
+
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH_STANCE:
-
-		m_sMotionFrag.bCatch = false;
-
-		break;
-
 	default:
 		break;
 	}
@@ -594,7 +591,8 @@ bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
-	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+	CBall::EState stateBall = pBall->GetState();	// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
 
 	//死亡状態ならすり抜け
@@ -614,8 +612,9 @@ bool CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
-	if (m_sMotionFrag.bCatch)
-	{ // キャッチアクション中だった中でも受け付け中の場合	
+	if (m_sMotionFrag.bCatch &&
+		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
+	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理
 		CatchSetting(pBall);
@@ -1051,6 +1050,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+		ImGui::Text("bCatch : [%d]", m_sMotionFrag.bCatch);
 
 		ImGui::TreePop();
 	}
