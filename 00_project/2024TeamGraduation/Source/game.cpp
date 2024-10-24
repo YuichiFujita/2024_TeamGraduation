@@ -220,11 +220,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pGameManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// キーボード情報取得
-	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();
-
-	// ゲームパッド情報取得
-	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
 
 
 #if _DEBUG
@@ -240,6 +235,31 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		{
 			// オーディエンス生成
 			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM);
+		}
+
+		// ツリー終端
+		ImGui::TreePop();
+	}
+
+	// 操作
+	if (ImGui::TreeNode("Control"))
+	{
+		if (ImGui::Button("Audience : Normal"))
+		{
+			// オーディエンス全通常
+			CAudience::SetEnableJumpAll(false);
+		}
+
+		if (ImGui::Button("Audience : Jump"))
+		{
+			// オーディエンス全盛り上がり
+			CAudience::SetEnableJumpAll(true);
+		}
+
+		if (ImGui::Button("Audience : Despawn"))
+		{
+			// オーディエンス全退場
+			CAudience::SetDespawnAll();
 		}
 
 		// ツリー終端

@@ -253,8 +253,13 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 	//ƒtƒƒb‚Æ
 	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
 	MyLib::Vector3 move = m_pPlayer->GetMove();
-	move.y = param.fJumpStartMove;
-	m_pPlayer->SetMove(move);
+
+	//ã¸’†
+	if (move.y > 0)
+	{
+		move.y = param.fJumpStartMove;
+		m_pPlayer->SetMove(move);
+	}
 }
 
 //==========================================================================

@@ -97,8 +97,7 @@ CGameManager* CGameManager::Create(CScene::MODE mode)
 //==========================================================================
 HRESULT CGameManager::Init()
 {
-	m_bControll = true;			// 操作できるか
-
+	m_bControll = true;	// 操作できるか
 
 	// コートサイズ
 	m_courtSize = Court::SIZE;
@@ -474,5 +473,14 @@ void CGameManager::Debug()
 
 		// 位置設定
 		ImGui::TreePop();
+	}
+
+	// チームステータス
+	for (int i = 0; i < TeamType::TYPE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->Debug();
+		}
 	}
 }
