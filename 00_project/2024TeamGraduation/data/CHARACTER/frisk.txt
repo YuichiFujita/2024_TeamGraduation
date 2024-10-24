@@ -1,0 +1,17 @@
+#==============================================================================
+#
+#	フリスクのセットアップ [frisk.txt]
+#	Author : 藤田 勇一
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+#	モーション情報
+#------------------------------------------------------------------------------
+MOTIONPASS = data\MOTION\MAIN\FRISK\idol_up.txt		# 上待機モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\idol_down.txt	# 下待機モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\idol_left.txt	# 左待機モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\idol_right.txt	# 右待機モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\move_up.txt		# 上移動モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\move_down.txt	# 下移動モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\move_left.txt	# 左移動モーション
+MOTIONPASS = data\MOTION\MAIN\FRISK\move_right.txt	# 右移動モーション

@@ -31,6 +31,7 @@ class CPlayer;
 class CMap;
 class CXLoad;
 class CFont;
+class CCharacterAnim;
 class CEdit;
 class CElevation;
 class CEnemyManager;
@@ -74,6 +75,7 @@ public:
 	CCamera *GetCamera();
 	CEdit *GetEdit();
 	CFont *GetFont();	// フォント取得
+	CCharacterAnim* GetCharacterAnim();	// キャラクターアニメーション取得
 	CFade *GetFade();
 	CInstantFade *GetInstantFade();	// 遷移なしフェード取得
 	CPause *GetPause();
@@ -122,6 +124,7 @@ private:
 	CTexture *m_pTexture;				// テクスチャ
 	CXLoad* m_pXLoad;					// Xファイル
 	CFont* m_pFont;						// フォント
+	CCharacterAnim* m_pCharacterAnim;	// キャラクターアニメーション
 	CEdit *m_pEdit;						// エディット
 	CScene *m_pScene;					// シーン
 	CFade *m_pFade;						// フェード

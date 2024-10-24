@@ -25,6 +25,7 @@
 #include "Imguimanager.h"
 #include "fog.h"
 #include "font.h"
+#include "characterAnim.h"
 
 //==========================================================================
 // 定数定義
@@ -66,6 +67,7 @@ CManager::CManager()
 	m_pTexture = nullptr;			// テクスチャ
 	m_pXLoad = nullptr;				// Xファイル
 	m_pFont = nullptr;				// フォント
+	m_pCharacterAnim = nullptr;		// キャラクターアニメーション
 	m_pEdit = nullptr;				// エディット
 	m_pScene = nullptr;				// シーン
 	m_pFade = nullptr;				// フェード
@@ -295,6 +297,18 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	}
 
 	//**********************************
+	// キャラクターアニメーション
+	//**********************************
+	m_pCharacterAnim = CCharacterAnim::Create();
+	if (m_pCharacterAnim == nullptr)
+	{ // 生成に失敗した場合
+
+		// 失敗を返す
+		assert(false);
+		return E_FAIL;
+	}
+
+	//**********************************
 	// フェード
 	//**********************************
 	m_pFade = CFade::Create();
@@ -373,6 +387,9 @@ void CManager::Load()
 
 	// 全てのフォント読み込み
 	m_pFont->LoadAll();
+
+	// 全てのキャラクターアニメーションの読み込み
+	m_pCharacterAnim->LoadAll();
 
 	//**********************************
 	// 遷移なしフェード
@@ -618,6 +635,9 @@ void CManager::Uninit()
 
 	// フォントの破棄
 	SAFE_REF_RELEASE(m_pFont);
+
+	// キャラクターアニメーションの破棄
+	SAFE_REF_RELEASE(m_pCharacterAnim);
 
 	if (m_pScene != nullptr)
 	{// メモリの確保が出来ていたら
@@ -990,9 +1010,17 @@ CEdit *CManager::GetEdit()
 //==========================================================================
 // フォントの取得
 //==========================================================================
-CFont *CManager::GetFont(void)
+CFont *CManager::GetFont()
 {
 	return m_pFont;
+}
+
+//==========================================================================
+// キャラクターアニメーションの取得
+//==========================================================================
+CCharacterAnim *CManager::GetCharacterAnim()
+{
+	return m_pCharacterAnim;
 }
 
 //==========================================================================
