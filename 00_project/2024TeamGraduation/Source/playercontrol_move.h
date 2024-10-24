@@ -45,10 +45,10 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ブリンク
-	virtual void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 走る
-	virtual void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ウォーク
-	virtual CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::DashAngle angle);	// ダッシュ時のトリガー
+	virtual void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// ブリンク
+	virtual void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 走る
+	virtual void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// ウォーク
+	virtual CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::DashAngle angle) = 0;	// ダッシュ時のトリガー
 
 	//=============================
 	// メンバ変数

@@ -142,7 +142,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	{// 猶予受け付け終了中
 
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0 ||
+			(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0 ||
 				pKey->GetTrigger(DIK_W)))
 		{// 上
 			bInput = true;
@@ -165,7 +165,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0 ||
+			(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0 ||
 				pKey->GetTrigger(DIK_S)))
 		{// 下
 			bInput = true;
@@ -188,7 +188,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0 ||
+			(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0 ||
 				pKey->GetTrigger(DIK_D)))
 		{// 右
 			bInput = true;
@@ -211,7 +211,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-			(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0 ||
+			(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0 ||
 				pKey->GetTrigger(DIK_A)))
 		{// 左
 			bInput = true;
@@ -252,13 +252,13 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 		{
 		case CPlayer::DashAngle::ANGLE_LEFT:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_Y)))
 			{// 上
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 			{// 下
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
@@ -267,13 +267,13 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 
 		case CPlayer::DashAngle::ANGLE_RIGHT:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
 			{// 上
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 			{// 下
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
@@ -282,13 +282,13 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 
 		case CPlayer::DashAngle::ANGLE_UP:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
 			{// 左
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
 			{// 右
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
@@ -297,13 +297,13 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 
 		case CPlayer::DashAngle::ANGLE_DOWN:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
 			{// 左
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
-				(pPad->GetLStickTrigger(CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
+				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
 			{// 右
 				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
@@ -399,7 +399,8 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) &&
 		!pKey->GetPress(DIK_A);
 
-	bool bStick = pPad->IsTipStick();
+	// 左スティック判定
+	bool bStick = pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_X) && pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_Y);
 
 	if (bUP && bDown && bRight && bLeft && !bStick)
 	{
