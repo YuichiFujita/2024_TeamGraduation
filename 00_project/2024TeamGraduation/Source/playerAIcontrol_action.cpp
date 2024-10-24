@@ -48,11 +48,12 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetCharStatus()->GetTeam()) return;
+
 	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
 	{
 		// アクションパターン変更
-		pMotion->Set(CPlayer::MOTION::MOTION_CATCH_STANCE);
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_CATCH);
+		SetPattern(player, CPlayer::MOTION::MOTION_CATCH_STANCE, CPlayer::Action::ACTION_CATCH);
 	}
 }
 
@@ -81,13 +82,11 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 		// アクションパターン変更
 		if (player->IsJump())
 		{
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW_JUMP);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW_JUMP, CPlayer::Action::ACTION_THROW_JUMP);
 		}
 		else
 		{
-			pBall->ThrowNormal(player);
-
-			player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_THROW);
+			SetPattern(player, CPlayer::MOTION::MOTION_THROW, CPlayer::Action::ACTION_THROW);
 		}
 	}
 }
