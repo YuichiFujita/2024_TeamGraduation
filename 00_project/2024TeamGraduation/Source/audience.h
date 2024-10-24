@@ -84,17 +84,23 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-
+	void SetEnableJump(const bool bJump);	// 盛り上がり設定
+	void SetDespawn();	// 退場設定
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CAudience* Create(EObjType type);
+	static CAudience* Create(EObjType type);		// 生成
+	static void SetEnableJumpAll(const bool bJump);	// 全盛り上がり設定
+	static void SetDespawnAll();					// 全退場設定
+	static int GetNumWatchAll();					// 全観戦中の人数取得
 
 protected:
 	//=============================
 	// メンバ関数
 	//=============================
+	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	{ m_posSpawn = rPos;}	// 入場位置設定
+	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }	// 入場位置取得
 	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}	// 観戦位置設定
 	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }	// 観戦位置取得
 
@@ -115,6 +121,9 @@ private:
 	void UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり状態の更新
 	void UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 退場状態の更新
 
+	// 通常関数
+	bool UpdateGravity(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaTime, const float fDeltaRate, const float fSlowRate, const float fGravityRate = 1.0f);	// 重力更新
+
 	//=============================
 	// 静的メンバ変数
 	//=============================
@@ -125,7 +134,9 @@ private:
 	//=============================
 	const EObjType m_type;		// オブジェクト種類
 	const float m_fJumpLevel;	// ジャンプ量
+	MyLib::Vector3 m_posSpawn;	// 入場位置
 	MyLib::Vector3 m_posWatch;	// 観戦位置
+	MyLib::Vector3 m_posDespawnStart;	// 退場開始位置
 	EState m_state;		// 状態
 	float m_fTimeState;	// 状態管理時間
 };

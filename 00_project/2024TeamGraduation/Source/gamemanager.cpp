@@ -97,8 +97,7 @@ CGameManager* CGameManager::Create(CScene::MODE mode)
 //==========================================================================
 HRESULT CGameManager::Init()
 {
-	m_bControll = true;			// 操作できるか
-
+	m_bControll = true;	// 操作できるか
 
 	// コートサイズ
 	m_courtSize = Court::SIZE;
