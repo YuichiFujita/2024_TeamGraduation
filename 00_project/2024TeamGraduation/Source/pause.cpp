@@ -253,7 +253,7 @@ void CPause::UpdateSelect()
 
 	if (pKey->GetTrigger(DIK_W) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+		(pPad->GetLStickTrigger(0, CInputGamepad::STICK_AXIS::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 	{// 上系が押された
 
 		// パターンNo.を更新
@@ -264,7 +264,7 @@ void CPause::UpdateSelect()
 	}
 	else if (pKey->GetTrigger(DIK_S) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, 0) ||
-		(pPad->GetLStickTrigger(CInputGamepad::STICK::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+		(pPad->GetLStickTrigger(0, CInputGamepad::STICK_AXIS::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
 	{// 下系が押された
 
 		// パターンNo.を更新

@@ -18,7 +18,9 @@ class CInputGamepad : public CInput
 {
 public:
 
+	//=============================
 	// 列挙型定義
+	//=============================
 	enum BUTTON
 	{
 		BUTTON_UP = 0,
@@ -44,20 +46,20 @@ public:
 		BUTTON_MAX
 	};
 
-	// 列挙型定義
-	enum STICK
+	// スティック軸
+	enum STICK_AXIS
 	{
 		STICK_X = 0,
 		STICK_Y,
 		STICK_MAX
 	};
 
+	// バイブレーション
 	enum VIBRATION_STATE
 	{
-		VIBRATION_STATE_NONE = 0,	//何もしてない状態
-		VIBRATION_STATE_AIR,		// 空気噴出状態
-		VIBRATION_STATE_DMG,		//ダメージ状態
-
+		VIBRATION_STATE_NONE = 0,	// 何もしてない状態
+		VIBRATION_STATE_DMG,		// ダメージ時
+		VIBRATION_STATE_MAX
 	};
 
 	CInputGamepad();
@@ -86,15 +88,16 @@ public:
 	//--------------------------
 	// スティック系
 	//--------------------------
-	bool GetLStickTrigger(STICK XY);	// スティックのトリガー判定
-	bool GetRStickTrigger(STICK XY);	// スティックのトリガー判定
+	bool GetLStickTrigger(int nCntPlayer, STICK_AXIS XY);	// スティックのトリガー判定
+	bool GetRStickTrigger(int nCntPlayer, STICK_AXIS XY);	// スティックのトリガー判定
 	MyLib::Vector3 GetStickMoveL(int nCntPlayer);
 	MyLib::Vector3 GetStickMoveR(int nCntPlayer);
 	MyLib::Vector3 GetStickPositionRatioL(int nCntPlayer);	// 左スティックの割合取得
 	MyLib::Vector3 GetStickPositionRatioR(int nCntPlayer);	// 右スティックの割合取得
 	float GetStickRotL(int nCntPlayer);					// スティックの向き取得
 	float GetStickRotR(int nCntPlayer);					// スティックの向き取得
-	bool IsTipStick() { return m_bLStickTip; }		// スティックが倒れてるかの判定
+	bool IsTipStickL(int nCntPlayer, STICK_AXIS XY) { return m_bLStickTip[nCntPlayer][XY]; }		// Lスティックが倒れてるかの判定
+	bool IsTipStickR(int nCntPlayer, STICK_AXIS XY) { return m_bRStickTip[nCntPlayer][XY]; }		// Rスティックが倒れてるかの判定
 	float GetVibMulti() { return m_fVibrationMulti; }
 	void SetVibMulti(float fMulti) { m_fVibrationMulti = fMulti; }
 
@@ -123,7 +126,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	void UpdateStickTrigger();		// スティックのトリガー判定
+	void UpdateStickTrigger(int nCntPlayer);		// スティックのトリガー判定
 	void UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate);	// トリガーの判定処理
 	void UpdateVibration(int nCntPlayer);	// 振動の更新処理
 
@@ -131,7 +134,7 @@ private:
 	// メンバ変数
 	//=============================
 	//--------------------------
-	// 
+	// 機能
 	//--------------------------
 	XINPUT_STATE m_aGamepadState[mylib_const::MAX_PLAYER];				// プレス情報
 	XINPUT_STATE m_aGamepadStateTrigger[mylib_const::MAX_PLAYER];		// トリガー情報
@@ -142,7 +145,7 @@ private:
 	VIBRATION_STATE m_VibrationState[mylib_const::MAX_PLAYER];			// 振動の種類
 	int m_nCntVibration[mylib_const::MAX_PLAYER];						// 振動の時間
 	int m_nMaxCntVibration[mylib_const::MAX_PLAYER];					// 振動の時間
-	int m_nCntPadrepeat;									// リピート用カウント
+	int m_nCntPadrepeat;												// リピート用カウント
 
 	//--------------------------
 	// トリガー
@@ -153,13 +156,15 @@ private:
 	//--------------------------
 	// スティック
 	//--------------------------
-	bool m_bLeftStickSelect[STICK_MAX];						// 左スティックの選択判定
-	bool m_bLeftStickTrigger[STICK_MAX];					// 左スティックのトリガー判定
-	bool m_bRightStickSelect[STICK_MAX];					// 右スティックの選択判定
-	bool m_bRightStickTrigger[STICK_MAX];					// 右スティックのトリガー判定
-	bool m_bLStickTip;										// 左スティックの傾き判定
-	bool m_bVibrationUse;									// バイブを使用するかどうか
-	float m_fVibrationMulti;								// バイブレーション倍率
+	bool m_bLStickSelect[mylib_const::MAX_PLAYER][STICK_MAX];		// 左スティックの選択判定
+	bool m_bLStickTrigger[mylib_const::MAX_PLAYER][STICK_MAX];		// 左スティックのトリガー判定
+	bool m_bRStickTrigger[mylib_const::MAX_PLAYER][STICK_MAX];		// 右スティックの選択判定
+	bool m_bRStickSelect[mylib_const::MAX_PLAYER][STICK_MAX];		// 右スティックのトリガー判定
+	bool m_bLStickTip[mylib_const::MAX_PLAYER][STICK_MAX];			// 左スティックの傾き判定
+	bool m_bRStickTip[mylib_const::MAX_PLAYER][STICK_MAX];			// 右スティックの傾き判定
+	bool m_bVibrationUse;					// バイブを使用するかどうか
+	float m_fVibrationMulti;				// バイブレーション倍率
+	float m_fDeadZone;						// デッドゾーン
 
 	static CInputGamepad* m_pThisPtr;	// 自身のポインタ
 };
