@@ -173,8 +173,11 @@ void CAudience::SetEnableJump(const bool bJump)
 //==========================================================================
 // 退場の設定処理
 //==========================================================================
-void CAudience::SetDespawn()
+bool CAudience::SetDespawn()
 {
+	// 既に退場中の場合抜ける
+	if (m_state == STATE_DESPAWN) { return false; }
+
 	// 退場開始位置を保存
 	m_posDespawnStart = GetPosition();	// 現在の位置
 
@@ -184,6 +187,45 @@ void CAudience::SetDespawn()
 
 	// 退場状態にする
 	m_state = STATE_DESPAWN;
+	return true;
+}
+
+//==========================================================================
+// 観戦中の人数設定処理
+//==========================================================================
+HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
+{
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return E_FAIL; }
+
+	// 観戦人数が同一の場合抜ける
+	int nIdxTeam = team - 1;	// チームインデックス
+	if (nNumWatch == m_aNumWatchAll[nIdxTeam]) { return E_FAIL; }
+
+	if (nNumWatch < m_aNumWatchAll[nIdxTeam])
+	{ // 観戦人数が多い場合
+
+		// 人数分退場
+		int nNumDespawn = m_aNumWatchAll[nIdxTeam] - nNumWatch;	// 退場人数
+		SetDespawnAll(team, nNumDespawn);
+	}
+	else if (nNumWatch > m_aNumWatchAll[nIdxTeam])
+	{ // 観戦人数が少ない場合
+
+		int nNumSpawn = nNumWatch - m_aNumWatchAll[nIdxTeam];	// 登場人数
+		for (int i = 0; i < nNumSpawn; i++)
+		{ // 登場人数分繰り返す
+
+			// 観客を生成
+			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, team)))
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+		}
+	}
+
+	return S_OK;
 }
 
 //==========================================================================
@@ -224,11 +266,12 @@ void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
 //==========================================================================
 // 全退場の設定処理
 //==========================================================================
-void CAudience::SetDespawnAll(CGameManager::TeamSide team)
+void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn)
 {
 	// チームが設定されていない場合抜ける
 	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
 
+	int nCurDespawn = 0;	// 現在の退場人数
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
@@ -239,7 +282,13 @@ void CAudience::SetDespawnAll(CGameManager::TeamSide team)
 		if (pAudience->m_team != team) { continue; }
 
 		// 退場を設定
-		pAudience->SetDespawn();
+		if (!pAudience->SetDespawn()) { continue; }	// 既に退場中の場合は次へ
+
+		// 現在の退場人数を加算
+		nCurDespawn++;
+
+		// 引数の人数分退場させた場合抜ける
+		if (nCurDespawn == nNumDespawn) { return; }
 	}
 }
 
