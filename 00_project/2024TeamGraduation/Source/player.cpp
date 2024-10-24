@@ -848,6 +848,9 @@ void CPlayer::StateDead()
 	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT, time);
 
 	SetPosition(pos);
+
+	//志望状態をキャンセル不能にする
+	SetEnableMove(false);
 }
 
 //==========================================================================
@@ -1032,4 +1035,17 @@ void CPlayer::Debug()
 
 		ImGui::TreePop();
 	}
-}
+
+	//-----------------------------
+	// 体力
+	//-----------------------------
+	if (ImGui::TreeNode("Life"))
+	{
+		int nLife = GetLife();
+
+		ImGui::DragInt("nLife", &nLife, 1, 0, 50, "%d");
+
+		SetLife(nLife);
+
+		ImGui::TreePop();
+	}}

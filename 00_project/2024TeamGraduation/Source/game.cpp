@@ -245,6 +245,31 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		// ツリー終端
 		ImGui::TreePop();
 	}
+
+	// 操作
+	if (ImGui::TreeNode("Control"))
+	{
+		if (ImGui::Button("Audience : Normal"))
+		{
+			// オーディエンス全通常
+			CAudience::SetEnableJumpAll(false);
+		}
+
+		if (ImGui::Button("Audience : Jump"))
+		{
+			// オーディエンス全盛り上がり
+			CAudience::SetEnableJumpAll(true);
+		}
+
+		if (ImGui::Button("Audience : Despawn"))
+		{
+			// オーディエンス全退場
+			CAudience::SetDespawnAll();
+		}
+
+		// ツリー終端
+		ImGui::TreePop();
+	}
 #endif
 
 	// シーンの更新
