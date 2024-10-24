@@ -55,6 +55,9 @@ HRESULT CAudienceAnim::Init()
 	float fTurn = ((bool)(rand() % 2)) ? 1.0f : -1.0f;
 	posSpawn.x = CAudience::SPAWN_SIDE_LINE * fTurn;
 
+	// TODO
+	posSpawn.y += 60.0f;
+
 	// アニメーション3Dの生成
 	m_pAnim3D = CObject3DAnim::Create(posSpawn, 1, 1, 0.0f, false);
 	if (m_pAnim3D == nullptr)
