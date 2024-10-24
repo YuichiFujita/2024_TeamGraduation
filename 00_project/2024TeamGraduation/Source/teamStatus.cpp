@@ -121,7 +121,7 @@ void CTeamStatus::TeamSetting(const CGameManager::TeamSide team)
 }
 
 //==========================================================================
-// スペシャル情報初期化
+// モテ情報初期化
 //==========================================================================
 void CTeamStatus::InitCharmInfo()
 {
@@ -129,7 +129,26 @@ void CTeamStatus::InitCharmInfo()
 }
 
 //==========================================================================
-// モテ情報初期化
+// モテゲージ値増加
+//==========================================================================
+void CTeamStatus::AddCharmValue(float fValue)
+{
+	m_sCharmInfo.fValue += fValue;
+
+	UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue, 0.0f, m_sCharmInfo.fValueMax);
+}
+//==========================================================================
+// モテゲージ値増加
+//==========================================================================
+void CTeamStatus::SubCharmValue(float fValue)
+{
+	m_sCharmInfo.fValue -= fValue;
+
+	UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue, 0.0f, m_sCharmInfo.fValueMax);
+}
+
+//==========================================================================
+// スペシャル情報初期化
 //==========================================================================
 void CTeamStatus::InitSpecialInfo()
 {
@@ -143,13 +162,11 @@ void CTeamStatus::InitSpecialInfo()
 	m_sSpecialInfo.pGauge = CObject2D::Create();
 	m_sSpecialInfo.pGauge->SetSize(Special::GAUGE_SIZE);
 
-
-
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
 }
 
 //==========================================================================
-// モテゲージ増加
+// スペシャルゲージ増加
 //==========================================================================
 void CTeamStatus::AddSpecialValue(float fValue)
 {
@@ -169,7 +186,7 @@ void CTeamStatus::AddSpecialValue(float fValue)
 }
 
 //==========================================================================
-// モテゲージ減少
+// スペシャルゲージ減少
 //==========================================================================
 void CTeamStatus::SubSpecialValue(float fValue)
 {

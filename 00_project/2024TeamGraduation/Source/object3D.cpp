@@ -170,6 +170,31 @@ void CObject3D::Draw()
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = pMgr->GetRenderer()->GetDevice();
 
+	// ワールドマトリックスの計算
+	CalWorldMtx();
+
+	// ワールドマトリックスの設定
+	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();
+	pDevice->SetTransform(D3DTS_WORLD, &mtx);
+
+	// 頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_3D));
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	// テクスチャの設定
+	pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nTexIdx));
+
+	// ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+}
+
+//==========================================================================
+// ワールドマトリックスの計算処理
+//==========================================================================
+void CObject3D::CalWorldMtx()
+{
 	// 情報取得
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 rot = GetRotation();
@@ -193,22 +218,6 @@ void CObject3D::Draw()
 	// 位置を反映する
 	mtxTrans.Translation(pos);
 	m_mtxWorld.Multiply(m_mtxWorld, mtxTrans);
-
-	// ワールドマトリックスの設定
-	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();
-	pDevice->SetTransform(D3DTS_WORLD, &mtx);
-
-	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_3D));
-
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_3D);
-
-	// テクスチャの設定
-	pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nTexIdx));
-
-	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
 
 //==========================================================================

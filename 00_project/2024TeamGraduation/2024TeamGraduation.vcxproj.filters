@@ -452,6 +452,12 @@
     <ClCompile Include="Source\teamStatus.cpp">
       <Filter>ingame\team</Filter>
     </ClCompile>
+    <ClCompile Include="Source\characterAnim.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\objectCharaAnim.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -822,6 +828,12 @@
     </ClInclude>
     <ClInclude Include="Source\teamStatus.h">
       <Filter>ingame\team</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\characterAnim.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\objectCharaAnim.h">
+      <Filter>object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

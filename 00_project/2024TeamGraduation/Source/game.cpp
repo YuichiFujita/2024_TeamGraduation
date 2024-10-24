@@ -30,6 +30,7 @@
 #include "playerAI.h"
 #include "ball.h"
 #include "audience.h"
+#include "teamStatus.h"
 
 namespace
 {
@@ -123,7 +124,7 @@ HRESULT CGame::Init()
 	pUser->SetRotDest(-HALF_PI);
 
 	// プレイヤーUser二世生成
-#if 1
+#if 0
 	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
@@ -248,6 +249,18 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
+		// 左チームのモテ値増減
+		CTeamStatus* pTeamLeft = GetGameManager()->GetTeamStatus(0);	// チーム情報
+		CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
+		ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
+		pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
+
+		// 右チームのモテ値増減
+		CTeamStatus* pTeamRight = GetGameManager()->GetTeamStatus(1);	// チーム情報
+		CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
+		ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
+		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
+
 		if (ImGui::Button("Audience : NormalLeft"))
 		{
 			// オーディエンス全通常

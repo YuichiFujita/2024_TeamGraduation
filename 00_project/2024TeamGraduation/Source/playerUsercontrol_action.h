@@ -23,8 +23,6 @@ public:
 	// コンストラクタ
 	CPlayerUserControlAction();
 
-	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// キャッチ
-
 private:
 	
 	//=============================

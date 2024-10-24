@@ -12,6 +12,7 @@
 #include "game.h"
 #include "ball.h"
 #include "playerAction.h"
+#include "teamStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -30,71 +31,11 @@ CPlayerUserControlAction::CPlayerUserControlAction()
 }
 
 //==========================================================================
-// 統括
-//==========================================================================
-void CPlayerUserControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 目標の向き取得
-	float fRotDest = player->GetRotDest();
-
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
-	// モーション情報取得
-	CMotion* pMotion = player->GetMotion();
-	int nMotionType = pMotion->GetType();
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	// 状態取得
-	CPlayer::STATE state = player->GetState();
-
-	// アクション取得
-	CPlayerAction* pPlayerAction = player->GetActionPattern();
-	if (pPlayerAction == nullptr) return;
-	CPlayer::Action action = pPlayerAction->GetAction();
-
-
-	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
-	{// 移動可能モーションの時
-
-		//--------------------------
-		// アクション操作
-		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK ||
-			action != CPlayer::Action::ACTION_DODGE)
-		{
-			Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
-			Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
-			Jump(player, fDeltaTime, fDeltaRate, fSlowRate);
-		}
-
-	}
-
-	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
-	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
-
-	// モーションフラグ設定
-	player->SetMotionFrag(motionFrag);
-}
-
-//==========================================================================
 // キャッチ
 //==========================================================================
 void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (player->GetBall() != nullptr)
-	{
-		return;
-	}
+	if (player->GetBall() != nullptr) return;
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -117,10 +58,7 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 {
 	CBall* pBall = player->GetBall();
 
-	if (pBall == nullptr)
-	{
-		return;
-	}
+	if (pBall == nullptr) return;
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -150,10 +88,7 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 {
 	bool bJump = player->IsJump();
 
-	if (bJump)
-	{
-		return;
-	}
+	if (bJump) return;
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -173,11 +108,11 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 void CPlayerUserControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-
-	if (pBall == nullptr)
-	{//スペシャルゲージMAX＋ボール所持か
-		return;
-	}
+	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
+	
+	//スペシャルゲージMAX＋ボール所持か
+	if (pBall == nullptr ||	!pTeamStatus->IsMaxSpecial()) return;
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -186,10 +121,8 @@ void CPlayerUserControlAction::Special(CPlayer* player, const float fDeltaTime, 
 	if (pKey->GetTrigger(DIK_X) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_LB, player->GetMyPlayerIdx()))
 	{
-		pBall->ThrowSpecial(player);
-
-		// アクションパターン変更
-		SetPattern(player, CPlayer::MOTION::MOTION_SPECIAL, CPlayer::Action::ACTION_SPECIAL);
+		//発動
+		SpecialSetting(player, pBall, pTeamStatus);
 	}
 }
 

@@ -54,6 +54,7 @@ namespace UtilFunc
 			MyLib::Vector3 RotationChangeToForwardVector(float rot);
 		MyLib::Vector3 WorldMtxChangeToPosition(D3DXMATRIX worldmtx);	// ワールドマトリックスをposに変換
 		MyLib::Vector3 MtxChangeToMatrix(const D3DXMATRIX& matrix);
+		inline float DegreeChangeToRadian(float degree);
 	}
 
 	namespace Collision
@@ -1975,7 +1976,7 @@ namespace UtilFunc	// 便利関数
 		@param	posMain			[in]	中心となる人の位置
 		@param	posTarget		[in]	対象の位置
 		@param	mainRotY		[in]	向き
-		@param	fieldofview		[in]	視野角(弧度法)
+		@param	fieldofview		[in]	視野角(度数法)
 		@return	衝突したかのbool値
 		*/
 		inline bool CollisionViewRange3D(const MyLib::Vector3& posMain, MyLib::Vector3& posTarget, float mainRotY, float fieldofview)
@@ -1992,7 +1993,7 @@ namespace UtilFunc	// 便利関数
 			angle = acos(angle);
 
 			// 視界の中にいるか判定
-			fieldofview = D3DXToRadian(fieldofview);
+			fieldofview = UtilFunc::Transformation::DegreeChangeToRadian(fieldofview);
 			if (angle <= fieldofview / 2.0f)
 			{
 				return true;

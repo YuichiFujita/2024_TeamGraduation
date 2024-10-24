@@ -80,6 +80,7 @@ public:
 	void Debug();			// デバッグ
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
+	CTeamStatus* GetTeamStatus(const int nTeam) { return m_pTeamStatus[nTeam]; }	// チームステータス取得
 
 	static CGameManager *Create(CScene::MODE mode);	// 生成処理
 

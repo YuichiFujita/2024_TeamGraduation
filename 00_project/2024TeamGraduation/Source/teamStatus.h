@@ -64,8 +64,8 @@ public:
 	// モテ情報
 	//-----------------------------
 	void InitCharmInfo();													//モテ情報初期化
-	void AddCharmValue(float fValue) { m_sCharmInfo.fValue += fValue; }		//モテゲージ値増加
-	void SubCharmValue(float fValue) { m_sCharmInfo.fValue -= fValue; }		//モテゲージ値減少
+	void AddCharmValue(float fValue);										//モテゲージ値増加
+	void SubCharmValue(float fValue);										//モテゲージ値減少
 	void SetCharmInfo(SCharmInfo sInfo) { m_sCharmInfo = sInfo; }			//モテ情報設定
 	SCharmInfo GetCharmInfo() { return m_sCharmInfo; }						//モテ情報取得
 
@@ -75,8 +75,10 @@ public:
 	void InitSpecialInfo();													//スペシャル情報初期化
 	void AddSpecialValue(float fValue);										//スペシャルゲージ値増加
 	void SubSpecialValue(float fValue);										//スペシャルゲージ値減少
+	void ZeroSpecialValue() { m_sSpecialInfo.fValue = 0; }					//スペシャルゲージ値消去
 	void SetSpecialInfo(SSpecialInfo sInfo) { m_sSpecialInfo = sInfo; }		//スペシャル情報設定
 	SSpecialInfo GetSpecialInfo() { return m_sSpecialInfo; }				//スペシャル情報取得
+	bool IsMaxSpecial() { return m_sSpecialInfo.fValue == m_sSpecialInfo.fValueMax; }		//マックスフラグ取得
 
 	void Debug();		//デバッグ
 

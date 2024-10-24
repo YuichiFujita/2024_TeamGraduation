@@ -21,6 +21,7 @@
 #include "ball.h"
 #include "collisionLine_Box.h"
 #include "teamStatus.h"
+#include "audience.h"
 
 //==========================================================================
 // 定数定義
@@ -216,7 +217,17 @@ void CGameManager::SceneStart()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
+	for (int i = 0; i < 2; i++)
+	{
+		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// モテ情報
+		float fMoteRate = info.fValue / info.fValueMax;				// モテ割合
+		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// 現在の観客数
 
+		// 観客数を設定
+		CAudience::SetNumWatch(nNumAudience, (CGameManager::TeamSide)(i + 1));
+
+		GET_MANAGER->GetDebugProc()->Print("チーム%d：観客 %d\n", i, nNumAudience);
+	}
 }
 
 //==========================================================================
