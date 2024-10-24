@@ -36,7 +36,6 @@ namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
-	const float CATCH_ANGLE = 180;	// キャッチ判定角度
 }
 
 namespace Knockback
@@ -56,7 +55,7 @@ namespace Catch
 		5.0,	// スペシャル
 	};
 
-
+	const float ANGLE = 160;	// キャッチ判定角度(度数法)
 }
 
 namespace StateTime
@@ -614,7 +613,7 @@ bool CPlayer::Hit(CBall* pBall)
 	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
 	if (m_sMotionFrag.bCatch &&
-		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, CATCH_ANGLE))
+		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
 	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理
