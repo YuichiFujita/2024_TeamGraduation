@@ -26,8 +26,6 @@ public:
 	// コンストラクタ
 	CPlayerAIControlAction();
 
-	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// キャッチ
-
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
 	void SetEnableAutoThrow(bool bAuto) { m_bAutoThrow = bAuto; }

@@ -1,4 +1,3 @@
-#if 0
 //============================================================
 //
 //	オブジェクトキャラクターアニメーション処理 [objectCharaAnim.cpp]
@@ -142,12 +141,12 @@ void CObjectCharaAnim::SetMotion(const int nType)
 	SChara* pInfoChara = &m_info.vecMotion[nType].infoChara;	// キャラクター情報
 
 	// 指定テクスチャの割当
-	BindTexture(pInfoChara->sPathTexture.c_str());
+	BindTexture(CTexture::GetInstance()->Regist(pInfoChara->sPathTexture.c_str()));
 
 	// キャラクター情報を設定
 	SetTexPtrn(pInfoChara->ptrnTexture);	// テクスチャ分割数
 	SetEnableLoop(pInfoChara->bLoop);		// ループON/OFF
-	SetVec3Size(pInfoChara->size);			// 大きさ
+	SetSize(pInfoChara->size);				// 大きさ
 
 	assert((int)pInfoChara->vecNextTime.size() == pInfoChara->nMaxPtrn);
 	for (int i = 0; i < pInfoChara->nMaxPtrn; i++)
@@ -273,25 +272,28 @@ MyLib::Vector3 CObjectCharaAnim::GetCollOffsetPosition() const
 void CObjectCharaAnim::CalWorldMtx()
 {
 	MyLib::Vector3 offset = m_info.vecMotion[m_info.nType].infoChara.offset;	// オフセット
-	MyLib::Matrix* pMtxWorld = GetPtrMtxWorld();	// ワールドマトリックス
-	MyLib::Matrix mtxRot, mtxTrans, mtxOffset;		// 計算用マトリックス
-	MyLib::Vector3 pos = GetPosition();		// 位置
-	MyLib::Vector3 rot = GetRotation();		// 向き
+	MyLib::Matrix mtxWorld = GetWorldMtx();		// ワールドマトリックス
+	MyLib::Matrix mtxRot, mtxTrans, mtxOffset;	// 計算用マトリックス
+	MyLib::Vector3 pos = GetPosition();			// 位置
+	MyLib::Vector3 rot = GetRotation();			// 向き
 
 	// ワールドマトリックスの初期化
-	D3DXMatrixIdentity(pMtxWorld);
+	mtxWorld.Identity();
 
-	// オフセットを反映
-	D3DXMatrixTranslation(&mtxOffset, offset.x, offset.y, offset.z);
-	D3DXMatrixMultiply(pMtxWorld, pMtxWorld, &mtxOffset);
+	// 位置を反映する
+	mtxOffset.Translation(offset);
+	mtxWorld.Multiply(mtxWorld, mtxOffset);
 
-	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, rot.y, rot.x, rot.z);
-	D3DXMatrixMultiply(pMtxWorld, pMtxWorld, &mtxRot);
+	// 向きを反映する
+	mtxRot.RotationYawPitchRoll(rot.y, rot.x, rot.z);
+	mtxWorld.Multiply(mtxWorld, mtxRot);
 
-	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, pos.x, pos.y, pos.z);
-	D3DXMatrixMultiply(pMtxWorld, pMtxWorld, &mtxTrans);
+	// 位置を反映する
+	mtxTrans.Translation(pos);
+	mtxWorld.Multiply(mtxWorld, mtxTrans);
+
+	// ワールドマトリックスを反映
+	SetWorldMtx(mtxWorld);
 }
 
 //============================================================
@@ -307,21 +309,20 @@ MyLib::Vector3 CObjectCharaAnim::CalcOffsetPosition
 	MyLib::Matrix mtxWorld, mtxRot, mtxTrans, mtxOffset;	// 計算用マトリックス
 
 	// ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&mtxWorld);
+	mtxWorld.Identity();
 
-	// オフセットを反映
-	D3DXMatrixTranslation(&mtxOffset, rOffset.x, rOffset.y, rOffset.z);
-	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxOffset);
+	// 位置を反映する
+	mtxOffset.Translation(rOffset);
+	mtxWorld.Multiply(mtxWorld, mtxOffset);
 
-	// 向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, rRot.y, rRot.x, rRot.z);
-	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
+	// 向きを反映する
+	mtxRot.RotationYawPitchRoll(rRot.y, rRot.x, rRot.z);
+	mtxWorld.Multiply(mtxWorld, mtxRot);
 
-	// 位置を反映
-	D3DXMatrixTranslation(&mtxTrans, rPos.x, rPos.y, rPos.z);
-	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrans);
+	// 位置を反映する
+	mtxTrans.Translation(rPos);
+	mtxWorld.Multiply(mtxWorld, mtxTrans);
 
 	// 算出したマトリックスの位置を返す
-	return mtxWorld.GetPosition();
+	return mtxWorld.GetWorldPosition();
 }
-#endif
