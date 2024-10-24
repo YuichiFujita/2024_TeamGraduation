@@ -1,5 +1,4 @@
-﻿#if 0
-//============================================================
+﻿//============================================================
 //
 //	キャラクターアニメーション処理 [characterAnim.cpp]
 //	Author：藤田勇一
@@ -73,6 +72,7 @@ void CCharacterAnim::Uninit()
 //============================================================
 HRESULT CCharacterAnim::LoadAll()
 {
+#ifndef _DEBUG
 	// キャラクターの全読込
 	if (FAILED(SearchFolderAll(LOAD_FOLDER)))
 	{ // 読込に失敗した場合
@@ -81,6 +81,7 @@ HRESULT CCharacterAnim::LoadAll()
 		assert(false);
 		return E_FAIL;
 	}
+#endif
 
 	// 成功を返す
 	return S_OK;
@@ -385,4 +386,3 @@ HRESULT CCharacterAnim::LoadMotionSetup(AMotion* pInfoChara, const char* pMotion
 	// 成功を返す
 	return S_OK;
 }
-#endif
