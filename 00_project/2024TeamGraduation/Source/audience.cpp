@@ -15,7 +15,8 @@ namespace
 {
 	const int MIN_JUMP = 6;		// 最低ジャンプ量
 	const int MAX_JUMP = 12;	// 最大ジャンプ量
-
+	const float GRAVITY_RATE = 0.5f;	// 重力にかける割合
+	const float JUMP_RATE = 0.5f;		// ジャンプ力にかける割合
 	const float TIME_SPAWN = 2.4f;		// 入場時間
 	const float TIME_DESPAWN = 3.2f;	// 退場時間
 }
@@ -206,6 +207,23 @@ void CAudience::SetDespawnAll()
 }
 
 //==========================================================================
+// 全観戦中の人数取得処理
+//==========================================================================
+int CAudience::GetNumWatchAll()
+{
+	int nNumWatch = 0;	// 観戦中人数
+	std::list<CAudience*>::iterator itr = m_list.GetEnd();
+	while (m_list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		// 観戦中の状態だった場合人数加算
+		CAudience* pAudience = (*itr);	// 観客情報
+		if (pAudience->m_state != STATE_DESPAWN) { nNumWatch++; }	// TODO：観戦状態に含まれない状態を追加した場合加算
+	}
+	return nNumWatch;
+}
+
+//==========================================================================
 // 入場状態の更新処理
 //==========================================================================
 void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -223,7 +241,7 @@ void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 	pos.z = posDest.z;
 
 	// 重力の更新
-	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate, 0.5f))
+	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate, GRAVITY_RATE))
 	{ // 着地した場合
 
 		// TODO：ここで盛り上がるタイミング化を確認
@@ -231,7 +249,7 @@ void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 		{ // 盛り上がっている場合
 
 			// 縦移動量を与える
-			move.y = m_fJumpLevel * 0.5f;
+			move.y = m_fJumpLevel * JUMP_RATE;
 		}
 	}
 

@@ -93,6 +93,7 @@ public:
 	static CAudience* Create(EObjType type);		// 生成
 	static void SetEnableJumpAll(const bool bJump);	// 全盛り上がり設定
 	static void SetDespawnAll();					// 全退場設定
+	static int GetNumWatchAll();					// 全観戦中の人数取得
 
 protected:
 	//=============================

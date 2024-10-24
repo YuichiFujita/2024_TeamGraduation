@@ -220,11 +220,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pGameManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// キーボード情報取得
-	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();
-
-	// ゲームパッド情報取得
-	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
 
 
 #if _DEBUG
