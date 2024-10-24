@@ -38,6 +38,7 @@ namespace
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;			// ジャンプ力初期値
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
+	const float CATCH_ANGLE = 180;	// キャッチ判定角度
 }
 
 namespace Knockback
@@ -583,7 +584,8 @@ bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
-	CBall::EState stateBall	= pBall->GetState();	// ボール状態
+	CBall::EState stateBall = pBall->GetState();	// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
 
 	//死亡状態ならすり抜け
@@ -603,8 +605,9 @@ bool CPlayer::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
-	if (m_sMotionFrag.bCatch)
-	{ // キャッチアクション中だった中でも受け付け中の場合	
+	if (m_sMotionFrag.bCatch &&
+		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, CATCH_ANGLE))
+	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理
 		CatchSetting(pBall);
@@ -1032,6 +1035,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+		ImGui::Text("bCatch : [%d]", m_sMotionFrag.bCatch);
 
 		ImGui::TreePop();
 	}
