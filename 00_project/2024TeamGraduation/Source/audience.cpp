@@ -36,6 +36,7 @@ CAudience::STATE_FUNC CAudience::m_StateFuncList[] =
 // 静的メンバ変数
 //==========================================================================
 CListManager<CAudience> CAudience::m_list = {};	// リスト
+int CAudience::m_nNumWatchAll = 0;	// 観戦中の人数
 
 //==========================================================================
 // コンストラクタ
@@ -100,6 +101,9 @@ HRESULT CAudience::Init()
 {
 	// リストに追加
 	m_list.Regist(this);
+
+	// 観戦中の人数を加算
+	m_nNumWatchAll++;
 
 	return S_OK;
 }
@@ -172,6 +176,9 @@ void CAudience::SetDespawn()
 	// 退場開始位置を保存
 	m_posDespawnStart = GetPosition();	// 現在の位置
 
+	// 観戦中の人数を減算
+	m_nNumWatchAll--;
+
 	// 退場状態にする
 	m_state = STATE_DESPAWN;
 }
@@ -207,23 +214,6 @@ void CAudience::SetDespawnAll()
 }
 
 //==========================================================================
-// 全観戦中の人数取得処理
-//==========================================================================
-int CAudience::GetNumWatchAll()
-{
-	int nNumWatch = 0;	// 観戦中人数
-	std::list<CAudience*>::iterator itr = m_list.GetEnd();
-	while (m_list.ListLoop(itr))
-	{ // リスト内の要素数分繰り返す
-
-		// 観戦中の状態だった場合人数加算
-		CAudience* pAudience = (*itr);	// 観客情報
-		if (pAudience->m_state != STATE_DESPAWN) { nNumWatch++; }	// TODO：観戦状態に含まれない状態を追加した場合加算
-	}
-	return nNumWatch;
-}
-
-//==========================================================================
 // 入場状態の更新処理
 //==========================================================================
 void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -233,7 +223,7 @@ void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 	MyLib::Vector3 move = GetMove();	// 移動量
 
 	// 経過時間を加算
-	m_fTimeState += fDeltaTime;
+	m_fTimeState += fDeltaTime * fSlowRate;
 
 	// 入場位置から観戦位置に移動 (Y座標は無視する)
 	MyLib::Vector3 posDest = UtilFunc::Correction::EasingLinear(m_posSpawn, m_posWatch, 0.0f, TIME_SPAWN, m_fTimeState);
@@ -326,7 +316,7 @@ void CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, co
 	posDespawn.x = -m_posSpawn.x;			// X座標を反転させる
 
 	// 経過時間を加算
-	m_fTimeState += fDeltaTime;
+	m_fTimeState += fDeltaTime * fSlowRate;
 
 	// 観戦位置から入場位置の逆方向に移動 (Y座標は無視する)
 	MyLib::Vector3 posDest = UtilFunc::Correction::EasingLinear(m_posDespawnStart, posDespawn, 0.0f, TIME_DESPAWN, m_fTimeState);
