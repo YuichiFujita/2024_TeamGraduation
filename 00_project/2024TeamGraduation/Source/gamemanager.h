@@ -69,20 +69,17 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetType(ESceneType type);							// シーンの種類設定
-	ESceneType GetType() { return m_SceneType; }			// シーンの種類取得
-	ESceneType GetOldType() { return m_OldSceneType; }		// 前回のシーンの種類取得
+	void SetType(ESceneType type);						// シーンの種類設定
+	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
+	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
-	void SetPosLimit(MyLib::Vector3& pos);	// コート移動制限
+	void SetPosLimit(MyLib::Vector3& pos);					// コート移動制限
 
-
-	void Debug();	// デバッグ
-
-	void StartSetting();		// スタート時の設定
-
-	CBall* GetBall();	// ボール取得
+	void Debug();			// デバッグ
+	void StartSetting();	// スタート時の設定
+	CBall* GetBall();		// ボール取得
 
 	static CGameManager *Create(CScene::MODE mode);	// 生成処理
 
@@ -91,9 +88,9 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void SceneStart();			// 開始演出
+	virtual void SceneStart();	// 開始演出
+	void UpdateAudience();		// 観客更新
 	void CreateTeamStatus();	// チームステータス生成
-
 
 	//=============================
 	// メンバ変数
@@ -103,11 +100,11 @@ private:
 	bool m_bControll;			// 操作できるか
 	float m_fSceneTimer;		// シーンタイマー
 
-	MyLib::Vector3 m_courtSize;							//コートのサイズ
-	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];		// チームステータス
+	MyLib::Vector3 m_courtSize;						// コートのサイズ
+	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];	// チームステータス
 
 #if _DEBUG
-	CCollisionLine_Box* m_pCourtSizeBox = nullptr;		// コートサイズのボックス
+	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
 #endif
 };
 

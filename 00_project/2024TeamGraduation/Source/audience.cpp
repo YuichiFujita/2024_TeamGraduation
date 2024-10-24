@@ -36,13 +36,14 @@ CAudience::STATE_FUNC CAudience::m_StateFuncList[] =
 // 静的メンバ変数
 //==========================================================================
 CListManager<CAudience> CAudience::m_list = {};	// リスト
-int CAudience::m_nNumWatchAll = 0;	// 観戦中の人数
+int CAudience::m_aNumWatchAll[2] = {};	// 観戦中の人数
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudience::CAudience(EObjType type, int nPriority, const LAYER layer) : CObject(nPriority, layer),
+CAudience::CAudience(EObjType type, CGameManager::TeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel		(UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
+	m_team				(team),			// 応援チーム
 	m_type				(type),			// オブジェクト種類
 	m_posSpawn			(VEC3_ZERO),	// 入場位置
 	m_posWatch			(VEC3_ZERO),	// 観戦位置
@@ -64,14 +65,14 @@ CAudience::~CAudience()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CAudience* CAudience::Create(EObjType type)
+CAudience* CAudience::Create(EObjType type, CGameManager::TeamSide team)
 {
 	// メモリの確保
 	CAudience* pAudience = nullptr;
 	switch (type)
 	{ // オブジェクト種類ごとの処理
 	case CAudience::OBJTYPE_ANIM:
-		pAudience = DEBUG_NEW CAudienceAnim(type);
+		pAudience = DEBUG_NEW CAudienceAnim(type, team);
 		break;
 
 	default:
@@ -103,7 +104,8 @@ HRESULT CAudience::Init()
 	m_list.Regist(this);
 
 	// 観戦中の人数を加算
-	m_nNumWatchAll++;
+	int nIdxTeam = m_team - 1;
+	m_aNumWatchAll[nIdxTeam]++;
 
 	return S_OK;
 }
@@ -177,23 +179,44 @@ void CAudience::SetDespawn()
 	m_posDespawnStart = GetPosition();	// 現在の位置
 
 	// 観戦中の人数を減算
-	m_nNumWatchAll--;
+	int nIdxTeam = m_team - 1;
+	m_aNumWatchAll[nIdxTeam]--;
 
 	// 退場状態にする
 	m_state = STATE_DESPAWN;
 }
 
 //==========================================================================
+// 全観戦中の人数取得処理
+//==========================================================================
+int CAudience::GetNumWatchAll(CGameManager::TeamSide team)
+{
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return -1; }
+
+	// 引数サイドの観戦人数を返す
+	int nIdxTeam = team - 1;
+	return m_aNumWatchAll[nIdxTeam];
+}
+
+//==========================================================================
 // 全盛り上がりの設定処理
 //==========================================================================
-void CAudience::SetEnableJumpAll(const bool bJump)
+void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
 {
-	// 全観客の盛り上がり状況を設定
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
 		CAudience* pAudience = (*itr);	// 観客情報
+
+		// 指定チームではない場合次へ
+		if (pAudience->m_team != team) { continue; }
+
+		// 盛り上がり状況を設定
 		pAudience->SetEnableJump(bJump);
 	}
 }
@@ -201,14 +224,21 @@ void CAudience::SetEnableJumpAll(const bool bJump)
 //==========================================================================
 // 全退場の設定処理
 //==========================================================================
-void CAudience::SetDespawnAll()
+void CAudience::SetDespawnAll(CGameManager::TeamSide team)
 {
-	// 全観客の退場を設定
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
 		CAudience* pAudience = (*itr);	// 観客情報
+
+		// 指定チームではない場合次へ
+		if (pAudience->m_team != team) { continue; }
+
+		// 退場を設定
 		pAudience->SetDespawn();
 	}
 }
