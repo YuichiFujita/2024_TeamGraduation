@@ -26,9 +26,10 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float MAX_LEFT_LINE = -1000.0f;	// 左の生成位置上限
-	static constexpr float MAX_RIGHT_LINE = 1000.0f;	// 右の生成位置上限
-	static constexpr float SPAWN_SIDE_LINE = 2200.0f;	// 生成する横位置
+	static constexpr float MAX_LEFT_LINE = -2200.0f;	// 左の生成位置上限
+	static constexpr float MAX_RIGHT_LINE = 2200.0f;	// 右の生成位置上限
+	static constexpr float SPAWN_SIDE_LINE = 2500.0f;	// 生成する横位置
+	static constexpr int MAX_WATCH = 500;				// 観戦する最大人数
 
 	//=============================
 	// 列挙型定義
@@ -86,15 +87,16 @@ public:
 	// メンバ関数
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
-	void SetDespawn();	// 退場設定
+	bool SetDespawn();	// 退場設定
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CAudience* Create(EObjType type, CGameManager::TeamSide team);			// 生成
-	static int GetNumWatchAll(CGameManager::TeamSide team);							// 全観戦中の人数取得
-	static void SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team);	// 全盛り上がり設定
-	static void SetDespawnAll(CGameManager::TeamSide team);							// 全退場設定
+	static CAudience* Create(EObjType type, CGameManager::TeamSide team);				// 生成
+	static HRESULT SetNumWatch(const int nNumWatch, CGameManager::TeamSide team);		// 観戦中の人数設定
+	static int GetNumWatchAll(CGameManager::TeamSide team);								// 全観戦中の人数取得
+	static void SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team);		// 全盛り上がり設定
+	static void SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn = -1);	// 全退場設定
 
 protected:
 	//=============================
