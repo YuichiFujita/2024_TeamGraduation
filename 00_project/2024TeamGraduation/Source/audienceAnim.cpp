@@ -12,7 +12,8 @@
 //==========================================================================
 namespace
 {
-	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;	// 優先順位
+	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
+	const char* SETUP_TXT = "data\\CHARACTER\\frisk.txt";	// プレイヤーセットアップテキスト
 
 	const int LEFT_LINE[]  = { (int)CAudienceAnim::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };		// チームサイドごとの左ライン
 	const int RIGHT_LINE[] = { (int)CGameManager::CENTER_LINE, (int)CAudienceAnim::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
@@ -22,7 +23,7 @@ namespace
 // コンストラクタ
 //==========================================================================
 CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pAnim3D	(nullptr)	// アニメーション3D情報
+	m_pAnimChara	(nullptr)	// キャラクターアニメーション情報
 {
 }
 
@@ -60,24 +61,22 @@ HRESULT CAudienceAnim::Init()
 	posSpawn.x = CAudience::SPAWN_SIDE_LINE * fTurn;
 	SetSpawnPosition(posSpawn);
 
-	// アニメーション3Dの生成
-	m_pAnim3D = CObject3DAnim::Create(MyLib::PosGrid2(10, 1), posSpawn, 1.0f);
-	if (m_pAnim3D == nullptr)
+	// オブジェクトキャラクターアニメーションの生成
+	m_pAnimChara = CObjectCharaAnim::Create(posSpawn);
+	if (m_pAnimChara == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
 
-#if 1
-	m_pAnim3D->BindTexture(CTexture::GetInstance()->Regist("data\\TEXTURE\\number000.png"));
-#endif
+	// キャラクター情報の割当
+	m_pAnimChara->BindCharaData(SETUP_TXT);
+
+	// モーションを設定
+	m_pAnimChara->SetMotion(1);
 
 	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
-	m_pAnim3D->SetType(CObject::TYPE::TYPE_NONE);
-
-	// TODO：大きさ定数必要
-	m_pAnim3D->SetSizeOrigin(MyLib::Vector3(40.0f, 60.0f, 0.0f));
-	m_pAnim3D->SetSize(MyLib::Vector3(40.0f, 60.0f, 0.0f));
+	m_pAnimChara->SetType(CObject::TYPE::TYPE_NONE);
 
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
@@ -93,8 +92,8 @@ void CAudienceAnim::Uninit()
 	// 親クラスの終了
 	CAudience::Uninit();
 
-	// アニメーション3Dの終了
-	SAFE_UNINIT(m_pAnim3D);
+	// オブジェクトキャラクターアニメーションの終了
+	SAFE_UNINIT(m_pAnimChara);
 }
 
 //==========================================================================
@@ -105,8 +104,8 @@ void CAudienceAnim::Kill()
 	// 親クラスの削除
 	CAudience::Kill();
 
-	// アニメーション3Dの終了
-	SAFE_UNINIT(m_pAnim3D);
+	// オブジェクトキャラクターアニメーションの終了
+	SAFE_UNINIT(m_pAnimChara);
 }
 
 //==========================================================================
@@ -114,10 +113,45 @@ void CAudienceAnim::Kill()
 //==========================================================================
 void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_pAnim3D != nullptr)
+	int nCurMotion = m_pAnimChara->GetMotion();	// TODO
+
+	if (m_pAnimChara != nullptr)
 	{
-		// アニメーション3Dの更新
-		m_pAnim3D->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		// 死んでいる場合抜ける
+		if (IsDeath()) { return; }
+
+		// モーションが設定されていない場合抜ける
+		if (nCurMotion == -1) { return; }
+
+		int nAnimMotion = m_pAnimChara->GetMotion();	// 現在再生中のモーション
+		if (m_pAnimChara->IsLoop())
+		{ // ループするモーションだった場合
+
+			if (nAnimMotion != nCurMotion)
+			{ // 現在のモーションが再生中のモーションと一致しない場合
+
+				// 現在のモーションの設定
+				m_pAnimChara->SetMotion(nCurMotion);
+			}
+		}
+
+		// オブジェクトキャラクターアニメーションの更新
+		m_pAnimChara->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+#if 0
+		switch (m_pAnimChara->GetMotion())
+		{ // モーションの種類ごとの処理
+		case MOTION_IDOL_U:	// 上待機モーション
+		case MOTION_IDOL_D:	// 下待機モーション
+		case MOTION_IDOL_L:	// 左待機モーション
+		case MOTION_IDOL_R:	// 右待機モーション
+		case MOTION_MOVE_U:	// 上移動モーション
+		case MOTION_MOVE_D:	// 下移動モーション
+		case MOTION_MOVE_L:	// 左移動モーション
+		case MOTION_MOVE_R:	// 右移動モーション
+			break;
+		}
+#endif
 	}
 
 	// 親クラスの更新
@@ -129,8 +163,8 @@ void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CAudienceAnim::Draw()
 {
-	// アニメーション3Dの描画
-	m_pAnim3D->Draw();
+	// オブジェクトキャラクターアニメーションの描画
+	m_pAnimChara->Draw();
 
 	// 親クラスの描画
 	CAudience::Draw();
