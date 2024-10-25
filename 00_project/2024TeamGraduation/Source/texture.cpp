@@ -273,13 +273,37 @@ HRESULT CTexture::LoadTex(const std::string& file)
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevive = CManager::GetInstance()->GetRenderer()->GetDevice();
 
-	// テクスチャの読み込み
-	hr = D3DXCreateTextureFromFile(pDevive,
-		file.c_str(),
-		&m_TexInfo[nIdx].pTexture);
+	// 画像情報の取得
+	D3DXIMAGE_INFO size;	// テクスチャステータス
+	if (FAILED(D3DXGetImageInfoFromFile(file.c_str(), &size)))
+	{ // 画像情報の取得に失敗した場合
 
+		std::string error = "画像情報の読み込み失敗！" + file;
+		MyAssert::CustomAssert(false, error);
+		return E_FAIL;
+	}
+
+	// テクスチャの読込
+	hr = D3DXCreateTextureFromFileEx
+	( // 引数
+		GET_DEVICE,			// Direct3Dデバイス
+		file.c_str(),		// テクスチャファイルパス
+		size.Width,			// テクスチャ横幅
+		size.Height,		// テクスチャ縦幅
+		0,					// ミップマップレベル
+		0,					// 性質・確保オプション
+		D3DFMT_A8R8G8B8,	// ピクセルフォーマット
+		D3DPOOL_MANAGED,	// 格納メモリ
+		D3DX_DEFAULT,		// フィルタ
+		D3DX_DEFAULT,		// ミップマップフィルタ
+		0,					// カラーキー
+		&m_TexInfo[nIdx].imageInfo,	// テクスチャステータスへのポインタ
+		nullptr,					// テクスチャパレットへのポインタ
+		&m_TexInfo[nIdx].pTexture	// テクスチャへのポインタ
+	);
 	if (FAILED(hr))
-	{
+	{ // テクスチャの読込に失敗した場合
+
 		// 要素削除
 		m_TexInfo.erase(m_TexInfo.end() - 1);
 
@@ -287,9 +311,6 @@ HRESULT CTexture::LoadTex(const std::string& file)
 		MyAssert::CustomAssert(false, error);
 		return E_FAIL;
 	}
-
-	// テクスチャ素材情報
-	D3DXGetImageInfoFromFile(file.c_str(), &m_TexInfo[nIdx].imageInfo);
 
 	// ファイル名と長さ保存
 	m_TexInfo[nIdx].filename = file;
