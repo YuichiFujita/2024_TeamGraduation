@@ -99,6 +99,7 @@ public:
 	static void SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn = -1);	// ‘S‘Şêİ’è
 
 protected:
+
 	//=============================
 	// ƒˆ‰¼‘zŠÖ”
 	//=============================

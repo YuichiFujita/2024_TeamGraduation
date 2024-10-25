@@ -1,13 +1,13 @@
+#if 0
 //==========================================================================
 // 
-//  ライト処理 [light.h]
-//  Author : 相馬靜雅
-//  Adder  : 藤田勇一
+//  スポットライト処理 [lightspot.h]
+//  Author : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _LIGHT_H_
-#define _LIGHT_H_	// 二重インクルード防止
+#ifndef _LIGHT_SPOT_H_
+#define _LIGHT_SPOT_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -17,44 +17,32 @@
 //==========================================================================
 // クラス定義
 //==========================================================================
-// ライトクラス
-class CLight
+// スポットライトクラス
+class CLightSpot
 {
 public:
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CLight();
-	~CLight();
+	CLightSpot();
+	~CLightSpot();
 
 	//=============================
 	// メンバ関数
 	//=============================
-	HRESULT Init();	// 初期化
-	void Uninit();	// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-	void UpdateSpotLightDirection(MyLib::Vector3 vec);	// スポットライトの向き更新
+	HRESULT Init();
+	void Uninit();
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void UpdateSpotLightSpotDirection(MyLib::Vector3 vec);	// スポットスポットライトの向き更新
 
 private:
 
 	//=============================
-	// 列挙型定義
-	//=============================
-	// 種類列挙
-	enum TYPE
-	{
-		TYPE_DIRECTIONAL_01 = 0,
-		TYPE_DIRECTIONAL_02,
-		TYPE_DIRECTIONAL_03,
-		TYPE_SPOT_01,
-		TYPE_MAX,
-	};
-
-	//=============================
 	// メンバ変数
 	//=============================
-	D3DLIGHT9 m_aLight[TYPE_MAX];	// ライト構造体
+	D3DLIGHT9 m_light;	// スポットライト構造体
 };
 
+#endif
 #endif
