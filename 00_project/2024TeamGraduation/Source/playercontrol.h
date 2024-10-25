@@ -23,7 +23,7 @@ public:
 	// コンストラクタ
 	CPlayerControl();
 
-	void SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA);
+	void SetPattern(CPlayer* player, CPlayer::EMotion typeM, CPlayer::EAction typeA);
 
 private:
 	

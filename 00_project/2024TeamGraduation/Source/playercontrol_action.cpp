@@ -33,7 +33,7 @@ CPlayerControlAction::CPlayerControlAction()
 //==========================================================================
 // 統括
 //==========================================================================
-void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlAction::EAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーション情報取得
 	CMotion* pMotion = player->GetMotion();
@@ -61,10 +61,10 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
 	if (pPlayerAction == nullptr) return; 
-	CPlayer::Action action = pPlayerAction->GetAction();
+	CPlayer::EAction action = pPlayerAction->GetAction();
 
-	if (action != CPlayer::Action::ACTION_BLINK ||
-		action != CPlayer::Action::ACTION_DODGE)
+	if (action != CPlayer::EAction::ACTION_BLINK ||
+		action != CPlayer::EAction::ACTION_DODGE)
 	{
 		Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
@@ -83,7 +83,7 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 	pTeamStatus->ZeroSpecialValue();
 
 	// アクションパターン変更
-	SetPattern(player, CPlayer::MOTION::MOTION_SPECIAL, CPlayer::Action::ACTION_SPECIAL);
+	SetPattern(player, CPlayer::EMotion::MOTION_SPECIAL, CPlayer::EAction::ACTION_SPECIAL);
 }
 
 //==========================================================================
@@ -115,7 +115,7 @@ void CPlayerControlAction::SetJump(CPlayer* player)
 	player->SetEnableJump(bJump);
 
 	// アクションパターン変更
-	SetPattern(player, CPlayer::MOTION::MOTION_JUMP, CPlayer::Action::ACTION_JUMP);
+	SetPattern(player, CPlayer::EMotion::MOTION_JUMP, CPlayer::EAction::ACTION_JUMP);
 
 	// サウンド再生
 	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);

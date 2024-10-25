@@ -134,7 +134,7 @@ HRESULT CPlayer::Init()
 
 	// ダメージ受け付け判定
 	m_sDamageInfo.bReceived = true;
-	m_sDamageInfo.reciveTime = 0.0f;
+	m_sDamageInfo.fReceiveTime = 0.0f;
 
 	m_state = STATE_NONE;	// 状態
 	m_Oldstate = m_state;
@@ -315,9 +315,9 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	pos += move * fDeltaRate * fSlowRate;
 
 	// 慣性補正
-	Action act = m_pActionPattern->GetAction();
+	EAction act = m_pActionPattern->GetAction();
 	float ratio = 0.25f;
-	if (act == Action::ACTION_BLINK)
+	if (act == EAction::ACTION_BLINK)
 	{
 		ratio = 0.1f;
 	}
@@ -431,6 +431,7 @@ void CPlayer::ResetFrag()
 
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
+	m_sMotionFrag.bCatchJust = false;
 
 	switch (nType)
 	{
@@ -455,7 +456,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_THROW:
+	case EMotion::MOTION_THROW:
 		
 		if (m_pBall != nullptr)
 		{// 通常投げ
@@ -464,7 +465,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 		break;
 
-	case MOTION::MOTION_THROW_JUMP:
+	case EMotion::MOTION_THROW_JUMP:
 
 		if (m_pBall != nullptr)
 		{// ジャンプ投げ
@@ -490,10 +491,17 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 
 	switch (nType)
 	{
-	case MOTION::MOTION_CATCH_STANCE:
+	case EMotion::MOTION_CATCH_STANCE:
 
 		// キャッチフラグON
 		m_sMotionFrag.bCatch = true;
+
+		if (nCntATK == 1)
+		{//2個目(1)がジャスト
+
+			//ジャストフラグON
+			m_sMotionFrag.bCatchJust = true;
+		}
 
 		break;
 
@@ -537,7 +545,7 @@ void CPlayer::LimitPos()
 
 		if (m_bJump)
 		{// ジャンプ中着地
-			GetMotion()->Set(MOTION::MOTION_LAND);
+			GetMotion()->Set(EMotion::MOTION_LAND);
 		}
 
 		// 重力リセット
@@ -596,7 +604,7 @@ bool CPlayer::Hit(CBall* pBall)
 	MyLib::HitResult_Character hitresult = {};
 
 	//死亡状態ならすり抜け
-	if (m_state == STATE::STATE_DEAD)
+	if (m_state == EState::STATE_DEAD)
 	{
 		return true;
 	}
@@ -680,8 +688,8 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 void CPlayer::DamageSetting(CBall* pBall)
 {
 	// ダメージ状態にする
-	SetState(STATE::STATE_DMG);
-	SetMotion(MOTION::MOTION_DAMAGE);
+	SetState(EState::STATE_DMG);
+	SetMotion(EMotion::MOTION_DAMAGE);
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -693,7 +701,7 @@ void CPlayer::DamageSetting(CBall* pBall)
 	m_sKnockback.fPosEnd = posE;
 
 	// ダメージ受付時間を設定
-	m_sDamageInfo.reciveTime = StateTime::DAMAGE;
+	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
 }
 
 //==========================================================================
@@ -706,25 +714,22 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
 
-	// ジャストキャッチフラグ
-	bool bJust = false;
-
 	// モーション設定
-	if (bJust)
+	if (m_sMotionFrag.bCatchJust)
 	{// ジャストキャッチ
 
 		switch (atkBall)
 		{
 		case CBall::ATK_NORMAL:
-			SetMotion(MOTION::MOTION_JUSTCATCH_NORMAL);
+			SetMotion(EMotion::MOTION_JUSTCATCH_NORMAL);
 			break;
 
 		case CBall::ATK_JUMP:
-			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
 			break;
 
 		case CBall::ATK_SPECIAL:
-			SetMotion(MOTION::MOTION_JUSTCATCH_JUMP);
+			SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
 			break;
 
 		default:
@@ -732,7 +737,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 		}
 
 		// ジャストキャッチ状態
-		SetState(STATE::STATE_CATCH_JUST);
+		SetState(EState::STATE_CATCH_JUST);
 	}
 	else
 	{// 通常キャッチ
@@ -740,15 +745,15 @@ void CPlayer::CatchSetting(CBall* pBall)
 		switch (atkBall)
 		{
 		case CBall::ATK_NORMAL:
-			SetMotion(MOTION::MOTION_CATCH_NORMAL);
+			SetMotion(EMotion::MOTION_CATCH_NORMAL);
 			break;
 
 		case CBall::ATK_JUMP:
-			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			SetMotion(EMotion::MOTION_CATCH_JUMP);
 			break;
 
 		case CBall::ATK_SPECIAL:
-			SetMotion(MOTION::MOTION_CATCH_JUMP);
+			SetMotion(EMotion::MOTION_CATCH_JUMP);
 			break;
 
 		default:
@@ -756,12 +761,12 @@ void CPlayer::CatchSetting(CBall* pBall)
 		}
 
 		// キャッチ状態
-		SetState(STATE::STATE_CATCH_NORMAL);
+		SetState(EState::STATE_CATCH_NORMAL);
 	}
 
 
 	// 受けた種類
-	m_sDamageInfo.reiveType = atkBall;
+	m_sDamageInfo.eReiceiveType = atkBall;
 
 }
 
@@ -795,12 +800,12 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 	m_sDamageInfo.bReceived = false;
 
 	// ダメージ受け付け時間減算
-	m_sDamageInfo.reciveTime -= fDeltaTime;
-	if (m_sDamageInfo.reciveTime <= 0.0f)
+	m_sDamageInfo.fReceiveTime -= fDeltaTime;
+	if (m_sDamageInfo.fReceiveTime <= 0.0f)
 	{
 		// ダメージ受け付け判定
 		m_sDamageInfo.bReceived = true;
-		m_sDamageInfo.reciveTime = 0.0f;
+		m_sDamageInfo.fReceiveTime = 0.0f;
 	}
 }
 
@@ -820,7 +825,7 @@ void CPlayer::StateInvincible()
 {
 	if (m_fStateTime >= StateTime::INVINCIBLE)
 	{
-		m_sDamageInfo.reciveTime = 0.0f;
+		m_sDamageInfo.fReceiveTime = 0.0f;
 		m_sDamageInfo.bReceived = true;
 
 		SetState(STATE_NONE);
@@ -901,8 +906,8 @@ void CPlayer::StateCatch_Normal()
 	MyLib::Vector3 move = GetMove();
 
 	// 移動量更新
-	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.reiveType] * ratio);
-	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.reiveType] * ratio);
+	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
+	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
 
 	// 位置更新
 	pos.x += move.x;
@@ -912,7 +917,7 @@ void CPlayer::StateCatch_Normal()
 
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
-		SetState(STATE::STATE_NONE);
+		SetState(EState::STATE_NONE);
 	}
 
 }
@@ -928,7 +933,7 @@ void CPlayer::StateCatch_Just()
 
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
-		SetState(STATE::STATE_NONE);
+		SetState(EState::STATE_NONE);
 	}
 }
 
@@ -980,7 +985,7 @@ void CPlayer::Draw()
 //==========================================================================
 // 状態設定
 //==========================================================================
-void CPlayer::SetState(STATE state)
+void CPlayer::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
@@ -1050,7 +1055,6 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("bCatch : [%d]", m_sMotionFrag.bCatch);
 
 		ImGui::TreePop();
 	}

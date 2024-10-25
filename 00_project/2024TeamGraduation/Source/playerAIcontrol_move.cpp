@@ -56,12 +56,12 @@ void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const f
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
 	// 状態取得
-	CPlayer::STATE state = player->GetState();
+	CPlayer::EState state = player->GetState();
 
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
 	if (pPlayerAction == nullptr) return;
-	CPlayer::Action action = pPlayerAction->GetAction();
+	CPlayer::EAction action = pPlayerAction->GetAction();
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
@@ -71,7 +71,7 @@ void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const f
 		//--------------------------
 		// ブリンク操作
 		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK)
+		if (action != CPlayer::EAction::ACTION_BLINK)
 		{
 			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
 		}
@@ -98,11 +98,11 @@ void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const f
 			// 移動モーション
 			if (player->IsDash())
 			{
-				pMotion->Set(CPlayer::MOTION::MOTION_RUN);
+				pMotion->Set(CPlayer::EMotion::MOTION_RUN);
 			}
 			else
 			{
-				pMotion->Set(CPlayer::MOTION::MOTION_WALK);
+				pMotion->Set(CPlayer::EMotion::MOTION_WALK);
 			}
 		}
 
@@ -133,7 +133,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 
 	//コントロール系取得
 	int* nCntTrigger = GetCntTrigger();						//トリガーのカウント取得
-	CPlayer::DashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
+	CPlayer::EDashAngle HoldDashAngle = GetHoldDashAngle();	//ダッシュ方向取得
 	float fInputInterval = GetInputInterval();				//入力の受け付け猶予取得
 	float fTriggerInterval = GetTriggerInterval();			//トリガーのインターバル取得
 	bool bDash = IsBlink();									//走るフラグ取得
@@ -151,17 +151,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左上
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				pPad->GetStickMoveL(0).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右上
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
 			}
 			else
 			{// 上
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_UP;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
@@ -174,17 +174,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).x < 0 ||
 				pKey->GetPress(DIK_A))
 			{// 左下
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				pPad->GetStickMoveL(0).x > 0 ||
 				pKey->GetPress(DIK_D))
 			{// 右下
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
 			}
 			else
 			{// 下
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_DOWN;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_DOWN;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
@@ -197,17 +197,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 右上
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				pPad->GetStickMoveL(0).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 右下
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
 			}
 			else
 			{// 右
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_RIGHT;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
 			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
@@ -220,17 +220,17 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 				pPad->GetStickMoveL(0).y < 0 ||
 				pKey->GetPress(DIK_W))
 			{// 左上
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTUP;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				pPad->GetStickMoveL(0).y > 0 ||
 				pKey->GetPress(DIK_S))
 			{// 左下
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFTDW;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
 			}
 			else
 			{// 左
-				HoldDashAngle = CPlayer::DashAngle::ANGLE_LEFT;
+				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFT;
 			}
 		}
 	}
@@ -250,62 +250,62 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 		bool bNextInput = false;
 		switch (HoldDashAngle)
 		{
-		case CPlayer::DashAngle::ANGLE_LEFT:
+		case CPlayer::EDashAngle::ANGLE_LEFT:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_Y)))
 			{// 上
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 			{// 下
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
 			}
 			break;
 
-		case CPlayer::DashAngle::ANGLE_RIGHT:
+		case CPlayer::EDashAngle::ANGLE_RIGHT:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
 			{// 上
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
 			{// 下
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
 			}
 			break;
 
-		case CPlayer::DashAngle::ANGLE_UP:
+		case CPlayer::EDashAngle::ANGLE_UP:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
 			{// 左
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTUP);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTUP);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
 			{// 右
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTUP);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTUP);
 				bNextInput = true;
 			}
 			break;
 
-		case CPlayer::DashAngle::ANGLE_DOWN:
+		case CPlayer::EDashAngle::ANGLE_DOWN:
 			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x < 0))
 			{// 左
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_LEFTDW);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTDW);
 				bNextInput = true;
 			}
 			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 				(pPad->GetLStickTrigger(0, CInputGamepad::STICK_X) && pPad->GetStickMoveL(0).x > 0))
 			{// 右
-				info = Trigger(player, CPlayer::DashAngle::ANGLE_RIGHTDW);
+				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTDW);
 				bNextInput = true;
 			}
 			break;
@@ -339,9 +339,9 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	if (info.bDash && !bDash)
 	{
 		MyLib::Vector3 move = player->GetMove();
-		float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-		move.x += sinf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
-		move.z += cosf((D3DX_PI * 0.0f) + division * info.angle + Camerarot.y) * 15.0f;
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		move.x += sinf((D3DX_PI * 0.0f) + division * info.eAngle + Camerarot.y) * 15.0f;
+		move.z += cosf((D3DX_PI * 0.0f) + division * info.eAngle + Camerarot.y) * 15.0f;
 
 		// 移動量設定
 		player->SetMove(move);
@@ -430,7 +430,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	bool bDash = IsBlink();	//走るフラグ
 
-	CPlayer::DashAngle angle;
+	CPlayer::EDashAngle eAngle;
 	bool bInput = false;
 
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
@@ -443,17 +443,17 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 			pPad->GetStickMoveL(0).x < 0 ||
 			pKey->GetPress(DIK_A))
 		{// 左上
-			angle = CPlayer::DashAngle::ANGLE_LEFTUP;
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
 		}
 		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 			pPad->GetStickMoveL(0).x > 0 ||
 			pKey->GetPress(DIK_D))
 		{// 右上
-			angle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
 		}
 		else
 		{// 上
-			angle = CPlayer::DashAngle::ANGLE_UP;
+			eAngle = CPlayer::EDashAngle::ANGLE_UP;
 		}
 	}
 	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
@@ -466,17 +466,17 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 			pPad->GetStickMoveL(0).x < 0 ||
 			pKey->GetPress(DIK_A))
 		{// 左下
-			angle = CPlayer::DashAngle::ANGLE_LEFTDW;
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
 		}
 		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 			pPad->GetStickMoveL(0).x > 0 ||
 			pKey->GetPress(DIK_D))
 		{// 右下
-			angle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
 		}
 		else
 		{// 下
-			angle = CPlayer::DashAngle::ANGLE_DOWN;
+			eAngle = CPlayer::EDashAngle::ANGLE_DOWN;
 		}
 	}
 	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
@@ -489,17 +489,17 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 			pPad->GetStickMoveL(0).y < 0 ||
 			pKey->GetPress(DIK_W))
 		{// 右上
-			angle = CPlayer::DashAngle::ANGLE_RIGHTUP;
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
 		}
 		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 			pPad->GetStickMoveL(0).y > 0 ||
 			pKey->GetPress(DIK_S))
 		{// 右下
-			angle = CPlayer::DashAngle::ANGLE_RIGHTDW;
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
 		}
 		else
 		{// 右
-			angle = CPlayer::DashAngle::ANGLE_RIGHT;
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
 		}
 	}
 	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
@@ -512,17 +512,17 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 			pPad->GetStickMoveL(0).y < 0 ||
 			pKey->GetPress(DIK_W))
 		{// 左上
-			angle = CPlayer::DashAngle::ANGLE_LEFTUP;
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
 		}
 		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 			pPad->GetStickMoveL(0).y > 0 ||
 			pKey->GetPress(DIK_S))
 		{// 左下
-			angle = CPlayer::DashAngle::ANGLE_LEFTDW;
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
 		}
 		else
 		{// 左
-			angle = CPlayer::DashAngle::ANGLE_LEFT;
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFT;
 		}
 	}
 
@@ -541,21 +541,21 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	fMove *= fSlowRate;
 
 	MyLib::Vector3 move = player->GetMove();
-	float division = (D3DX_PI * 2.0f) / CPlayer::DashAngle::ANGLE_MAX;	// 向き
-	move.x += sinf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
-	move.z += cosf((D3DX_PI * 0.0f) + division * angle + Camerarot.y) * fMove;
+	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+	move.x += sinf((D3DX_PI * 0.0f) + division * eAngle + Camerarot.y) * fMove;
+	move.z += cosf((D3DX_PI * 0.0f) + division * eAngle + Camerarot.y) * fMove;
 
 	// 移動量設定
 	player->SetMove(move);
 
 	// 向き設定
-	player->SetRotDest(angle * division + D3DX_PI + Camerarot.y);
+	player->SetRotDest(eAngle * division + D3DX_PI + Camerarot.y);
 }
 
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::DashAngle angle)
+CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;
@@ -563,20 +563,20 @@ CPlayer::SDashInfo CPlayerAIControlMove::Trigger(CPlayer* player, CPlayer::DashA
 	float fTriggerInterval = GetTriggerInterval();	//トリガーのインターバル
 	int* nCntTrigger = GetCntTrigger();				//トリガーのカウント
 
-	if (nCntTrigger[angle] == 1)
+	if (nCntTrigger[eAngle] == 1)
 	{// ダッシュ
 		info.bDash = true;
-		info.angle = angle;
+		info.eAngle = eAngle;
 
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::Action::ACTION_BLINK);
+		player->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_BLINK);
 	}
 
 	// トリガーのインターバルリセット
 	fTriggerInterval = TIME_INTERVAL;
 
 	// トリガーのカウント
-	nCntTrigger[angle] = (nCntTrigger[angle] + 1) % 2;
+	nCntTrigger[eAngle] = (nCntTrigger[eAngle] + 1) % 2;
 
 	//コントロール系
 	SetCntTrigger(nCntTrigger);				//トリガーのカウント

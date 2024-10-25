@@ -15,7 +15,7 @@ namespace
 {
 	const int SHOT_FPS = 15;	// 弾の間隔
 	const int DMG_TIME = 30;	// バイブの時間
-	const float DEADZONE = 0.8f;	// デッドゾーン
+	const float DEADZONE = 0.2f;	// デッドゾーン
 }
 CInputGamepad* CInputGamepad::m_pThisPtr = nullptr;	// 自身のポインタ
 
@@ -455,18 +455,46 @@ MyLib::Vector3 CInputGamepad::GetStickMoveR(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickPositionRatioL(int nCntPlayer)
 {
+	// デッドゾーン反映後の割合
+	const float shortMax = static_cast<float>(SHRT_MAX);
+	float deadZoneRate = (shortMax * m_fDeadZone);
+
 	// X軸
-	float ratioX = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbLX) / static_cast<float>(SHRT_MAX);
-	if (fabsf(ratioX) <= m_fDeadZone)
-	{
-		ratioX = 0.0f;
+	float thumbLX = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbLX);
+	float ratioX = 0.0f;
+
+	if (fabs(thumbLX) > deadZoneRate)
+	{// デッドゾーン外
+
+		if (thumbLX > 0) 
+		{
+			// 正の値の場合
+			ratioX = (thumbLX - deadZoneRate) / (shortMax - deadZoneRate);
+		}
+		else 
+		{
+			// 負の値の場合
+			ratioX = (thumbLX + deadZoneRate) / (shortMax - deadZoneRate);
+		}
 	}
 
 	// Y軸
-	float ratioY = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbLY) / static_cast<float>(SHRT_MAX);
-	if (fabsf(ratioY) <= m_fDeadZone)
-	{
-		ratioY = 0.0f;
+	float thumbLY = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbLY);
+	float ratioY = 0.0f;
+
+	if (fabs(thumbLY) > deadZoneRate)
+	{// デッドゾーン外
+
+		if (thumbLY > 0)
+		{
+			// 正の値の場合
+			ratioY = (thumbLY - deadZoneRate) / (shortMax - deadZoneRate);
+		}
+		else
+		{
+			// 負の値の場合
+			ratioY = (thumbLY + deadZoneRate) / (shortMax - deadZoneRate);
+		}
 	}
 
 	return MyLib::Vector3(ratioX, ratioY, 0.0f);
@@ -477,18 +505,46 @@ MyLib::Vector3 CInputGamepad::GetStickPositionRatioL(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickPositionRatioR(int nCntPlayer)
 {
+	// デッドゾーン反映後の割合
+	const float shortMax = static_cast<float>(SHRT_MAX);
+	float deadZoneRate = (shortMax * m_fDeadZone);
+
 	// X軸
-	float ratioX = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbRX) / static_cast<float>(SHRT_MAX);
-	if (fabsf(ratioX) <= m_fDeadZone)
-	{
-		ratioX = 0.0f;
+	float thumbRX = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbRX);
+	float ratioX = 0.0f;
+
+	if (fabs(thumbRX) > deadZoneRate)
+	{// デッドゾーン外
+
+		if (thumbRX > 0)
+		{
+			// 正の値の場合
+			ratioX = (thumbRX - deadZoneRate) / (shortMax - deadZoneRate);
+		}
+		else
+		{
+			// 負の値の場合
+			ratioX = (thumbRX + deadZoneRate) / (shortMax - deadZoneRate);
+		}
 	}
 
 	// Y軸
-	float ratioY = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbRY) / static_cast<float>(SHRT_MAX);
-	if (fabsf(ratioY) <= m_fDeadZone)
-	{
-		ratioY = 0.0f;
+	float thumbRY = static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbRY);
+	float ratioY = 0.0f;
+
+	if (fabs(thumbRY) > deadZoneRate)
+	{// デッドゾーン外
+
+		if (thumbRY > 0)
+		{
+			// 正の値の場合
+			ratioY = (thumbRY - deadZoneRate) / (shortMax - deadZoneRate);
+		}
+		else
+		{
+			// 負の値の場合
+			ratioY = (thumbRY + deadZoneRate) / (shortMax - deadZoneRate);
+		}
 	}
 
 	return MyLib::Vector3(ratioX, ratioY, 0.0f);
