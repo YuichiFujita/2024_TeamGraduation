@@ -129,7 +129,7 @@ void CPlayerAI::Operate(const float fDeltaTime, const float fDeltaRate, const fl
 {
 	// ˆÚ“®‘€ì	// TODOFAI‚Þ‚¶`
 	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+	m_pControlAction->EAction(this, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

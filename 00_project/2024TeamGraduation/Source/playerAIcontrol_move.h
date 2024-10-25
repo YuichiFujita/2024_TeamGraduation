@@ -44,7 +44,7 @@ private:
 	void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ブリンク
 	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ブリンク
 	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ウォーク
-	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::DashAngle angle) override;	// ダッシュ時のトリガー
+	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) override;	// ダッシュ時のトリガー
 
 	//=============================
 	// メンバ変数

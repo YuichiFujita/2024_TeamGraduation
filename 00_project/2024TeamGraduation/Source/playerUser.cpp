@@ -129,7 +129,7 @@ void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const 
 {
 	// ˆÚ“®‘€ì
 	m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	m_pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+	m_pControlAction->EAction(this, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================

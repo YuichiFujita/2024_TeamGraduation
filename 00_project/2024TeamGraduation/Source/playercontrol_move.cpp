@@ -27,7 +27,7 @@ namespace
 CPlayerControlMove::CPlayerControlMove()
 {
 	memset(m_nCntTrigger, 0, sizeof(m_nCntTrigger));	// トリガーのカウント
-	m_HoldDashAngle = CPlayer::DashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
+	m_HoldDashAngle = CPlayer::EDashAngle::ANGLE_UP;		// 保持してるダッシュの移動方向
 	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
 	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
 	m_bBlink = false;
@@ -59,12 +59,12 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
 	// 状態取得
-	CPlayer::STATE state = player->GetState();
+	CPlayer::EState state = player->GetState();
 
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
 	if (pPlayerAction == nullptr) return;
-	CPlayer::Action action = pPlayerAction->GetAction();
+	CPlayer::EAction action = pPlayerAction->GetAction();
 
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
@@ -74,8 +74,8 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		//--------------------------
 		// 移動操作
 		//--------------------------
-		if (action != CPlayer::Action::ACTION_BLINK ||
-			action != CPlayer::Action::ACTION_DODGE)
+		if (action != CPlayer::EAction::ACTION_BLINK ||
+			action != CPlayer::EAction::ACTION_DODGE)
 		{
 			// ブリンク
 			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
@@ -107,7 +107,7 @@ void CPlayerControlMove::SetCntTrigger(int* nTrigger)
 {
 	if (nTrigger == nullptr) return;
 
-	for (int i = 0; i < CPlayer::DashAngle::ANGLE_MAX; i++)
+	for (int i = 0; i < CPlayer::EDashAngle::ANGLE_MAX; i++)
 	{
 		m_nCntTrigger[i] = nTrigger[i];
 	}

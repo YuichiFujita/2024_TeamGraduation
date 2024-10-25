@@ -56,7 +56,7 @@ public:
 	};
 
 	// —ñ‹“Œ^’è‹`
-	enum STATE
+	enum EState
 	{
 		STATE_NONE = 0,	// ‚È‚É‚à‚È‚¢
 		STATE_MAX
