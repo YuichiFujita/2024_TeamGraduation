@@ -37,25 +37,25 @@ public:
 	// モーション列挙
 	enum EMotion
 	{
-		MOTION_DEF = 0,			// ニュートラルモーション
-		MOTION_WALK,			// 移動
-		MOTION_RUN,				// 走り
-		MOTION_BLINK,			// ブリンク
-		MOTION_DODGE,			// 回避成功時
-		MOTION_JUMP,			// ジャンプ
-		MOTION_LAND,			// 着地
+		MOTION_DEF = 0,				// ニュートラルモーション
+		MOTION_WALK,				// 移動
+		MOTION_RUN,					// 走り
+		MOTION_BLINK,				// ブリンク
+		MOTION_DODGE,				// 回避成功時
+		MOTION_JUMP,				// ジャンプ
+		MOTION_LAND,				// 着地
 		MOTION_CATCH_STANCE,		// キャッチの構え
 		MOTION_CATCH_NORMAL,		// キャッチ(通常)
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
-		MOTION_THROW,			// 投げ
-		MOTION_THROW_JUMP,		// 投げ(ジャンプ)
-		MOTION_SPECIAL,			// スペシャル
-		MOTION_WIN,				// 勝利
-		MOTION_DAMAGE,			// ダメージ
-		MOTION_DEAD,			// 死亡
-		MOTION_GRIP_FRONT,		// 前グリップ
+		MOTION_THROW,				// 投げ
+		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
+		MOTION_SPECIAL,				// スペシャル
+		MOTION_WIN,					// 勝利
+		MOTION_DAMAGE,				// ダメージ
+		MOTION_DEAD,				// 死亡
+		MOTION_GRIP_FRONT,			// 前グリップ
 		MOTION_MAX
 	};
 
@@ -253,6 +253,12 @@ private:
 	//-----------------------------
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK) override;	// 攻撃判定中処理
+
+	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
+	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
+	//TOKODO: 空中キャッチモーション出来たら実装
+	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
+	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
 	//=============================
 	// メンバ変数
