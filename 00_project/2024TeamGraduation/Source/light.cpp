@@ -1,14 +1,13 @@
-//=============================================================================
+//==========================================================================
 // 
 //  ライト処理 [light.cpp]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 #include "light.h"
-#include "input.h"
 #include "manager.h"
 #include "renderer.h"
-
 
 //==========================================================================
 // コンストラクタ
@@ -31,15 +30,12 @@ CLight::~CLight()
 }
 
 //==========================================================================
-// ライトの初期化処理
+// 初期化処理
 //==========================================================================
 HRESULT CLight::Init()
 {
-	//  デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 	MyLib::Vector3 vecDir;	// 設定用方向ベクトル
-
 	for (int nCntLight = 0; nCntLight < TYPE_MAX; nCntLight++)
 	{
 		// ライトの情報をクリアする
@@ -48,6 +44,7 @@ HRESULT CLight::Init()
 		switch (nCntLight)
 		{
 		case TYPE_DIRECTIONAL_01:
+
 			// ライトの種類を設定
 			m_aLight[nCntLight].Type = D3DLIGHT_DIRECTIONAL;
 
@@ -59,6 +56,7 @@ HRESULT CLight::Init()
 			break;
 
 		case TYPE_DIRECTIONAL_02:
+
 			// ライトの種類を設定
 			m_aLight[nCntLight].Type = D3DLIGHT_DIRECTIONAL;
 
@@ -70,6 +68,7 @@ HRESULT CLight::Init()
 			break;
 
 		case TYPE_DIRECTIONAL_03:
+
 			// ライトの種類を設定
 			m_aLight[nCntLight].Type = D3DLIGHT_DIRECTIONAL;
 
@@ -81,6 +80,7 @@ HRESULT CLight::Init()
 			break;
 
 		case TYPE_SPOT_01:
+
 			// ライトの種類をスポットライトに設定
 			m_aLight[nCntLight].Type = D3DLIGHT_DIRECTIONAL;
 
@@ -107,7 +107,7 @@ HRESULT CLight::Init()
 }
 
 //==========================================================================
-// ライトの終了処理
+// 終了処理
 //==========================================================================
 void CLight::Uninit()
 {
@@ -127,8 +127,7 @@ void CLight::Update(const float fDeltaTime, const float fDeltaRate, const float 
 //==========================================================================
 void CLight::UpdateSpotLightDirection(MyLib::Vector3 vec)
 {
-	//  デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 
 	// スポットライトの方向を設定
 	MyLib::Vector3 vecDir = vec;

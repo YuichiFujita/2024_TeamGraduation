@@ -458,6 +458,9 @@
     <ClCompile Include="Source\objectCharaAnim.cpp">
       <Filter>object</Filter>
     </ClCompile>
+    <ClCompile Include="Source\lightspot.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -834,6 +837,9 @@
     </ClInclude>
     <ClInclude Include="Source\objectCharaAnim.h">
       <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\lightspot.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
