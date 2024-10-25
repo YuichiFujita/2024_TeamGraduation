@@ -13,7 +13,7 @@ TEXTURE_PASS = data\TEXTURE\CAST\MAIN\FRISK\spr_move_d.png
 #	アニメーション情報
 #------------------------------------------------------------------------------
 TEX_PATTERN = 4 1		# テクスチャ分割
-OFFSET_ORIGIN = 0 -15 0	# 原点オフセット
+OFFSET_ORIGIN = 0 90 0	# 原点オフセット
 CHARA_SIZE = 60 90 0	# キャラ大きさ
 
 LOOP = 1			# 繰り返し状況 [0：ループOFF / 1：ループON]
