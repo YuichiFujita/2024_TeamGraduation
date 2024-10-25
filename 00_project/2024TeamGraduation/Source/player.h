@@ -107,9 +107,9 @@ public:
 	// ダメージ情報
 	struct SDamageInfo
 	{
-		bool bActiveSuperArmor;		// スーパーアーマー
-		bool bReceived;				// ダメージ受け付け判定
-		float fReceiveTime;			// ダメージ受付時間
+		bool bActiveSuperArmor;			// スーパーアーマー
+		bool bReceived;					// ダメージ受け付け判定
+		float fReceiveTime;				// ダメージ受付時間
 		CBall::EAttack eReiceiveType;	// 受けた種類
 
 		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), fReceiveTime(0.0f), eReiceiveType(CBall::EAttack::ATK_NONE) {}
@@ -144,7 +144,7 @@ public:
 	struct SKnockbackInfo
 	{
 		MyLib::Vector3 fPosStart;	// 始点
-		MyLib::Vector3 fPosEnd;	// 終点
+		MyLib::Vector3 fPosEnd;		// 終点
 
 		SKnockbackInfo() : fPosStart(MyLib::Vector3()), fPosEnd(MyLib::Vector3()) {}
 	};
