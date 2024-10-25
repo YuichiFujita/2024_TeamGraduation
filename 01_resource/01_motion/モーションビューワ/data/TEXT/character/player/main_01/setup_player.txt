@@ -210,7 +210,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # ƒ‚[ƒVƒ‡ƒ“”
 #------------------------------------------------------------------------------
-NUM_MOTION = 19
+NUM_MOTION = 20
 
 #------------------------------------------------------------------------------
 # ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼
@@ -224,9 +224,10 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt			# ƒWƒƒƒ“ƒ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_land.txt			# ’…’n
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance.txt	# ƒLƒƒƒbƒ`\‚¦
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_normal.txt	# ’ÊíƒLƒƒƒbƒ`(’Êí)
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_jump.txt	# ’ÊíƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_jump.txt			# ’ÊíƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_normal.txt	# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(’Êí)
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt	# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt			# “Š‚°
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt			# ƒXƒyƒVƒƒƒ‹
