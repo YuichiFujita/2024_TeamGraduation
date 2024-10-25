@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 11
+NUM_MODEL = 12
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -24,12 +24,13 @@ MODEL_FILENAME = data/MODEL/audience/01_body.x	# [1]体
 MODEL_FILENAME = data/MODEL/audience/02_head.x	# [2]頭
 MODEL_FILENAME = data/MODEL/audience/03_armUP_R.x	# [3]右腕(上)
 MODEL_FILENAME = data/MODEL/audience/04_armDW_R.x	# [4]右腕(下)
-MODEL_FILENAME = data/MODEL/audience/05_armUP_L.x	# [5]右手
-MODEL_FILENAME = data/MODEL/audience/06_armDW_L.x	# [6]左腕(上)
-MODEL_FILENAME = data/MODEL/audience/07_legUP_R.x	# [7]左腕(下)
-MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [8]左手
-MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [9]右脚(上)
-MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [10]右脚(下)
+MODEL_FILENAME = data/MODEL/audience/05_armUP_L.x	# [5]左腕(上)
+MODEL_FILENAME = data/MODEL/audience/06_armDW_L.x	# [6]左腕(下)
+MODEL_FILENAME = data/MODEL/audience/07_legUP_R.x	# [7]右足(上)
+MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [8]右足(下)
+MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [9]左脚(上)
+MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [10]左脚(下)
+MODEL_FILENAME = data/MODEL/audience/hair_long.x	# [10]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -39,7 +40,8 @@ CHARACTERSET
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 29.61	# ブリンク移動量
 	
-	VELOCITY = 1.00	# ブリンク移動量
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
 	JUMP = 0.00		# ジャンプ量
 	RADIUS = 60.00	# 半径
@@ -50,11 +52,16 @@ CHARACTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
 	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
 
 	PARTSSET
 		INDEX = 0
 		PARENT = -1
-		POS = 0.00 66.00 0.00
+		POS = 0.00 37.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -62,7 +69,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 1
 		PARENT = 0
-		POS = 0.00 0.50 0.00
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -70,7 +77,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 2
 		PARENT = 1
-		POS = 0.00 46.50 0.00
+		POS = 0.00 31.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -78,7 +85,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		POS = -15.00 36.50 1.50
+		POS = -12.00 28.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -86,31 +93,31 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
-		POS = -18.50 0.00 0.25
+		POS = -11.50 0.00 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 5
-		PARENT = 4
-		POS = -14.00 -0.50 0.00
+		PARENT = 1
+		POS = 12.00 28.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 6
-		PARENT = 1
-		POS = 15.00 36.50 1.50
+		PARENT = 5
+		POS = 12.50 0.00 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 7
-		PARENT = 6
-		POS = 18.50 0.00 0.25
+		PARENT = 0
+		POS = -5.50 -7.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -118,7 +125,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 8
 		PARENT = 7
-		POS = 14.00 -0.50 0.00
+		POS = 0.00 -14.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -126,7 +133,23 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 9
 		PARENT = 0
-		POS = -7.00 -8.50 0.00
+		POS = 5.50 -7.50 1.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 10
+		PARENT = 9
+		POS = 0.00 -14.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 11
+		PARENT = 2
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -149,12 +172,12 @@ COLLIDER_FILENAME = data/TEXT/character/audience/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 2
+NUM_MOTION = 1
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/audience/main_01/motion_def.txt				# 勝利
-MOTION_FILENAME = data/TEXT/character/audience/main_01/motion_win.txt				# 勝利
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt				# 勝利
+
 
 END_SCRIPT		# この行は絶対消さないこと！
