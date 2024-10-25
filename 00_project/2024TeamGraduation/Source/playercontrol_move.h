@@ -31,8 +31,8 @@ public:
 	void SetCntTrigger(int* nTrigger);															// トリガーのカウント設定
 	int GetCntTrigger(int nIdx) { return m_nCntTrigger[nIdx]; }									// トリガーのカウント取得
 	int* GetCntTrigger() { return &m_nCntTrigger[0]; }											// トリガーのカウント取得
-	void SetHoldDashAngle(CPlayer::DashAngle angle) { m_HoldDashAngle = angle; }				// ダッシュ方向設定
-	CPlayer::DashAngle GetHoldDashAngle() { return m_HoldDashAngle; }							// ダッシュ方向取得
+	void SetHoldDashAngle(CPlayer::EDashAngle eAngle) { m_HoldDashAngle = eAngle; }				// ダッシュ方向設定
+	CPlayer::EDashAngle GetHoldDashAngle() { return m_HoldDashAngle; }							// ダッシュ方向取得
 	void SetInputInterval(float fInputInterval) { m_fInputInterval = fInputInterval; }			// 入力の受け付け猶予設定
 	float GetInputInterval() { return m_fInputInterval; }										// 入力の受け付け猶予取得
 	void SetTriggerInterval(float fTriggerInterval) { m_fTriggerInterval = fTriggerInterval; }	// トリガーのインターバル設定
@@ -48,13 +48,13 @@ private:
 	virtual void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// ブリンク
 	virtual void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 走る
 	virtual void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// ウォーク
-	virtual CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::DashAngle angle) = 0;	// ダッシュ時のトリガー
+	virtual CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) = 0;	// ダッシュ時のトリガー
 
 	//=============================
 	// メンバ変数
 	//=============================
-	int m_nCntTrigger[CPlayer::DashAngle::ANGLE_MAX];	// トリガーのカウント
-	CPlayer::DashAngle m_HoldDashAngle;					// 保持してるダッシュの移動方向
+	int m_nCntTrigger[CPlayer::EDashAngle::ANGLE_MAX];	// トリガーのカウント
+	CPlayer::EDashAngle m_HoldDashAngle;					// 保持してるダッシュの移動方向
 	float m_fInputInterval;								// 入力の受け付け猶予
 	float m_fTriggerInterval;							// トリガーのインターバル
 	bool m_bBlink;										// 走るフラグ

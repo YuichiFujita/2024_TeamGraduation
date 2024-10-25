@@ -35,7 +35,7 @@ public:
 	// 列挙型定義
 	//=============================
 	// モーション列挙
-	enum MOTION
+	enum EMotion
 	{
 		MOTION_DEF = 0,			// ニュートラルモーション
 		MOTION_WALK,			// 移動
@@ -60,7 +60,7 @@ public:
 	};
 
 	// 状態定義
-	enum STATE
+	enum EState
 	{
 		STATE_NONE = 0,		// なにもない
 		STATE_INVINCIBLE,	// 無敵
@@ -73,7 +73,7 @@ public:
 	};
 
 	// アクション
-	enum Action
+	enum EAction
 	{
 		ACTION_NONE = 0,	// 通常
 		ACTION_BLINK,		// ブリンク
@@ -88,7 +88,7 @@ public:
 	};
 
 	// ダッシュ方向
-	enum DashAngle
+	enum EDashAngle
 	{
 		ANGLE_UP = 0,
 		ANGLE_RIGHTUP,
@@ -109,10 +109,10 @@ public:
 	{
 		bool bActiveSuperArmor;		// スーパーアーマー
 		bool bReceived;				// ダメージ受け付け判定
-		float reciveTime;			// ダメージ受付時間
-		CBall::EAttack reiveType;	// 受けた種類
+		float fReceiveTime;			// ダメージ受付時間
+		CBall::EAttack eReiceiveType;	// 受けた種類
 
-		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), reciveTime(0.0f), reiveType(CBall::EAttack::ATK_NONE) {}
+		SDamageInfo() : bActiveSuperArmor(false), bReceived(false), fReceiveTime(0.0f), eReiceiveType(CBall::EAttack::ATK_NONE) {}
 	};
 
 	// モーションの判定
@@ -125,18 +125,19 @@ public:
 		bool bMove;			// 移動中
 		bool bBlink;		// ブリンク
 		bool bCatch;		// キャッチ
+		bool bCatchJust;	// ジャストキャッチ
 
 		// コンストラクタ
-		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false), bCatch(false) {}
+		SMotionFrag() : bJump(false), bATK(false), bKnockBack(false), bDead(false), bMove(false), bBlink(false), bCatch(false), bCatchJust(false) {}
 	};
 
 	// ダッシュ情報
 	struct SDashInfo
 	{
 		bool bDash;			// ダッシュ判定
-		DashAngle angle;	// ダッシュ方向
+		EDashAngle eAngle;	// ダッシュ方向
 
-		SDashInfo() : bDash(false), angle(ANGLE_LEFT) {}
+		SDashInfo() : bDash(false), eAngle(ANGLE_LEFT) {}
 	};
 
 	// ノックバック情報
@@ -188,8 +189,8 @@ public:
 	// その他
 	//=============================
 	bool Hit(CBall* pBall);		// ヒット処理
-	void SetState(STATE state);	// 状態設定
-	STATE GetState() { return m_state; }						// 状態取得
+	void SetState(EState state);	// 状態設定
+	EState GetState() { return m_state; }						// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }		// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }				// 自分のインデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }				// ボール情報設定
@@ -259,8 +260,8 @@ private:
 	//-----------------------------
 	// 状態
 	//-----------------------------
-	STATE m_Oldstate;	// 前回の状態
-	STATE m_state;		// 状態
+	EState m_Oldstate;	// 前回の状態
+	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
 
 	//-----------------------------

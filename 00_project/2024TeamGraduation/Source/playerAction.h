@@ -24,8 +24,8 @@ public:
 	// メンバ関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-	void SetAction(CPlayer::Action action);						// アクション設定
-	CPlayer::Action GetAction() { return m_Action; }			// アクション取得
+	void SetAction(CPlayer::EAction action);						// アクション設定
+	CPlayer::EAction GetAction() { return m_Action; }			// アクション取得
 	void SetEnableCharm(bool bCharm) { m_bCharm = bCharm; }			// モテボタン状態設定
 	bool IsCharm() { return m_bCharm; }							// モテボタン状態取得
 	void BindPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割り当て
@@ -63,7 +63,7 @@ private:
 	// メンバ変数
 	//=============================
 	bool m_bCharm;				// モテボタン状態
-	CPlayer::Action m_Action;	// アクション
+	CPlayer::EAction m_Action;	// アクション
 	float m_fActionTime;		// アクション時間
 	CPlayer* m_pPlayer;			// プレイヤーのポインタ
 };

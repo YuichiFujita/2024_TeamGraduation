@@ -282,7 +282,7 @@ HRESULT CCharacterAnim::LoadMotionSetup(AMotion* pInfoChara, const char* pMotion
 	// 変数をポインタ化し簡略化
 	CObjectCharaAnim::SMotion* pMotion = &pInfoChara->vecMotion[nCurMotionIdx];			// モーション情報
 	CObjectCharaAnim::SChara* pChara = &pInfoChara->vecMotion[nCurMotionIdx].infoChara;	// キャラクター情報
-	CObjectCharaAnim::SColl* pColl = &pInfoChara->vecMotion[nCurMotionIdx].infoColl;		// 当たり判定情報
+	CObjectCharaAnim::SColl* pColl = &pInfoChara->vecMotion[nCurMotionIdx].infoColl;	// 当たり判定情報
 
 	// ファイルを読込
 	std::string str;	// 読込文字列
