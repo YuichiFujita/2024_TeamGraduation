@@ -137,7 +137,10 @@ void CAudience::Kill()
 void CAudience::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態別処理
-	(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	int nMotion = (this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// モーションを設定
+	SetMotion(nMotion);
 }
 
 //==========================================================================
@@ -295,7 +298,7 @@ void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn
 //==========================================================================
 // 入場状態の更新処理
 //==========================================================================
-void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
@@ -340,12 +343,14 @@ void CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(move);		// 移動量
+
+	return 0;	// この関数の返り値は使用しない
 }
 
 //==========================================================================
 // 通常状態の更新処理
 //==========================================================================
-void CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
@@ -357,12 +362,14 @@ void CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, con
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(move);		// 移動量
+
+	return 0;	// この関数の返り値は使用しない
 }
 
 //==========================================================================
 // 盛り上がり状態の更新処理
 //==========================================================================
-void CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+int CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
@@ -379,12 +386,14 @@ void CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(move);		// 移動量
+
+	return 0;	// この関数の返り値は使用しない
 }
 
 //==========================================================================
 // 退場状態の更新処理
 //==========================================================================
-void CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+int CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
@@ -417,12 +426,14 @@ void CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, co
 
 		// 自身を削除する
 		Kill();
-		return;
+		return 0;	// この関数の返り値は使用しない
 	}
 
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(move);		// 移動量
+
+	return 0;	// この関数の返り値は使用しない
 }
 
 //==========================================================================

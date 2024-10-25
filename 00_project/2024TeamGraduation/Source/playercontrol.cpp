@@ -32,7 +32,7 @@ CPlayerControl::CPlayerControl()
 //==========================================================================
 // アクション＆モーションの一括設定
 //==========================================================================
-void CPlayerControl::SetPattern(CPlayer* player, CPlayer::MOTION typeM, CPlayer::Action typeA)
+void CPlayerControl::SetPattern(CPlayer* player, CPlayer::EMotion typeM, CPlayer::EAction typeA)
 {
 	CMotion* pMotion = player->GetMotion();
 
