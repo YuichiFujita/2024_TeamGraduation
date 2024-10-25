@@ -100,8 +100,21 @@ public:
 
 protected:
 	//=============================
+	// 純粋仮想関数
+	//=============================
+	// 状態関数
+	virtual int UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 入場状態の更新
+	virtual int UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 通常状態の更新
+	virtual int UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 盛り上がり状態の更新
+	virtual int UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 退場状態の更新
+
+	// ゲッター/セッター
+	virtual void SetMotion(const int nMotion) = 0;	// モーション設定
+
+	//=============================
 	// メンバ関数
 	//=============================
+	// ゲッター/セッター
 	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	{ m_posSpawn = rPos;}	// 入場位置設定
 	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }	// 入場位置取得
 	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}	// 観戦位置設定
@@ -113,19 +126,13 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
-	typedef void(CAudience::*STATE_FUNC)(const float, const float, const float);
+	typedef int(CAudience::*STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFuncList[];	// 関数のリスト
 
 	//=============================
 	// メンバ関数
 	//=============================
-	// 状態関数
-	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 入場状態の更新
-	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
-	void UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり状態の更新
-	void UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 退場状態の更新
-
-	// 通常関数
+	// 汎用関数
 	bool UpdateGravity(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaTime, const float fDeltaRate, const float fSlowRate, const float fGravityRate = 1.0f);	// 重力更新
 
 	//=============================
