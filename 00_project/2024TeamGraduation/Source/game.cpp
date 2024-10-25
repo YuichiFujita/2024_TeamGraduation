@@ -32,6 +32,8 @@
 #include "audience.h"
 #include "teamStatus.h"
 
+#include "objectX.h"
+
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
@@ -90,6 +92,11 @@ HRESULT CGame::Init()
 {
 	// エディット判定OFF
 	m_bEdit = false;
+
+	CObjectX::Create("data/MODEL/audience/07_legUP_R.x");
+	CObjectX::Create("data/MODEL/audience/08_legDW_R.x");
+	CObjectX::Create("data/MODEL/audience/09_legUP_L.x");
+	CObjectX::Create("data/MODEL/audience/10_legDW_L.x");
 
 	// プレイヤーの数設定
 	CManager::GetInstance()->SetNumPlayer(1);
