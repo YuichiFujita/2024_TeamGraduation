@@ -232,7 +232,7 @@ MOTIONSET
 		FRAME = 9
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.13 0.00 -0.09
-			POS = 0.00 12.00 0.00
+			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
@@ -332,7 +332,7 @@ MOTIONSET
 		FRAME = 20
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.13 0.00 -0.09
-			POS = 0.00 12.00 0.00
+			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
@@ -432,7 +432,7 @@ MOTIONSET
 		FRAME = 20
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.13 0.00 -0.23
-			POS = 0.00 12.00 0.00
+			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
@@ -532,7 +532,7 @@ MOTIONSET
 		FRAME = 5
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.13 0.00 -0.09
-			POS = 0.00 12.00 0.00
+			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
@@ -632,7 +632,7 @@ MOTIONSET
 		FRAME = 5
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.13 0.00 -0.09
-			POS = 0.00 12.00 0.00
+			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 

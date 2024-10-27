@@ -47,7 +47,12 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
 		// アクションパターン変更
-		SetPattern(player, CPlayer::EMotion::MOTION_CATCH_STANCE, CPlayer::EAction::ACTION_CATCH);
+		CPlayer::EMotion motion = CPlayer::EMotion::MOTION_CATCH_STANCE;
+		if (player->IsJump())
+		{
+			motion = CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP;
+		}
+		SetPattern(player, motion, CPlayer::EAction::ACTION_CATCH);
 	}
 }
 

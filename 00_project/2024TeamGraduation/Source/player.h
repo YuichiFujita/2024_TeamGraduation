@@ -45,6 +45,7 @@ public:
 		MOTION_JUMP,			// ジャンプ
 		MOTION_LAND,			// 着地
 		MOTION_CATCH_STANCE,		// キャッチの構え
+		MOTION_CATCH_STANCE_JUMP,	// キャッチの構え(ジャンプ)
 		MOTION_CATCH_NORMAL,		// キャッチ(通常)
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
