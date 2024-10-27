@@ -501,6 +501,12 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 
 			//ジャストフラグON
 			m_sMotionFrag.bCatchJust = true;
+		
+			CEffect3D::Create(
+				GetPosition(),
+				MyLib::Vector3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
 
 		break;
@@ -529,6 +535,70 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	{
 		return;
 	}
+}
+
+//==========================================================================
+// キャッチ時処理(地上・通常)
+//==========================================================================
+void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
+{
+	switch (atkBall)
+	{
+	case CBall::ATK_NORMAL:
+		SetMotion(EMotion::MOTION_CATCH_NORMAL);
+		break;
+
+	case CBall::ATK_JUMP:
+		SetMotion(EMotion::MOTION_CATCH_JUMP);
+		break;
+
+	case CBall::ATK_SPECIAL:	//TODO: スペシャルに変更
+		SetMotion(EMotion::MOTION_CATCH_JUMP);
+		break;
+
+	default:
+		break;
+	}
+
+	// キャッチ状態
+	SetState(EState::STATE_CATCH_NORMAL);
+}
+
+//==========================================================================
+// キャッチ時処理(地上・ジャスト)
+//==========================================================================
+void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
+{
+	MyLib::Vector3 pos = GetPosition();
+	pos.y += 130.0f;
+
+	//演出
+	CEffect3D::Create(
+		pos,
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+
+	switch (atkBall)
+	{
+	case CBall::ATK_NORMAL:
+		SetMotion(EMotion::MOTION_JUSTCATCH_NORMAL);
+		break;
+
+	case CBall::ATK_JUMP:
+		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
+		break;
+
+	case CBall::ATK_SPECIAL:	//TODO: スペシャルに変更
+		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
+		break;
+
+	default:
+		break;
+	}
+
+	// ジャストキャッチ状態
+	SetState(EState::STATE_CATCH_JUST);
 }
 
 //==========================================================================
@@ -718,56 +788,16 @@ void CPlayer::CatchSetting(CBall* pBall)
 	if (m_sMotionFrag.bCatchJust)
 	{// ジャストキャッチ
 
-		switch (atkBall)
-		{
-		case CBall::ATK_NORMAL:
-			SetMotion(EMotion::MOTION_JUSTCATCH_NORMAL);
-			break;
-
-		case CBall::ATK_JUMP:
-			SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
-			break;
-
-		case CBall::ATK_SPECIAL:
-			SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
-			break;
-
-		default:
-			break;
-		}
-
-		// ジャストキャッチ状態
-		SetState(EState::STATE_CATCH_JUST);
+		CatchSettingLandJust(atkBall);		// キャッチ時処理(地上・ジャスト)
 	}
 	else
 	{// 通常キャッチ
 
-		switch (atkBall)
-		{
-		case CBall::ATK_NORMAL:
-			SetMotion(EMotion::MOTION_CATCH_NORMAL);
-			break;
-
-		case CBall::ATK_JUMP:
-			SetMotion(EMotion::MOTION_CATCH_JUMP);
-			break;
-
-		case CBall::ATK_SPECIAL:
-			SetMotion(EMotion::MOTION_CATCH_JUMP);
-			break;
-
-		default:
-			break;
-		}
-
-		// キャッチ状態
-		SetState(EState::STATE_CATCH_NORMAL);
+		CatchSettingLandNormal(atkBall);		// キャッチ時処理(地上・通常)
 	}
-
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
-
 }
 
 //==========================================================================

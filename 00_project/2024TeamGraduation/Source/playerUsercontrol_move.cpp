@@ -20,6 +20,7 @@ namespace
 	const float INTERVAL_INPUT = (2.0f / 60.0f);	// 入力
 	const float RATIO_STICKBLINK = 0.75f;	// スティックブリンク時の割合
 	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
+	const float BLINK_JUMP_COR = 0.5f;	// 空中時ブリンク補正値
 }
 
 //==========================================================================
@@ -348,6 +349,12 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 		move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
 		move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+
+		if (player->IsJump())
+		{//ジャンプ時補正
+			move.x *= BLINK_JUMP_COR;
+			move.z *= BLINK_JUMP_COR;
+		}
 
 		// 移動量設定
 		player->SetMove(move);
