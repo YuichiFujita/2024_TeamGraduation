@@ -107,6 +107,13 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (player->GetBall() != nullptr)
+	{//ボール所持では使用不可
+		// コントロール系
+		SetBlink(true);
+		return;
+	}
+
 	// 入力フラグ
 	bool bInput = false;
 
@@ -129,7 +136,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
-
 
 	// Lスティックの割合
 	MyLib::Vector3 stickRatio = pPad->GetStickPositionRatioL(playerIdx);
