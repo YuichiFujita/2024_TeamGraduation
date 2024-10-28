@@ -18,7 +18,7 @@
 #include "pause.h"
 #include "fade.h"
 #include "blackframe.h"
-#include "light.h"
+#include "lightManager.h"
 #include "camera.h"
 #include "edit.h"
 #include "loadmanager.h"
@@ -219,18 +219,12 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
-	// メモリ確保
-	m_pLight = DEBUG_NEW CLight;
+	// ライトの生成
+	m_pLight = CLightManager::Create();
+	if (m_pLight == nullptr)
+	{// 生成に失敗した場合
 
-	if (m_pLight != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 初期化処理
-		hr = m_pLight->Init();
-		if (FAILED(hr))
-		{// 初期化処理が失敗した場合
-			return E_FAIL;
-		}
+		return E_FAIL;
 	}
 
 
@@ -519,6 +513,9 @@ void CManager::Uninit()
 		m_pScene->Kill();
 	}
 
+	// ライトの破棄
+	SAFE_REF_RELEASE(m_pLight);
+
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
 
@@ -547,18 +544,6 @@ void CManager::Uninit()
 
 	// Imguiの終了
 	ImguiMgr::Uninit();
-
-	// ライトの破棄
-	if (m_pLight != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pLight->Uninit();
-
-		// メモリの開放
-		delete m_pLight;
-		m_pLight = nullptr;
-	}
 
 	// カメラの破棄
 	if (m_pCamera != nullptr)
@@ -986,7 +971,7 @@ CDebugProc *CManager::GetDebugProc()
 //==========================================================================
 // ライトの取得
 //==========================================================================
-CLight *CManager::GetLight()
+CLightManager *CManager::GetLight()
 {
 	return m_pLight;
 }
