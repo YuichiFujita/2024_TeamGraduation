@@ -53,6 +53,7 @@ public:
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
 		MOTION_THROW,				// 投げ
+		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
 		MOTION_SPECIAL,				// スペシャル
 		MOTION_WIN,					// 勝利

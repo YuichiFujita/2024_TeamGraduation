@@ -24,12 +24,13 @@ public:
 	CPlayerControlAction();
 
 	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
-	void SetJump(CPlayer* player);
 
 protected:
 	//=============================
 	// メンバ関数
 	//=============================
+	void ThrowSetting(CPlayer* player);
+	void JumpSetting(CPlayer* player);
 	void SpecialSetting(CPlayer* player, CBall* pBall, CTeamStatus* pTeamStatus);		// スペシャル発動
 
 private:

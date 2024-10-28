@@ -38,6 +38,7 @@ namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
+	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
 
 namespace Knockback
@@ -790,15 +791,20 @@ void CPlayer::CatchSetting(CBall* pBall)
 	MyLib::Vector3 posB = pBall->GetPosition();	// ボール位置
 	MyLib::Vector3 pos = GetPosition();	// ボール位置
 	
-	// 入力8方向にゆとり(左右1/8π)を持たせる
-	// 入力判定
-	bool bInput = UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE);
-	EDashAngle;
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	//現在の入力方向を取る(向き)
-	//m_pActionPattern->GetHoldDashAngle();
-	//左右1/8π(視野角)
-	
+	// 入力判定
+	bool bInput = false;
+	EDashAngle* angle = m_pControlMove->GetInputAngle();
+	if (angle != nullptr)
+	{
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		float fRot = division * (*angle) + D3DX_PI + Camerarot.y;
+		UtilFunc::Transformation::RotNormalize(fRot);
+		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
+	}
 
 	// モーション設定
 	if (m_sMotionFrag.bCatchJust
@@ -1102,6 +1108,16 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+
+		//現在の入力方向を取る(向き)
+		bool bInput = false;
+		EDashAngle* angle = m_pControlMove->GetInputAngle();
+		if (angle != nullptr)
+		{
+			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+			float fRot = division * *angle;
+			ImGui::Text("fRot : [%.2f]", fRot);
+		}
 
 		ImGui::TreePop();
 	}
