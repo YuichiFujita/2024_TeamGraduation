@@ -85,7 +85,8 @@ public:
 	void Draw() override;
 	void Draw(D3DXCOLOR col) override;
 	void Draw(float fAlpha) override;
-	
+	virtual void Kill() override;	// “®“Iíœˆ—
+
 	//--------------------------
 	// ƒLƒƒƒ‰î•ñ
 	//--------------------------
