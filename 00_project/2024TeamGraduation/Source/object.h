@@ -51,6 +51,7 @@ public:
 		TYPE_MESHDOME,			// メッシュドーム
 		TYPE_MESHDONUTS,		// メッシュドーナツ
 		TYPE_MESHSPHERE,		// メッシュスフィア
+		TYPE_MANAGER,			// マネージャー
 		TYPE_NUMBER,			// 数字
 		TYPE_LIGHT,				// ライト
 		TYPE_TIMER,				// タイマー

@@ -72,7 +72,7 @@ HRESULT CLight::Init()
 void CLight::Uninit()
 {
 	// オブジェクトを破棄
-	CLight::Release();
+	Release();
 }
 
 //============================================================
@@ -81,7 +81,7 @@ void CLight::Uninit()
 void CLight::Kill()
 {
 	// 自身の終了
-	CLight::Uninit();
+	Uninit();
 }
 
 //============================================================
