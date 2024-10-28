@@ -165,7 +165,7 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
-	virtual void Release() override;	// 死亡処理
+	virtual void Kill() override;	// 動的削除処理
 
 	//=============================
 	// モーション

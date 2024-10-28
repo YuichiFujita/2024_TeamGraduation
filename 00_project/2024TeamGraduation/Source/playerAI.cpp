@@ -99,7 +99,7 @@ void CPlayerAI::Uninit()
 void CPlayerAI::Kill()
 {
 	// 親クラスの終了
-	CPlayer::Uninit();
+	CPlayer::Kill();
 }
 
 //==========================================================================
