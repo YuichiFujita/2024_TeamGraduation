@@ -470,6 +470,15 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 		break;
 
+	case EMotion::MOTION_THROW_RUN:
+
+		if (m_pBall != nullptr)
+		{// 通常投げ
+			m_pBall->ThrowNormal(this);
+		}
+
+		break;
+
 	case EMotion::MOTION_THROW_JUMP:
 
 		if (m_pBall != nullptr)
