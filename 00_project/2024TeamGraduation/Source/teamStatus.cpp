@@ -82,6 +82,8 @@ HRESULT CTeamStatus::Init()
 void CTeamStatus::Uninit()
 {
 	m_sSpecialInfo.pGauge = nullptr;
+
+	delete this;
 }
 
 //==========================================================================
