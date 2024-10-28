@@ -39,6 +39,7 @@ public:
 	void SetLightType(const D3DLIGHTTYPE type);		// 種類設定
 	void SetPosition(const MyLib::Vector3& rPos);	// 位置設定
 	void SetDirection(const MyLib::Vector3& rDir);	// 方向設定
+	void SetRange(const float fRange);				// 光源範囲設定
 	void SetDiffuse(const MyLib::Color& rCol);		// 拡散光設定
 	void SetEnableLight(const bool bLight);			// 有効設定
 	inline D3DLIGHT9 GetLight() { return m_light; }	// ライト取得

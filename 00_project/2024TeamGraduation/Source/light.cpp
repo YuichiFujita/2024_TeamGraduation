@@ -139,6 +139,18 @@ void CLight::SetDirection(const MyLib::Vector3& rDir)
 }
 
 //============================================================
+//	ŒõŒ¹”ÍˆÍ‚Ìİ’èˆ—
+//============================================================
+void CLight::SetRange(const float fRange)
+{
+	// ŒõŒ¹”ÍˆÍ‚Ìİ’è
+	m_light.Range = fRange;
+
+	// ƒ‰ƒCƒg‚Éİ’è‚ğ”½‰f
+	GET_DEVICE->SetLight(m_nLightIdx, &m_light);
+}
+
+//============================================================
 //	ŠgUŒõ‚Ìİ’èˆ—
 //============================================================
 void CLight::SetDiffuse(const MyLib::Color& rCol)
