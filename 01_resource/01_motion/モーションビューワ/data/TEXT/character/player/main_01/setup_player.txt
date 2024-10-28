@@ -210,7 +210,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 20
+NUM_MOTION = 21
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -229,6 +229,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_normal.txt
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt		# ジャストキャッチ(ジャンプ)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance_jump.txt	# キャッチ構え(ジャンプ)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt			# 投げ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_dash.txt		# 投げ(ダッシュ)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt		# 投げ(ジャンプ)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt			# スペシャル
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt				# 勝利
