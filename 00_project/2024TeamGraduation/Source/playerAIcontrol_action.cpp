@@ -76,18 +76,10 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	{
 
 #ifdef _DEBUG
-	fThrowTime = 0.0f;
+		fThrowTime = 0.0f;
 #endif
 
-		// アクションパターン変更
-		if (player->IsJump())
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
-		}
-		else
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW, CPlayer::EAction::ACTION_THROW);
-		}
+		ThrowSetting(player);
 	}
 }
 
@@ -103,7 +95,7 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
 	if (false)
 	{
-		SetJump(player);
+		JumpSetting(player);
 	}
 }
 

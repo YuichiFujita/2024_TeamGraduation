@@ -87,9 +87,29 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 }
 
 //==========================================================================
+// 投げ設定
+//==========================================================================
+void CPlayerControlAction::ThrowSetting(CPlayer* player)
+{
+	// アクションパターン変更
+	if (player->IsJump())
+	{
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
+	}
+	else if (player->IsDash())
+	{
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_RUN, CPlayer::EAction::ACTION_THROW);
+	}
+	else
+	{
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW, CPlayer::EAction::ACTION_THROW);
+	}
+}
+
+//==========================================================================
 // ジャンプ設定
 //==========================================================================
-void CPlayerControlAction::SetJump(CPlayer* player)
+void CPlayerControlAction::JumpSetting(CPlayer* player)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
