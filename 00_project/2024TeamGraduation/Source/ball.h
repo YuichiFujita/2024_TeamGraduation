@@ -124,8 +124,8 @@ private:
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
-	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);	// プレイヤーとの当たり判定
-	CPlayer* CollisionThrow(void);		// ホーミング対象との当たり判定
+	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);			// プレイヤーとの当たり判定
+	CPlayer* CollisionThrow(const bool bAbsLock = false);	// ホーミング対象との当たり判定
 	void SetState(const EState state);	// 状態設定
 	void Catch(CPlayer* pPlayer);		// キャッチ
 	void Throw(CPlayer* pPlayer);		// 投げ

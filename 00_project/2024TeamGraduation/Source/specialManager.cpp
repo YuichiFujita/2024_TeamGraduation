@@ -165,6 +165,12 @@ HRESULT CSpecialManager::Init(void)
 //============================================================
 void CSpecialManager::Uninit(void)
 {
+	// 攻撃プレイヤーを照らすライトの終了
+	SAFE_UNINIT(m_pAttackLight);
+
+	// 標的プレイヤーを照らすライトの終了
+	SAFE_UNINIT(m_pTargetLight);
+
 	// オブジェクトを破棄
 	Release();
 
@@ -248,7 +254,7 @@ CSpecialManager *CSpecialManager::Create(const CPlayer* pAttack, const CPlayer* 
 //============================================================
 void CSpecialManager::UpdateFadeOut(const float fDeltaTime)
 {
-#if 0
+#if 1
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
 	if (m_fCurTime >= fade::MOVE_TIME)
