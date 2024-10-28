@@ -385,7 +385,7 @@ void CCamera::UpdateSpotLightVec()
 	D3DXVec3Normalize(&vec, &vec);
 
 	// スポットライトの方向設定
-	CManager::GetInstance()->GetLight()->UpdateSpotLightDirection(vec);
+	//CManager::GetInstance()->GetLight()->UpdateSpotLightDirection(vec);
 }
 
 //==========================================================================
