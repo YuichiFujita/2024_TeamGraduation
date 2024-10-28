@@ -68,7 +68,7 @@ namespace StateTime
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
-	const float COURT_RETURN = 10.0f;		// コートに戻ってくる
+	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
 }
 
 //==========================================================================
@@ -1061,18 +1061,19 @@ void CPlayer::StateOutCourt_Return()
 {
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 posStart = CGame::GetInstance()->GetGameManager()->GetCourtSize();
-	posStart.z *= 0.5f;
+	posStart.y = 0.0f;
+	posStart.z = 0.0f;
 	posStart.x *= 0.5f;
 
 	//コート内に戻る
-	pos = UtilFunc::Correction::EaseInExpo(m_sKnockback.posEnd, posStart, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
+	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posEnd, posStart, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
 
-	if (pMotion->IsGetCancelable())
+	if (m_fStateTime >= StateTime::COURT_RETURN)
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}

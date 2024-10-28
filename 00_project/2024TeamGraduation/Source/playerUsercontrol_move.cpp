@@ -107,6 +107,8 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	
+
 	// 入力フラグ
 	bool bInput = false;
 
@@ -338,33 +340,36 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		info = Trigger(player, HoldDashAngle);
 	}
 
-	if (info.bDash && !bDash &&
-		player->GetBall() != nullptr)
-	{//ボール所持では使用不可
-		// コントロール系
-		SetBlink(true);
-		return;
-	}
+	//
 
 	// ダッシュする
 	if (info.bDash && !bDash)
 	{
-		MyLib::Vector3 move = player->GetMove();
-		float velocityBlink = player->GetParameter().fVelocityBlink;
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 
-		move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
-		move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+		if (player->GetBall() == nullptr)
+		{//ボール所持では使用不可
 
-		if (player->IsJump())
-		{//ジャンプ時補正
-			move.x *= BLINK_JUMP_COR;
-			move.z *= BLINK_JUMP_COR;
+			MyLib::Vector3 move = player->GetMove();
+			float velocityBlink = player->GetParameter().fVelocityBlink;
+			
+			// 移動量更新
+			move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
+			move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+
+			if (player->IsJump())
+			{//ジャンプ時補正
+				move.x *= BLINK_JUMP_COR;
+				move.z *= BLINK_JUMP_COR;
+			}
+
+			// 移動量設定
+			player->SetMove(move);
+
+			// モーション設定
+			player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
 		}
-
-		// 移動量設定
-		player->SetMove(move);
 
 		// 向き設定
 		player->SetRotDest(info.eAngle * division + D3DX_PI + Camerarot.y);
@@ -377,9 +382,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 		// ダッシュフラグ
 		bDash = true;
-
-		// モーション設定
-		player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
 	}
 
 	// トリガーのインターバル取得
@@ -666,7 +668,10 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDa
 		info.eAngle = eAngle;
 
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_BLINK);
+		if (player->GetBall() == nullptr)
+		{
+			player->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_BLINK);
+		}
 	}
 
 	// トリガーのインターバルリセット
