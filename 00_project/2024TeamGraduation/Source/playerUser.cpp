@@ -26,9 +26,7 @@ namespace
 //==========================================================================
 CPlayerUser::CPlayerUser()
 {
-	// パターン用インスタンス
-	m_pControlMove = nullptr;	// 移動操作
-	m_pControlAction = nullptr;	// アクション操作
+
 }
 
 //==========================================================================
@@ -127,9 +125,15 @@ void CPlayerUser::Draw()
 //==========================================================================
 void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
 	// 移動操作
-	m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	m_pControlAction->EAction(this, fDeltaTime, fDeltaRate, fSlowRate);
+	pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
+	pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+
+	SetPlayerControlMove(pControlMove);
+	SetPlayerControlAction(pControlAction);
 }
 
 //==========================================================================
@@ -137,8 +141,12 @@ void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 {
-	delete m_pControlMove;
-	m_pControlMove = control;
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+
+	delete pControlMove;
+	pControlMove = control;
+
+	SetPlayerControlMove(pControlMove);
 }
 
 //==========================================================================
@@ -146,8 +154,12 @@ void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 //==========================================================================
 void CPlayerUser::ChangeActionControl(CPlayerUserControlAction* control)
 {
-	delete m_pControlAction;
-	m_pControlAction = control;
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
+	delete pControlAction;
+	pControlAction = control;
+
+	SetPlayerControlAction(pControlAction);
 }
 
 //==========================================================================
@@ -155,18 +167,24 @@ void CPlayerUser::ChangeActionControl(CPlayerUserControlAction* control)
 //==========================================================================
 void CPlayerUser::DeleteControl()
 {
-	if (m_pControlMove != nullptr)
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
+	if (pControlMove != nullptr)
 	{// 移動操作
-		delete m_pControlMove;
-		m_pControlMove = nullptr;
+		delete pControlMove;
+		pControlMove = nullptr;
 	}
 
-	if (m_pControlAction != nullptr)
+	if (pControlAction != nullptr)
 	{// アクション操作
-		delete m_pControlAction;
-		m_pControlAction = nullptr;
+		delete pControlAction;
+		pControlAction = nullptr;
 	}
 
 	// 操作関連削除
 	CPlayer::DeleteControl();
+
+	SetPlayerControlMove(pControlMove);
+	SetPlayerControlAction(pControlAction);
 }

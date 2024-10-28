@@ -20,6 +20,8 @@
 // 前方宣言
 //==========================================================================
 class CShadow;			// 影
+class CPlayerControlAction;	// 操作(アクション)
+class CPlayerControlMove;	// 操作(移動)
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
@@ -213,6 +215,10 @@ protected:
 	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
 	virtual void Debug();			// デバッグ処理
+	CPlayerControlMove* GetPlayerControlMove();																	// 操作取得(移動)
+	CPlayerControlAction* GetPlayerControlAction();																// 操作取得(アクション)
+	void SetPlayerControlMove(CPlayerControlMove* pControlMove) { m_pControlMove = pControlMove; }				// 操作設定(移動)
+	void SetPlayerControlAction(CPlayerControlAction* pControlAction) { m_pControlAction = pControlAction; }	// 操作設定(アクション)
 
 private:
 
@@ -290,6 +296,8 @@ private:
 	//-----------------------------
 	CPlayerAction* m_pActionPattern;	// アクションパターン
 	CPlayerStatus* m_pStatus;			// ステータス
+	CPlayerControlMove* m_pControlMove;		// 移動操作
+	CPlayerControlAction* m_pControlAction;	// アクション操作
 
 	//-----------------------------
 	// その他変数

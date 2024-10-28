@@ -33,7 +33,7 @@ CPlayerControlAction::CPlayerControlAction()
 //==========================================================================
 // “Š‡
 //==========================================================================
-void CPlayerControlAction::EAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ƒ‚[ƒVƒ‡ƒ“î•ñŽæ“¾
 	CMotion* pMotion = player->GetMotion();
