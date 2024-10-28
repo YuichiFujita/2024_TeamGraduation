@@ -71,6 +71,9 @@ HRESULT CLight::Init()
 //============================================================
 void CLight::Uninit()
 {
+	// ライトを無効にする
+	SetEnableLight(false);
+
 	// オブジェクトを破棄
 	Release();
 }

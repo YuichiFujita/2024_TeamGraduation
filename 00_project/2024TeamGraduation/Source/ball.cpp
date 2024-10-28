@@ -12,6 +12,7 @@
 #include "gamemanager.h"
 #include "calculation.h"
 #include "model.h"
+#include "specialManager.h"
 
 #include "debugproc.h"
 #include "3D_Effect.h"
@@ -348,27 +349,28 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 	assert(m_state == STATE_CATCH);
 
 	// ホーミング対象の設定
-	m_pTarget = CollisionThrow();
-	if (m_pTarget != nullptr)
-	{ // ターゲットがいる場合
-
-		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
-		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
-		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
-
-		// ホーミング状態にする
-		SetState(STATE_HOM_NOR);	// TODO：スペシャルに後々変更
-
-		// 目標向き/向きをボール方向にする
-		m_pPlayer->SetRotDest(fAngleY);
-		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
-	}
-	else
+	m_pTarget = CollisionThrow(true);
+	if (m_pTarget == nullptr)
 	{ // ターゲットがいない場合
 
 		// 移動状態にする
+		assert(false);	// 見つからなきゃ敵がいないよ～
 		SetState(STATE_MOVE);
 	}
+
+	MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+	float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+	// ホーミング状態にする
+	SetState(STATE_HOM_NOR);	// TODO：スペシャルに後々変更
+
+	// 目標向き/向きをボール方向にする
+	m_pPlayer->SetRotDest(fAngleY);
+	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+	// スペシャル演出マネージャーの生成
+	CSpecialManager::Create(m_pPlayer, m_pTarget);
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -831,7 +833,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 //==========================================================================
 // ホーミング対象との当たり判定
 //==========================================================================
-CPlayer* CBall::CollisionThrow(void)
+CPlayer* CBall::CollisionThrow(const bool bAbsLock)
 {
 	// 持っていたプレイヤーが初期化済みの場合エラー
 	assert(m_pPlayer != nullptr);
@@ -859,7 +861,7 @@ CPlayer* CBall::CollisionThrow(void)
 
 		// 視界内にいない場合次へ
 		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);
-		if (!bHit) { continue; }
+		if (!bHit && !bAbsLock) { continue; }
 
 		// プレイヤー視野中心ベクトルからの距離測定
 		MyLib::Vector3 posFront = posThrow + MyLib::Vector3(sinf(rotThrow.y), 0.0f, cosf(rotThrow.y));
