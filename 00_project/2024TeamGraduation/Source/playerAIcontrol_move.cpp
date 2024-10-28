@@ -430,6 +430,12 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	bool bDash = IsBlink();	//‘–‚éƒtƒ‰ƒO
 
+	// Œ»İ‚Ì“ü—Í•ûŒü
+	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
+	if (pInputAngle != nullptr) delete pInputAngle;
+	pInputAngle = nullptr;
+	SetInputAngle(pInputAngle);
+
 	CPlayer::EDashAngle eAngle;
 	bool bInput = false;
 
@@ -550,6 +556,11 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// Œü‚«İ’è
 	player->SetRotDest(eAngle * division + D3DX_PI + Camerarot.y);
+
+	// Œ»İ‚Ì“ü—Í•ûŒüİ’è
+	pInputAngle = new CPlayer::EDashAngle;
+	*pInputAngle = eAngle;
+	SetInputAngle(pInputAngle); 
 }
 
 //==========================================================================
