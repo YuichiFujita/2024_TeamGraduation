@@ -135,7 +135,7 @@ HRESULT CGame::Init()
 	pUser->SetRotDest(-HALF_PI);
 
 	// プレイヤーUser二世生成
-#if 1
+#if 0
 	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
@@ -162,7 +162,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成
-#if 0
+#if 1
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
 	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
