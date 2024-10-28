@@ -185,8 +185,8 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	CPlayerAction* GetActionPattern() { return m_pActionPattern; }	// アクション取得
-	CPlayerStatus* GetStatus() { return m_pStatus; }				// ステータス取得
+	CPlayerAction* GetActionPattern()	{ return m_pActionPattern; }	// アクション取得
+	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
 
 	//=============================
 	// その他

@@ -93,6 +93,9 @@
     <Filter Include="ingame\team">
       <UniqueIdentifier>{6c47d80e-0f75-4d2b-8c6a-de499b03a323}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\special">
+      <UniqueIdentifier>{ab4478a0-9acd-41b4-8000-ec3cf9cb914d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -466,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="Source\lightPoint.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\specialManager.cpp">
+      <Filter>ingame\special</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -852,6 +858,9 @@
     </ClInclude>
     <ClInclude Include="Source\lightPoint.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\specialManager.h">
+      <Filter>ingame\special</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

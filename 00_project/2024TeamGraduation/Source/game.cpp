@@ -35,6 +35,9 @@
 
 #include "objectX.h"
 
+// TODO：デバッグ、後で消しますいらないので
+#include "specialManager.h"
+
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
@@ -259,6 +262,15 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
+		if (ImGui::Button("Special!"))
+		{
+			//std::list<CPlayer*> list = CPlayer::GetList().GetList();
+
+			CPlayer* pPlayerAttack = CPlayer::GetList().GetData(0);
+			CPlayer* pPlayerTarget = CPlayer::GetList().GetData(1);
+			CSpecialManager::Create(pPlayerAttack, pPlayerTarget);
+		}
+
 		if (ImGui::Button("Room : Bright"))
 		{
 			// 部屋を明るくする
