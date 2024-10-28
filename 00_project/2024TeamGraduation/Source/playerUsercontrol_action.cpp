@@ -74,15 +74,7 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
-		// アクションパターン変更
-		if (player->IsJump())
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
-		}
-		else
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW, CPlayer::EAction::ACTION_THROW);
-		}
+		ThrowSetting(player);
 	}
 }
 
@@ -103,7 +95,7 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 	if (pKey->GetTrigger(DIK_SPACE) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
 	{
-		SetJump(player);
+		JumpSetting(player);
 	}
 }
 
