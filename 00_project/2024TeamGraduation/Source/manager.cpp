@@ -516,6 +516,18 @@ void CManager::Uninit()
 	// ライトの破棄
 	SAFE_REF_RELEASE(m_pLight);
 
+	// カメラの破棄
+	if (m_pCamera != nullptr)
+	{// メモリの確保が出来ていたら
+
+		// 終了処理
+		m_pCamera->Uninit();
+
+		// メモリの開放
+		delete m_pCamera;
+		m_pCamera = nullptr;
+	}
+
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
 
@@ -544,18 +556,6 @@ void CManager::Uninit()
 
 	// Imguiの終了
 	ImguiMgr::Uninit();
-
-	// カメラの破棄
-	if (m_pCamera != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pCamera->Uninit();
-
-		// メモリの開放
-		delete m_pCamera;
-		m_pCamera = nullptr;
-	}
 
 	if (m_pMyEffekseer != nullptr)
 	{

@@ -27,14 +27,6 @@ namespace
 		MyLib::Vector3(-0.18f, 0.88f, -0.44f),
 		MyLib::Vector3(0.89f, -0.11f, 0.44f),
 	};
-
-	// TODO
-#if 0
-	// スポットライトの拡散光を設定
-	m_aLight[nCntLight].Diffuse = D3DXCOLOR(0.6f, 0.6f, 0.6f, 1.0f);
-	// スポットライトの方向を設定
-	vecDir = MyLib::Vector3(0.0f, 0.0f, 0.0f);
-#endif
 }
 
 //************************************************************
