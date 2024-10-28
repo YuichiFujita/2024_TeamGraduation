@@ -458,7 +458,10 @@
     <ClCompile Include="Source\objectCharaAnim.cpp">
       <Filter>object</Filter>
     </ClCompile>
-    <ClCompile Include="Source\lightspot.cpp">
+    <ClCompile Include="Source\lightDir.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\lightManager.cpp">
       <Filter>system</Filter>
     </ClCompile>
   </ItemGroup>
@@ -838,7 +841,10 @@
     <ClInclude Include="Source\objectCharaAnim.h">
       <Filter>object</Filter>
     </ClInclude>
-    <ClInclude Include="Source\lightspot.h">
+    <ClInclude Include="Source\lightDir.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\lightManager.h">
       <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
