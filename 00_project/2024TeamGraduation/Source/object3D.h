@@ -26,6 +26,7 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
+	virtual void Kill() override;	// “®“Iíœˆ—
 
 	virtual void SetVtx();
 	virtual void BindTexture(int nIdx);

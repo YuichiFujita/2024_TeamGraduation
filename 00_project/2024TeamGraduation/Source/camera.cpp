@@ -14,7 +14,7 @@
 #include "player.h"
 #include "title.h"
 #include "instantfade.h"
-#include "light.h"
+#include "lightDir.h"
 #include "3D_effect.h"
 #include "calculation.h"
 #include "pause.h"
@@ -78,6 +78,7 @@ CCamera::CCamera()
 	m_bFollow = false;				// 追従するかどうか
 	m_bMotion = false;				// モーション中かどうか
 	m_state = CAMERASTATE_NONE;		// 状態
+	m_pLight = nullptr;				// ディレクショナルライト
 	m_fTimerState = 0.0f;			// 状態カウンター
 	m_fTimerShake = 0.0f;			// 振動カウンター
 	m_pCameraMotion = nullptr;		// カメラモーションのポインタ
@@ -99,13 +100,26 @@ CCamera::~CCamera()
 //==========================================================================
 HRESULT CCamera::Init()
 {
-	
 	// ビューポートの設定
 	SetViewPort(MyLib::Vector3(0.0f, 0.0f, 0.0f), D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	// リセット
 	m_bFollow = true;	// 追従するかどうか
 	Reset(CScene::MODE_GAME);
+
+	// ディレクショナルライトの生成
+	m_pLight = CLightDir::Create();
+	if (m_pLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// オブジェクト種類を未設定にする
+	m_pLight->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 拡散光の色を設定
+	m_pLight->SetDiffuse(D3DXCOLOR(0.6f, 0.6f, 0.6f, 1.0f));
 
 	// 操作の状態設定
 	SetControlState(DEBUG_NEW CCameraControlState_Normal(this));
@@ -141,7 +155,9 @@ void CCamera::SetViewPort(const MyLib::Vector3& pos, const D3DXVECTOR2& size)
 //==========================================================================
 void CCamera::Uninit()
 {
-	
+	// ライトの終了
+	SAFE_UNINIT(m_pLight);
+
 	if (m_pControlState != nullptr)
 	{
 		delete m_pControlState;
@@ -216,6 +232,9 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"---------------- カメラ情報 ----------------\n"
 		"【交差点】[X：%f Y：%f Z：%f]\n",
 		pos.x, pos.y, pos.z);
+
+	// ライトの更新
+	m_pLight->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// カメラモーション作成
 	if (m_pCameraMotion != nullptr)
@@ -381,11 +400,8 @@ void CCamera::UpdateSpotLightVec()
 	// 視点から注視点への向き
 	vec = m_posR - m_posV;
 
-	// 正規化
-	D3DXVec3Normalize(&vec, &vec);
-
 	// スポットライトの方向設定
-	CManager::GetInstance()->GetLight()->UpdateSpotLightDirection(vec);
+	m_pLight->SetDirection(vec);
 }
 
 //==========================================================================

@@ -27,6 +27,7 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
+	virtual void Kill() override;	// “®“Iíœˆ—
 
 	// î•ñİ’è
 	void SetValueRot(float rot)				{ m_fValueRot = rot; }		// ‰ñ“]Špİ’è

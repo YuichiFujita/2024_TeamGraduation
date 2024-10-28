@@ -21,7 +21,7 @@
 
 // 前方宣言
 class CRenderer;
-class CLight;
+class CLightManager;
 class CCamera;
 class CInput;
 class CSound;
@@ -71,7 +71,7 @@ public:
 
 	CRenderer *GetRenderer();
 	CDebugProc *GetDebugProc();
-	CLight *GetLight();
+	CLightManager *GetLight();
 	CCamera *GetCamera();
 	CEdit *GetEdit();
 	CFont *GetFont();	// フォント取得
@@ -119,7 +119,7 @@ private:
 	CInput*m_pInput;					// 入力機器
 	CSound* m_pSound;					// サウンド
 	CDebugProc *m_pDebugProc;			// デバッグ表示
-	CLight *m_pLight;					// ライト
+	CLightManager *m_pLight;			// ライト
 	CCamera *m_pCamera;					// カメラ
 	CTexture *m_pTexture;				// テクスチャ
 	CXLoad* m_pXLoad;					// Xファイル

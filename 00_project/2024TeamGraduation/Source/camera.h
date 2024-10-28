@@ -10,9 +10,9 @@
 #include "scene.h"
 #include "camera_motion.h"	// カメラモーション
 
+class CLightDir;			// ディレクションライト
 class CCameraControlState;	// 状態別操作
-
-class CCamera_Debug;	// デバッグ処理
+class CCamera_Debug;		// デバッグ処理
 
 //==========================================================================
 // クラス定義
@@ -141,19 +141,18 @@ private:
 	// メンバ変数
 	void UpdateByMode();	// モード別更新処理
 	void MoveCameraInput();	// 入力機器のカメラ移動
-	void ReflectCameraR();		// 注視点の反映
-	void ReflectCameraV();		// 視点反映
+	void ReflectCameraR();	// 注視点の反映
+	void ReflectCameraV();	// 視点反映
 	void Shake();
 
-
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
 	void UpdateSpotLightVec();	// ライトのベクトル更新
 
 	// リセット
 	void ResetGame();
 
-	D3DXMATRIX	m_mtxProjection;	// プロジェクションマトリックス
-	D3DXMATRIX	m_mtxView;			// ビューマトリックス
+	D3DXMATRIX m_mtxProjection;		// プロジェクションマトリックス
+	D3DXMATRIX m_mtxView;			// ビューマトリックス
 	D3DVIEWPORT9 m_viewport;		// ビューポート
 	MyLib::Vector3 m_posV;			// 視点(カメラの位置)
 	MyLib::Vector3 m_posVDest;		// 目標の視点
@@ -180,14 +179,14 @@ private:
 	bool m_bFollow;	// 追従判定
 	bool m_bMotion;	// モーション中判定
 	
-	float m_fTimerState;			// 状態カウンター
-	float m_fTimerShake;			// 振動カウンター
-	STATE m_state;					// 状態
+	float m_fTimerState;	// 状態カウンター
+	float m_fTimerShake;	// 振動カウンター
+	STATE m_state;			// 状態
+	CLightDir* m_pLight;	// ディレクショナルライト
 	CCameraMotion* m_pCameraMotion;	// カメラモーションのポインタ
 
-
 	CCameraControlState* m_pControlState;	// 操作の状態ポインタ
-	CCamera_Debug* m_pDebugControll;	// デバッグ処理
+	CCamera_Debug* m_pDebugControll;		// デバッグ処理
 };
 
 

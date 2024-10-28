@@ -46,11 +46,11 @@ public:
 	void Draw() override;
 	void Draw(const D3DXCOLOR& col);
 	void Draw(float fAlpha);
+	virtual void Kill() override;	// “®“Iíœˆ—
 
 	//--------------------------
 	// ‘€ì
 	//--------------------------
-	void Kill();		// íœ
 	void DrawOnly();	// •`‰æ‚Ì‚İ
 
 	//--------------------------

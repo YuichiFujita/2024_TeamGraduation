@@ -52,6 +52,7 @@ public:
 		TYPE_MESHDONUTS,		// メッシュドーナツ
 		TYPE_MESHSPHERE,		// メッシュスフィア
 		TYPE_NUMBER,			// 数字
+		TYPE_LIGHT,				// ライト
 		TYPE_TIMER,				// タイマー
 		TYPE_UI,				// UI
 		TYPE_MAX
@@ -78,6 +79,7 @@ public:
 	virtual void Uninit() = 0;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;
 	virtual void Draw() = 0;
+	virtual void Kill() = 0;	// 動的削除処理
 
 	//--------------------------
 	// 仮想関数
