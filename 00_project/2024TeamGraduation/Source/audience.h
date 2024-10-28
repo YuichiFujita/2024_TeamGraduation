@@ -89,7 +89,7 @@ public:
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
 	void SetSpecial();	// スペシャル設定
-	bool SetDespawn();	// 退場設定
+	virtual bool SetDespawn();	// 退場設定
 
 	//=============================
 	// 静的メンバ関数
@@ -115,6 +115,7 @@ protected:
 
 	// ゲッター/セッター
 	virtual void SetMotion(const int nMotion) = 0;	// モーション設定
+	virtual void EndSettingSpawn() = 0;				// スポーン終了時の設定
 
 	//=============================
 	// メンバ関数

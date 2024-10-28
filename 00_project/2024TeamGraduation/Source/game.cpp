@@ -241,11 +241,11 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
-#if 0
+#if 1
 		if (ImGui::Button("Audience : AnimLeft"))
 		{
 			// オーディエンス生成
-			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, CGameManager::TeamSide::SIDE_LEFT);
 		}
 
 		if (ImGui::Button("Audience : AnimRight"))

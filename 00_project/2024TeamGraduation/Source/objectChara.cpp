@@ -41,7 +41,7 @@ CObjectChara::~CObjectChara()
 //==========================================================================
 // ¶¬ˆ—
 //==========================================================================
-CObjectChara* CObjectChara::Create(const std::string pTextFile)
+CObjectChara* CObjectChara::Create(const std::string& pTextFile)
 {
 	// ƒƒ‚ƒŠ‚ÌŠm•Û
 	CObjectChara* pObjChara = DEBUG_NEW CObjectChara;

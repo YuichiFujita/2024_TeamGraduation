@@ -5,8 +5,11 @@
 // 
 //==========================================================================
 #include "audience.h"
-#include "audienceAnim.h"
 #include "gameManager.h"
+
+// 派生先
+#include "audienceAnim.h"
+#include "audienceHighPoly.h"
 
 //==========================================================================
 // 定数定義
@@ -74,6 +77,10 @@ CAudience* CAudience::Create(EObjType type, CGameManager::TeamSide team)
 	{ // オブジェクト種類ごとの処理
 	case CAudience::OBJTYPE_ANIM:
 		pAudience = DEBUG_NEW CAudienceAnim(type, team);
+		break;
+
+	case CAudience::EObjType::OBJTYPE_HIGHPOLY:
+		pAudience = DEBUG_NEW CAudienceHighPoly(type, team);
 		break;
 
 	default:
@@ -233,7 +240,7 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
 		{ // 登場人数分繰り返す
 
 			// 観客を生成
-			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, team)))
+			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, team)))
 			{ // 生成に失敗した場合
 
 				return E_FAIL;
@@ -369,6 +376,9 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 		// 観戦位置に補正
 		pos.x = m_posWatch.x;
 		pos.z = m_posWatch.z;
+
+		// スポーン終了時の設定
+		EndSettingSpawn();
 
 		// TODO：ここで盛り上がるタイミング化を確認
 		if (true)	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
