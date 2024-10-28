@@ -79,6 +79,7 @@ public:
 	virtual void Uninit() = 0;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;
 	virtual void Draw() = 0;
+	virtual void Kill() = 0;	// “®“Iíœˆ—
 
 	//--------------------------
 	// ‰¼‘zŠÖ”

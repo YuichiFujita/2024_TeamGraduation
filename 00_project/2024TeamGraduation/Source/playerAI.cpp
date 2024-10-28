@@ -26,9 +26,7 @@ namespace
 //==========================================================================
 CPlayerAI::CPlayerAI()
 {
-	// パターン用インスタンス
-	m_pControlMove = nullptr;	// 移動操作
-	m_pControlAction = nullptr;	// アクション操作
+
 }
 
 //==========================================================================
@@ -127,9 +125,15 @@ void CPlayerAI::Draw()
 //==========================================================================
 void CPlayerAI::Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
 	// 移動操作	// TODO：AIむじ～
 	//m_pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	m_pControlAction->EAction(this, fDeltaTime, fDeltaRate, fSlowRate);
+	pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+
+	SetPlayerControlMove(pControlMove);
+	SetPlayerControlAction(pControlAction);
 }
 
 //==========================================================================
@@ -137,8 +141,12 @@ void CPlayerAI::Operate(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 {
-	delete m_pControlMove;
-	m_pControlMove = control;
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+
+	delete pControlMove;
+	pControlMove = control;
+
+	SetPlayerControlMove(pControlMove);
 }
 
 //==========================================================================
@@ -146,8 +154,12 @@ void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 //==========================================================================
 void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
 {
-	delete m_pControlAction;
-	m_pControlAction = control;
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
+	delete pControlAction;
+	pControlAction = control;
+
+	SetPlayerControlAction(pControlAction);
 }
 
 //==========================================================================
@@ -155,20 +167,26 @@ void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
 //==========================================================================
 void CPlayerAI::DeleteControl()
 {
-	if (m_pControlMove != nullptr)
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
+	if (pControlMove != nullptr)
 	{// 移動操作
-		delete m_pControlMove;
-		m_pControlMove = nullptr;
+		delete pControlMove;
+		pControlMove = nullptr;
 	}
 
-	if (m_pControlAction != nullptr)
+	if (pControlAction != nullptr)
 	{// アクション操作
-		delete m_pControlAction;
-		m_pControlAction = nullptr;
+		delete pControlAction;
+		pControlAction = nullptr;
 	}
 
 	// 操作関連削除
 	CPlayer::DeleteControl();
+
+	SetPlayerControlMove(pControlMove);
+	SetPlayerControlAction(pControlAction);
 }
 
 
@@ -180,10 +198,13 @@ void CPlayerAI::Debug()
 	// デバッグ処理
 	CPlayer::Debug();
 
+	CPlayerAIControlAction* pControlAction = dynamic_cast<CPlayerAIControlAction*> (GetPlayerControlAction());
+	if (pControlAction == nullptr) return;
+
 	// 自動投げフラグ設定
-	bool autoThrow = m_pControlAction->IsAutoThrow();
+	bool autoThrow = pControlAction->IsAutoThrow();
 	if (ImGui::Checkbox("Change Auto Throw", &autoThrow))
 	{ 
-		m_pControlAction->SetEnableAutoThrow(autoThrow);
+		pControlAction->SetEnableAutoThrow(autoThrow);
 	}
 }

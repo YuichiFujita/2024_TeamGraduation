@@ -38,6 +38,7 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
+	virtual void Kill() override;	// “®“Iíœˆ—
 	virtual void SetVtx() override;
 
 	void SetLeftPosition(const MyLib::Vector3& pos) { m_Info.left = pos; }

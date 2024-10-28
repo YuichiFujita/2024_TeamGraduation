@@ -23,7 +23,7 @@ public:
 	// コンストラクタ
 	CPlayerControlAction();
 
-	void EAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
+	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
 	void SetJump(CPlayer* player);
 
 protected:

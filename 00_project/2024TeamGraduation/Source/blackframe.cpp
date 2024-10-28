@@ -169,6 +169,25 @@ void CBlackFrame::Uninit()
 }
 
 //==========================================================================
+// 動的削除
+//==========================================================================
+void CBlackFrame::Kill()
+{
+	for (int nCntSelect = 0; nCntSelect < VTX_MAX; nCntSelect++)
+	{
+		if (m_pObj2D[nCntSelect] != nullptr)
+		{
+			// 終了処理
+			m_pObj2D[nCntSelect]->Kill();
+			m_pObj2D[nCntSelect] = nullptr;
+		}
+	}
+
+	// 終了処理
+	Uninit();
+}
+
+//==========================================================================
 // 更新処理
 //==========================================================================
 void CBlackFrame::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)

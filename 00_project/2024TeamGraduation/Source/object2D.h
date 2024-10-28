@@ -36,11 +36,14 @@ public:
 	virtual ~CObject2D();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void Draw();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
 	void Draw(int nNumVertex);
+	virtual void Kill() override;	// 動的削除処理
+
+
 	virtual void SetVtx();
 	virtual void SetVtx(int nNumVertex);
 	void BindTexture(int nIdx) { m_nTexIdx = nIdx; }	// テクスチャインデックス設定

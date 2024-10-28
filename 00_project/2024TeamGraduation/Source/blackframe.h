@@ -44,6 +44,7 @@ public:
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
+	virtual void Kill() override;	// “®“Iíœˆ—
 
 	void SetState(STATE state);	// ó‘Ôİ’è
 	STATE GetState() { return m_state; }	// ó‘Ôİ’è

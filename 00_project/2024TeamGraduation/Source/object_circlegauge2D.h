@@ -22,10 +22,11 @@ public:
 	~CObjectCircleGauge2D();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void Draw();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
+	virtual void Kill() override;	// 動的削除処理
 	virtual void SetVtx();
 
 	void SetColor(const D3DXCOLOR col);		// 色設定
