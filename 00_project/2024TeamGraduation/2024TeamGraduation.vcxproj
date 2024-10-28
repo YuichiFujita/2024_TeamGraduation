@@ -207,6 +207,7 @@
     <ClCompile Include="Source\light.cpp" />
     <ClCompile Include="Source\lightDir.cpp" />
     <ClCompile Include="Source\lightManager.cpp" />
+    <ClCompile Include="Source\lightPoint.cpp" />
     <ClCompile Include="Source\listmanager.cpp" />
     <ClCompile Include="Source\loadmanager.cpp" />
     <ClCompile Include="Source\loadscreen.cpp" />
@@ -339,6 +340,7 @@
     <ClInclude Include="Source\light.h" />
     <ClInclude Include="Source\lightDir.h" />
     <ClInclude Include="Source\lightManager.h" />
+    <ClInclude Include="Source\lightPoint.h" />
     <ClInclude Include="Source\listmanager.h" />
     <ClInclude Include="Source\loadmanager.h" />
     <ClInclude Include="Source\loadscreen.h" />

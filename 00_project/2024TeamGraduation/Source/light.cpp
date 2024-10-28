@@ -113,12 +113,12 @@ void CLight::SetLightType(const D3DLIGHTTYPE type)
 }
 
 //============================================================
-//	ŠgŽUŒõ‚ÌÝ’èˆ—
+//	ˆÊ’u‚ÌÝ’èˆ—
 //============================================================
-void CLight::SetDiffuse(const MyLib::Color& rCol)
+void CLight::SetPosition(const MyLib::Vector3& rPos)
 {
-	// ŠgŽUŒõ‚ÌÝ’è
-	m_light.Diffuse = rCol;
+	// ˆÊ’u‚ÌÝ’è
+	m_light.Position = rPos;
 
 	// ƒ‰ƒCƒg‚ÉÝ’è‚ð”½‰f
 	GET_DEVICE->SetLight(m_nLightIdx, &m_light);
@@ -133,6 +133,18 @@ void CLight::SetDirection(const MyLib::Vector3& rDir)
 
 	// •ûŒü‚ÌÝ’è
 	m_light.Direction = dir.Normal();	// •ûŒü‚ð³‹K‰»
+
+	// ƒ‰ƒCƒg‚ÉÝ’è‚ð”½‰f
+	GET_DEVICE->SetLight(m_nLightIdx, &m_light);
+}
+
+//============================================================
+//	ŠgŽUŒõ‚ÌÝ’èˆ—
+//============================================================
+void CLight::SetDiffuse(const MyLib::Color& rCol)
+{
+	// ŠgŽUŒõ‚ÌÝ’è
+	m_light.Diffuse = rCol;
 
 	// ƒ‰ƒCƒg‚ÉÝ’è‚ð”½‰f
 	GET_DEVICE->SetLight(m_nLightIdx, &m_light);

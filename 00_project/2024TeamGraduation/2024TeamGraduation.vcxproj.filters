@@ -464,6 +464,9 @@
     <ClCompile Include="Source\lightManager.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\lightPoint.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -845,6 +848,9 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Source\lightManager.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\lightPoint.h">
       <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
