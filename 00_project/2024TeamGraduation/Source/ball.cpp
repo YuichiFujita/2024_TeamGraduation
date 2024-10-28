@@ -24,6 +24,7 @@ namespace
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
 	const float	RADIUS = 12.0f;			// 半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
+	const float	REV_INIMOVE = 0.29f;	// 初速の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
@@ -64,7 +65,8 @@ namespace
 
 	namespace move
 	{
-		const float TIME_GRAVITY = 0.8f;	// 重力がかかり始めるまでの時間
+		const float TIME_GRAVITY = 0.8f;		// 重力がかかり始めるまでの時間
+		const float MULTIPLY_INIMOVE = 3.5f;	// 初速の倍率
 	}
 
 	namespace rebound
@@ -194,6 +196,13 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 前回の位置を更新
 	SetOldPosition(GetPosition());
 
+	// 初速移動量更新
+	if (IsAttack())
+	{// 攻撃中のみ補正
+
+		m_fInitialSpeed += (0.0f - m_fInitialSpeed) * (REV_INIMOVE * fDeltaRate * fSlowRate);
+	}
+
 	// 状態別処理
 	(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -285,6 +294,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = normal::THROW_MOVE;
+	CalSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -326,6 +336,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = jump::THROW_MOVE;
+	CalSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -367,6 +378,7 @@ void CBall::ThrowSpecial(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = Special::THROW_MOVE;
+	CalSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -707,6 +719,7 @@ void CBall::UpdateDecay(const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量を減衰させる
 	m_fMoveSpeed += (0.0f - m_fMoveSpeed) * (REV_MOVE * fDeltaRate * fSlowRate);
+	
 }
 
 //==========================================================================
@@ -724,7 +737,7 @@ void CBall::UpdateGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, c
 void CBall::UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置に移動量を反映
-	*pPos += (*pMove * m_fMoveSpeed) * fDeltaRate * fSlowRate;
+	*pPos += (*pMove * (m_fMoveSpeed + m_fInitialSpeed)) * fDeltaRate * fSlowRate;
 
 	// 場外の補正
 	CGame::GetInstance()->GetGameManager()->SetPosLimit(*pPos);
@@ -961,4 +974,12 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;
+}
+
+//==========================================================================
+// 初速の計算設定処理
+//==========================================================================
+void CBall::CalSetInitialSpeed(float move)
+{
+	m_fInitialSpeed = move * move::MULTIPLY_INIMOVE;
 }

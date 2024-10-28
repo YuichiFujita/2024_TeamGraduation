@@ -826,9 +826,6 @@
     <ClInclude Include="Source\playercontrol_move.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ball.h">
-      <Filter>ingame\ball</Filter>
-    </ClInclude>
     <ClInclude Include="Source\audience.h">
       <Filter>ingame\audience</Filter>
     </ClInclude>
@@ -852,6 +849,9 @@
     </ClInclude>
     <ClInclude Include="Source\lightPoint.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ball.h">
+      <Filter>ingame\ball</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

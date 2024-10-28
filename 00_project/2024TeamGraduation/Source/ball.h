@@ -131,6 +131,7 @@ private:
 	void Throw(CPlayer* pPlayer);		// 投げ
 	void Landing(void);					// 着地
 	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
+	void CalSetInitialSpeed(float move);						// 初速の計算設定処理
 
 	//=============================
 	// 静的メンバ変数
@@ -140,11 +141,12 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CPlayer* m_pPlayer;	// プレイヤー情報
-	CPlayer* m_pTarget;	// ホーミングターゲット情報
-	CPlayer* m_pCover;	// カバー対象プレイヤー情報
-	float m_fMoveSpeed;	// 移動速度
-	float m_fGravity;	// 重力
+	CPlayer* m_pPlayer;		// プレイヤー情報
+	CPlayer* m_pTarget;		// ホーミングターゲット情報
+	CPlayer* m_pCover;		// カバー対象プレイヤー情報
+	float m_fMoveSpeed;		// 移動速度
+	float m_fInitialSpeed;	// 初速
+	float m_fGravity;		// 重力
 	MyLib::Vector3 m_oldOverLine;	// ホーミング終了ライン
 
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
