@@ -28,6 +28,8 @@
 // 使用クラス
 #include "playerAction.h"
 #include "playerStatus.h"
+#include "playercontrol_action.h"
+#include "playercontrol_move.h"
 
 //==========================================================================
 // 定数定義
@@ -108,6 +110,8 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	// パターン用インスタンス
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
+	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
@@ -763,8 +767,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
-	MyLib::Vector3 posS = GetPosition();
-	MyLib::Vector3 posE = posS;
+	MyLib::Vector3 posS = GetPosition();	//始点
+	MyLib::Vector3 posE = posS;				//終点
 	posE.x += vecBall.x * Knockback::DAMAGE;
 	posE.z += vecBall.z * Knockback::DAMAGE;
 	m_sKnockback.fPosStart = posS;
@@ -783,9 +787,22 @@ void CPlayer::CatchSetting(CBall* pBall)
 	pBall->CatchAttack(this);
 
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
+	MyLib::Vector3 posB = pBall->GetPosition();	// ボール位置
+	MyLib::Vector3 pos = GetPosition();	// ボール位置
+	
+	// 入力8方向にゆとり(左右1/8π)を持たせる
+	// 入力判定
+	bool bInput = UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE);
+	EDashAngle;
+
+	//現在の入力方向を取る(向き)
+	//m_pActionPattern->GetHoldDashAngle();
+	//左右1/8π(視野角)
+	
 
 	// モーション設定
-	if (m_sMotionFrag.bCatchJust)
+	if (m_sMotionFrag.bCatchJust
+		&& bInput)
 	{// ジャストキャッチ
 
 		CatchSettingLandJust(atkBall);		// キャッチ時処理(地上・ジャスト)
@@ -1102,3 +1119,19 @@ void CPlayer::Debug()
 
 		ImGui::TreePop();
 	}}
+
+//==========================================================================
+// 操作取得(アクション)
+//==========================================================================
+CPlayerControlAction* CPlayer::GetPlayerControlAction()
+{
+	return m_pControlAction;
+}
+
+//==========================================================================
+// 操作取得(移動)
+//==========================================================================
+CPlayerControlMove* CPlayer::GetPlayerControlMove()
+{
+	return m_pControlMove;
+}

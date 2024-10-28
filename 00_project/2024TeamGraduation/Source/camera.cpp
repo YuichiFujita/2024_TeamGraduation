@@ -14,7 +14,6 @@
 #include "player.h"
 #include "title.h"
 #include "instantfade.h"
-#include "lightDir.h"
 #include "3D_effect.h"
 #include "calculation.h"
 #include "pause.h"

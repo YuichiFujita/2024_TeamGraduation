@@ -70,17 +70,12 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 移動
+	void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 操作
 	void DeleteControl() override;	// 操作削除
 
 	//=============================
 	// メンバ変数
 	//=============================
-	//-----------------------------
-	// パターン用インスタンス
-	//-----------------------------
-	CPlayerUserControlMove* m_pControlMove;		// 移動操作
-	CPlayerUserControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif

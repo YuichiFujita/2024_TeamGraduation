@@ -80,11 +80,6 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	//-----------------------------
-	// パターン用インスタンス
-	//-----------------------------
-	CPlayerAIControlMove* m_pControlMove;		// 移動操作
-	CPlayerAIControlAction* m_pControlAction;	// アクション操作
 };
 
 #endif
