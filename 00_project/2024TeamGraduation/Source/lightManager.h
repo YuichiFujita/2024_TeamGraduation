@@ -37,6 +37,8 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 	inline D3DLIGHT9 GetLight(const int nIdx) { return m_apLight[nIdx]->GetLight(); }	// ライト取得
 
+	void SetEnableBright(const bool bBright);	// 明るさ設定
+
 	// 静的メンバ関数
 	static CLightManager* Create();	// 生成
 	static void Release(CLightManager*& prLightManager);	// 破棄

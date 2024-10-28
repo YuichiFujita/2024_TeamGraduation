@@ -8,9 +8,9 @@
 #define _CAMERA_H_		// 二重インクルード防止のマクロを定義する
 
 #include "scene.h"
+#include "lightDir.h"
 #include "camera_motion.h"	// カメラモーション
 
-class CLightDir;			// ディレクションライト
 class CCameraControlState;	// 状態別操作
 class CCamera_Debug;		// デバッグ処理
 
@@ -49,11 +49,6 @@ public:
 	void SetCamera();	// カメラ設定
 	void Reset(CScene::MODE mode);	// リセット
 
-
-
-
-
-	
 	//=============================
 	// 位置情報
 	//=============================
@@ -114,6 +109,7 @@ public:
 	//--------------------------
 	// フラグ
 	//--------------------------
+	inline void SetEnableLight(bool bLight) { m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
 	bool IsFollow() { return m_bFollow; }							// 追従判定取得
 	void SetEnableFollow(bool bFollow) { m_bFollow = bFollow; }		// 追従の判定設定
 	bool IsMotion() { return m_bMotion; }						// モーション中判定取得

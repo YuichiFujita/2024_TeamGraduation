@@ -196,9 +196,9 @@ void CPlayer::Uninit()
 }
 
 //==========================================================================
-// 終了処理
+// 動的削除処理
 //==========================================================================
-void CPlayer::Release()
+void CPlayer::Kill()
 {
 	// 影を消す
 	if (m_pShadow != nullptr)
@@ -206,9 +206,6 @@ void CPlayer::Release()
 		m_pShadow->Uninit();
 		m_pShadow = nullptr;
 	}
-
-	// 操作系
-	DeleteControl();
 
 	// アクションパターン
 	if (m_pActionPattern != nullptr)
@@ -219,6 +216,9 @@ void CPlayer::Release()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
+
+	// 終了処理
+	Uninit();
 }
 
 //==========================================================================

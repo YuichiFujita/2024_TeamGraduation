@@ -8,17 +8,27 @@
 //	インクルードファイル
 //************************************************************
 #include "lightManager.h"
+#include "manager.h"
+#include "camera.h"
 
 //************************************************************
 //	定数宣言
 //************************************************************
 namespace
 {
-	const MyLib::Color DIFFUSE[] =	// 設定用拡散光カラー
+	const MyLib::Color DIFFUSE[2][CLightManager::MAX_NUM] =	// 設定用拡散光カラー
 	{
-		MyLib::Color(1.0f, 1.0f, 1.0f, 1.0f),
-		MyLib::Color(0.65f, 0.65f, 0.65f, 1.0f),
-		MyLib::Color(0.15f, 0.15f, 0.15f, 1.0f),
+		{ // 明るいときのライト
+			MyLib::Color(1.0f, 1.0f, 1.0f, 1.0f),
+			MyLib::Color(0.65f, 0.65f, 0.65f, 1.0f),
+			MyLib::Color(0.15f, 0.15f, 0.15f, 1.0f),
+		},
+
+		{ // 暗いときのライト
+			MyLib::Color(0.25f, 0.25f, 0.25f, 1.0f),
+			MyLib::Color(0.25f, 0.25f, 0.25f, 1.0f),
+			MyLib::Color(0.25f, 0.25f, 0.25f, 1.0f),
+		}
 	};
 
 	const MyLib::Vector3 DIRECTION[] =	// 設定用方向ベクトル
@@ -32,7 +42,6 @@ namespace
 //************************************************************
 //	スタティックアサート
 //************************************************************
-static_assert(NUM_ARRAY(DIFFUSE)   == CLightManager::MAX_NUM, "ERROR : Light Count Mismatch");
 static_assert(NUM_ARRAY(DIRECTION) == CLightManager::MAX_NUM, "ERROR : Light Count Mismatch");
 
 //************************************************************
@@ -76,7 +85,7 @@ HRESULT CLightManager::Init()
 		m_apLight[i]->SetType(CObject::TYPE::TYPE_NONE);	// 自動破棄/自動更新を停止
 
 		// ライトの拡散光を設定
-		m_apLight[i]->SetDiffuse(DIFFUSE[i]);
+		m_apLight[i]->SetDiffuse(DIFFUSE[0][i]);
 
 		// ライトの方向を設定
 		m_apLight[i]->SetDirection(DIRECTION[i]);
@@ -109,6 +118,23 @@ void CLightManager::Update(const float fDeltaTime, const float fDeltaRate, const
 		// ライトの更新
 		m_apLight[i]->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+}
+
+//============================================================
+//	明るさの設定処理
+//============================================================
+void CLightManager::SetEnableBright(const bool bBright)
+{
+	int nBright = (bBright) ? 0 : 1;	// ライト配列インデックス
+	for (int i = 0; i < MAX_NUM; i++)
+	{ // 使用するライト数分繰り返す
+
+		// ライトの拡散光を設定
+		m_apLight[i]->SetDiffuse(DIFFUSE[nBright][i]);
+	}
+
+	// カメラのライトフラグを設定
+	GET_MANAGER->GetCamera()->SetEnableLight(bBright);
 }
 
 //============================================================

@@ -16,6 +16,11 @@
 #include "objectCharaAnim.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CObjectX;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // 観客_アニメーション3Dクラス定義
@@ -68,10 +73,11 @@ protected:
 	// オーバーライド関数
 	//=============================
 	// 状態関数
-	int UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 入場状態の更新
-	int UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
-	int UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり状態の更新
-	int UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 退場状態の更新
+	int UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 入場状態の更新
+	int UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 通常状態の更新
+	int UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// 盛り上がり状態の更新
+	int UpdateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// スペシャル状態の更新
+	int UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 退場状態の更新
 
 	// ゲッター/セッター
 	void SetMotion(const int nMotion) override;	// モーション設定
@@ -82,6 +88,7 @@ private:
 	// メンバ変数
 	//=============================
 	CObjectCharaAnim* m_pAnimChara;	// キャラクターアニメーション情報
+	CObjectX* m_pLight;		// ペンライト情報
 	EMotion m_moveMotion;	// 移動モーション
 };
 

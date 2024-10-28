@@ -49,6 +49,7 @@ public:
 		STATE_SPAWN = 0,	// 入場状態
 		STATE_NORMAL,		// 通常状態
 		STATE_JUMP,			// 盛り上がり状態
+		STATE_SPECIAL,		// スペシャル状態
 		STATE_DESPAWN,		// 退場状態
 		STATE_MAX			// この列挙型の総数
 	};
@@ -87,6 +88,7 @@ public:
 	// メンバ関数
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
+	void SetSpecial();	// スペシャル設定
 	bool SetDespawn();	// 退場設定
 
 	//=============================
@@ -96,6 +98,7 @@ public:
 	static HRESULT SetNumWatch(const int nNumWatch, CGameManager::TeamSide team);		// 観戦中の人数設定
 	static int GetNumWatchAll(CGameManager::TeamSide team);								// 全観戦中の人数取得
 	static void SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team);		// 全盛り上がり設定
+	static void SetSpecialAll(CGameManager::TeamSide team);								// 全スペシャル設定
 	static void SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn = -1);	// 全退場設定
 
 protected:
@@ -107,6 +110,7 @@ protected:
 	virtual int UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 入場状態の更新
 	virtual int UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 通常状態の更新
 	virtual int UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 盛り上がり状態の更新
+	virtual int UpdateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// スペシャル状態の更新
 	virtual int UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 退場状態の更新
 
 	// ゲッター/セッター

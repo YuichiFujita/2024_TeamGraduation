@@ -99,7 +99,7 @@ void CPlayerUser::Uninit()
 void CPlayerUser::Kill()
 {
 	// 親クラスの終了
-	CPlayer::Uninit();
+	CPlayer::Kill();
 }
 
 //==========================================================================
