@@ -271,6 +271,38 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			GET_MANAGER->GetLight()->SetEnableBright(false);
 		}
 
+		if (ImGui::Button("Audience : NormalLeft"))
+		{
+			// オーディエンス全通常
+			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
+		}
+		if (ImGui::Button("Audience : JumpLeft"))
+		{
+			// オーディエンス全盛り上がり
+			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_LEFT);
+		}
+		if (ImGui::Button("Audience : SpecialLeft"))
+		{
+			// オーディエンス全スペシャル
+			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_LEFT);
+		}
+
+		if (ImGui::Button("Audience : NormalRight"))
+		{
+			// オーディエンス全通常
+			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
+		}
+		if (ImGui::Button("Audience : JumpRight"))
+		{
+			// オーディエンス全盛り上がり
+			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_RIGHT);
+		}
+		if (ImGui::Button("Audience : SpecialRight"))
+		{
+			// オーディエンス全スペシャル
+			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_RIGHT);
+		}
+
 #if 1
 		// 左チームのモテ値増減
 		CTeamStatus* pTeamLeft = GetGameManager()->GetTeamStatus(0);	// チーム情報
@@ -285,31 +317,10 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
 
 #else
-		if (ImGui::Button("Audience : NormalLeft"))
-		{
-			// オーディエンス全通常
-			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
-		}
-		if (ImGui::Button("Audience : JumpLeft"))
-		{
-			// オーディエンス全盛り上がり
-			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_LEFT);
-		}
 		if (ImGui::Button("Audience : DespawnLeft"))
 		{
 			// オーディエンス全退場
 			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
-		}
-
-		if (ImGui::Button("Audience : NormalRight"))
-		{
-			// オーディエンス全通常
-			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
-		}
-		if (ImGui::Button("Audience : JumpRight"))
-		{
-			// オーディエンス全盛り上がり
-			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_RIGHT);
 		}
 		if (ImGui::Button("Audience : DespawnRight"))
 		{

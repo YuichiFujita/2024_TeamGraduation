@@ -29,6 +29,7 @@ CAudience::STATE_FUNC CAudience::m_StateFuncList[] =
 	&CAudience::UpdateSpawn,	// 入場状態の更新
 	&CAudience::UpdateNormal,	// 通常状態の更新
 	&CAudience::UpdateJump,		// 盛り上がり状態の更新
+	&CAudience::UpdateSpecial,	// スペシャル状態の更新
 	&CAudience::UpdateDespawn,	// 退場状態の更新
 };
 
@@ -156,8 +157,8 @@ void CAudience::Draw()
 //==========================================================================
 void CAudience::SetEnableJump(const bool bJump)
 {
-	// 通常状態でも盛り上がり状態でもない場合
-	if (m_state != STATE_NORMAL && m_state != STATE_JUMP) { return; }
+	// 通常状態でも盛り上がり状態でもスペシャル状態でもない場合抜ける
+	if (m_state != STATE_NORMAL && m_state != STATE_JUMP && m_state != STATE_SPECIAL) { return; }
 
 	if (bJump)
 	{ // 盛り上がる場合
@@ -171,6 +172,18 @@ void CAudience::SetEnableJump(const bool bJump)
 		// 通常状態にする
 		m_state = STATE_NORMAL;
 	}
+}
+
+//==========================================================================
+// スペシャルの設定処理
+//==========================================================================
+void CAudience::SetSpecial()
+{
+	// 通常状態でも盛り上がり状態でもスペシャル状態でもない場合抜ける
+	if (m_state != STATE_NORMAL && m_state != STATE_JUMP && m_state != STATE_SPECIAL) { return; }
+
+	// スペシャル状態にする
+	m_state = STATE_SPECIAL;
 }
 
 //==========================================================================
@@ -263,6 +276,28 @@ void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
 
 		// 盛り上がり状況を設定
 		pAudience->SetEnableJump(bJump);
+	}
+}
+
+//==========================================================================
+// 全スペシャルの設定処理
+//==========================================================================
+void CAudience::SetSpecialAll(CGameManager::TeamSide team)
+{
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+
+	std::list<CAudience*>::iterator itr = m_list.GetEnd();
+	while (m_list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CAudience* pAudience = (*itr);	// 観客情報
+
+		// 指定チームではない場合次へ
+		if (pAudience->m_team != team) { continue; }
+
+		// スペシャル状態を設定
+		pAudience->SetSpecial();
 	}
 }
 
@@ -370,6 +405,30 @@ int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, cons
 // 盛り上がり状態の更新処理
 //==========================================================================
 int CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 move = GetMove();	// 移動量
+
+	// 重力の更新
+	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 縦移動量を与える
+		move.y = m_fJumpLevel;
+	}
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(move);		// 移動量
+
+	return 0;	// この関数の返り値は使用しない
+}
+
+//==========================================================================
+// スペシャル状態の更新処理
+//==========================================================================
+int CAudience::UpdateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
