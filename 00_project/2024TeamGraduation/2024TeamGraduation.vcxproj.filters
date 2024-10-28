@@ -473,6 +473,9 @@
     <ClCompile Include="Source\specialManager.cpp">
       <Filter>ingame\special</Filter>
     </ClCompile>
+    <ClCompile Include="Source\cutin.cpp">
+      <Filter>ingame\special</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -832,6 +835,9 @@
     <ClInclude Include="Source\playercontrol_move.h">
       <Filter>player</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ball.h">
+      <Filter>ingame\ball</Filter>
+    </ClInclude>
     <ClInclude Include="Source\audience.h">
       <Filter>ingame\audience</Filter>
     </ClInclude>
@@ -859,8 +865,8 @@
     <ClInclude Include="Source\specialManager.h">
       <Filter>ingame\special</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ball.h">
-      <Filter>ingame\ball</Filter>
+    <ClInclude Include="Source\cutin.h">
+      <Filter>ingame\special</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
