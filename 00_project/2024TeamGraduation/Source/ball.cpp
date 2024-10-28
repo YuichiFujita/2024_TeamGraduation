@@ -61,7 +61,7 @@ namespace
 
 	namespace Special
 	{
-		const float THROW_MOVE = 60.0f;	// スペシャル投げ移動速度
+		const float THROW_MOVE = 35.0f;	// スペシャル投げ移動速度
 	}
 
 	namespace move

@@ -43,7 +43,8 @@ namespace
 
 namespace Knockback
 {
-	const float HEIGHT = 50.0f;		// 最大高度
+	const float HEIGHT = 50.0f;					// 最大高度
+	const float HEIGHT_OUTCOURT = 50.0f;		// 最大高度(コート越え)
 	const float DAMAGE = 50.0f;		// ダメージ
 	const float DEAD = 100.0f;		// 死亡
 }
@@ -67,6 +68,7 @@ namespace StateTime
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
+	const float COURT_RETURN = 10.0f;		// コートに戻ってくる
 }
 
 //==========================================================================
@@ -74,13 +76,15 @@ namespace StateTime
 //==========================================================================
 CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 {
-	&CPlayer::StateNone,			// なし
-	&CPlayer::StateInvincible,		// 無敵
-	&CPlayer::StateDamage,			// ダメージ
-	&CPlayer::StateDead,			// 死亡
-	&CPlayer::StateDodge,			// 回避
-	&CPlayer::StateCatch_Normal,	// 通常キャッチ
-	&CPlayer::StateCatch_Just,		// ジャストキャッチ
+	&CPlayer::StateNone,				// なし
+	&CPlayer::StateInvincible,			// 無敵
+	&CPlayer::StateDamage,				// ダメージ
+	&CPlayer::StateDead,				// 死亡
+	&CPlayer::StateDodge,				// 回避
+	&CPlayer::StateCatch_Normal,		// 通常キャッチ
+	&CPlayer::StateCatch_Just,			// ジャストキャッチ
+	&CPlayer::StateOutCourt,			// コート越え
+	&CPlayer::StateOutCourt_Return,		// コートに戻る
 };
 
 //==========================================================================
@@ -613,7 +617,12 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 void CPlayer::LimitPos()
 {
 	MyLib::Vector3 pos = GetPosition();
-	CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
+	
+	if (m_state != EState::STATE_OUTCOURT &&
+		m_state != EState::STATE_OUTCOURT_RETURN)
+	{//コート越え状態以外はコート内補正
+		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
+	}
 
 	if (pos.y <= 0.0f)
 	{
@@ -749,10 +758,10 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 	MyLib::Vector3 posS = GetPosition();
 	MyLib::Vector3 posE = posS;
-	posE.x += vecBall.x * Knockback::DAMAGE;
-	posE.z += vecBall.z * Knockback::DAMAGE;
-	m_sKnockback.fPosStart = posS;
-	m_sKnockback.fPosEnd = posE;
+	posE.x += vecBall.x * Knockback::DEAD;
+	posE.z += vecBall.z * Knockback::DEAD;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
 
 	// 死んだ
 	result->isdeath = true;
@@ -773,8 +782,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 	MyLib::Vector3 posE = posS;				//終点
 	posE.x += vecBall.x * Knockback::DAMAGE;
 	posE.z += vecBall.z * Knockback::DAMAGE;
-	m_sKnockback.fPosStart = posS;
-	m_sKnockback.fPosEnd = posE;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
@@ -822,6 +831,28 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
+}
+
+//==========================================================================
+// コート越え処理
+//==========================================================================
+void CPlayer::OutCourtSetting()
+{
+	//ダメージ
+	m_pStatus->LifeDamage(10);
+	SetMotion(EMotion::MOTION_DAMAGE);
+
+	// ノックバックの位置設定
+	MyLib::Vector3 rot = GetRotation();
+	UtilFunc::Transformation::RotNormalize(rot.y);
+	MyLib::Vector3 posS = GetPosition();	//始点
+	MyLib::Vector3 posE = posS;				//終点
+	posE.x += sinf(rot.y) * Knockback::DEAD;
+	posE.z += cosf(rot.y) * Knockback::DEAD;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
+
+	SetState(EState::STATE_OUTCOURT);
 }
 
 //==========================================================================
@@ -897,7 +928,7 @@ void CPlayer::StateDamage()
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT,time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT,time);
 
 	SetPosition(pos);
 
@@ -918,7 +949,7 @@ void CPlayer::StateDead()
 	float time = m_fStateTime / StateTime::DEAD;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT, time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT, time);
 
 	SetPosition(pos);
 
@@ -969,11 +1000,18 @@ void CPlayer::StateCatch_Normal()
 	SetPosition(pos);
 	SetMove(move);
 
+	//スペシャル時ライン越え判定
+	if (m_sDamageInfo.eReiceiveType == CBall::EAttack::ATK_SPECIAL &&
+		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos) &&
+		m_state != EState::STATE_OUTCOURT)
+	{
+		OutCourtSetting();
+	}
+		
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}
-
 }
 
 //==========================================================================
@@ -981,6 +1019,55 @@ void CPlayer::StateCatch_Normal()
 //==========================================================================
 void CPlayer::StateCatch_Just()
 {
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// コート越え
+//==========================================================================
+void CPlayer::StateOutCourt()		
+{
+	MyLib::Vector3 pos = GetPosition();
+
+	//ノックバック
+	float time = m_fStateTime / StateTime::DAMAGE;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT_OUTCOURT, time);
+
+	SetPosition(pos);
+
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(EState::STATE_OUTCOURT_RETURN);
+	}
+}
+
+//==========================================================================
+// コート越えから戻る
+//==========================================================================
+void CPlayer::StateOutCourt_Return()
+{
+	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 posStart = CGame::GetInstance()->GetGameManager()->GetCourtSize();
+	posStart.z *= 0.5f;
+	posStart.x *= 0.5f;
+
+	//コート内に戻る
+	pos = UtilFunc::Correction::EaseInExpo(m_sKnockback.posEnd, posStart, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
+	SetPosition(pos);
+
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
@@ -1135,7 +1222,16 @@ void CPlayer::Debug()
 		SetLife(nLife);
 
 		ImGui::TreePop();
-	}}
+	}
+
+	//-----------------------------
+	// コート外検証
+	//-----------------------------
+	if (ImGui::Button("OutCourt"))
+	{// リセット
+		OutCourtSetting();
+	}
+}
 
 //==========================================================================
 // 操作取得(アクション)
