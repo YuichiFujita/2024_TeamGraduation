@@ -58,9 +58,9 @@ public:
 	// チーム種類列挙
 	enum TeamType
 	{
-		TYPE_LEFT = 0,	// 左コート
+		TYPE_LEFT = 1,	// 左コート
 		TYPE_RIGHT,		// 右コート
-		TYPE_MAX		// この列挙型の総数
+		TYPE_MAX = 2	// この列挙型の総数
 	};
 
 	CGameManager();

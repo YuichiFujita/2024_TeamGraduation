@@ -73,6 +73,8 @@ public:
 	// スペシャル情報
 	//-----------------------------
 	void InitSpecialInfo();													//スペシャル情報初期化
+	void SetSpecialValue(float fValue);										//スペシャルゲージ値設定
+	float GetSpecialValue() { return m_sSpecialInfo.fValue; }				//スペシャルゲージ値取得
 	void AddSpecialValue(float fValue);										//スペシャルゲージ値増加
 	void SubSpecialValue(float fValue);										//スペシャルゲージ値減少
 	void ZeroSpecialValue() { m_sSpecialInfo.fValue = 0; }					//スペシャルゲージ値消去

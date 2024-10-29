@@ -311,7 +311,7 @@ void CGameManager::CreateTeamStatus()
 
 		m_pTeamStatus[i] = CTeamStatus::Create();
 
-		switch (static_cast<CGameManager::TeamType>(i))
+		switch (static_cast<CGameManager::TeamType>(i + 1))
 		{
 		case TYPE_LEFT:
 			side = CGameManager::SIDE_LEFT;
@@ -367,6 +367,22 @@ void CGameManager::Debug()
 	// チームステータス
 	for (int i = 0; i < TeamType::TYPE_MAX; i++)
 	{
+		//-----------------------------
+		// コート
+		//-----------------------------
+		std::string treename = "Special" + std::to_string(i);	// ツリー名
+		if (ImGui::TreeNode(treename.c_str()))
+		{
+			float fValue = m_pTeamStatus[i]->GetSpecialValue();
+
+			ImGui::DragFloat("GaugeValue", (float*)&fValue, 1.0f, 0.0f, m_pTeamStatus[i]->GetSpecialInfo().fValueMax, "%.2f");
+
+			// 位置設定
+			ImGui::TreePop();
+
+			m_pTeamStatus[i]->SetSpecialValue(fValue);
+		}
+
 		if (m_pTeamStatus[i] != nullptr)
 		{
 			m_pTeamStatus[i]->Debug();
