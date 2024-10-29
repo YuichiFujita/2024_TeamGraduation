@@ -214,7 +214,6 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 # ƒ‚[ƒVƒ‡ƒ“î•ñ
 #
 #==============================================================================
-#------------------------------------------------------------------------------
 # ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt					# ƒfƒtƒHƒ‹ƒg
@@ -238,6 +237,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt				# ƒXƒ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt					# Ÿ—˜
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt				# ƒ_ƒ[ƒW
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt				# €–S
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead_after.txt			# €–SŒã
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt			# ‘OƒOƒŠƒbƒv
 
 

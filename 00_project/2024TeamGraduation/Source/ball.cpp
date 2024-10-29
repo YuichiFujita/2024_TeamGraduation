@@ -208,6 +208,8 @@ void CBall::Uninit()
 //==========================================================================
 void CBall::Kill()
 {
+	m_pShadow->Kill();
+
 	// ƒŠƒXƒg‚©‚çíœ
 	m_list.Delete(this);
 

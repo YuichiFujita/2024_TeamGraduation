@@ -25,9 +25,7 @@ namespace
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-#ifdef _DEBUG
 bool CPlayerAIControlAction::m_bAutoThrow = true;
-#endif
 
 //==========================================================================
 // コンストラクタ
@@ -75,9 +73,7 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
 	{
 
-#ifdef _DEBUG
 		fThrowTime = 0.0f;
-#endif
 
 		ThrowSetting(player);
 	}
