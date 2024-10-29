@@ -129,7 +129,8 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f)			// 状態カウンター
 {
-
+	// スタティックアサート
+	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
