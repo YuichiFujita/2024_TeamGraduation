@@ -147,7 +147,7 @@ protected:
 	void LoadPartsData(FILE* pFile, const std::string& file, int *pCntParts) override;	// パーツ毎のデータ読み込み
 	void BindObjectData(int nCntData) override;											// オブジェクト毎のデータ割り当て
 	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK);				// 攻撃時処理
-	virtual void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK);			// 攻撃判定中処理
+	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK);			// 攻撃判定中処理
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 
 	bool m_bInDicision;	// 攻撃判定中フラグ

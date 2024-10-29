@@ -195,6 +195,7 @@ void CPlayerAI::DeleteControl()
 //==========================================================================
 void CPlayerAI::Debug()
 {
+#if _DEBUG
 	// デバッグ処理
 	CPlayer::Debug();
 
@@ -207,4 +208,5 @@ void CPlayerAI::Debug()
 	{ 
 		pControlAction->SetEnableAutoThrow(autoThrow);
 	}
+#endif
 }
