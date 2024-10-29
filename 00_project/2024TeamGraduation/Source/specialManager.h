@@ -20,6 +20,7 @@
 //************************************************************
 class CPlayer;
 class CLightPoint;
+class CCutIn;
 
 //************************************************************
 //	クラス定義
@@ -31,10 +32,14 @@ public:
 	// 状態列挙
 	enum EState
 	{
-		STATE_NONE = 0,	// 何もしない状態
-		STATE_FADEOUT,	// フェードアウト状態
-		STATE_END,		// 終了状態
-		STATE_MAX		// この列挙型の総数
+		STATE_NONE = 0,			// 何もしない状態
+		STATE_CUTIN,			// カットイン状態
+		STATE_PLAYER_HYPE,		// プレイヤー盛り上げ状態
+		STATE_AUDIENCE_HYPE,	// 観客盛り上げ状態
+		STATE_PLAYER_SPECIAL,	// プレイヤースペシャル演出状態	// この状態はスペシャルによってカメラワーク変更
+		STATE_NORMAL,			// 通常状態
+		STATE_END,				// 終了状態
+		STATE_MAX				// この列挙型の総数
 	};
 
 	// コンストラクタ
@@ -58,16 +63,24 @@ public:
 	static CSpecialManager *Create(const CPlayer* pAttack, const CPlayer* pTarget);	// 生成
 
 private:
-	// 状態更新の関数ポインタ型エイリアス定義
-	typedef void (CSpecialManager::*AFuncUpdateState)(const float fDeltaTime);
+	// エイリアス定義
+	typedef void (CSpecialManager::*AFuncUpdateState)(const float, const float, const float);	// 状態更新の関数ポインタ型
+	typedef void (CSpecialManager::*AFuncUpdateSpecial)(const float, const float, const float);	// スペシャル更新の関数ポインタ型
 
 	// 静的メンバ変数
-	static AFuncUpdateState m_aFuncUpdateState[];	// 状態更新関数
-	static CSpecialManager* m_pThisClass;			// 自身のインスタンス
+	static AFuncUpdateState m_aFuncUpdateState[];		// 状態更新関数
+	static AFuncUpdateSpecial m_aFuncUpdateSpecial[];	// スペシャル更新関数
+	static CSpecialManager* m_pThisClass;				// 自身のインスタンス
 
 	// メンバ関数
-	void UpdateFadeOut(const float fDeltaTime);	// フェードアウト更新
-	void UpdateEnd(const float fDeltaTime);		// 終了更新
+	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// カットイン更新
+	void UpdatePlayerHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// プレイヤー盛り上げ更新
+	void UpdateAudienceHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 観客盛り上げ更新
+	void UpdatePlayerSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// プレイヤースペシャル演出更新
+	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 通常更新
+	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 終了更新
+
+	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
 	void SetLightPosition();	// ライト位置設定
 
@@ -76,6 +89,7 @@ private:
 	const CPlayer* m_pTargetPlayer;	// 標的プレイヤー
 	CLightPoint* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
 	CLightPoint* m_pTargetLight;	// 標的プレイヤーを照らすライト
+	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
 };

@@ -36,7 +36,7 @@ CObject::CObject(int nPriority, const LAYER layer)
 	m_type = TYPE_NONE;			// 種類
 	m_bDeath = false;			// 死亡フラグ
 	m_bDisp = true;				// 描画フラグ
-	m_bHitstopMove = false;		// ヒットストップ時に動くかのフラグ
+	m_bPosibleMove_WorldPause = false;		// 世界停止中に動けるフラグ
 	m_nNumAll++;				// 総数加算
 
 	// オブジェクト格納
@@ -122,6 +122,16 @@ void CObject::ReleaseAll()
 //==========================================================================
 void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// マネージャー取得
+	CManager* pMgr = CManager::GetInstance();
+	if (pMgr == nullptr) return;
+
+	// 世界の停止状況取得
+	bool bWorldPause = pMgr->IsWorldPaused();
+
+	// 更新フラグ
+	bool bUpdate = false;
+
 	// 削除する要素
 	std::map<LAYER, std::map<int, std::vector<CObject*>>> objectsToRemove;
 	for (auto& layer : m_pObj)
@@ -134,7 +144,11 @@ void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const fl
 			{
 				CObject* pObj = priority.second[i];
 
-				if (!pObj->m_bDeath &&
+				// 更新フラグ更新
+				bUpdate = !bWorldPause || (bWorldPause && pObj->IsPosibleMove_WorldPause());
+
+				if (bUpdate &&
+					!pObj->m_bDeath &&
 					pObj->m_type != TYPE_NONE)
 				{// タイプがNONE以外
 

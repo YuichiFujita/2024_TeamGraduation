@@ -169,12 +169,17 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 		SceneStart();
 		break;
 
-	case ESceneType::SCENE_BEFOREBATTLE:
+	case CGameManager::ESceneType::SCENE_BEFOREBATTLE:
 		m_bControll = false;
 		break;
 
-	case ESceneType::SCENE_BATTLESTART:
+	case CGameManager::ESceneType::SCENE_BATTLESTART:
 		m_bControll = false;
+		break;
+
+	case CGameManager::ESceneType::SCENE_SPECIAL_STAG:
+		m_bControll = false;
+		UpdateSpecialStag();
 		break;
 
 	case ESceneType::SCENE_DEBUG:
@@ -228,6 +233,14 @@ void CGameManager::UpdateAudience()
 
 		GET_MANAGER->GetDebugProc()->Print("チーム%d：観客 %d\n", i, nNumAudience);
 	}
+}
+
+//==========================================================================
+// スペシャル演出更新
+//==========================================================================
+void CGameManager::UpdateSpecialStag()
+{
+
 }
 
 //==========================================================================

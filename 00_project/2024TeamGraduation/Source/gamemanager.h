@@ -41,6 +41,7 @@ public:
 		SCENE_START,			// 開始演出
 		SCENE_BEFOREBATTLE,		// 戦闘準備
 		SCENE_BATTLESTART,		// 戦闘開始
+		SCENE_SPECIAL_STAG,		// スペシャル演出
 		SCENE_DEBUG,			// デバッグ
 		SCENE_MAX
 	};
@@ -72,7 +73,7 @@ public:
 	void SetType(ESceneType type);						// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
 	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
-	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
+	void SetEnableControll(bool bControll) { m_bControll = bControll; }	// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
 	bool SetPosLimit(MyLib::Vector3& pos);					// コート移動制限
@@ -91,6 +92,7 @@ private:
 	//=============================
 	virtual void SceneStart();	// 開始演出
 	void UpdateAudience();		// 観客更新
+	void UpdateSpecialStag();	// スペシャル演出更新
 	void CreateTeamStatus();	// チームステータス生成
 
 	//=============================
