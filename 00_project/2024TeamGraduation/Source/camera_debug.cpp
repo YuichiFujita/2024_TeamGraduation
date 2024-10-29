@@ -205,14 +205,22 @@ void CCamera_Debug::UpdateDistance()
 	float originDistance = m_pCamera->GetOriginDistance();
 
 	// キーボード情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputMouse* pMouse = CInputMouse::GetInstance();
 
 	float moceWheel = pMouse->GetMouseMove().z;
 
-	// マウスホイールで距離調整
-	distance += moceWheel * MOVE_DISTANCE;
-	destDistance += moceWheel * MOVE_DISTANCE;
-	originDistance += moceWheel * MOVE_DISTANCE;
+	if (pKey->GetPress(DIK_LALT))
+	{
+		// マウスホイールで距離調整
+		distance += moceWheel * MOVE_DISTANCE;
+
+		// 値の補正
+		UtilFunc::Transformation::ValueNormalize(distance, 10000.0f, 1.0f);
+
+		// 目標/元々も同一にする
+		destDistance = originDistance = distance;
+	}
 
 	// 距離設定
 	m_pCamera->SetDistance(distance);

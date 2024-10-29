@@ -300,7 +300,6 @@ void CCamera::WarpCamera(const MyLib::Vector3& pos)
 //==========================================================================
 void CCamera::ReflectCameraV()
 {
-
 	if (!m_bFollow)
 	{// 追従しないとき
 
@@ -322,13 +321,11 @@ void CCamera::ReflectCameraV()
 	}
 }
 
-
 //==========================================================================
 // カメラの注視点代入処理
 //==========================================================================
 void CCamera::ReflectCameraR()
 {
-
 	if (!m_bFollow ||
 		(m_bMotion && m_bFollow))
 	{// 追従しないとき
@@ -347,7 +344,6 @@ void CCamera::ReflectCameraR()
 		// 補正する
 		m_posR += (m_posRDest - m_posR) * MULTIPLY_CHASE_POSR;
 	}
-
 }
 
 //==========================================================================
@@ -541,11 +537,10 @@ void CCamera::Reset(CScene::MODE mode)
 	// リセット
 	ResetGame();
 
-
 	// プロジェクションマトリックスの初期化
 	D3DXMatrixPerspectiveFovLH(&m_mtxProjection, D3DXToRadian(45.0f),
 								(float)m_viewport.Width / (float)m_viewport.Height,
-								10.0f,		// 奥行きの制限
+								10.0f,			// 奥行きの制限
 								1500000.0f);	// 奥行きの制限
 
 	// ビューマトリックスの初期化
