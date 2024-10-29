@@ -164,14 +164,13 @@ HRESULT CSpecialManager::Init(void)
 		return E_FAIL;
 	}
 
+	// 両チームの観客を通常状態にする
+	CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
+	CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
+
 #if 1
 	// 体育館を暗くする
 	GET_MANAGER->GetLight()->SetEnableBright(false);
-#endif
-
-#if 1
-	// 攻撃側プレイヤーチームの観客を盛り上げる
-	CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 #endif
 
 #if 1
@@ -291,6 +290,15 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);
 
+		// TODO：カメラモーションを設定してみるよ
+#if 1
+		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+		// スペシャル盛り上げモーションを設定
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, CCameraMotion::Linear);
+#endif
+
 		// プレイヤー盛り上げ状態にする
 		m_state = STATE_PLAYER_HYPE;
 	}
@@ -306,19 +314,31 @@ void CSpecialManager::UpdatePlayerHype(const float fDeltaTime, const float fDelt
 {
 	// TODO：ここにプレイヤーカメラ
 
-#if 1
+#if 0
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
 	if (m_fCurTime >= 1.0f)
 	{ // 待機が終了した場合
-
+#else
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	if (pCameraMotion->IsFinish())
+	{ // カメラモーションが終了した場合
+#endif
 		// タイマーを初期化
 		m_fCurTime = 0.0f;
+
+		// 固定カメラにする
+		//pCamera->	// TODO：教えて
+
+		// TODO：ここにカメラ揺れ
+
+		// 攻撃側プレイヤーチームの観客を盛り上げる
+		CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 
 		// 観客盛り上げ状態にする
 		m_state = STATE_AUDIENCE_HYPE;
 	}
-#endif
 
 	// ライト位置の設定
 	SetLightPosition();
@@ -337,8 +357,13 @@ void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDe
 	if (m_fCurTime >= 1.0f)
 	{ // 待機が終了した場合
 
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+
 		// タイマーを初期化
 		m_fCurTime = 0.0f;
+
+		// カメラ配置をリセット
+		pCamera->Reset(CScene::MODE_GAME);
 
 		// プレイヤーをスペシャルモーションにする
 		m_pAttackPlayer->SetMotion(CPlayer::MOTION_SPECIAL);

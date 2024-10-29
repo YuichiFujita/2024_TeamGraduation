@@ -177,7 +177,6 @@
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
-    <ClCompile Include="Source\cameratrigger_result.cpp" />
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
@@ -311,7 +310,6 @@
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />
     <ClInclude Include="Source\cameratrigger_pass.h" />
-    <ClInclude Include="Source\cameratrigger_result.h" />
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />

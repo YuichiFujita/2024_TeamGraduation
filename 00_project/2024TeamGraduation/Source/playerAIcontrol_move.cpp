@@ -98,11 +98,11 @@ void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const f
 			// ˆÚ“®ƒ‚[ƒVƒ‡ƒ“
 			if (player->IsDash())
 			{
-				pMotion->Set(CPlayer::EMotion::MOTION_RUN);
+				player->SetMotion(CPlayer::EMotion::MOTION_RUN);
 			}
 			else
 			{
-				pMotion->Set(CPlayer::EMotion::MOTION_WALK);
+				player->SetMotion(CPlayer::EMotion::MOTION_WALK);
 			}
 		}
 

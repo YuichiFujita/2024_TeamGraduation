@@ -162,7 +162,7 @@ void CTeamStatus::InitSpecialInfo()
 
 	//ƒQ[ƒW¶¬
 	m_sSpecialInfo.pGauge = CObject2D::Create();
-	m_sSpecialInfo.pGauge->SetSize(Special::GAUGE_SIZE);
+	ZeroSpecialValue();
 
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
 }

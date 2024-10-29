@@ -641,7 +641,10 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	player->SetMotionFrag(motionFrag);
 
 	// Œ»İ‚Ì“ü—Í•ûŒüİ’è
-	pInputAngle = new CPlayer::EDashAngle;
+	if (pInputAngle == nullptr)
+	{
+		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
+	}
 	*pInputAngle = eAngle;
 	SetInputAngle(pInputAngle);
 

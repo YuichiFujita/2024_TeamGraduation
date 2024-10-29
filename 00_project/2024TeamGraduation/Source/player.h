@@ -60,6 +60,7 @@ public:
 		MOTION_WIN,					// 勝利
 		MOTION_DAMAGE,				// ダメージ
 		MOTION_DEAD,				// 死亡
+		MOTION_DEAD_AFTER,			// 死亡後
 		MOTION_GRIP_FRONT,			// 前グリップ
 		MOTION_MAX
 	};
@@ -71,6 +72,7 @@ public:
 		STATE_INVINCIBLE,		// 無敵
 		STATE_DMG,				// ダメージ
 		STATE_DEAD,				// 死
+		STATE_DEAD_AFTER,		// 死後
 		STATE_DODGE,			// 回避
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
@@ -243,15 +245,16 @@ private:
 	// 状態関数
 	//-----------------------------
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone();			// なし
-	void StateInvincible();		// 無敵
-	void StateDamage();			// ダメージ
-	void StateDead();			// 死亡
-	void StateDodge();			// 回避
-	void StateCatch_Normal();	// 通常キャッチ
-	void StateCatch_Just();		// ジャストキャッチ
-	void StateOutCourt();		// コート越え
-	void StateOutCourt_Return();		// コート越えから戻る
+	void StateNone();				// なし
+	void StateInvincible();			// 無敵
+	void StateDamage();				// ダメージ
+	void StateDead();				// 死亡
+	void StateDeadAfter();			// 死亡後
+	void StateDodge();				// 回避
+	void StateCatch_Normal();		// 通常キャッチ
+	void StateCatch_Just();			// ジャストキャッチ
+	void StateOutCourt();			// コート越え
+	void StateOutCourt_Return();	// コート越えから戻る
 
 	//-----------------------------
 	// その他関数
@@ -266,7 +269,7 @@ private:
 	// モーション系関数
 	//-----------------------------
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
