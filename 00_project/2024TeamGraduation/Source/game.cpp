@@ -162,7 +162,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成
-#if 1
+#if 0
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
 	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)

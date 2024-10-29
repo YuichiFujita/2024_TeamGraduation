@@ -1276,7 +1276,7 @@ void CPlayer::Debug()
 		CBall* pBall = CBall::Create(GetPosition());
 		DeadSetting(result,pBall);
 		delete result;
-		pBall->Uninit();
+		pBall->Kill();
 	}
 
 	//-----------------------------
