@@ -26,13 +26,13 @@ public:
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
+	void Kill() override;
 	void SetPosition(const MyLib::Vector3& pos) override;	// à íuê›íË
 
 	void SetColor(const D3DXCOLOR& col);			// êFê›íË
 
 	void SetAABB(MyLib::AABB aabb, float scale = 1.0f);	// AAbBèÓïÒê›íË
 	MyLib::AABB GetAABB() { return m_AABB; }
-	void Kill();
 
 	static CCollisionLine_Box* Create(const MyLib::AABB& aabb, const D3DXCOLOR& col);
 

@@ -129,13 +129,6 @@ CObjectX* CObjectX::Create(const std::string& file, const MyLib::Vector3& pos, c
 		{// 失敗していたら
 			return nullptr;
 		}
-
-		if (bShadow)
-		{
-			// 影設定
-			float f = pObjectX->GetVtxMax().x * 0.5f;
-			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
-		}
 	}
 
 	return pObjectX;
@@ -163,13 +156,6 @@ CObjectX* CObjectX::Create(int nIdxXFile, const MyLib::Vector3& pos, const MyLib
 		if (FAILED(pObjectX->Init(nIdxXFile)))
 		{
 			return nullptr;
-		}
-
-		if (bShadow)
-		{
-			// 影設定
-			float f = pObjectX->GetVtxMax().x * 0.5f;
-			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
 		}
 	}
 
@@ -288,9 +274,6 @@ void CObjectX::Uninit()
 	// リストから削除
 	m_List.Delete(this);
 
-	// 影を消す
-	m_pShadow = nullptr;
-
 	// オブジェクトの破棄
 	Release();
 }
@@ -300,9 +283,6 @@ void CObjectX::Uninit()
 //==========================================================================
 void CObjectX::Kill()
 {
-	// リストから削除
-	m_List.Delete(this);
-
 	// 影を消す
 	if (m_pShadow != nullptr)
 	{
@@ -311,14 +291,14 @@ void CObjectX::Kill()
 	}
 
 	// 当たり判定ボックス
-	if (m_pCollisionLineBox != nullptr) 
+	if (m_pCollisionLineBox != nullptr)
 	{
 		m_pCollisionLineBox->Kill();
 		m_pCollisionLineBox = nullptr;
 	}
 
 	// 終了処理
-	Uninit();
+	CObjectX::Uninit();
 }
 
 //==========================================================================

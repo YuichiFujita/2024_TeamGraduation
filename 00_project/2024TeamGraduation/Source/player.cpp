@@ -28,6 +28,8 @@
 // 使用クラス
 #include "playerAction.h"
 #include "playerStatus.h"
+#include "playercontrol_action.h"
+#include "playercontrol_move.h"
 
 //==========================================================================
 // 定数定義
@@ -36,11 +38,13 @@ namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
+	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
 
 namespace Knockback
 {
-	const float HEIGHT = 50.0f;		// 最大高度
+	const float HEIGHT = 50.0f;					// 最大高度
+	const float HEIGHT_OUTCOURT = 50.0f;		// 最大高度(コート越え)
 	const float DAMAGE = 50.0f;		// ダメージ
 	const float DEAD = 100.0f;		// 死亡
 }
@@ -64,6 +68,7 @@ namespace StateTime
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
+	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
 }
 
 //==========================================================================
@@ -71,13 +76,16 @@ namespace StateTime
 //==========================================================================
 CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 {
-	&CPlayer::StateNone,			// なし
-	&CPlayer::StateInvincible,		// 無敵
-	&CPlayer::StateDamage,			// ダメージ
-	&CPlayer::StateDead,			// 死亡
-	&CPlayer::StateDodge,			// 回避
-	&CPlayer::StateCatch_Normal,	// 通常キャッチ
-	&CPlayer::StateCatch_Just,		// ジャストキャッチ
+	&CPlayer::StateNone,				// なし
+	&CPlayer::StateInvincible,			// 無敵
+	&CPlayer::StateDamage,				// ダメージ
+	&CPlayer::StateDead,				// 死亡
+	&CPlayer::StateDeadAfter,			// 死亡後
+	&CPlayer::StateDodge,				// 回避
+	&CPlayer::StateCatch_Normal,		// 通常キャッチ
+	&CPlayer::StateCatch_Just,			// ジャストキャッチ
+	&CPlayer::StateOutCourt,			// コート越え
+	&CPlayer::StateOutCourt_Return,		// コートに戻る
 };
 
 //==========================================================================
@@ -108,6 +116,8 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	// パターン用インスタンス
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
+	m_pControlMove = nullptr;	// 移動操作
+	m_pControlAction = nullptr;	// アクション操作
 
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
@@ -183,6 +193,9 @@ void CPlayer::Uninit()
 	// 操作系
 	DeleteControl();
 
+	// ステータス
+	SAFE_DELETE(m_pStatus);
+
 	// 終了処理
 	CObjectChara::Uninit();
 
@@ -191,9 +204,9 @@ void CPlayer::Uninit()
 }
 
 //==========================================================================
-// 終了処理
+// 動的削除処理
 //==========================================================================
-void CPlayer::Release()
+void CPlayer::Kill()
 {
 	// 影を消す
 	if (m_pShadow != nullptr)
@@ -201,9 +214,6 @@ void CPlayer::Release()
 		m_pShadow->Uninit();
 		m_pShadow = nullptr;
 	}
-
-	// 操作系
-	DeleteControl();
 
 	// アクションパターン
 	if (m_pActionPattern != nullptr)
@@ -214,6 +224,9 @@ void CPlayer::Release()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
+
+	// 終了処理
+	Uninit();
 }
 
 //==========================================================================
@@ -360,8 +373,11 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx)
+void CPlayer::SetMotion(int motionIdx) const
 {
+	//TAKADA: はじく条件(死んだら)
+	//if (m_sMotionFrag.bDead) return;
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)
@@ -386,6 +402,9 @@ void CPlayer::MotionSet()
 	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
 
+	// 死亡時通さない
+	if (m_sMotionFrag.bDead) return;
+
 	// 再生中
 	if (!pMotion->IsFinish()) return;
 
@@ -398,11 +417,11 @@ void CPlayer::MotionSet()
 		if (m_bDash)
 		{// ダッシュモーション
 			m_bDash = false;
-			pMotion->Set(MOTION_RUN);
+			SetMotion(MOTION_RUN);
 		}
 		else
 		{// 歩行モーション
-			pMotion->Set(MOTION_WALK);
+			SetMotion(MOTION_WALK);
 		}
 	}
 	else if (m_sMotionFrag.bJump)
@@ -416,7 +435,7 @@ void CPlayer::MotionSet()
 	else
 	{
 		// ニュートラルモーション
-		pMotion->Set(MOTION_DEF);
+		SetMotion(MOTION_DEF);
 	}
 }
 
@@ -457,7 +476,8 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	switch (nType)
 	{
 	case EMotion::MOTION_THROW:
-		
+	case EMotion::MOTION_THROW_RUN:
+
 		if (m_pBall != nullptr)
 		{// 通常投げ
 			m_pBall->ThrowNormal(this);
@@ -482,7 +502,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
+void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -501,6 +521,12 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 
 			//ジャストフラグON
 			m_sMotionFrag.bCatchJust = true;
+		
+			CEffect3D::Create(
+				GetPosition(),
+				MyLib::Vector3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
 
 		break;
@@ -510,9 +536,9 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	}
 
 	// 武器の位置
-	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
+	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), ATKInfo);
 
-	if (pATKInfo->fRangeSize == 0.0f)
+	if (ATKInfo.fRangeSize == 0.0f)
 	{
 		return;
 	}
@@ -522,11 +548,11 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 		weponpos,
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-		pATKInfo->fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+		ATKInfo.fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 #endif
 
-	if (pATKInfo->bEndAtk)
-	{
+	if (ATKInfo.bEndAtk)
+	{// 終了してたら抜ける
 		return;
 	}
 }
@@ -563,6 +589,16 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 //==========================================================================
 void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 {
+	MyLib::Vector3 pos = GetPosition();
+	pos.y += 130.0f;
+
+	//演出
+	CEffect3D::Create(
+		pos,
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+
 	switch (atkBall)
 	{
 	case CBall::ATK_NORMAL:
@@ -591,7 +627,12 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 void CPlayer::LimitPos()
 {
 	MyLib::Vector3 pos = GetPosition();
-	CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
+	
+	if (m_state != EState::STATE_OUTCOURT &&
+		m_state != EState::STATE_OUTCOURT_RETURN)
+	{//コート越え状態以外はコート内補正
+		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
+	}
 
 	if (pos.y <= 0.0f)
 	{
@@ -690,6 +731,9 @@ bool CPlayer::Hit(CBall* pBall)
 	if (stateBall == CBall::STATE_REBOUND)
 	{
 		pBall->CatchAttack(this);
+
+		//TAKADA: カバー対象を回復
+
 		return false;
 	}
 
@@ -722,15 +766,16 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	// 死亡状態にする
 	SetState(STATE_DEAD);
 	SetMotion(MOTION_DEAD);
+	m_sMotionFrag.bDead = true;
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 	MyLib::Vector3 posS = GetPosition();
 	MyLib::Vector3 posE = posS;
-	posE.x += vecBall.x * Knockback::DAMAGE;
-	posE.z += vecBall.z * Knockback::DAMAGE;
-	m_sKnockback.fPosStart = posS;
-	m_sKnockback.fPosEnd = posE;
+	posE.x += vecBall.x * Knockback::DEAD;
+	posE.z += vecBall.z * Knockback::DEAD;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
 
 	// 死んだ
 	result->isdeath = true;
@@ -747,12 +792,12 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
-	MyLib::Vector3 posS = GetPosition();
-	MyLib::Vector3 posE = posS;
+	MyLib::Vector3 posS = GetPosition();	//始点
+	MyLib::Vector3 posE = posS;				//終点
 	posE.x += vecBall.x * Knockback::DAMAGE;
 	posE.z += vecBall.z * Knockback::DAMAGE;
-	m_sKnockback.fPosStart = posS;
-	m_sKnockback.fPosEnd = posE;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
@@ -767,9 +812,27 @@ void CPlayer::CatchSetting(CBall* pBall)
 	pBall->CatchAttack(this);
 
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
+	MyLib::Vector3 posB = pBall->GetPosition();	// ボール位置
+	MyLib::Vector3 pos = GetPosition();	// ボール位置
+	
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	// 入力判定
+	bool bInput = false;
+	EDashAngle* angle = m_pControlMove->GetInputAngle();
+	if (angle != nullptr)
+	{
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		float fRot = division * (*angle) + D3DX_PI + Camerarot.y;
+		UtilFunc::Transformation::RotNormalize(fRot);
+		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
+	}
 
 	// モーション設定
-	if (m_sMotionFrag.bCatchJust)
+	if (m_sMotionFrag.bCatchJust
+		&& bInput)
 	{// ジャストキャッチ
 
 		CatchSettingLandJust(atkBall);		// キャッチ時処理(地上・ジャスト)
@@ -782,6 +845,28 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
+}
+
+//==========================================================================
+// コート越え処理
+//==========================================================================
+void CPlayer::OutCourtSetting()
+{
+	//ダメージ
+	m_pStatus->LifeDamage(10);
+	SetMotion(EMotion::MOTION_DAMAGE);
+
+	// ノックバックの位置設定
+	MyLib::Vector3 rot = GetRotation();
+	UtilFunc::Transformation::RotNormalize(rot.y);
+	MyLib::Vector3 posS = GetPosition();	//始点
+	MyLib::Vector3 posE = posS;				//終点
+	posE.x += sinf(rot.y) * Knockback::DEAD;
+	posE.z += cosf(rot.y) * Knockback::DEAD;
+	m_sKnockback.posStart = posS;
+	m_sKnockback.posEnd = posE;
+
+	SetState(EState::STATE_OUTCOURT);
 }
 
 //==========================================================================
@@ -857,7 +942,7 @@ void CPlayer::StateDamage()
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT,time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT,time);
 
 	SetPosition(pos);
 
@@ -878,12 +963,38 @@ void CPlayer::StateDead()
 	float time = m_fStateTime / StateTime::DEAD;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
-	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.fPosStart, m_sKnockback.fPosEnd, Knockback::HEIGHT, time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT, time);
 
 	SetPosition(pos);
 
-	//志望状態をキャンセル不能にする
+	//死亡状態をキャンセル不能にする
 	SetEnableMove(false);
+	//m_sMotionFrag.bDead = true;
+
+	if (m_fStateTime >= StateTime::DEAD)
+	{
+		SetState(STATE_DEAD_AFTER);
+		SetMotion(MOTION_DEAD_AFTER);
+	}
+}
+
+//==========================================================================
+// 死亡状態
+//==========================================================================
+void CPlayer::StateDeadAfter()
+{
+	//MyLib::Vector3 pos = GetPosition();
+
+	//float time = m_fStateTime / StateTime::DEAD;
+	//time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+
+	//pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT, time);
+
+	//SetPosition(pos);
+
+	//死亡状態をキャンセル不能にする
+	SetEnableMove(false);
+	//m_sMotionFrag.bDead = true;
 }
 
 //==========================================================================
@@ -904,7 +1015,7 @@ void CPlayer::StateCatch_Normal()
 	if (pMotion == nullptr) return;
 
 	// キャンセル可能フレーム取得
-	CMotion::Info motionInfo = pMotion->GetNowInfo();
+	CMotion::Info motionInfo = pMotion->GetInfo();
 	float fCancelableTime = static_cast<float>(motionInfo.nCancelableFrame);
 
 	// TODO : ずざざーとする
@@ -929,11 +1040,18 @@ void CPlayer::StateCatch_Normal()
 	SetPosition(pos);
 	SetMove(move);
 
+	//スペシャル時ライン越え判定
+	if (m_sDamageInfo.eReiceiveType == CBall::EAttack::ATK_SPECIAL &&
+		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos) &&
+		m_state != EState::STATE_OUTCOURT)
+	{
+		OutCourtSetting();
+	}
+		
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}
-
 }
 
 //==========================================================================
@@ -946,6 +1064,56 @@ void CPlayer::StateCatch_Just()
 	if (pMotion == nullptr) return;
 
 	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// コート越え
+//==========================================================================
+void CPlayer::StateOutCourt()		
+{
+	MyLib::Vector3 pos = GetPosition();
+
+	//ノックバック
+	float time = m_fStateTime / StateTime::DAMAGE;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+
+	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT_OUTCOURT, time);
+
+	SetPosition(pos);
+
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsGetCancelable())
+	{// キャンセル可能
+		SetState(EState::STATE_OUTCOURT_RETURN);
+	}
+}
+
+//==========================================================================
+// コート越えから戻る
+//==========================================================================
+void CPlayer::StateOutCourt_Return()
+{
+	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 posStart = CGame::GetInstance()->GetGameManager()->GetCourtSize();
+	posStart.y = 0.0f;
+	posStart.z = 0.0f;
+	posStart.x *= 0.5f;
+
+	//コート内に戻る
+	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posEnd, posStart, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
+	SetPosition(pos);
+
+	// モーションのキャンセルで管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (m_fStateTime >= StateTime::COURT_RETURN)
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}
@@ -1011,6 +1179,7 @@ void CPlayer::SetState(EState state)
 //==========================================================================
 void CPlayer::Debug()
 {
+#if _DEBUG
 
 	//-----------------------------
 	// 位置
@@ -1050,7 +1219,9 @@ void CPlayer::Debug()
 
 		// 設定
 		SetRadius(parameter.fRadius);
+
 		pStatus->SetParameter(parameter);
+		
 		ImGui::TreePop();
 	}
 
@@ -1062,6 +1233,7 @@ void CPlayer::Debug()
 		MyLib::Vector3 pos = GetPosition();
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
+		CMotion* motion = GetMotion();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -1069,6 +1241,17 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+		ImGui::Text("Motion : [%d]", motion->GetType());
+
+		//現在の入力方向を取る(向き)
+		bool bInput = false;
+		EDashAngle* angle = m_pControlMove->GetInputAngle();
+		if (angle != nullptr)
+		{
+			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+			float fRot = division * *angle;
+			ImGui::Text("fRot : [%.2f]", fRot);
+		}
 
 		ImGui::TreePop();
 	}
@@ -1085,4 +1268,40 @@ void CPlayer::Debug()
 		SetLife(nLife);
 
 		ImGui::TreePop();
-	}}
+	}
+
+	if (ImGui::Button("Dead"))
+	{// リセット
+		MyLib::HitResult_Character* result = DEBUG_NEW MyLib::HitResult_Character;
+		CBall* pBall = CBall::Create(GetPosition());
+		DeadSetting(result,pBall);
+		delete result;
+		pBall->Kill();
+	}
+
+	//-----------------------------
+	// コート外検証
+	//-----------------------------
+	if (ImGui::Button("OutCourt"))
+	{// リセット
+		OutCourtSetting();
+	}
+
+#endif
+}
+
+//==========================================================================
+// 操作取得(アクション)
+//==========================================================================
+CPlayerControlAction* CPlayer::GetPlayerControlAction()
+{
+	return m_pControlAction;
+}
+
+//==========================================================================
+// 操作取得(移動)
+//==========================================================================
+CPlayerControlMove* CPlayer::GetPlayerControlMove()
+{
+	return m_pControlMove;
+}

@@ -169,12 +169,17 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 		SceneStart();
 		break;
 
-	case ESceneType::SCENE_BEFOREBATTLE:
+	case CGameManager::ESceneType::SCENE_BEFOREBATTLE:
 		m_bControll = false;
 		break;
 
-	case ESceneType::SCENE_BATTLESTART:
+	case CGameManager::ESceneType::SCENE_BATTLESTART:
 		m_bControll = false;
+		break;
+
+	case CGameManager::ESceneType::SCENE_SPECIAL_STAG:
+		m_bControll = false;
+		UpdateSpecialStag();
 		break;
 
 	case ESceneType::SCENE_DEBUG:
@@ -209,7 +214,17 @@ void CGameManager::StartSetting()
 //==========================================================================
 void CGameManager::SceneStart()
 {
-	
+	m_SceneType = ESceneType::SCENE_MAIN;	// シーンの種類 
+
+#if _DEBUG
+	// コートサイズのボックス
+	if (m_pCourtSizeBox == nullptr)
+	{
+		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+#endif
+	//チームステータス
+	CreateTeamStatus();
 }
 
 //==========================================================================
@@ -228,6 +243,14 @@ void CGameManager::UpdateAudience()
 
 		GET_MANAGER->GetDebugProc()->Print("チーム%d：観客 %d\n", i, nNumAudience);
 	}
+}
+
+//==========================================================================
+// スペシャル演出更新
+//==========================================================================
+void CGameManager::UpdateSpecialStag()
+{
+
 }
 
 //==========================================================================
@@ -252,25 +275,33 @@ void CGameManager::SetType(ESceneType type)
 //==========================================================================
 // コート移動制限
 //==========================================================================
-void CGameManager::SetPosLimit(MyLib::Vector3& pos)
+bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
 {
+	bool bHit = false;
+
 	if (pos.x > m_courtSize.x)
 	{
 		pos.x = m_courtSize.x;
+		bHit = true;
 	}
 	else if (pos.x < -m_courtSize.x)
 	{
 		pos.x = -m_courtSize.x;
+		bHit = true;
 	}
 
 	if (pos.z > m_courtSize.z)
 	{
 		pos.z = m_courtSize.z;
+		bHit = true;
 	}
 	else if (pos.z < -m_courtSize.z)
 	{
 		pos.z = -m_courtSize.z;
+		bHit = true;
 	}
+
+	return bHit;
 }
 
 //==========================================================================
@@ -290,7 +321,7 @@ void CGameManager::CreateTeamStatus()
 
 		m_pTeamStatus[i] = CTeamStatus::Create();
 
-		switch (static_cast<CGameManager::TeamType>(i))
+		switch (static_cast<CGameManager::TeamType>(i + 1))
 		{
 		case TYPE_LEFT:
 			side = CGameManager::SIDE_LEFT;
@@ -314,6 +345,7 @@ void CGameManager::CreateTeamStatus()
 //==========================================================================
 void CGameManager::Debug()
 {
+#if _DEBUG
 
 	//-----------------------------
 	// コート
@@ -346,9 +378,27 @@ void CGameManager::Debug()
 	// チームステータス
 	for (int i = 0; i < TeamType::TYPE_MAX; i++)
 	{
+		//-----------------------------
+		// コート
+		//-----------------------------
+		std::string treename = "Special" + std::to_string(i);	// ツリー名
+		if (ImGui::TreeNode(treename.c_str()))
+		{
+			float fValue = m_pTeamStatus[i]->GetSpecialValue();
+
+			ImGui::DragFloat("GaugeValue", (float*)&fValue, 1.0f, 0.0f, m_pTeamStatus[i]->GetSpecialInfo().fValueMax, "%.2f");
+
+			// 位置設定
+			ImGui::TreePop();
+
+			m_pTeamStatus[i]->SetSpecialValue(fValue);
+		}
+
 		if (m_pTeamStatus[i] != nullptr)
 		{
 			m_pTeamStatus[i]->Debug();
 		}
 	}
+
+#endif
 }

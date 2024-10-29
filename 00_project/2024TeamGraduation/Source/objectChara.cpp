@@ -41,7 +41,7 @@ CObjectChara::~CObjectChara()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectChara* CObjectChara::Create(const std::string pTextFile)
+CObjectChara* CObjectChara::Create(const std::string& pTextFile)
 {
 	// メモリの確保
 	CObjectChara* pObjChara = DEBUG_NEW CObjectChara;
@@ -153,6 +153,18 @@ void CObjectChara::Uninit()
 }
 
 //==========================================================================
+// 動的削除処理
+//==========================================================================
+void CObjectChara::Kill()
+{
+	// 動的削除処理
+	CObjectHierarchy::Kill();
+
+	// 終了処理
+	CObjectChara::Uninit();
+}
+
+//==========================================================================
 // 更新処理
 //==========================================================================
 void CObjectChara::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -197,48 +209,33 @@ void CObjectChara::MotionInProgressAction()
 	// 攻撃判定フラグリセット
 	m_bInDicision = false;
 
-	if (m_pMotion == nullptr)
-	{
-		return;
-	}
+	if (m_pMotion == nullptr) return;
 
 	// 情報取得
-	MyLib::Vector3 pos = GetPosition();
-	MyLib::Vector3 rot = GetRotation();
-	CMotion::Info aInfo = m_pMotion->GetInfo(m_pMotion->GetType());
-	int nType = m_pMotion->GetType();
+	std::vector<CMotion::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
 
-	// 攻撃情報の総数取得
-	int nNumAttackInfo = aInfo.nNumAttackInfo;
-
-	for (int nCntAttack = 0; nCntAttack < nNumAttackInfo; nCntAttack++)
+	int i = 0;
+	for (const auto& attack : attackInfo)
 	{
-		if (aInfo.AttackInfo[nCntAttack] == nullptr)
-		{
-			continue;
-		}
-
-		// 攻撃情報取得
-		CMotion::AttackInfo* AttackInfo = aInfo.AttackInfo[nCntAttack];
-
-		if (m_pMotion->IsImpactFrame(*AttackInfo))
+		if (attack.bInpactAct)
 		{// 衝撃のカウントと同じとき
 
 			// 攻撃時処理
-			AttackAction(*AttackInfo, nCntAttack);
+			AttackAction(attack, i);
 		}
 
 		// モーションカウンター取得
-		float fAllCount = m_pMotion->GetAllCount();
-		if (fAllCount > AttackInfo->nMinCnt && fAllCount <= AttackInfo->nMaxCnt)
+		if (m_pMotion->IsAttacking())
 		{// 攻撃判定中
 
 			// 攻撃判定フラグ
 			m_bInDicision = true;
 
 			// 攻撃判定中処理
-			AttackInDicision(AttackInfo, nCntAttack);
+			AttackInDicision(attack, i);
 		}
+
+		i++;
 	}
 }
 
@@ -254,10 +251,10 @@ void CObjectChara::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CObjectChara::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
+void CObjectChara::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 {
 	// 武器の位置
-	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), *pATKInfo);
+	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), ATKInfo);
 }
 
 //==========================================================================

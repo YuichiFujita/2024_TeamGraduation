@@ -85,7 +85,8 @@ public:
 	void Draw() override;
 	void Draw(D3DXCOLOR col) override;
 	void Draw(float fAlpha) override;
-	
+	virtual void Kill() override;	// 動的削除処理
+
 	//--------------------------
 	// キャラ情報
 	//--------------------------
@@ -107,8 +108,8 @@ public:
 
 	HRESULT SetCharacter(const std::string& file) override;		// キャラクター設定
 	CObjectChara* GetObjectChara() { return this; }				// オブジェクトキャラクターオブジェクトの取得
-	CMotion* GetMotion() { return m_pMotion; }					// モーションオブジェクト取得
-	static CObjectChara *Create(const std::string pTextFile);	// 生成処理
+	CMotion* GetMotion() const { return m_pMotion; }			// モーションオブジェクト取得
+	static CObjectChara *Create(const std::string& pTextFile);	// 生成処理
 
 
 	//=============================
@@ -146,7 +147,7 @@ protected:
 	void LoadPartsData(FILE* pFile, const std::string& file, int *pCntParts) override;	// パーツ毎のデータ読み込み
 	void BindObjectData(int nCntData) override;											// オブジェクト毎のデータ割り当て
 	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK);				// 攻撃時処理
-	virtual void AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK);			// 攻撃判定中処理
+	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK);			// 攻撃判定中処理
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 
 	bool m_bInDicision;	// 攻撃判定中フラグ

@@ -28,6 +28,8 @@ public:
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
+	virtual void Kill() override;	// “®“Iíœˆ—
+
 	virtual void SetVtx();
 
 	//--------------------------

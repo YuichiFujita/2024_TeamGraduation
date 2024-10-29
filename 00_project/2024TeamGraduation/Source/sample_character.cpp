@@ -204,17 +204,17 @@ void CSample_Character::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // UŒ‚”»’è’†ˆ—
 //==========================================================================
-void CSample_Character::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
+void CSample_Character::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 {
-	if (pATKInfo->fRangeSize == 0.0f) return;
+	if (ATKInfo.fRangeSize == 0.0f) return;
 
-	if (pATKInfo->bEndAtk) return;
+	if (ATKInfo.bEndAtk) return;
 
 	// ƒ‚[ƒVƒ‡ƒ“Žæ“¾
 	CMotion* pMotion = GetMotion();
 
 	// •Ší‚ÌˆÊ’u
-	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
+	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), ATKInfo);
 
 	CEffect3D* pEffect = nullptr;
 }

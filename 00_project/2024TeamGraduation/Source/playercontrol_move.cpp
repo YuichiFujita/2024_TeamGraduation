@@ -31,6 +31,8 @@ CPlayerControlMove::CPlayerControlMove()
 	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
 	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
 	m_bBlink = false;
+	m_pInputAngle = nullptr;					// 現在の入力方向
+	m_fInputAngleCtr = 0.0f;					// 現在の入力方向の保持カウンター
 }
 
 //==========================================================================

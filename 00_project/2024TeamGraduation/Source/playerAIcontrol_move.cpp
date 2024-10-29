@@ -98,11 +98,11 @@ void CPlayerAIControlMove::Move(CPlayer* player, const float fDeltaTime, const f
 			// 移動モーション
 			if (player->IsDash())
 			{
-				pMotion->Set(CPlayer::EMotion::MOTION_RUN);
+				player->SetMotion(CPlayer::EMotion::MOTION_RUN);
 			}
 			else
 			{
-				pMotion->Set(CPlayer::EMotion::MOTION_WALK);
+				player->SetMotion(CPlayer::EMotion::MOTION_WALK);
 			}
 		}
 
@@ -430,6 +430,12 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	bool bDash = IsBlink();	//走るフラグ
 
+	// 現在の入力方向
+	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
+	if (pInputAngle != nullptr) delete pInputAngle;
+	pInputAngle = nullptr;
+	SetInputAngle(pInputAngle);
+
 	CPlayer::EDashAngle eAngle;
 	bool bInput = false;
 
@@ -550,6 +556,11 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// 向き設定
 	player->SetRotDest(eAngle * division + D3DX_PI + Camerarot.y);
+
+	// 現在の入力方向設定
+	pInputAngle = new CPlayer::EDashAngle;
+	*pInputAngle = eAngle;
+	SetInputAngle(pInputAngle); 
 }
 
 //==========================================================================

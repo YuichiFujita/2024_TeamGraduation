@@ -172,11 +172,11 @@
     <ClCompile Include="Source\3D_effect.cpp" />
     <ClCompile Include="Source\audience.cpp" />
     <ClCompile Include="Source\audienceAnim.cpp" />
+    <ClCompile Include="Source\audienceHighPoly.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
-    <ClCompile Include="Source\cameratrigger_result.cpp" />
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
@@ -184,6 +184,7 @@
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
+    <ClCompile Include="Source\cutin.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\edit.cpp" />
     <ClCompile Include="Source\edithandle.cpp" />
@@ -205,6 +206,9 @@
     <ClCompile Include="Source\input_mouse.cpp" />
     <ClCompile Include="Source\instantfade.cpp" />
     <ClCompile Include="Source\light.cpp" />
+    <ClCompile Include="Source\lightDir.cpp" />
+    <ClCompile Include="Source\lightManager.cpp" />
+    <ClCompile Include="Source\lightPoint.cpp" />
     <ClCompile Include="Source\listmanager.cpp" />
     <ClCompile Include="Source\loadmanager.cpp" />
     <ClCompile Include="Source\loadscreen.cpp" />
@@ -271,6 +275,7 @@
     <ClCompile Include="Source\scene.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
+    <ClCompile Include="Source\specialManager.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\teamStatus.cpp" />
@@ -299,12 +304,12 @@
     <ClInclude Include="Source\3D_effect.h" />
     <ClInclude Include="Source\audience.h" />
     <ClInclude Include="Source\audienceAnim.h" />
+    <ClInclude Include="Source\audienceHighPoly.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />
     <ClInclude Include="Source\cameratrigger_pass.h" />
-    <ClInclude Include="Source\cameratrigger_result.h" />
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
@@ -314,6 +319,7 @@
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
+    <ClInclude Include="Source\cutin.h" />
     <ClInclude Include="Source\debugproc.h" />
     <ClInclude Include="Source\edit.h" />
     <ClInclude Include="Source\edithandle.h" />
@@ -335,6 +341,9 @@
     <ClInclude Include="Source\input_mouse.h" />
     <ClInclude Include="Source\instantfade.h" />
     <ClInclude Include="Source\light.h" />
+    <ClInclude Include="Source\lightDir.h" />
+    <ClInclude Include="Source\lightManager.h" />
+    <ClInclude Include="Source\lightPoint.h" />
     <ClInclude Include="Source\listmanager.h" />
     <ClInclude Include="Source\loadmanager.h" />
     <ClInclude Include="Source\loadscreen.h" />
@@ -398,6 +407,7 @@
     <ClInclude Include="Source\scene.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
+    <ClInclude Include="Source\specialManager.h" />
     <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\teamStatus.h" />

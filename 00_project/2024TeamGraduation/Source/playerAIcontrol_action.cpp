@@ -25,9 +25,7 @@ namespace
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-#ifdef _DEBUG
 bool CPlayerAIControlAction::m_bAutoThrow = true;
-#endif
 
 //==========================================================================
 // コンストラクタ
@@ -75,19 +73,9 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
 	{
 
-#ifdef _DEBUG
-	fThrowTime = 0.0f;
-#endif
+		fThrowTime = 0.0f;
 
-		// アクションパターン変更
-		if (player->IsJump())
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
-		}
-		else
-		{
-			SetPattern(player, CPlayer::EMotion::MOTION_THROW, CPlayer::EAction::ACTION_THROW);
-		}
+		ThrowSetting(player);
 	}
 }
 
@@ -103,7 +91,7 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
 	if (false)
 	{
-		SetJump(player);
+		JumpSetting(player);
 	}
 }
 

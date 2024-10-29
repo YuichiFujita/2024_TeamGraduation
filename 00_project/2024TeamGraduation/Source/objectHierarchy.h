@@ -72,6 +72,7 @@ public:
 	virtual void Draw() override;
 	virtual void Draw(D3DXCOLOR col);
 	virtual void Draw(float fAlpha);
+	virtual void Kill() override;	// 動的削除処理
 
 	void SetmtxWorld(const MyLib::Matrix mtxWorld);
 	MyLib::Matrix GetWorldMtx() const { return m_mtxWorld; }			// マトリックス取得

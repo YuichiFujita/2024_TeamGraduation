@@ -11,6 +11,7 @@
 #include "debugproc.h"
 #include "fade.h"
 #include "camera.h"
+#include "lightManager.h"
 #include "pause.h"
 #include "texture.h"
 
@@ -33,6 +34,9 @@
 #include "teamStatus.h"
 
 #include "objectX.h"
+
+// TODO：デバッグ、後で消しますいらないので
+#include "specialManager.h"
 
 namespace
 {
@@ -158,7 +162,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成
-#if 1
+#if 0
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
 	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
@@ -237,10 +241,11 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
+#if 1
 		if (ImGui::Button("Audience : AnimLeft"))
 		{
 			// オーディエンス生成
-			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, CGameManager::TeamSide::SIDE_LEFT);
 		}
 
 		if (ImGui::Button("Audience : AnimRight"))
@@ -248,6 +253,7 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_RIGHT);
 		}
+#endif
 
 		// ツリー終端
 		ImGui::TreePop();
@@ -256,17 +262,24 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
-		// 左チームのモテ値増減
-		CTeamStatus* pTeamLeft = GetGameManager()->GetTeamStatus(0);	// チーム情報
-		CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
-		ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
-		pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
+		if (ImGui::Button("Special!"))
+		{
+			CPlayer* pPlayerAttack = CPlayer::GetList().GetData(0);
+			CPlayer* pPlayerTarget = CPlayer::GetList().GetData(1);
+			CSpecialManager::Create(pPlayerAttack, pPlayerTarget);
+		}
 
-		// 右チームのモテ値増減
-		CTeamStatus* pTeamRight = GetGameManager()->GetTeamStatus(1);	// チーム情報
-		CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
-		ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
-		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
+		if (ImGui::Button("Room : Bright"))
+		{
+			// 部屋を明るくする
+			GET_MANAGER->GetLight()->SetEnableBright(true);
+		}
+
+		if (ImGui::Button("Room : Dark"))
+		{
+			// 部屋を明るくする
+			GET_MANAGER->GetLight()->SetEnableBright(false);
+		}
 
 		if (ImGui::Button("Audience : NormalLeft"))
 		{
@@ -278,10 +291,10 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス全盛り上がり
 			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_LEFT);
 		}
-		if (ImGui::Button("Audience : DespawnLeft"))
+		if (ImGui::Button("Audience : SpecialLeft"))
 		{
-			// オーディエンス全退場
-			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
+			// オーディエンス全スペシャル
+			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_LEFT);
 		}
 
 		if (ImGui::Button("Audience : NormalRight"))
@@ -294,11 +307,37 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス全盛り上がり
 			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_RIGHT);
 		}
+		if (ImGui::Button("Audience : SpecialRight"))
+		{
+			// オーディエンス全スペシャル
+			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_RIGHT);
+		}
+
+#if 1
+		// 左チームのモテ値増減
+		CTeamStatus* pTeamLeft = GetGameManager()->GetTeamStatus(0);	// チーム情報
+		CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
+		ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
+		pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
+
+		// 右チームのモテ値増減
+		CTeamStatus* pTeamRight = GetGameManager()->GetTeamStatus(1);	// チーム情報
+		CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
+		ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
+		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
+
+#else
+		if (ImGui::Button("Audience : DespawnLeft"))
+		{
+			// オーディエンス全退場
+			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
+		}
 		if (ImGui::Button("Audience : DespawnRight"))
 		{
 			// オーディエンス全退場
 			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_RIGHT);
 		}
+#endif
 
 		// ツリー終端
 		ImGui::TreePop();

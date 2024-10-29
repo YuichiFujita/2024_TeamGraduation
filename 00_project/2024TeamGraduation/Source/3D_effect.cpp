@@ -337,6 +337,10 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 #endif
 	// 不透明度の更新
 	SetAlpha(1.0f);
+
+	// 寿命の更新
+	m_fLife -= fDeltaTime * fSlowRate * fDeltaRate;
+
 	if (m_fLife <= 0.0f)
 	{// 寿命が尽きたら
 

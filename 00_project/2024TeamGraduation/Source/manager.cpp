@@ -18,7 +18,7 @@
 #include "pause.h"
 #include "fade.h"
 #include "blackframe.h"
-#include "light.h"
+#include "lightManager.h"
 #include "camera.h"
 #include "edit.h"
 #include "loadmanager.h"
@@ -41,7 +41,7 @@ namespace
 #if _DEBUG
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #else
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_TITLE;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #endif
 }
 
@@ -85,6 +85,7 @@ CManager::CManager()
 	m_bDisp_2D = false;				// 2Dの表示
 	m_bDisp_UI = true;				// UIの表示
 	m_bWindowed = true;				// ウィンドウモードか
+	m_bWorldPaused = false;			// 世界のポーズ判定
 	m_dwOldTime = 0;				// 前回の処理開始時刻
 	m_dwCurTime = 0;				// 今回の処理開始時刻
 	m_fDeltaTime = 0.0f;			// 経過時間
@@ -219,18 +220,12 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
-	// メモリ確保
-	m_pLight = DEBUG_NEW CLight;
+	// ライトの生成
+	m_pLight = CLightManager::Create();
+	if (m_pLight == nullptr)
+	{// 生成に失敗した場合
 
-	if (m_pLight != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 初期化処理
-		hr = m_pLight->Init();
-		if (FAILED(hr))
-		{// 初期化処理が失敗した場合
-			return E_FAIL;
-		}
+		return E_FAIL;
 	}
 
 
@@ -519,6 +514,21 @@ void CManager::Uninit()
 		m_pScene->Kill();
 	}
 
+	// ライトの破棄
+	SAFE_REF_RELEASE(m_pLight);
+
+	// カメラの破棄
+	if (m_pCamera != nullptr)
+	{// メモリの確保が出来ていたら
+
+		// 終了処理
+		m_pCamera->Uninit();
+
+		// メモリの開放
+		delete m_pCamera;
+		m_pCamera = nullptr;
+	}
+
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
 
@@ -547,30 +557,6 @@ void CManager::Uninit()
 
 	// Imguiの終了
 	ImguiMgr::Uninit();
-
-	// ライトの破棄
-	if (m_pLight != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pLight->Uninit();
-
-		// メモリの開放
-		delete m_pLight;
-		m_pLight = nullptr;
-	}
-
-	// カメラの破棄
-	if (m_pCamera != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pCamera->Uninit();
-
-		// メモリの開放
-		delete m_pCamera;
-		m_pCamera = nullptr;
-	}
 
 	if (m_pMyEffekseer != nullptr)
 	{
@@ -986,7 +972,7 @@ CDebugProc *CManager::GetDebugProc()
 //==========================================================================
 // ライトの取得
 //==========================================================================
-CLight *CManager::GetLight()
+CLightManager *CManager::GetLight()
 {
 	return m_pLight;
 }

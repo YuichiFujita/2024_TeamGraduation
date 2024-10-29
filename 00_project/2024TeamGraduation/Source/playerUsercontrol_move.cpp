@@ -20,6 +20,8 @@ namespace
 	const float INTERVAL_INPUT = (2.0f / 60.0f);	// 入力
 	const float RATIO_STICKBLINK = 0.75f;	// スティックブリンク時の割合
 	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
+	const float BLINK_JUMP_COR = 0.5f;	// 空中時ブリンク補正値
+	const float INPUT_COUNTER = (4.0f / 60.0f);	// 入力カウンター
 }
 
 //==========================================================================
@@ -63,7 +65,6 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 	if (pPlayerAction == nullptr) return;
 	CPlayer::EAction action = pPlayerAction->GetAction();
 
-
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -106,6 +107,8 @@ void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	
+
 	// 入力フラグ
 	bool bInput = false;
 
@@ -128,7 +131,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
-
 
 	// Lスティックの割合
 	MyLib::Vector3 stickRatio = pPad->GetStickPositionRatioL(playerIdx);
@@ -338,19 +340,36 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		info = Trigger(player, HoldDashAngle);
 	}
 
+	//
+
 	// ダッシュする
 	if (info.bDash && !bDash)
 	{
-		MyLib::Vector3 move = player->GetMove();
-		float velocityBlink = player->GetParameter().fVelocityBlink;
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 
-		move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
-		move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+		if (player->GetBall() == nullptr)
+		{//ボール所持では使用不可
 
-		// 移動量設定
-		player->SetMove(move);
+			MyLib::Vector3 move = player->GetMove();
+			float velocityBlink = player->GetParameter().fVelocityBlink;
+			
+			// 移動量更新
+			move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
+			move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+
+			if (player->IsJump())
+			{//ジャンプ時補正
+				move.x *= BLINK_JUMP_COR;
+				move.z *= BLINK_JUMP_COR;
+			}
+
+			// 移動量設定
+			player->SetMove(move);
+
+			// モーション設定
+			player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
+		}
 
 		// 向き設定
 		player->SetRotDest(info.eAngle * division + D3DX_PI + Camerarot.y);
@@ -363,9 +382,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 		// ダッシュフラグ
 		bDash = true;
-
-		// モーション設定
-		player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
 	}
 
 	// トリガーのインターバル取得
@@ -471,9 +487,23 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	bool bDash = IsBlink();	//走るフラグ
 
+	// 現在の入力方向カウンター
+	float fInputAngleCtr = GetInputAngleCtr();
+	fInputAngleCtr -= fDeltaTime, fDeltaRate, fSlowRate;
+	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
+	SetInputAngleCtr(fInputAngleCtr);
+
+	// 現在の入力方向
+	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
+	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
+	{
+		delete pInputAngle;
+		pInputAngle = nullptr;
+	}
+	SetInputAngle(pInputAngle);
+
 	CPlayer::EDashAngle eAngle;
 	bool bInput = false;
-
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
@@ -573,14 +603,14 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	if (!bInput)
 	{
-		// 移動中にする
+		// 移動しない
 		motionFrag.bMove = false;
 
 		// モーションフラグ設定
 		player->SetMotionFrag(motionFrag);
 		return;
 	}
-	
+
 	// 移動中にする
 	motionFrag.bMove = true;
 
@@ -610,6 +640,17 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
 
+	// 現在の入力方向設定
+	if (pInputAngle == nullptr)
+	{
+		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
+	}
+	*pInputAngle = eAngle;
+	SetInputAngle(pInputAngle);
+
+	// 入力方向カウンター設定
+	SetInputAngleCtr(INPUT_COUNTER);
+
 	SetBlink(bDash);	//走るフラグ設定
 }
 
@@ -630,7 +671,10 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDa
 		info.eAngle = eAngle;
 
 		// アクションパターン変更
-		player->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_BLINK);
+		if (player->GetBall() == nullptr)
+		{
+			player->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_BLINK);
+		}
 	}
 
 	// トリガーのインターバルリセット

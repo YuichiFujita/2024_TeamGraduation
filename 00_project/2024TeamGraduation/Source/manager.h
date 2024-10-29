@@ -21,7 +21,7 @@
 
 // 前方宣言
 class CRenderer;
-class CLight;
+class CLightManager;
 class CCamera;
 class CInput;
 class CSound;
@@ -71,7 +71,7 @@ public:
 
 	CRenderer *GetRenderer();
 	CDebugProc *GetDebugProc();
-	CLight *GetLight();
+	CLightManager *GetLight();
 	CCamera *GetCamera();
 	CEdit *GetEdit();
 	CFont *GetFont();	// フォント取得
@@ -99,9 +99,11 @@ public:
 	bool IsWireframe() { return m_bWireframe; }		// ワイヤーフレーム
 	CScene::MODE GetOldMode() { return m_OldMode; }	// 前回のモード取得
 	bool IsLoadComplete() { return m_bLoadComplete; }
-	bool Is2DDisp() { return m_bDisp_2D; }			// 2D表示の判定
-	void SerEnableDisp_UI(bool bDisp) { m_bDisp_UI = bDisp; }			// UI表示の判定
-	bool IsDisp_UI() { return m_bDisp_UI; }			// UI表示の判定
+	bool Is2DDisp() { return m_bDisp_2D; }						// 2D表示の判定
+	void SerEnableDisp_UI(bool bDisp) { m_bDisp_UI = bDisp; }	// UI表示の判定
+	bool IsDisp_UI() { return m_bDisp_UI; }						// UI表示の判定
+	void SerEnableWorldPaused(bool bPause) { m_bWorldPaused = bPause; }	// 世界のポーズ判定設定
+	bool IsWorldPaused() { return m_bWorldPaused; }						// 世界のポーズ判定取得
 
 	bool IsWindowed() { return m_bWindowed; }	// ウィンドウモードか
 	void ChangeDisplayMode(bool bWindow);		// ディスプレイモード変更
@@ -119,7 +121,7 @@ private:
 	CInput*m_pInput;					// 入力機器
 	CSound* m_pSound;					// サウンド
 	CDebugProc *m_pDebugProc;			// デバッグ表示
-	CLight *m_pLight;					// ライト
+	CLightManager *m_pLight;			// ライト
 	CCamera *m_pCamera;					// カメラ
 	CTexture *m_pTexture;				// テクスチャ
 	CXLoad* m_pXLoad;					// Xファイル
@@ -150,6 +152,7 @@ private:
 	bool m_bDisp_2D;		// 2Dの表示
 	bool m_bDisp_UI;		// UIの表示
 	bool m_bWindowed;		// ウィンドウモードか
+	bool m_bWorldPaused;	// 世界のポーズ判定
 
 	static CManager *m_pManager;	// マネージャ
 

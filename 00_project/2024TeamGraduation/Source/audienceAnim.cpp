@@ -8,6 +8,7 @@
 #include "gameManager.h"
 #include "manager.h"
 #include "renderer.h"
+#include "objectX.h"
 
 //==========================================================================
 // 定数定義
@@ -15,6 +16,7 @@
 namespace
 {
 	const char* SETUP_TXT = "data\\CHARACTER\\frisk.txt";	// プレイヤーセットアップテキスト
+	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
 
 	const int LEFT_LINE[]  = { (int)CAudienceAnim::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };		// チームサイドごとの左ライン
@@ -26,6 +28,7 @@ namespace
 //==========================================================================
 CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pAnimChara	(nullptr),		// キャラクターアニメーション情報
+	m_pLight		(nullptr),		// ペンライト情報
 	m_moveMotion	(MOTION_IDOL)	// 移動モーション
 {
 }
@@ -49,6 +52,25 @@ HRESULT CAudienceAnim::Init()
 
 		return E_FAIL;
 	}
+
+	// ペンライトの生成
+	m_pLight = CObjectX::Create(LIGHT_PATH, VEC3_ZERO);
+	if (m_pLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 種類を設定
+	m_pLight->SetType(CObject::TYPE::TYPE_OBJECTX);
+
+	// 自動描画フラグをオフにする
+	m_pLight->SetEnableDisp(false);
+
+	// TODO：スケール調整後で消す
+#if 1
+	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
+#endif
 
 	// ランダムに観戦位置を設定
 	int nIdxTeam = GetTeam() - 1;
@@ -175,6 +197,9 @@ int CAudienceAnim::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, c
 	// 入場状態の更新
 	CAudience::UpdateSpawn(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// ライトの自動描画をオフにする
+	m_pLight->SetEnableDisp(false);
+
 	// 移動モーションを返す
 	return m_moveMotion;
 }
@@ -186,6 +211,9 @@ int CAudienceAnim::UpdateNormal(const float fDeltaTime, const float fDeltaRate, 
 {
 	// 通常状態の更新
 	CAudience::UpdateNormal(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// ライトの自動描画をオフにする
+	m_pLight->SetEnableDisp(false);
 
 	// 待機モーションを返す
 	return MOTION_IDOL;
@@ -199,6 +227,27 @@ int CAudienceAnim::UpdateJump(const float fDeltaTime, const float fDeltaRate, co
 	// 盛り上がり状態の更新
 	CAudience::UpdateJump(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// ライトの自動描画をオフにする
+	m_pLight->SetEnableDisp(false);
+
+	// ジャンプモーションを返す
+	return MOTION_JUMP;
+}
+
+//==========================================================================
+// スペシャル状態の更新処理
+//==========================================================================
+int CAudienceAnim::UpdateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// スペシャル状態の更新
+	CAudience::UpdateSpecial(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// ライトの自動描画をオンにする
+	m_pLight->SetEnableDisp(true);
+
+	// ライトの位置を頭の上にする
+	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+
 	// ジャンプモーションを返す
 	return MOTION_JUMP;
 }
@@ -210,6 +259,9 @@ int CAudienceAnim::UpdateDespawn(const float fDeltaTime, const float fDeltaRate,
 {
 	// 退場状態の更新
 	CAudience::UpdateDespawn(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// ライトの自動描画をオフにする
+	m_pLight->SetEnableDisp(false);
 
 	// 移動モーションを返す
 	return m_moveMotion;
