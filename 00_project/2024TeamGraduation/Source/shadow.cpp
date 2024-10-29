@@ -2,6 +2,7 @@
 // 
 //  影処理 [shadow.cpp]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
 //=============================================================================
 #include "shadow.h"
@@ -16,22 +17,12 @@
 #define POS_SHADOW	(50.0f)
 
 //==========================================================================
-// 静的メンバ変数宣言
-//==========================================================================
-int CShadow::m_nNumAll = 0;						// 影の総数
-
-//==========================================================================
 // コンストラクタ
 //==========================================================================
 CShadow::CShadow(int nPriority) : CObject3D(nPriority)
 {
-
 	m_pObject = nullptr;	// オブジェクトのポインタ
-	m_nNumAll = 0;		// 総数
-	m_nTexIdx = 0;		// テクスチャのインデックス番号
-
-	// 総数加算
-	m_nNumAll++;
+	m_nTexIdx = 0;			// テクスチャのインデックス番号
 }
 
 //==========================================================================
@@ -43,36 +34,9 @@ CShadow::~CShadow()
 }
 
 //==========================================================================
-// 生成処理
-//==========================================================================
-CShadow *CShadow::Create()
-{
-	// 生成用のオブジェクト
-	CShadow *pShadow = nullptr;
-
-	if (pShadow == nullptr)
-	{// nullptrだったら
-
-		// メモリの確保
-		pShadow = DEBUG_NEW CShadow;
-
-		if (pShadow != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 初期化処理
-			pShadow->Init();
-		}
-
-		return pShadow;
-	}
-
-	return nullptr;
-}
-
-//==========================================================================
 // 生成処理(オーバーロード)
 //==========================================================================
-CShadow *CShadow::Create(MyLib::Vector3 pos, float size)
+CShadow *CShadow::Create(CObject* pObject, float fRadius)
 {
 	// 生成用のオブジェクト
 	CShadow *pShadow = nullptr;
@@ -82,20 +46,17 @@ CShadow *CShadow::Create(MyLib::Vector3 pos, float size)
 
 		// メモリの確保
 		pShadow = DEBUG_NEW CShadow;
-
-		//if (pShadow->GetID() < 0)
-		//{// メモリ確保に失敗していたら
-
-		//	delete pShadow;
-		//	return nullptr;
-		//}
-
 		if (pShadow != nullptr)
 		{// メモリの確保が出来ていたら
 
-			// 位置割り当て
-			pShadow->SetPosition(pos);
-			pShadow->SetSize(MyLib::Vector3(size, 0.0f, size));	// サイズ
+			// 追従オブジェクトの割当
+			pShadow->BindObject(pObject);
+
+			// 相対位置の設定
+			pShadow->SetPositionRelative();
+
+			// 大きさの設定
+			pShadow->SetSize(MyLib::Vector3(fRadius, 0.0f, fRadius));
 
 			// 初期化処理
 			pShadow->Init();
@@ -144,27 +105,18 @@ void CShadow::Uninit()
 {
 	// 終了処理
 	CObject3D::Uninit();
-
-	// 総数減算
-	m_nNumAll--;
 }
 
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CShadow::Update()
+void CShadow::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 死亡の判定
-	if (IsDeath())
-	{// 死亡フラグが立っていたら
-		return;
-	}
+	if (IsDeath()) { return; }
 
-	// 位置取得
-	MyLib::Vector3 pos = GetPosition();
-
-	// 位置設定
-	SetPosition(pos);
+	// 相対位置の設定
+	SetPositionRelative();
 
 	// 頂点情報設定
 	CObject3D::SetVtx();
@@ -203,9 +155,16 @@ void CShadow::Draw()
 }
 
 //==========================================================================
-// 総数取得
+// 相対位置の設定処理
 //==========================================================================
-int CShadow::GetNumAll()
+void CShadow::SetPositionRelative()
 {
-	return m_nNumAll;
+	// 位置取得
+	MyLib::Vector3 pos = m_pObject->GetPosition();
+
+	// Y座標を地面に設定
+	pos.y = CGameManager::FIELD_LIMIT + 1.0f;
+
+	// 位置設定
+	SetPosition(pos);
 }

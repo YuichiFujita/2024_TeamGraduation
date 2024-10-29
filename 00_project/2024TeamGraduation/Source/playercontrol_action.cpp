@@ -83,7 +83,7 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 	pTeamStatus->ZeroSpecialValue();
 
 	// アクションパターン変更
-	SetPattern(player, CPlayer::EMotion::MOTION_SPECIAL, CPlayer::EAction::ACTION_SPECIAL);
+	SetPattern(player, CPlayer::EMotion::MOTION_WIN, CPlayer::EAction::ACTION_SPECIAL);	// TAKADA：SPECIAL_THROWが出来たらそれにしてくれ
 }
 
 //==========================================================================

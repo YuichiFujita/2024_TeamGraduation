@@ -70,10 +70,18 @@ namespace
 //************************************************************
 CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
-	nullptr,						// 何もしない更新
-	&CSpecialManager::UpdateCutIn,	// カットイン更新
-	&CSpecialManager::UpdateNormal,	// 通常更新
-	&CSpecialManager::UpdateEnd,	// 終了更新
+	nullptr,								// 何もしない更新
+	&CSpecialManager::UpdateCutIn,			// カットイン更新
+	&CSpecialManager::UpdatePlayerHype,		// プレイヤー盛り上げ更新
+	&CSpecialManager::UpdateAudienceHype,	// 観客盛り上げ更新
+	&CSpecialManager::UpdatePlayerSpecial,	// プレイヤースペシャル演出更新
+	&CSpecialManager::UpdateNormal,			// 通常更新
+	&CSpecialManager::UpdateEnd,			// 終了更新
+};
+CSpecialManager::AFuncUpdateSpecial CSpecialManager::m_aFuncUpdateSpecial[] =	// スペシャル更新関数
+{
+	nullptr,							// スペシャル無し
+	&CSpecialManager::UpdateKamehameha,	// かめはめ波の更新
 };
 CSpecialManager* CSpecialManager::m_pThisClass = nullptr;	// 自身のインスタンス
 
@@ -94,6 +102,7 @@ CSpecialManager::CSpecialManager(const CPlayer* pAttack, const CPlayer* pTarget)
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState) == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(m_aFuncUpdateSpecial) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 }
 
 //============================================================
@@ -115,6 +124,9 @@ HRESULT CSpecialManager::Init(void)
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
+
+	// 世界停止中に動けるようにする
+	SetEnablePosibleMove_WorldPause(true);
 
 	// 攻撃プレイヤーを照らすライトの生成
 	m_pAttackLight = CLightPoint::Create();
@@ -164,7 +176,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// 世界の時を止める
-	//GET_MANAGER->SetSlowRate(0.0f);	// TODO
+	GET_MANAGER->SerEnableWorldPaused(true);
 #endif
 
 #if 1
@@ -274,13 +286,92 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	{ // カットイン演出が終了した場合
 
 		// 世界の時はうごきだす
-		//GET_MANAGER->SetSlowRate(1.0f);	// TODO
+		GET_MANAGER->SerEnableWorldPaused(false);
 
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);
 
-		// 通常状態にする
-		m_state = STATE_NORMAL;
+		// プレイヤー盛り上げ状態にする
+		m_state = STATE_PLAYER_HYPE;
+	}
+
+	// ライト位置の設定
+	SetLightPosition();
+}
+
+//============================================================
+//	プレイヤー盛り上げの更新処理
+//============================================================
+void CSpecialManager::UpdatePlayerHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// TODO：ここにプレイヤーカメラ
+
+#if 1
+	// タイマーを加算
+	m_fCurTime += fDeltaTime;
+	if (m_fCurTime >= 1.0f)
+	{ // 待機が終了した場合
+
+		// タイマーを初期化
+		m_fCurTime = 0.0f;
+
+		// 観客盛り上げ状態にする
+		m_state = STATE_AUDIENCE_HYPE;
+	}
+#endif
+
+	// ライト位置の設定
+	SetLightPosition();
+}
+
+//============================================================
+//	観客盛り上げの更新処理
+//============================================================
+void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// TODO：ここに観客カメラ
+
+#if 1
+	// タイマーを加算
+	m_fCurTime += fDeltaTime;
+	if (m_fCurTime >= 1.0f)
+	{ // 待機が終了した場合
+
+		// タイマーを初期化
+		m_fCurTime = 0.0f;
+
+		// プレイヤーをスペシャルモーションにする
+		m_pAttackPlayer->SetMotion(CPlayer::MOTION_SPECIAL);
+
+		// プレイヤースペシャル演出状態にする
+		m_state = STATE_PLAYER_SPECIAL;
+	}
+#endif
+
+	// ライト位置の設定
+	SetLightPosition();
+}
+
+//============================================================
+//	プレイヤースペシャル演出の更新処理
+//============================================================
+void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CBall::ESpecial typeSpecial = CGame::GetInstance()->GetGameManager()->GetBall()->GetTypeSpecial();	// スペシャル種類
+	assert(typeSpecial > CBall::SPECIAL_NONE && typeSpecial < CBall::SPECIAL_MAX);
+	if (m_aFuncUpdateState[typeSpecial] != nullptr)
+	{ // 更新関数が指定されている場合
+
+		// 各スペシャルごとの更新
+		(this->*(m_aFuncUpdateSpecial[typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// TODO：投げた瞬間の解除はちょっと...
+	if (m_pAttackPlayer->GetBall() == nullptr)
+	{ // ボールを投げている場合
+
+		// 終了状態にする
+		m_state = STATE_END;
 	}
 
 	// ライト位置の設定
@@ -293,13 +384,8 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 void CSpecialManager::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if 1
-	// タイマーを加算
-	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 3.0f)
-	{ // 待機が終了した場合
-
-		// タイマーを初期化
-		m_fCurTime = 0.0f;
+	if (m_pAttackPlayer->GetBall() == nullptr)
+	{ // ボールを投げている場合
 
 		// 終了状態にする
 		m_state = STATE_END;
@@ -326,6 +412,28 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 
 	// 自身の終了
 	Uninit();
+}
+
+//============================================================
+//	かめはめ波の更新処理
+//============================================================
+void CSpecialManager::UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// TODO：ここに各スペシャルのカメラ動作
+
+#if 0
+	// タイマーを加算
+	m_fCurTime += fDeltaTime;
+	if (m_fCurTime >= 2.0f)
+	{ // 待機が終了した場合
+
+		// タイマーを初期化
+		m_fCurTime = 0.0f;
+
+		// 終了状態にする
+		m_state = STATE_END;
+	}
+#endif
 }
 
 //============================================================

@@ -129,13 +129,6 @@ CObjectX* CObjectX::Create(const std::string& file, const MyLib::Vector3& pos, c
 		{// Ž¸”s‚µ‚Ä‚¢‚½‚ç
 			return nullptr;
 		}
-
-		if (bShadow)
-		{
-			// ‰eÝ’è
-			float f = pObjectX->GetVtxMax().x * 0.5f;
-			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
-		}
 	}
 
 	return pObjectX;
@@ -163,13 +156,6 @@ CObjectX* CObjectX::Create(int nIdxXFile, const MyLib::Vector3& pos, const MyLib
 		if (FAILED(pObjectX->Init(nIdxXFile)))
 		{
 			return nullptr;
-		}
-
-		if (bShadow)
-		{
-			// ‰eÝ’è
-			float f = pObjectX->GetVtxMax().x * 0.5f;
-			pObjectX->m_pShadow = CShadow::Create(pObjectX->GetPosition(), f);
 		}
 	}
 

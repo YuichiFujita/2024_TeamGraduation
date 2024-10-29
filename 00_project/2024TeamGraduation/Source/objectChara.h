@@ -108,7 +108,7 @@ public:
 
 	HRESULT SetCharacter(const std::string& file) override;		// キャラクター設定
 	CObjectChara* GetObjectChara() { return this; }				// オブジェクトキャラクターオブジェクトの取得
-	CMotion* GetMotion() { return m_pMotion; }					// モーションオブジェクト取得
+	CMotion* GetMotion() const { return m_pMotion; }			// モーションオブジェクト取得
 	static CObjectChara *Create(const std::string& pTextFile);	// 生成処理
 
 

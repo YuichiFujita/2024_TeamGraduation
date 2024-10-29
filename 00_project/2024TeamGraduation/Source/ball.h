@@ -18,6 +18,7 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CShadow;
 class CPlayer;
 
 //==========================================================================
@@ -92,6 +93,7 @@ public:
 	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }	// スペシャル種類取得
 	EAttack GetTypeAtk() const		{ return m_typeAtk; }		// 攻撃種類取得
 	EState GetState() const			{ return m_state; }			// 状態取得
+	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
 
@@ -164,6 +166,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	CShadow* m_pShadow;		// 影情報
 	CPlayer* m_pPlayer;		// プレイヤー情報
 	CPlayer* m_pTarget;		// ホーミングターゲット情報
 	CPlayer* m_pCover;		// カバー対象プレイヤー情報
