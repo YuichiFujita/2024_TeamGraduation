@@ -97,6 +97,9 @@ HRESULT CCutIn::Init()
 	// í—Ş‚Ìİ’è
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
 
+	// ¢ŠE’â~’†‚É“®‚¯‚é‚æ‚¤‚É‚·‚é
+	SetEnablePosibleMove_WorldPause(true);
+
 	return S_OK;
 }
 

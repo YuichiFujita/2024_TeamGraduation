@@ -125,6 +125,9 @@ HRESULT CSpecialManager::Init(void)
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
+	// 世界停止中に動けるようにする
+	SetEnablePosibleMove_WorldPause(true);
+
 	// 攻撃プレイヤーを照らすライトの生成
 	m_pAttackLight = CLightPoint::Create();
 	if (m_pAttackLight == nullptr)
@@ -173,7 +176,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// 世界の時を止める
-	//GET_MANAGER->SetSlowRate(0.0f);	// TODO
+	GET_MANAGER->SerEnableWorldPaused(true);
 #endif
 
 #if 1
@@ -283,7 +286,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	{ // カットイン演出が終了した場合
 
 		// 世界の時はうごきだす
-		//GET_MANAGER->SetSlowRate(1.0f);	// TODO
+		GET_MANAGER->SerEnableWorldPaused(false);
 
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);
@@ -306,7 +309,7 @@ void CSpecialManager::UpdatePlayerHype(const float fDeltaTime, const float fDelt
 #if 1
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 3.0f)
+	if (m_fCurTime >= 1.0f)
 	{ // 待機が終了した場合
 
 		// タイマーを初期化
@@ -331,11 +334,14 @@ void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDe
 #if 1
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 3.0f)
+	if (m_fCurTime >= 1.0f)
 	{ // 待機が終了した場合
 
 		// タイマーを初期化
 		m_fCurTime = 0.0f;
+
+		// プレイヤーをスペシャルモーションにする
+		m_pAttackPlayer->SetMotion(CPlayer::MOTION_SPECIAL);
 
 		// プレイヤースペシャル演出状態にする
 		m_state = STATE_PLAYER_SPECIAL;
@@ -360,6 +366,14 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 		(this->*(m_aFuncUpdateSpecial[typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// TODO：投げた瞬間の解除はちょっと...
+	if (m_pAttackPlayer->GetBall() == nullptr)
+	{ // ボールを投げている場合
+
+		// 終了状態にする
+		m_state = STATE_END;
+	}
+
 	// ライト位置の設定
 	SetLightPosition();
 }
@@ -370,13 +384,8 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 void CSpecialManager::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if 1
-	// タイマーを加算
-	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 3.0f)
-	{ // 待機が終了した場合
-
-		// タイマーを初期化
-		m_fCurTime = 0.0f;
+	if (m_pAttackPlayer->GetBall() == nullptr)
+	{ // ボールを投げている場合
 
 		// 終了状態にする
 		m_state = STATE_END;
@@ -412,10 +421,10 @@ void CSpecialManager::UpdateKamehameha(const float fDeltaTime, const float fDelt
 {
 	// TODO：ここに各スペシャルのカメラ動作
 
-#if 1
+#if 0
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 3.0f)
+	if (m_fCurTime >= 2.0f)
 	{ // 待機が終了した場合
 
 		// タイマーを初期化

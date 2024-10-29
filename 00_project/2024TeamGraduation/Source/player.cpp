@@ -193,6 +193,9 @@ void CPlayer::Uninit()
 	// 操作系
 	DeleteControl();
 
+	// ステータス
+	SAFE_DELETE(m_pStatus);
+
 	// 終了処理
 	CObjectChara::Uninit();
 
@@ -370,7 +373,7 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx)
+void CPlayer::SetMotion(int motionIdx) const
 {
 	//TAKADA: はじく条件(死んだら)
 	//if (m_sMotionFrag.bDead) return;
@@ -499,7 +502,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
+void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -533,9 +536,9 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 	}
 
 	// 武器の位置
-	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), *pATKInfo);
+	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), ATKInfo);
 
-	if (pATKInfo->fRangeSize == 0.0f)
+	if (ATKInfo.fRangeSize == 0.0f)
 	{
 		return;
 	}
@@ -545,11 +548,11 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo* pATKInfo, int nCntATK)
 		weponpos,
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-		pATKInfo->fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+		ATKInfo.fRangeSize, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 #endif
 
-	if (pATKInfo->bEndAtk)
-	{
+	if (ATKInfo.bEndAtk)
+	{// 終了してたら抜ける
 		return;
 	}
 }
@@ -1012,7 +1015,7 @@ void CPlayer::StateCatch_Normal()
 	if (pMotion == nullptr) return;
 
 	// キャンセル可能フレーム取得
-	CMotion::Info motionInfo = pMotion->GetNowInfo();
+	CMotion::Info motionInfo = pMotion->GetInfo();
 	float fCancelableTime = static_cast<float>(motionInfo.nCancelableFrame);
 
 	// TODO : ずざざーとする

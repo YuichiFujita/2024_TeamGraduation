@@ -1,7 +1,7 @@
 //==========================================================================
 // 
 //  ボール処理 [ball.cpp]
-//  Author : 相馬靜雅
+//  Author : 藤田勇一
 // 
 //==========================================================================
 #include "ball.h"
@@ -12,6 +12,7 @@
 #include "gamemanager.h"
 #include "calculation.h"
 #include "model.h"
+#include "shadow.h"
 #include "specialManager.h"
 
 #include "debugproc.h"
@@ -23,7 +24,8 @@
 namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
-	const float	RADIUS = 12.0f;			// 半径
+	const float	RADIUS = 14.0f;			// 半径
+	const float	RADIUS_SHADOW = 24.0f;	// 影の半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	REV_INIMOVE = 0.29f;	// 初速の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
@@ -118,6 +120,7 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
+	m_pShadow		(nullptr),		// 影情報
 	m_pPlayer		(nullptr),		// プレイヤー情報
 	m_pTarget		(nullptr),		// ホーミングターゲット情報
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
@@ -180,6 +183,10 @@ HRESULT CBall::Init()
 	// 親クラスの初期化
 	HRESULT hr = CObjectX::Init(MODEL);
 	if (FAILED(hr)) { return E_FAIL; }
+
+	// 影の生成
+	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
+	if (m_pShadow == nullptr) { return E_FAIL; }
 
 	return S_OK;
 }
@@ -374,6 +381,9 @@ void CBall::Special(CPlayer* pPlayer)
 	// スペシャル演出状態にする
 	SetState(STATE_SPECIAL_STAG);
 
+	// TODO：スペシャルの種類設定
+	m_typeSpecial = SPECIAL_KAMEHAMEHA;
+
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
 }
@@ -393,7 +403,7 @@ float CBall::GetRadius() const
 bool CBall::IsAttack() const
 {
 	// 攻撃フラグを返す
-	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE);	// TODO：攻撃状態が増えたら追加
+	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE || m_state == STATE_SPECIAL_THROW);	// TODO：攻撃状態が増えたら追加
 }
 
 //==========================================================================
@@ -401,7 +411,7 @@ bool CBall::IsAttack() const
 //==========================================================================
 void CBall::CalWorldMtx()
 {
-	if (m_state == STATE_CATCH)
+	if (m_state == STATE_CATCH || m_state == STATE_SPECIAL_STAG)
 	{ // キャッチ中の場合
 
 		const int nPartsIdx = m_pPlayer->GetParameter().nBallPartsIdx;		// ボールパーツインデックス
@@ -435,12 +445,18 @@ void CBall::CalWorldMtx()
 
 		// キャッチ時のマトリックスから位置を反映
 		SetPosition(pMtxParts->GetWorldPosition());
+
+		// 影の描画を停止
+		m_pShadow->SetEnableDisp(false);
 	}
 	else
 	{ // キャッチしていない場合
 
 		// 親クラスのワールドマトリックス計算
 		CObjectX::CalWorldMtx();
+
+		// 影の描画を再開
+		m_pShadow->SetEnableDisp(true);
 	}
 }
 
@@ -654,8 +670,14 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CMotion* pMotion = m_pPlayer->GetMotion();	// プレイヤーモーション情報
+
+	// モーションがスペシャルじゃない場合抜ける
+	//if (!pMotion->IsSpecial()) { return; }	// TODO：Special科の確認が出来たら置換
+	if (pMotion->GetType() != CPlayer::MOTION_SPECIAL) { return; }
+
 	// TODO：ここでプレイヤーのモーションが投げるタイミングなのかを確認する
-	if (m_pPlayer)
+	if (pMotion->GetAllCount() >= 85.0f)
 	{ // 
 
 		// スペシャル投げ
@@ -853,6 +875,9 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 		// 上限に補正
 		UtilFunc::Transformation::ValueNormalize(pMove->y, MAX_BOUND_MOVE, 0.0f);
 
+		// 初速を初期化
+		m_fInitialSpeed = 0.0f;
+
 		// 重力を初期化
 		m_fGravity = 0.0f;
 		return true;
@@ -1034,9 +1059,6 @@ void CBall::ThrowSpecial()
 	// 投げ処理
 	Throw(m_pPlayer);
 
-	// TODO：スペシャルの種類設定
-	m_typeSpecial = SPECIAL_KAMEHAMEHA;
-
 	// スペシャル攻撃を設定
 	m_typeAtk = ATK_SPECIAL;
 
@@ -1073,6 +1095,9 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 
 	// 上移動量を追加
 	pMove->y = rebound::MOVE_UP;
+
+	// 初速を初期化
+	m_fInitialSpeed = 0.0f;
 
 	// 移動速度を低下
 	m_fMoveSpeed = rebound::MOVE_SPEED;
