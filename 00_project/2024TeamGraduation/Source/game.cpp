@@ -264,8 +264,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	{
 		if (ImGui::Button("Special!"))
 		{
-			//std::list<CPlayer*> list = CPlayer::GetList().GetList();
-
 			CPlayer* pPlayerAttack = CPlayer::GetList().GetData(0);
 			CPlayer* pPlayerTarget = CPlayer::GetList().GetData(1);
 			CSpecialManager::Create(pPlayerAttack, pPlayerTarget);

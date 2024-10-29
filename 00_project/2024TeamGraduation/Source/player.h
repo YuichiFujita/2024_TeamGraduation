@@ -45,6 +45,7 @@ public:
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
 		MOTION_JUMP,				// ジャンプ
+		MOTION_JUMP_BALL,			// ジャンプ(ボール所持)
 		MOTION_LAND,				// 着地
 		MOTION_CATCH_STANCE,		// キャッチの構え
 		MOTION_CATCH_STANCE_JUMP,	// キャッチの構え(ジャンプ)
