@@ -127,7 +127,8 @@ public:
 	static bool ZSortInverse(const CObject *obj1, const CObject *obj2);	// 逆Zソートの比較関数
 	virtual inline void SetEnableDisp(bool bDisp) { m_bDisp = bDisp; }	// 描画状況設定
 	bool IsDisp() { return m_bDisp; }									// 描画状況取得
-	void SetEnableHitstopMove() { m_bHitstopMove = true; }				// ヒットストップ中に動くフラグ有効
+	void SetEnablePosibleMove_WorldPause(bool bMove) { m_bPosibleMove_WorldPause = bMove; }	// 世界停止中に動けるフラグ
+	bool IsPosibleMove_WorldPause() { return m_bPosibleMove_WorldPause; }					// 世界停止中に動けるフラグ
 
 	//--------------------------
 	// その他
@@ -175,7 +176,7 @@ private:
 	//--------------------------
 	bool m_bDeath;				// 死亡フラグ
 	bool m_bDisp;				// 描画フラグ
-	bool m_bHitstopMove;		// ヒットストップ時に動くかのフラグ
+	bool m_bPosibleMove_WorldPause;		// 世界停止中に動けるフラグ
 	static int m_nNumAll;		// オブジェクトの総数
 
 };
