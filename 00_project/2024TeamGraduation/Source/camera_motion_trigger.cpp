@@ -8,17 +8,14 @@
 
 // 派生先
 #include "cameratrigger_pass.h"
-#include "cameratrigger_result.h"
 
 //==========================================================================
 // 関数リスト
 //==========================================================================
 std::vector < CCameraMotion_Trigger::CREATE_FUNC > CCameraMotion_Trigger::m_CreateFunc =
 {
-	[]() {return DEBUG_NEW CCameraTrigger_Pass(); },	// パス
-	[]() {return nullptr; },	// パス
-	[]() {return nullptr; },	// パス
-	[]() {return DEBUG_NEW CCameraTrigger_Result(); },	// リザルト
+	[]() { return DEBUG_NEW CCameraTrigger_Pass(); },	// パス
+	[]() { return nullptr; },	// スペシャル盛り上げ
 };
 
 //==========================================================================
@@ -26,7 +23,7 @@ std::vector < CCameraMotion_Trigger::CREATE_FUNC > CCameraMotion_Trigger::m_Crea
 //==========================================================================
 CCameraMotion_Trigger::CCameraMotion_Trigger()
 {
-	
+
 }
 
 //==========================================================================
