@@ -473,6 +473,9 @@
     <ClCompile Include="Source\specialManager.cpp">
       <Filter>ingame\special</Filter>
     </ClCompile>
+    <ClCompile Include="Source\audienceHighPoly.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
     <ClCompile Include="Source\cutin.cpp">
       <Filter>ingame\special</Filter>
     </ClCompile>
@@ -867,6 +870,9 @@
     </ClInclude>
     <ClInclude Include="Source\cutin.h">
       <Filter>ingame\special</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceHighPoly.h">
+      <Filter>ingame\audience</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

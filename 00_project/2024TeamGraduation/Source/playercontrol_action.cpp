@@ -134,8 +134,16 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 	// ジャンプ判定設定
 	player->SetEnableJump(bJump);
 
+	//ボール所持判定
+	CPlayer::EMotion motion = CPlayer::EMotion::MOTION_JUMP;
+
+	if (player->GetBall() != nullptr)
+	{
+		motion = CPlayer::EMotion::MOTION_JUMP_BALL;
+	}
+
 	// アクションパターン変更
-	SetPattern(player, CPlayer::EMotion::MOTION_JUMP, CPlayer::EAction::ACTION_JUMP);
+	SetPattern(player, motion, CPlayer::EAction::ACTION_JUMP);
 
 	// サウンド再生
 	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);

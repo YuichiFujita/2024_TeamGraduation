@@ -76,7 +76,7 @@ public:
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }	// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
-	void SetPosLimit(MyLib::Vector3& pos);					// コート移動制限
+	bool SetPosLimit(MyLib::Vector3& pos);					// コート移動制限
 
 	void Debug();			// デバッグ
 	void StartSetting();	// スタート時の設定

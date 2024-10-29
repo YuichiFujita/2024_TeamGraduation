@@ -265,25 +265,33 @@ void CGameManager::SetType(ESceneType type)
 //==========================================================================
 // ƒR[ƒgˆÚ“®§ŒÀ
 //==========================================================================
-void CGameManager::SetPosLimit(MyLib::Vector3& pos)
+bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
 {
+	bool bHit = false;
+
 	if (pos.x > m_courtSize.x)
 	{
 		pos.x = m_courtSize.x;
+		bHit = true;
 	}
 	else if (pos.x < -m_courtSize.x)
 	{
 		pos.x = -m_courtSize.x;
+		bHit = true;
 	}
 
 	if (pos.z > m_courtSize.z)
 	{
 		pos.z = m_courtSize.z;
+		bHit = true;
 	}
 	else if (pos.z < -m_courtSize.z)
 	{
 		pos.z = -m_courtSize.z;
+		bHit = true;
 	}
+
+	return bHit;
 }
 
 //==========================================================================

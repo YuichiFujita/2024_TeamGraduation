@@ -45,6 +45,7 @@ public:
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
 		MOTION_JUMP,				// ジャンプ
+		MOTION_JUMP_BALL,			// ジャンプ(ボール所持)
 		MOTION_LAND,				// 着地
 		MOTION_CATCH_STANCE,		// キャッチの構え
 		MOTION_CATCH_STANCE_JUMP,	// キャッチの構え(ジャンプ)
@@ -66,13 +67,15 @@ public:
 	// 状態定義
 	enum EState
 	{
-		STATE_NONE = 0,		// なにもない
-		STATE_INVINCIBLE,	// 無敵
-		STATE_DMG,			// ダメージ
-		STATE_DEAD,			// 死
-		STATE_DODGE,		// 回避
-		STATE_CATCH_NORMAL,	// 通常キャッチ
-		STATE_CATCH_JUST,	// ジャストキャッチ
+		STATE_NONE = 0,			// なにもない
+		STATE_INVINCIBLE,		// 無敵
+		STATE_DMG,				// ダメージ
+		STATE_DEAD,				// 死
+		STATE_DODGE,			// 回避
+		STATE_CATCH_NORMAL,		// 通常キャッチ
+		STATE_CATCH_JUST,		// ジャストキャッチ
+		STATE_OUTCOURT,			// コート越え
+		STATE_OUTCOURT_RETURN,	// コート越えから戻る
 		STATE_MAX
 	};
 
@@ -147,10 +150,10 @@ public:
 	// ノックバック情報
 	struct SKnockbackInfo
 	{
-		MyLib::Vector3 fPosStart;	// 始点
-		MyLib::Vector3 fPosEnd;		// 終点
+		MyLib::Vector3 posStart;	// 始点
+		MyLib::Vector3 posEnd;		// 終点
 
-		SKnockbackInfo() : fPosStart(MyLib::Vector3()), fPosEnd(MyLib::Vector3()) {}
+		SKnockbackInfo() : posStart(MyLib::Vector3()), posEnd(MyLib::Vector3()) {}
 	};
 
 	//=============================
@@ -202,6 +205,7 @@ public:
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);		// 死亡設定
 	void DamageSetting(CBall* pBall);										// ダメージ発生時設定
 	void CatchSetting(CBall* pBall);										// キャッチ時処理
+	void OutCourtSetting();													// コート越え処理
 	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
 
 	//=============================
@@ -246,6 +250,8 @@ private:
 	void StateDodge();			// 回避
 	void StateCatch_Normal();	// 通常キャッチ
 	void StateCatch_Just();		// ジャストキャッチ
+	void StateOutCourt();		// コート越え
+	void StateOutCourt_Return();		// コート越えから戻る
 
 	//-----------------------------
 	// その他関数
