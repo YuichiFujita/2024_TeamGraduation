@@ -369,7 +369,7 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx)
+void CPlayer::SetMotion(int motionIdx) const
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();

@@ -18,25 +18,29 @@
 class CShadow : public CObject3D
 {
 public:
+
+	// コンストラクタ/デストラクタ
 	CShadow(int nPriority = 7);
 	~CShadow();
 
-	static CShadow *Create();
-	static CShadow *Create(MyLib::Vector3 pos, float size = 50.0f);
+	// 静的メンバ関数
+	static CShadow *Create(CObject* pObject, float fRadius = 50.0f);
 
-	// オーバーライドされた関数ああ
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
+	// オーバーライドされた関数
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
 
-	static int GetNumAll();
+	// メンバ関数
+	void BindObject(CObject* pObject) { m_pObject = pObject; }	// 追従オブジェクト割当
+	void SetPositionRelative();	// 相対位置設定
 
 private:
 
-	CObject *m_pObject;		// オブジェクトのポインタ
-	static int m_nNumAll;	// 総数
-	int m_nTexIdx;			// テクスチャのインデックス番号
+	// メンバ変数
+	CObject *m_pObject;	// オブジェクトのポインタ
+	int m_nTexIdx;		// テクスチャのインデックス番号
 };
 
 

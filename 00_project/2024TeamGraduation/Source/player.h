@@ -174,7 +174,7 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx);										// モーションの設定
+	void SetMotion(int motionIdx) const;								// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
 	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
@@ -195,18 +195,18 @@ public:
 	//=============================
 	// その他
 	//=============================
-	bool Hit(CBall* pBall);		// ヒット処理
+	bool Hit(CBall* pBall);			// ヒット処理
 	void SetState(EState state);	// 状態設定
-	EState GetState() { return m_state; }						// 状態取得
-	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }		// 自分のインデックス設定
-	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }				// 自分のインデックス取得
-	void SetBall(CBall* pBall) { m_pBall = pBall; }				// ボール情報設定
-	CBall* GetBall() { return m_pBall; }						// ボール情報取得
-	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);		// 死亡設定
-	void DamageSetting(CBall* pBall);										// ダメージ発生時設定
-	void CatchSetting(CBall* pBall);										// キャッチ時処理
-	void OutCourtSetting();													// コート越え処理
-	static CListManager<CPlayer> GetList() { return m_List; }	// リスト取得
+	EState GetState() { return m_state; }					// 状態取得
+	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
+	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
+	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
+	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
+	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
+	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
+	void CatchSetting(CBall* pBall);									// キャッチ時処理
+	void OutCourtSetting();												// コート越え処理
+	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
 
 	//=============================
 	// 定数
