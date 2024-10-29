@@ -46,15 +46,13 @@ private:
 	//=============================
 	// Ã“Iƒƒ“ƒo•Ï”
 	//=============================
-#ifdef _DEBUG
 	static bool m_bAutoThrow;
-
-	float fThrowTime = 0.0f;
-#endif
 
 	//=============================
 	// ƒƒ“ƒo•Ï”
 	//=============================
+	float fThrowTime = 0.0f;
+
 };
 
 #endif

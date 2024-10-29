@@ -80,6 +80,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateInvincible,			// 無敵
 	&CPlayer::StateDamage,				// ダメージ
 	&CPlayer::StateDead,				// 死亡
+	&CPlayer::StateDeadAfter,			// 死亡後
 	&CPlayer::StateDodge,				// 回避
 	&CPlayer::StateCatch_Normal,		// 通常キャッチ
 	&CPlayer::StateCatch_Just,			// ジャストキャッチ
@@ -371,6 +372,9 @@ void CPlayer::DeleteControl()
 //==========================================================================
 void CPlayer::SetMotion(int motionIdx)
 {
+	//TAKADA: はじく条件(死んだら)
+	//if (m_sMotionFrag.bDead) return;
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)
@@ -395,6 +399,9 @@ void CPlayer::MotionSet()
 	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
 
+	// 死亡時通さない
+	if (m_sMotionFrag.bDead) return;
+
 	// 再生中
 	if (!pMotion->IsFinish()) return;
 
@@ -407,11 +414,11 @@ void CPlayer::MotionSet()
 		if (m_bDash)
 		{// ダッシュモーション
 			m_bDash = false;
-			pMotion->Set(MOTION_RUN);
+			SetMotion(MOTION_RUN);
 		}
 		else
 		{// 歩行モーション
-			pMotion->Set(MOTION_WALK);
+			SetMotion(MOTION_WALK);
 		}
 	}
 	else if (m_sMotionFrag.bJump)
@@ -425,7 +432,7 @@ void CPlayer::MotionSet()
 	else
 	{
 		// ニュートラルモーション
-		pMotion->Set(MOTION_DEF);
+		SetMotion(MOTION_DEF);
 	}
 }
 
@@ -721,6 +728,9 @@ bool CPlayer::Hit(CBall* pBall)
 	if (stateBall == CBall::STATE_REBOUND)
 	{
 		pBall->CatchAttack(this);
+
+		//TAKADA: カバー対象を回復
+
 		return false;
 	}
 
@@ -753,6 +763,7 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	// 死亡状態にする
 	SetState(STATE_DEAD);
 	SetMotion(MOTION_DEAD);
+	m_sMotionFrag.bDead = true;
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -953,8 +964,34 @@ void CPlayer::StateDead()
 
 	SetPosition(pos);
 
-	//志望状態をキャンセル不能にする
+	//死亡状態をキャンセル不能にする
 	SetEnableMove(false);
+	//m_sMotionFrag.bDead = true;
+
+	if (m_fStateTime >= StateTime::DEAD)
+	{
+		SetState(STATE_DEAD_AFTER);
+		SetMotion(MOTION_DEAD_AFTER);
+	}
+}
+
+//==========================================================================
+// 死亡状態
+//==========================================================================
+void CPlayer::StateDeadAfter()
+{
+	//MyLib::Vector3 pos = GetPosition();
+
+	//float time = m_fStateTime / StateTime::DEAD;
+	//time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+
+	//pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT, time);
+
+	//SetPosition(pos);
+
+	//死亡状態をキャンセル不能にする
+	SetEnableMove(false);
+	//m_sMotionFrag.bDead = true;
 }
 
 //==========================================================================
@@ -1139,6 +1176,7 @@ void CPlayer::SetState(EState state)
 //==========================================================================
 void CPlayer::Debug()
 {
+#if _DEBUG
 
 	//-----------------------------
 	// 位置
@@ -1178,7 +1216,9 @@ void CPlayer::Debug()
 
 		// 設定
 		SetRadius(parameter.fRadius);
+
 		pStatus->SetParameter(parameter);
+		
 		ImGui::TreePop();
 	}
 
@@ -1190,6 +1230,7 @@ void CPlayer::Debug()
 		MyLib::Vector3 pos = GetPosition();
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
+		CMotion* motion = GetMotion();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -1197,6 +1238,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
+		ImGui::Text("Motion : [%d]", motion->GetType());
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;
@@ -1225,6 +1267,15 @@ void CPlayer::Debug()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::Button("Dead"))
+	{// リセット
+		MyLib::HitResult_Character* result = DEBUG_NEW MyLib::HitResult_Character;
+		CBall* pBall = CBall::Create(GetPosition());
+		DeadSetting(result,pBall);
+		delete result;
+		pBall->Uninit();
+	}
+
 	//-----------------------------
 	// コート外検証
 	//-----------------------------
@@ -1232,6 +1283,8 @@ void CPlayer::Debug()
 	{// リセット
 		OutCourtSetting();
 	}
+
+#endif
 }
 
 //==========================================================================

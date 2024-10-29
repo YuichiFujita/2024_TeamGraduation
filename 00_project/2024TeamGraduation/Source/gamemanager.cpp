@@ -214,7 +214,17 @@ void CGameManager::StartSetting()
 //==========================================================================
 void CGameManager::SceneStart()
 {
-	
+	m_SceneType = ESceneType::SCENE_MAIN;	// シーンの種類 
+
+#if _DEBUG
+	// コートサイズのボックス
+	if (m_pCourtSizeBox == nullptr)
+	{
+		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+#endif
+	//チームステータス
+	CreateTeamStatus();
 }
 
 //==========================================================================
@@ -335,6 +345,7 @@ void CGameManager::CreateTeamStatus()
 //==========================================================================
 void CGameManager::Debug()
 {
+#if _DEBUG
 
 	//-----------------------------
 	// コート
@@ -388,4 +399,6 @@ void CGameManager::Debug()
 			m_pTeamStatus[i]->Debug();
 		}
 	}
+
+#endif
 }
