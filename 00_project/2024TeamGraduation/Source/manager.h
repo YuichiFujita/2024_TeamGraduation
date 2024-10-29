@@ -99,9 +99,11 @@ public:
 	bool IsWireframe() { return m_bWireframe; }		// ワイヤーフレーム
 	CScene::MODE GetOldMode() { return m_OldMode; }	// 前回のモード取得
 	bool IsLoadComplete() { return m_bLoadComplete; }
-	bool Is2DDisp() { return m_bDisp_2D; }			// 2D表示の判定
-	void SerEnableDisp_UI(bool bDisp) { m_bDisp_UI = bDisp; }			// UI表示の判定
-	bool IsDisp_UI() { return m_bDisp_UI; }			// UI表示の判定
+	bool Is2DDisp() { return m_bDisp_2D; }						// 2D表示の判定
+	void SerEnableDisp_UI(bool bDisp) { m_bDisp_UI = bDisp; }	// UI表示の判定
+	bool IsDisp_UI() { return m_bDisp_UI; }						// UI表示の判定
+	void SerEnablePaused(bool bPause) { m_bWorldPaused = bPause; }	// 世界のポーズ判定設定
+	bool IsWorldPaused() { return m_bWorldPaused; }					// 世界のポーズ判定取得
 
 	bool IsWindowed() { return m_bWindowed; }	// ウィンドウモードか
 	void ChangeDisplayMode(bool bWindow);		// ディスプレイモード変更
@@ -150,6 +152,7 @@ private:
 	bool m_bDisp_2D;		// 2Dの表示
 	bool m_bDisp_UI;		// UIの表示
 	bool m_bWindowed;		// ウィンドウモードか
+	bool m_bWorldPaused;	// 世界のポーズ判定
 
 	static CManager *m_pManager;	// マネージャ
 

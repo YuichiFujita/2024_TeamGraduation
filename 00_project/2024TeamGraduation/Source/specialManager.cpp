@@ -18,6 +18,7 @@
 #include "playerStatus.h"
 #include "lightManager.h"
 #include "lightPoint.h"
+#include "cutin.h"
 #include "audience.h"
 
 //************************************************************
@@ -69,9 +70,10 @@ namespace
 //************************************************************
 CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
-	nullptr,							// 何もしない更新
-	&CSpecialManager::UpdateFadeOut,	// フェードアウト更新
-	&CSpecialManager::UpdateEnd,		// 終了更新
+	nullptr,						// 何もしない更新
+	&CSpecialManager::UpdateCutIn,	// カットイン更新
+	&CSpecialManager::UpdateNormal,	// 通常更新
+	&CSpecialManager::UpdateEnd,	// 終了更新
 };
 CSpecialManager* CSpecialManager::m_pThisClass = nullptr;	// 自身のインスタンス
 
@@ -86,6 +88,7 @@ CSpecialManager::CSpecialManager(const CPlayer* pAttack, const CPlayer* pTarget)
 	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
 	m_pAttackLight	(nullptr),		// 攻撃プレイヤーを照らすライト
 	m_pTargetLight	(nullptr),		// 標的プレイヤーを照らすライト
+	m_pCutIn		(nullptr),		// カットイン情報
 	m_state			(STATE_NONE),	// 状態
 	m_fCurTime		(0.0f)			// 現在の待機時間
 {
@@ -107,8 +110,8 @@ CSpecialManager::~CSpecialManager()
 HRESULT CSpecialManager::Init(void)
 {
 	// メンバ変数を初期化
-	m_state		= STATE_FADEOUT;	// 状態
-	m_fCurTime	= 0.0f;				// 現在の待機時間
+	m_state		= STATE_CUTIN;	// 状態
+	m_fCurTime	= 0.0f;			// 現在の待機時間
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
@@ -141,6 +144,14 @@ HRESULT CSpecialManager::Init(void)
 	// 光源範囲を設定
 	m_pTargetLight->SetRange(LIGHT_RANGE);
 
+	// カットインの生成
+	m_pCutIn = CCutIn::Create();
+	if (m_pCutIn == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 #if 1
 	// 体育館を暗くする
 	GET_MANAGER->GetLight()->SetEnableBright(false);
@@ -151,13 +162,18 @@ HRESULT CSpecialManager::Init(void)
 	CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 #endif
 
-#if 0
-	// カメラを神器獲得状態にする
-	GET_MANAGER->GetCamera()->SetState(CCamera::STATE_GODITEM);
+#if 1
+	// 世界の時を止める
+	//GET_MANAGER->SetSlowRate(0.0f);	// TODO
 #endif
 
-	// 成功を返す
-	return S_OK;
+#if 1
+	// ゲームをスペシャル演出シーンに変更
+	CGame::GetInstance()->GetGameManager()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
+#endif
+
+// 成功を返す
+return S_OK;
 }
 
 //============================================================
@@ -197,7 +213,7 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 	{ // 更新関数が指定されている場合
 
 		// 各状態ごとの更新
-		(this->*(m_aFuncUpdateState[m_state]))(fDeltaTime);
+		(this->*(m_aFuncUpdateState[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
@@ -250,14 +266,36 @@ CSpecialManager *CSpecialManager::Create(const CPlayer* pAttack, const CPlayer* 
 }
 
 //============================================================
-//	フェードアウトの更新処理
+//	カットインの更新処理
 //============================================================
-void CSpecialManager::UpdateFadeOut(const float fDeltaTime)
+void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_pCutIn->IsEnd())
+	{ // カットイン演出が終了した場合
+
+		// 世界の時はうごきだす
+		//GET_MANAGER->SetSlowRate(1.0f);	// TODO
+
+		// カットインの終了
+		SAFE_UNINIT(m_pCutIn);
+
+		// 通常状態にする
+		m_state = STATE_NORMAL;
+	}
+
+	// ライト位置の設定
+	SetLightPosition();
+}
+
+//============================================================
+//	通常の更新処理
+//============================================================
+void CSpecialManager::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if 1
 	// タイマーを加算
 	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= fade::MOVE_TIME)
+	if (m_fCurTime >= 3.0f)
 	{ // 待機が終了した場合
 
 		// タイマーを初期化
@@ -275,13 +313,16 @@ void CSpecialManager::UpdateFadeOut(const float fDeltaTime)
 //============================================================
 //	終了の更新処理
 //============================================================
-void CSpecialManager::UpdateEnd(const float fDeltaTime)
+void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 体育館を明るくする
 	GET_MANAGER->GetLight()->SetEnableBright(true);
 
 	// 攻撃側プレイヤーチームの観客を通常状態にする
 	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetStatus()->GetTeam());
+
+	// ゲームをメインシーンに変更
+	CGame::GetInstance()->GetGameManager()->SetType(CGameManager::ESceneType::SCENE_MAIN);
 
 	// 自身の終了
 	Uninit();

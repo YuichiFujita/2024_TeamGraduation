@@ -85,6 +85,7 @@ CManager::CManager()
 	m_bDisp_2D = false;				// 2Dの表示
 	m_bDisp_UI = true;				// UIの表示
 	m_bWindowed = true;				// ウィンドウモードか
+	m_bWorldPaused = false;			// 世界のポーズ判定
 	m_dwOldTime = 0;				// 前回の処理開始時刻
 	m_dwCurTime = 0;				// 今回の処理開始時刻
 	m_fDeltaTime = 0.0f;			// 経過時間

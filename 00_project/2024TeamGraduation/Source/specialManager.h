@@ -20,6 +20,7 @@
 //************************************************************
 class CPlayer;
 class CLightPoint;
+class CCutIn;
 
 //************************************************************
 //	クラス定義
@@ -32,7 +33,8 @@ public:
 	enum EState
 	{
 		STATE_NONE = 0,	// 何もしない状態
-		STATE_FADEOUT,	// フェードアウト状態
+		STATE_CUTIN,	// カットイン状態
+		STATE_NORMAL,	// 通常状態
 		STATE_END,		// 終了状態
 		STATE_MAX		// この列挙型の総数
 	};
@@ -59,15 +61,16 @@ public:
 
 private:
 	// 状態更新の関数ポインタ型エイリアス定義
-	typedef void (CSpecialManager::*AFuncUpdateState)(const float fDeltaTime);
+	typedef void (CSpecialManager::*AFuncUpdateState)(const float, const float, const float);
 
 	// 静的メンバ変数
 	static AFuncUpdateState m_aFuncUpdateState[];	// 状態更新関数
 	static CSpecialManager* m_pThisClass;			// 自身のインスタンス
 
 	// メンバ関数
-	void UpdateFadeOut(const float fDeltaTime);	// フェードアウト更新
-	void UpdateEnd(const float fDeltaTime);		// 終了更新
+	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// フェードアウト更新
+	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常更新
+	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了更新
 
 	void SetLightPosition();	// ライト位置設定
 
@@ -76,6 +79,7 @@ private:
 	const CPlayer* m_pTargetPlayer;	// 標的プレイヤー
 	CLightPoint* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
 	CLightPoint* m_pTargetLight;	// 標的プレイヤーを照らすライト
+	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
 };

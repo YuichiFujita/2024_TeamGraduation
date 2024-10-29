@@ -35,13 +35,15 @@ namespace
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
-		"SPAWN    生成状態               (フリーボール)",
-		"CATCH    キャッチ状態           (プレイヤー所持)",
-		"HOM_NOR  通常ホーミング状態     (攻撃判定ON)",
-		"HOM_JUMP ジャンプホーミング状態 (攻撃判定ON)",
-		"MOVE     移動状態               (攻撃判定ON)",
-		"REBOUND  リバウンド状態         (ぶつかった時の落下)",
-		"LAND     着地状態               (地面落下)",
+		"SPAWN         生成状態               (フリーボール)",
+		"CATCH         キャッチ状態           (プレイヤー所持)",
+		"HOM_NOR       通常ホーミング状態     (攻撃判定ON)",
+		"HOM_JUMP      ジャンプホーミング状態 (攻撃判定ON)",
+		"MOVE          移動状態               (攻撃判定ON)",
+		"SPECIAL_STAG  スペシャル演出状態     (開始前演出)",
+		"SPECIAL_THROW スペシャル投げ状態     (攻撃判定ON)",
+		"REBOUND       リバウンド状態         (ぶつかった時の落下)",
+		"LAND          着地状態               (地面落下)",
 	};
 
 	namespace normal
@@ -59,9 +61,14 @@ namespace
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
 	}
 
-	namespace Special
+	namespace special
 	{
-		const float THROW_MOVE = 35.0f;	// スペシャル投げ移動速度
+		const float THROW_MOVE = 12.0f;	// スペシャル投げ移動速度
+	}
+
+	namespace kamehameha
+	{
+		const float REV_HOMING = 0.46f;	// ホーミングの慣性補正係数
 	}
 
 	namespace move
@@ -80,6 +87,7 @@ namespace
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
+// 状態関数
 CBall::STATE_FUNC CBall::m_StateFuncList[] =
 {
 	&CBall::UpdateSpawn,		// 生成状態の更新
@@ -87,8 +95,17 @@ CBall::STATE_FUNC CBall::m_StateFuncList[] =
 	&CBall::UpdateHomingNormal,	// 通常ホーミング状態の更新
 	&CBall::UpdateHomingJump,	// ジャンプホーミング状態の更新
 	&CBall::UpdateMove,			// 移動状態の更新
+	&CBall::UpdateSpecialStag,	// スペシャル演出状態の更新
+	&CBall::UpdateSpecialThrow,	// スペシャル投げ状態の更新
 	&CBall::UpdateReBound,		// リバウンド状態の更新
 	&CBall::UpdateLand,			// 着地状態の更新
+};
+
+// スペシャル関数
+CBall::SPECIAL_FUNC CBall::m_SpecialFuncList[] =
+{
+	nullptr,					// スペシャル無し
+	&CBall::UpdateKamehameha,	// かめはめ波の更新
 };
 
 //==========================================================================
@@ -107,6 +124,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
 	m_oldOverLine	(VEC3_ZERO),	// ホーミング終了ライン
+	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f)			// 状態カウンター
@@ -204,8 +222,11 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_fInitialSpeed += (0.0f - m_fInitialSpeed) * (REV_INIMOVE * fDeltaRate * fSlowRate);
 	}
 
-	// 状態別処理
-	(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	if (m_StateFuncList[m_state] != nullptr)
+	{
+		// 状態別処理
+		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -341,46 +362,19 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// スペシャル投げ処理
+// スペシャル発動処理
 //==========================================================================
-void CBall::ThrowSpecial(CPlayer* pPlayer)
+void CBall::Special(CPlayer* pPlayer)
 {
-	// キャッチしていないボールを投げようとした場合エラー
-	assert(m_state == STATE_CATCH);
-
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrow(true);
-	if (m_pTarget == nullptr)
-	{ // ターゲットがいない場合
+	assert(m_pTarget != nullptr);	// 見つからなきゃ敵がいないよ～
 
-		// 移動状態にする
-		assert(false);	// 見つからなきゃ敵がいないよ～
-		SetState(STATE_MOVE);
-	}
-
-	MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
-	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
-	float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
-
-	// ホーミング状態にする
-	SetState(STATE_HOM_NOR);	// TODO：スペシャルに後々変更
-
-	// 目標向き/向きをボール方向にする
-	m_pPlayer->SetRotDest(fAngleY);
-	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+	// スペシャル演出状態にする
+	SetState(STATE_SPECIAL_STAG);
 
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
-
-	// 投げ処理
-	Throw(pPlayer);
-
-	// スペシャル攻撃を設定
-	m_typeAtk = ATK_SPECIAL;
-
-	// 移動量を設定
-	m_fMoveSpeed = Special::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -655,6 +649,32 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 }
 
 //==========================================================================
+// スペシャル演出状態の更新処理
+//==========================================================================
+void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// TODO：ここでプレイヤーのモーションが投げるタイミングなのかを確認する
+	if (m_pPlayer)
+	{ // 
+
+		// スペシャル投げ
+		ThrowSpecial();
+	}
+}
+
+//==========================================================================
+// スペシャル投げ状態の更新処理
+//==========================================================================
+void CBall::UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_SpecialFuncList[m_typeSpecial] != nullptr)
+	{
+		// スペシャル別処理
+		(this->*(m_SpecialFuncList[m_typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
 // リバウンド状態の更新処理
 //==========================================================================
 void CBall::UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -699,6 +719,58 @@ void CBall::UpdateLand(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// プレイヤーとの当たり判定
 	CollisionPlayer(&pos);
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(vecMove);	// 移動量
+}
+
+//==========================================================================
+// かめはめ波の更新処理
+//==========================================================================
+void CBall::UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
+	MyLib::Vector3 posTarget = m_pTarget->GetCenterPosition();	// ターゲット中心位置
+	MyLib::Vector3 rotTarget = m_pTarget->GetRotation();		// ターゲット向き
+
+	// 目標ベクトルを取得
+	MyLib::Vector3 vecDest = posTarget - pos;
+	vecDest = vecDest.Normal();
+
+	// 差分ベクトルを計算
+	MyLib::Vector3 vecDiff = vecDest - vecMove;
+	vecDiff = vecDiff.Normal();
+
+	// 移動ベクトルを更新
+	vecMove += vecDiff * kamehameha::REV_HOMING;
+
+	// ベクトルを正規化
+	vecMove = vecMove.Normal();
+
+	// 位置に移動量を反映
+	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
+
+#if 0
+	// 地面の着地
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+#endif
+
+	// プレイヤーとの当たり判定
+	CPlayer* pHit = CollisionPlayer(&pos);
+	if (pHit != nullptr)
+	{ // 当たった場合
+
+		// リバウンド遷移
+		ReBound(pHit, &vecMove);
+	}
 
 	// 情報を反映
 	SetPosition(pos);	// 位置
@@ -940,9 +1012,42 @@ void CBall::Throw(CPlayer* pPlayer)
 }
 
 //==========================================================================
+// スペシャル投げ処理
+//==========================================================================
+void CBall::ThrowSpecial()
+{
+	// スペシャル演出を通過していないボールを投げようとした場合エラー
+	assert(m_state == STATE_SPECIAL_STAG);
+
+	// スペシャル投げ状態にする
+	SetState(STATE_SPECIAL_THROW);
+
+	MyLib::Vector3 posPlayer = m_pPlayer->GetPosition();	// ボール過去位置
+	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+	float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+	// 目標向き/向きをボール方向にする
+	m_pPlayer->SetRotDest(fAngleY);
+	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+	// 投げ処理
+	Throw(m_pPlayer);
+
+	// TODO：スペシャルの種類設定
+	m_typeSpecial = SPECIAL_KAMEHAMEHA;
+
+	// スペシャル攻撃を設定
+	m_typeAtk = ATK_SPECIAL;
+
+	// 移動量を設定
+	m_fMoveSpeed = special::THROW_MOVE;
+	CalSetInitialSpeed(m_fMoveSpeed);
+}
+
+//==========================================================================
 // 着地処理
 //==========================================================================
-void CBall::Landing(void)
+void CBall::Landing()
 {
 	// 着地状態にする
 	SetState(STATE_LAND);
