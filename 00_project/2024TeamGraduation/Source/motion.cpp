@@ -712,44 +712,20 @@ void CMotion::ReadText(const std::string& file)
 			continue;
 		}
 
-		if (line.find("NUM_MOTION") != std::string::npos)
-		{// モーション数の読み込みを開始
+		if (line.find("MOTION_FILENAME") != std::string::npos)
+		{// モーションファイル名読み込み
 
 			// ストリーム作成
 			std::istringstream lineStream(line);
 
 			// 情報渡す
 			lineStream >>
-				hoge >>			// ゴミ
-				hoge >>			// ＝
-				m_nNumMotion;	// モーション数
+				hoge >>		// ゴミ
+				hoge >>		// ＝
+				hoge;		// モーションファイル名
 
-			while (nCntFile != m_nNumMotion)
-			{// モーション数分読み込むまで繰り返し
-
-				// 確認する
-				std::getline(File, line);
-
-				if (line.find("MOTION_FILENAME") != std::string::npos)
-				{// MOTION_FILENAMEで読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>		// ゴミ
-						hoge >>		// ＝
-						hoge;		// モーションファイル名
-
-
-					// ファイル名保存
-					motionFile.push_back(hoge);
-
-					nCntFile++;	// ファイルの読み込み回数加算
-				}
-
-			}// END_MOTIONSETのかっこ
+			// ファイル名保存
+			motionFile.push_back(hoge);
 		}
 
 		if (line.find("END_SCRIPT") != std::string::npos)
@@ -775,6 +751,9 @@ void CMotion::ReadText(const std::string& file)
 
 	// モーション情報渡す
 	m_vecInfo = m_vecLoadData[m_nNumLoad];
+
+	// モーション数
+	m_nNumMotion = static_cast<int>(m_vecInfo.size());
 
 	// 読み込んだ数加算
 	m_nNumLoad++;
