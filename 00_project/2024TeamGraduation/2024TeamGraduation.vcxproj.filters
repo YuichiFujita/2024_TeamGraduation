@@ -344,9 +344,6 @@
     <ClCompile Include="Source\EffekseerObj.cpp">
       <Filter>effect</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cameratrigger_result.cpp">
-      <Filter>camera</Filter>
-    </ClCompile>
     <ClCompile Include="Libraries\Imgui\imgui.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
@@ -729,9 +726,6 @@
     </ClInclude>
     <ClInclude Include="Source\controlkeydisp.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cameratrigger_result.h">
-      <Filter>camera</Filter>
     </ClInclude>
     <ClInclude Include="Source\blackframe.h">
       <Filter>ヘッダー ファイル</Filter>

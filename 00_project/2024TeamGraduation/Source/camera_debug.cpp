@@ -17,11 +17,11 @@ namespace
 {
 	const float MOVE_SLIDEMOUSE = 2.5f;			// マウスのスライド移動量
 	const float MOVE_ROTATIONMOUSE = 0.005f;	// マウスの回転移動量
-	const float MOVE_WASD = 5.0f;				// WASDの移動量
+	const float MOVE_WASD = 2.0f;				// WASDの移動量
 	const float MOVE_UP_DOWN = 10.0f;			// 上下移動量
 	const float MOVE_DISTANCE = 1.0f;			// 距離の移動量
-	const float  MIN_ROT = -D3DX_PI * 0.49f;	// カメラ固定用
-	const float  MAX_ROT = D3DX_PI * 0.49f;		// カメラ固定用
+	const float MIN_ROT = -D3DX_PI * 0.49f;		// カメラ固定用
+	const float MAX_ROT = D3DX_PI * 0.49f;		// カメラ固定用
 }
 
 //==========================================================================
