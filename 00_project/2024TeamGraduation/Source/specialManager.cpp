@@ -361,9 +361,6 @@ void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDe
 		// タイマーを初期化
 		m_fCurTime = 0.0f;
 
-		// カメラ配置をリセット
-		pCamera->Reset(CScene::MODE_GAME);
-
 		// 攻撃側プレイヤーにスペシャル攻撃を設定
 		m_pAttackPlayer->SetSpecialAttack();
 
@@ -393,7 +390,14 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 	// TODO：プレイヤーの座標にカメラ位置を補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
+	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// カメラ位置を攻撃プレイヤーの位置に
+
+	if (pCameraMotion->IsFinish())
+	{ // カメラモーションが終わった場合
+
+		// カメラ配置をリセット
+		pCamera->Reset(CScene::MODE_GAME);
+	}
 
 	// TODO：投げた瞬間の解除はちょっと...
 	if (m_pAttackPlayer->GetBall() == nullptr)
