@@ -641,7 +641,7 @@ void CPlayer::LimitPos()
 
 		if (m_bJump)
 		{// ジャンプ中着地
-			GetMotion()->Set(EMotion::MOTION_LAND);
+			SetMotion(EMotion::MOTION_LAND);
 		}
 
 		// 重力リセット
@@ -1040,6 +1040,8 @@ void CPlayer::StateCatch_Normal()
 	pos.z += move.z;
 	SetPosition(pos);
 	SetMove(move);
+
+	//TODO: 砂埃的な何か
 
 	//スペシャル時ライン越え判定
 	if (m_sDamageInfo.eReiceiveType == CBall::EAttack::ATK_SPECIAL &&
