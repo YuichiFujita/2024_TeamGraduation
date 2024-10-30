@@ -75,7 +75,6 @@ CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// ó‘
 	&CSpecialManager::UpdatePlayerHype,		// ƒvƒŒƒCƒ„[·‚èã‚°XV
 	&CSpecialManager::UpdateAudienceHype,	// ŠÏ‹q·‚èã‚°XV
 	&CSpecialManager::UpdatePlayerSpecial,	// ƒvƒŒƒCƒ„[ƒXƒyƒVƒƒƒ‹‰‰oXV
-	&CSpecialManager::UpdateNormal,			// ’ÊíXV
 	&CSpecialManager::UpdateEnd,			// I—¹XV
 };
 CSpecialManager::AFuncUpdateSpecial CSpecialManager::m_aFuncUpdateSpecial[] =	// ƒXƒyƒVƒƒƒ‹XVŠÖ”
@@ -91,7 +90,7 @@ CSpecialManager* CSpecialManager::m_pThisClass = nullptr;	// ©g‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
 //============================================================
 //	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 //============================================================
-CSpecialManager::CSpecialManager(const CPlayer* pAttack, const CPlayer* pTarget) : CObject(PRIORITY),
+CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(PRIORITY),
 	m_pAttackPlayer	(pAttack),		// UŒ‚ƒvƒŒƒCƒ„[
 	m_pTargetPlayer	(pTarget),		// •W“IƒvƒŒƒCƒ„[
 	m_pAttackLight	(nullptr),		// UŒ‚ƒvƒŒƒCƒ„[‚ğÆ‚ç‚·ƒ‰ƒCƒg
@@ -239,7 +238,7 @@ void CSpecialManager::Draw()
 //============================================================
 //	¶¬ˆ—
 //============================================================
-CSpecialManager *CSpecialManager::Create(const CPlayer* pAttack, const CPlayer* pTarget)
+CSpecialManager *CSpecialManager::Create(CPlayer* pAttack, CPlayer* pTarget)
 {
 	if (m_pThisClass != nullptr)
 	{ // ©ƒNƒ‰ƒX‚Ì‘¼ƒCƒ“ƒXƒ^ƒ“ƒX‚ª‚ ‚éê‡
@@ -365,8 +364,8 @@ void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDe
 		// ƒJƒƒ‰”z’u‚ğƒŠƒZƒbƒg
 		pCamera->Reset(CScene::MODE_GAME);
 
-		// ƒvƒŒƒCƒ„[‚ğƒXƒyƒVƒƒƒ‹ƒ‚[ƒVƒ‡ƒ“‚É‚·‚é
-		m_pAttackPlayer->SetMotion(CPlayer::MOTION_SPECIAL);
+		// UŒ‚‘¤ƒvƒŒƒCƒ„[‚ÉƒXƒyƒVƒƒƒ‹UŒ‚‚ğİ’è
+		m_pAttackPlayer->SetSpecialAttack();
 
 		// ƒvƒŒƒCƒ„[ƒXƒyƒVƒƒƒ‹‰‰oó‘Ô‚É‚·‚é
 		m_state = STATE_PLAYER_SPECIAL;
@@ -398,24 +397,6 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 		// I—¹ó‘Ô‚É‚·‚é
 		m_state = STATE_END;
 	}
-
-	// ƒ‰ƒCƒgˆÊ’u‚Ìİ’è
-	SetLightPosition();
-}
-
-//============================================================
-//	’Êí‚ÌXVˆ—
-//============================================================
-void CSpecialManager::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-#if 1
-	if (m_pAttackPlayer->GetBall() == nullptr)
-	{ // ƒ{[ƒ‹‚ğ“Š‚°‚Ä‚¢‚éê‡
-
-		// I—¹ó‘Ô‚É‚·‚é
-		m_state = STATE_END;
-	}
-#endif
 
 	// ƒ‰ƒCƒgˆÊ’u‚Ìİ’è
 	SetLightPosition();

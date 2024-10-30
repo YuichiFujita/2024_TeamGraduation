@@ -36,14 +36,13 @@ public:
 		STATE_CUTIN,			// カットイン状態
 		STATE_PLAYER_HYPE,		// プレイヤー盛り上げ状態
 		STATE_AUDIENCE_HYPE,	// 観客盛り上げ状態
-		STATE_PLAYER_SPECIAL,	// プレイヤースペシャル演出状態	// この状態はスペシャルによってカメラワーク変更
-		STATE_NORMAL,			// 通常状態
+		STATE_PLAYER_SPECIAL,	// プレイヤースペシャル演出状態	// この状態はスペシャルごとにカメラワーク変更
 		STATE_END,				// 終了状態
 		STATE_MAX				// この列挙型の総数
 	};
 
 	// コンストラクタ
-	CSpecialManager(const CPlayer* pAttack, const CPlayer* pTarget);
+	CSpecialManager(CPlayer* pAttack, CPlayer* pTarget);
 
 	// デストラクタ
 	~CSpecialManager() override;
@@ -60,7 +59,7 @@ public:
 	EState GetState(void) const			{ return m_state; }		// 状態取得
 
 	// 静的メンバ関数
-	static CSpecialManager *Create(const CPlayer* pAttack, const CPlayer* pTarget);	// 生成
+	static CSpecialManager *Create(CPlayer* pAttack, CPlayer* pTarget);	// 生成
 
 private:
 	// エイリアス定義
@@ -77,7 +76,6 @@ private:
 	void UpdatePlayerHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// プレイヤー盛り上げ更新
 	void UpdateAudienceHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 観客盛り上げ更新
 	void UpdatePlayerSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// プレイヤースペシャル演出更新
-	void UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 通常更新
 	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 終了更新
 
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
@@ -85,8 +83,8 @@ private:
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数
-	const CPlayer* m_pAttackPlayer;	// 攻撃プレイヤー
-	const CPlayer* m_pTargetPlayer;	// 標的プレイヤー
+	CPlayer* m_pAttackPlayer;		// 攻撃プレイヤー
+	CPlayer* m_pTargetPlayer;		// 標的プレイヤー
 	CLightPoint* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
 	CLightPoint* m_pTargetLight;	// 標的プレイヤーを照らすライト
 	CCutIn* m_pCutIn;	// カットイン情報
