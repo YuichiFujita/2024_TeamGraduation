@@ -712,6 +712,38 @@ bool CPlayer::Hit(CBall* pBall)
 		return false;
 	}
 
+	// ダメージを受け付けないならすり抜ける
+	if (!m_sDamageInfo.bReceived) { return false; }
+
+	// リバウンドボールの場合キャッチする
+	if (stateBall == CBall::STATE_REBOUND)
+	{
+		// カバー対象を回復
+		CPlayer* pCoverPlayer = pBall->GetCover();
+		if (pCoverPlayer == nullptr) return false;
+
+		// 死んでいない味方回復
+		if (!pCoverPlayer->GetMotionFrag().bDead &&
+			m_pStatus->GetTeam() == pCoverPlayer->GetStatus()->GetTeam())
+		{
+			pCoverPlayer->GetStatus()->LifeHeal(10);
+		}
+
+		//演出
+		CEffect3D::Create(
+			GetPosition(),
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+			80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+
+		pBall->CatchAttack(this);
+
+		return false;
+	}
+
+	// 攻撃状態以外ならすり抜ける
+	if (atkBall == CBall::EAttack::ATK_NONE) { return false; }
+	
 	// 味方のボールならすり抜ける
 	if (m_pStatus->GetTeam() == sideBall) { return false; }
 
@@ -724,32 +756,17 @@ bool CPlayer::Hit(CBall* pBall)
 		return false;
 	}
 
-	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return false; }
-
-	// リバウンドボールの場合キャッチする
-	if (stateBall == CBall::STATE_REBOUND)
-	{
-		pBall->CatchAttack(this);
-
-		//TAKADA: カバー対象を回復
-
-		return false;
-	}
-
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
 	m_pStatus->LifeDamage(10);
 
 	if (GetLife() <= 0)
-	{ // 体力がない場合
-
+	{
 		// 終活
 		DeadSetting(&hitresult, pBall);
 	}
 	else
-	{ // 体力がある場合
-
+	{
 		// ダメージ状態にする
 		DamageSetting(pBall);
 	}

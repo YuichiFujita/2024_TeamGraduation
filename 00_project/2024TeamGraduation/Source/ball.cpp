@@ -81,7 +81,11 @@ namespace
 
 	namespace rebound
 	{
-		const float MOVE_UP = 2.5f;		// 上移動量
+#if _DEBUG
+		const float MOVE_UP = 10.5f;	// 上移動量
+#else
+		const float MOVE_UP = 5.5f;		// 上移動量
+#endif
 		const float MOVE_SPEED = 2.5f;	// 移動速度
 	}
 }
@@ -187,6 +191,7 @@ HRESULT CBall::Init()
 	// 影の生成
 	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
 	if (m_pShadow == nullptr) { return E_FAIL; }
+	m_pShadow->SetAlpha(0.8f);	// 色
 
 	return S_OK;
 }
@@ -1106,6 +1111,9 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 
 	// リバウンド状態にする
 	SetState(STATE_REBOUND);
+
+	// チームの初期化
+	m_typeTeam = CGameManager::SIDE_NONE;
 
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;
