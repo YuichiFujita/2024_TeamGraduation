@@ -699,7 +699,7 @@ bool CPlayer::Hit(CBall* pBall)
 	MyLib::HitResult_Character hitresult = {};
 
 	//死亡状態ならすり抜け
-	if (m_state == EState::STATE_DEAD)
+	if (m_sMotionFrag.bDead)
 	{
 		return true;
 	}
