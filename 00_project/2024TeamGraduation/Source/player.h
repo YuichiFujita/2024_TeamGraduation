@@ -56,6 +56,7 @@ public:
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
+		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
 		MOTION_WIN,					// 勝利
 		MOTION_DAMAGE,				// ダメージ
