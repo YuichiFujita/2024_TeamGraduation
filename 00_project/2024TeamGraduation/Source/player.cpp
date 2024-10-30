@@ -1054,9 +1054,8 @@ void CPlayer::StateSpecial()
 {
 	CMotion* pMotion = GetMotion();	// プレイヤーモーション情報
 
-	//if (!pMotion->IsSpecial())	// TODO：Specialかの確認が出来たら置換
-	if (pMotion->GetType() != CPlayer::MOTION_SPECIAL)
-	{ // モーションがスペシャルじゃない場合
+	if (!pMotion->IsSpecial())
+	{ // モーションがスペシャルじゃなくなった場合
 
 		// 何もしない状態にする
 		SetState(STATE_NONE);
