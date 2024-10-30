@@ -34,7 +34,7 @@ namespace
 namespace Court
 {//ドッジボールコート情報
 
-	const D3DXVECTOR3 SIZE = D3DXVECTOR3(600.0f, 100.0f, 800.0f);		// サイズ
+	const D3DXVECTOR3 SIZE = D3DXVECTOR3(1500.0f, 100.0f, 800.0f);		// サイズ
 }
 
 //==========================================================================

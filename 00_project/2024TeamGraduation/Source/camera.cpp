@@ -35,6 +35,7 @@ namespace
 	const float DEFAULT_TITLELEN = 1265.0f;		// タイトルのデフォルト長さ
 	const float DEFAULT_RANKINGLEN = 1540.0f;	// ランキングのデフォルト長さ
 	const float MIN_DISNTANCE = 500.0f;		// 最少距離
+	const float DISNTANCE = 1160.0f;		// 距離
 
 	const float MULTIPLY_CHASE_POSR = 1.5f;		// 注視点追従の倍率
 	const float MULTIPLY_CHASE_POSV = 1.5f;		// 注視点追従の倍率
@@ -563,9 +564,9 @@ void CCamera::ResetGame()
 	m_rotOrigin = m_rot;							// 元の向き
 	m_rotDest = DEFAULT_GAMEROT;					// 目標の向き
 	m_posTarget = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 目標の位置
-	m_fDistance = MIN_DISNTANCE;					// 距離
-	m_fDestDistance = MIN_DISNTANCE;				// 目標の距離
-	m_fOriginDistance = MIN_DISNTANCE;				// 元の距離
+	m_fDistance = DISNTANCE;						// 距離
+	m_fDestDistance = DISNTANCE;					// 目標の距離
+	m_fOriginDistance = DISNTANCE;					// 元の距離
 	m_state = CAMERASTATE_NONE;						// 状態
 	m_fTimerState = 0.0f;							// 状態カウンター
 	m_fTimerShake = 0.0f;							// 振動カウンター
