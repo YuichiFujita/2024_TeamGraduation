@@ -121,7 +121,7 @@ public:
 	inline bool IsGetCombiable() { return m_bCombiable; }				// コンボ可能の判定取得
 	inline bool IsAttacking() { return m_bAttaking; }					// 攻撃判定中フラグ取得
 	inline bool IsSpecial() { return m_vecInfo[m_nType].bSpecial; }		// スペシャル判定取得
-	inline bool IsImpactFrame(int nCntAtk);								// 指定したインデックスの情報が衝撃カウントか
+	bool IsImpactFrame(int nCntAtk);									// 指定したインデックスの情報が衝撃カウントか
 
 	//--------------------------
 	// 設定
