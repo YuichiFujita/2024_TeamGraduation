@@ -33,8 +33,8 @@ private:
 	// 関数リスト
 	//=============================
 	// 生成リスト
-	using CREATE_FUNC = std::function<CCameraMotion_Trigger* ()>;
-	static std::vector < CREATE_FUNC > m_CreateFunc;
+	using CREATE_FUNC = std::function<CCameraMotion_Trigger*()>;
+	static std::vector<CREATE_FUNC>m_CreateFunc;
 };
 
 #endif

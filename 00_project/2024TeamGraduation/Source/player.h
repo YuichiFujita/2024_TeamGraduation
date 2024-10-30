@@ -56,6 +56,7 @@ public:
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
+		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
 		MOTION_WIN,					// 勝利
 		MOTION_DAMAGE,				// ダメージ
@@ -76,6 +77,7 @@ public:
 		STATE_DODGE,			// 回避
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
+		STATE_SPECIAL,			// スペシャル
 		STATE_OUTCOURT,			// コート越え
 		STATE_OUTCOURT_RETURN,	// コート越えから戻る
 		STATE_MAX
@@ -198,6 +200,7 @@ public:
 	// その他
 	//=============================
 	bool Hit(CBall* pBall);			// ヒット処理
+	void SetSpecialAttack();		// スペシャル攻撃設定
 	void SetState(EState state);	// 状態設定
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
@@ -213,7 +216,7 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	float GetDodgeDistance();		//回避範囲取得
+	float GetDodgeDistance();	// 回避範囲取得
 
 protected:
 	//=============================
@@ -253,6 +256,7 @@ private:
 	void StateDodge();				// 回避
 	void StateCatch_Normal();		// 通常キャッチ
 	void StateCatch_Just();			// ジャストキャッチ
+	void StateSpecial();			// スペシャル
 	void StateOutCourt();			// コート越え
 	void StateOutCourt_Return();	// コート越えから戻る
 

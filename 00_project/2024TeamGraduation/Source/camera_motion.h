@@ -25,6 +25,7 @@ public:
 	{
 		MOTION_PASS = 0,		// パスモーション
 		MOTION_SPECIAL_HYPE,	// スペシャル盛り上げモーション
+		MOTION_KAMEHAMEHA,		// かめはめ波モーション
 		MOTION_MAX
 	};
 
@@ -138,9 +139,9 @@ private:
 	void LoadMotion(const std::string& filename);	// モーション読み込み
 
 	// モーション
-	void MotionPass();		// パス
-	void MotionGoal();		// ゴール
-	void MotionGoalBag();	// ゴールフット橋
+	void MotionPass();			// パス
+	void MotionSpecial();		// スペシャル
+	void MotionKamehameha();	// かめはめ波
 
 	// エディット用
 	void UpdateEdit();		// エディット更新

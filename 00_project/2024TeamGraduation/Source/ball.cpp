@@ -65,7 +65,8 @@ namespace
 
 	namespace special
 	{
-		const float THROW_MOVE = 12.0f;	// スペシャル投げ移動速度
+		const int	TIMING_ATK_IDX = 0;	// スペシャルボールの投げるタイミング
+		const float	THROW_MOVE = 12.0f;	// スペシャル投げ移動速度
 	}
 
 	namespace kamehameha
@@ -680,12 +681,10 @@ void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, co
 	CMotion* pMotion = m_pPlayer->GetMotion();	// プレイヤーモーション情報
 
 	// モーションがスペシャルじゃない場合抜ける
-	//if (!pMotion->IsSpecial()) { return; }	// TODO：Special科の確認が出来たら置換
-	if (pMotion->GetType() != CPlayer::MOTION_SPECIAL) { return; }
+	if (!pMotion->IsSpecial()) { return; }
 
-	// TODO：ここでプレイヤーのモーションが投げるタイミングなのかを確認する
-	if (pMotion->GetAllCount() >= 85.0f)
-	{ // 
+	if (pMotion->IsImpactFrame(special::TIMING_ATK_IDX))
+	{ // 攻撃タイミングが訪れた場合
 
 		// スペシャル投げ
 		ThrowSpecial();
