@@ -74,10 +74,14 @@ public:
 		int nNumKey;			// キーの数
 		int nLoop;				// ループ判定
 		int nMove;				// 移動判定
+		bool bSpecial;			// スペシャル判定
 		int nNumAttackInfo;		// 攻撃情報の数
 		int nCancelableFrame;	// キャンセル可能フレーム
 		int nCombolableFrame;	// コンボ可能フレーム
 		std::vector<AttackInfo> AttackInfo;	// 当たり判定用
+
+		// コンストラクタ
+		Info() : bSpecial(false), nCancelableFrame(-1), nCombolableFrame(-1) {}
 	};
 
 	CMotion();
@@ -88,10 +92,6 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	static CMotion* Create(const std::string& file, CObjectChara* pObjChara);
-
-
-
-
 
 	//--------------------------
 	// 再生中情報
@@ -120,7 +120,8 @@ public:
 	inline bool IsGetCancelable() { return m_bCancelable; }				// キャンセル可能の判定取得
 	inline bool IsGetCombiable() { return m_bCombiable; }				// コンボ可能の判定取得
 	inline bool IsAttacking() { return m_bAttaking; }					// 攻撃判定中フラグ取得
-
+	inline bool IsSpecial() { return m_vecInfo[m_nType].bSpecial; }		// スペシャル判定取得
+	bool IsImpactFrame(int nCntAtk);									// 指定したインデックスの情報が衝撃カウントか
 
 	//--------------------------
 	// 設定
@@ -128,13 +129,9 @@ public:
 	void Set(int nType, bool bBlend = true);	// モーションの設定処理
 	void ResetPose(int nType);					// ポーズのリセット
 
-
-	bool IsImpactFrame(AttackInfo attackInfo);	// 衝撃のフレームかどうか取得
 	MyLib::Vector3 GetAttackPosition(CModel** ppModel, AttackInfo attackInfo);	// 攻撃の位置取得
 	MyLib::Vector3 GetAttackPosition(CModel* pModel, AttackInfo attackInfo);	// 攻撃の位置取得
 	
-	
-
 	Parts GetPartsOld(int nParts) { return m_pPartsOld[nParts]; }				// 過去のパーツ情報取得
 	void SetPartsOld(int nParts, Parts parts) { m_pPartsOld[nParts] = parts; }	// 過去のパーツ情報設定
 	void SetModel(CModel** pModel, int nNumModel);	// モーションをするモデルの登録
