@@ -675,7 +675,7 @@ void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, co
 	CMotion* pMotion = m_pPlayer->GetMotion();	// プレイヤーモーション情報
 
 	// モーションがスペシャルじゃない場合抜ける
-	//if (!pMotion->IsSpecial()) { return; }	// TODO：Special科の確認が出来たら置換
+	//if (!pMotion->IsSpecial()) { return; }	// TODO：Specialかの確認が出来たら置換
 	if (pMotion->GetType() != CPlayer::MOTION_SPECIAL) { return; }
 
 	// TODO：ここでプレイヤーのモーションが投げるタイミングなのかを確認する

@@ -84,6 +84,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateDodge,				// 回避
 	&CPlayer::StateCatch_Normal,		// 通常キャッチ
 	&CPlayer::StateCatch_Just,			// ジャストキャッチ
+	&CPlayer::StateSpecial,				// スペシャル
 	&CPlayer::StateOutCourt,			// コート越え
 	&CPlayer::StateOutCourt_Return,		// コートに戻る
 };
@@ -656,40 +657,6 @@ void CPlayer::LimitPos()
 //==========================================================================
 // ヒット処理
 //==========================================================================
-#if 0
-MyLib::HitResult_Character CPlayer::Hit(const int nValue)
-{
-	MyLib::HitResult_Character hitresult = {};
-
-	if (m_state == STATE::STATE_DEAD ||
-		m_state == STATE::STATE_DEADWAIT)
-	{
-		hitresult.isdeath = true;
-		return hitresult;
-	}
-
-	// 体力取得
-	int nLife = GetLife();
-	nLife -= nValue;
-	nLife = UtilFunc::Transformation::Clamp(nLife, 0, GetLifeOrigin());
-
-	// 体力設定
-	SetLife(nLife);
-
-	// 振動
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-
-	if (nLife <= 0)
-	{// 体力がなくなったら
-
-		// 死亡時の設定
-		DeadSetting(&hitresult);
-	}
-
-	// 当たった判定を返す
-	return hitresult;
-}
-#else
 bool CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
@@ -756,7 +723,18 @@ bool CPlayer::Hit(CBall* pBall)
 
 	return true;
 }
-#endif
+
+//==========================================================================
+// スペシャル攻撃の設定
+//==========================================================================
+void CPlayer::SetSpecialAttack()
+{
+	// スペシャル状態にする
+	SetState(STATE_SPECIAL);
+
+	// スペシャルモーションにする
+	SetMotion(CPlayer::MOTION_SPECIAL);	// TODO：スペシャルごとに変更
+}
 
 //==========================================================================
 // 死亡時の設定
@@ -1066,6 +1044,22 @@ void CPlayer::StateCatch_Just()
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// スペシャル
+//==========================================================================
+void CPlayer::StateSpecial()
+{
+	CMotion* pMotion = GetMotion();	// プレイヤーモーション情報
+
+	//if (!pMotion->IsSpecial())	// TODO：Specialかの確認が出来たら置換
+	if (pMotion->GetType() != CPlayer::MOTION_SPECIAL)
+	{ // モーションがスペシャルじゃない場合
+
+		// 何もしない状態にする
+		SetState(STATE_NONE);
 	}
 }
 
