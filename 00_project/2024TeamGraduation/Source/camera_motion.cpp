@@ -28,9 +28,9 @@ namespace
 //==========================================================================
 CCameraMotion::MOTION_FUNC CCameraMotion::m_MotionFunc[] =
 {
-	&CCameraMotion::MotionPass,		// パス
-	&CCameraMotion::MotionGoal,		// ゴール
-	&CCameraMotion::MotionGoalBag,	// ゴールフット橋
+	&CCameraMotion::MotionPass,			// パス
+	&CCameraMotion::MotionSpecial,		// スペシャル
+	&CCameraMotion::MotionKamehameha,	// かめはめ波
 };
 
 //==========================================================================
@@ -469,17 +469,17 @@ void CCameraMotion::MotionPass()
 }
 
 //==========================================================================
-// ゴール
+// スペシャル
 //==========================================================================
-void CCameraMotion::MotionGoal()
+void CCameraMotion::MotionSpecial()
 {
 
 }
 
 //==========================================================================
-// ゴールフット橋
+// かめはめ波
 //==========================================================================
-void CCameraMotion::MotionGoalBag()
+void CCameraMotion::MotionKamehameha()
 {
 
 }

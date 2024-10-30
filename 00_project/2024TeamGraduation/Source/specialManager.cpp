@@ -390,6 +390,11 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 		(this->*(m_aFuncUpdateSpecial[typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// TODO：プレイヤーの座標にカメラ位置を補正
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
+
 	// TODO：投げた瞬間の解除はちょっと...
 	if (m_pAttackPlayer->GetBall() == nullptr)
 	{ // ボールを投げている場合

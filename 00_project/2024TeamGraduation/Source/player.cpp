@@ -729,6 +729,12 @@ bool CPlayer::Hit(CBall* pBall)
 //==========================================================================
 void CPlayer::SetSpecialAttack()
 {
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+	// かめはめ波モーションを設定
+	pCameraMotion->SetMotion(CCameraMotion::MOTION_KAMEHAMEHA, CCameraMotion::Linear);	// TODO：スペシャルごとに変更
+
 	// スペシャル状態にする
 	SetState(STATE_SPECIAL);
 
