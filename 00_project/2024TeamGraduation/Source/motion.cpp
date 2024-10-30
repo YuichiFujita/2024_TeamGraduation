@@ -594,11 +594,17 @@ void CMotion::Set(int nType, bool bBlend)
 
 
 //==========================================================================
-// 衝撃のフレームかどうか取得
+// 指定したインデックスの情報が衝撃カウントか
 //==========================================================================
-bool CMotion::IsImpactFrame(AttackInfo attackInfo)
+bool CMotion::IsImpactFrame(int nCntAtk)
 {
-	return attackInfo.bInpactAct;
+	// 攻撃情報のコンテナ
+	const std::vector<AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
+
+	// 範囲外
+	if (static_cast<int>(vecAtkInfo.size()) <= nCntAtk) return false;
+
+	return vecAtkInfo[nCntAtk].bInpactAct;
 }
 
 //==========================================================================
@@ -771,16 +777,8 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 		return;
 	}
 
-
-	// 読み込み用変数
-	Info InitInfo = {};
-
-	// キャンセル可能フレームリセット
-	InitInfo.nCancelableFrame = -1;
-	InitInfo.nCombolableFrame = -1;
-
 	// 読み込み用データ
-	Info loadInfo = InitInfo;
+	Info loadInfo;
 
 	// コメント用
 	std::string hoge;
@@ -841,6 +839,24 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 						hoge >>				// ゴミ
 						hoge >>				// ＝
 						loadInfo.nMove;		// 移動0か1か
+				}
+				else if (line.find("SPECIAL") != std::string::npos)
+				{// SPECIALが来たらON/OFF読み込み
+
+					// ストリーム作成
+					std::istringstream lineStream(line);
+
+					// スペシャル
+					int nSpecial;
+
+					// 情報渡す
+					lineStream >>
+						hoge >>		// ゴミ
+						hoge >>		// ＝
+						nSpecial;	// スペシャル判定
+
+					// スペシャル判定
+					loadInfo.bSpecial = (nSpecial == 1);
 				}
 				else if (line.find("CANCELABLE") != std::string::npos)
 				{// CANCELABLEでキャンセル可能フレーム読み込み
