@@ -14,7 +14,8 @@ PATH = data/TEXT/camera/	# 読み込むテキストのあるパス
 #------------------------------------------------------------------------------
 # モーションファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = motion_pass.bin	# [0]パスのモーション
+MOTION_FILENAME = motion_pass.bin		# [0]パスのモーション
 MOTION_FILENAME = motion_special.bin	# [1]スペシャル盛り上げのモーション
+MOTION_FILENAME = motion_kamehameha.bin	# [2]かめはめ波のモーション
 
 END_SCRIPT		# この行は絶対消さないこと！

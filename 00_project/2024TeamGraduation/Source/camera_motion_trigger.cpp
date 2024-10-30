@@ -12,10 +12,11 @@
 //==========================================================================
 // 関数リスト
 //==========================================================================
-std::vector < CCameraMotion_Trigger::CREATE_FUNC > CCameraMotion_Trigger::m_CreateFunc =
+std::vector<CCameraMotion_Trigger::CREATE_FUNC>CCameraMotion_Trigger::m_CreateFunc =
 {
 	[]() { return DEBUG_NEW CCameraTrigger_Pass(); },	// パス
 	[]() { return nullptr; },	// スペシャル盛り上げ
+	[]() { return nullptr; },	// かめはめ波
 };
 
 //==========================================================================
