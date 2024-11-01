@@ -96,6 +96,7 @@ public:
 	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
+	bool IsSpecial() const;			// スペシャルフラグ取得
 
 	//=============================
 	// 静的関数
@@ -155,8 +156,11 @@ private:
 	void Throw(CPlayer* pPlayer);		// 投げ
 	void ThrowSpecial();				// スペシャル投げ
 	void Landing();						// 着地
+	void UpdateTypeTeam();				// チームサイド更新
+	void UpdateTypeAtk();				// 攻撃種類更新
+	void UpdateTypeSpecial();			// スペシャル種類更新
 	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
-	void CalSetInitialSpeed(float move);						// 初速の計算設定処理
+	void CalcSetInitialSpeed(const float fMove);				// 初速計算
 
 	//=============================
 	// 静的メンバ変数
