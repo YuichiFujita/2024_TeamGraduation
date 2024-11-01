@@ -34,8 +34,6 @@ public:
 	// コンストラクタ
 	CPlayerAIControlMove();
 
-	void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 移動
-
 private:
 	
 	//=============================

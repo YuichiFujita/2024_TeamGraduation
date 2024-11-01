@@ -37,15 +37,33 @@ namespace
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
-		"SPAWN         生成状態               (フリーボール)",
-		"CATCH         キャッチ状態           (プレイヤー所持)",
-		"HOM_NOR       通常ホーミング状態     (攻撃判定ON)",
-		"HOM_JUMP      ジャンプホーミング状態 (攻撃判定ON)",
-		"MOVE          移動状態               (攻撃判定ON)",
-		"SPECIAL_STAG  スペシャル演出状態     (開始前演出)",
-		"SPECIAL_THROW スペシャル投げ状態     (攻撃判定ON)",
-		"REBOUND       リバウンド状態         (ぶつかった時の落下)",
-		"LAND          着地状態               (地面落下)",
+		"SPAWN    生成状態 (フリーボール)",
+		"CATCH    キャッチ状態 (プレイヤー所持)",
+		"HOM_NOR  通常ホーミング状態 (攻撃判定ON)",
+		"HOM_JUMP ジャンプホーミング状態 (攻撃判定ON)",
+		"MOVE     移動状態 (攻撃判定ON)",
+		"S_STAG   スペシャル演出状態 (開始前演出)",
+		"S_THROW  スペシャル投げ状態 (攻撃判定ON)",
+		"REBOUND  リバウンド状態 (ぶつかった時の落下)",
+		"LAND     着地状態 (地面落下)",
+	};
+	const char* DEBUG_TEAM_PRINT[] =	// デバッグ表示用チーム
+	{
+		"NONE    (コート指定なし)",
+		"LEFT    (左コート)",
+		"RIGHT   (右コート)",
+	};
+	const char* DEBUG_ATK_PRINT[] =		// デバッグ表示用攻撃
+	{
+		"NONE    (攻撃判定無し)",
+		"NORMAL  (通常攻撃)",
+		"JUMP    (ジャンプ攻撃)",
+		"SPECIAL (スペシャリスト攻撃)",
+	};
+	const char* DEBUG_SPECIAL_PRINT[] =	// デバッグ表示用スペシャル
+	{
+		"NONE    (指定なし)",
+		"かめはめ波",
 	};
 
 	namespace normal
@@ -66,7 +84,7 @@ namespace
 	namespace special
 	{
 		const int	TIMING_ATK_IDX = 0;	// スペシャルボールの投げるタイミング
-		const float	THROW_MOVE = 12.0f;	// スペシャル投げ移動速度
+		const float	THROW_MOVE = 20.0f;	// スペシャル投げ移動速度
 	}
 
 	namespace kamehameha
@@ -131,14 +149,19 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
-	m_oldOverLine	(VEC3_ZERO),	// ホーミング終了ライン
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f)			// 状態カウンター
 {
 	// スタティックアサート
+	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
+
+	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,       "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_TEAM_PRINT)    == CGameManager::SIDE_MAX, "ERROR : Team Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,         "ERROR : Attack Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX,     "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
@@ -231,26 +254,41 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 前回の位置を更新
 	SetOldPosition(GetPosition());
 
-	// 初速移動量更新
+	// 初速移動量の更新
 	if (IsAttack())
-	{// 攻撃中のみ補正
+	{ // 攻撃中の場合
 
+		// 初速を減衰させる
 		m_fInitialSpeed += (0.0f - m_fInitialSpeed) * (REV_INIMOVE * fDeltaRate * fSlowRate);
 	}
 
 	if (m_StateFuncList[m_state] != nullptr)
-	{
+	{ // 状態更新関数がある場合
+
 		// 状態別処理
 		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// 現在のチームサイドを更新
+	UpdateTypeTeam();
+
+	// 現在の攻撃種類を更新
+	UpdateTypeAtk();
+
+	// 現在のスペシャル種類を更新
+	UpdateTypeSpecial();
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// ボールの状態表示
-	GET_MANAGER->GetDebugProc()->Print("ボール状態：%s\n", DEBUG_STATE_PRINT[m_state]);
-	GET_MANAGER->GetDebugProc()->Print("ターゲット：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
-	GET_MANAGER->GetDebugProc()->Print("カバー対象：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print(" ボール状態 ：%s\n", DEBUG_STATE_PRINT[m_state]);
+	GET_MANAGER->GetDebugProc()->Print("チームサイド：%s\n", DEBUG_TEAM_PRINT[m_typeTeam]);
+	GET_MANAGER->GetDebugProc()->Print("　　攻撃　　：%s\n", DEBUG_ATK_PRINT[m_typeAtk]);
+	GET_MANAGER->GetDebugProc()->Print(" スペシャル ：%s\n", DEBUG_SPECIAL_PRINT[m_typeSpecial]);
+	GET_MANAGER->GetDebugProc()->Print("　所有対象　：%s\n", (m_pPlayer == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print(" ターゲット ：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print(" カバー対象 ：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
 }
 
 //==========================================================================
@@ -332,7 +370,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = normal::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -374,7 +414,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = jump::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -412,6 +454,15 @@ bool CBall::IsAttack() const
 {
 	// 攻撃フラグを返す
 	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE || m_state == STATE_SPECIAL_THROW);	// TODO：攻撃状態が増えたら追加
+}
+
+//==========================================================================
+// スペシャルフラグの取得処理
+//==========================================================================
+bool CBall::IsSpecial() const
+{
+	// スペシャルフラグを返す
+	return (m_state == STATE_SPECIAL_STAG || m_state == STATE_SPECIAL_THROW);	// TODO：スペシャル状態が増えたら追加
 }
 
 //==========================================================================
@@ -697,7 +748,8 @@ void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, co
 void CBall::UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_SpecialFuncList[m_typeSpecial] != nullptr)
-	{
+	{ // スペシャル更新関数がある場合
+
 		// スペシャル別処理
 		(this->*(m_SpecialFuncList[m_typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
@@ -1014,6 +1066,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// プレイヤーのチームを保存
 	m_typeTeam = pPlayer->GetStatus()->GetTeam();
 
+	// ホーミング対象の初期化
+	m_pTarget = nullptr;
+
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
@@ -1070,7 +1125,9 @@ void CBall::ThrowSpecial()
 
 	// 移動量を設定
 	m_fMoveSpeed = special::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -1083,12 +1140,45 @@ void CBall::Landing()
 
 	// ホーミング対象の初期化
 	m_pTarget = nullptr;
+}
 
-	// チームの初期化
-	m_typeTeam = CGameManager::SIDE_NONE;
+//==========================================================================
+// チームサイドの更新処理
+//==========================================================================
+void CBall::UpdateTypeTeam()
+{
+	// 攻撃判定がある場合は現在のチームを保持
+	if (IsAttack()) { return; }
 
-	// 攻撃の初期化
+	// プレイヤーが所持していない場合チーム指定なし
+	if (m_pPlayer == nullptr) { m_typeTeam = CGameManager::SIDE_NONE; return; }
+
+	// プレイヤーのチームを保存
+	m_typeTeam = m_pPlayer->GetStatus()->GetTeam();
+}
+
+//==========================================================================
+// 攻撃種類の更新処理
+//==========================================================================
+void CBall::UpdateTypeAtk()
+{
+	// 攻撃判定がある場合は現在の攻撃種類を保持
+	if (IsAttack()) { return; }
+
+	// 攻撃種類を破棄
 	m_typeAtk = ATK_NONE;
+}
+
+//==========================================================================
+// スペシャル種類の更新処理
+//==========================================================================
+void CBall::UpdateTypeSpecial()
+{
+	// スペシャル中の場合は現在のスペシャルを保持
+	if (IsSpecial()) { return; }
+
+	// スペシャルを破棄
+	m_typeSpecial = SPECIAL_NONE;
 }
 
 //==========================================================================
@@ -1111,17 +1201,14 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 	// リバウンド状態にする
 	SetState(STATE_REBOUND);
 
-	// チームの初期化
-	m_typeTeam = CGameManager::SIDE_NONE;
-
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;
 }
 
 //==========================================================================
-// 初速の計算設定処理
+// 初速の計算処理
 //==========================================================================
-void CBall::CalSetInitialSpeed(float move)
+void CBall::CalcSetInitialSpeed(const float fMove)
 {
-	m_fInitialSpeed = move * move::MULTIPLY_INIMOVE;
+	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
 }

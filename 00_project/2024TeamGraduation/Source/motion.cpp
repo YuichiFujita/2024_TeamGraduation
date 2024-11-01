@@ -346,7 +346,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 			float fMoveDiff =
 				sqrtf((nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x)
 					+ (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z));
-			fMoveDiff /= (static_cast<float>(nMaxFrame) / static_cast<float>(fDeltaRate));
+			fMoveDiff /= (static_cast<float>(nMaxFrame) / (fDeltaRate * fSlowRate));
 
 			// 動きの向きを一時代入
 			float fRot = nowInfo.aKey[nNextMoveKey].fRotMove;
@@ -488,7 +488,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 //==========================================================================
 // モーションの設定処理
 //==========================================================================
-void CMotion::Set(int nType, bool bBlend)
+void CMotion::Set(int nType, int nStartKey, bool bBlend)
 {
 	// デバッグ用処理
 	if (nType >= m_nNumMotion)
@@ -501,16 +501,16 @@ void CMotion::Set(int nType, bool bBlend)
 		return;
 	}
 
-	m_nOldType = m_nType;	// 前回のモーションの種類
-	m_nType = nType;		// 種類設定
-	m_nPatternKey = 0;		// 何個目のキーか
-	m_fCntFrame = 0.0f;		// フレームのカウント
-	m_fAllFrame = 0.0f;	// 全てのカウント
-	m_fMaxAllFrame = 0.0f;	// 全てのカウントの最大値
-	m_bFinish = false;		// 終了したかどうか
-	m_bCancelable = false;	// キャンセル可能か
-	m_bCombiable = false;	// コンボ可能か
-	m_bAttaking = false;			// 攻撃判定中フラグ
+	m_nOldType = m_nType;		// 前回のモーションの種類
+	m_nType = nType;			// 種類設定
+	m_nPatternKey = nStartKey;	// 何個目のキーか
+	m_fCntFrame = 0.0f;			// フレームのカウント
+	m_fAllFrame = 0.0f;			// 全てのカウント
+	m_fMaxAllFrame = 0.0f;		// 全てのカウントの最大値
+	m_bFinish = false;			// 終了したかどうか
+	m_bCancelable = false;		// キャンセル可能か
+	m_bCombiable = false;		// コンボ可能か
+	m_bAttaking = false;		// 攻撃判定中フラグ
 
 	// 現在の情報
 	Info& nowInfo = m_vecInfo[m_nType];
@@ -575,16 +575,16 @@ void CMotion::Set(int nType, bool bBlend)
 			else
 			{
 				// 現在の情報を過去の情報に
-				m_pPartsOld[nCntParts].rot = nowInfo.aKey[0].aParts[nCntParts].rot;
-				m_pPartsOld[nCntParts].scale = nowInfo.aKey[0].aParts[nCntParts].scale;
+				m_pPartsOld[nCntParts].rot = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].rot;
+				m_pPartsOld[nCntParts].scale = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].scale;
 
 				if (nCntParts == 0)
 				{// 親はキャラクターの位置にする
-					m_pPartsOld[nCntParts].pos = nowInfo.aKey[0].aParts[nCntParts].pos + m_pObjChara->GetOriginPosition() - m_ppModel[nCntParts]->GetOriginPosition();
+					m_pPartsOld[nCntParts].pos = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos + m_pObjChara->GetOriginPosition() - m_ppModel[nCntParts]->GetOriginPosition();
 				}
 				else
 				{
-					m_pPartsOld[nCntParts].pos = nowInfo.aKey[0].aParts[nCntParts].pos;
+					m_pPartsOld[nCntParts].pos = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos;
 				}
 			}
 

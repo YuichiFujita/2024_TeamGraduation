@@ -29,40 +29,6 @@ namespace
 	const int	PRIORITY = 4;			// 優先順位
 	const float	LIGHT_RANGE = 600.0f;	// 光源範囲
 	const MyLib::Vector3 LIGHT_OFFSET = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
-
-	namespace fade
-	{
-		const float	MOVE_TIME	 = 0.5f;	// 変動時間
-		const float DEST_ALPHA	 = 0.5f;	// 目標透明度
-		const float INIT_ALPHA	 = 0.0f;	// 初期透明度
-		const float DIFF_ALPHA	 = DEST_ALPHA - INIT_ALPHA;	// 差分透明度
-		const D3DXCOLOR INIT_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, INIT_ALPHA);		// 初期色
-		const D3DXVECTOR3 SIZE	 = D3DXVECTOR3(SCREEN_SIZE.x, 280.0f, 0.0f);	// 大きさ
-		const D3DXVECTOR3 POS	 = D3DXVECTOR3(SCREEN_CENT.x, 548.0f, 0.0f);	// 位置
-		const D3DXVECTOR3 ROT	 = VEC3_ZERO;	// 向き
-	}
-
-	namespace title
-	{
-		const char *TEXTURE		= "data\\TEXTURE\\get_magatama.png";	// テクスチャパス
-		const D3DXVECTOR3 SIZE	= D3DXVECTOR3(632.0f, 184.0f, 0.0f);	// 大きさ
-		const float	MOVE_TIME	= 0.68f;	// 移動時間
-		const D3DXCOLOR DEST_COL	= MyLib::color::White();		// 目標色
-		const D3DXCOLOR INIT_COL	= MyLib::color::White(0.0f);	// 初期色
-		const D3DXCOLOR DIFF_COL	= DEST_COL - INIT_COL;			// 差分色
-		const D3DXVECTOR3 DEST_POS	= D3DXVECTOR3(SCREEN_CENT.x, 505.0f, 0.0f);		// 目標位置
-		const D3DXVECTOR3 INIT_POS	= DEST_POS + D3DXVECTOR3(0.0f, 40.0f, 0.0f);	// 初期位置
-		const D3DXVECTOR3 DIFF_POS	= DEST_POS - INIT_POS;							// 差分位置
-	}
-
-	namespace line
-	{
-		const float	MOVE_TIME	= 0.5f;	// 移動時間
-		const D3DXVECTOR3 POS	= D3DXVECTOR3(SCREEN_CENT.x, 590.0f, 0.0f);	// 位置
-		const D3DXVECTOR3 DEST_SIZE	= D3DXVECTOR3(980.0f, 10.0f, 0.0f);		// 目標大きさ
-		const D3DXVECTOR3 INIT_SIZE	= D3DXVECTOR3(0.0f, DEST_SIZE.y, 0.0f);	// 初期大きさ
-		const D3DXVECTOR3 DIFF_SIZE	= DEST_SIZE - INIT_SIZE;				// 差分大きさ
-	}
 }
 
 //************************************************************
@@ -70,12 +36,11 @@ namespace
 //************************************************************
 CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
-	nullptr,								// 何もしない更新
-	&CSpecialManager::UpdateCutIn,			// カットイン更新
-	&CSpecialManager::UpdatePlayerHype,		// プレイヤー盛り上げ更新
-	&CSpecialManager::UpdateAudienceHype,	// 観客盛り上げ更新
-	&CSpecialManager::UpdatePlayerSpecial,	// プレイヤースペシャル演出更新
-	&CSpecialManager::UpdateEnd,			// 終了更新
+	nullptr,						// 何もしない更新
+	&CSpecialManager::UpdateCutIn,	// カットイン更新
+	&CSpecialManager::UpdateHype,	// 盛り上がり更新
+	&CSpecialManager::UpdateStag,	// スペシャル演出更新
+	&CSpecialManager::UpdateEnd,	// 終了更新
 };
 CSpecialManager::AFuncUpdateSpecial CSpecialManager::m_aFuncUpdateSpecial[] =	// スペシャル更新関数
 {
@@ -100,8 +65,8 @@ CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(P
 	m_fCurTime		(0.0f)			// 現在の待機時間
 {
 	// スタティックアサート
-	static_assert(NUM_ARRAY(m_aFuncUpdateState) == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
-	static_assert(NUM_ARRAY(m_aFuncUpdateSpecial) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
+	static_assert(NUM_ARRAY(m_aFuncUpdateState)   == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(m_aFuncUpdateSpecial) == CBall::SPECIAL_MAX,         "ERROR : Special Count Mismatch");
 }
 
 //============================================================
@@ -283,60 +248,33 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	if (m_pCutIn->IsEnd())
 	{ // カットイン演出が終了した場合
 
+		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
 		// 世界の時はうごきだす
 		GET_MANAGER->SerEnableWorldPaused(false);
 
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);
 
-		// TODO：カメラモーションを設定してみるよ
-#if 1
-		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
-		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-
 		// スペシャル盛り上げモーションを設定
 		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, CCameraMotion::Linear);
-#endif
-
-		// プレイヤー盛り上げ状態にする
-		m_state = STATE_PLAYER_HYPE;
-	}
-
-	// ライト位置の設定
-	SetLightPosition();
-}
-
-//============================================================
-//	プレイヤー盛り上げの更新処理
-//============================================================
-void CSpecialManager::UpdatePlayerHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// TODO：ここにプレイヤーカメラ
-
-#if 0
-	// タイマーを加算
-	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 1.0f)
-	{ // 待機が終了した場合
-#else
-	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
-	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-	if (pCameraMotion->IsFinish())
-	{ // カメラモーションが終了した場合
-#endif
-		// タイマーを初期化
-		m_fCurTime = 0.0f;
-
-		// 固定カメラにする
-		//pCamera->	// TODO：教えて
-
-		// TODO：ここにカメラ揺れ
 
 		// 攻撃側プレイヤーチームの観客を盛り上げる
 		CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 
-		// 観客盛り上げ状態にする
-		m_state = STATE_AUDIENCE_HYPE;
+		// TODO：プレイヤー位置の調整
+#if 1
+		// 攻撃プレイヤーの位置を設定
+		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
+
+		// 攻撃プレイヤーの向きを設定
+		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+		m_pAttackPlayer->SetRotDest(0.0f);
+#endif
+
+		// 盛り上がり状態にする
+		m_state = STATE_HYPE;
 	}
 
 	// ライト位置の設定
@@ -344,42 +282,43 @@ void CSpecialManager::UpdatePlayerHype(const float fDeltaTime, const float fDelt
 }
 
 //============================================================
-//	観客盛り上げの更新処理
+//	盛り上がりの更新処理
 //============================================================
-void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// TODO：ここに観客カメラ
-
-#if 1
-	// タイマーを加算
-	m_fCurTime += fDeltaTime;
-	if (m_fCurTime >= 1.0f)
-	{ // 待機が終了した場合
-
-		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	if (pCameraMotion->IsFinish())
+	{ // カメラモーションが終了した場合
 
 		// タイマーを初期化
 		m_fCurTime = 0.0f;
 
-		// カメラ配置をリセット
-		pCamera->Reset(CScene::MODE_GAME);
-
 		// 攻撃側プレイヤーにスペシャル攻撃を設定
 		m_pAttackPlayer->SetSpecialAttack();
 
-		// プレイヤースペシャル演出状態にする
-		m_state = STATE_PLAYER_SPECIAL;
-	}
+		// TODO：プレイヤー位置の調整
+#if 1
+		// 攻撃プレイヤーの位置を設定
+		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
+
+		// 攻撃プレイヤーの向きを設定
+		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+		m_pAttackPlayer->SetRotDest(-HALF_PI);
 #endif
+
+		// プレイヤースペシャル演出状態にする
+		m_state = STATE_STAG;
+	}
 
 	// ライト位置の設定
 	SetLightPosition();
 }
 
 //============================================================
-//	プレイヤースペシャル演出の更新処理
+//	スペシャル演出の更新処理
 //============================================================
-void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall::ESpecial typeSpecial = CGame::GetInstance()->GetGameManager()->GetBall()->GetTypeSpecial();	// スペシャル種類
 	assert(typeSpecial > CBall::SPECIAL_NONE && typeSpecial < CBall::SPECIAL_MAX);
@@ -393,7 +332,14 @@ void CSpecialManager::UpdatePlayerSpecial(const float fDeltaTime, const float fD
 	// TODO：プレイヤーの座標にカメラ位置を補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
+	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// カメラ位置を攻撃プレイヤーの位置に
+
+	if (pCameraMotion->IsFinish())
+	{ // カメラモーションが終わった場合
+
+		// カメラ配置をリセット
+		pCamera->Reset(CScene::MODE_GAME);
+	}
 
 	// TODO：投げた瞬間の解除はちょっと...
 	if (m_pAttackPlayer->GetBall() == nullptr)

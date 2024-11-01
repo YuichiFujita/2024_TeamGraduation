@@ -34,7 +34,7 @@ namespace
 namespace Court
 {//ドッジボールコート情報
 
-	const D3DXVECTOR3 SIZE = D3DXVECTOR3(600.0f, 100.0f, 800.0f);		// サイズ
+	const D3DXVECTOR3 SIZE = D3DXVECTOR3(1500.0f, 100.0f, 800.0f);		// サイズ
 }
 
 //==========================================================================
@@ -112,12 +112,12 @@ HRESULT CGameManager::Init()
 		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	//チームステータス
-	CreateTeamStatus();
-
 #else
 	m_SceneType = ESceneType::SCENE_START;	// シーンの種類 
 #endif
+
+	//チームステータス
+	CreateTeamStatus();
 
 	m_OldSceneType = m_SceneType;
 

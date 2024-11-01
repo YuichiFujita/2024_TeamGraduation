@@ -33,76 +33,6 @@ CPlayerUserControlMove::CPlayerUserControlMove()
 }
 
 //==========================================================================
-// 通常移動
-//==========================================================================
-void CPlayerUserControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 目標の向き取得
-	float fRotDest = player->GetRotDest();
-
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
-	// モーション情報取得
-	CMotion* pMotion = player->GetMotion();
-	int nMotionType = pMotion->GetType();
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	// 状態取得
-	CPlayer::EState state = player->GetState();
-
-	// アクション取得
-	CPlayerAction* pPlayerAction = player->GetActionPattern();
-	if (pPlayerAction == nullptr) return;
-	CPlayer::EAction action = pPlayerAction->GetAction();
-
-	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
-	{// 移動可能モーションの時
-
-		//--------------------------
-		// 移動操作
-		//--------------------------
-		if (action != CPlayer::EAction::ACTION_BLINK &&
-			action != CPlayer::EAction::ACTION_DODGE)
-		{
-			// ブリンク
-			Blink(player, fDeltaTime, fDeltaRate, fSlowRate);
-
-			// 歩き
-			Walk(player, fDeltaTime, fDeltaRate, fSlowRate);
-
-			// ダッシュ
-			Dash(player, fDeltaTime, fDeltaRate, fSlowRate);
-		}
-
-		// ジャンプ状況取得
-		bool bJump = player->IsJump();
-
-		if (player->GetMotionFrag().bMove && 
-			pMotion->IsGetCancelable() &&
-			!bJump)
-		{// キャンセル可能 && 移動中
-
-			// モーションキャンセル
-			pMotion->ToggleFinish(true);
-
-		 //TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
-		
-		}
-	}
-}
-
-//==========================================================================
 // ブリンク
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -507,6 +437,35 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
+
+	//--------------------------
+	// 左右
+	//--------------------------
+	// スティック
+	bool bStick = 
+		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y) ||
+		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
+	
+	// 方向キー
+	bool bAngleKey =
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx);
+
+	// WASD
+	bool bWASD =
+		pKey->GetTrigger(DIK_W) || pKey->GetTrigger(DIK_A) || pKey->GetTrigger(DIK_S) || pKey->GetTrigger(DIK_D);
+
+	if (!motionFrag.bMove &&
+		(bStick || bAngleKey || bWASD))
+	{// 移動してない && どっか押された
+
+		// 左右フラグ反転
+		player->InverseFootLR();
+	}
+
+
 
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetStickMoveL(playerIdx).y > 0 ||
