@@ -112,12 +112,12 @@ HRESULT CGameManager::Init()
 		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	//チームステータス
-	CreateTeamStatus();
-
 #else
 	m_SceneType = ESceneType::SCENE_START;	// シーンの種類 
 #endif
+
+	//チームステータス
+	CreateTeamStatus();
 
 	m_OldSceneType = m_SceneType;
 
