@@ -178,7 +178,7 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx) const;								// モーションの設定
+	void SetMotion(int motionIdx, int startKey = 0) const;								// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
 	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定

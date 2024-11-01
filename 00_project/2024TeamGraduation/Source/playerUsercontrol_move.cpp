@@ -438,6 +438,35 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
 
+	//--------------------------
+	// 左右
+	//--------------------------
+	// スティック
+	bool bStick = 
+		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y) ||
+		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
+	
+	// 方向キー
+	bool bAngleKey =
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx);
+
+	// WASD
+	bool bWASD =
+		pKey->GetTrigger(DIK_W) || pKey->GetTrigger(DIK_A) || pKey->GetTrigger(DIK_S) || pKey->GetTrigger(DIK_D);
+
+	if (!motionFrag.bMove &&
+		(bStick || bAngleKey || bWASD))
+	{// 移動してない && どっか押された
+
+		// 左右フラグ反転
+		player->InverseFootLR();
+	}
+
+
+
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetStickMoveL(playerIdx).y > 0 ||
 		pKey->GetPress(DIK_W))

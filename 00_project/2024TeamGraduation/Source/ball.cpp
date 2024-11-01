@@ -254,18 +254,29 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 前回の位置を更新
 	SetOldPosition(GetPosition());
 
-	// 初速移動量更新
+	// 初速移動量の更新
 	if (IsAttack())
-	{// 攻撃中のみ補正
+	{ // 攻撃中の場合
 
+		// 初速を減衰させる
 		m_fInitialSpeed += (0.0f - m_fInitialSpeed) * (REV_INIMOVE * fDeltaRate * fSlowRate);
 	}
 
 	if (m_StateFuncList[m_state] != nullptr)
-	{
+	{ // 状態更新関数がある場合
+
 		// 状態別処理
 		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// 現在のチームサイドを更新
+	UpdateTypeTeam();
+
+	// 現在の攻撃種類を更新
+	UpdateTypeAtk();
+
+	// 現在のスペシャル種類を更新
+	UpdateTypeSpecial();
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -275,6 +286,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	GET_MANAGER->GetDebugProc()->Print("チームサイド：%s\n", DEBUG_TEAM_PRINT[m_typeTeam]);
 	GET_MANAGER->GetDebugProc()->Print("　　攻撃　　：%s\n", DEBUG_ATK_PRINT[m_typeAtk]);
 	GET_MANAGER->GetDebugProc()->Print(" スペシャル ：%s\n", DEBUG_SPECIAL_PRINT[m_typeSpecial]);
+	GET_MANAGER->GetDebugProc()->Print("　所有対象　：%s\n", (m_pPlayer == nullptr) ? "nullptr" : "player");
 	GET_MANAGER->GetDebugProc()->Print(" ターゲット ：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
 	GET_MANAGER->GetDebugProc()->Print(" カバー対象 ：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
 }
@@ -358,7 +370,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = normal::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -400,7 +414,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = jump::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -438,6 +454,15 @@ bool CBall::IsAttack() const
 {
 	// 攻撃フラグを返す
 	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE || m_state == STATE_SPECIAL_THROW);	// TODO：攻撃状態が増えたら追加
+}
+
+//==========================================================================
+// スペシャルフラグの取得処理
+//==========================================================================
+bool CBall::IsSpecial() const
+{
+	// スペシャルフラグを返す
+	return (m_state == STATE_SPECIAL_STAG || m_state == STATE_SPECIAL_THROW);	// TODO：スペシャル状態が増えたら追加
 }
 
 //==========================================================================
@@ -723,7 +748,8 @@ void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, co
 void CBall::UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_SpecialFuncList[m_typeSpecial] != nullptr)
-	{
+	{ // スペシャル更新関数がある場合
+
 		// スペシャル別処理
 		(this->*(m_SpecialFuncList[m_typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
@@ -1040,6 +1066,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// プレイヤーのチームを保存
 	m_typeTeam = pPlayer->GetStatus()->GetTeam();
 
+	// ホーミング対象の初期化
+	m_pTarget = nullptr;
+
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
@@ -1096,7 +1125,9 @@ void CBall::ThrowSpecial()
 
 	// 移動量を設定
 	m_fMoveSpeed = special::THROW_MOVE;
-	CalSetInitialSpeed(m_fMoveSpeed);
+
+	// 初速を設定
+	CalcSetInitialSpeed(m_fMoveSpeed);
 }
 
 //==========================================================================
@@ -1109,12 +1140,45 @@ void CBall::Landing()
 
 	// ホーミング対象の初期化
 	m_pTarget = nullptr;
+}
 
-	// チームの初期化
-	m_typeTeam = CGameManager::SIDE_NONE;
+//==========================================================================
+// チームサイドの更新処理
+//==========================================================================
+void CBall::UpdateTypeTeam()
+{
+	// 攻撃判定がある場合は現在のチームを保持
+	if (IsAttack()) { return; }
 
-	// 攻撃の初期化
+	// プレイヤーが所持していない場合チーム指定なし
+	if (m_pPlayer == nullptr) { m_typeTeam = CGameManager::SIDE_NONE; return; }
+
+	// プレイヤーのチームを保存
+	m_typeTeam = m_pPlayer->GetStatus()->GetTeam();
+}
+
+//==========================================================================
+// 攻撃種類の更新処理
+//==========================================================================
+void CBall::UpdateTypeAtk()
+{
+	// 攻撃判定がある場合は現在の攻撃種類を保持
+	if (IsAttack()) { return; }
+
+	// 攻撃種類を破棄
 	m_typeAtk = ATK_NONE;
+}
+
+//==========================================================================
+// スペシャル種類の更新処理
+//==========================================================================
+void CBall::UpdateTypeSpecial()
+{
+	// スペシャル中の場合は現在のスペシャルを保持
+	if (IsSpecial()) { return; }
+
+	// スペシャルを破棄
+	m_typeSpecial = SPECIAL_NONE;
 }
 
 //==========================================================================
@@ -1137,17 +1201,14 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 	// リバウンド状態にする
 	SetState(STATE_REBOUND);
 
-	// チームの初期化
-	m_typeTeam = CGameManager::SIDE_NONE;
-
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;
 }
 
 //==========================================================================
-// 初速の計算設定処理
+// 初速の計算処理
 //==========================================================================
-void CBall::CalSetInitialSpeed(float move)
+void CBall::CalcSetInitialSpeed(const float fMove)
 {
-	m_fInitialSpeed = move * move::MULTIPLY_INIMOVE;
+	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
 }
