@@ -68,7 +68,6 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	if (pPlayerAction == nullptr) return;
 	CPlayer::EAction action = pPlayerAction->GetAction();
 
-
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
 		player->IsPossibleMove())
 	{// 移動可能モーションの時
@@ -93,13 +92,42 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		bool bJump = player->IsJump();
 
 		if (motionFrag.bMove &&
+			pMotion->IsGetCancelable() && 
 			!bJump)
 		{// キャンセル可能 && 移動中
 
-		 //TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
+			// モーションキャンセル
+			pMotion->ToggleFinish(true);
+			
+			//TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
 		
 		}
 	}
+	
+#if 0
+	// カニ歩き判定
+	if (player->IsCrab() &&
+		action != CPlayer::EAction::ACTION_BLINK &&
+		action != CPlayer::EAction::ACTION_RUN)
+	{
+		// 相手コートを見る
+		MyLib::Vector3 posCourt = MyLib::Vector3();
+		MyLib::Vector3 pos = player->GetPosition();
+		
+		posCourt.x = pos.x;
+
+		D3DXVECTOR3 vecDiff = D3DXVECTOR3(pos.x - posCourt.x,
+			0.0f,
+			pos.z - posCourt.z);
+		float fAngle = atan2f(vecDiff.x, vecDiff.z) + D3DX_PI;		//目標の向き
+		UtilFunc::Transformation::RotNormalize(fAngle);
+
+		//pos取得ー線に対する角度
+		fRotDest = fAngle;
+	
+		player->SetRotDest(fRotDest);
+	}
+#endif
 }
 
 //==========================================================================
