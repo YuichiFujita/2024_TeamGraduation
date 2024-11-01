@@ -112,6 +112,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_bPossibleMove = false;		// 移動可能フラグ
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
+	m_bFootLR = false;				// 足左右判定
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
@@ -1197,6 +1198,28 @@ void CPlayer::SetState(EState state)
 	m_fStateTime = 0.0f;
 }
 
+//==========================================================================
+// カニ歩き判定
+//==========================================================================
+bool CPlayer::IsCrab()
+{
+	if (m_pBall != nullptr) return false;
+
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	if (pBall == nullptr) return false;
+	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
+	if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
+
+	return true;
+}
+
+//==========================================================================
+// カニ歩き状態
+//==========================================================================
+void CPlayer::CrabState(float& fAngle)
+{
+	fAngle;
+}
 
 //==========================================================================
 // デバッグ処理
