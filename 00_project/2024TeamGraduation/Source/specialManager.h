@@ -32,13 +32,12 @@ public:
 	// 状態列挙
 	enum EState
 	{
-		STATE_NONE = 0,			// 何もしない状態
-		STATE_CUTIN,			// カットイン状態
-		STATE_PLAYER_HYPE,		// プレイヤー盛り上げ状態
-		STATE_AUDIENCE_HYPE,	// 観客盛り上げ状態
-		STATE_PLAYER_SPECIAL,	// プレイヤースペシャル演出状態	// この状態はスペシャルごとにカメラワーク変更
-		STATE_END,				// 終了状態
-		STATE_MAX				// この列挙型の総数
+		STATE_NONE = 0,	// 何もしない状態
+		STATE_CUTIN,	// カットイン状態
+		STATE_HYPE,		// 盛り上がり状態
+		STATE_STAG,		// スペシャル演出状態	// この状態はスペシャルごとにカメラワーク変更
+		STATE_END,		// 終了状態
+		STATE_MAX		// この列挙型の総数
 	};
 
 	// コンストラクタ
@@ -72,11 +71,10 @@ private:
 	static CSpecialManager* m_pThisClass;				// 自身のインスタンス
 
 	// メンバ関数
-	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// カットイン更新
-	void UpdatePlayerHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// プレイヤー盛り上げ更新
-	void UpdateAudienceHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 観客盛り上げ更新
-	void UpdatePlayerSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// プレイヤースペシャル演出更新
-	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 終了更新
+	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カットイン更新
+	void UpdateHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり更新
+	void UpdateStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャル演出更新
+	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了更新
 
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
