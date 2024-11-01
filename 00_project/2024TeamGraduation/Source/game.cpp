@@ -138,6 +138,18 @@ HRESULT CGame::Init()
 	pUser2->SetRotDest(HALF_PI);
 #endif
 
+	// プレイヤーAI一人生成(右)
+#if 1
+	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
+	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
+	if (pAI == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI->SetRotDest(HALF_PI);
+#endif
+
 	// プレイヤーAI四人生成(右)
 #if 0
 	for (int i = 0; i < 4; i++)
@@ -152,18 +164,6 @@ HRESULT CGame::Init()
 		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
 		pAI->SetRotDest(HALF_PI);
 	}
-#endif
-
-	// プレイヤーAI一人生成(右)
-#if 1
-	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
-	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
-	if (pAI == nullptr)
-	{
-		return E_FAIL;
-	}
-	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-	pAI->SetRotDest(HALF_PI);
 #endif
 
 	// カメラのリセット

@@ -296,6 +296,17 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 
 		// スペシャル盛り上げモーションを設定
 		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, CCameraMotion::Linear);
+
+		// TODO：プレイヤー位置の調整
+#if 1
+		// 攻撃プレイヤーの位置を設定
+		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
+
+		// 攻撃プレイヤーの向きを設定
+		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+		m_pAttackPlayer->SetRotDest(0.0f);
+#endif
+
 #endif
 
 		// プレイヤー盛り上げ状態にする
@@ -363,6 +374,16 @@ void CSpecialManager::UpdateAudienceHype(const float fDeltaTime, const float fDe
 
 		// 攻撃側プレイヤーにスペシャル攻撃を設定
 		m_pAttackPlayer->SetSpecialAttack();
+
+		// TODO：プレイヤー位置の調整
+#if 1
+		// 攻撃プレイヤーの位置を設定
+		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
+
+		// 攻撃プレイヤーの向きを設定
+		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+		m_pAttackPlayer->SetRotDest(-HALF_PI);
+#endif
 
 		// プレイヤースペシャル演出状態にする
 		m_state = STATE_PLAYER_SPECIAL;

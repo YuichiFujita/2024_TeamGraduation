@@ -66,7 +66,7 @@ namespace
 	namespace special
 	{
 		const int	TIMING_ATK_IDX = 0;	// スペシャルボールの投げるタイミング
-		const float	THROW_MOVE = 12.0f;	// スペシャル投げ移動速度
+		const float	THROW_MOVE = 20.0f;	// スペシャル投げ移動速度
 	}
 
 	namespace kamehameha
