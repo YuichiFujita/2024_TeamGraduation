@@ -414,10 +414,10 @@ void CPlayer::MotionSet()
 	{// 移動していたら
 
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
-		m_bDash = false;
 
 		// モーションの種類
 		EMotion motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+		m_bDash = false;
 
 		// 歩行の情報取得
 		CMotion::Info info = pMotion->GetInfo(motionType);

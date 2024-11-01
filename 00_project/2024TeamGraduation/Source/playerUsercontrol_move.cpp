@@ -462,7 +462,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	{// ˆÚ“®‚µ‚Ä‚È‚¢ && ‚Ç‚Á‚©‰Ÿ‚³‚ê‚½
 
 		// ¶‰Eƒtƒ‰ƒO”½“]
-		InverseFootLR();
+		player->InverseFootLR();
 	}
 
 
