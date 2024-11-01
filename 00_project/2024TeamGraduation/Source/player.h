@@ -185,6 +185,9 @@ public:
 	bool IsDash()					{ return m_bDash; }					// ダッシュ判定
 	void SetEnableJump(bool bJump)	{ m_bJump = bJump; }				// ジャンプ状況設定
 	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
+	void SetFootLR(bool bFootLR) { m_bFootLR = bFootLR; }				// 足左右判定設定
+	bool IsFootLR() { return m_bFootLR; }								// 足左右判定取得
+	void InverseFootLR() { m_bFootLR = !m_bFootLR; }					// 足左右判定反転
 	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
 	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
 	void SetDamageInfo(SDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
@@ -207,6 +210,8 @@ public:
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
+	bool IsCrab();											// カニ歩き判定
+	void CrabState(float &fAngle);							// カニ歩き状態
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
 	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
@@ -303,6 +308,7 @@ private:
 	bool m_bPossibleMove;		// 移動可能フラグ
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定
+	bool m_bFootLR;				// 足左右判定 (t: 右 / f: 左)
 	SMotionFrag m_sMotionFrag;	// モーションのフラグ
 
 	//-----------------------------
