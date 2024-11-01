@@ -1,0 +1,518 @@
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 13
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data/TEXTURE/FIELD/concreat.png		# [0]コンクリ
+TEXTURE_FILENAME = data/TEXTURE/FIELD/senter.png		# [1]真ん中線
+TEXTURE_FILENAME = data/TEXTURE/FIELD/senterlong.png	# [2]真ん中線(長い)
+TEXTURE_FILENAME = data/TEXTURE/FIELD/sideL.png			# [3]左線
+TEXTURE_FILENAME = data/TEXTURE/FIELD/sideR.png			# [4]右線
+TEXTURE_FILENAME = data/TEXTURE/FIELD/odan.png			# [5]横断歩道
+TEXTURE_FILENAME = data/TEXTURE/FIELD/walkroad.jpg		# [6]歩道00
+TEXTURE_FILENAME = data/TEXTURE/FIELD/walkroad_01.jpg	# [7]歩道01
+TEXTURE_FILENAME = data/TEXTURE/FIELD/tile_04.jpg		# [8]タイル00
+TEXTURE_FILENAME = data/TEXTURE/FIELD/tile_03.jpg		# [9]タイル01
+TEXTURE_FILENAME = data/TEXTURE/sky101.png				# [10]空テクスチャ
+TEXTURE_FILENAME = data/TEXTURE/city001.png				# [11]山テクスチャ
+TEXTURE_FILENAME = data/TEXTURE/line.png				# [12]メッシュわかりやす素材
+
+
+#==============================================================================
+# 空情報
+#==============================================================================
+SKYSET
+	TEXTYPE = 10
+	MOVE = 0.0002
+END_SKYSET
+
+#==============================================================================
+# 山情報
+#==============================================================================
+MOUNTAINSET
+	TEXTYPE = 11
+END_MOUNTAINSET
+
+#==============================================================================
+# 地面情報
+#==============================================================================
+
+
+FIELDSET
+	TEXTYPE = 2
+	POS = 0 0 400
+	ROT = 0 0 0
+	BLOCK = 1 10
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 1
+	POS = 200 0 400
+	ROT = 0 0 0
+	BLOCK = 1 10
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 1
+	POS = 400 0 400
+	ROT = 0 0 0
+	BLOCK = 1 10
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 1
+	POS = -200 0 400
+	ROT = 0 0 0
+	BLOCK = 1 10
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 1
+	POS = -400 0 400
+	ROT = 0 0 0
+	BLOCK = 1 10
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオン前の横断歩道
+FIELDSET
+	TEXTYPE = 5
+	POS = 0 0 -1000
+	ROT = 0 0 0
+	BLOCK = 5 2
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 3
+	POS = 0 0 -700
+	ROT = 0 90 0
+	BLOCK = 1 5
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオン前のでか交差点
+FIELDSET
+	TEXTYPE = 0
+	POS = 0 0 -2100
+	ROT = 0 0 0
+	BLOCK = 5 9
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 4
+	POS = 0 0 1500
+	ROT = 0 90 0
+	BLOCK = 1 5
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 0
+	POS = 0 0 1900
+	ROT = 0 0 0
+	BLOCK = 5 3
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨ前の横断歩道
+FIELDSET
+	TEXTYPE = 5
+	POS = 0 0 2500
+	ROT = 0 0 0
+	BLOCK = 5 3
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨ前の線
+FIELDSET
+	TEXTYPE = 4
+	POS = 300 0 3100
+	ROT = 0 90 0
+	BLOCK = 1 2
+	SIZE = 200 200
+END_FIELDSET
+
+
+#マツキヨの奥,穴埋め
+FIELDSET
+	TEXTYPE = 0
+	POS = -300 0 3100
+	ROT = 0 0 0
+	BLOCK = 2 1
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨ前の線の横
+FIELDSET
+	TEXTYPE = 0
+	POS = 0 0 2900
+	ROT = 0 0 0
+	BLOCK = 5 1
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨとメルシーの間
+FIELDSET
+	TEXTYPE = 5
+	POS = -600 0 2000
+	ROT = 0 90 0
+	BLOCK = 2 1
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨとメルシーの間
+FIELDSET
+	TEXTYPE = 2
+	POS = -800 0 2000
+	ROT = 0 0 0
+	BLOCK = 1 2
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨとメルシーの間
+FIELDSET
+	TEXTYPE = 0
+	POS = -3500 0 2000
+	ROT = 0 0 0
+	BLOCK = 26 2
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥
+FIELDSET
+	TEXTYPE = 5
+	POS = -600 0 3000
+	ROT = 0 90 0
+	BLOCK = 2 1
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥
+FIELDSET
+	TEXTYPE = 3
+	POS = -800 0 3000
+	ROT = 0 0 0
+	BLOCK = 1 2
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥
+FIELDSET
+	TEXTYPE = 4
+	POS = -3500 0 2900
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥
+FIELDSET
+	TEXTYPE = 3
+	POS = -3500 0 3100
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 1
+	POS = 300 0 5000
+	ROT = 0 0 0
+	BLOCK = 2 18
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 2
+	POS = 0 0 4900
+	ROT = 0 0 0
+	BLOCK = 1 19
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 1
+	POS = -300 0 5000
+	ROT = 0 0 0
+	BLOCK = 2 18
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 5
+	POS = 600 0 600
+	ROT = 0 90 0
+	BLOCK = 2 1
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 2
+	POS = 800 0 600
+	ROT = 0 0 0
+	BLOCK = 1 2
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 5
+	POS = -600 0 300
+	ROT = 0 90 0
+	BLOCK = 1 1
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 2
+	POS = -800 0 300
+	ROT = 0 0 0
+	BLOCK = 1 1
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 4
+	POS = -3500 0 300
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,横断歩道
+FIELDSET
+	TEXTYPE = 5
+	POS = 700 0 -2500
+	ROT = 0 90 0
+	BLOCK = 5 2
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,横断歩道の奥線
+FIELDSET
+	TEXTYPE = 4
+	POS = 1000 0 -2800
+	ROT = 0 0 0
+	BLOCK = 1 2
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,横断歩道の穴埋め
+FIELDSET
+	TEXTYPE = 0
+	POS = 1000 0 -2300
+	ROT = 0 0 0
+	BLOCK = 1 3
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,点線
+FIELDSET
+	TEXTYPE = 1
+	POS = 3600 0 -2200
+	ROT = 0 90 0
+	BLOCK = 2 25
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,線
+FIELDSET
+	TEXTYPE = 2
+	POS = 3600 0 -2500
+	ROT = 0 90 0
+	BLOCK = 1 25
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機の横,点線
+FIELDSET
+	TEXTYPE = 1
+	POS = 3600 0 -2800
+	ROT = 0 90 0
+	BLOCK = 2 25
+	SIZE = 200 200
+END_FIELDSET
+
+
+#エディオンの横,点線
+FIELDSET
+	TEXTYPE = 1
+	POS = -3500 0 -1300
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの横,線
+FIELDSET
+	TEXTYPE = 2
+	POS = -3500 0 -1500
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの横,点線
+FIELDSET
+	TEXTYPE = 1
+	POS = -3500 0 -1700
+	ROT = 0 90 0
+	BLOCK = 1 26
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの横,横断歩道
+FIELDSET
+	TEXTYPE = 5
+	POS = -600 0 -1500
+	ROT = 0 90 0
+	BLOCK = 3 1
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの横,線
+FIELDSET
+	TEXTYPE = 2
+	POS = -800 0 -1500
+	ROT = 0 0 0
+	BLOCK = 1 3
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機奥の横断歩道
+FIELDSET
+	TEXTYPE = 5
+	POS = 0 0 -3200
+	ROT = 0 0 0
+	BLOCK = 5 2
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電機奥の横断歩道
+FIELDSET
+	TEXTYPE = 2
+	POS = 0 0 -3500
+	ROT = 0 90 0
+	BLOCK = 1 5
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 1
+	POS = 300 0 -5400
+	ROT = 0 0 0
+	BLOCK = 2 18
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 2
+	POS = 0 0 -5400
+	ROT = 0 0 0
+	BLOCK = 1 18
+	SIZE = 200 200
+END_FIELDSET
+
+#マツキヨの奥,中央の線
+FIELDSET
+	TEXTYPE = 1
+	POS = -300 0 -5400
+	ROT = 0 0 0
+	BLOCK = 2 18
+	SIZE = 200 200
+END_FIELDSET
+
+#------------------------------------------------------------------------------
+# 歩道
+#------------------------------------------------------------------------------
+FIELDSET
+	TEXTYPE = 6
+	POS = 3500 0 600
+	ROT = 0 0 0
+	BLOCK = 26 2
+	SIZE = 200 200
+END_FIELDSET
+
+#九州電気のとこ
+FIELDSET
+	TEXTYPE = 7
+	POS = 3300 0 3800
+	ROT = 0 0 0
+	BLOCK = 28 30
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = 3300 0 -800
+	ROT = 0 0 0
+	BLOCK = 28 12
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの下
+FIELDSET
+	TEXTYPE = 7
+	POS = -3300 0 -500
+	ROT = 0 0 0
+	BLOCK = 28 7
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = -3300 0 1100
+	ROT = 0 0 0
+	BLOCK = 28 7
+	SIZE = 200 200
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = -3300 0 2500
+	ROT = 0 0 0
+	BLOCK = 28 3
+	SIZE = 200 200
+END_FIELDSET
+
+#一番左奥
+FIELDSET
+	TEXTYPE = 7
+	POS = -3300 0 5000
+	ROT = 0 0 0
+	BLOCK = 28 18
+	SIZE = 200 200
+END_FIELDSET
+
+#エディオンの横
+FIELDSET
+	TEXTYPE = 7
+	POS = -3300 0 -4500
+	ROT = 0 0 0
+	BLOCK = 28 27
+	SIZE = 200 200
+END_FIELDSET
+
+#奥定電気の奥
+FIELDSET
+	TEXTYPE = 7
+	POS = 3300 0 -5100
+	ROT = 0 0 0
+	BLOCK = 28 21
+	SIZE = 200 200
+END_FIELDSET
+
+END_SCRIPT		# この行は絶対消さないこと！

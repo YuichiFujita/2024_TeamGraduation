@@ -37,15 +37,33 @@ namespace
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
-		"SPAWN         生成状態               (フリーボール)",
-		"CATCH         キャッチ状態           (プレイヤー所持)",
-		"HOM_NOR       通常ホーミング状態     (攻撃判定ON)",
-		"HOM_JUMP      ジャンプホーミング状態 (攻撃判定ON)",
-		"MOVE          移動状態               (攻撃判定ON)",
-		"SPECIAL_STAG  スペシャル演出状態     (開始前演出)",
-		"SPECIAL_THROW スペシャル投げ状態     (攻撃判定ON)",
-		"REBOUND       リバウンド状態         (ぶつかった時の落下)",
-		"LAND          着地状態               (地面落下)",
+		"SPAWN    生成状態 (フリーボール)",
+		"CATCH    キャッチ状態 (プレイヤー所持)",
+		"HOM_NOR  通常ホーミング状態 (攻撃判定ON)",
+		"HOM_JUMP ジャンプホーミング状態 (攻撃判定ON)",
+		"MOVE     移動状態 (攻撃判定ON)",
+		"S_STAG   スペシャル演出状態 (開始前演出)",
+		"S_THROW  スペシャル投げ状態 (攻撃判定ON)",
+		"REBOUND  リバウンド状態 (ぶつかった時の落下)",
+		"LAND     着地状態 (地面落下)",
+	};
+	const char* DEBUG_TEAM_PRINT[] =	// デバッグ表示用チーム
+	{
+		"NONE    (コート指定なし)",
+		"LEFT    (左コート)",
+		"RIGHT   (右コート)",
+	};
+	const char* DEBUG_ATK_PRINT[] =		// デバッグ表示用攻撃
+	{
+		"NONE    (攻撃判定無し)",
+		"NORMAL  (通常攻撃)",
+		"JUMP    (ジャンプ攻撃)",
+		"SPECIAL (スペシャリスト攻撃)",
+	};
+	const char* DEBUG_SPECIAL_PRINT[] =	// デバッグ表示用スペシャル
+	{
+		"NONE    (指定なし)",
+		"かめはめ波",
 	};
 
 	namespace normal
@@ -131,14 +149,19 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
-	m_oldOverLine	(VEC3_ZERO),	// ホーミング終了ライン
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f)			// 状態カウンター
 {
 	// スタティックアサート
+	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
+
+	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,       "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_TEAM_PRINT)    == CGameManager::SIDE_MAX, "ERROR : Team Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,         "ERROR : Attack Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX,     "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
@@ -248,9 +271,12 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// ボールの状態表示
-	GET_MANAGER->GetDebugProc()->Print("ボール状態：%s\n", DEBUG_STATE_PRINT[m_state]);
-	GET_MANAGER->GetDebugProc()->Print("ターゲット：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
-	GET_MANAGER->GetDebugProc()->Print("カバー対象：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print(" ボール状態 ：%s\n", DEBUG_STATE_PRINT[m_state]);
+	GET_MANAGER->GetDebugProc()->Print("チームサイド：%s\n", DEBUG_TEAM_PRINT[m_typeTeam]);
+	GET_MANAGER->GetDebugProc()->Print("　　攻撃　　：%s\n", DEBUG_ATK_PRINT[m_typeAtk]);
+	GET_MANAGER->GetDebugProc()->Print(" スペシャル ：%s\n", DEBUG_SPECIAL_PRINT[m_typeSpecial]);
+	GET_MANAGER->GetDebugProc()->Print(" ターゲット ：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
+	GET_MANAGER->GetDebugProc()->Print(" カバー対象 ：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
 }
 
 //==========================================================================

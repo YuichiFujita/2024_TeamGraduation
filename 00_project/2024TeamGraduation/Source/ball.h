@@ -173,7 +173,6 @@ private:
 	float m_fMoveSpeed;		// 移動速度
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
-	MyLib::Vector3 m_oldOverLine;		// ホーミング終了ライン
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
 	ESpecial m_typeSpecial;	// スペシャル種類
 	EAttack m_typeAtk;		// 攻撃種類
