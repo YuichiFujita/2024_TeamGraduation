@@ -112,6 +112,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_bPossibleMove = false;		// 移動可能フラグ
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
+	m_bFootLR = false;				// 足左右判定
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
@@ -374,7 +375,7 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx) const
+void CPlayer::SetMotion(int motionIdx, int startKey) const
 {
 	//TAKADA: はじく条件(死んだら)
 	//if (m_sMotionFrag.bDead) return;
@@ -385,7 +386,7 @@ void CPlayer::SetMotion(int motionIdx) const
 	{
 		return;
 	}
-	pMotion->Set(motionIdx);
+	pMotion->Set(motionIdx, startKey);
 }
 
 //==========================================================================
@@ -414,16 +415,22 @@ void CPlayer::MotionSet()
 
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
-		// 移動モーション
-		if (m_bDash)
-		{// ダッシュモーション
-			m_bDash = false;
-			SetMotion(MOTION_RUN);
+		// モーションの種類
+		EMotion motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+		m_bDash = false;
+
+		// 歩行の情報取得
+		CMotion::Info info = pMotion->GetInfo(motionType);
+
+		// 開始キー
+		int nStartKey = 0;
+		if (m_bFootLR)
+		{
+			nStartKey = (info.nNumKey - 1) / 2;
 		}
-		else
-		{// 歩行モーション
-			SetMotion(MOTION_WALK);
-		}
+
+		// モーション設定
+		SetMotion(motionType, nStartKey);
 	}
 	else if (m_sMotionFrag.bJump)
 	{// ジャンプ中
@@ -1191,6 +1198,28 @@ void CPlayer::SetState(EState state)
 	m_fStateTime = 0.0f;
 }
 
+//==========================================================================
+// カニ歩き判定
+//==========================================================================
+bool CPlayer::IsCrab()
+{
+	if (m_pBall != nullptr) return false;
+
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	if (pBall == nullptr) return false;
+	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
+	if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
+
+	return true;
+}
+
+//==========================================================================
+// カニ歩き状態
+//==========================================================================
+void CPlayer::CrabState(float& fAngle)
+{
+	fAngle;
+}
 
 //==========================================================================
 // デバッグ処理
