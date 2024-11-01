@@ -1199,20 +1199,21 @@ bool CPlayer::IsCrab()
 {
 	if (m_pBall != nullptr) return false;
 
+	CPlayer::EAction action = GetActionPattern()->GetAction();
+	int motionType = GetMotion()->GetType();
+	
 	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
 	if (pBall == nullptr) return false;
+
+	// ボールは敵が所持しているか
 	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
 	if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
 
-	return true;
-}
+	// ブリンク＆走りでない
+	if (action == CPlayer::EAction::ACTION_BLINK) return false;
+	if (motionType == CPlayer::EMotion::MOTION_RUN) return false;
 
-//==========================================================================
-// カニ歩き状態
-//==========================================================================
-void CPlayer::CrabState(float& fAngle)
-{
-	fAngle;
+	return true;
 }
 
 //==========================================================================

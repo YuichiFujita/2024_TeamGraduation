@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "game.h"
 #include "playerAction.h"
+#include "playerStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -40,28 +41,10 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 目標の向き取得
-	float fRotDest = player->GetRotDest();
-
-	// 移動量取得
-	MyLib::Vector3 move = player->GetMove();
-
 	// モーション情報取得
 	CMotion* pMotion = player->GetMotion();
 	int nMotionType = pMotion->GetType();
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	// 状態取得
-	CPlayer::EState state = player->GetState();
 
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
@@ -100,32 +83,14 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			pMotion->ToggleFinish(true);
 			
 			//TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
-		
 		}
 	}
 	
 #if 0
 	// カニ歩き判定
-	if (player->IsCrab() &&
-		action != CPlayer::EAction::ACTION_BLINK &&
-		action != CPlayer::EAction::ACTION_RUN)
+	if (player->IsCrab())
 	{
-		// 相手コートを見る
-		MyLib::Vector3 posCourt = MyLib::Vector3();
-		MyLib::Vector3 pos = player->GetPosition();
-		
-		posCourt.x = pos.x;
-
-		D3DXVECTOR3 vecDiff = D3DXVECTOR3(pos.x - posCourt.x,
-			0.0f,
-			pos.z - posCourt.z);
-		float fAngle = atan2f(vecDiff.x, vecDiff.z) + D3DX_PI;		//目標の向き
-		UtilFunc::Transformation::RotNormalize(fAngle);
-
-		//pos取得ー線に対する角度
-		fRotDest = fAngle;
-	
-		player->SetRotDest(fRotDest);
+		CrabSetting(player);
 	}
 #endif
 }
@@ -141,4 +106,48 @@ void CPlayerControlMove::SetCntTrigger(int* nTrigger)
 	{
 		m_nCntTrigger[i] = nTrigger[i];
 	}
+}
+
+//==========================================================================
+// カニ歩き状態
+//==========================================================================
+void CPlayerControlMove::CrabSetting(CPlayer* player)
+{
+	// 目標の向き取得
+	float fRotDest = player->GetRotDest();
+	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();
+
+	MyLib::Vector3 posCourt = MyLib::Vector3();
+	MyLib::Vector3 pos = player->GetPosition();
+	posCourt.z = pos.z;
+
+	// 相手コート奥を見る
+	switch (player->GetStatus()->GetTeam())
+	{
+	case CGameManager::TeamSide::SIDE_LEFT:
+	
+		posCourt.x = sizeCourt.x;
+		
+		break;
+
+	case CGameManager::TeamSide::SIDE_RIGHT:
+	
+		posCourt.x = -sizeCourt.x;
+		
+		break;
+
+	default:
+		break;
+	}
+
+	D3DXVECTOR3 vecDiff = D3DXVECTOR3(pos.x - posCourt.x,
+		0.0f,
+		pos.z - posCourt.z);
+	float fAngle = atan2f(vecDiff.x, vecDiff.z);		//目標の向き
+	UtilFunc::Transformation::RotNormalize(fAngle);
+
+	//pos取得ー線に対する角度
+	fRotDest = fAngle;
+
+	player->SetRotDest(fRotDest);
 }

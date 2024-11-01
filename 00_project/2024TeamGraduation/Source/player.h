@@ -211,7 +211,6 @@ public:
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
 	bool IsCrab();											// カニ歩き判定
-	void CrabState(float &fAngle);							// カニ歩き状態
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
 	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
