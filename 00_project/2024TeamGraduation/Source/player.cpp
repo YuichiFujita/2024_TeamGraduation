@@ -639,7 +639,7 @@ void CPlayer::LimitPos()
 	{
 		pos.y = 0.0f;
 
-		if (m_bJump)
+		if (m_bJump && !m_sMotionFrag.bDead)
 		{// ジャンプ中着地
 			SetMotion(EMotion::MOTION_LAND);
 		}
