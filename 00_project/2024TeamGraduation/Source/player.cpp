@@ -30,6 +30,7 @@
 #include "playerStatus.h"
 #include "playercontrol_action.h"
 #include "playercontrol_move.h"
+#include "dressup_hair.h"
 
 //==========================================================================
 // 定数定義
@@ -121,6 +122,10 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_pControlMove = nullptr;	// 移動操作
 	m_pControlAction = nullptr;	// アクション操作
 
+	// 着せ替え
+	m_pDressup_Hair = nullptr;		// 髪着せ替え
+	m_pDressup_Accessory = nullptr;	// アクセ更新
+
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
@@ -178,6 +183,19 @@ HRESULT CPlayer::Init()
 		m_pStatus = DEBUG_NEW CPlayerStatus(this);
 	}
 
+
+	// 着せ替え
+	if (m_pDressup_Hair == nullptr)
+	{
+		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, 15);	// 髪着せ替え
+	}
+
+	// アクセ
+	if (m_pDressup_Accessory == nullptr)
+	{
+		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+	}
+
 	return S_OK;
 }
 
@@ -197,6 +215,10 @@ void CPlayer::Uninit()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
+
+	// 着せ替え
+	SAFE_UNINIT(m_pDressup_Hair);
+	SAFE_UNINIT(m_pDressup_Accessory);
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -237,6 +259,9 @@ void CPlayer::Kill()
 void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (IsDeath()) return;
+
+	// ドレスアップの更新
+	UpdateDressUP(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// エディット中は抜ける
 	if (CGame::GetInstance()->GetEditType() != CGame::GetInstance()->EDITTYPE_OFF)
@@ -1250,6 +1275,25 @@ void CPlayer::StateOutCourt_Return()
 }
 
 //==========================================================================
+// ドレスアップの更新
+//==========================================================================
+void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 髪更新
+	if (m_pDressup_Hair != nullptr)
+	{
+		m_pDressup_Hair->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// アクセ更新
+	if (m_pDressup_Accessory != nullptr)
+	{
+		m_pDressup_Accessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+}
+
+//==========================================================================
 // 描画処理
 //==========================================================================
 void CPlayer::Draw()
@@ -1421,6 +1465,18 @@ void CPlayer::Debug()
 		SetLife(nLife);
 
 		ImGui::TreePop();
+	}
+
+	// 髪更新
+	if (m_pDressup_Hair != nullptr)
+	{
+		m_pDressup_Hair->Debug();
+	}
+
+	// アクセ更新
+	if (m_pDressup_Accessory != nullptr)
+	{
+		m_pDressup_Accessory->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

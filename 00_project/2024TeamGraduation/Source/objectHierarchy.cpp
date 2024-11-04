@@ -184,6 +184,8 @@ void CObjectHierarchy::Uninit()
 	// ƒ‚ƒfƒ‹‚ÌI—¹ˆ—
 	for (auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
+
 		model->Uninit();
 		delete model;
 		model = nullptr;
@@ -381,6 +383,8 @@ void CObjectHierarchy::Draw()
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	for (const auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
+
 		model->Draw();
 	}
 }

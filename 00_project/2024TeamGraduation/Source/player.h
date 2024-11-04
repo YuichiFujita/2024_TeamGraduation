@@ -25,6 +25,7 @@ class CPlayerControlMove;	// 操作(移動)
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
+class CDressup;			// 着せ替え
 
 //==========================================================================
 // クラス定義
@@ -201,6 +202,11 @@ public:
 	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
 
 	//=============================
+	// 着せ替え
+	//=============================
+	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
+
+	//=============================
 	// その他
 	//=============================
 	bool Hit(CBall* pBall);			// ヒット処理
@@ -320,6 +326,12 @@ private:
 	CPlayerStatus* m_pStatus;			// ステータス
 	CPlayerControlMove* m_pControlMove;		// 移動操作
 	CPlayerControlAction* m_pControlAction;	// アクション操作
+
+	//-----------------------------
+	// 着せ替え
+	//-----------------------------
+	CDressup* m_pDressup_Hair;		// 髪着せ替え
+	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
 
 	//-----------------------------
 	// その他変数
