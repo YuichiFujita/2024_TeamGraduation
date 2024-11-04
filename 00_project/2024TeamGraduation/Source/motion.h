@@ -31,6 +31,17 @@ public:
 	//=============================
 	// 構造体定義
 	//=============================
+	// 揃え情報
+	struct AlignInfo
+	{
+		int nFrame;				// このフレーム
+		int nExtensionFrame;	// 猶予フレーム
+		bool bSet;				// 設定時
+
+		// コンストラクタ
+		AlignInfo() : nFrame(0), nExtensionFrame(0), bSet(false) {}
+	};
+
 	// 判定の構造体
 	struct AttackInfo
 	{
@@ -44,6 +55,7 @@ public:
 		bool bInpactAct;		// 衝撃カウントの行動をしたか
 		bool bInpactActSet;		// 衝撃カウントの行動設定したか
 		bool bEndAtk;			// 攻撃の終了フラグ
+		AlignInfo AlignInfo;	// 揃え情報
 	};
 
 	// パーツ情報
@@ -121,7 +133,9 @@ public:
 	inline bool IsGetCombiable() { return m_bCombiable; }				// コンボ可能の判定取得
 	inline bool IsAttacking() { return m_bAttaking; }					// 攻撃判定中フラグ取得
 	inline bool IsSpecial() { return m_vecInfo[m_nType].bSpecial; }		// スペシャル判定取得
+	bool IsImpactFrame(const Info& info);								// 指定した種類の情報が衝撃カウントか
 	bool IsImpactFrame(int nCntAtk);									// 指定したインデックスの情報が衝撃カウントか
+	bool IsAlignFrame(const Info& info);								// 指定した情報がフレーム内
 
 	//--------------------------
 	// 設定
@@ -161,8 +175,8 @@ private:
 	bool m_bLoop;				// ループするかどうか
 	int m_nPatternKey;			// 何個目のキーか
 	float m_fCntFrame;			// フレームのカウント
-	float m_fAllFrame;			// 全てのカウント
-	float m_fMaxAllFrame;		// 全てのカウントの最大値
+	float m_fAllFrame;			// 再生中の全てのカウント
+	float m_fMaxAllFrame;		// 再生中の全てのカウントの最大値
 	float m_fSlowFactor;		// 遅延係数
 	bool m_bFinish;				// 終了したかどうか
 	bool m_bCancelable;			// キャンセル可能か

@@ -259,7 +259,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// モーションの設定処理
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{
-		MotionSet();
+		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 状態更新
@@ -392,11 +392,16 @@ void CPlayer::SetMotion(int motionIdx, int startKey) const
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::MotionSet()
+void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
+	// 足左右の更新
+	UpdateFootLR();
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)	return;
+
 	// 現在の種類取得
 	int nType = pMotion->GetType();
 	int nOldType = pMotion->GetOldType();
@@ -424,13 +429,18 @@ void CPlayer::MotionSet()
 
 		// 開始キー
 		int nStartKey = 0;
-		if (m_bFootLR)
+		/*if (m_bFootLR)
 		{
 			nStartKey = (info.nNumKey - 1) / 2;
-		}
+		}*/
 
 		// モーション設定
 		SetMotion(motionType, nStartKey);
+
+		if (nOldType != pMotion->GetType())
+		{
+			m_bFootLR = true;
+		}
 	}
 	else if (m_sMotionFrag.bJump)
 	{// ジャンプ中
@@ -442,9 +452,104 @@ void CPlayer::MotionSet()
 	}
 	else
 	{
-		// ニュートラルモーション
+		// デフォルトモーションの設定
+		DefaultMotionSet(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// デフォルトモーションの設定
+//==========================================================================
+void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 情報取得
+	CMotion::Info info = pMotion->GetInfo();
+	int nType = pMotion->GetType();
+
+	// 状況別設定
+	if (nType != EMotion::MOTION_WALK)
+	{
+		// ニュートラルモーション設定
 		SetMotion(MOTION_DEF);
 	}
+	else if (nType == EMotion::MOTION_WALK)
+	{
+		if (m_bFootLR)
+		{
+			// ニュートラルモーション設定
+			SetMotion(EMotion::MOTION_GRIP_DEF);
+		}
+		else if (!pMotion->IsAlignFrame(info))
+		{// 足が揃ってない
+
+			// 移動量取得
+			MyLib::Vector3 move = GetMove();
+
+			// 移動する
+			float fMove = GetParameter().fVelocityNormal;
+			switch (nType)
+			{
+			case EMotion::MOTION_WALK:
+				fMove = GetParameter().fVelocityNormal;
+				break;
+
+			case EMotion::MOTION_RUN:
+				fMove = GetParameter().fVelocityDash;
+				break;
+
+			default:
+				break;
+			}
+
+			// 補正倍率
+			fMove *= fDeltaRate;
+			fMove *= fSlowRate;
+
+			// 移動量更新
+			MyLib::Vector3 rot = GetRotation();
+			move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+			move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+
+			// 移動量設定
+			SetMove(move);
+		}
+		else
+		{
+			// ニュートラルモーション設定
+			SetMotion(MOTION_DEF);
+		}
+	}
+}
+
+//==========================================================================
+// 足左右の更新
+//==========================================================================
+void CPlayer::UpdateFootLR()
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 情報取得
+	CMotion::Info info = pMotion->GetInfo();
+	int nType = pMotion->GetType();
+
+	// 歩き以外は抜ける
+	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN) return;
+
+	if (pMotion->IsImpactFrame(info))
+	{// 衝撃のフレーム
+		m_bFootLR = !m_bFootLR;
+	}
+
+	ImGui::Checkbox("m_bFootLR", &m_bFootLR);
+
+	float a = pMotion->GetAllCount();
+	ImGui::DragFloat("frame", &a, 1.0f, 0.0f, 0.0f, "%.2f");
 }
 
 //==========================================================================

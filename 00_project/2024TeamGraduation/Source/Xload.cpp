@@ -190,45 +190,6 @@ void CXLoad::Unload()
 //==========================================================================
 int CXLoad::XLoad(std::string file)
 {
-#if 0
-	// 最大数取得
-	int nIdx = 0;
-	int nNumAll = GetNumAll();
-
-	if (file == "")
-	{
-		return -1;
-	}
-	int nNowLen = file.length();
-
-
-	for (int nCntData = 0; nCntData < nNumAll; nCntData++)
-	{
-		if (m_XFileInfo[nCntData].nFileNameLen != nNowLen)
-		{// ファイル名の長さが違う
-			continue;
-		}
-
-		// 既にテクスチャが読み込まれてないかの最終確認
-		if (m_XFileInfo[nCntData].filename == file)
-		{// ファイル名が一致している
-			return nCntData;
-		}
-	}
-
-	// 読み込み
-	if (FAILED(Load(file)))
-	{
-		return E_FAIL;
-	}
-
-	// インデックス番号保存
-	nIdx = nNumAll;
-	return nIdx;
-
-#else
-
-
 	if (file == "")
 	{
 		return 0;
@@ -238,9 +199,10 @@ int CXLoad::XLoad(std::string file)
 	file = UtilFunc::Transformation::ReplaceBackslash(file);
 	file = UtilFunc::Transformation::ReplaceForwardSlashes(file);
 
+	// 同名検索
 	auto itr = std::find(m_ImageNames.begin(), m_ImageNames.end(), file);
 	if (itr != m_ImageNames.end())
-	{
+	{// 同じのがあった
 		return itr - m_ImageNames.begin();
 	}
 
@@ -255,7 +217,6 @@ int CXLoad::XLoad(std::string file)
 	}
 
 	return nNumAll;
-#endif
 }
 
 //==========================================================================
@@ -271,7 +232,7 @@ HRESULT CXLoad::Load(std::string file)
 	SXFile initinfo = {};
 	m_XFileInfo.push_back(initinfo);
 
-	//Xファイルの読み込み
+	// Xファイルの読み込み
 	HRESULT hr = D3DXLoadMeshFromX(
 		file.c_str(),
 		D3DXMESH_SYSTEMMEM,
@@ -325,10 +286,17 @@ HRESULT CXLoad::Load(std::string file)
 	// マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)m_XFileInfo[nIdx].pBuffMat->GetBufferPointer();
 
+	// マテリアルの数分リサイズ
+	int numMat = (int)m_XFileInfo[nIdx].dwNumMat;
+	m_XFileInfo[nIdx].pMatData.resize(numMat);
+
 	// 頂点数分繰り返し
-	for (int nCntMat = 0; nCntMat < (int)m_XFileInfo[nIdx].dwNumMat; nCntMat++)
+	for (int nCntMat = 0; nCntMat < numMat; nCntMat++)
 	{
 		m_XFileInfo[nIdx].nIdxTexture[nCntMat] = 0;
+
+		// マテリアルデータ
+		m_XFileInfo[nIdx].pMatData[nCntMat] = pMat[nCntMat];
 
 		if (pMat[nCntMat].pTextureFilename != nullptr)
 		{// ファイルが存在する

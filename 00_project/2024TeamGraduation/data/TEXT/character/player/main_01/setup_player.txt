@@ -239,6 +239,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt					# 勝利
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt				# ダメージ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt				# 死亡
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead_after.txt			# 死亡後
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt			# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt			# 前グリップ
 
 

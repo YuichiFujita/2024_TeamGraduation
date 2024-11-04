@@ -62,6 +62,7 @@ public:
 		MOTION_DAMAGE,				// ダメージ
 		MOTION_DEAD,				// 死亡
 		MOTION_DEAD_AFTER,			// 死亡後
+		MOTION_GRIP_DEF,			// デフォグリップ
 		MOTION_GRIP_FRONT,			// 前グリップ
 		MOTION_MAX
 	};
@@ -178,7 +179,7 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0) const;								// モーションの設定
+	void SetMotion(int motionIdx, int startKey = 0) const;				// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
 	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
@@ -230,6 +231,7 @@ protected:
 	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
 	virtual void Debug();			// デバッグ処理
+	void UpdateFootLR();			// 足左右の更新
 	CPlayerControlMove* GetPlayerControlMove();																	// 操作取得(移動)
 	CPlayerControlAction* GetPlayerControlAction();																// 操作取得(アクション)
 	void SetPlayerControlMove(CPlayerControlMove* pControlMove) { m_pControlMove = pControlMove; }				// 操作設定(移動)
@@ -272,11 +274,12 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void LimitPos();	// 位置制限
 	void ResetFrag();	// フラグリセット
-	void MotionSet();	// モーションの設定
 
 	//-----------------------------
 	// モーション系関数
 	//-----------------------------
+	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
+	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
