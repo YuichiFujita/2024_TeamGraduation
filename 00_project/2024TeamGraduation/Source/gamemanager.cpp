@@ -260,9 +260,9 @@ void CGameManager::SetCameraTargetPosition()
 		fRate = 0.05f;
 	}
 
-	float fCameraDis = 2180.0f * fRate;
-	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 350.0f, fRate);
-	float fTargetZ = UtilFunc::Correction::EasingLinear(-1680.0f, -380.0f, fRate);
+	float fCameraDis = 2480.0f * fRate;
+	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fRate);
+	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fRate);
 
 	// ’Ž‹“_‚ðÝ’è
 	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, fTargetY, fTargetZ));
