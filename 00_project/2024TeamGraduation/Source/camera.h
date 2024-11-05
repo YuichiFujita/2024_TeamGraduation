@@ -49,12 +49,47 @@ public:
 	CCamera();	// コンストラクタ
 	~CCamera();	// デストラクタ
 
+	// カメラ揺れ構造体
+	struct SSwing
+	{
+	public:
+		// コンストラクタ
+		SSwing() :
+			shiftPos	 (VEC3_ZERO),	// 位置ずれ量
+			fShiftAngle	 (0.0f),		// 位置をずらす角度
+			fShiftLength (0.0f),		// 位置をずらす距離
+			fSubAngle	 (0.0f),		// ずらす角度の減算量
+			fSubLength	 (0.0f)			// ずらす距離の減算量
+		{}
+
+		// 引数付きコンストラクタ
+		SSwing(const float in_fShiftLength, const float in_fSubAngle, const float in_fSubLength) :
+			shiftPos	 (VEC3_ZERO),		// 位置ずれ量
+			fShiftAngle	 (0.0f),			// 位置をずらす角度
+			fShiftLength (in_fShiftLength),	// 位置をずらす距離
+			fSubAngle	 (in_fSubAngle),	// ずらす角度の減算量
+			fSubLength	 (in_fSubLength)	// ずらす距離の減算量
+		{}
+
+		// デストラクタ
+		~SSwing() {}
+
+		// メンバ変数
+		MyLib::Vector3 shiftPos;	// 位置ずれ量
+		float fShiftAngle;	// 位置をずらす角度
+		float fShiftLength;	// 位置をずらす距離
+		float fSubAngle;	// ずらす角度の減算量
+		float fSubLength;	// ずらす距離の減算量
+	};
+
 	HRESULT Init();		// 初期化
 	void Uninit();		// 終了
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 	void SetCamera();	// カメラ設定
 	void Reset();		// カメラリセット
-	void WarpCamera(const MyLib::Vector3& pos);	// カメラワープ設定
+	void ResetSwing();	// カメラ揺れリセット
+	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
+	void SetWarp(const MyLib::Vector3& pos);	// カメラワープ設定
 
 	//--------------------------
 	// スクリーン
@@ -137,6 +172,7 @@ private:
 	void ReflectCameraR();		// 注視点の反映
 	void ReflectCameraV();		// 視点の反映
 	void UpdateSpotLightVec();	// ライトのベクトル更新
+	void UpdateSwing();			// カメラ揺れ更新
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
 
 	// メンバ変数
@@ -145,7 +181,8 @@ private:
 	CLightDir* m_pLight;				// ディレクショナルライト情報
 	D3DXMATRIX m_mtxProjection;			// プロジェクションマトリックス
 	D3DXMATRIX m_mtxView;				// ビューマトリックス
-	D3DVIEWPORT9 m_viewport;			// ビューポート
+	D3DVIEWPORT9 m_viewport;			// ビューポート情報
+	SSwing m_swing;						// カメラ揺れ情報
 	MyLib::Vector3 m_posV;				// 視点
 	MyLib::Vector3 m_posVDest;			// 目標視点
 	MyLib::Vector3 m_posR;				// 注視点

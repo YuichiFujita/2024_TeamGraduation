@@ -288,11 +288,9 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// ‘€ì
 	if (ImGui::TreeNode("Control"))
 	{
-		if (ImGui::Button("Special!"))
+		if (ImGui::Button("Camera : Swing"))
 		{
-			CPlayer* pPlayerAttack = CPlayer::GetList().GetData(0);
-			CPlayer* pPlayerTarget = CPlayer::GetList().GetData(1);
-			CSpecialManager::Create(pPlayerAttack, pPlayerTarget);
+			GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(10.0f, 2.0f, 0.6f));
 		}
 
 		if (ImGui::Button("Room : Bright"))

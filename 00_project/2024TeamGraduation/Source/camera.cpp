@@ -29,6 +29,7 @@ namespace
 	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.0f, -0.32f);	// デフォルト向き
 	const float MIN_NEAR	= 10.0f;		// 手前の描画制限
 	const float MAX_FAR		= 1500000.0f;	// 奥の描画制限
+	const float REV_DIS		= 0.001f;		// カメラ揺れ計算時のカメラ距離の補正係数
 	const float MIN_DISNTANCE	= 500.0f;	// 最少距離
 	const float DISNTANCE		= 1160.0f;	// 距離
 	const float MULTIPLY_CHASE_POSR	= 1.5f;	// 注視点追従の倍率
@@ -67,12 +68,19 @@ CCamera::CCamera()
 	D3DXMatrixIdentity(&m_mtxView);			// ビューマトリックス
 
 	// ビューポート情報のクリア
-	m_viewport.X = 0;		// 画面の左上X座標
-	m_viewport.Y = 0;		// 画面の左上Y座標
-	m_viewport.Width = 0;	// 画面の幅
-	m_viewport.Height = 0;	// 画面の高さ
-	m_viewport.MinZ = 0.0f;
-	m_viewport.MaxZ = 0.0f;
+	m_viewport.X		= 0;	// 画面の左上X座標
+	m_viewport.Y		= 0;	// 画面の左上Y座標
+	m_viewport.Width	= 0;	// 画面の幅
+	m_viewport.Height	= 0;	// 画面の高さ
+	m_viewport.MinZ		= 0.0f;
+	m_viewport.MaxZ		= 0.0f;
+
+	// カメラ揺れ情報のクリア
+	m_swing.shiftPos		= VEC3_ZERO;	// 位置ずれ量
+	m_swing.fShiftAngle		= 0.0f;			// 位置をずらす角度
+	m_swing.fShiftLength	= 0.0f;			// 位置をずらす距離
+	m_swing.fSubAngle		= 0.0f;			// ずらす角度の減算量
+	m_swing.fSubLength		= 0.0f;			// ずらす距離の減算量
 }
 
 //==========================================================================
@@ -185,6 +193,9 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// スポットライトベクトルの更新
 	UpdateSpotLightVec();
 
+	// カメラ揺れの更新
+	UpdateSwing();
+
 	if (m_pLight != nullptr)
 	{
 		// ライトの更新
@@ -290,6 +301,9 @@ void CCamera::Reset()
 	m_fOriginDistance = m_fDistance;	// 元の距離
 #endif
 
+	// カメラ揺れのリセット
+	ResetSwing();
+
 	if (m_pCameraMotion != nullptr)
 	{
 		// カメラモーションの位置リセット
@@ -312,9 +326,31 @@ void CCamera::Reset()
 }
 
 //==========================================================================
+// カメラ揺れリセット
+//==========================================================================
+void CCamera::ResetSwing()
+{
+	// カメラ揺れ情報を初期化
+	m_swing.shiftPos	 = VEC3_ZERO;	// 位置ずれ量
+	m_swing.fShiftAngle	 = 0.0f;		// 位置をずらす角度
+	m_swing.fShiftLength = 0.0f;		// 位置をずらす距離
+	m_swing.fSubAngle	 = 0.0f;		// ずらす角度の減算量
+	m_swing.fSubLength	 = 0.0f;		// ずらす距離の減算量
+}
+
+//==========================================================================
+// カメラ揺れの設定処理
+//==========================================================================
+void CCamera::SetSwing(const SSwing& swing)
+{
+	// 引数のカメラ揺れ情報を設定
+	m_swing = swing;
+}
+
+//==========================================================================
 // カメラワープ処理
 //==========================================================================
-void CCamera::WarpCamera(const MyLib::Vector3& pos)
+void CCamera::SetWarp(const MyLib::Vector3& pos)
 {
 	// 注視点の設定
 	m_posR = pos;			// 注視点
@@ -386,6 +422,56 @@ void CCamera::UpdateSpotLightVec()
 
 	// スポットライトの方向設定
 	m_pLight->SetDirection(vec);
+}
+
+//============================================================
+// カメラ揺れの更新処理
+//============================================================
+void CCamera::UpdateSwing()
+{
+	// 注視点のずらし量が設定されていない場合抜ける
+	if (m_swing.fShiftLength <= 0.0f) { return; }
+
+	D3DXQUATERNION quat;	// クォータニオン
+	D3DXMATRIX mtxRot;		// 回転マトリックス
+	MyLib::Vector3 offset;	// 位置ずれオフセット
+	float fRotY;			// 位置ずれ向き
+	MyLib::Vector3 vecAxis = m_posR - m_posV;	// 回転軸ベクトル
+
+	// クォータニオンを作成
+	D3DXVec3Normalize(&vecAxis, &vecAxis);	// 回転軸を正規化
+	D3DXQuaternionRotationAxis(&quat, &vecAxis, m_swing.fShiftAngle);
+
+	// 回転マトリックスを作成
+	D3DXMatrixRotationQuaternion(&mtxRot, &quat);
+
+	// 位置をずらす向きを求める
+	fRotY = atan2f(-vecAxis.z, vecAxis.x);
+
+	// 位置ずれオフセットを設定
+	float fCalcTemp = m_swing.fShiftLength * (fabsf(m_fDistance) * REV_DIS);
+	offset = MyLib::Vector3(sinf(fRotY) * fCalcTemp, 0.0f, cosf(fRotY) * fCalcTemp);
+
+	// オフセットを反映した回転マトリックスを座標変換
+	D3DXVec3TransformCoord(&m_swing.shiftPos, &offset, &mtxRot);
+
+	// 注視点に位置のずれを加算
+	m_posR += m_swing.shiftPos;
+
+	// 位置ずれ量を減算
+	m_swing.fShiftAngle  -= m_swing.fSubAngle;
+	m_swing.fShiftLength -= m_swing.fSubLength;
+
+	// 角度を補正
+	UtilFunc::Transformation::RotNormalize(m_swing.fShiftAngle);
+
+	// 距離を補正
+	if (m_swing.fShiftLength < 0.0f)
+	{ // 最低値より小さい場合
+
+		// 最低値に補正
+		m_swing.fShiftLength = 0.0f;
+	}
 }
 
 //==========================================================================
