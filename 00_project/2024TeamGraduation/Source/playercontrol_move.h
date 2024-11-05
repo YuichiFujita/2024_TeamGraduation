@@ -44,6 +44,8 @@ public:
 	void SetInputAngleCtr(float fInputAngleCtr) { m_fInputAngleCtr = fInputAngleCtr; }			// 現在の入力方向カウンター設定
 	float GetInputAngleCtr() { return m_fInputAngleCtr; }										// 現在の入力方向カウンター取得
 
+	void CrabSetting(CPlayer* player);				// カニ歩き状態
+
 private:
 	
 	//=============================

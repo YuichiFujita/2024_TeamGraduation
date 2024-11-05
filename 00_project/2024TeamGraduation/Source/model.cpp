@@ -171,6 +171,8 @@ HRESULT CModel::Init(const std::string& file)
 //==========================================================================
 void CModel::Uninit()
 {
+	m_mtxParent = nullptr;
+
 	if (m_nIdxTexture != nullptr)
 	{
 		delete[] m_nIdxTexture;

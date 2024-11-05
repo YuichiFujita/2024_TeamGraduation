@@ -104,7 +104,7 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 void CObjectHierarchy::BindObjectData(int nCntData)
 {
 	// 読み込みデータ
-	Load loadData = m_aLoadData[nCntData];
+	const Load& loadData = m_aLoadData[nCntData];
 
 	// 中心にするパーツのインデックス
 	m_nCenterPartsIdx = loadData.nCenterIdx;
@@ -159,10 +159,10 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 			m_apModel[nCntParts]->SetMtxParent(&m_mtxWorld);
 		}
 
-		// 初期配置なし
+		// 最初から使わない場合
 		if (modelInfo.nStart != 1)
 		{
-			ChangeObject(nCntParts, -1);
+			DeleteObject(nCntParts);
 		}
 	}
 }
@@ -184,6 +184,8 @@ void CObjectHierarchy::Uninit()
 	// モデルの終了処理
 	for (auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
+
 		model->Uninit();
 		delete model;
 		model = nullptr;
@@ -226,157 +228,51 @@ void CObjectHierarchy::Update(const float fDeltaTime, const float fDeltaRate, co
 }
 
 //==========================================================================
-// モデル変更
+// モデル切り替え
 //==========================================================================
-void CObjectHierarchy::ChangeObject(int nDeleteParts, int nNewParts)
+void CObjectHierarchy::ChangeObject(int nSwitchIdx, const std::string& file)
 {
-	// ファイル情報取得
-	Load LoadData = GetLoadData(m_nIdxFile);
+	// サイズ外
+	if (static_cast<int>(m_apModel.size()) <= nSwitchIdx) return;
 
-	// オブジェクトキャラクターの情報取得
-	CObjectHierarchy *pObjChar = GetObjectHierarchy();
-
-	int nNumAll = pObjChar->GetNumModel();
-
-	if (m_apModel[nDeleteParts] != nullptr)
+	//--------------------------
+	// 切り替えモデル削除
+	//--------------------------
+	if (m_apModel[nSwitchIdx] != nullptr)
 	{
-		// モデルの終了処理
-		m_apModel[nDeleteParts]->Uninit();
-		delete m_apModel[nDeleteParts];
-		m_apModel[nDeleteParts] = nullptr;
+		m_apModel[nSwitchIdx]->Uninit();
+		delete m_apModel[nSwitchIdx];
+		m_apModel[nSwitchIdx] = nullptr;
 	}
 
-	// 新しいパーツを読み込む
-	if (nNewParts >= 0 && m_apModel[nNewParts] == nullptr)
-	{
-		if (m_apModel[nNewParts] == nullptr)
-		{
-			// モデル作成
-			m_apModel[nNewParts] = CModel::Create(
-				LoadData.LoadData[LoadData.LoadData[nNewParts].nType].pModelFile.c_str(),
-				LoadData.LoadData[nNewParts].pos,
-				LoadData.LoadData[nNewParts].rot);
-		}
-	}
+	// 読み込みデータ
+	const Load& loadData = m_aLoadData[m_nIdxFile];
+
+	// 今回の切り替えデータ
+	LoadData modelInfo = loadData.LoadData[nSwitchIdx];
+
+	//--------------------------
+	// モデルの生成
+	//--------------------------
+	m_apModel[nSwitchIdx] = CModel::Create(
+		file,
+		modelInfo.pos,
+		modelInfo.rot);
 
 	// 親モデルの設定
-	for (int nCntParts = 0; nCntParts < LoadData.nNumModel; nCntParts++)
-	{// パーツ分繰り返し
+	if (modelInfo.nParent >= 0)
+	{
+		// 親のモデルオブジェクト設定
+		m_apModel[nSwitchIdx]->SetParent(m_apModel[modelInfo.nParent]);
 
-		if (m_apModel[nCntParts] == nullptr)
-		{// nullptrだったら
-			continue;
-		}
-
-		// 親モデルの設定
-		if (LoadData.LoadData[nCntParts].nParent >= 0)
-		{
-			// 親のモデルオブジェクト設定
-			m_apModel[nCntParts]->SetParent(m_apModel[LoadData.LoadData[nCntParts].nParent]);
-		}
-		else
-		{// 自分が親の時
-			m_apModel[nCntParts]->SetParent(nullptr);
-		}
+		int idx = modelInfo.nParent;
+		m_apModel[nSwitchIdx]->SetMtxParent(m_apModel[idx]->GetPtrWorldMtx());
 	}
-}
-
-//==========================================================================
-// 切り替えの種類
-//==========================================================================
-void CObjectHierarchy::ChangeObject(int nSwitchType)
-{
-	// ファイル情報取得
-	Load LoadData = GetLoadData(m_nIdxFile);
-
-#if _DEBUG
-	for (int nCntParts = 0; nCntParts < LoadData.nNumModel; nCntParts++)
-	{// パーツ分繰り返し
-
-		if (m_apModel[nCntParts] != nullptr)
-		{
-			// モデルの終了処理
-			m_apModel[nCntParts]->Uninit();
-			delete m_apModel[nCntParts];
-			m_apModel[nCntParts] = nullptr;
-		}
-
-		// モデル作成
-		if (m_apModel[nCntParts] == nullptr)
-		{
-			m_apModel[nCntParts] = CModel::Create(
-				LoadData.LoadData[LoadData.LoadData[nCntParts].nType].pModelFile.c_str(),
-				LoadData.LoadData[nCntParts].pos,
-				LoadData.LoadData[nCntParts].rot);
-		}
-
-		// 親モデルの設定
-		if (LoadData.LoadData[nCntParts].nParent >= 0)
-		{
-			// 親のモデルオブジェクト設定
-			m_apModel[nCntParts]->SetParent(m_apModel[LoadData.LoadData[nCntParts].nParent]);
-		}
-		else
-		{// 自分が親の時
-			m_apModel[nCntParts]->SetParent(nullptr);
-		}
-
-		if (LoadData.LoadData[nCntParts].nStart != 1)
-		{
-			ChangeObject(nCntParts, -1);
-		}
+	else
+	{// 自分が親の時
+		m_apModel[nSwitchIdx]->SetParent(nullptr);
+		m_apModel[nSwitchIdx]->SetMtxParent(&m_mtxWorld);
 	}
-#endif
-
-	// モデルの切り替え
-	for (int nCntParts = 0; nCntParts < LoadData.nNumModel; nCntParts++)
-	{// パーツ分繰り返し
-
-		if (LoadData.LoadData[nCntParts].nSwitchType != nSwitchType)
-		{// 切り替えの種類が違うとき
-			continue;
-		}
-
-		// 削除するインデックス番号
-		int nDeleteIdx = LoadData.LoadData[nCntParts].nIDSwitchModel;
-
-		if (nDeleteIdx >= 0 && m_apModel[nDeleteIdx] != nullptr)
-		{
-			// モデルの終了処理
-			m_apModel[nDeleteIdx]->Uninit();
-			delete m_apModel[nDeleteIdx];
-			m_apModel[nDeleteIdx] = nullptr;
-		}
-
-		// 生成するインデックス番号
-		int nNewIdx = nDeleteIdx;
-
-		if (nNewIdx < 0)
-		{
-			nNewIdx = nCntParts;
-		}
-
-		// モデル作成
-		if (m_apModel[nNewIdx] == nullptr)
-		{
-			m_apModel[nNewIdx] = CModel::Create(
-				LoadData.LoadData[LoadData.LoadData[nCntParts].nType].pModelFile.c_str(),
-				LoadData.LoadData[nCntParts].pos,
-				LoadData.LoadData[nCntParts].rot);
-		}
-
-		// 親モデルの設定
-		if (LoadData.LoadData[nCntParts].nParent >= 0)
-		{
-			// 親のモデルオブジェクト設定
-			m_apModel[nNewIdx]->SetParent(m_apModel[LoadData.LoadData[nCntParts].nParent]);
-		}
-		else
-		{// 自分が親の時
-			m_apModel[nNewIdx]->SetParent(nullptr);
-		}
-	}
-
 }
 
 //==========================================================================
@@ -433,30 +329,19 @@ void CObjectHierarchy::SetObject(int nNewParts)
 //==========================================================================
 // モデル削除
 //==========================================================================
-void CObjectHierarchy::DeleteObject(int nSwitchType)
+void CObjectHierarchy::DeleteObject(int nDeleteIdx)
 {
-	// ファイル情報取得
-	Load LoadData = GetLoadData(m_nIdxFile);
+	// サイズ外
+	if (static_cast<int>(m_apModel.size()) <= nDeleteIdx) return;
 
-	// モデルの切り替え
-	for (int nCntParts = 0; nCntParts < LoadData.nNumModel; nCntParts++)
-	{// パーツ分繰り返し
-
-		if (LoadData.LoadData[nCntParts].nSwitchType != nSwitchType)
-		{// 切り替えの種類が違うとき
-			continue;
-		}
-
-		// 削除するインデックス番号
-		int nDeleteIdx = LoadData.LoadData[nCntParts].nIDSwitchModel;
-
-		if (nDeleteIdx >= 0 && m_apModel[nDeleteIdx] != nullptr)
-		{
-			// モデルの終了処理
-			m_apModel[nDeleteIdx]->Uninit();
-			delete m_apModel[nDeleteIdx];
-			m_apModel[nDeleteIdx] = nullptr;
-		}
+	//--------------------------
+	// 切り替えモデル削除
+	//--------------------------
+	if (m_apModel[nDeleteIdx] != nullptr)
+	{
+		m_apModel[nDeleteIdx]->Uninit();
+		delete m_apModel[nDeleteIdx];
+		m_apModel[nDeleteIdx] = nullptr;
 	}
 }
 
@@ -498,6 +383,8 @@ void CObjectHierarchy::Draw()
 	// モデルの描画
 	for (const auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
+
 		model->Draw();
 	}
 }
@@ -779,9 +666,10 @@ void CObjectHierarchy::LoadPartsData(FILE* pFile, const std::string& file, int *
 			m_apModel[nCntSetParts]->SetMtxParent(&m_mtxWorld);
 		}
 
+		// 最初から使わない場合
 		if (m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].nStart != 1)
 		{
-			ChangeObject(nCntSetParts, -1);
+			DeleteObject(nCntSetParts);
 		}
 
 		(*pCntParts)++;	// パーツのカウントを加算

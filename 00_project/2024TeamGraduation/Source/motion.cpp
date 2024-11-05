@@ -191,17 +191,33 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	for (auto& attackInfo : nowInfo.AttackInfo)
 	{
+		//--------------------------
+		// 攻撃情報
+		//--------------------------
 		// まだ衝撃カウントの行動をしてない状態にする
 		attackInfo.bInpactAct = false;
 
-		if (attackInfo.nInpactCnt > 0&&
-			m_fAllFrame >= attackInfo.nInpactCnt &&
-			!attackInfo.bInpactActSet)
+		if (attackInfo.nInpactCnt >= 0 &&
+			!attackInfo.bInpactActSet &&
+			m_fAllFrame >= static_cast<float>(attackInfo.nInpactCnt))
 		{// 衝撃のカウントを超えた時 && まだ行動してなかったら
 
 			// 行動してる状態にして、設定完了
 			attackInfo.bInpactAct = true;
 			attackInfo.bInpactActSet = true;
+		}
+
+
+		//--------------------------
+		// 揃え情報
+		//--------------------------
+		attackInfo.AlignInfo.bSet = false;
+
+		if (attackInfo.AlignInfo.nFrame >= 0 &&
+			m_fAllFrame >= static_cast<float>(attackInfo.AlignInfo.nFrame) &&
+			m_fAllFrame <= static_cast<float>(attackInfo.AlignInfo.nFrame + attackInfo.AlignInfo.nExtensionFrame))
+		{// フレーム内
+			attackInfo.AlignInfo.bSet = true;
 		}
 	}
 
@@ -594,6 +610,25 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 
 
 //==========================================================================
+// 指定した情報が衝撃カウントか
+//==========================================================================
+bool CMotion::IsImpactFrame(const Info& info)
+{
+	// 攻撃情報のコンテナ
+	const std::vector<AttackInfo>& vecAtkInfo = info.AttackInfo;
+
+	for (const auto& atkInfo : vecAtkInfo)
+	{
+		// 衝撃フレームじゃないと抜ける
+		if (!atkInfo.bInpactAct) continue;
+
+		return true;
+	}
+
+	return false;
+}
+
+//==========================================================================
 // 指定したインデックスの情報が衝撃カウントか
 //==========================================================================
 bool CMotion::IsImpactFrame(int nCntAtk)
@@ -605,6 +640,28 @@ bool CMotion::IsImpactFrame(int nCntAtk)
 	if (static_cast<int>(vecAtkInfo.size()) <= nCntAtk) return false;
 
 	return vecAtkInfo[nCntAtk].bInpactAct;
+}
+
+//==========================================================================
+// 指定した情報がフレーム内
+//==========================================================================
+bool CMotion::IsAlignFrame(const Info& info)
+{
+	// 攻撃情報のコンテナ
+	const std::vector<AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
+
+	for (const auto& atkInfo : vecAtkInfo)
+	{
+		// 揃え情報
+		const AlignInfo& align = atkInfo.AlignInfo;
+
+		// フレーム外で戻る
+		if (!align.bSet) continue;
+
+		return true;
+	}
+
+	return false;
 }
 
 //==========================================================================
@@ -972,6 +1029,19 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 								hoge >>			// ゴミ
 								hoge >>			// ＝
 								loadAttackInfo.nDamage;	// 攻撃力
+						}
+						else if (line.find("ALIGNFRAME") != std::string::npos)
+						{// ALIGNFRAMEが来たら足揃え
+
+							// ストリーム作成
+							std::istringstream lineStream(line);
+
+							// 情報渡す
+							lineStream >>
+								hoge >>			// ゴミ
+								hoge >>			// ＝
+								loadAttackInfo.AlignInfo.nFrame >>			// 衝撃のフレーム
+								loadAttackInfo.AlignInfo.nExtensionFrame;	// 猶予フレーム
 						}
 					}
 

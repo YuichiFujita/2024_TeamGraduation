@@ -20,9 +20,6 @@ class CXLoad
 {
 public:
 
-	// マクロ定義
-#define MAX_MAT				(512)		// マテリアルサイズ
-
 	struct SXFile
 	{
 		MyLib::Vector3 vtxMin;					// モデルの最小値
@@ -31,7 +28,7 @@ public:
 		LPD3DXMESH pMesh;						// メッシュ(頂点情報)へのポインタ
 		LPD3DXBUFFER pBuffMat;					// マテリアルへのポインタ
 		DWORD dwNumMat;							// マテリアルの数
-		D3DXMATERIAL pMatData[MAX_MAT];			// マテリアルのデータ
+		std::vector<D3DXMATERIAL> pMatData;		// マテリアルのデータ
 		int nVtxNum;							// 頂点数
 		int nFaceNum;							// 面の数
 		MyLib::Vector3 *pVtxPos;				// 頂点座標

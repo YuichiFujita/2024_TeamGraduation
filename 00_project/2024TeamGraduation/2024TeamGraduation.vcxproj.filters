@@ -96,6 +96,9 @@
     <Filter Include="ingame\special">
       <UniqueIdentifier>{ab4478a0-9acd-41b4-8000-ec3cf9cb914d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="character\dressup">
+      <UniqueIdentifier>{96dfd3e4-2a3d-41da-a2fa-48ac3dfc21b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -475,6 +478,15 @@
     </ClCompile>
     <ClCompile Include="Source\cutin.cpp">
       <Filter>ingame\special</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dressup_hair.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dressup.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dressup_accessory.cpp">
+      <Filter>character\dressup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -867,6 +879,15 @@
     </ClInclude>
     <ClInclude Include="Source\audienceHighPoly.h">
       <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_hair.h">
+      <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup.h">
+      <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_accessory.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
