@@ -220,8 +220,7 @@ void CGameManager::SetCameraTargetPosition()
 {
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤー内部リスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// プレイヤーイテレーター
-	float fPosL;	// 左座標
-	float fPosR;	// 右座標
+	float fPosL, fPosR;	// 左右座標
 
 	// 先頭プレイヤーの横座標を仮設定
 	CPlayer* pPlayerFront = *list.GetBegin();
@@ -249,27 +248,20 @@ void CGameManager::SetCameraTargetPosition()
 
 
 
-
-
-
-	float fCurDis = fPosR - fPosL;			// 左右距離
-	float fMaxDis = Court::SIZE.x * 2.0f;	// 最大距離
-	float fRate = fCurDis / fMaxDis;		// 距離割合
-	if (fRate < 0.05f)
-	{
-		fRate = 0.05f;
-	}
-
-	float fCameraDis = 2480.0f * fRate;
-	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fRate);
-	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fRate);
+	float fCurDis = fPosR - fPosL;				// 左右距離
+	float fMaxDis = Court::SIZE.x * 2.0f;		// 最大距離
+	float fRate = fCurDis / fMaxDis;			// 距離割合
+	float fCameraDis = 2479.0f * fRate + 1.0f;	// カメラ距離
+	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fRate);		// カメラY注視点
+	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fRate);	// カメラZ注視点
 
 	// 注視点を設定
 	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, fTargetY, fTargetZ));
 
-	// 注視点を設定
+	// 距離を設定
 	GET_MANAGER->GetCamera()->SetDistanceDest(fCameraDis);
 	GET_MANAGER->GetCamera()->SetDistance(fCameraDis);
+
 
 	GET_MANAGER->GetDebugProc()->Print("左右距離：%f\n", fCurDis);
 	GET_MANAGER->GetDebugProc()->Print("距離割合：%f\n", fRate);

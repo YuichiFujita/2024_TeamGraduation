@@ -201,7 +201,7 @@ void CCamera_Debug::UpdateDistance()
 	// 距離取得
 	float distance = m_pCamera->GetDistance();
 	float destDistance = m_pCamera->GetDistanceDest();
-	float originDistance = m_pCamera->GetOriginDistance();
+	float originDistance = m_pCamera->GetDistanceOrigin();
 
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -224,7 +224,7 @@ void CCamera_Debug::UpdateDistance()
 	// 距離設定
 	m_pCamera->SetDistance(distance);
 	m_pCamera->SetDistanceDest(destDistance);
-	m_pCamera->SetOriginDistance(originDistance);
+	m_pCamera->SetDistanceOrigin(originDistance);
 	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
 }
 

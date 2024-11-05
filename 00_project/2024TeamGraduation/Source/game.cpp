@@ -200,7 +200,7 @@ HRESULT CGame::Init()
 #endif
 
 	// カメラのリセット
-	CManager::GetInstance()->GetCamera()->Reset(CScene::MODE_GAME);
+	CManager::GetInstance()->GetCamera()->Reset();
 
 	// クリアの判定
 	SetEnableClear(true);
