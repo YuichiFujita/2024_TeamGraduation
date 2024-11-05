@@ -35,7 +35,7 @@
 
 // TODO：デバッグ、後で消しますいらないので
 #include "specialManager.h"
-
+#include "gymWallManager.h"
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
