@@ -286,8 +286,11 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 //============================================================
 void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// TODO：プレイヤーの座標にカメラ位置を補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// カメラ位置を攻撃プレイヤーの位置に
+
 	if (pCameraMotion->IsFinish())
 	{ // カメラモーションが終了した場合
 
