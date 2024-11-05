@@ -32,10 +32,9 @@ private:
 	// 列挙型定義
 	enum STATE
 	{
-		CAMERASTATE_NONE = 0,	// 通常
-		CAMERASTATE_SHAKE,		// 振動
-		CAMERASTATE_FOLLOW,		// 追従
-		CAMERASTATE_MAX
+		STATE_NONE = 0,	// 通常
+		STATE_FOLLOW,	// 追従
+		STATE_MAX
 	};
 
 public:
@@ -141,38 +140,30 @@ private:
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
 
 	// メンバ変数
-	D3DXMATRIX m_mtxProjection;		// プロジェクションマトリックス
-	D3DXMATRIX m_mtxView;			// ビューマトリックス
-	D3DVIEWPORT9 m_viewport;		// ビューポート
-	MyLib::Vector3 m_posV;			// 視点(カメラの位置)
-	MyLib::Vector3 m_posVDest;		// 目標の視点
-	MyLib::Vector3 m_posR;			// 注視点(見たい場所)
-	MyLib::Vector3 m_posRDest;		// 目標の注視点
-	MyLib::Vector3 m_posROrigin;	// 元の注視点
-	MyLib::Vector3 m_vecU;			// 上方向ベクトル
-	MyLib::Vector3 m_move;			// 移動量
-	MyLib::Vector3 m_rot;			// 向き
-	MyLib::Vector3 m_rotOrigin;		// 元の向き
-	MyLib::Vector3 m_rotDest;		// 目標の向き
-	MyLib::Vector3 m_posTarget;		// 追従目標の位置
-	MyLib::Vector3 m_posTargetDest;	// 目標の追従目標の位置
-
-	float m_fDistance;			// 距離
-	float m_fDestDistance;		// 目標の距離
-	float m_fOriginDistance;	// 元の距離
-	float m_nShakeLength;		// 揺れの長さ
-	float m_nShakeLengthY;		// Yの揺れの長さ
-	float m_fMoveShake;			// 揺れの移動量
-	float m_fMoveShakeY;		// Yの揺れの移動量
-	
-	bool m_bFollow;	// 追従判定
-	bool m_bMotion;	// モーション中判定
-	
-	float m_fTimerState;	// 状態カウンター
-	STATE m_state;			// 状態
-	CLightDir* m_pLight;	// ディレクショナルライト
-	CCameraMotion* m_pCameraMotion;		// カメラモーションのポインタ
-	CCamera_Debug* m_pDebugControll;	// デバッグ処理
+	CCamera_Debug* m_pDebugControll;	// デバッグ情報
+	CCameraMotion* m_pCameraMotion;		// カメラモーション情報
+	CLightDir* m_pLight;				// ディレクショナルライト情報
+	D3DXMATRIX m_mtxProjection;			// プロジェクションマトリックス
+	D3DXMATRIX m_mtxView;				// ビューマトリックス
+	D3DVIEWPORT9 m_viewport;			// ビューポート
+	MyLib::Vector3 m_posV;				// 視点
+	MyLib::Vector3 m_posVDest;			// 目標視点
+	MyLib::Vector3 m_posR;				// 注視点
+	MyLib::Vector3 m_posRDest;			// 目標注視点
+	MyLib::Vector3 m_posROrigin;		// 原点注視点
+	MyLib::Vector3 m_vecU;				// 上方向ベクトル
+	MyLib::Vector3 m_move;				// 移動量
+	MyLib::Vector3 m_rot;				// 向き
+	MyLib::Vector3 m_rotDest;			// 目標向き
+	MyLib::Vector3 m_rotOrigin;			// 原点向き
+	MyLib::Vector3 m_posTarget;			// 追従位置
+	MyLib::Vector3 m_posTargetDest;		// 目標追従位置
+	float m_fDistance;					// 距離
+	float m_fDestDistance;				// 目標距離
+	float m_fOriginDistance;			// 原点距離
+	bool m_bFollow;						// 追従判定
+	bool m_bMotion;						// モーション中判定
+	STATE m_state;						// 状態
 };
 
 #endif
