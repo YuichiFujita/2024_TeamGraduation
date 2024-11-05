@@ -255,15 +255,13 @@ void CGameManager::SetCameraTargetPosition()
 	float fCurDis = fPosR - fPosL;			// ¶‰E‹——£
 	float fMaxDis = Court::SIZE.x * 2.0f;	// Å‘å‹——£
 	float fRate = fCurDis / fMaxDis;		// ‹——£Š„‡
-	if (fRate < 0.15f)
+	if (fRate < 0.05f)
 	{
-		fRate = 0.15f;
+		fRate = 0.05f;
 	}
 
 	float fCameraDis = 2180.0f * fRate;
-	float fInverse = fabsf(fRate - 1.0f);
-
-	float fTargetY = UtilFunc::Correction::EasingLinear(400.0f, 200.0f, fRate);
+	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 350.0f, fRate);
 	float fTargetZ = UtilFunc::Correction::EasingLinear(-1680.0f, -380.0f, fRate);
 
 	// ’‹“_‚ğİ’è
