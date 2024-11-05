@@ -86,7 +86,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		}
 	}
 	
-#if 0
+#if 1
 	// カニ歩き判定
 	if (player->IsCrab())
 	{
@@ -115,10 +115,15 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 {
 	// 目標の向き取得
 	float fRotDest = player->GetRotDest();
-	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();
-
 	MyLib::Vector3 posCourt = MyLib::Vector3();
 	MyLib::Vector3 pos = player->GetPosition();
+
+	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CPlayer* pHaveP = pBall->GetPlayer();
+	if (pHaveP != nullptr) posCourt = pHaveP->GetPosition();
+
+#if 0
 	posCourt.z = pos.z;
 
 	// 相手コート奥を見る
@@ -139,6 +144,7 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 	default:
 		break;
 	}
+#endif
 
 	D3DXVECTOR3 vecDiff = D3DXVECTOR3(pos.x - posCourt.x,
 		0.0f,

@@ -597,6 +597,7 @@ void CPlayer::ResetFrag()
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
+	m_bDash = false;
 
 	switch (nType)
 	{
@@ -1375,7 +1376,8 @@ bool CPlayer::IsCrab()
 
 	// ブリンク＆走りでない
 	if (action == CPlayer::EAction::ACTION_BLINK) return false;
-	if (motionType == CPlayer::EMotion::MOTION_RUN) return false;
+	if (action == CPlayer::EAction::ACTION_JUMP && m_bDash) return false;
+	if (m_bDash) return false;
 
 	return true;
 }
