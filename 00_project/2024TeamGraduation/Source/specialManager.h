@@ -78,6 +78,7 @@ private:
 
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
+	void SetPlayerHypePosition(const bool bInverse);	// プレイヤー盛り上げ位置設定
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数

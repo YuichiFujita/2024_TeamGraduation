@@ -883,11 +883,12 @@ bool CPlayer::Hit(CBall* pBall)
 //==========================================================================
 void CPlayer::SetSpecialAttack()
 {
+	bool bInverse = (m_pStatus->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 
 	// かめはめ波モーションを設定
-	pCameraMotion->SetMotion(CCameraMotion::MOTION_KAMEHAMEHA, CCameraMotion::Linear);	// TODO：スペシャルごとに変更
+	pCameraMotion->SetMotion(CCameraMotion::MOTION_KAMEHAMEHA, bInverse);	// TODO：スペシャルごとに変更
 
 	// スペシャル状態にする
 	SetState(STATE_SPECIAL);

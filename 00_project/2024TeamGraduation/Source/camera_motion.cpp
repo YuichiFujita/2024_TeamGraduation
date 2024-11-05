@@ -50,6 +50,7 @@ CCameraMotion::CCameraMotion()
 	m_bEdit = false;			// エディターフラグ
 	m_bPause = false;			// ポーズ判定
 	m_bSystemPause = false;		// システムポーズ判定
+	m_bInverse = false;			// 反転フラグ
 }
 
 //==========================================================================
@@ -437,6 +438,14 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		break;
 	}
 
+	if (m_bInverse)
+	{ // 反転する場合
+
+		// 向きをY軸に反転させる
+		rot.y += D3DX_PI;
+		UtilFunc::Transformation::RotNormalize(rot.y);
+	}
+
 	// カメラ情報設定
 	pCamera->SetPositionR(m_pos + posR);
 	pCamera->SetRotation(rot);
@@ -499,7 +508,7 @@ void CCameraMotion::UpdateEdit()
 		ImGui::SetNextItemWidth(150.0f);
 		if (ImGui::Button("Play / RePlay"))
 		{
-			SetMotion(m_EditInfo.motionIdx, EASING::Linear);
+			SetMotion(m_EditInfo.motionIdx, false, EASING::Linear);
 		}
 		ImGui::SameLine();
 
@@ -859,7 +868,7 @@ void CCameraMotion::EditTrigger()
 //==========================================================================
 // モーション設定
 //==========================================================================
-void CCameraMotion::SetMotion(int motion, EASING EasingType)
+void CCameraMotion::SetMotion(int motion, bool bInverse, EASING EasingType)
 {
 	m_nNowMotionIdx = motion;
 	m_nNowKeyIdx = 0;
@@ -868,6 +877,7 @@ void CCameraMotion::SetMotion(int motion, EASING EasingType)
 	m_fTriggerTimer = 0.0f;
 	m_bFinish = false;
 	m_bPause = false;
+	m_bInverse = bInverse;
 	m_EasingType = EasingType;
 }
 
