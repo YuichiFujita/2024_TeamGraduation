@@ -4,7 +4,7 @@
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "sample_objX.h"
+#include "gymWall.h"
 #include "manager.h"
 #include "calculation.h"
 
@@ -13,27 +13,27 @@
 //==========================================================================
 namespace
 {
-	const char* MODEL = "data\\MODEL\\box.x";
+	const char* MODEL = "data\\MODEL\\gym\\3D_Gym_Wall.x";
 }
 
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CSample_ObjX::SAMPLE_FUNC CSample_ObjX::m_SampleFuncList[] =
+CGymWall::SAMPLE_FUNC CGymWall::m_SampleFuncList[] =
 {
-	&CSample_ObjX::SampleWho,	// フー
-	&CSample_ObjX::SampleWao,	// ワオ
+	&CGymWall::SampleWho,	// フー
+	&CGymWall::SampleWao,	// ワオ
 };
 
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-CListManager<CSample_ObjX> CSample_ObjX::m_List = {};	// リスト
+CListManager<CGymWall> CGymWall::m_List = {};	// リスト
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CSample_ObjX::CSample_ObjX(int nPriority) : CObjectX(nPriority)
+CGymWall::CGymWall(int nPriority) : CObjectX(nPriority)
 {
 	// 値のクリア
 	m_fStateTime = 0.0f;	// 状態カウンター
@@ -43,7 +43,7 @@ CSample_ObjX::CSample_ObjX(int nPriority) : CObjectX(nPriority)
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CSample_ObjX::~CSample_ObjX()
+CGymWall::~CGymWall()
 {
 	
 }
@@ -51,10 +51,10 @@ CSample_ObjX::~CSample_ObjX()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CSample_ObjX *CSample_ObjX::Create()
+CGymWall *CGymWall::Create()
 {
 	// メモリの確保
-	CSample_ObjX* pObj = DEBUG_NEW CSample_ObjX;
+	CGymWall* pObj = DEBUG_NEW CGymWall;
 
 	if (pObj != nullptr)
 	{
@@ -68,7 +68,7 @@ CSample_ObjX *CSample_ObjX::Create()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CSample_ObjX::Init()
+HRESULT CGymWall::Init()
 {
 	// リストに追加
 	m_List.Regist(this);
@@ -89,7 +89,7 @@ HRESULT CSample_ObjX::Init()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CSample_ObjX::Uninit()
+void CGymWall::Uninit()
 {
 	
 	// リストから削除
@@ -102,7 +102,7 @@ void CSample_ObjX::Uninit()
 //==========================================================================
 // 削除
 //==========================================================================
-void CSample_ObjX::Kill()
+void CGymWall::Kill()
 {
 	
 	// リストから削除
@@ -115,7 +115,7 @@ void CSample_ObjX::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CSample_ObjX::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CGymWall::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態カウンター加算
 	m_fStateTime += fDeltaTime * fSlowRate;
@@ -128,7 +128,7 @@ void CSample_ObjX::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 // フー
 //==========================================================================
-void CSample_ObjX::SampleWho()
+void CGymWall::SampleWho()
 {
 	
 }
@@ -136,7 +136,7 @@ void CSample_ObjX::SampleWho()
 //==========================================================================
 // ワオ
 //==========================================================================
-void CSample_ObjX::SampleWao()
+void CGymWall::SampleWao()
 {
 
 }
@@ -144,7 +144,7 @@ void CSample_ObjX::SampleWao()
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CSample_ObjX::Draw()
+void CGymWall::Draw()
 {
 	// 描画
 	CObjectX::Draw();

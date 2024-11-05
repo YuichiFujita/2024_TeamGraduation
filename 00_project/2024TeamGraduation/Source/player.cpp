@@ -311,13 +311,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
-	// カメラの情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	if (pCamera != nullptr)
-	{
-		pCamera->SetTargetPosition(pos);
-	}
-
 	// 影の位置更新
 	if (m_pShadow != nullptr)
 	{
@@ -604,6 +597,7 @@ void CPlayer::ResetFrag()
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
+	m_bDash = false;
 
 	switch (nType)
 	{
@@ -1382,7 +1376,8 @@ bool CPlayer::IsCrab()
 
 	// ブリンク＆走りでない
 	if (action == CPlayer::EAction::ACTION_BLINK) return false;
-	if (motionType == CPlayer::EMotion::MOTION_RUN) return false;
+	if (action == CPlayer::EAction::ACTION_JUMP && m_bDash) return false;
+	if (m_bDash) return false;
 
 	return true;
 }

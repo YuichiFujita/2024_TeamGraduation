@@ -47,8 +47,7 @@ void CCamera_Debug::Update()
 	{// F7が押された,追従切り替え
 
 		// 反転
-		bool bFollow = m_pCamera->IsFollow() ? false : true;
-		m_pCamera->SetEnableFollow(bFollow);
+		m_pCamera->SetEnableFollow(!m_pCamera->IsFollow());
 	}
 
 	if (pMouse->GetPress(CInputMouse::BUTTON_LEFT) &&
@@ -202,7 +201,7 @@ void CCamera_Debug::UpdateDistance()
 	// 距離取得
 	float distance = m_pCamera->GetDistance();
 	float destDistance = m_pCamera->GetDistanceDest();
-	float originDistance = m_pCamera->GetOriginDistance();
+	float originDistance = m_pCamera->GetDistanceOrigin();
 
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -225,7 +224,7 @@ void CCamera_Debug::UpdateDistance()
 	// 距離設定
 	m_pCamera->SetDistance(distance);
 	m_pCamera->SetDistanceDest(destDistance);
-	m_pCamera->SetOriginDistance(originDistance);
+	m_pCamera->SetDistanceOrigin(originDistance);
 	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
 }
 

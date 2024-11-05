@@ -340,7 +340,7 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 	{ // カメラモーションが終わった場合
 
 		// カメラ配置をリセット
-		pCamera->Reset(CScene::MODE_GAME);
+		pCamera->Reset();	// TODO：ここでカメラ追従に戻す
 	}
 
 	// TODO：投げた瞬間の解除はちょっと...

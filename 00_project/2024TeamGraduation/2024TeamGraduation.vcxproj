@@ -199,6 +199,8 @@
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
+    <ClCompile Include="Source\gymWall.cpp" />
+    <ClCompile Include="Source\gymWallManager.cpp" />
     <ClCompile Include="Source\handle_Move.cpp" />
     <ClCompile Include="Source\handle_Scale.cpp" />
     <ClCompile Include="Source\Imguimanager.cpp" />
@@ -337,6 +339,8 @@
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gamemanager.h" />
+    <ClInclude Include="Source\gymWall.h" />
+    <ClInclude Include="Source\gymWallManager.h" />
     <ClInclude Include="Source\handle_Move.h" />
     <ClInclude Include="Source\handle_Scale.h" />
     <ClInclude Include="Source\Imguimanager.h" />

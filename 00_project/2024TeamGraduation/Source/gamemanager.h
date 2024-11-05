@@ -21,6 +21,7 @@
 class CBall;
 class CCollisionLine_Box;
 class CTeamStatus;
+class CGymWallManager;
 
 //==========================================================================
 // クラス定義
@@ -77,6 +78,7 @@ public:
 	bool IsControll() { return m_bControll; }				// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }	// コートサイズ取得
 	bool SetPosLimit(MyLib::Vector3& pos);					// コート移動制限
+	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }
 
 	void Debug();			// デバッグ
 	void StartSetting();	// スタート時の設定
@@ -90,10 +92,12 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void SceneStart();	// 開始演出
-	void UpdateAudience();		// 観客更新
-	void UpdateSpecialStag();	// スペシャル演出更新
-	void CreateTeamStatus();	// チームステータス生成
+	virtual void SceneStart();		// 開始演出
+	void SetCameraTargetPosition();	// カメラ追従注視点設定
+	void SetCameraDistance();		// カメラ追従距離設定
+	void UpdateAudience();			// 観客更新
+	void UpdateSpecialStag();		// スペシャル演出更新
+	void CreateTeamStatus();		// チームステータス生成
 
 	//=============================
 	// メンバ変数
@@ -102,6 +106,8 @@ private:
 	ESceneType m_OldSceneType;	// シーンの種類
 	bool m_bControll;			// 操作できるか
 	float m_fSceneTimer;		// シーンタイマー
+
+	CGymWallManager* m_pGymWallManager;
 
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
 	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];	// チームステータス
