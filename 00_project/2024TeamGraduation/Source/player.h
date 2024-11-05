@@ -237,8 +237,8 @@ protected:
 	virtual void DeleteControl();	// 操作削除
 	virtual void Debug();			// デバッグ処理
 	void UpdateFootLR();			// 足左右の更新
-	CPlayerControlMove* GetPlayerControlMove();																	// 操作取得(移動)
-	CPlayerControlAction* GetPlayerControlAction();																// 操作取得(アクション)
+	CPlayerControlMove* GetPlayerControlMove();		// 操作取得(移動)
+	CPlayerControlAction* GetPlayerControlAction();	// 操作取得(アクション)
 	void SetPlayerControlMove(CPlayerControlMove* pControlMove) { m_pControlMove = pControlMove; }				// 操作設定(移動)
 	void SetPlayerControlAction(CPlayerControlAction* pControlAction) { m_pControlAction = pControlAction; }	// 操作設定(アクション)
 

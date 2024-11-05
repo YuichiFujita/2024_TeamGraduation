@@ -363,7 +363,7 @@ void CCamera::SetCamera()
 
 	// プロジェクションマトリックスの作成
 	D3DXMatrixPerspectiveFovLH(&m_mtxProjection,
-								D3DXToRadian(45.0f),	// 視野角
+								D3DXToRadian(30.0f),	// 視野角
 								(float)m_viewport.Width / (float)m_viewport.Height,	// アスペクト比
 								10.0f,		// 手前の制限
 								150000.0f);	// 奥行きの制限
@@ -487,6 +487,10 @@ void CCamera::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 			m_nShakeLength = 0.0f;	// 揺れの大きさ
 			m_nShakeLengthY = 0.0f;	// Yの揺れの大きさ
 		}
+		break;
+
+	default:
+		assert(false);
 		break;
 	}
 }

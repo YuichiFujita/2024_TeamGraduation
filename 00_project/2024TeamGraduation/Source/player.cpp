@@ -302,13 +302,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
-	// カメラの情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	if (pCamera != nullptr)
-	{
-		pCamera->SetTargetPosition(pos);
-	}
-
 	// 影の位置更新
 	if (m_pShadow != nullptr)
 	{
