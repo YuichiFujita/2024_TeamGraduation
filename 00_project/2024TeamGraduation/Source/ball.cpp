@@ -1210,5 +1210,6 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 //==========================================================================
 void CBall::CalcSetInitialSpeed(const float fMove)
 {
+	// èâë¨Çó^Ç¶ÇÈ
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
 }
