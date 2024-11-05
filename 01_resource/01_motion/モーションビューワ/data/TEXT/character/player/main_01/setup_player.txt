@@ -210,7 +210,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 23
+NUM_MOTION = 24
 
 
 #------------------------------------------------------------------------------
@@ -238,6 +238,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt			# スペ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt				# 勝利
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt			# ダメージ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt			# 死亡
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt		# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt		# 前グリップ
 
 
