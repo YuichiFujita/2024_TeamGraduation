@@ -247,8 +247,7 @@ void CGameManager::SetCameraTargetPosition()
 	float fCourtHalfSize = Court::SIZE.x * 0.5f;	// コートの半分の大きさ
 	UtilFunc::Transformation::ValueNormalize(fTargetX, CENTER_LINE + fCourtHalfSize, CENTER_LINE - fCourtHalfSize);
 
-	// 注視点を設定
-	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, 200.0f, -560.0f));
+
 
 
 
@@ -256,12 +255,17 @@ void CGameManager::SetCameraTargetPosition()
 	float fCurDis = fPosR - fPosL;			// 左右距離
 	float fMaxDis = Court::SIZE.x * 2.0f;	// 最大距離
 	float fRate = fCurDis / fMaxDis;		// 距離割合
+	if (fRate < 0.05f)
+	{
+		fRate = 0.05f;
+	}
 
 	float fCameraDis = 2180.0f * fRate;
-	if (fCameraDis < 1000.0f)
-	{
-		fCameraDis = 1000.0f;
-	}
+	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 350.0f, fRate);
+	float fTargetZ = UtilFunc::Correction::EasingLinear(-1680.0f, -380.0f, fRate);
+
+	// 注視点を設定
+	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, fTargetY, fTargetZ));
 
 	// 注視点を設定
 	GET_MANAGER->GetCamera()->SetDistanceDest(fCameraDis);
