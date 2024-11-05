@@ -60,8 +60,8 @@ public:
 	HRESULT Init();		// 初期化
 	void LoadText();	// テキスト読み込み
 	void Uninit();		// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 更新
-	void SetMotion(int motion, EASING EasingType);	// モーション設定
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 更新
+	void SetMotion(int motion, bool bInverse = false, EASING EasingType = EASING::Linear);	// モーション設定
 
 	// 情報操作
 	void SetPosition(const MyLib::Vector3& pos) { m_pos = pos; }	// 位置設定
@@ -173,6 +173,7 @@ private:
 	bool m_bPause;			// ポーズ判定
 	bool m_bSystemPause;	// システムポーズ判定
 	bool m_bTrigger;		// トリガー判定
+	bool m_bInverse;		// 反転フラグ
 	EditInfo m_EditInfo;	// エディット情報
 
 	CCameraMotion_Trigger* m_pCameraMotion_Trigger[MOTION_MAX];

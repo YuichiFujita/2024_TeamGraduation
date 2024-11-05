@@ -248,6 +248,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	if (m_pCutIn->IsEnd())
 	{ // カットイン演出が終了した場合
 
+		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 
@@ -258,20 +259,13 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		SAFE_UNINIT(m_pCutIn);
 
 		// スペシャル盛り上げモーションを設定
-		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, CCameraMotion::Linear);
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse);
 
 		// 攻撃側プレイヤーチームの観客を盛り上げる
 		CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 
-		// TODO：プレイヤー位置の調整
-#if 1
-		// 攻撃プレイヤーの位置を設定
-		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
-
-		// 攻撃プレイヤーの向きを設定
-		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
-		m_pAttackPlayer->SetRotDest(0.0f);
-#endif
+		// プレイヤー盛り上げ位置の設定
+		SetPlayerHypePosition(bInverse);
 
 		// 盛り上がり状態にする
 		m_state = STATE_HYPE;
@@ -301,13 +295,18 @@ void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate,
 		m_pAttackPlayer->SetSpecialAttack();
 
 		// TODO：プレイヤー位置の調整
-#if 1
+#if 0
 		// 攻撃プレイヤーの位置を設定
 		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
 
 		// 攻撃プレイヤーの向きを設定
 		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
 		m_pAttackPlayer->SetRotDest(-HALF_PI);
+#else
+		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+
+		// プレイヤー盛り上げ位置の設定
+		SetPlayerHypePosition(bInverse);
 #endif
 
 		// プレイヤースペシャル演出状態にする
@@ -394,6 +393,21 @@ void CSpecialManager::UpdateKamehameha(const float fDeltaTime, const float fDelt
 		m_state = STATE_END;
 	}
 #endif
+}
+
+//============================================================
+//	プレイヤー盛り上げ位置の設定処理
+//============================================================
+void CSpecialManager::SetPlayerHypePosition(const bool bInverse)
+{
+	float fOffset = (bInverse) ? 1.0f : -1.0f;	// オフセット方向
+
+	// 攻撃プレイヤーの位置を設定
+	m_pAttackPlayer->SetPosition(MyLib::Vector3(800.0f * fOffset, 0.0f, 0.0f));
+
+	// 攻撃プレイヤーの向きを設定
+	m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI * fOffset, 0.0f));
+	m_pAttackPlayer->SetRotDest(HALF_PI * fOffset);
 }
 
 //============================================================
