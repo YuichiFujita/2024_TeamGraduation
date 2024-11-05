@@ -1,12 +1,12 @@
 //=============================================================================
 // 
-//  サンプル_オブジェクトXヘッダー [sample_objX.h]
-//  Author : 相馬靜雅
+//  ジムウォールヘッダー [sample_objX.h]
+//  Author : Takeru
 // 
 //=============================================================================
 
-#ifndef _SAMPLE_OBJX_H_
-#define _SAMPLE_OBJX_H_		// 二重インクルード防止
+#ifndef _GYM_WALL_H_
+#define _GYM_WALL_H_		// 二重インクルード防止
 
 #include "objectX.h"
 #include "listmanager.h"
@@ -15,7 +15,7 @@
 // クラス定義
 //==========================================================================
 // サンプル_オブジェクトXクラス
-class CSample_ObjX : public CObjectX
+class CGymWall : public CObjectX
 {
 public:
 	
@@ -29,8 +29,8 @@ public:
 		SAMPLE_MAX
 	};
 
-	CSample_ObjX(int nPriority = 6);
-	~CSample_ObjX();
+	CGymWall(int nPriority = 6);
+	~CGymWall();
 
 	//=============================
 	// オーバーライド関数
@@ -52,15 +52,15 @@ public:
 	@brief		生成処理
 	@details	必要があれば引数追加
 	*/
-	static CSample_ObjX *Create();
-	static CListManager<CSample_ObjX> GetListObj() { return m_List; }	// リスト取得
+	static CGymWall *Create();
+	static CListManager<CGymWall> GetListObj() { return m_List; }	// リスト取得
 
 private:
 
 	//=============================
 	// 関数リスト
 	//=============================
-	typedef void(CSample_ObjX::*SAMPLE_FUNC)();
+	typedef void(CGymWall::*SAMPLE_FUNC)();
 	static SAMPLE_FUNC m_SampleFuncList[];	// 関数のリスト
 
 	//=============================
@@ -75,7 +75,7 @@ private:
 	//=============================
 	float m_fStateTime;				// 状態カウンター
 	Sample m_state;					// 状態
-	static CListManager<CSample_ObjX> m_List;	// リスト
+	static CListManager<CGymWall> m_List;	// リスト
 
 };
 

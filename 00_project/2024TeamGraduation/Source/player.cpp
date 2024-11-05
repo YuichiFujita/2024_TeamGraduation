@@ -72,6 +72,12 @@ namespace StateTime
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
 }
 
+namespace Align	// 足揃え
+{
+	const float MULTIPLY_MOVE = 0.25f;	// 移動倍率
+	const float MULTIPLY_MOTION = 1.5f;	// モーション倍率
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -114,6 +120,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_bFootLR = false;				// 足左右判定
+	m_bAlign = false;	// 揃え
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
@@ -276,7 +283,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	ResetFrag();
 
 	// 親の更新処理
-	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
+	float nowSlowRate = fSlowRate;
+	if (m_bAlign) nowSlowRate *= Align::MULTIPLY_MOTION;
+	CObjectChara::Update(fDeltaTime, fDeltaRate, nowSlowRate);
 
 	// 操作
 	Controll(fDeltaTime, fDeltaRate, fSlowRate);
@@ -393,7 +402,7 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx, int startKey) const
+void CPlayer::SetMotion(int motionIdx, int startKey, bool bBlend) const
 {
 	//TAKADA: はじく条件(死んだら)
 	//if (m_sMotionFrag.bDead) return;
@@ -404,7 +413,7 @@ void CPlayer::SetMotion(int motionIdx, int startKey) const
 	{
 		return;
 	}
-	pMotion->Set(motionIdx, startKey);
+	pMotion->Set(motionIdx, startKey, bBlend);
 }
 
 //==========================================================================
@@ -412,9 +421,10 @@ void CPlayer::SetMotion(int motionIdx, int startKey) const
 //==========================================================================
 void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	m_bAlign = false;	// 揃え
 
 	// 足左右の更新
-	UpdateFootLR();
+	//UpdateFootLR();
 
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -447,17 +457,17 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 
 		// 開始キー
 		int nStartKey = 0;
-		/*if (m_bFootLR)
+		if (m_bFootLR)
 		{
-			nStartKey = (info.nNumKey - 1) / 2;
-		}*/
+			nStartKey = info.nNumKey / 2;
+		}
 
 		// モーション設定
 		SetMotion(motionType, nStartKey);
 
 		if (nOldType != pMotion->GetType())
 		{
-			m_bFootLR = true;
+			//m_bFootLR = true;
 		}
 	}
 	else if (m_sMotionFrag.bJump)
@@ -495,13 +505,16 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 		SetMotion(MOTION_DEF);
 	}
 	else if (nType == EMotion::MOTION_WALK)
-	{
-		if (m_bFootLR)
-		{
-			// ニュートラルモーション設定
-			SetMotion(EMotion::MOTION_GRIP_DEF);
-		}
-		else if (!pMotion->IsAlignFrame(info))
+	{// ニュートラルモーション設定
+		//SetMotion(EMotion::MOTION_GRIP_DEF);
+		//return;
+
+		//if (m_bFootLR)
+		//{
+		//	// ニュートラルモーション設定
+		//	SetMotion(EMotion::MOTION_GRIP_DEF);
+		//}
+		 if (!pMotion->IsAlignFrame(info))
 		{// 足が揃ってない
 
 			// 移動量取得
@@ -526,6 +539,7 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 			// 補正倍率
 			fMove *= fDeltaRate;
 			fMove *= fSlowRate;
+			fMove *= Align::MULTIPLY_MOVE;		// 揃えるからゆっくり
 
 			// 移動量更新
 			MyLib::Vector3 rot = GetRotation();
@@ -534,7 +548,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 
 			// 移動量設定
 			SetMove(move);
-		}
+			m_bAlign = true;	// 揃え
+		 }
 		else
 		{
 			// ニュートラルモーション設定

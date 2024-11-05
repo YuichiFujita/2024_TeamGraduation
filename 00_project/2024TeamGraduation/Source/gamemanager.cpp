@@ -22,6 +22,7 @@
 #include "collisionLine_Box.h"
 #include "teamStatus.h"
 #include "audience.h"
+#include "gymWallManager.h"
 
 //==========================================================================
 // 定数定義
@@ -45,6 +46,8 @@ CGameManager::CGameManager()
 	m_OldSceneType = SCENE_MAIN;	// シーンの種類(過去)
 	m_bControll = false;		// 操作できるか
 	m_fSceneTimer = 0.0f;		// シーンタイマー
+
+	m_pGymWallManager = nullptr;	// ジム壁マネジャー
 
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 
@@ -100,6 +103,9 @@ HRESULT CGameManager::Init()
 
 	// コートサイズ
 	m_courtSize = Court::SIZE;
+
+	// ジム壁マネージャ生成
+	m_pGymWallManager = CGymWallManager::Create();
 
 #if _DEBUG
 	m_SceneType = ESceneType::SCENE_MAIN;	// シーンの種類 

@@ -180,7 +180,7 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0) const;				// モーションの設定
+	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;				// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
 	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
@@ -317,6 +317,7 @@ private:
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定
 	bool m_bFootLR;				// 足左右判定 (t: 右 / f: 左)
+	bool m_bAlign;				// 揃え
 	SMotionFrag m_sMotionFrag;	// モーションのフラグ
 
 	//-----------------------------
