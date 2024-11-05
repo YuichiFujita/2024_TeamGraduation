@@ -87,10 +87,9 @@ public:
 	HRESULT ReadText(const std::string& file);	// 外部ファイル読み込み処理
 	virtual HRESULT SetCharacter(const std::string& file);	// キャラクター設定
 
-	void ChangeObject(int nDeleteParts, int nNewParts);
-	void ChangeObject(int nSwitchType);		// 切り替えの種類
+	void ChangeObject(int nSwitchIdx, const std::string& file);		// 切り替えの種類
 	void SetObject(int nNewParts);			// モデルの設定
-	void DeleteObject(int nSwitchType);		// モデル削除
+	void DeleteObject(int nDeleteIdx);		// モデル削除
 
 	int GetNumModel();					// モデル数取得
 	void SetNumModel(int nNumModel);		// モデル数設定

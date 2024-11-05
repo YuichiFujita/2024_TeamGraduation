@@ -22,19 +22,18 @@
 #include "collisionLine_Box.h"
 #include "teamStatus.h"
 #include "audience.h"
+#include "gymWallManager.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-
-}
-
-namespace Court
-{//ドッジボールコート情報
-
-	const D3DXVECTOR3 SIZE = D3DXVECTOR3(1500.0f, 100.0f, 800.0f);		// サイズ
+	//ドッジボールコート情報
+	namespace Court
+	{
+		const D3DXVECTOR3 SIZE = D3DXVECTOR3(950.0f, 100.0f, 560.0f);	// サイズ
+	}
 }
 
 //==========================================================================
@@ -47,6 +46,8 @@ CGameManager::CGameManager()
 	m_OldSceneType = SCENE_MAIN;	// シーンの種類(過去)
 	m_bControll = false;		// 操作できるか
 	m_fSceneTimer = 0.0f;		// シーンタイマー
+
+	m_pGymWallManager = nullptr;	// ジム壁マネジャー
 
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 
@@ -102,6 +103,9 @@ HRESULT CGameManager::Init()
 
 	// コートサイズ
 	m_courtSize = Court::SIZE;
+
+	// ジム壁マネージャ生成
+	m_pGymWallManager = CGymWallManager::Create();
 
 #if _DEBUG
 	m_SceneType = ESceneType::SCENE_MAIN;	// シーンの種類 
@@ -161,6 +165,7 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 	case CGameManager::ESceneType::SCENE_MAIN:
 		m_bControll = true;
+		SetCameraTargetPosition();
 		UpdateAudience();
 		break;
 
@@ -208,6 +213,67 @@ void CGameManager::StartSetting()
 	
 }
 
+//==========================================================================
+// カメラ追従の注視点設定
+//==========================================================================
+void CGameManager::SetCameraTargetPosition()
+{
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤー内部リスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// プレイヤーイテレーター
+	float fPosL;	// 左座標
+	float fPosR;	// 右座標
+
+	// 先頭プレイヤーの横座標を仮設定
+	CPlayer* pPlayerFront = *list.GetBegin();
+	fPosL = fPosR = pPlayerFront->GetPosition().x;
+
+	while (list.ListLoop(itr))
+	{ // 要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
+
+		// 左の更新
+		if (posPlayer.x < fPosL) { fPosL = posPlayer.x; }
+
+		// 右の更新
+		if (posPlayer.x > fPosR) { fPosR = posPlayer.x; }
+	}
+
+	// 左右座標の平均からX注視点を計算
+	float fTargetX = (fPosL + fPosR) * 0.5f;
+
+	// X注視点の補正
+	float fCourtHalfSize = Court::SIZE.x * 0.5f;	// コートの半分の大きさ
+	UtilFunc::Transformation::ValueNormalize(fTargetX, CENTER_LINE + fCourtHalfSize, CENTER_LINE - fCourtHalfSize);
+
+
+
+
+
+
+	float fCurDis = fPosR - fPosL;			// 左右距離
+	float fMaxDis = Court::SIZE.x * 2.0f;	// 最大距離
+	float fRate = fCurDis / fMaxDis;		// 距離割合
+	if (fRate < 0.05f)
+	{
+		fRate = 0.05f;
+	}
+
+	float fCameraDis = 2480.0f * fRate;
+	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fRate);
+	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fRate);
+
+	// 注視点を設定
+	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, fTargetY, fTargetZ));
+
+	// 注視点を設定
+	GET_MANAGER->GetCamera()->SetDistanceDest(fCameraDis);
+	GET_MANAGER->GetCamera()->SetDistance(fCameraDis);
+
+	GET_MANAGER->GetDebugProc()->Print("左右距離：%f\n", fCurDis);
+	GET_MANAGER->GetDebugProc()->Print("距離割合：%f\n", fRate);
+}
 
 //==========================================================================
 // 開始演出

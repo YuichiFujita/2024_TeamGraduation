@@ -27,7 +27,7 @@ private:
 	{
 		CAMERASTATE_NONE = 0,	// 通常
 		CAMERASTATE_SHAKE,		// 振動
-		CAMERASTATE_PRAYER,		// 祈り
+		CAMERASTATE_FOLLOW,		// 追従
 		CAMERASTATE_MAX
 	};
 
@@ -88,10 +88,10 @@ public:
 	//--------------------------
 	// 向き
 	//--------------------------
-	void SetRotation(const MyLib::Vector3& rot) { m_rot = rot; }			// 向き設定
-	MyLib::Vector3 GetRotation() const { return m_rot; }					// 向き取得
-	void SetDestRotation(const MyLib::Vector3& rot) { m_rotDest = rot; }	// 目標の向き設定
-	MyLib::Vector3 GetDestRotation() { return m_rotDest; }					// 目標の向き取得
+	void SetRotation(const MyLib::Vector3& rot) { m_rot = rot; }				// 向き設定
+	MyLib::Vector3 GetRotation() const { return m_rot; }						// 向き取得
+	void SetDestRotation(const MyLib::Vector3& rot) { m_rotDest = rot; }		// 目標の向き設定
+	MyLib::Vector3 GetDestRotation() { return m_rotDest; }						// 目標の向き取得
 	void SetOriginRotation(const MyLib::Vector3& rot) { m_rotOrigin = rot; }	// 目標の向き設定
 	MyLib::Vector3 GetOriginRotation() { return m_rotOrigin; }					// 目標の向き取得
 
@@ -104,14 +104,14 @@ public:
 	//--------------------------
 	// カメラモーション
 	//--------------------------
-	CCameraMotion* GetCameraMotion() { return m_pCameraMotion; }		// カメラモーションのポインタ取得
+	CCameraMotion* GetCameraMotion() { return m_pCameraMotion; }	// カメラモーションのポインタ取得
 
 	//--------------------------
 	// フラグ
 	//--------------------------
 	inline void SetEnableLight(bool bLight) { m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
-	bool IsFollow() { return m_bFollow; }							// 追従判定取得
-	void SetEnableFollow(bool bFollow) { m_bFollow = bFollow; }		// 追従の判定設定
+	bool IsFollow() { return m_bFollow; }						// 追従判定取得
+	void SetEnableFollow(bool bFollow) { m_bFollow = bFollow; }	// 追従の判定設定
 	bool IsMotion() { return m_bMotion; }						// モーション中判定取得
 	void SetEnableMotion(bool frag) { m_bMotion = frag; }		// モーション中判定設定
 	

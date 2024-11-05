@@ -30,6 +30,7 @@
 #include "playerStatus.h"
 #include "playercontrol_action.h"
 #include "playercontrol_move.h"
+#include "dressup_hair.h"
 
 //==========================================================================
 // 定数定義
@@ -69,6 +70,12 @@ namespace StateTime
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
+}
+
+namespace Align	// 足揃え
+{
+	const float MULTIPLY_MOVE = 0.25f;	// 移動倍率
+	const float MULTIPLY_MOTION = 1.5f;	// モーション倍率
 }
 
 //==========================================================================
@@ -113,6 +120,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_bFootLR = false;				// 足左右判定
+	m_bAlign = false;	// 揃え
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
@@ -120,6 +128,10 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_pStatus = nullptr;		// ステータス
 	m_pControlMove = nullptr;	// 移動操作
 	m_pControlAction = nullptr;	// アクション操作
+
+	// 着せ替え
+	m_pDressup_Hair = nullptr;		// 髪着せ替え
+	m_pDressup_Accessory = nullptr;	// アクセ更新
 
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
@@ -178,6 +190,19 @@ HRESULT CPlayer::Init()
 		m_pStatus = DEBUG_NEW CPlayerStatus(this);
 	}
 
+
+	// 着せ替え
+	if (m_pDressup_Hair == nullptr)
+	{
+		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, 15);	// 髪着せ替え
+	}
+
+	// アクセ
+	if (m_pDressup_Accessory == nullptr)
+	{
+		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+	}
+
 	return S_OK;
 }
 
@@ -197,6 +222,10 @@ void CPlayer::Uninit()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
+
+	// 着せ替え
+	SAFE_UNINIT(m_pDressup_Hair);
+	SAFE_UNINIT(m_pDressup_Accessory);
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -238,6 +267,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 {
 	if (IsDeath()) return;
 
+	// ドレスアップの更新
+	UpdateDressUP(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// エディット中は抜ける
 	if (CGame::GetInstance()->GetEditType() != CGame::GetInstance()->EDITTYPE_OFF)
 	{
@@ -251,7 +283,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	ResetFrag();
 
 	// 親の更新処理
-	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
+	float nowSlowRate = fSlowRate;
+	if (m_bAlign) nowSlowRate *= Align::MULTIPLY_MOTION;
+	CObjectChara::Update(fDeltaTime, fDeltaRate, nowSlowRate);
 
 	// 操作
 	Controll(fDeltaTime, fDeltaRate, fSlowRate);
@@ -259,7 +293,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// モーションの設定処理
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{
-		MotionSet();
+		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 状態更新
@@ -276,13 +310,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
-
-	// カメラの情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	if (pCamera != nullptr)
-	{
-		pCamera->SetTargetPosition(pos);
-	}
 
 	// 影の位置更新
 	if (m_pShadow != nullptr)
@@ -375,7 +402,7 @@ void CPlayer::DeleteControl()
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::SetMotion(int motionIdx, int startKey) const
+void CPlayer::SetMotion(int motionIdx, int startKey, bool bBlend) const
 {
 	//TAKADA: はじく条件(死んだら)
 	//if (m_sMotionFrag.bDead) return;
@@ -386,17 +413,23 @@ void CPlayer::SetMotion(int motionIdx, int startKey) const
 	{
 		return;
 	}
-	pMotion->Set(motionIdx, startKey);
+	pMotion->Set(motionIdx, startKey, bBlend);
 }
 
 //==========================================================================
 // モーションの設定
 //==========================================================================
-void CPlayer::MotionSet()
+void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	m_bAlign = false;	// 揃え
+
+	// 足左右の更新
+	//UpdateFootLR();
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)	return;
+
 	// 現在の種類取得
 	int nType = pMotion->GetType();
 	int nOldType = pMotion->GetOldType();
@@ -426,11 +459,16 @@ void CPlayer::MotionSet()
 		int nStartKey = 0;
 		if (m_bFootLR)
 		{
-			nStartKey = (info.nNumKey - 1) / 2;
+			nStartKey = info.nNumKey / 2;
 		}
 
 		// モーション設定
 		SetMotion(motionType, nStartKey);
+
+		if (nOldType != pMotion->GetType())
+		{
+			//m_bFootLR = true;
+		}
 	}
 	else if (m_sMotionFrag.bJump)
 	{// ジャンプ中
@@ -442,9 +480,109 @@ void CPlayer::MotionSet()
 	}
 	else
 	{
-		// ニュートラルモーション
+		// デフォルトモーションの設定
+		DefaultMotionSet(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// デフォルトモーションの設定
+//==========================================================================
+void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 情報取得
+	CMotion::Info info = pMotion->GetInfo();
+	int nType = pMotion->GetType();
+
+	// 状況別設定
+	if (nType != EMotion::MOTION_WALK)
+	{
+		// ニュートラルモーション設定
 		SetMotion(MOTION_DEF);
 	}
+	else if (nType == EMotion::MOTION_WALK)
+	{// ニュートラルモーション設定
+		//SetMotion(EMotion::MOTION_GRIP_DEF);
+		//return;
+
+		//if (m_bFootLR)
+		//{
+		//	// ニュートラルモーション設定
+		//	SetMotion(EMotion::MOTION_GRIP_DEF);
+		//}
+		 if (!pMotion->IsAlignFrame(info))
+		{// 足が揃ってない
+
+			// 移動量取得
+			MyLib::Vector3 move = GetMove();
+
+			// 移動する
+			float fMove = GetParameter().fVelocityNormal;
+			switch (nType)
+			{
+			case EMotion::MOTION_WALK:
+				fMove = GetParameter().fVelocityNormal;
+				break;
+
+			case EMotion::MOTION_RUN:
+				fMove = GetParameter().fVelocityDash;
+				break;
+
+			default:
+				break;
+			}
+
+			// 補正倍率
+			fMove *= fDeltaRate;
+			fMove *= fSlowRate;
+			fMove *= Align::MULTIPLY_MOVE;		// 揃えるからゆっくり
+
+			// 移動量更新
+			MyLib::Vector3 rot = GetRotation();
+			move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+			move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+
+			// 移動量設定
+			SetMove(move);
+			m_bAlign = true;	// 揃え
+		 }
+		else
+		{
+			// ニュートラルモーション設定
+			SetMotion(MOTION_DEF);
+		}
+	}
+}
+
+//==========================================================================
+// 足左右の更新
+//==========================================================================
+void CPlayer::UpdateFootLR()
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 情報取得
+	CMotion::Info info = pMotion->GetInfo();
+	int nType = pMotion->GetType();
+
+	// 歩き以外は抜ける
+	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN) return;
+
+	if (pMotion->IsImpactFrame(info))
+	{// 衝撃のフレーム
+		m_bFootLR = !m_bFootLR;
+	}
+
+	ImGui::Checkbox("m_bFootLR", &m_bFootLR);
+
+	float a = pMotion->GetAllCount();
+	ImGui::DragFloat("frame", &a, 1.0f, 0.0f, 0.0f, "%.2f");
 }
 
 //==========================================================================
@@ -754,11 +892,12 @@ bool CPlayer::Hit(CBall* pBall)
 //==========================================================================
 void CPlayer::SetSpecialAttack()
 {
+	bool bInverse = (m_pStatus->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 
 	// かめはめ波モーションを設定
-	pCameraMotion->SetMotion(CCameraMotion::MOTION_KAMEHAMEHA, CCameraMotion::Linear);	// TODO：スペシャルごとに変更
+	pCameraMotion->SetMotion(CCameraMotion::MOTION_KAMEHAMEHA, bInverse);	// TODO：スペシャルごとに変更
 
 	// スペシャル状態にする
 	SetState(STATE_SPECIAL);
@@ -1146,6 +1285,25 @@ void CPlayer::StateOutCourt_Return()
 }
 
 //==========================================================================
+// ドレスアップの更新
+//==========================================================================
+void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 髪更新
+	if (m_pDressup_Hair != nullptr)
+	{
+		m_pDressup_Hair->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// アクセ更新
+	if (m_pDressup_Accessory != nullptr)
+	{
+		m_pDressup_Accessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+}
+
+//==========================================================================
 // 描画処理
 //==========================================================================
 void CPlayer::Draw()
@@ -1318,6 +1476,18 @@ void CPlayer::Debug()
 		SetLife(nLife);
 
 		ImGui::TreePop();
+	}
+
+	// 髪更新
+	if (m_pDressup_Hair != nullptr)
+	{
+		m_pDressup_Hair->Debug();
+	}
+
+	// アクセ更新
+	if (m_pDressup_Accessory != nullptr)
+	{
+		m_pDressup_Accessory->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

@@ -47,8 +47,7 @@ void CCamera_Debug::Update()
 	{// F7‚ª‰Ÿ‚³‚ê‚½,’Ç]Ø‚è‘Ö‚¦
 
 		// ”½“]
-		bool bFollow = m_pCamera->IsFollow() ? false : true;
-		m_pCamera->SetEnableFollow(bFollow);
+		m_pCamera->SetEnableFollow(!m_pCamera->IsFollow());
 	}
 
 	if (pMouse->GetPress(CInputMouse::BUTTON_LEFT) &&

@@ -25,6 +25,7 @@ class CPlayerControlMove;	// 操作(移動)
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
+class CDressup;			// 着せ替え
 
 //==========================================================================
 // クラス定義
@@ -62,6 +63,7 @@ public:
 		MOTION_DAMAGE,				// ダメージ
 		MOTION_DEAD,				// 死亡
 		MOTION_DEAD_AFTER,			// 死亡後
+		MOTION_GRIP_DEF,			// デフォグリップ
 		MOTION_GRIP_FRONT,			// 前グリップ
 		MOTION_MAX
 	};
@@ -178,7 +180,7 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0) const;								// モーションの設定
+	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;				// モーションの設定
 	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
 	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
@@ -198,6 +200,11 @@ public:
 	//=============================
 	CPlayerAction* GetActionPattern()	{ return m_pActionPattern; }	// アクション取得
 	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
+
+	//=============================
+	// 着せ替え
+	//=============================
+	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
 
 	//=============================
 	// その他
@@ -229,8 +236,9 @@ protected:
 	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
 	virtual void DeleteControl();	// 操作削除
 	virtual void Debug();			// デバッグ処理
-	CPlayerControlMove* GetPlayerControlMove();																	// 操作取得(移動)
-	CPlayerControlAction* GetPlayerControlAction();																// 操作取得(アクション)
+	void UpdateFootLR();			// 足左右の更新
+	CPlayerControlMove* GetPlayerControlMove();		// 操作取得(移動)
+	CPlayerControlAction* GetPlayerControlAction();	// 操作取得(アクション)
 	void SetPlayerControlMove(CPlayerControlMove* pControlMove) { m_pControlMove = pControlMove; }				// 操作設定(移動)
 	void SetPlayerControlAction(CPlayerControlAction* pControlAction) { m_pControlAction = pControlAction; }	// 操作設定(アクション)
 
@@ -271,11 +279,12 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void LimitPos();	// 位置制限
 	void ResetFrag();	// フラグリセット
-	void MotionSet();	// モーションの設定
 
 	//-----------------------------
 	// モーション系関数
 	//-----------------------------
+	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
+	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
@@ -308,6 +317,7 @@ private:
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定
 	bool m_bFootLR;				// 足左右判定 (t: 右 / f: 左)
+	bool m_bAlign;				// 揃え
 	SMotionFrag m_sMotionFrag;	// モーションのフラグ
 
 	//-----------------------------
@@ -317,6 +327,12 @@ private:
 	CPlayerStatus* m_pStatus;			// ステータス
 	CPlayerControlMove* m_pControlMove;		// 移動操作
 	CPlayerControlAction* m_pControlAction;	// アクション操作
+
+	//-----------------------------
+	// 着せ替え
+	//-----------------------------
+	CDressup* m_pDressup_Hair;		// 髪着せ替え
+	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
 
 	//-----------------------------
 	// その他変数

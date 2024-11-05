@@ -35,7 +35,7 @@
 
 // TODO：デバッグ、後で消しますいらないので
 #include "specialManager.h"
-
+#include "gymWallManager.h"
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
@@ -118,7 +118,39 @@ HRESULT CGame::Init()
 	// ボール生成
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
+	// プレイヤーUser四人生成(左右)
+#if 1
+	// プレイヤーUser二人生成(右)
+	for (int i = 0; i < 1; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
+		CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_RIGHT, pos + offset);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pUser->SetRotDest(HALF_PI);
+	}
+
+	// プレイヤーUser二人生成(左)
+	for (int i = 0; i < 1; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
+		CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, pos + offset);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+		pUser->SetRotDest(-HALF_PI);
+	}
+#endif
+
 	// プレイヤーUser生成
+#if 0
 	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{
@@ -126,6 +158,7 @@ HRESULT CGame::Init()
 	}
 	pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
 	pUser->SetRotDest(-HALF_PI);
+#endif
 
 	// プレイヤーUser二世生成(右)
 #if 0
@@ -139,7 +172,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
 	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
