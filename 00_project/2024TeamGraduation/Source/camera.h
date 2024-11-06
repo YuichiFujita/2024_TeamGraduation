@@ -77,6 +77,34 @@ public:
 		float fSubLength;	// ずらす距離の減算量
 	};
 
+	// 左右座標構造体
+	struct SSide
+	{
+	public:
+		// コンストラクタ
+		SSide() :
+			l (0.0f),	// 左
+			r (0.0f)	// 右
+		{}
+
+		// 引数付きコンストラクタ
+		SSide(const float in_fLR) :
+			l (in_fLR),	// 左
+			r (in_fLR)	// 右
+		{}
+		SSide(const float in_fL, const float in_fR) :
+			l (in_fL),	// 左
+			r (in_fR)	// 右
+		{}
+
+		// デストラクタ
+		~SSide() {}
+
+		// メンバ変数
+		float l;	// 左
+		float r;	// 右
+	};
+
 	//-----------------------------
 	// コンストラクタ/デストラクタ
 	//-----------------------------
@@ -94,6 +122,7 @@ public:
 	void ResetSwing();	// カメラ揺れリセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void SetWarp(const MyLib::Vector3& pos);	// カメラワープ設定
+	STATE GetState() const { return m_state; }	// 状態取得
 	void SetState(const STATE state, const bool bReset = true);	// 状態設定
 
 	//-----------------------------
@@ -118,14 +147,6 @@ public:
 	inline MyLib::Vector3 GetPositionV()					{ return m_posV; }		// 視点の取得
 	inline void SetPositionVDest(const MyLib::Vector3& pos)	{ m_posVDest = pos; }	// 目標視点の設定
 	inline MyLib::Vector3 GetPositionVDest()				{ return m_posVDest; }	// 目標視点の取得
-
-	//-----------------------------
-	// 追従目標値
-	//-----------------------------
-	inline void SetTargetPosition(const MyLib::Vector3& pos)		{ m_posTarget = pos; }		// 追従位置の設定
-	inline MyLib::Vector3 GetTargetPosition()						{ return m_posTarget; }		// 追従位置の取得
-	inline void SetTargetPositionDest(const MyLib::Vector3& pos)	{ m_posTargetDest = pos; }	// 追従目標位置の設定
-	inline MyLib::Vector3 GetTargetPositionDest()					{ return m_posTargetDest; }	// 追従目標位置の取得
 
 	//-----------------------------
 	// 距離
@@ -163,11 +184,9 @@ public:
 	//-----------------------------
 	// フラグ
 	//-----------------------------
-	inline void SetEnableLight(bool bLight)		{ m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
-	inline void SetEnableFollow(bool bFollow)	{ m_bFollow = bFollow; }	// 追従判定設定
-	inline bool IsFollow()						{ return m_bFollow; }		// 追従判定取得
-	inline void SetEnableMotion(bool frag)		{ m_bMotion = frag; }		// モーション中判定設定
-	inline bool IsMotion()						{ return m_bMotion; }		// モーション中判定取得
+	inline void SetEnableLight(bool bLight)	{ m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
+	inline void SetEnableMotion(bool frag)	{ m_bMotion = frag; }	// モーション中判定設定
+	inline bool IsMotion()					{ return m_bMotion; }	// モーション中判定取得
 	
 	//-----------------------------
 	// 視点マトリックス
@@ -203,9 +222,14 @@ private:
 	void ResetNoneState();		// 通常状態リセット
 	void ResetFollowState();	// 追従状態リセット
 
+	// 追従関数
+	SSide GetPlayerMaxSide();	// プレイヤー最大左右座標取得
+	float CalcDistanceRate();	// 左右間の距離割合計算
+	float CalcFollowDistance(const float fDisRate);				// 追従カメラの距離計算
+	MyLib::Vector3 CalcFollowPositionR(const float fDisRate);	// 追従カメラの注視点計算
+
 	// 汎用関数
-	void ReflectCameraR();		// 注視点の反映
-	void ReflectCameraV();		// 視点の反映
+	MyLib::Vector3 CalcSpherePosition(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot, const float fDis);	// 球面座標変換による相対位置取得
 	void UpdateViewAngle();		// 視野角の更新
 	void UpdateSwing();			// カメラ揺れの更新
 	void UpdateSpotLightVec();	// ライトベクトルの更新
@@ -226,18 +250,14 @@ private:
 	MyLib::Vector3 m_posRDest;			// 目標注視点
 	MyLib::Vector3 m_posROrigin;		// 原点注視点
 	MyLib::Vector3 m_vecU;				// 上方向ベクトル
-	MyLib::Vector3 m_move;				// 移動量
 	MyLib::Vector3 m_rot;				// 向き
 	MyLib::Vector3 m_rotDest;			// 目標向き
 	MyLib::Vector3 m_rotOrigin;			// 原点向き
-	MyLib::Vector3 m_posTarget;			// 追従位置
-	MyLib::Vector3 m_posTargetDest;		// 目標追従位置
 	float m_fDistance;					// 距離
 	float m_fDestDistance;				// 目標距離
 	float m_fOriginDistance;			// 原点距離
 	float m_fViewAngle;					// 視野角
 	float m_fDestViewAngle;				// 目標視野角
-	bool m_bFollow;						// 追従判定
 	bool m_bMotion;						// モーション中判定
 	STATE m_state;						// 状態
 };

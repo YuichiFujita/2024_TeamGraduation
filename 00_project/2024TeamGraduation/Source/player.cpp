@@ -463,7 +463,14 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 		}
 
 		// モーション設定
-		SetMotion(motionType, nStartKey);
+		if (IsCrab() && motionType == MOTION_WALK)
+		{
+			MotionCrab(nStartKey);
+		}
+		else
+		{
+			SetMotion(motionType, nStartKey);
+		}
 
 		if (nOldType != pMotion->GetType())
 		{
@@ -768,6 +775,110 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	SetState(EState::STATE_CATCH_JUST);
 }
 
+//==========================================================================
+// カニ歩きモーション設定
+//==========================================================================
+void CPlayer::MotionCrab(int nStartKey)
+{
+	EMotion motionType = MOTION_WALK;
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	// 向き
+	MyLib::Vector3 rot = GetRotation();
+
+	float fRange = D3DX_PI * 0.25f;
+
+	float fRangeMinMax[] =
+	{
+		D3DX_PI * 1.0f + fRange,	// 上
+		D3DX_PI * 1.0f - fRange,	// 上
+		D3DX_PI * 0.0f + fRange,	// 下
+		D3DX_PI * 0.0f - fRange,	// 下
+		D3DX_PI * -0.5f + fRange,	// 右
+		D3DX_PI * -0.5f - fRange,	// 右
+		D3DX_PI * 0.5f + fRange,	// 左
+		D3DX_PI * 0.5f - fRange,	// 左
+	};
+
+	for (int i = 0; i < sizeof(fRangeMinMax) / sizeof(fRangeMinMax[0]); i++)
+	{
+		UtilFunc::Transformation::RotNormalize(fRangeMinMax[i]);
+	}
+	ImGui::Text("%f", rot.y);
+
+	// プレイヤーどこ見てる
+	if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[0], fRangeMinMax[1]))
+	{// 上
+		ImGui::Text("PLAYER_ROT_HIGH");
+	}
+
+#if 0
+	if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[0], fRangeMinMax[1]))
+	{// 上
+		ImGui::Text("PLAYER_ROT_HIGH");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[3], fRangeMinMax[3]))
+	{// 下
+		ImGui::Text("PLAYER_ROT_LOW");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[6], fRangeMinMax[7]))
+	{// 左
+		ImGui::Text("PLAYER_ROT_LEFT");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[4], fRangeMinMax[5]))
+	{// 右
+		ImGui::Text("PLAYER_ROT_RIGHT");
+	}
+	else
+	{// 上
+		ImGui::Text("NONE: %f", rot.y);
+	}
+#endif
+
+	// 入力方向
+	EDashAngle* angle = m_pControlMove->GetInputAngle();
+	float fRot = 0.0f;
+	if (angle != nullptr)
+	{
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		fRot = division * (*angle) + D3DX_PI + Camerarot.y;
+		UtilFunc::Transformation::RotNormalize(fRot);
+	}
+
+#if 0
+	// 入力方向を4方向に変換
+	if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[0], fRangeMinMax[1]))
+	{// 上
+		ImGui::Text("INPUT_ROT_HIGH");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[2], fRangeMinMax[3]))
+	{// 下
+		ImGui::Text("INPUT_ROT_LOW");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[4], fRangeMinMax[5]))
+	{// 右
+		ImGui::Text("INPUT_ROT_RIGHT");
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[6], fRangeMinMax[7]))
+	{// 左
+		ImGui::Text("INPUT_ROT_LEFT");
+	}
+#endif
+
+	// プレイヤーから見た方向に変換
+#if 0
+	motionType = MOTION_CRAB_FRONT;
+	motionType = MOTION_CRAB_BACK;
+	motionType = MOTION_CRAB_LEFT;
+	motionType = MOTION_CRAB_RIGHT;
+#endif
+
+	// モーション設定
+	SetMotion(motionType, nStartKey);
+}
 //==========================================================================
 // 位置制限
 //==========================================================================

@@ -580,7 +580,39 @@ HRESULT CObjectChara::ReadText(const std::string pTextFile)
 							if (nSide < -1) nSide = -1;
 							if (nSide > 1) nSide = 1;
 
+							// SIDE読み込み
 							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side = static_cast<EPartSide>(nSide);
+
+							const auto& loadData = m_aLoadData[m_nNumLoad];
+							// 左右
+							if (loadData.LoadData[nCntSetParts].side != EPartSide::SIDE_CENTER)
+							{// 中央以外
+
+								// 前回のインデックス
+								int beforeIdx = nCntSetParts - 1;
+								if (beforeIdx < 0) beforeIdx = 0;
+
+								int nStart = 0;
+								int nCnt = 0;
+
+								if (loadData.LoadData[beforeIdx].side != loadData.LoadData[nCntSetParts].side)
+								{// 前回と今回のサイドが違う
+									
+									// 開始
+									nStart = nCntSetParts;
+									nCnt++;	// パーツ数加算
+								}
+								else if (loadData.LoadData[beforeIdx].side == loadData.LoadData[nCntSetParts].side)
+								{// 前回と今回のサイドが違う
+
+									// 開始
+									nCnt++;	// パーツ数加算
+								}
+
+							}
+
+							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side;
+
 						}
 
 						if (strcmp(aComment, "POS") == 0)

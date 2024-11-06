@@ -42,6 +42,10 @@ public:
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
 		MOTION_WALK,				// 移動
+		MOTION_CRAB_FRONT,			// カニ歩き(前)
+		MOTION_CRAB_BACK,			// カニ歩き(後)
+		MOTION_CRAB_LEFT,			// カニ歩き(左)
+		MOTION_CRAB_RIGHT,			// カニ歩き(右)
 		MOTION_RUN,					// 走り
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
@@ -309,6 +313,7 @@ private:
 	//TOKODO: 空中キャッチモーション出来たら実装
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
+	void MotionCrab(int nStartKey);		// キャッチ時処理(地上・ジャスト)
 
 	//=============================
 	// メンバ変数
