@@ -1954,7 +1954,7 @@ namespace UtilFunc	// 便利関数
 
 			if (nMaxAngle <= nMinAngle)
 			{// 範囲が360°を跨ぐ場合
-				return (angle >= nMaxAngle || angle <= nMinAngle);
+				return !(angle >= nMaxAngle && angle <= nMinAngle);
 			}
 			else
 			{// 範囲が通常の順序で指定されている場合
@@ -2690,6 +2690,10 @@ namespace UtilFunc	// 便利関数
 			if (fRot < 0)
 			{
 				fRot = D3DX_PI + fabsf(fRot);
+			}
+			else if (fRot > 0 && fRot < D3DX_PI)
+			{
+				fRot = D3DX_PI - fabsf(fRot);
 			}
 		}
 
