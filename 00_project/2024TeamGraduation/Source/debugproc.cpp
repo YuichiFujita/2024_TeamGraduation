@@ -237,15 +237,16 @@ void CDebugProc::SetText()
 	// デバッグの情報取得
 	CDebugProc *pDebug = CManager::GetInstance()->GetDebugProc();
 
-	pDebug->Print("FPS：%d\n", GetFPS());
+	pDebug->Print("--------------- システム情報 ---------------\n");
+	pDebug->Print("【FPS】      [%d]\n", GetFPS());
 #ifdef _DEBUG
-	pDebug->Print("目標FPS：%d\n", *GetDebugFps());
+	pDebug->Print("【目標FPS】  [%d]\n", *GetDebugFps());
 #endif
-	pDebug->Print("DeltaTime：%f\n", CManager::GetInstance()->GetDeltaTime());
-	pDebug->Print("SlowRate：%f\n", CManager::GetInstance()->GetSlowRate());
-	pDebug->Print("オブジェクトの総数：%d\n", CObject::GetNumAll());
+	pDebug->Print("【DeltaTime】[%f]\n", CManager::GetInstance()->GetDeltaTime());
+	pDebug->Print("【SlowRate】 [%f]\n", CManager::GetInstance()->GetSlowRate());
+	pDebug->Print("【オブジェクト総数】[%d]\n", CObject::GetNumAll());
 
-	pDebug->Print("\n--------------------------------[ F系 ]--------------------------------\n");
+	pDebug->Print("\n--------------- デバッグ操作 ---------------\n");
 	pDebug->Print("[F2]：ワイヤーフレーム切り替え\n");
 	pDebug->Print("[F3]：起伏のエディット切り替え\n");
 	pDebug->Print("[F4]：マップ制御点エディット切り替え\n");

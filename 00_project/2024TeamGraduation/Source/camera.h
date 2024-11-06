@@ -143,6 +143,14 @@ public:
 	inline MyLib::Vector3 GetOriginRotation()					{ return m_rotOrigin; }	// 原点向きの取得
 
 	//--------------------------
+	// 視野角
+	//--------------------------
+	inline void SetViewAngle(const float fAngle)		{ m_fViewAngle = fAngle; }		// 視野角
+	inline float GetViewAngle()							{ return m_fViewAngle; }		// 視野角
+	inline void SetDestViewAngle(const float fAngle)	{ m_fDestViewAngle = fAngle; }	// 目標視野角
+	inline float GetDestViewAngle()						{ return m_fDestViewAngle; }	// 目標視野角
+
+	//--------------------------
 	// カメラモーション
 	//--------------------------
 	inline CCameraMotion* GetCameraMotion() { return m_pCameraMotion; }	// カメラモーションポインタ取得
@@ -168,14 +176,38 @@ public:
 
 private:
 
+	//=============================
+	// 関数リスト
+	//=============================
+	// 状態関数
+	typedef void(CCamera::*STATE_FUNC)(const float, const float, const float);	// 関数型
+	static STATE_FUNC m_StateFuncList[];	// 関数リスト
+
+	// 状態リセット関数
+	typedef void(CCamera::*RESET_FUNC)();	// 関数型
+	static RESET_FUNC m_ResetFuncList[];	// 関数リスト
+
+	//=============================
 	// メンバ関数
+	//=============================
+	// 状態関数
+	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
+	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従状態の更新
+
+	// リセット関数
+	void ResetNoneState();		// 通常状態リセット
+	void ResetFollowState();	// 追従状態リセット
+
+	// 汎用関数
 	void ReflectCameraR();		// 注視点の反映
 	void ReflectCameraV();		// 視点の反映
-	void UpdateSpotLightVec();	// ライトのベクトル更新
-	void UpdateSwing();			// カメラ揺れ更新
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
+	void UpdateViewAngle();		// 視野角の更新
+	void UpdateSwing();			// カメラ揺れの更新
+	void UpdateSpotLightVec();	// ライトベクトルの更新
 
+	//=============================
 	// メンバ変数
+	//=============================
 	CCamera_Debug* m_pDebugControll;	// デバッグ情報
 	CCameraMotion* m_pCameraMotion;		// カメラモーション情報
 	CLightDir* m_pLight;				// ディレクショナルライト情報
@@ -198,6 +230,8 @@ private:
 	float m_fDistance;					// 距離
 	float m_fDestDistance;				// 目標距離
 	float m_fOriginDistance;			// 原点距離
+	float m_fViewAngle;					// 視野角
+	float m_fDestViewAngle;				// 目標視野角
 	bool m_bFollow;						// 追従判定
 	bool m_bMotion;						// モーション中判定
 	STATE m_state;						// 状態

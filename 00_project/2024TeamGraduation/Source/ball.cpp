@@ -37,33 +37,33 @@ namespace
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
-		"SPAWN    生成状態 (フリーボール)",
-		"CATCH    キャッチ状態 (プレイヤー所持)",
-		"HOM_NOR  通常ホーミング状態 (攻撃判定ON)",
-		"HOM_JUMP ジャンプホーミング状態 (攻撃判定ON)",
-		"MOVE     移動状態 (攻撃判定ON)",
-		"S_STAG   スペシャル演出状態 (開始前演出)",
-		"S_THROW  スペシャル投げ状態 (攻撃判定ON)",
-		"REBOUND  リバウンド状態 (ぶつかった時の落下)",
-		"LAND     着地状態 (地面落下)",
+		"[SPAWN]    生成状態 (フリーボール)",
+		"[CATCH]    キャッチ状態 (プレイヤー所持)",
+		"[HOM_NOR]  通常ホーミング状態 (攻撃判定ON)",
+		"[HOM_JUMP] ジャンプホーミング状態 (攻撃判定ON)",
+		"[MOVE]     移動状態 (攻撃判定ON)",
+		"[S_STAG]   スペシャル演出状態 (開始前演出)",
+		"[S_THROW]  スペシャル投げ状態 (攻撃判定ON)",
+		"[REBOUND]  リバウンド状態 (ぶつかった時の落下)",
+		"[LAND]     着地状態 (地面落下)",
 	};
 	const char* DEBUG_TEAM_PRINT[] =	// デバッグ表示用チーム
 	{
-		"NONE    (コート指定なし)",
-		"LEFT    (左コート)",
-		"RIGHT   (右コート)",
+		"[NONE]    (コート指定なし)",
+		"[LEFT]    (左コート)",
+		"[RIGHT]   (右コート)",
 	};
 	const char* DEBUG_ATK_PRINT[] =		// デバッグ表示用攻撃
 	{
-		"NONE    (攻撃判定無し)",
-		"NORMAL  (通常攻撃)",
-		"JUMP    (ジャンプ攻撃)",
-		"SPECIAL (スペシャリスト攻撃)",
+		"[NONE]    (攻撃判定無し)",
+		"[NORMAL]  (通常攻撃)",
+		"[JUMP]    (ジャンプ攻撃)",
+		"[SPECIAL] (スペシャリスト攻撃)",
 	};
 	const char* DEBUG_SPECIAL_PRINT[] =	// デバッグ表示用スペシャル
 	{
-		"NONE    (指定なし)",
-		"かめはめ波",
+		"[NONE]    (指定なし)",
+		"[かめはめ波]",
 	};
 
 	namespace normal
@@ -281,14 +281,25 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// ボールの状態表示
-	GET_MANAGER->GetDebugProc()->Print(" ボール状態 ：%s\n", DEBUG_STATE_PRINT[m_state]);
-	GET_MANAGER->GetDebugProc()->Print("チームサイド：%s\n", DEBUG_TEAM_PRINT[m_typeTeam]);
-	GET_MANAGER->GetDebugProc()->Print("　　攻撃　　：%s\n", DEBUG_ATK_PRINT[m_typeAtk]);
-	GET_MANAGER->GetDebugProc()->Print(" スペシャル ：%s\n", DEBUG_SPECIAL_PRINT[m_typeSpecial]);
-	GET_MANAGER->GetDebugProc()->Print("　所有対象　：%s\n", (m_pPlayer == nullptr) ? "nullptr" : "player");
-	GET_MANAGER->GetDebugProc()->Print(" ターゲット ：%s\n", (m_pTarget == nullptr) ? "nullptr" : "player");
-	GET_MANAGER->GetDebugProc()->Print(" カバー対象 ：%s\n", (m_pCover == nullptr) ? "nullptr" : "player");
+	// カメラ情報のテキスト描画
+	GET_MANAGER->GetDebugProc()->Print
+	(
+		"\n---------------- ボール情報 ----------------\n"
+		"【ボール状態】%s\n"
+		"【チーム方向】%s\n"
+		"【 攻撃状態 】%s\n"
+		"【スペシャル】%s\n"
+		"【 所有対象 】[%s]\n"
+		"【ターゲット】[%s]\n"
+		"【カバー対象】[%s]\n",
+		DEBUG_STATE_PRINT[m_state],
+		DEBUG_TEAM_PRINT[m_typeTeam],
+		DEBUG_ATK_PRINT[m_typeAtk],
+		DEBUG_SPECIAL_PRINT[m_typeSpecial],
+		(m_pPlayer == nullptr) ? "nullptr" : "player",
+		(m_pTarget == nullptr) ? "nullptr" : "player",
+		(m_pCover  == nullptr) ? "nullptr" : "player"
+	);
 }
 
 //==========================================================================

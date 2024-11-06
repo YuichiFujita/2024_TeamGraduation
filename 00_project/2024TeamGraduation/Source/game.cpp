@@ -290,6 +290,7 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	{
 		if (ImGui::Button("Camera : Swing"))
 		{
+			// ƒJƒƒ‰‚ð“K“–‚É—h‚ç‚·
 			GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(10.0f, 2.0f, 0.6f));
 		}
 
