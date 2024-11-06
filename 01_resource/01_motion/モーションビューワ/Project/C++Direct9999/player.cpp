@@ -416,7 +416,8 @@ void CPlayer::Controll(void)
 	// 現在の種類取得
 	int nType = m_pMotion->GetType();
 
-	if (m_pMotion->IsGetMove(nType) == 1)
+	if (m_pMotion->IsGetMove(nType) == 1 ||
+		(m_pMotion->IsGetMove(nType) == 0 && m_pMotion->IsGetCancelable()))
 	{// 移動可能モーションの時
 
 		// 移動量取得
@@ -507,6 +508,12 @@ void CPlayer::Controll(void)
 		{
 			// 移動中かどうか
 			m_bMove = false;
+		}
+
+		if (m_bMove &&
+			(m_pMotion->IsGetMove(nType) == 0 && m_pMotion->IsGetCancelable()))
+		{// キャンセル
+			m_pMotion->SetFinish(true);
 		}
 
 		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
@@ -1672,7 +1679,7 @@ void CPlayer::SetAttackInfo(void)
 
 
 	// ウィンドウ生成
-	ImGui::Begin("AttackInfo");
+	//ImGui::CollapsingHeader("AttackInfo");
 	{
 		//***********************
 		// モーション切り替え
@@ -1972,7 +1979,7 @@ void CPlayer::SetAttackInfo(void)
 			ImGui::DragFloat("z", &aInfo.AttackInfo[m_nNowAttackIdx]->Offset.z, SETUP_MOVE, 0.0f, 0.0f, "%.2f");
 		}
 	}
-	ImGui::End();
+	//ImGui::End();
 
 
 

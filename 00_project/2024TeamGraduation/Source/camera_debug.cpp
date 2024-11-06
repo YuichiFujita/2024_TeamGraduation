@@ -29,43 +29,20 @@ namespace
 //==========================================================================
 void CCamera_Debug::Update()
 {
-	// 注視点取得
-	MyLib::Vector3 posR = m_pCamera->GetPositionR();
-
-	// 向き取得
-	MyLib::Vector3 rot = m_pCamera->GetRotation();
-
-
-	// キーボード情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-
-	// キーボード情報取得
-	CInputMouse* pMouse = CInputMouse::GetInstance();
-
+	MyLib::Vector3 rot = m_pCamera->GetRotation();			// 向き
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
+	CInputMouse* pMouse = CInputMouse::GetInstance();		// マウス情報
 
 	if (pKey->GetTrigger(DIK_F7))
-	{// F7が押された,追従切り替え
+	{ // F7が押された,追従切り替え
 
-		// 反転
-		m_pCamera->SetEnableFollow(!m_pCamera->IsFollow());
+		// 追従を切り替え
+		m_pCamera->SetState((m_pCamera->GetState() != CCamera::STATE_FOLLOW) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE);
 	}
 
-	if (pMouse->GetPress(CInputMouse::BUTTON_LEFT) &&
-		pMouse->GetPress(CInputMouse::BUTTON_RIGHT))
-	{// 左右同時押し
-
-		posR.x +=
-			(pMouse->GetMouseMove().x * sinf(-D3DX_PI * 0.5f + rot.y) * MOVE_SLIDEMOUSE) -
-			(pMouse->GetMouseMove().y * cosf(-D3DX_PI * 0.5f + rot.y) * MOVE_SLIDEMOUSE);
-
-		posR.z +=
-			(pMouse->GetMouseMove().x * cosf(-D3DX_PI * 0.5f + rot.y) * MOVE_SLIDEMOUSE) +
-			(pMouse->GetMouseMove().y * sinf(-D3DX_PI * 0.5f + rot.y) * MOVE_SLIDEMOUSE);
-	}
-	else if (
-		pKey->GetPress(DIK_LALT) &&
+	if (pKey->GetPress(DIK_LALT) &&
 		pMouse->GetPress(CInputMouse::BUTTON_LEFT))
-	{// 左クリックしてるとき,視点回転
+	{ // 左クリックしてるとき,視点回転
 
 		m_moveRot.y += pMouse->GetMouseMove().x * MOVE_ROTATIONMOUSE;
 		m_moveRot.z += pMouse->GetMouseMove().y * MOVE_ROTATIONMOUSE;
@@ -82,6 +59,7 @@ void CCamera_Debug::Update()
 
 	// 向き設定
 	m_pCamera->SetRotation(rot);
+	m_pCamera->SetDestRotation(rot);
 
 	// 移動量をリセット
 	m_moveRot += (MyLib::Vector3() - m_moveRot) * 0.6f;
@@ -201,7 +179,7 @@ void CCamera_Debug::UpdateDistance()
 	// 距離取得
 	float distance = m_pCamera->GetDistance();
 	float destDistance = m_pCamera->GetDistanceDest();
-	float originDistance = m_pCamera->GetOriginDistance();
+	float originDistance = m_pCamera->GetDistanceOrigin();
 
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -224,8 +202,8 @@ void CCamera_Debug::UpdateDistance()
 	// 距離設定
 	m_pCamera->SetDistance(distance);
 	m_pCamera->SetDistanceDest(destDistance);
-	m_pCamera->SetOriginDistance(originDistance);
-	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
+	m_pCamera->SetDistanceOrigin(originDistance);
+	m_pCamera->SetWarp(m_pCamera->GetPositionR());
 }
 
 //==========================================================================
@@ -237,9 +215,9 @@ void CCamera_Debug::UpdateGUI()
 	// 追従切り替え
 	//--------------------------
 	{
-		bool bFollow = m_pCamera->IsFollow();
+		bool bFollow = (m_pCamera->GetState() == CCamera::STATE_FOLLOW) ? true : false;
 		ImGui::Checkbox("Follow", &bFollow);
-		m_pCamera->SetEnableFollow(bFollow);
+		m_pCamera->SetState((bFollow) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE);
 	}
 
 	//--------------------------

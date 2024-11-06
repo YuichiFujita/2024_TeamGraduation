@@ -141,6 +141,7 @@ HRESULT CObjectChara::Init(void)
 		for (int nCntParts = 0; nCntParts < mylib_const::MAX_MODEL; nCntParts++)
 		{
 			m_aLoadData[nCntModel].LoadData[nCntParts].nStart = 1;	// 読み込みのデータ
+			m_aLoadData[nCntModel].LoadData[nCntParts].side = EPartSide::SIDE_CENTER;	// 読み込みのデータ
 		}
 	}
 	return S_OK;
@@ -566,6 +567,52 @@ HRESULT CObjectChara::ReadText(const std::string pTextFile)
 
 							fscanf(pFile, "%s", &aComment[0]);	// =の分
 							fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].nParent);		// 親の番号
+						}
+
+						if (strcmp(aComment, "SIDE") == 0)
+						{// SIDEが来たら配置情報
+
+							fscanf(pFile, "%s", &aComment[0]);	// =の分
+
+							int nSide = 0;
+							fscanf(pFile, "%d", &nSide);	// 配置情報
+
+							if (nSide < -1) nSide = -1;
+							if (nSide > 1) nSide = 1;
+
+							// SIDE読み込み
+							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side = static_cast<EPartSide>(nSide);
+
+							const auto& loadData = m_aLoadData[m_nNumLoad];
+							// 左右
+							if (loadData.LoadData[nCntSetParts].side != EPartSide::SIDE_CENTER)
+							{// 中央以外
+
+								// 前回のインデックス
+								int beforeIdx = nCntSetParts - 1;
+								if (beforeIdx < 0) beforeIdx = 0;
+
+								int nStart = 0;
+								int nCnt = 0;
+
+								if (loadData.LoadData[beforeIdx].side != loadData.LoadData[nCntSetParts].side)
+								{// 前回と今回のサイドが違う
+									
+									// 開始
+									nStart = nCntSetParts;
+									nCnt++;	// パーツ数加算
+								}
+								else if (loadData.LoadData[beforeIdx].side == loadData.LoadData[nCntSetParts].side)
+								{// 前回と今回のサイドが違う
+
+									// 開始
+									nCnt++;	// パーツ数加算
+								}
+
+							}
+
+							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side;
+
 						}
 
 						if (strcmp(aComment, "POS") == 0)

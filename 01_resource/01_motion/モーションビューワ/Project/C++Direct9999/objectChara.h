@@ -22,6 +22,17 @@ class CObjectChara : public CObject
 {
 public:
 
+	//===========================
+	// 列挙型定義
+	//===========================
+	enum EPartSide
+	{
+		SIDE_LEFT = -1,
+		SIDE_CENTER,
+		SIDE_RIGHT,
+		SIDE_MAX
+	};
+
 	// 構造体定義
 	struct LoadData
 	{
@@ -29,6 +40,7 @@ public:
 		int nType;				// モデル種類
 		int nParent;			// 親のインデックス
 		int nStart;				// 最初からあるかどうか
+		EPartSide side;			// 配置
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 rot;		// 向き
 	};

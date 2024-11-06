@@ -238,7 +238,7 @@ MyLib::Vector3 CInputMouse::GetMouseMove()
 //==========================================================================
 D3DXVECTOR2 CInputMouse::GetPosition()
 {
-	return D3DXVECTOR2(m_pos.x, m_pos.y);
+	return D3DXVECTOR2((float)m_pos.x, (float)m_pos.y);
 }
 
 //==========================================================================
