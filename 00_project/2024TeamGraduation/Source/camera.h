@@ -225,12 +225,12 @@ private:
 	// 追従関数
 	SSide GetPlayerMaxSide();	// プレイヤー最大左右座標取得
 	float CalcDistanceRate();	// 左右間の距離割合計算
-	float CalcFollowDistance(const float fDisRate);				// 追従カメラの距離計算
-	MyLib::Vector3 CalcFollowPositionR(const float fDisRate);	// 追従カメラの注視点計算
+	float CalcFollowDistance(const float fDisRate);					// 追従カメラの距離計算
+	MyLib::Vector3 CalcFollowPositionR(const float fDisRate);		// 追従カメラの注視点計算
+	void RevFollowPositionR(float* pTargetX, const float fDisRate);	// X注視点の範囲補正
 
 	// 汎用関数
 	MyLib::Vector3 CalcSpherePosition(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot, const float fDis);	// 球面座標変換による相対位置取得
-	void UpdateViewAngle();		// 視野角の更新
 	void UpdateSwing();			// カメラ揺れの更新
 	void UpdateSpotLightVec();	// ライトベクトルの更新
 

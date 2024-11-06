@@ -22,6 +22,13 @@
 #include "camera_debug.h"
 
 //==========================================================================
+// 追従デバッグ表示のON/OFF
+//==========================================================================
+#if 0
+#define FOLLOW_DEBUG
+#endif
+
+//==========================================================================
 // 定数定義
 //==========================================================================
 namespace
@@ -47,9 +54,12 @@ namespace
 
 		const float REV_POSR		= 0.05f;		// 注視点の補正係数
 		const float REV_VIEWANGLE	= 0.1f;			// 視野角の補正係数
-
 		const float MAX_DIS	= 2500.0f - MIN_DIS;	// 追従カメラの最大距離
-		const float MIN_DIS	= MIN_DIS;				// 追従カメラの最低距離
+
+		const float POSRY_START	= 550.0f;	// カメラY注視点の開始座標
+		const float POSRY_END	= 320.0f;	// カメラY注視点の終了座標
+		const float POSRZ_START	= -1600.0f;	// カメラZ注視点の開始座標
+		const float POSRZ_END	= -100.0f;	// カメラZ注視点の終了座標
 	}
 }
 
@@ -217,9 +227,6 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// 状態別処理
 		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-	// 視野角の更新
-	UpdateViewAngle();
 
 	// カメラ揺れの更新
 	UpdateSwing();
@@ -451,6 +458,19 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 		m_posRDest.x = posCurDest.x + follow::DEST_POSR_BOXSIZE;
 	}
 
+	// X注視点の範囲補正
+	RevFollowPositionR(&m_posRDest.x, fDisRate);
+
+#ifdef FOLLOW_DEBUG
+	CEffect3D::Create(MyLib::Vector3(posCurDest.x, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Red(), 20.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(MyLib::Vector3(m_posRDest.x, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 15.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+
+	CEffect3D::Create(MyLib::Vector3(m_posRDest.x + follow::DEST_POSR_BOXSIZE, 50.0f, -follow::DEST_POSR_BOXSIZE), VEC3_ZERO, MyLib::color::Green(), 5.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(MyLib::Vector3(m_posRDest.x - follow::DEST_POSR_BOXSIZE, 50.0f, -follow::DEST_POSR_BOXSIZE), VEC3_ZERO, MyLib::color::Green(), 5.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(MyLib::Vector3(m_posRDest.x + follow::DEST_POSR_BOXSIZE, 50.0f, +follow::DEST_POSR_BOXSIZE), VEC3_ZERO, MyLib::color::Green(), 5.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(MyLib::Vector3(m_posRDest.x - follow::DEST_POSR_BOXSIZE, 50.0f, +follow::DEST_POSR_BOXSIZE), VEC3_ZERO, MyLib::color::Green(), 5.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+#endif
+
 	// 現在注視点を慣性補正
 	UtilFunc::Correction::InertiaCorrection(m_posR, m_posRDest, follow::REV_POSR);
 
@@ -580,7 +600,7 @@ float CCamera::CalcDistanceRate()
 float CCamera::CalcFollowDistance(const float fDisRate)
 {
 	// カメラ距離を距離割合から計算し返す
-	return (follow::MAX_DIS * fDisRate + follow::MIN_DIS);
+	return (follow::MAX_DIS * fDisRate + MIN_DIS);
 }
 
 //==========================================================================
@@ -589,21 +609,39 @@ float CCamera::CalcFollowDistance(const float fDisRate)
 MyLib::Vector3 CCamera::CalcFollowPositionR(const float fDisRate)
 {
 	const MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();	// コートサイズ
-	const SSide posSide = GetPlayerMaxSide();		// プレイヤー左右最大位置
+	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
 
 	// 左右座標の平均からX注視点を計算
 	float fTargetX = (posSide.l + posSide.r) * 0.5f;
 
-	// X注視点の補正
-	float fCourtHalfSize = sizeCourt.x * 0.5f;	// コートの半分の大きさ
-	UtilFunc::Transformation::ValueNormalize(fTargetX, CGameManager::CENTER_LINE + fCourtHalfSize, CGameManager::CENTER_LINE - fCourtHalfSize);
+	// X注視点の範囲補正
+	RevFollowPositionR(&fTargetX, fDisRate);
 
 	// Y/Z注視点を距離割合から計算
-	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fDisRate);		// カメラY注視点
-	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fDisRate);	// カメラZ注視点
+	float fTargetY = UtilFunc::Correction::EasingLinear(follow::POSRY_START, follow::POSRY_END, fDisRate);	// カメラY注視点
+	float fTargetZ = UtilFunc::Correction::EasingLinear(follow::POSRZ_START, follow::POSRZ_END, fDisRate);	// カメラZ注視点
 
 	// 計算した注視点を返す
 	return MyLib::Vector3(fTargetX, fTargetY, fTargetZ);
+}
+
+//==========================================================================
+// X注視点の範囲補正
+//==========================================================================
+void CCamera::RevFollowPositionR(float* pTargetX, const float fDisRate)
+{
+	const MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();	// コートサイズ
+	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
+
+	// X注視点の補正
+	float fCourtHalfSize = sizeCourt.x * 0.5f;		// コートの半分の大きさ
+	float fPlusOffset = fCourtHalfSize * fDisRate;	// 注視点範囲オフセット
+	UtilFunc::Transformation::ValueNormalize(*pTargetX, CGameManager::CENTER_LINE + fCourtHalfSize - fPlusOffset, CGameManager::CENTER_LINE - fCourtHalfSize + fPlusOffset);
+
+#ifdef FOLLOW_DEBUG
+	CEffect3D::Create(MyLib::Vector3(CGameManager::CENTER_LINE - fCourtHalfSize + fPlusOffset, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(MyLib::Vector3(CGameManager::CENTER_LINE + fCourtHalfSize - fPlusOffset, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+#endif
 }
 
 //==========================================================================
@@ -619,15 +657,6 @@ MyLib::Vector3 CCamera::CalcSpherePosition(const MyLib::Vector3& rPos, const MyL
 
 	// 変換した相対座標を返す
 	return out;
-}
-
-//==========================================================================
-// 視野角の更新
-//==========================================================================
-void CCamera::UpdateViewAngle()
-{
-	// 目標の視野角へ慣性補正
-	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, 0.2f);
 }
 
 //==========================================================================
