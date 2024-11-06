@@ -2,6 +2,7 @@
 // 
 // カメラ処理 [camera.cpp]
 // Author : 相馬靜雅
+// Adder  : 藤田勇一
 // 
 //=============================================================================
 #include "debugproc.h"
@@ -18,7 +19,6 @@
 #include "calculation.h"
 #include "pause.h"
 #include "objectX.h"
-
 #include "camera_debug.h"
 
 //==========================================================================
@@ -26,63 +26,80 @@
 //==========================================================================
 namespace
 {
-	const MyLib::Vector3 TITLE_POSR_DEST = MyLib::Vector3(45271.0f, -34.0f, 591.0f);
-	const MyLib::Vector3 RANKING_POSR_DEST = MyLib::Vector3(625.34f, 503.34f, 2667.39f);	// ランキングの注視点
-	const MyLib::Vector3 DEFAULT_TITLEROT = MyLib::Vector3(0.0f, 0.67f, -0.08f);	// タイトルのデフォルト向き
-	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.0f, -0.32f);		// ゲームのデフォルト向き
-	const MyLib::Vector3 DEFAULT_RESULTROT = MyLib::Vector3(0.0f, 0.0f, -0.15f);	// リザルトのデフォルト向き
-	const MyLib::Vector3 DEFAULT_RANKINGROT = MyLib::Vector3(0.0f, 0.0f, -0.05f);	// ランキングのデフォルト向き
-	const float DEFAULT_TITLELEN = 1265.0f;		// タイトルのデフォルト長さ
-	const float DEFAULT_RANKINGLEN = 1540.0f;	// ランキングのデフォルト長さ
-	const float MIN_DISNTANCE = 500.0f;		// 最少距離
-	const float DISNTANCE = 1160.0f;		// 距離
-
-	const float MULTIPLY_CHASE_POSR = 1.5f;		// 注視点追従の倍率
-	const float MULTIPLY_CHASE_POSV = 1.5f;		// 注視点追従の倍率
-
-	const float MIN_STICKROT = -D3DX_PI * 0.25f;		// カメラ固定用
-	const float ROT_MOVE_STICK_Y = D3DX_PI * 0.003f;	// 回転移動量
-	const float ROT_MOVE_STICK_Z = D3DX_PI * 0.003f;	// 回転移動量
+	const MyLib::Vector3 DEFAULT_GAMEROT = MyLib::Vector3(0.0f, 0.0f, -0.32f);	// デフォルト向き
+	const float MIN_NEAR	= 10.0f;		// 手前の描画制限
+	const float MAX_FAR		= 1500000.0f;	// 奥の描画制限
+	const float REV_DIS		= 0.001f;		// カメラ揺れ計算時のカメラ距離の補正係数
+	const float MIN_DISNTANCE	= 500.0f;	// 最少距離
+	const float DISNTANCE		= 1160.0f;	// 距離
+	const float MULTIPLY_CHASE_POSR	= 1.5f;	// 注視点追従の倍率
+	const float MULTIPLY_CHASE_POSV	= 1.5f;	// 注視点追従の倍率
 }
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+// 状態関数
+CCamera::STATE_FUNC CCamera::m_StateFuncList[] =
+{
+	&CCamera::UpdateNoneState,		// 通常カメラ更新
+	&CCamera::UpdateFollowState,	// 追従カメラ更新
+};
+
+// リセット関数
+CCamera::RESET_FUNC CCamera::m_ResetFuncList[] =
+{
+	&CCamera::ResetNoneState,		// 通常カメラリセット
+	&CCamera::ResetFollowState,		// 追従カメラリセット
+};
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CCamera::CCamera()
 {
-	m_viewport.X = 0;		// 描画する画面の左上X座標
-	m_viewport.Y = 0;		// 描画する画面の左上Y座標
-	m_viewport.Width = 0;	// 描画する画面の幅
-	m_viewport.Height = 0;	// 描画する画面の高さ
-	m_viewport.Width = 0;	// 描画する画面の幅
-	m_viewport.Height = 0;	// 描画する画面の高さ
-	m_viewport.MinZ = 0.0f;
-	m_viewport.MaxZ = 0.0f;
-	m_posR = MyLib::Vector3();		// 注視点(見たい場所)
-	m_posV = MyLib::Vector3();		// 視点(カメラの位置)
-	m_posVDest = MyLib::Vector3();	// 目標の視点
-	m_posRDest = MyLib::Vector3();	// 目標の注視点
-	m_posROrigin = MyLib::Vector3();	// 元の注視点
-	m_vecU = MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
-	m_move = MyLib::Vector3();		// 移動量
-	m_rot = MyLib::Vector3();		// 向き
-	m_rotDest = 0.0f;				// 目標の向き
-	m_posTarget = MyLib::Vector3();	// 追従目標の位置
-	m_fDistance = 0.0f;				// 距離
-	m_fDestDistance = 0.0f;			// 目標の距離
-	m_fOriginDistance = 0.0f;		// 元の距離
-	m_nShakeLength = 0.0f;			// 揺れの長さ
-	m_nShakeLengthY = 0.0f;			// Yの揺れの長さ
-	m_fMoveShake = 0.0f;			// 揺れの移動量
-	m_fMoveShakeY = 0.0f;			// Yの揺れの移動量
-	m_bFollow = false;				// 追従するかどうか
-	m_bMotion = false;				// モーション中かどうか
-	m_state = CAMERASTATE_NONE;		// 状態
-	m_pLight = nullptr;				// ディレクショナルライト
-	m_fTimerState = 0.0f;			// 状態カウンター
-	m_pCameraMotion = nullptr;		// カメラモーションのポインタ
-	m_pDebugControll = nullptr;		// デバッグ処理
+	m_pDebugControll	= nullptr;		// デバッグ情報
+	m_pCameraMotion		= nullptr;		// カメラモーション情報
+	m_pLight			= nullptr;		// ディレクショナルライト情報
+	m_posV				= VEC3_ZERO;	// 視点
+	m_posVDest			= VEC3_ZERO;	// 目標視点
+	m_posR				= VEC3_ZERO;	// 注視点
+	m_posRDest			= VEC3_ZERO;	// 目標注視点
+	m_posROrigin		= VEC3_ZERO;	// 原点注視点
+	m_vecU				= MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル
+	m_move				= VEC3_ZERO;	// 移動量
+	m_rot				= VEC3_ZERO;	// 向き
+	m_rotDest			= VEC3_ZERO;	// 目標向き
+	m_rotOrigin			= VEC3_ZERO;	// 原点向き
+	m_posTarget			= VEC3_ZERO;	// 追従位置
+	m_posTargetDest		= VEC3_ZERO;	// 目標追従位置
+	m_fDistance			= 0.0f;			// 距離
+	m_fDestDistance		= 0.0f;			// 目標距離
+	m_fOriginDistance	= 0.0f;			// 原点距離
+	m_fViewAngle		= 0.0f;			// 視野角
+	m_fDestViewAngle	= 0.0f;			// 目標視野角
+	m_bFollow			= false;		// 追従判定
+	m_bMotion			= false;		// モーション中判定
+	m_state				= STATE_NONE;	// 状態
 
+	// マトリックス情報のクリア
+	D3DXMatrixIdentity(&m_mtxProjection);	// プロジェクションマトリックス
+	D3DXMatrixIdentity(&m_mtxView);			// ビューマトリックス
+
+	// ビューポート情報のクリア
+	m_viewport.X		= 0;	// 画面の左上X座標
+	m_viewport.Y		= 0;	// 画面の左上Y座標
+	m_viewport.Width	= 0;	// 画面の幅
+	m_viewport.Height	= 0;	// 画面の高さ
+	m_viewport.MinZ		= 0.0f;
+	m_viewport.MaxZ		= 0.0f;
+
+	// カメラ揺れ情報のクリア
+	m_swing.shiftPos		= VEC3_ZERO;	// 位置ずれ量
+	m_swing.fShiftAngle		= 0.0f;			// 位置をずらす角度
+	m_swing.fShiftLength	= 0.0f;			// 位置をずらす距離
+	m_swing.fSubAngle		= 0.0f;			// ずらす角度の減算量
+	m_swing.fSubLength		= 0.0f;			// ずらす距離の減算量
 }
 
 //==========================================================================
@@ -144,10 +161,13 @@ HRESULT CCamera::Init()
 //==========================================================================
 void CCamera::SetViewPort(const MyLib::Vector3& pos, const D3DXVECTOR2& size)
 {
-	m_viewport.X = (DWORD)pos.x;			// 描画する画面の左上X座標
-	m_viewport.Y = (DWORD)pos.y;			// 描画する画面の左上Y座標
-	m_viewport.Width = (DWORD)size.x;		// 描画する画面の幅
-	m_viewport.Height = (DWORD)size.y;		// 描画する画面の高さ
+	// 引数情報の設定
+	m_viewport.X = (DWORD)pos.x;			// 画面の左上X座標
+	m_viewport.Y = (DWORD)pos.y;			// 画面の左上Y座標
+	m_viewport.Width = (DWORD)size.x;		// 画面の幅
+	m_viewport.Height = (DWORD)size.y;		// 画面の高さ
+
+	// 情報の初期化
 	m_viewport.MinZ = 0.0f;
 	m_viewport.MaxZ = 1.0f;
 }
@@ -178,22 +198,21 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pDebugControll->Update();
 	}
 
-	// 向きの正規化
-	UtilFunc::Transformation::RotNormalize(m_rot);
-	UtilFunc::Transformation::RotNormalize(m_rotDest);
-	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+	if (m_StateFuncList[m_state] != nullptr)
+	{ // 状態更新関数がある場合
 
-	// 注視点の反映
-	ReflectCameraR();
+		// 状態別処理
+		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
-	// 視点の反映
-	ReflectCameraV();
+	// 視野角の更新
+	UpdateViewAngle();
+
+	// カメラ揺れの更新
+	UpdateSwing();
 
 	// スポットライトベクトルの更新
 	UpdateSpotLightVec();
-
-	// 状態更新
-	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 	if (m_pLight != nullptr)
 	{
@@ -207,35 +226,32 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pCameraMotion->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// テキストの描画
+#ifdef _DEBUG
+	// カメラ交差点の取得
+	MyLib::Vector3 posScreen = UtilFunc::Transformation::CalcScreenToXZ
+	(
+		CInputMouse::GetInstance()->GetPosition(),	// マウス座標
+		D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),	// スクリーンサイズ
+		m_mtxView,		// ビューマトリックス
+		m_mtxProjection	// プロジェクションマトリックス
+	);
+
+	// カメラ情報のテキスト描画
 	GET_MANAGER->GetDebugProc()->Print
 	(
-		"---------------- カメラ情報 ----------------\n"
+		"\n---------------- カメラ情報 ----------------\n"
 		"【向き】[X：%f Y：%f Z：%f]\n"
 		"【距離】[%f]\n"
 		"【視点】[X：%f Y：%f Z：%f]\n"
-		"【注視点】[X：%f Y：%f Z：%f]\n",
+		"【注視点】[X：%f Y：%f Z：%f]\n"
+		"【交差点】[X：%f Y：%f Z：%f]\n",
 		m_rot.x, m_rot.y, m_rot.z,
 		m_fDistance,
 		m_posV.x, m_posV.y, m_posV.z,
-		m_posR.x, m_posR.y, m_posR.z
+		m_posR.x, m_posR.y, m_posR.z,
+		posScreen.x, posScreen.y, posScreen.z
 	);
-
-	// テキストの描画
-	CInputMouse* pMouse = CInputMouse::GetInstance();
-	MyLib::Vector3 pos = UtilFunc::Transformation::CalcScreenToXZ
-	(
-		pMouse->GetPosition(),
-		D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),
-		m_mtxView,
-		m_mtxProjection
-	);
-	GET_MANAGER->GetDebugProc()->Print
-	(
-		"---------------- カメラ情報 ----------------\n"
-		"【交差点】[X：%f Y：%f Z：%f]\n",
-		pos.x, pos.y, pos.z
-	);
+#endif
 }
 
 //==========================================================================
@@ -255,11 +271,11 @@ void CCamera::SetCamera()
 	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
 	D3DXMatrixPerspectiveFovLH
 	(
-		&m_mtxProjection,		// プロジェクションマトリックス
-		D3DXToRadian(30.0f),	// 視野角
-		fAspect,	// アスペクト比
-		10.0f,		// 手前の制限
-		150000.0f	// 奥行きの制限
+		&m_mtxProjection,	// プロジェクションマトリックス
+		m_fViewAngle,		// 視野角
+		fAspect,			// アスペクト比
+		MIN_NEAR,			// 手前の描画制限
+		MAX_FAR				// 奥の描画制限
 	);
 
 	// プロジェクションマトリックスの設定
@@ -286,19 +302,32 @@ void CCamera::SetCamera()
 //==========================================================================
 void CCamera::Reset()
 {
+	// TODO：この初期化群をSTATE内でやろうねって話
 #if 1
 	m_posR = MyLib::Vector3(0.0f, 200.0f, -560.0f);				// 注視点(見たい場所)
 	m_posV = MyLib::Vector3(0.0f, 300.0f, m_posR.z + -400.0f);	// 視点(カメラの位置)
-	m_posVDest = m_posV;				// 目標の視点
-	m_posRDest = m_posR;				// 目標の注視点
-	m_posROrigin = m_posR;				// 元の注視点
-	m_rot = DEFAULT_GAMEROT;			// 向き
-	m_rotOrigin = m_rot;				// 元の向き
-	m_rotDest = m_rot;					// 目標の向き
-	m_fDistance = DISNTANCE;			// 距離
-	m_fDestDistance = m_fDistance;		// 目標の距離
-	m_fOriginDistance = m_fDistance;	// 元の距離
+	m_posVDest			= m_posV;				// 目標の視点
+	m_posRDest			= m_posR;				// 目標の注視点
+	m_posROrigin		= m_posR;				// 元の注視点
+	m_rot				= DEFAULT_GAMEROT;		// 向き
+	m_rotOrigin			= m_rot;				// 元の向き
+	m_rotDest			= m_rot;				// 目標の向き
+	m_fDistance			= DISNTANCE;			// 距離
+	m_fDestDistance		= m_fDistance;			// 目標の距離
+	m_fOriginDistance	= m_fDistance;			// 元の距離
+	m_fViewAngle		= D3DXToRadian(30.0f);	// 視野角
+	m_fDestViewAngle	= m_fViewAngle;			// 目標視野角
 #endif
+
+	if (m_StateFuncList[m_state] != nullptr)
+	{ // 状態リセット関数がある場合
+
+		// 状態別処理
+		(this->*(m_ResetFuncList[m_state]))();
+	}
+
+	// カメラ揺れのリセット
+	ResetSwing();
 
 	if (m_pCameraMotion != nullptr)
 	{
@@ -307,13 +336,14 @@ void CCamera::Reset()
 	}
 
 	// プロジェクションマトリックスの初期化
+	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
 	D3DXMatrixPerspectiveFovLH
 	(
-		&m_mtxProjection,
-		D3DXToRadian(45.0f),
-		(float)m_viewport.Width / (float)m_viewport.Height,
-		10.0f,		// 奥行きの制限
-		1500000.0f	// 奥行きの制限
+		&m_mtxProjection,	// プロジェクションマトリックス
+		m_fViewAngle,		// 視野角
+		fAspect,			// アスペクト比
+		MIN_NEAR,			// 手前の描画制限
+		MAX_FAR				// 奥の描画制限
 	);
 
 	// ビューマトリックスの初期化
@@ -321,9 +351,31 @@ void CCamera::Reset()
 }
 
 //==========================================================================
+// カメラ揺れリセット
+//==========================================================================
+void CCamera::ResetSwing()
+{
+	// カメラ揺れ情報を初期化
+	m_swing.shiftPos	 = VEC3_ZERO;	// 位置ずれ量
+	m_swing.fShiftAngle	 = 0.0f;		// 位置をずらす角度
+	m_swing.fShiftLength = 0.0f;		// 位置をずらす距離
+	m_swing.fSubAngle	 = 0.0f;		// ずらす角度の減算量
+	m_swing.fSubLength	 = 0.0f;		// ずらす距離の減算量
+}
+
+//==========================================================================
+// カメラ揺れの設定処理
+//==========================================================================
+void CCamera::SetSwing(const SSwing& swing)
+{
+	// 引数のカメラ揺れ情報を設定
+	m_swing = swing;
+}
+
+//==========================================================================
 // カメラワープ処理
 //==========================================================================
-void CCamera::WarpCamera(const MyLib::Vector3& pos)
+void CCamera::SetWarp(const MyLib::Vector3& pos)
 {
 	// 注視点の設定
 	m_posR = pos;			// 注視点
@@ -335,12 +387,83 @@ void CCamera::WarpCamera(const MyLib::Vector3& pos)
 }
 
 //==========================================================================
+// 状態の設定処理
+//==========================================================================
+void CCamera::SetState(const STATE state, const bool bReset)
+{
+	// 引数状態を設定
+	m_state = state;
+
+	// リセットフラグがONならカメラリセット
+	if (bReset) { Reset(); }
+}
+
+//==========================================================================
+// 通常状態の更新処理
+//==========================================================================
+void CCamera::UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 向きの正規化
+	UtilFunc::Transformation::RotNormalize(m_rot);
+	UtilFunc::Transformation::RotNormalize(m_rotDest);
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
+	// 注視点の反映
+	ReflectCameraR();
+
+	// 視点の反映
+	ReflectCameraV();
+
+	// 非追従状態にする
+	m_bFollow = false;
+}
+
+//==========================================================================
+// 追従状態の更新処理
+//==========================================================================
+void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 向きの正規化
+	UtilFunc::Transformation::RotNormalize(m_rot);
+	UtilFunc::Transformation::RotNormalize(m_rotDest);
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
+	// 注視点の反映
+	ReflectCameraR();
+
+	// 視点の反映
+	ReflectCameraV();
+
+	// 追従状態にする
+	m_bFollow = true;
+
+	if (m_bMotion)	{ m_fDestViewAngle = D3DXToRadian(45.0f); }
+	else			{ m_fDestViewAngle = D3DXToRadian(30.0f); }
+}
+
+//==========================================================================
+// 通常状態のリセット
+//==========================================================================
+void CCamera::ResetNoneState()
+{
+
+}
+
+//==========================================================================
+// 追従状態のリセット
+//==========================================================================
+void CCamera::ResetFollowState()
+{
+
+}
+
+//==========================================================================
 // カメラの視点代入処理
 //==========================================================================
 void CCamera::ReflectCameraV()
 {
 	if (!m_bFollow)
-	{ // 追従しないとき
+	{ // 追従OFF
 
 		// 視点の代入処理
 		m_posV.x = m_posR.x + cosf(m_rot.z) * sinf(m_rot.y) * -m_fDistance;
@@ -365,16 +488,10 @@ void CCamera::ReflectCameraV()
 //==========================================================================
 void CCamera::ReflectCameraR()
 {
-	if (!m_bFollow ||
-		(m_bMotion && m_bFollow))
-	{ // 追従しないとき
+	// モーション中の場合抜ける
+	if (m_bMotion) { return; }
 
-		//// 注視点の代入処理
-		//m_posR.x = m_posV.x + cosf(m_rot.z) * sinf(m_rot.y) * m_fDistance;
-		//m_posR.z = m_posV.z + cosf(m_rot.z) * cosf(m_rot.y) * m_fDistance;
-		//m_posR.y = m_posV.y + sinf(m_rot.z) * m_fDistance;
-	}
-	else
+	if (m_bFollow)
 	{ // 追従ON
 
 		// ターゲットみる
@@ -383,6 +500,60 @@ void CCamera::ReflectCameraR()
 		// 補正する
 		m_posR += (m_posRDest - m_posR) * MULTIPLY_CHASE_POSR;
 	}
+}
+
+//==========================================================================
+// 視野角の更新
+//==========================================================================
+void CCamera::UpdateViewAngle()
+{
+	// 目標の視野角へ慣性補正
+	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, 0.2f);
+}
+
+//==========================================================================
+// カメラ揺れの更新
+//==========================================================================
+void CCamera::UpdateSwing()
+{
+	// 注視点のずらし量が設定されていない場合抜ける
+	if (m_swing.fShiftLength <= 0.0f) { return; }
+
+	float fRotY;			// 位置ずれ向き
+	D3DXQUATERNION quat;	// クォータニオン
+	D3DXMATRIX mtxRot;		// 回転マトリックス
+	MyLib::Vector3 offset;	// 位置ずれオフセット
+	MyLib::Vector3 vecAxis = m_posR - m_posV;	// 回転軸ベクトル
+
+	// クォータニオンを作成
+	D3DXVec3Normalize(&vecAxis, &vecAxis);	// 回転軸を正規化
+	D3DXQuaternionRotationAxis(&quat, &vecAxis, m_swing.fShiftAngle);
+
+	// 回転マトリックスを作成
+	D3DXMatrixRotationQuaternion(&mtxRot, &quat);
+
+	// 位置をずらす向きを求める
+	fRotY = atan2f(-vecAxis.z, vecAxis.x);
+
+	// 位置ずれオフセットを設定
+	float fCalcTemp = m_swing.fShiftLength * (fabsf(m_fDistance) * REV_DIS);
+	offset = MyLib::Vector3(sinf(fRotY) * fCalcTemp, 0.0f, cosf(fRotY) * fCalcTemp);
+
+	// オフセットを反映した回転マトリックスを座標変換
+	D3DXVec3TransformCoord(&m_swing.shiftPos, &offset, &mtxRot);
+
+	// 視点に位置のずれを加算
+	m_posV += m_swing.shiftPos;
+
+	// 位置ずれ量を減算
+	m_swing.fShiftAngle  -= m_swing.fSubAngle;
+	m_swing.fShiftLength -= m_swing.fSubLength;
+
+	// 角度を補正
+	UtilFunc::Transformation::RotNormalize(m_swing.fShiftAngle);
+
+	// 距離を補正
+	if (m_swing.fShiftLength < 0.0f) { m_swing.fShiftLength = 0.0f; }
 }
 
 //==========================================================================
@@ -395,22 +566,6 @@ void CCamera::UpdateSpotLightVec()
 
 	// スポットライトの方向設定
 	m_pLight->SetDirection(vec);
-}
-
-//==========================================================================
-// カメラの状態更新処理
-//==========================================================================
-void CCamera::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	switch (m_state)
-	{ // 状態ごとの処理
-	case CAMERASTATE_NONE:
-		break;
-
-	default:
-		assert(false);
-		break;
-	}
 }
 
 //==========================================================================

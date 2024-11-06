@@ -199,8 +199,9 @@ HRESULT CGame::Init()
 	}
 #endif
 
-	// カメラのリセット
-	CManager::GetInstance()->GetCamera()->Reset();
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
 
 	// クリアの判定
 	SetEnableClear(true);
@@ -288,11 +289,10 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
-		if (ImGui::Button("Special!"))
+		if (ImGui::Button("Camera : Swing"))
 		{
-			CPlayer* pPlayerAttack = CPlayer::GetList().GetData(0);
-			CPlayer* pPlayerTarget = CPlayer::GetList().GetData(1);
-			CSpecialManager::Create(pPlayerAttack, pPlayerTarget);
+			// カメラを適当に揺らす
+			GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(10.0f, 2.0f, 0.6f));
 		}
 
 		if (ImGui::Button("Room : Bright"))

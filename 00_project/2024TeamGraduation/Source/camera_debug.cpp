@@ -225,7 +225,7 @@ void CCamera_Debug::UpdateDistance()
 	m_pCamera->SetDistance(distance);
 	m_pCamera->SetDistanceDest(destDistance);
 	m_pCamera->SetDistanceOrigin(originDistance);
-	m_pCamera->WarpCamera(m_pCamera->GetPositionR());
+	m_pCamera->SetWarp(m_pCamera->GetPositionR());
 }
 
 //==========================================================================
