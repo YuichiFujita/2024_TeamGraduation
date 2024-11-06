@@ -199,8 +199,9 @@ HRESULT CGame::Init()
 	}
 #endif
 
-	// カメラのリセット
-	CManager::GetInstance()->GetCamera()->Reset();
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
 
 	// クリアの判定
 	SetEnableClear(true);

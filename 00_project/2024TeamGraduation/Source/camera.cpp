@@ -306,17 +306,17 @@ void CCamera::Reset()
 #if 1
 	m_posR = MyLib::Vector3(0.0f, 200.0f, -560.0f);				// 注視点(見たい場所)
 	m_posV = MyLib::Vector3(0.0f, 300.0f, m_posR.z + -400.0f);	// 視点(カメラの位置)
-	m_posVDest			= m_posV;			// 目標の視点
-	m_posRDest			= m_posR;			// 目標の注視点
-	m_posROrigin		= m_posR;			// 元の注視点
-	m_rot				= DEFAULT_GAMEROT;	// 向き
-	m_rotOrigin			= m_rot;			// 元の向き
-	m_rotDest			= m_rot;			// 目標の向き
-	m_fDistance			= DISNTANCE;		// 距離
-	m_fDestDistance		= m_fDistance;		// 目標の距離
-	m_fOriginDistance	= m_fDistance;		// 元の距離
-	m_fViewAngle		= D3DXToRadian(30);	// 視野角
-	m_fDestViewAngle	= m_fViewAngle;		// 目標視野角
+	m_posVDest			= m_posV;				// 目標の視点
+	m_posRDest			= m_posR;				// 目標の注視点
+	m_posROrigin		= m_posR;				// 元の注視点
+	m_rot				= DEFAULT_GAMEROT;		// 向き
+	m_rotOrigin			= m_rot;				// 元の向き
+	m_rotDest			= m_rot;				// 目標の向き
+	m_fDistance			= DISNTANCE;			// 距離
+	m_fDestDistance		= m_fDistance;			// 目標の距離
+	m_fOriginDistance	= m_fDistance;			// 元の距離
+	m_fViewAngle		= D3DXToRadian(30.0f);	// 視野角
+	m_fDestViewAngle	= m_fViewAngle;			// 目標視野角
 #endif
 
 	if (m_StateFuncList[m_state] != nullptr)
@@ -387,12 +387,83 @@ void CCamera::SetWarp(const MyLib::Vector3& pos)
 }
 
 //==========================================================================
+// 状態の設定処理
+//==========================================================================
+void CCamera::SetState(const STATE state, const bool bReset)
+{
+	// 引数状態を設定
+	m_state = state;
+
+	// リセットフラグがONならカメラリセット
+	if (bReset) { Reset(); }
+}
+
+//==========================================================================
+// 通常状態の更新処理
+//==========================================================================
+void CCamera::UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 向きの正規化
+	UtilFunc::Transformation::RotNormalize(m_rot);
+	UtilFunc::Transformation::RotNormalize(m_rotDest);
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
+	// 注視点の反映
+	ReflectCameraR();
+
+	// 視点の反映
+	ReflectCameraV();
+
+	// 非追従状態にする
+	m_bFollow = false;
+}
+
+//==========================================================================
+// 追従状態の更新処理
+//==========================================================================
+void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 向きの正規化
+	UtilFunc::Transformation::RotNormalize(m_rot);
+	UtilFunc::Transformation::RotNormalize(m_rotDest);
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
+	// 注視点の反映
+	ReflectCameraR();
+
+	// 視点の反映
+	ReflectCameraV();
+
+	// 追従状態にする
+	m_bFollow = true;
+
+	if (m_bMotion)	{ m_fDestViewAngle = D3DXToRadian(45.0f); }
+	else			{ m_fDestViewAngle = D3DXToRadian(30.0f); }
+}
+
+//==========================================================================
+// 通常状態のリセット
+//==========================================================================
+void CCamera::ResetNoneState()
+{
+
+}
+
+//==========================================================================
+// 追従状態のリセット
+//==========================================================================
+void CCamera::ResetFollowState()
+{
+
+}
+
+//==========================================================================
 // カメラの視点代入処理
 //==========================================================================
 void CCamera::ReflectCameraV()
 {
 	if (!m_bFollow)
-	{ // 追従しないとき
+	{ // 追従OFF
 
 		// 視点の代入処理
 		m_posV.x = m_posR.x + cosf(m_rot.z) * sinf(m_rot.y) * -m_fDistance;
@@ -413,70 +484,14 @@ void CCamera::ReflectCameraV()
 }
 
 //==========================================================================
-// 通常状態の更新処理
-//==========================================================================
-void CCamera::UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 向きの正規化
-	UtilFunc::Transformation::RotNormalize(m_rot);
-	UtilFunc::Transformation::RotNormalize(m_rotDest);
-	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
-
-	// 注視点の反映
-	ReflectCameraR();
-
-	// 視点の反映
-	ReflectCameraV();
-}
-
-//==========================================================================
-// 追従状態の更新処理
-//==========================================================================
-void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 向きの正規化
-	UtilFunc::Transformation::RotNormalize(m_rot);
-	UtilFunc::Transformation::RotNormalize(m_rotDest);
-	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
-
-	// 注視点の反映
-	ReflectCameraR();
-
-	// 視点の反映
-	ReflectCameraV();
-}
-
-//==========================================================================
-// 通常状態のリセット
-//==========================================================================
-void CCamera::ResetNoneState()
-{
-
-}
-
-//==========================================================================
-// 追従状態のリセット
-//==========================================================================
-void CCamera::ResetFollowState()
-{
-
-}
-
-//==========================================================================
 // カメラの注視点代入処理
 //==========================================================================
 void CCamera::ReflectCameraR()
 {
-	if (!m_bFollow ||
-		(m_bMotion && m_bFollow))
-	{ // 追従しないとき
+	// モーション中の場合抜ける
+	if (m_bMotion) { return; }
 
-		//// 注視点の代入処理
-		//m_posR.x = m_posV.x + cosf(m_rot.z) * sinf(m_rot.y) * m_fDistance;
-		//m_posR.z = m_posV.z + cosf(m_rot.z) * cosf(m_rot.y) * m_fDistance;
-		//m_posR.y = m_posV.y + sinf(m_rot.z) * m_fDistance;
-	}
-	else
+	if (m_bFollow)
 	{ // 追従ON
 
 		// ターゲットみる

@@ -27,9 +27,9 @@ class CCamera_Debug;	// デバッグ処理
 // カメラクラス定義
 class CCamera
 {
-private:
+public:
 
-	// 列挙型定義
+	// 状態列挙
 	enum STATE
 	{
 		STATE_NONE = 0,	// 通常
@@ -37,17 +37,12 @@ private:
 		STATE_MAX
 	};
 
-public:
-
-	// 注視点の状態
+	// 注視点の状態列挙
 	enum PosRState
 	{
 		POSR_STATE_NORMAL = 0,
 		POSR_STATE_MAX
 	};
-
-	CCamera();	// コンストラクタ
-	~CCamera();	// デストラクタ
 
 	// カメラ揺れ構造体
 	struct SSwing
@@ -82,6 +77,15 @@ public:
 		float fSubLength;	// ずらす距離の減算量
 	};
 
+	//-----------------------------
+	// コンストラクタ/デストラクタ
+	//-----------------------------
+	CCamera();
+	~CCamera();
+
+	//-----------------------------
+	// メンバ関数
+	//-----------------------------
 	HRESULT Init();		// 初期化
 	void Uninit();		// 終了
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
@@ -90,41 +94,42 @@ public:
 	void ResetSwing();	// カメラ揺れリセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void SetWarp(const MyLib::Vector3& pos);	// カメラワープ設定
+	void SetState(const STATE state, const bool bReset = true);	// 状態設定
 
-	//--------------------------
+	//-----------------------------
 	// スクリーン
-	//--------------------------
+	//-----------------------------
 	bool IsOnScreen(const MyLib::Vector3& pos);				// スクリーン内判定
 	MyLib::Vector3 GetScreenPos(const MyLib::Vector3& pos);	// スクリーン座標取得
 
-	//--------------------------
+	//-----------------------------
 	// 注視点
-	//--------------------------
+	//-----------------------------
 	inline void SetPositionR(const MyLib::Vector3& pos)		{ m_posR = pos; }			// 注視点の設定
 	inline MyLib::Vector3 GetPositionR()					{ return m_posR; }			// 注視点の取得
 	inline void SetPositionRDest(const MyLib::Vector3& pos)	{ m_posRDest = pos; }		// 目標注視点の設定
 	inline MyLib::Vector3 GetPositionRDest()				{ return m_posRDest; }		// 目標注視点の取得
 	inline MyLib::Vector3 GetPositionROrigin()				{ return m_posROrigin; }	// 原点注視点の取得
 
-	//--------------------------
+	//-----------------------------
 	// 視点
-	//--------------------------
+	//-----------------------------
 	inline void SetPositionV(const MyLib::Vector3& pos)		{ m_posV = pos; }		// 視点の設定
 	inline MyLib::Vector3 GetPositionV()					{ return m_posV; }		// 視点の取得
 	inline void SetPositionVDest(const MyLib::Vector3& pos)	{ m_posVDest = pos; }	// 目標視点の設定
 	inline MyLib::Vector3 GetPositionVDest()				{ return m_posVDest; }	// 目標視点の取得
 
-	//--------------------------
+	//-----------------------------
 	// 追従目標値
-	//--------------------------
+	//-----------------------------
 	inline void SetTargetPosition(const MyLib::Vector3& pos)		{ m_posTarget = pos; }		// 追従位置の設定
 	inline MyLib::Vector3 GetTargetPosition()						{ return m_posTarget; }		// 追従位置の取得
 	inline void SetTargetPositionDest(const MyLib::Vector3& pos)	{ m_posTargetDest = pos; }	// 追従目標位置の設定
 	inline MyLib::Vector3 GetTargetPositionDest()					{ return m_posTargetDest; }	// 追従目標位置の取得
 
-	//--------------------------
+	//-----------------------------
 	// 距離
-	//--------------------------
+	//-----------------------------
 	inline void SetDistance(float distance)			{ m_fDistance = distance; }			// 距離の設定
 	inline float GetDistance()						{ return m_fDistance; }				// 距離の取得
 	inline void SetDistanceDest(float distance)		{ m_fDestDistance = distance; }		// 目標距離の取得
@@ -132,9 +137,9 @@ public:
 	inline void SetDistanceOrigin(float distance)	{ m_fOriginDistance = distance; }	// 原点距離の設定
 	inline float GetDistanceOrigin()				{ return m_fOriginDistance; }		// 原点距離の取得
 
-	//--------------------------
+	//-----------------------------
 	// 向き
-	//--------------------------
+	//-----------------------------
 	inline void SetRotation(const MyLib::Vector3& rot)			{ m_rot = rot; }		// 向きの設定
 	inline MyLib::Vector3 GetRotation() const					{ return m_rot; }		// 向きの取得
 	inline void SetDestRotation(const MyLib::Vector3& rot)		{ m_rotDest = rot; }	// 目標向きの設定
@@ -142,31 +147,31 @@ public:
 	inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 原点向きの設定
 	inline MyLib::Vector3 GetOriginRotation()					{ return m_rotOrigin; }	// 原点向きの取得
 
-	//--------------------------
+	//-----------------------------
 	// 視野角
-	//--------------------------
+	//-----------------------------
 	inline void SetViewAngle(const float fAngle)		{ m_fViewAngle = fAngle; }		// 視野角
 	inline float GetViewAngle()							{ return m_fViewAngle; }		// 視野角
 	inline void SetDestViewAngle(const float fAngle)	{ m_fDestViewAngle = fAngle; }	// 目標視野角
 	inline float GetDestViewAngle()						{ return m_fDestViewAngle; }	// 目標視野角
 
-	//--------------------------
+	//-----------------------------
 	// カメラモーション
-	//--------------------------
+	//-----------------------------
 	inline CCameraMotion* GetCameraMotion() { return m_pCameraMotion; }	// カメラモーションポインタ取得
 
-	//--------------------------
+	//-----------------------------
 	// フラグ
-	//--------------------------
+	//-----------------------------
 	inline void SetEnableLight(bool bLight)		{ m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
 	inline void SetEnableFollow(bool bFollow)	{ m_bFollow = bFollow; }	// 追従判定設定
 	inline bool IsFollow()						{ return m_bFollow; }		// 追従判定取得
 	inline void SetEnableMotion(bool frag)		{ m_bMotion = frag; }		// モーション中判定設定
 	inline bool IsMotion()						{ return m_bMotion; }		// モーション中判定取得
 	
-	//--------------------------
+	//-----------------------------
 	// 視点マトリックス
-	//--------------------------
+	//-----------------------------
 	void SetViewPort(const MyLib::Vector3& pos, const D3DXVECTOR2& size);		// ビューポート設定
 	inline D3DVIEWPORT9 GetViewPort()			{ return m_viewport; };			// ビューポート取得
 	inline D3DXMATRIX GetMtxView()				{ return m_mtxView; }			// ビューマトリックス取得
@@ -176,9 +181,9 @@ public:
 
 private:
 
-	//=============================
+	//-----------------------------
 	// 関数リスト
-	//=============================
+	//-----------------------------
 	// 状態関数
 	typedef void(CCamera::*STATE_FUNC)(const float, const float, const float);	// 関数型
 	static STATE_FUNC m_StateFuncList[];	// 関数リスト
@@ -187,9 +192,9 @@ private:
 	typedef void(CCamera::*RESET_FUNC)();	// 関数型
 	static RESET_FUNC m_ResetFuncList[];	// 関数リスト
 
-	//=============================
+	//-----------------------------
 	// メンバ関数
-	//=============================
+	//-----------------------------
 	// 状態関数
 	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
 	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従状態の更新
@@ -205,9 +210,9 @@ private:
 	void UpdateSwing();			// カメラ揺れの更新
 	void UpdateSpotLightVec();	// ライトベクトルの更新
 
-	//=============================
+	//-----------------------------
 	// メンバ変数
-	//=============================
+	//-----------------------------
 	CCamera_Debug* m_pDebugControll;	// デバッグ情報
 	CCameraMotion* m_pCameraMotion;		// カメラモーション情報
 	CLightDir* m_pLight;				// ディレクショナルライト情報
