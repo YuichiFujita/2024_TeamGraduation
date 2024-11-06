@@ -870,6 +870,18 @@ void CMotion::LoadMotion(const std::string text, int nIdxMotion)
 	// ファイル名保存
 	InitInfo.filename = text;
 
+	// 最後のスラッシュの位置を見つける
+	size_t pos = text.find_last_of("/\\");
+
+	if (pos == std::string::npos) 
+	{// スラッシュが見つからなかった場合、全体がファイル名
+		InitInfo.filename = text;
+	}
+	else 
+	{// スラッシュの後ろから取得
+		InitInfo.filename = text.substr(pos + 1);
+	}
+
 	// キャンセル可能フレームリセット
 	InitInfo.nCancelableFrame = 0;
 

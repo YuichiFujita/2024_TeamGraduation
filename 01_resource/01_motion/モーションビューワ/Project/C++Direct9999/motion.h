@@ -14,7 +14,7 @@
 class CModel;
 class CObjectChara;
 
-#define MAX_MOTION	(32)	// モーションの最大数
+#define MAX_MOTION	(64)	// モーションの最大数
 #define MAX_KEY		(24)	// キーの最大数
 #define MAX_PARTS	(48)	// パーツの最大数
 
@@ -79,6 +79,7 @@ public:
 	static CMotion *Create(void);
 	void Set(int nType);	// モーションの設定処理
 	int GetType(void);		// 現在のモーションタイプ取得
+	void SetFinish(bool bFinish) { m_bFinish = bFinish; }	// 終了しているかの判定
 	bool IsFinish(void);	// 終了しているかの判定
 	bool IsGetCancelable(void);	// キャンセルの判定取得
 
