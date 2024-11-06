@@ -14,6 +14,12 @@
 #include "playercontrol_action.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerUserControlAction;
+class CPlayerAIControlAction;
+
+//==========================================================================
 // プレイヤーAIコントロール_アクションクラス定義
 //==========================================================================
 //=============================
@@ -25,6 +31,13 @@ public:
 
 	// コンストラクタ
 	CPlayerAIControlAction();
+
+	//=============================
+	// メンバ関数
+	//=============================
+	void SetIsThrow(bool bThrow) { m_bThrow = bThrow; }
+	virtual CPlayerAIControlAction* GetAI() { return this; };
+	virtual CPlayerUserControlAction* GetUser() { return nullptr; };
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
@@ -52,6 +65,7 @@ private:
 	// メンバ変数
 	//=============================
 	float fThrowTime = 0.0f;
+	bool m_bThrow;
 
 };
 

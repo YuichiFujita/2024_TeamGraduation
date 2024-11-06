@@ -11,6 +11,12 @@
 #include "playercontrol_action.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerUserControlAction;
+class CPlayerAIControlAction;
+
+//==========================================================================
 // プレイヤーコントロールクラス定義
 //==========================================================================
 //=============================
@@ -22,6 +28,9 @@ public:
 
 	// コンストラクタ
 	CPlayerUserControlAction();
+
+	virtual CPlayerAIControlAction* GetAI() { return nullptr; };
+	virtual CPlayerUserControlAction* GetUser() { return this; };
 
 private:
 	

@@ -114,6 +114,15 @@ public:
 		ANGLE_MAX
 	};
 
+	// 動作状態
+	enum EHit
+	{
+		HIT_NONE = 0,	// 通常
+		HIT_CATCH,		// キャッチ
+		HIT_DODGE,		// 回避
+		HIT_MAX
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -160,6 +169,13 @@ public:
 		MyLib::Vector3 posEnd;		// 終点
 
 		SKnockbackInfo() : posStart(MyLib::Vector3()), posEnd(MyLib::Vector3()) {}
+	};
+
+	// 
+	struct SHitInfo
+	{
+		bool bHit;	// 当たったか
+		EHit eHit;	// 動作状態
 	};
 
 	//=============================
@@ -209,7 +225,7 @@ public:
 	//=============================
 	// その他
 	//=============================
-	bool Hit(CBall* pBall);			// ヒット処理
+	virtual SHitInfo Hit(CBall* pBall);			// ヒット処理
 	void SetSpecialAttack();		// スペシャル攻撃設定
 	void SetState(EState state);	// 状態設定
 	EState GetState() { return m_state; }					// 状態取得

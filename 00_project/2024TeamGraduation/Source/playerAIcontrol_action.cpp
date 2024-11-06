@@ -32,7 +32,7 @@ bool CPlayerAIControlAction::m_bAutoThrow = true;
 //==========================================================================
 CPlayerAIControlAction::CPlayerAIControlAction()
 {
-
+	m_bThrow = false;
 }
 
 //==========================================================================
@@ -64,17 +64,9 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 
 	if (pBall == nullptr) return;
 
-	if (m_bAutoThrow)
+	if (m_bThrow)
 	{
-		fThrowTime += fDeltaTime;
-	}
-
-	// ƒ{ƒ^ƒ“
-	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
-	{
-
-		fThrowTime = 0.0f;
-
+		// “Š‚°‚é
 		ThrowSetting(player);
 	}
 }

@@ -7,6 +7,9 @@
 #include "playerAI.h"
 #include "manager.h"
 #include "calculation.h"
+#include "game.h"
+#include "teamStatus.h"
+
 
 // 使用クラス
 #include "playerStatus.h"
@@ -20,6 +23,16 @@ namespace
 {
 
 }
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+CPlayerAI::STATE_FUNC CPlayerAI::m_StateFunc[] =	// 状態関数
+{
+	&CPlayerAI::StateNone,				// なし
+	//&CPlayerAI::StateThrowManager,		// 投げマネージャー
+	//&CPlayerAI::StateCatchManager,		// キャッチマネージャー
+};
 
 //==========================================================================
 // コンストラクタ
@@ -109,6 +122,9 @@ void CPlayerAI::Update(const float fDeltaTime, const float fDeltaRate, const flo
 {
 	// 親クラスの更新
 	CPlayer::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 状態更新
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -118,6 +134,102 @@ void CPlayerAI::Draw()
 {
 	// 親クラスの描画
 	CPlayer::Draw();
+}
+
+//==========================================================================
+// ヒット処理
+//==========================================================================
+CPlayerAI::SHitInfo CPlayerAI::Hit(CBall* pBall)
+{
+	CPlayer::SHitInfo hitInfo = CPlayer::Hit(pBall);	// ヒット情報
+
+	if (hitInfo.eHit == EHit::HIT_NONE){
+		return hitInfo;
+	}
+
+	if (hitInfo.eHit == EHit::HIT_CATCH)
+	{// キャッチ状態
+		StateThrowManager(pBall);
+	}
+
+	return hitInfo;
+}
+
+//==========================================================================
+// 投げの管理
+//==========================================================================
+void CPlayerAI::StateThrowManager(CBall* pBall)
+{
+	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(this->GetCharStatus()->GetTeam());
+
+	// ボール所持か
+	if (pBall == nullptr) return;
+
+	// TODO: フラグか何かで発動操作
+	if (false)
+	{
+		if (pTeamStatus->IsMaxSpecial())
+		{
+			SpecialThrow();
+		}
+		else
+		{
+			Throw();
+		}
+	}
+}
+
+//==========================================================================
+// キャッチの管理
+//==========================================================================
+void CPlayerAI::StateCatchManager()
+{
+
+}
+
+//==========================================================================
+// 通常投げ処理
+//==========================================================================
+void CPlayerAI::Throw()
+{
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction =pControlAction->GetAI();
+
+	pControlAIAction->SetIsThrow(true);
+}
+
+//==========================================================================
+// ジャンプ投げ処理
+//==========================================================================
+void CPlayerAI::JumpThrow()
+{
+
+}
+
+//==========================================================================
+// スペシャル投げ処理
+//==========================================================================
+void CPlayerAI::SpecialThrow()
+{
+	
+}
+
+//==========================================================================
+// 状態更新
+//==========================================================================
+void CPlayerAI::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 状態更新
+	(this->*(m_StateFunc[m_throwMode]))();
+}
+
+//==========================================================================
+// なし
+//==========================================================================
+void CPlayerAI::StateNone()
+{
+
 }
 
 //==========================================================================

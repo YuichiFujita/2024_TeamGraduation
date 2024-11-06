@@ -26,6 +26,18 @@ class CPlayerAIControlAction;	// アクション(AI)
 class CPlayerAI : public CPlayer
 {
 public:
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum EThrowMode
+	{
+		MODE_NONE = 0,	// 通常
+		MODE_WALK,		// 歩き
+		MODE_DASH,		// 走り
+		MODE_QUICK,		// すぐに
+		MODE_DELAY,		// 遅らせて
+		MODE_MAX
+	};
 	
 	//=============================
 	// コンストラクタ/デストラクタ
@@ -67,10 +79,29 @@ protected:
 	virtual void Debug() override;	// デバッグ処理
 
 private:
+	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CPlayerAI::* STATE_FUNC)();
+	static STATE_FUNC m_StateFunc[];	// 状態関数
 
 	//=============================
 	// メンバ関数
 	//=============================
+	SHitInfo Hit(CBall* pBall) override;
+
+	//-----------------------------
+	// 状態関数
+	//-----------------------------
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
+	void StateNone();				// なし
+	void StateThrowManager(CBall* pBall);	// 
+	void StateCatchManager();
+
+	void Throw();	// 通常投げ
+	void JumpThrow();	// ジャンプ投げ
+	void SpecialThrow();	// スペシャル投げ
+
 	//-----------------------------
 	// その他関数
 	//-----------------------------
@@ -80,6 +111,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	EThrowMode m_throwMode;
 };
 
 #endif
