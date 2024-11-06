@@ -30,8 +30,6 @@ namespace
 	const float MAX_FAR		= 1500000.0f;	// 奥の描画制限
 	const float MIN_DIS		= 50.0f;		// 最少距離
 	const float REV_SWING	= 0.001f;		// カメラ揺れ時のカメラ距離補正係数
-	const float MULTIPLY_CHASE_POSR	= 1.5f;	// 注視点追従の倍率
-	const float MULTIPLY_CHASE_POSV	= 1.5f;	// 視点追従の倍率
 
 	namespace none
 	{
@@ -43,8 +41,15 @@ namespace
 
 	namespace follow
 	{
-		const MyLib::Vector3 INIT_ROT = MyLib::Vector3(0.0f, 0.0f, -0.32f);	// 向きの初期値
-		const float INIT_VIEWANGLE = D3DXToRadian(30.0f);	// 視野角の初期値
+		const MyLib::Vector3 INIT_ROT	= MyLib::Vector3(0.0f, 0.0f, -0.32f);	// 向きの初期値
+		const float INIT_VIEWANGLE		= D3DXToRadian(30.0f);	// 視野角の初期値
+		const float DEST_POSR_BOXSIZE	= 50.0f;	// 目標注視点を動かさない範囲
+
+		const float REV_POSR		= 0.05f;		// 注視点の補正係数
+		const float REV_VIEWANGLE	= 0.1f;			// 視野角の補正係数
+
+		const float MAX_DIS	= 2500.0f - MIN_DIS;	// 追従カメラの最大距離
+		const float MIN_DIS	= MIN_DIS;				// 追従カメラの最低距離
 	}
 }
 
@@ -170,10 +175,10 @@ HRESULT CCamera::Init()
 void CCamera::SetViewPort(const MyLib::Vector3& pos, const D3DXVECTOR2& size)
 {
 	// 引数情報の設定
-	m_viewport.X = (DWORD)pos.x;			// 画面の左上X座標
-	m_viewport.Y = (DWORD)pos.y;			// 画面の左上Y座標
-	m_viewport.Width = (DWORD)size.x;		// 画面の幅
-	m_viewport.Height = (DWORD)size.y;		// 画面の高さ
+	m_viewport.X = (DWORD)pos.x;		// 画面の左上X座標
+	m_viewport.Y = (DWORD)pos.y;		// 画面の左上Y座標
+	m_viewport.Width  = (DWORD)size.x;	// 画面の幅
+	m_viewport.Height = (DWORD)size.y;	// 画面の高さ
 
 	// 情報の初期化
 	m_viewport.MinZ = 0.0f;
@@ -206,8 +211,8 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pDebugControll->Update();
 	}
 
-	if (m_StateFuncList[m_state] != nullptr)
-	{ // 状態更新関数がある場合
+	if (m_StateFuncList[m_state] != nullptr && !m_bMotion)
+	{ // 状態更新関数がある且つモーション中ではない場合
 
 		// 状態別処理
 		(this->*(m_StateFuncList[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -431,15 +436,23 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 
 	// 目標注視点を計算
 	MyLib::Vector3 posCurDest = CalcFollowPositionR(fDisRate);
-	if (!m_posRDest.IsNearlyTargetX(posCurDest.x, 20.0f))
-	{ // ある程度離れた位置が目標に設定された場合
 
-		// 目標注視点を更新する
-		m_posRDest = posCurDest;
+	// 注視点を補正
+	if (m_posRDest.x + follow::DEST_POSR_BOXSIZE < posCurDest.x)
+	{ // 目標注視点を動かさない範囲より右側の場合
+
+		// 注視点を右端に補正
+		m_posRDest.x = posCurDest.x - follow::DEST_POSR_BOXSIZE;
+	}
+	else if (m_posRDest.x - follow::DEST_POSR_BOXSIZE > posCurDest.x)
+	{ // 目標注視点を動かさない範囲より左側の場合
+
+		// 注視点を左端に補正
+		m_posRDest.x = posCurDest.x + follow::DEST_POSR_BOXSIZE;
 	}
 
 	// 現在注視点を慣性補正
-	UtilFunc::Correction::InertiaCorrection(m_posR, m_posRDest, 0.05f);
+	UtilFunc::Correction::InertiaCorrection(m_posR, m_posRDest, follow::REV_POSR);
 
 	// 現在注視点のY/Z座標は目標座標にし続ける
 	m_posR.y = posCurDest.y;
@@ -452,11 +465,11 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 	m_rot = m_rotDest = follow::INIT_ROT;
 
 	// 目標視野角を設定
-	if (m_bMotion)	{ m_fDestViewAngle = D3DXToRadian(45.0f); }
-	else			{ m_fDestViewAngle = D3DXToRadian(30.0f); }
+	if (m_bMotion)	{ m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else			{ m_fDestViewAngle = follow::INIT_VIEWANGLE; }
 
 	// 現在視野角を慣性補正
-	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, 0.1f);
+	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, follow::REV_VIEWANGLE);
 
 	// 球面座標変換による相対位置の取得
 	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
@@ -510,8 +523,8 @@ void CCamera::ResetFollowState()
 	m_rot = m_rotDest = m_rotOrigin = follow::INIT_ROT;
 
 	// 視野角を設定
-	if (m_bMotion)	{ m_fViewAngle = m_fDestViewAngle = D3DXToRadian(45.0f); }
-	else			{ m_fViewAngle = m_fDestViewAngle = D3DXToRadian(30.0f); }
+	if (m_bMotion)	{ m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else			{ m_fViewAngle = m_fDestViewAngle = follow::INIT_VIEWANGLE; }
 
 	// 球面座標変換による目標視点の相対位置取得
 	m_posV = m_posVDest = CalcSpherePosition(m_posROrigin, m_rotOrigin, -m_fOriginDistance);
@@ -567,7 +580,7 @@ float CCamera::CalcDistanceRate()
 float CCamera::CalcFollowDistance(const float fDisRate)
 {
 	// カメラ距離を距離割合から計算し返す
-	return (2430.0f * fDisRate + 50.0f);
+	return (follow::MAX_DIS * fDisRate + follow::MIN_DIS);
 }
 
 //==========================================================================
