@@ -25,6 +25,9 @@
 #include "map.h"
 #include "edit_map.h"
 
+// デバッグ
+#include "ObjectLine.h"
+
 // 使用クラス
 #include "playerAction.h"
 #include "playerStatus.h"
@@ -789,6 +792,26 @@ void CPlayer::MotionCrab(int nStartKey)
 	// 向き
 	MyLib::Vector3 rot = GetRotation();
 
+
+	{
+		MyLib::Vector3 move(
+			sinf(rot.y + D3DX_PI) * 15.0f,
+			0.0f,
+			cosf(rot.y + D3DX_PI) * 15.0f
+		);
+
+		CEffect3D::Create(
+			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
+			move,
+			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+	}
+
+
+
+
+
+
 	float fRange = D3DX_PI * 0.25f;
 
 	float fRangeMinMax[] =
@@ -806,13 +829,39 @@ void CPlayer::MotionCrab(int nStartKey)
 	for (int i = 0; i < sizeof(fRangeMinMax) / sizeof(fRangeMinMax[0]); i++)
 	{
 		UtilFunc::Transformation::RotNormalize(fRangeMinMax[i]);
+
+		MyLib::Vector3 move(
+			sinf(fRangeMinMax[i] + D3DX_PI) * 15.0f,
+			0.0f,
+			cosf(fRangeMinMax[i] + D3DX_PI) * 15.0f
+			);
+
+		CEffect3D::Create(
+			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
+			move,
+			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 	}
 	ImGui::Text("%f", rot.y);
 
+	// デバッグ
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	MyLib::Vector3 posBallP = pBall->GetPlayer()->GetPosition();
+	
+	
+
 	// プレイヤーどこ見てる
-	if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[0], fRangeMinMax[1]))
+	float fRotY = D3DX_PI * 1.0f + rot.y;
+	UtilFunc::Transformation::RotNormalize(fRotY);
+	if (UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeMinMax[0], fRangeMinMax[1]))
 	{// 上
 		ImGui::Text("PLAYER_ROT_HIGH");
+
+		CEffect3D::Create(
+			GetPosition(),
+			MyLib::Vector3(0.0f, 5.0f, 0.0f),
+			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 	}
 
 #if 0

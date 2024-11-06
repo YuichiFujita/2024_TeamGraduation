@@ -349,6 +349,28 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 		return;
 	}
 
+
+
+
+	// 位置取得
+	MyLib::Vector3 pos = GetPosition();
+	MyLib::Vector3 posOld = GetOldPosition();
+
+	// 移動量取得
+	MyLib::Vector3 move = GetMove();
+
+	pos += move;
+
+	// 位置設定
+	SetPosition(pos);
+
+	// 移動量設定
+	SetMove(move);
+
+
+
+
+
 	// 頂点座標の設定
 	SetVtx();
 }
