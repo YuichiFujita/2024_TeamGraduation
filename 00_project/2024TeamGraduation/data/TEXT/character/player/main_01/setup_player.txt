@@ -218,6 +218,10 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt					# デフォルト
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt				# 歩き
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_front.txt			# カニ歩き(前)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_back.txt			# カニ歩き(後)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_left.txt			# カニ歩き(左)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_right.txt			# カニ歩き(右)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt					# 走り
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt				# ブリンク
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt				# 回避成功時
