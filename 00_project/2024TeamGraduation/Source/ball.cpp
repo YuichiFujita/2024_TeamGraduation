@@ -486,7 +486,7 @@ void CBall::CalWorldMtx()
 
 		const int nPartsIdx = m_pPlayer->GetParameter().nBallPartsIdx;		// ボールパーツインデックス
 		const MyLib::Vector3 offset = m_pPlayer->GetParameter().ballOffset;	// ボールオフセット
-		MyLib::Matrix* pMtxParts = m_pPlayer->GetModel(nPartsIdx)->GetPtrWorldMtx();	// パーツマトリックス
+		MyLib::Matrix mtxParts = m_pPlayer->GetModel(nPartsIdx)->GetWorldMtx();	// パーツマトリックス
 		MyLib::Vector3 rot = GetRotation();			// 自身の向き
 		MyLib::Vector3 scale = GetScale();			// 自身の拡大率
 		MyLib::Matrix mtxWorld = GetWorldMtx();		// 自身のワールドマトリックス
@@ -505,16 +505,14 @@ void CBall::CalWorldMtx()
 
 		// 位置を反映する
 		mtxTrans.Translation(offset);
-		mtxWorld.Multiply(mtxWorld, mtxTrans);
-
-		// くっつけるプレイヤーパーツのマトリックスと掛け合わせる
-		mtxWorld.Multiply(*pMtxParts, mtxWorld);
+		mtxParts.Multiply(mtxTrans, mtxParts);
 
 		// マトリックスを反映
-		SetWorldMtx(*pMtxParts);
+		SetWorldMtx(mtxParts);
 
 		// キャッチ時のマトリックスから位置を反映
-		SetPosition(pMtxParts->GetWorldPosition());
+		SetPosition(mtxParts.GetWorldPosition());
+
 
 		// 影の描画を停止
 		m_pShadow->SetEnableDisp(false);
@@ -981,8 +979,8 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		if (bHit)
 		{ // 当たっていた場合
 
-			// プレイヤーヒット処理
-			if (pPlayer->Hit(this))
+		  // プレイヤーヒット処理
+			if (pPlayer->Hit(this).bHit)
 			{ // ヒット処理内でダメージを受けた場合
 
 				// ホーミング対象の初期化

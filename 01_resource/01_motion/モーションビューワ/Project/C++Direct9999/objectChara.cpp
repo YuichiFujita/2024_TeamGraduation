@@ -457,6 +457,9 @@ HRESULT CObjectChara::ReadText(const std::string pTextFile)
 	int nCntSetParts = 0;
 	int nCntFileName = 0;
 
+	int nCntSide = 0;	// サイドカウンター
+	int nSideStart = 0;
+
 	while (1)
 	{// END_SCRIPTが来るまで繰り返す
 
@@ -582,37 +585,13 @@ HRESULT CObjectChara::ReadText(const std::string pTextFile)
 
 							// SIDE読み込み
 							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side = static_cast<EPartSide>(nSide);
+						}
 
-							const auto& loadData = m_aLoadData[m_nNumLoad];
-							// 左右
-							if (loadData.LoadData[nCntSetParts].side != EPartSide::SIDE_CENTER)
-							{// 中央以外
+						if (strcmp(aComment, "INVERSE") == 0)
+						{// INVERSEが来たら反転元の番号読み込み
 
-								// 前回のインデックス
-								int beforeIdx = nCntSetParts - 1;
-								if (beforeIdx < 0) beforeIdx = 0;
-
-								int nStart = 0;
-								int nCnt = 0;
-
-								if (loadData.LoadData[beforeIdx].side != loadData.LoadData[nCntSetParts].side)
-								{// 前回と今回のサイドが違う
-									
-									// 開始
-									nStart = nCntSetParts;
-									nCnt++;	// パーツ数加算
-								}
-								else if (loadData.LoadData[beforeIdx].side == loadData.LoadData[nCntSetParts].side)
-								{// 前回と今回のサイドが違う
-
-									// 開始
-									nCnt++;	// パーツ数加算
-								}
-
-							}
-
-							m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].side;
-
+							fscanf(pFile, "%s", &aComment[0]);	// =の分
+							fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].LoadData[nCntSetParts].nInverseIdx);	// 反転元の番号
 						}
 
 						if (strcmp(aComment, "POS") == 0)
@@ -682,6 +661,7 @@ HRESULT CObjectChara::ReadText(const std::string pTextFile)
 
 	// ファイルを閉じる
 	fclose(pFile);
+
 
 	// 読み込んだ数加算
 	m_nNumLoad++;

@@ -87,6 +87,7 @@ CHARACTERSET
 		INDEX = 4
 		PARENT = 1					# (親)体
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 7					# 反転先
 		POS = -17.0 40.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -96,6 +97,7 @@ CHARACTERSET
 		INDEX = 5
 		PARENT = 4					# (親)左上腕
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 8					# 反転先
 		POS = -27.5 0.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -105,6 +107,7 @@ CHARACTERSET
 		INDEX = 6
 		PARENT = 5					# (親)左前腕
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 9					# 反転先
 		POS = -26.75 0.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -114,6 +117,7 @@ CHARACTERSET
 		INDEX = 7
 		PARENT = 1					# (親)体
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 4					# 反転先
 		POS = 17.0 40.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -123,6 +127,7 @@ CHARACTERSET
 		INDEX = 8
 		PARENT = 7					# (親)右上腕
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 5					# 反転先
 		POS = 27.5 0.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -132,6 +137,7 @@ CHARACTERSET
 		INDEX = 9
 		PARENT = 8					# (親)右前腕
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 6					# 反転先
 		POS = 26.75 0.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -141,6 +147,7 @@ CHARACTERSET
 		INDEX = 10
 		PARENT = 0					# (親)腰
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 13				# 反転先
 		POS = -10.0 -4.5 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -150,6 +157,7 @@ CHARACTERSET
 		INDEX = 11
 		PARENT = 10					# (親)左太もも
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 14				# 反転先
 		POS = 0.0 -39.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -159,6 +167,7 @@ CHARACTERSET
 		INDEX = 12
 		PARENT = 11					# (親)左ふくらはぎ
 		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 15				# 反転先
 		POS = 0.0 -22.75 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -168,6 +177,7 @@ CHARACTERSET
 		INDEX = 13
 		PARENT = 0					# (親)腰
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 10				# 反転先
 		POS = 10.0 -4.5 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -177,6 +187,7 @@ CHARACTERSET
 		INDEX = 14
 		PARENT = 13					# (親)右太もも
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 11				# 反転先
 		POS = 0.0 -39.0 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1
@@ -186,6 +197,7 @@ CHARACTERSET
 		INDEX = 15
 		PARENT = 14					# (親)左ふくらはぎ
 		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 12				# 反転先
 		POS = 0.0 -22.75 0.0
 		ROT = 0.0 0.0 0.0
 		START = 1

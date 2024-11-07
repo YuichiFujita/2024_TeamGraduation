@@ -989,11 +989,16 @@ void CPlayer::SetPartsRot(void)
 
 	// テキスト
 	ImGui::Text("OutPut TextFile");
+	
 	if (ImGui::Button("Save Motion") ||
 		pInputKeyboard->GetTrigger(DIK_F9))
 	{
 		SaveNowMotion();
 	}
+	// 反転出力
+	ImGui::SameLine();
+	ImGui::Checkbox("Save Inverse", &m_bSaveInverse);
+
 	ImGui::Separator();
 
 #if 1
@@ -1132,6 +1137,65 @@ void CPlayer::SetPartsRot(void)
 				// 保存されている向きに設定
 				pModel->SetRotation(m_CopyData.aParts[nCntParts].rot);
 				pModel->SetPosition(m_CopyData.aParts[nCntParts].pos);
+			}
+		}
+		ImGui::SameLine();
+
+
+		//***********************
+		// 反転
+		//***********************
+		if (ImGui::Button("Inverse Pause"))
+		{
+			// 読み込み情報取得
+			Load loadData = GetLoadData(GetIdxFile());
+
+
+			for (int nCntParts = 0; nCntParts < nPartsNum; nCntParts++)
+			{
+				// 今回のモデル取得
+				CModel* pModel = GetObjectChara()->GetModel()[nCntParts];
+				if (pModel == nullptr) continue;
+
+
+				MyLib::Vector3 rot = aInfo.aKey[m_nNowKey].aParts[nCntParts].rot;
+				MyLib::Vector3 pos = aInfo.aKey[m_nNowKey].aParts[nCntParts].pos;
+
+				// 反転出力
+				if (loadData.LoadData[nCntParts].side == EPartSide::SIDE_CENTER)
+				{
+					rot.y *= -1;
+					rot.z *= -1;
+
+					pos.x *= -1;
+				}
+				else
+				{
+					// 反転するインデックス
+					int nIdx = loadData.LoadData[nCntParts].nInverseIdx;
+
+					if (nIdx != -1)
+					{
+						rot.x = aInfo.aKey[m_nNowKey].aParts[nIdx].rot.x;
+						rot.y = -aInfo.aKey[m_nNowKey].aParts[nIdx].rot.y;
+						rot.z = -aInfo.aKey[m_nNowKey].aParts[nIdx].rot.z;
+
+						pos.x = -aInfo.aKey[m_nNowKey].aParts[nIdx].pos.x;
+						pos.y = aInfo.aKey[m_nNowKey].aParts[nIdx].pos.y;
+						pos.z = aInfo.aKey[m_nNowKey].aParts[nIdx].pos.z;
+					}
+					else
+					{
+						rot.y *= -1;
+						rot.z *= -1;
+
+						pos.x *= -1;
+					}
+				}
+
+				// 保存されている向きに設定
+				pModel->SetRotation(rot);
+				pModel->SetPosition(pModel->GetOriginPotision() + pos);
 			}
 		}
 		ImGui::Separator();
@@ -2310,6 +2374,11 @@ void CPlayer::SaveMotionInfo(void)
 			aInfo.AttackInfo[nCntAttack]->nMinCnt, aInfo.AttackInfo[nCntAttack]->nMaxCnt, aInfo.AttackInfo[nCntAttack]->nInpactCnt, aInfo.AttackInfo[nCntAttack]->nDamage);
 	}
 
+
+
+	// 読み込み情報取得
+	Load loadData = GetLoadData(GetIdxFile());
+
 	for (int nCntKey = 0; nCntKey < aInfo.nNumKey; nCntKey++)
 	{
 		fprintf(pFile, "\tKEYSET\t\t\t# --- << KEY : %d / %d >> ---\n", nCntKey, aInfo.nNumKey);
@@ -2318,13 +2387,51 @@ void CPlayer::SaveMotionInfo(void)
 		for (int nCntParts = 0; nCntParts < nPartsNum; nCntParts++)
 		{// パーツ数分繰り返し
 
+			MyLib::Vector3 rot = aInfo.aKey[nCntKey].aParts[nCntParts].rot;
+			MyLib::Vector3 pos = aInfo.aKey[nCntKey].aParts[nCntParts].pos;
+
+			// 反転出力
+			if (m_bSaveInverse)
+			{
+				if (loadData.LoadData[nCntParts].side == EPartSide::SIDE_CENTER)
+				{
+					rot.y *= -1;
+					rot.z *= -1;
+
+					pos.x *= -1;
+				}
+				else
+				{
+					// 反転するインデックス
+					int nIdx = loadData.LoadData[nCntParts].nInverseIdx;
+
+					if (nIdx != -1)
+					{
+						rot.x = aInfo.aKey[nCntKey].aParts[nIdx].rot.x;
+						rot.y = -aInfo.aKey[nCntKey].aParts[nIdx].rot.y;
+						rot.z = -aInfo.aKey[nCntKey].aParts[nIdx].rot.z;
+
+						pos.x = -aInfo.aKey[nCntKey].aParts[nIdx].pos.x;
+						pos.y = aInfo.aKey[nCntKey].aParts[nIdx].pos.y;
+						pos.z = aInfo.aKey[nCntKey].aParts[nIdx].pos.z;
+					}
+					else
+					{
+						rot.y *= -1;
+						rot.z *= -1;
+
+						pos.x *= -1;
+					}
+				}
+			}
+
 			fprintf(pFile,
 				"\t\tPARTS\t# ----- [ %d ] -----\n"
 				"\t\t\tROT = %.2f %.2f %.2f\n"
 				"\t\t\tPOS = %.2f %.2f %.2f\n"
 				"\t\t\tSCALE = %.2f %.2f %.2f\n"
 				"\t\tEND_PARTS\n\n", nCntParts,
-				aInfo.aKey[nCntKey].aParts[nCntParts].rot.x, aInfo.aKey[nCntKey].aParts[nCntParts].rot.y, aInfo.aKey[nCntKey].aParts[nCntParts].rot.z,
+				rot.x, rot.y, rot.z,
 				aInfo.aKey[nCntKey].aParts[nCntParts].pos.x, aInfo.aKey[nCntKey].aParts[nCntParts].pos.y, aInfo.aKey[nCntKey].aParts[nCntParts].pos.z,
 				aInfo.aKey[nCntKey].aParts[nCntParts].scale.x, aInfo.aKey[nCntKey].aParts[nCntParts].scale.y, aInfo.aKey[nCntKey].aParts[nCntParts].scale.z);
 		}
