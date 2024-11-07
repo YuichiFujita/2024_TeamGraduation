@@ -42,11 +42,13 @@ public:
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
 		MOTION_WALK,				// 移動
+		MOTION_WALK_BALL,			// 移動(ボール所持)
 		MOTION_CRAB_FRONT,			// カニ歩き(前)
 		MOTION_CRAB_BACK,			// カニ歩き(後)
 		MOTION_CRAB_LEFT,			// カニ歩き(左)
 		MOTION_CRAB_RIGHT,			// カニ歩き(右)
 		MOTION_RUN,					// 走り
+		MOTION_RUN_BALL,			// 走り(ボール所持)
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
 		MOTION_JUMP,				// ジャンプ
@@ -116,6 +118,22 @@ public:
 		ANGLE_LEFT,
 		ANGLE_LEFTUP,
 		ANGLE_MAX
+	};
+
+	// ユーザーの種類列挙
+	enum EUserType
+	{
+		TYPE_USER = 0,
+		TYPE_AI,
+		TYPE_MAX
+	};
+
+	// 利き手列挙
+	enum EHandedness
+	{
+		HAND_R,	// 右利き
+		HAND_L,	// 左利き
+		HAND_MAX
 	};
 
 	// 動作状態
@@ -249,6 +267,17 @@ public:
 	//=============================
 	float GetDodgeDistance();	// 回避範囲取得
 
+	//=============================
+	// 静的関数
+	//=============================
+	/*
+		@brief	生成処理
+		@param	type	[in]	ユーザーの種類
+		@param	team	[in]	チームサイド
+		@param	rPos	[in]	初期位置
+	*/
+	static CPlayer* Create(EUserType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype = EHandedness::HAND_R);
+
 protected:
 	//=============================
 	// メンバ関数
@@ -362,6 +391,7 @@ private:
 	CShadow* m_pShadow;	// 影の情報
 	CBall* m_pBall;		// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
+	EHandedness m_Handress;		// 利き手
 	static CListManager<CPlayer> m_List;	// リスト
 };
 

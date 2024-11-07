@@ -85,34 +85,6 @@ CPlayerAI::~CPlayerAI()
 }
 
 //==========================================================================
-// 生成処理
-//==========================================================================
-CPlayerAI *CPlayerAI::Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos)
-{
-	// メモリの確保
-	CPlayerAI* pPlayer = DEBUG_NEW CPlayerAI;
-	if (pPlayer != nullptr)
-	{
-		// クラスの初期化
-		if (FAILED(pPlayer->Init()))
-		{ // 初期化に失敗した場合
-
-			// クラスの終了
-			SAFE_UNINIT(pPlayer);
-			return nullptr;
-		}
-
-		// チームサイドを設定
-		pPlayer->GetStatus()->SetTeam(team);
-
-		// 位置を設定
-		pPlayer->SetPosition(rPos);
-	}
-
-	return pPlayer;
-}
-
-//==========================================================================
 // 初期化処理
 //==========================================================================
 HRESULT CPlayerAI::Init()

@@ -2,6 +2,7 @@
 // 
 // カメラモーション処理 [camera_motion.cpp]
 // Author : 相馬靜雅
+// Adder  : 藤田勇一
 // 
 //=============================================================================
 #include "camera_motion.h"
@@ -13,7 +14,6 @@
 #include "calculation.h"
 #include "particle.h"
 
-
 //==========================================================================
 // マクロ定義
 //==========================================================================
@@ -22,15 +22,33 @@ namespace
 	const std::string FILENAME = "data\\TEXT\\camera\\motion_manager.txt";	// 読み込むファイル名
 }
 
-
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
+// モーションリスト
 CCameraMotion::MOTION_FUNC CCameraMotion::m_MotionFunc[] =
 {
 	&CCameraMotion::MotionPass,			// パス
 	&CCameraMotion::MotionSpecial,		// スペシャル
 	&CCameraMotion::MotionKamehameha,	// かめはめ波
+};
+
+// vec3線形補正リスト
+CCameraMotion::VEC3_EASING_FUNC CCameraMotion::m_Vec3EasingFunc[] =
+{
+	&UtilFunc::Correction::EasingLinear,
+	&UtilFunc::Correction::EasingEaseIn,
+	&UtilFunc::Correction::EasingEaseOut,
+	&UtilFunc::Correction::EasingEaseInOut,
+};
+
+// float線形補正リスト
+CCameraMotion::FLOAT_EASING_FUNC CCameraMotion::m_FloatEasingFunc[] =
+{
+	&UtilFunc::Correction::EasingLinear,
+	&UtilFunc::Correction::EasingEaseIn,
+	&UtilFunc::Correction::EasingEaseOut,
+	&UtilFunc::Correction::EasingEaseInOut,
 };
 
 //==========================================================================
@@ -50,6 +68,9 @@ CCameraMotion::CCameraMotion()
 	m_bEdit = false;			// エディターフラグ
 	m_bPause = false;			// ポーズ判定
 	m_bSystemPause = false;		// システムポーズ判定
+	m_bMovePos = true;			// 位置動作フラグ
+	m_bMoveRot = true;			// 向き動作フラグ
+	m_bMoveDis = true;			// 距離動作フラグ
 	m_bInverse = false;			// 反転フラグ
 }
 
@@ -316,36 +337,31 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 	UpdateEdit();
 #endif // DEBUG
 
-	// カメラ取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	pCamera->SetEnableMotion(!m_bFinish);
+	// カメラのモーション中フラグを反映
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetEnableMotion(!m_bFinish);			// フラグ反映
 
-	if (m_bFinish)
-	{// モーション中のみ
-		return;
-	}
+	// モーションが終了している場合抜ける
+	if (m_bFinish) { return; }
 
-	// キーボード情報取得
-	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
+	// 現在のモーション情報を取得
+	MotionInfo nowInfo = m_vecMotionInfo[m_nNowMotionIdx];	// 現在のモーション
+	int keySize = static_cast<int>(nowInfo.Key.size());		// 現在のキー総数
 
-	// 現在のモーション情報
-	MotionInfo nowInfo = m_vecMotionInfo[m_nNowMotionIdx];
-	int keySize = static_cast<int>(nowInfo.Key.size());
-
-
-	// モーションタイマー加算
 	if (!m_bPause && !m_bSystemPause)
-	{
-		m_fMotionTimer +=  fDeltaTime * fSlowRate;
+	{ // 再生可能な場合
+
+		// モーションタイマー加算
+		m_fMotionTimer  += fDeltaTime * fSlowRate;
 		m_fTriggerTimer += fDeltaTime * fSlowRate;
 	}
 	else
-	{
+	{ // 再生不可能な場合
+
 		// トリガー判定リセット
 		m_bTrigger = false;
 		return;
 	}
-
 
 	//=============================
 	// トリガー判定
@@ -354,9 +370,9 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		// トリガー判定リセット
 		m_bTrigger = false;
 
-		if (!m_bTrigger &&
-			m_nNowTriggerIdx < static_cast<int>(nowInfo.trigger.size()) &&	// トリガーのサイズ以下
-			m_fTriggerTimer >= nowInfo.trigger[m_nNowTriggerIdx])
+		if (!m_bTrigger
+		&&  m_nNowTriggerIdx < static_cast<int>(nowInfo.trigger.size())	// トリガーのサイズ以下
+		&&  m_fTriggerTimer >= nowInfo.trigger[m_nNowTriggerIdx])
 		{
 			// トリガー時処理
 			TriggerMoment();
@@ -365,15 +381,16 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 			m_bTrigger = true;
 			m_nNowTriggerIdx++;
 
-			
-
 #if _DEBUG
+			// トリガータイミングならパーティクル生成
 			my_particle::Create(MyLib::Vector3(640.0f, 360.0f, 0.0f), my_particle::TYPE_OFFSETTING_2D);
 #endif
-
 		}
 	}
 
+	//=============================
+	// キー更新
+	//=============================
 	if (m_fMotionTimer >= nowInfo.Key[m_nNowKeyIdx].playTime)
 	{
 		// キー更新
@@ -381,7 +398,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		m_nNowKeyIdx = (m_nNowKeyIdx + 1) % keySize;
 
 		if (m_nNowKeyIdx == 0)
-		{// 一周
+		{ // 一周
 
 			// 終了判定ON
 			m_bFinish = true;
@@ -394,48 +411,41 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		}
 	}
 
-
 	// 次のキーインデックス
 	int nextKeyID = (m_nNowKeyIdx + 1) % keySize;
 	if (nextKeyID == 0)
-	{// 終端
+	{ // 終端
+
 		nextKeyID = keySize - 1;
 	}
 
-	// キー情報
-	MotionKey nowKey = nowInfo.Key[m_nNowKeyIdx];
-	MotionKey nextKey = nowInfo.Key[nextKeyID];
+	//=============================
+	// モーション更新
+	//=============================
+	MotionKey nowKey = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
+	MotionKey nextKey = nowInfo.Key[nextKeyID];		// 次のキー
+	MyLib::Vector3 posR, rot;	// 注視点/向き
+	float fDistance;			// 距離
 
-	// カメラ情報取得
-	MyLib::Vector3 posR, rot;
-	float distance = pCamera->GetDistance();
+	if (m_bMovePos)
+	{ // 注視点が動作する場合
 
-	// 線形補正
-	switch (m_EasingType)
-	{
-	case CCameraMotion::Linear:
-		posR = UtilFunc::Correction::EasingLinear(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		rot = UtilFunc::Correction::EasingLinear(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		distance = UtilFunc::Correction::EasingLinear(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
-		break;
+		// 注視点の線形補正
+		posR = (m_Vec3EasingFunc[m_EasingType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+	}
 
-	case CCameraMotion::EaseIn:
-		posR = UtilFunc::Correction::EasingEaseIn(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		rot = UtilFunc::Correction::EasingEaseIn(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		distance = UtilFunc::Correction::EasingEaseIn(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
-		break;
+	if (m_bMoveRot)
+	{ // 向きが動作する場合
 
-	case CCameraMotion::EaseOut:
-		posR = UtilFunc::Correction::EasingEaseOut(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		rot = UtilFunc::Correction::EasingEaseOut(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		distance = UtilFunc::Correction::EasingEaseOut(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
-		break;
+		// 向きの線形補正
+		rot = (m_Vec3EasingFunc[m_EasingType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+	}
 
-	case CCameraMotion::EaseInOut:
-		posR = UtilFunc::Correction::EasingEaseInOut(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		rot = UtilFunc::Correction::EasingEaseInOut(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
-		distance = UtilFunc::Correction::EasingEaseInOut(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
-		break;
+	if (m_bMoveDis)
+	{ // 距離が動作する場合
+
+		// 距離の線形補正
+		fDistance = (m_FloatEasingFunc[m_EasingType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
 	}
 
 	if (m_bInverse)
@@ -443,13 +453,53 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 
 		// 向きをY軸に反転させる
 		rot.y += D3DX_PI;
+
+		// 向きを正規化
 		UtilFunc::Transformation::RotNormalize(rot.y);
 	}
 
-	// カメラ情報設定
-	pCamera->SetPositionR(m_pos + posR);
-	pCamera->SetRotation(rot);
-	pCamera->SetDistance(distance);
+	// カメラ情報の反映
+	pCamera->SetPositionR(m_pos + posR);	// 注視点
+	pCamera->SetRotation(rot);				// 向き
+	pCamera->SetDistance(fDistance);		// 距離
+}
+
+//==========================================================================
+// トリガー判定取得
+//==========================================================================
+CCameraMotion::TriggerInfo CCameraMotion::GetTrigger()
+{
+	return TriggerInfo(m_bTrigger, m_nNowTriggerIdx);
+}
+
+//==========================================================================
+// モーション設定
+//==========================================================================
+void CCameraMotion::SetMotion
+(
+	int nMotion,	// モーション種類
+	bool bInverse,	// 反転フラグ
+	bool bPos,		// 位置動作フラグ
+	bool bRot,		// 向き動作フラグ
+	bool bDis,		// 距離動作フラグ
+	EASING easing	// イージング種類
+)
+{
+	// 引数情報の設定
+	m_EasingType	 = easing;
+	m_nNowMotionIdx	 = nMotion;
+	m_bInverse	= bInverse;
+	m_bMovePos	= bPos;
+	m_bMoveRot	= bRot;
+	m_bMoveDis	= bDis;
+
+	// 情報の初期化
+	m_nNowKeyIdx	 = 0;
+	m_nNowTriggerIdx = 0;
+	m_fMotionTimer	 = 0.0f;
+	m_fTriggerTimer	 = 0.0f;
+	m_bFinish	= false;
+	m_bPause	= false;
 }
 
 //==========================================================================
@@ -508,7 +558,7 @@ void CCameraMotion::UpdateEdit()
 		ImGui::SetNextItemWidth(150.0f);
 		if (ImGui::Button("Play / RePlay"))
 		{
-			SetMotion(m_EditInfo.motionIdx, false, EASING::Linear);
+			SetMotion(m_EditInfo.motionIdx, false);
 		}
 		ImGui::SameLine();
 
@@ -863,28 +913,4 @@ void CCameraMotion::EditTrigger()
 
 		ImGui::TreePop();
 	}
-}
-
-//==========================================================================
-// モーション設定
-//==========================================================================
-void CCameraMotion::SetMotion(int motion, bool bInverse, EASING EasingType)
-{
-	m_nNowMotionIdx = motion;
-	m_nNowKeyIdx = 0;
-	m_nNowTriggerIdx = 0;
-	m_fMotionTimer = 0.0f;
-	m_fTriggerTimer = 0.0f;
-	m_bFinish = false;
-	m_bPause = false;
-	m_bInverse = bInverse;
-	m_EasingType = EasingType;
-}
-
-//==========================================================================
-// トリガー判定取得
-//==========================================================================
-CCameraMotion::TriggerInfo CCameraMotion::GetTrigger()
-{
-	return TriggerInfo(m_bTrigger, m_nNowTriggerIdx);
 }
