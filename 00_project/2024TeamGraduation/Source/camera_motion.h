@@ -2,6 +2,7 @@
 //
 // カメラモーション処理 [camera_motion.h]
 // Author : 相馬靜雅
+// Adder  : 藤田勇一
 //
 //=============================================================================
 #ifndef _CAMERA_MOTION_H_		// このマクロ定義がされていなかったら
@@ -60,25 +61,33 @@ public:
 	HRESULT Init();		// 初期化
 	void LoadText();	// テキスト読み込み
 	void Uninit();		// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 更新
-	void SetMotion(int motion, bool bInverse = false, EASING EasingType = EASING::Linear);	// モーション設定
-
-	// 情報操作
-	void SetPosition(const MyLib::Vector3& pos) { m_pos = pos; }	// 位置設定
-	MyLib::Vector3 GetPosition() { return m_pos; }					// 位置取得
-	int GetNowMotionIdx() { return m_nNowMotionIdx; }
-	void SetFinish(bool bFinish) { m_bFinish = bFinish; }
-	bool IsFinish() { return m_bFinish; }
-	bool IsEdit() { return m_bEdit; }
-
-	void SetEnablePause(bool bPause) { m_bPause = bPause; }	// ポーズ判定
-	void SetEnableSystemPause(bool bPause) { m_bSystemPause = bPause; }	// システムポーズ判定
-	bool IsPause() { return m_bPause; }		// ポーズ判定
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
 	TriggerInfo GetTrigger();	// トリガー判定取得
+	void SetMotion				// モーション設定
+	(
+		int nMotion,			// モーション種類
+		bool bInverse = false,	// 反転フラグ
+		bool bPos = true,		// 位置動作フラグ
+		bool bRot = true,		// 向き動作フラグ
+		bool bDis = true,		// 距離動作フラグ
+		EASING easing = Linear	// イージング種類
+	);
 
-	int GetNowKeyIdx() { return m_nNowKeyIdx; }
-	int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
+	// 情報操作
+	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
+	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
+	inline int GetNowMotionIdx()		{ return m_nNowMotionIdx; }
+	inline void SetFinish(bool bFinish)	{ m_bFinish = bFinish; }
+	inline bool IsFinish()	{ return m_bFinish; }
+	inline bool IsEdit()	{ return m_bEdit; }
+
+	inline void SetEnablePause(bool bPause)			{ m_bPause = bPause; }			// ポーズ判定
+	inline void SetEnableSystemPause(bool bPause)	{ m_bSystemPause = bPause; }	// システムポーズ判定
+	inline bool IsPause()							{ return m_bPause; }			// ポーズ判定
+
+	inline int GetNowKeyIdx() { return m_nNowKeyIdx; }
+	inline int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
 
 	// 静的関数
 	static CCameraMotion* Create();	// 生成処理
@@ -131,6 +140,14 @@ private:
 	typedef void(CCameraMotion::*MOTION_FUNC)();
 	static MOTION_FUNC m_MotionFunc[];
 
+	// vec3線形補正リスト
+	typedef MyLib::Vector3(*VEC3_EASING_FUNC)(const MyLib::Vector3&, const MyLib::Vector3&, float, float, float);
+	static VEC3_EASING_FUNC m_Vec3EasingFunc[];
+
+	// float線形補正リスト
+	typedef float(*FLOAT_EASING_FUNC)(float, float, float, float, float);
+	static FLOAT_EASING_FUNC m_FloatEasingFunc[];
+
 	//=============================
 	// メンバ関数
 	//=============================
@@ -173,9 +190,11 @@ private:
 	bool m_bPause;			// ポーズ判定
 	bool m_bSystemPause;	// システムポーズ判定
 	bool m_bTrigger;		// トリガー判定
+	bool m_bMovePos;		// 位置動作フラグ
+	bool m_bMoveRot;		// 向き動作フラグ
+	bool m_bMoveDis;		// 距離動作フラグ
 	bool m_bInverse;		// 反転フラグ
 	EditInfo m_EditInfo;	// エディット情報
-
 	CCameraMotion_Trigger* m_pCameraMotion_Trigger[MOTION_MAX];
 };
 
