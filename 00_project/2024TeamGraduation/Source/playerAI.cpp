@@ -30,8 +30,8 @@ namespace
 CPlayerAI::STATE_FUNC CPlayerAI::m_StateFunc[] =	// 状態関数
 {
 	&CPlayerAI::StateNone,				// なし
-	//&CPlayerAI::StateThrowManager,		// 投げマネージャー
-	//&CPlayerAI::StateCatchManager,		// キャッチマネージャー
+	&CPlayerAI::StateThrowManager,		// 投げマネージャー
+	&CPlayerAI::StateCatchManager,		// キャッチマネージャー
 };
 
 //==========================================================================
@@ -39,7 +39,8 @@ CPlayerAI::STATE_FUNC CPlayerAI::m_StateFunc[] =	// 状態関数
 //==========================================================================
 CPlayerAI::CPlayerAI()
 {
-
+	m_eThrowType = EThrowType::TYPE_NONE;
+	m_eThrowMode = EThrowMode::MODE_NONE;
 }
 
 //==========================================================================
@@ -166,17 +167,23 @@ void CPlayerAI::StateThrowManager(CBall* pBall)
 	// ボール所持か
 	if (pBall == nullptr) return;
 
-	// TODO: フラグか何かで発動操作
-	if (false)
-	{
-		if (pTeamStatus->IsMaxSpecial())
-		{
-			SpecialThrow();
-		}
-		else
-		{
+	if (pTeamStatus->IsMaxSpecial())
+	{// スペシャル
+		SpecialThrow();
+	}
+	else
+	{// 投げる
+
+		//int nRand = rand() % 10;
+
+		//if (nRand >= 5)
+		//{// 通常投げ
 			Throw();
-		}
+		//}
+		//else
+		//{// ジャンプ投げ
+		//	JumpThrow();
+		//}
 	}
 }
 
@@ -196,6 +203,7 @@ void CPlayerAI::Throw()
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 	CPlayerAIControlAction* pControlAIAction =pControlAction->GetAI();
 
+	// 投げる
 	pControlAIAction->SetIsThrow(true);
 }
 
@@ -221,7 +229,7 @@ void CPlayerAI::SpecialThrow()
 void CPlayerAI::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態更新
-	(this->*(m_StateFunc[m_throwMode]))();
+	(this->*(m_StateFunc[m_eThrowMode]))();
 }
 
 //==========================================================================

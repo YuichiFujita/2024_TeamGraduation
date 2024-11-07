@@ -29,6 +29,15 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
+	enum EThrowType
+	{
+		TYPE_NONE = 0,
+		TYPE_NORMAL,
+		TYPE_JUMP,
+		TYPE_SPECIAL,
+		TYPE_MAX
+	};
+
 	enum EThrowMode
 	{
 		MODE_NONE = 0,	// 通常
@@ -102,6 +111,11 @@ private:
 	void JumpThrow();	// ジャンプ投げ
 	void SpecialThrow();	// スペシャル投げ
 
+	void Walk();
+	void Dash();
+	void Quick();
+	void Delay();
+
 	//-----------------------------
 	// その他関数
 	//-----------------------------
@@ -111,7 +125,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	EThrowMode m_throwMode;
+	EThrowType m_eThrowType;
+	EThrowMode m_eThrowMode;
 };
 
 #endif
