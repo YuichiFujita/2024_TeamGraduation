@@ -52,16 +52,6 @@ public:
 	void ChangeMoveControl(CPlayerUserControlMove* control);		// 移動の操作変更
 	void ChangeActionControl(CPlayerUserControlAction* control);	// アクションの操作変更
 
-	//=============================
-	// 静的関数
-	//=============================
-	/*
-		@brief		生成処理
-		@details	プレイヤーインデックス
-		@details	チームサイド
-	*/
-	static CPlayerUser *Create(const CGameManager::TeamSide team, const MyLib::Vector3& rPos);
-
 private:
 
 	//=============================

@@ -130,6 +130,7 @@ private:
 	int m_nNowColliderIdx;		// 現在のコライダーインデックス番号
 	CMotion::Key m_CopyData;	// コピー用パーツデータ
 	bool m_bStop;				// ストップするか
+	bool m_bSaveInverse = false;		// 反転出力
 };
 
 
