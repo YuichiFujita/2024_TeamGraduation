@@ -114,7 +114,6 @@ private:
 	typedef void(CPlayerAI::* TIMING_FUNC)(const float, const float, const float);
 	static TIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
-
 	//=============================
 	// メンバ関数
 	//=============================
@@ -162,6 +161,8 @@ private:
 
 	float m_fTimingCount;	// タイミングカウント
 	bool m_bTiming;			// タイミングフラグ
+
+	float m_fJumpEnd;	// ジャンプの終了位置
 };
 
 #endif

@@ -26,6 +26,8 @@ namespace timing
 	const float TIMING_NORMAL = 1.0f;	// 通常
 	const float TIMING_QUICK = 0.2f;	// 速く
 	const float TIMING_DELAY = 2.0f;	// 遅く
+
+	const float JUMP_END_POS = 140.0f;
 }
 
 //==========================================================================
@@ -74,6 +76,8 @@ CPlayerAI::CPlayerAI()
 
 	m_fTimingCount = 0.0f;
 	m_bTiming = false;
+
+	m_fJumpEnd = 140.0f;
 }
 
 //==========================================================================
@@ -100,7 +104,7 @@ HRESULT CPlayerAI::Init()
 	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
-	m_fTimingCount = timing::TIMING_QUICK;
+	m_fJumpEnd = timing::JUMP_END_POS;
 
 	return S_OK;
 }
@@ -382,17 +386,13 @@ void CPlayerAI::TimingNormal(const float fDeltaTime, const float fDeltaRate, con
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
 	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{
-		// 投げる
-		pControlAIAction->SetIsJump(true);
-		m_eThrowType = EThrowType::TYPE_NONE;
-	}
-
-	if (m_fTimingCount > 0)
-	{// カウントダウン
-		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
-
-		return;
+	{// ジャンプするぞ――
+		if (GetPosition().y >= timing::JUMP_END_POS)
+		{
+			// 投げる
+			pControlAIAction->SetIsJump(true);
+			m_eThrowType = EThrowType::TYPE_NONE;
+		}
 	}
 
 	// 投げる
@@ -405,7 +405,6 @@ void CPlayerAI::TimingNormal(const float fDeltaTime, const float fDeltaRate, con
 	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
 
 	// タイミングリセット
-	m_fTimingCount = timing::TIMING_NONE;
 	m_bTiming = false;
 
 	pControlAIAction->SetIsJump(false);
@@ -420,17 +419,13 @@ void CPlayerAI::TimingQuick(const float fDeltaTime, const float fDeltaRate, cons
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
 	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{
-		// 投げる
-		pControlAIAction->SetIsJump(true);
-		m_eThrowType = EThrowType::TYPE_NONE;
-	}
-
-	if (m_fTimingCount > 0)
-	{// カウントダウン
-		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
-
-		return;
+	{// ジャンプするぞ――
+		if (GetPosition().y >= timing::JUMP_END_POS)
+		{
+			// 投げる
+			pControlAIAction->SetIsJump(true);
+			m_eThrowType = EThrowType::TYPE_NONE;
+		}
 	}
 
 	// 投げる
@@ -443,9 +438,6 @@ void CPlayerAI::TimingQuick(const float fDeltaTime, const float fDeltaRate, cons
 	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
 
 	// カウントのリセット
-	m_fTimingCount = timing::TIMING_NONE;
-	m_bTiming = false;
-
 	pControlAIAction->SetIsJump(false);
 }
 
@@ -458,17 +450,13 @@ void CPlayerAI::TimingDelay(const float fDeltaTime, const float fDeltaRate, cons
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
 	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{
-		// 投げる
-		pControlAIAction->SetIsJump(true);
-		m_eThrowType = EThrowType::TYPE_NONE;
-	}
-
-	if (m_fTimingCount > 0)
-	{// カウントダウン
-		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
-
-		return;
+	{// ジャンプするぞ――
+		if (GetPosition().y >= timing::JUMP_END_POS)
+		{
+			// 投げる
+			pControlAIAction->SetIsJump(true);
+			m_eThrowType = EThrowType::TYPE_NONE;
+		}
 	}
 
 	// 投げる
@@ -481,9 +469,6 @@ void CPlayerAI::TimingDelay(const float fDeltaTime, const float fDeltaRate, cons
 	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
 
 	// カウントのリセット
-	m_fTimingCount = timing::TIMING_NONE;
-	m_bTiming = false;
-
 	pControlAIAction->SetIsJump(false);
 }
 
