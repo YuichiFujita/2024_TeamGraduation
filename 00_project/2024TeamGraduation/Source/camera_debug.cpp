@@ -37,7 +37,7 @@ void CCamera_Debug::Update()
 	{ // F7‚ª‰Ÿ‚³‚ê‚½,’Ç]Ø‚è‘Ö‚¦
 
 		// ’Ç]‚ðØ‚è‘Ö‚¦
-		m_pCamera->SetState((m_pCamera->GetState() != CCamera::STATE_FOLLOW) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE);
+		m_pCamera->SetState((m_pCamera->GetState() != CCamera::STATE_FOLLOW) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE, false);
 	}
 
 	if (pKey->GetPress(DIK_LALT) &&
@@ -217,7 +217,7 @@ void CCamera_Debug::UpdateGUI()
 	{
 		bool bFollow = (m_pCamera->GetState() == CCamera::STATE_FOLLOW) ? true : false;
 		ImGui::Checkbox("Follow", &bFollow);
-		m_pCamera->SetState((bFollow) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE);
+		m_pCamera->SetState((bFollow) ? CCamera::STATE_FOLLOW : CCamera::STATE_NONE, false);
 	}
 
 	//--------------------------

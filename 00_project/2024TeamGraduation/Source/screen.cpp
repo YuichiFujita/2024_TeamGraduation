@@ -1,21 +1,23 @@
 //============================================================
 //
-//	ディレクショナルライト処理 [lightDir.cpp]
+//	スクリーン処理 [screen.cpp]
 //	Author：藤田勇一
 //
 //============================================================
 //************************************************************
 //	インクルードファイル
 //************************************************************
-#include "lightDir.h"
+#include "screen.h"
+#include "manager.h"
+#include "renderer.h"
 
 //************************************************************
-//	親クラス [CLightDir] のメンバ関数
+//	子クラス [CScreen] のメンバ関数
 //************************************************************
 //============================================================
 //	コンストラクタ
 //============================================================
-CLightDir::CLightDir()
+CScreen::CScreen() : CObject2D(7)
 {
 
 }
@@ -23,7 +25,7 @@ CLightDir::CLightDir()
 //============================================================
 //	デストラクタ
 //============================================================
-CLightDir::~CLightDir()
+CScreen::~CScreen()
 {
 
 }
@@ -31,18 +33,24 @@ CLightDir::~CLightDir()
 //============================================================
 //	初期化処理
 //============================================================
-HRESULT CLightDir::Init()
+HRESULT CScreen::Init()
 {
-	// ライトの初期化
-	if (FAILED(CLight::Init()))
+	// オブジェクト2Dの初期化
+	if (FAILED(CObject2D::Init()))
 	{ // 初期化に失敗した場合
 
 		assert(false);
 		return E_FAIL;
 	}
 
-	// ディレクショナルライトを設定
-	SetLightType(D3DLIGHT_DIRECTIONAL);
+	// 種類の指定を無しにする
+	SetType(CObject::TYPE::TYPE_NONE);
+
+	// 位置をスクリーン中央にする
+	SetPosition(VEC2_SCREEN_CENT);
+
+	// 大きさをスクリーンサイズにする
+	SetSize(VEC2_SCREEN_SIZE * 0.5f);
 
 	return S_OK;
 }
@@ -50,47 +58,48 @@ HRESULT CLightDir::Init()
 //============================================================
 //	終了処理
 //============================================================
-void CLightDir::Uninit()
+void CScreen::Uninit()
 {
-	// 親クラスの終了
-	CLight::Uninit();
-}
-
-//============================================================
-//	削除処理
-//============================================================
-void CLightDir::Kill()
-{
-	// 親クラスの削除
-	CLight::Kill();
+	// オブジェクト2Dの終了
+	CObject2D::Uninit();
 }
 
 //============================================================
 //	更新処理
 //============================================================
-void CLightDir::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CScreen::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// ライトの更新
-	CLight::Update(fDeltaTime, fDeltaRate, fSlowRate);
+	// オブジェクト2Dの更新
+	CObject2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================
 //	描画処理
 //============================================================
-void CLightDir::Draw()
+void CScreen::Draw()
 {
-	// ライトの描画
-	CLight::Draw();
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイスのポインタ
+
+	// サンプラーステートを設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);	// U方向のラッピングを無効化
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);	// V方向のラッピングを無効化
+
+	// オブジェクト2Dの描画
+	CObject2D::Draw();
+
+	// サンプラーステートを設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);	// U方向のラッピングを有効化
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);	// V方向のラッピングを有効化
 }
 
 //============================================================
 //	生成処理
 //============================================================
-CLightDir* CLightDir::Create()
+CScreen* CScreen::Create(const int nScreenTexIdx)
 {
-	// ディレクショナルライトの生成
-	CLightDir* pLightDir = DEBUG_NEW CLightDir;
-	if (pLightDir == nullptr)
+	// スクリーンの生成
+	CScreen* pScreen = DEBUG_NEW CScreen;
+	if (pScreen == nullptr)
 	{ // 生成に失敗した場合
 
 		return nullptr;
@@ -98,16 +107,19 @@ CLightDir* CLightDir::Create()
 	else
 	{ // 生成に成功した場合
 
-		// ディレクショナルライトの初期化
-		if (FAILED(pLightDir->Init()))
+		// スクリーンの初期化
+		if (FAILED(pScreen->Init()))
 		{ // 初期化に失敗した場合
 
-			// ディレクショナルライトの破棄
-			SAFE_DELETE(pLightDir);
+			// スクリーンの破棄
+			SAFE_DELETE(pScreen);
 			return nullptr;
 		}
 
+		// テクスチャを登録・割当
+		pScreen->BindTexture(nScreenTexIdx);
+
 		// 確保したアドレスを返す
-		return pLightDir;
+		return pScreen;
 	}
 }

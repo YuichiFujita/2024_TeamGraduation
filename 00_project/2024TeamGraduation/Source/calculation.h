@@ -34,13 +34,15 @@ using namespace DirectX;
 #define VEC2_ZERO	(D3DXVECTOR2(0.0f, 0.0f))	// 0クリア
 #define VEC2_ONE	(D3DXVECTOR2(1.0f, 1.0f))	// 1クリア
 #define VEC2_ALL(f)	(D3DXVECTOR2((f), (f))		// 同値クリア
+#define VEC2_SCREEN_CENT	(MyLib::Vector2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f))	// ウインドウの中央座標
+#define VEC2_SCREEN_SIZE	(MyLib::Vector2((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT))	// ウインドウの画面サイズ
 
 // D3DXVECTOR3関係
 #define VEC3_ZERO	(MyLib::Vector3(0.0f, 0.0f, 0.0f))	// 0クリア
 #define VEC3_ONE	(MyLib::Vector3(1.0f, 1.0f, 1.0f))	// 1クリア
 #define VEC3_ALL(f)	(MyLib::Vector3((f), (f), (f)))		// 同値クリア
-#define SCREEN_CENT	(MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f))	// ウインドウの中央座標
-#define SCREEN_SIZE	(MyLib::Vector3((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f))	// ウインドウの画面サイズ
+#define VEC3_SCREEN_CENT	(MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f))	// ウインドウの中央座標
+#define VEC3_SCREEN_SIZE	(MyLib::Vector3((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f))	// ウインドウの画面サイズ
 
 /**
 @brief	便利関数
@@ -1954,7 +1956,7 @@ namespace UtilFunc	// 便利関数
 
 			if (nMaxAngle <= nMinAngle)
 			{// 範囲が360°を跨ぐ場合
-				return (angle >= nMaxAngle || angle <= nMinAngle);
+				return !(angle >= nMaxAngle && angle <= nMinAngle);
 			}
 			else
 			{// 範囲が通常の順序で指定されている場合
@@ -2690,6 +2692,10 @@ namespace UtilFunc	// 便利関数
 			if (fRot < 0)
 			{
 				fRot = D3DX_PI + fabsf(fRot);
+			}
+			else if (fRot > 0 && fRot < D3DX_PI)
+			{
+				fRot = D3DX_PI - fabsf(fRot);
 			}
 		}
 

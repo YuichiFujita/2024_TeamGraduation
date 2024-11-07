@@ -303,6 +303,14 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
+	// レンダーテクスチャーの生成
+	if (FAILED(m_pRenderer->CreateRenderTexture()))
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
 	//**********************************
 	// フェード
 	//**********************************
@@ -312,7 +320,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
-
 	// ロードフラグリセット
 	m_bLoadComplete = false;
 	m_bLoadFadeSet = false;	// ロードのフェード設定フラグ
@@ -320,10 +327,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	// シーンのロードを開始
 	GetLoadManager()->LoadScene(CScene::MODE_NONE);
-
-
-
-
 
 #if 0
 	/* VLCエンジンを読み込む */
@@ -361,10 +364,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	libvlc_release(instance);
 #endif
-
-
-
-
 
 	return S_OK;
 }
@@ -529,12 +528,6 @@ void CManager::Uninit()
 		m_pCamera = nullptr;
 	}
 
-	// 全てのオブジェクト破棄
-	CObject::ReleaseAll();
-
-	// BGMストップ
-	m_pSound->StopSound();
-
 	// 入力機器の破棄
 	if (m_pInput != nullptr)
 	{// メモリの確保が出来ていたら
@@ -554,6 +547,12 @@ void CManager::Uninit()
 		delete m_pRenderer;
 		m_pRenderer = nullptr;
 	}
+
+	// 全てのオブジェクト破棄
+	CObject::ReleaseAll();
+
+	// BGMストップ
+	m_pSound->StopSound();
 
 	// Imguiの終了
 	ImguiMgr::Uninit();
@@ -851,8 +850,6 @@ void CManager::Update()
 void CManager::ChangeDisplayMode(bool bWindow)
 {
 	m_bWindowed = bWindow;
-
-
 }
 
 //==========================================================================

@@ -235,6 +235,7 @@ void CGameManager::SceneStart()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
+	GET_MANAGER->GetDebugProc()->Print("\n----------------- ŠÏ‹qî•ñ -----------------\n");
 	for (int i = 0; i < 2; i++)
 	{
 		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// ƒ‚ƒeî•ñ
@@ -243,8 +244,7 @@ void CGameManager::UpdateAudience()
 
 		// ŠÏ‹q”‚ğİ’è
 		CAudience::SetNumWatch(nNumAudience, (CGameManager::TeamSide)(i + 1));
-
-		GET_MANAGER->GetDebugProc()->Print("ƒ`[ƒ€%dFŠÏ‹q %d\n", i, nNumAudience);
+		GET_MANAGER->GetDebugProc()->Print("yƒ`[ƒ€0%dŠÏ‹qz[%d]\n", i, nNumAudience);
 	}
 }
 
