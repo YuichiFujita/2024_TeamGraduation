@@ -60,7 +60,7 @@ CHARACTERSET
 	
 	BALLSET
 		PARTS = 5		# 中心にするパーツ
-		OFFSET = -6.50 -30.00 0.00		# オフセット位置
+		OFFSET = -6.50 -12.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
