@@ -558,7 +558,7 @@ void CCameraMotion::UpdateEdit()
 		ImGui::SetNextItemWidth(150.0f);
 		if (ImGui::Button("Play / RePlay"))
 		{
-			SetMotion(m_EditInfo.motionIdx, false, EASING::Linear);
+			SetMotion(m_EditInfo.motionIdx, false);
 		}
 		ImGui::SameLine();
 
