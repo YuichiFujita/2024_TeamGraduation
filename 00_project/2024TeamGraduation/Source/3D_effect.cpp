@@ -367,10 +367,6 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	// ˆÚ“®—Êİ’è
 	SetMove(move);
 
-
-
-
-
 	// ’¸“_À•W‚Ìİ’è
 	SetVtx();
 }

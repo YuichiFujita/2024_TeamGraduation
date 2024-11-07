@@ -118,6 +118,17 @@ public:
 		ANGLE_MAX
 	};
 
+	// カニ歩き方向
+	enum CRAB_DIRECTION
+	{
+		CRAB_NONE = -1,
+		CRAB_UP,
+		CRAB_DOWN,
+		CRAB_LEFT,
+		CRAB_RIGHT,
+		CRAB_MAX,
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -297,7 +308,7 @@ private:
 	//TOKODO: 空中キャッチモーション出来たら実装
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
-	void MotionCrab(int nStartKey);		// キャッチ時処理(地上・ジャスト)
+	void MotionCrab(int nStartKey);		// カニ歩き変化処理
 
 	//=============================
 	// メンバ変数
