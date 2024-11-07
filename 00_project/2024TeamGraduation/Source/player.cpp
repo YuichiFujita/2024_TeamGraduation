@@ -49,6 +49,7 @@ namespace
 		"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
 		"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
 	};
+
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
@@ -507,7 +508,17 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
 		// モーションの種類
-		EMotion motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+		EMotion motionType;
+		if (m_pBall == nullptr) // ボール所持によって分ける
+		{
+			motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+		}
+		else
+		{
+			motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
+		}
+
+		// ダッシュリセット
 		m_bDash = false;
 
 		// 歩行の情報取得
@@ -521,7 +532,7 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 		}
 
 		// モーション設定
-		if (IsCrab() && motionType == MOTION_WALK)
+		if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
 		{
 			MotionCrab(nStartKey);
 		}
@@ -637,7 +648,8 @@ void CPlayer::UpdateFootLR()
 	int nType = pMotion->GetType();
 
 	// 歩き以外は抜ける
-	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN) return;
+	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN &&
+		nType != EMotion::MOTION_WALK_BALL && nType != EMotion::MOTION_RUN_BALL) return;
 
 	if (pMotion->IsImpactFrame(info))
 	{// 衝撃のフレーム
@@ -1639,6 +1651,7 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fRadius", (float*)&parameter.fRadius, 0.5f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fJumpStartMove", &parameter.fJumpStartMove, 0.001f, 0.0f, 100.0f, "%.3f");
 		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");
+		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
 
 		// 設定
 		SetRadius(parameter.fRadius);

@@ -42,11 +42,13 @@ public:
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
 		MOTION_WALK,				// 移動
+		MOTION_WALK_BALL,			// 移動(ボール所持)
 		MOTION_CRAB_FRONT,			// カニ歩き(前)
 		MOTION_CRAB_BACK,			// カニ歩き(後)
 		MOTION_CRAB_LEFT,			// カニ歩き(左)
 		MOTION_CRAB_RIGHT,			// カニ歩き(右)
 		MOTION_RUN,					// 走り
+		MOTION_RUN_BALL,			// 走り(ボール所持)
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
 		MOTION_JUMP,				// ジャンプ

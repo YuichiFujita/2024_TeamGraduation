@@ -60,7 +60,7 @@ CHARACTERSET
 	
 	BALLSET
 		PARTS = 8		# 中心にするパーツ
-		OFFSET = 0.00 0.0 0.00		# オフセット位置
+		OFFSET = 6.50 -30.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
@@ -218,11 +218,13 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def.txt					# デフォルト
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt				# 歩き
+MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt		# 歩き(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt		# カニ歩き(前)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# カニ歩き(後)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# カニ歩き(左)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt		# カニ歩き(右)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# 走り
+MOTION_FILENAME = data/TEXT/character/player/common/motion_run_ball.txt			# 走り(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_blink.txt				# ブリンク
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dodge.txt				# 回避成功時
 MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt				# ジャンプ

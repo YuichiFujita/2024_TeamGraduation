@@ -61,7 +61,7 @@ CHARACTERSET
 	
 	BALLSET
 		PARTS = 5		# 中心にするパーツ
-		OFFSET = 0.00 0.0 0.00		# オフセット位置
+		OFFSET = -6.50 -4.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
@@ -235,7 +235,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 24
+NUM_MOTION = 26
 
 
 #------------------------------------------------------------------------------
@@ -243,7 +243,9 @@ NUM_MOTION = 24
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt				# デフォルト
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt			# 歩き
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk_ball.txt		# 歩き(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt				# 走り
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run_ball.txt		# 走り(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt			# ブリンク
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt			# 回避成功時
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt			# ジャンプ
