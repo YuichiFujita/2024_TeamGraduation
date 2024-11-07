@@ -29,6 +29,9 @@ public:
 	// コンストラクタ
 	CPlayerUserControlAction();
 
+	//=============================
+	// 仮想関数
+	//=============================
 	virtual CPlayerAIControlAction* GetAI() { return nullptr; };
 	virtual CPlayerUserControlAction* GetUser() { return this; };
 

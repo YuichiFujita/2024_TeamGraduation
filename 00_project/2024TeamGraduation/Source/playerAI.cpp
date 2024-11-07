@@ -19,28 +19,61 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace
+namespace timing
 {
-
+	// タイミング
+	const float TIMING_NONE = 0.0f;	// 通常
+	const float TIMING_NORMAL = 1.0f;	// 通常
+	const float TIMING_QUICK = 0.2f;	// 速く
+	const float TIMING_DELAY = 2.0f;	// 遅く
 }
 
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CPlayerAI::STATE_FUNC CPlayerAI::m_StateFunc[] =	// 状態関数
+CPlayerAI::MODE_FUNC CPlayerAI::m_ModeFunc[] =	// モード関数
 {
-	&CPlayerAI::StateNone,				// なし
-	&CPlayerAI::StateThrowManager,		// 投げマネージャー
-	&CPlayerAI::StateCatchManager,		// キャッチマネージャー
+	&CPlayerAI::ModeNone,				// なし
+	&CPlayerAI::ModeThrowManager,		// 投げマネージャー
+	&CPlayerAI::ModeCatchManager,		// キャッチマネージャー
 };
+
+CPlayerAI::TYPE_FUNC CPlayerAI::m_ThrowTypeFunc[] =	// 投げ種類関数
+{
+	&CPlayerAI::TypeNone,				// なし
+	&CPlayerAI::TypeThrow,				// 通常投げ
+	&CPlayerAI::TypeJumpThrow,			// ジャンプ投げ
+	&CPlayerAI::TypeSpecialThrow,		// スペシャル投げ
+};
+
+CPlayerAI::MOVE_FUNC CPlayerAI::m_ThrowMoveFunc[] =	// 投げ状態関数
+{
+	&CPlayerAI::MoveNormal,			// 通常(その場)
+	&CPlayerAI::MoveWalk,				// 歩き
+	&CPlayerAI::MoveDash,				// 走り
+};
+
+CPlayerAI::TIMING_FUNC CPlayerAI::m_ThrowTimingFunc[] =	// タイミング関数
+{
+	&CPlayerAI::TimingNormal,			// 通常
+	&CPlayerAI::TimingQuick,			// 速く
+	&CPlayerAI::TimingDelay,			// 遅く
+	& CPlayerAI::TimingFeint,			// フェイント
+};
+
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CPlayerAI::CPlayerAI()
 {
+	m_eMode = EMode::MODE_NONE;
 	m_eThrowType = EThrowType::TYPE_NONE;
-	m_eThrowMode = EThrowMode::MODE_NONE;
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
+	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+
+	m_fTimingCount = 0.0f;
+	m_bTiming = false;
 }
 
 //==========================================================================
@@ -95,6 +128,8 @@ HRESULT CPlayerAI::Init()
 	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
+	m_fTimingCount = timing::TIMING_QUICK;
+
 	return S_OK;
 }
 
@@ -125,7 +160,7 @@ void CPlayerAI::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	CPlayer::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 状態更新
-	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+	UpdateMode(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 向き
 	MyLib::Vector3 rot = GetRotation();
@@ -212,7 +247,9 @@ CPlayerAI::SHitInfo CPlayerAI::Hit(CBall* pBall)
 
 	if (hitInfo.eHit == EHit::HIT_CATCH)
 	{// キャッチ状態
-		StateThrowManager(pBall);
+
+		// 投げモード
+		m_eMode = EMode::MODE_THROW;
 	}
 
 	return hitInfo;
@@ -221,38 +258,42 @@ CPlayerAI::SHitInfo CPlayerAI::Hit(CBall* pBall)
 //==========================================================================
 // 投げの管理
 //==========================================================================
-void CPlayerAI::StateThrowManager(CBall* pBall)
+void CPlayerAI::ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(this->GetCharStatus()->GetTeam());
 
-	// ボール所持か
-	if (pBall == nullptr) return;
-
 	if (pTeamStatus->IsMaxSpecial())
 	{// スペシャル
-		SpecialThrow();
+		m_eThrowType = EThrowType::TYPE_SPECIAL;
 	}
 	else
-	{// 投げる
+	{
+		int n = rand() % 2;
 
-		//int nRand = rand() % 10;
+		/*switch (n)
+		{
+		case 0:
+			m_eThrowType = EThrowType::TYPE_NORMAL;
+			break;
 
-		//if (nRand >= 5)
-		//{// 通常投げ
-			Throw();
-		//}
-		//else
-		//{// ジャンプ投げ
-		//	JumpThrow();
-		//}
+		case 1:*/
+			m_eThrowType = EThrowType::TYPE_JUMP;
+			/*break;
+
+		default:
+			break;
+		}*/
+
+		// 投げる種類更新
+		(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
 //==========================================================================
 // キャッチの管理
 //==========================================================================
-void CPlayerAI::StateCatchManager()
+void CPlayerAI::ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -260,46 +301,235 @@ void CPlayerAI::StateCatchManager()
 //==========================================================================
 // 通常投げ処理
 //==========================================================================
-void CPlayerAI::Throw()
+void CPlayerAI::TypeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CPlayerControlAction* pControlAction = GetPlayerControlAction();
-	CPlayerAIControlAction* pControlAIAction =pControlAction->GetAI();
+	// 動きの設定 : 現在(その場)
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
 
-	// 投げる
-	pControlAIAction->SetIsThrow(true);
+	// 投げる動き更新
+	(this->*(m_ThrowMoveFunc[m_eThrowMove]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // ジャンプ投げ処理
 //==========================================================================
-void CPlayerAI::JumpThrow()
+void CPlayerAI::TypeJumpThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 動きの設定 : 現在(その場)
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
 
+	// 投げる動き更新
+	(this->*(m_ThrowMoveFunc[m_eThrowMove]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // スペシャル投げ処理
 //==========================================================================
-void CPlayerAI::SpecialThrow()
+void CPlayerAI::TypeSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// スペシャル投げ
+	pControlAIAction->SetIsSpecial(true);
+
+	// それぞれの状態を戻す
+	m_eMode = EMode::MODE_NONE;
+	m_eThrowType = EThrowType::TYPE_NONE;
+}
+
+//==========================================================================
+// 通常投げ(その場)
+//==========================================================================
+void CPlayerAI::MoveNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// タイミング管理
+	TimingManager(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 投げる動き更新
+	(this->*(m_ThrowTimingFunc[m_eThrowTiming]))(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 歩き投げ
+//==========================================================================
+void CPlayerAI::MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// 走り投げ
+//==========================================================================
+void CPlayerAI::MoveDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// タイミング管理
+//==========================================================================
+void CPlayerAI::TimingManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (!m_bTiming)
+	{
+		// タイミングの設定
+		int n = rand() % 3;
+
+		switch (n)
+		{
+		case 0:
+			m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+			m_fTimingCount = timing::TIMING_NORMAL;
+			m_bTiming = true;
+			break;
+
+		case 1:
+			m_eThrowTiming = EThrowTiming::TIMING_QUICK;
+			m_fTimingCount = timing::TIMING_QUICK;
+			m_bTiming = true;
+			break;
+
+		case 2:
+			m_eThrowTiming = EThrowTiming::TIMING_DELAY;
+			m_fTimingCount = timing::TIMING_DELAY;
+			m_bTiming = true;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+//==========================================================================
+// 通常タイミング
+//==========================================================================
+void CPlayerAI::TimingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	if (m_eThrowType == EThrowType::TYPE_JUMP)
+	{
+		// 投げる
+		pControlAIAction->SetIsJump(true);
+		m_eThrowType = EThrowType::TYPE_NONE;
+	}
+
+	if (m_fTimingCount > 0)
+	{// カウントダウン
+		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
+
+		return;
+	}
+
+	// 投げる
+	pControlAIAction->SetIsThrow(true);
+
+	// それぞれの状態のリセット
+	m_eMode = EMode::MODE_NONE;
+	m_eThrowType = EThrowType::TYPE_NONE;
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
+	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+
+	// タイミングリセット
+	m_fTimingCount = timing::TIMING_NONE;
+	m_bTiming = false;
+
+	pControlAIAction->SetIsJump(false);
+}
+
+//==========================================================================
+// 速いタイミング
+//==========================================================================
+void CPlayerAI::TimingQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	if (m_eThrowType == EThrowType::TYPE_JUMP)
+	{
+		// 投げる
+		pControlAIAction->SetIsJump(true);
+		m_eThrowType = EThrowType::TYPE_NONE;
+	}
+
+	if (m_fTimingCount > 0)
+	{// カウントダウン
+		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
+
+		return;
+	}
+
+	// 投げる
+	pControlAIAction->SetIsThrow(true);
+
+	// それぞれの状態のリセット
+	m_eMode = EMode::MODE_NONE;
+	m_eThrowType = EThrowType::TYPE_NONE;
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
+	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+
+	// カウントのリセット
+	m_fTimingCount = timing::TIMING_NONE;
+	m_bTiming = false;
+
+	pControlAIAction->SetIsJump(false);
+}
+
+//==========================================================================
+// 遅いタイミング
+//==========================================================================
+void CPlayerAI::TimingDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	if (m_eThrowType == EThrowType::TYPE_JUMP)
+	{
+		// 投げる
+		pControlAIAction->SetIsJump(true);
+		m_eThrowType = EThrowType::TYPE_NONE;
+	}
+
+	if (m_fTimingCount > 0)
+	{// カウントダウン
+		m_fTimingCount -= fDeltaTime * fDeltaRate * fSlowRate;
+
+		return;
+	}
+
+	// 投げる
+	pControlAIAction->SetIsThrow(true);
+
+	// それぞれの状態のリセット
+	m_eMode = EMode::MODE_NONE;
+	m_eThrowType = EThrowType::TYPE_NONE;
+	m_eThrowMove = EThrowMove::MOVE_NORMAL;
+	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+
+	// カウントのリセット
+	m_fTimingCount = timing::TIMING_NONE;
+	m_bTiming = false;
+
+	pControlAIAction->SetIsJump(false);
+}
+
+//==========================================================================
+// フェイント
+//==========================================================================
+void CPlayerAI::TimingFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
 }
 
 //==========================================================================
 // 状態更新
 //==========================================================================
-void CPlayerAI::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAI::UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 状態更新
-	(this->*(m_StateFunc[m_eThrowMode]))();
-}
-
-//==========================================================================
-// なし
-//==========================================================================
-void CPlayerAI::StateNone()
-{
-
+	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
