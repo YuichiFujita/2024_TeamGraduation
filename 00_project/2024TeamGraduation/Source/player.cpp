@@ -25,6 +25,10 @@
 #include "map.h"
 #include "edit_map.h"
 
+// 派生先
+#include "playerAI.h"
+#include "playerUser.h"
+
 // デバッグ
 #include "ObjectLine.h"
 
@@ -40,7 +44,11 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\player\\main_01\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE[] =		// キャラクターファイル
+	{
+		"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
+		"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
+	};
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
@@ -152,6 +160,53 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
+// 生成処理
+//==========================================================================
+CPlayer* CPlayer::Create(EUserType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype)
+{
+	// メモリの確保
+	CPlayer* pPlayer = nullptr;
+
+	switch (type)
+	{
+	case CPlayer::TYPE_USER:
+		pPlayer = DEBUG_NEW CPlayerUser;
+		break;
+
+	case CPlayer::TYPE_AI:
+		pPlayer = DEBUG_NEW CPlayerAI;
+		break;
+
+	default:
+		return pPlayer;
+		break;
+	}
+
+	if (pPlayer != nullptr)
+	{
+		// 利き手
+		pPlayer->m_Handress = handtype;
+
+		// クラスの初期化
+		if (FAILED(pPlayer->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pPlayer);
+			return nullptr;
+		}
+
+		// チームサイドを設定
+		pPlayer->GetStatus()->SetTeam(team);
+
+		// 位置を設定
+		pPlayer->SetPosition(rPos);
+	}
+
+	return pPlayer;
+}
+
+//==========================================================================
 // 初期化処理
 //==========================================================================
 HRESULT CPlayer::Init()
@@ -169,7 +224,7 @@ HRESULT CPlayer::Init()
 	m_bPossibleMove = true;
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE);
+	HRESULT hr = SetCharacter(CHARAFILE[m_Handress]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;

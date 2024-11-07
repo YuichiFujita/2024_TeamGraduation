@@ -125,7 +125,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_RIGHT, pos + offset);
+		CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_RIGHT, pos + offset, CPlayer::EHandedness::HAND_R);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -139,7 +139,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, pos + offset);
+		CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, pos + offset, CPlayer::EHandedness::HAND_L);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -151,7 +151,8 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser生成
 #if 0
-	CPlayerUser* pUser = CPlayerUser::Create(CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
+
+	CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{
 		return E_FAIL;
@@ -162,7 +163,7 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser二世生成(右)
 #if 0
-	CPlayerUser* pUser2 = CPlayerUser::Create(CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
+	CPlayer* pUser2 = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
 		return E_FAIL;
@@ -174,7 +175,7 @@ HRESULT CGame::Init()
 	// プレイヤーAI一人生成(右)
 #if 0
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
-	CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos);
+	CPlayer* pAI = CPlayer::Create(CPlayer::EUserType::TYPE_AI, CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
 	{
 		return E_FAIL;
@@ -189,7 +190,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
-		CPlayerAI* pAI = CPlayerAI::Create(CGameManager::SIDE_RIGHT, pos + offset);
+		CPlayer* pAI = CPlayer::Create(CPlayer::EUserType::TYPE_AI, CGameManager::SIDE_RIGHT, pos + offset);
 		if (pAI == nullptr)
 		{
 			return E_FAIL;

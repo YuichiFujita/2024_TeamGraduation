@@ -40,9 +40,12 @@ public:
 		int nType;				// モデル種類
 		int nParent;			// 親のインデックス
 		int nStart;				// 最初からあるかどうか
+		int nInverseIdx;		// 反転インデックス
 		EPartSide side;			// 配置
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 rot;		// 向き
+
+		LoadData() : side(EPartSide::SIDE_CENTER), nInverseIdx(-1) {}
 	};
 
 	struct Load

@@ -118,6 +118,22 @@ public:
 		ANGLE_MAX
 	};
 
+	// ユーザーの種類列挙
+	enum EUserType
+	{
+		TYPE_USER = 0,
+		TYPE_AI,
+		TYPE_MAX
+	};
+
+	// 利き手列挙
+	enum EHandedness
+	{
+		HAND_R,	// 右利き
+		HAND_L,	// 左利き
+		HAND_MAX
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -233,6 +249,17 @@ public:
 	//=============================
 	float GetDodgeDistance();	// 回避範囲取得
 
+	//=============================
+	// 静的関数
+	//=============================
+	/*
+		@brief	生成処理
+		@param	type	[in]	ユーザーの種類
+		@param	team	[in]	チームサイド
+		@param	rPos	[in]	初期位置
+	*/
+	static CPlayer* Create(EUserType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype = EHandedness::HAND_R);
+
 protected:
 	//=============================
 	// メンバ関数
@@ -346,6 +373,7 @@ private:
 	CShadow* m_pShadow;	// 影の情報
 	CBall* m_pBall;		// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
+	EHandedness m_Handress;		// 利き手
 	static CListManager<CPlayer> m_List;	// リスト
 };
 
