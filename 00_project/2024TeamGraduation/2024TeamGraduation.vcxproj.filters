@@ -497,6 +497,12 @@
     <ClCompile Include="Source\gymWallManager.cpp">
       <Filter>ingame\gym</Filter>
     </ClCompile>
+    <ClCompile Include="Source\renderTexture.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\screen.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -903,6 +909,12 @@
     </ClInclude>
     <ClInclude Include="Source\gymWallManager.h">
       <Filter>ingame\gym</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\renderTexture.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\screen.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

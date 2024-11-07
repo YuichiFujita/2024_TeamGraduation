@@ -93,8 +93,6 @@ private:
 	// メンバ関数
 	//=============================
 	virtual void SceneStart();		// 開始演出
-	void SetCameraTargetPosition();	// カメラ追従注視点設定
-	void SetCameraDistance();		// カメラ追従距離設定
 	void UpdateAudience();			// 観客更新
 	void UpdateSpecialStag();		// スペシャル演出更新
 	void CreateTeamStatus();		// チームステータス生成

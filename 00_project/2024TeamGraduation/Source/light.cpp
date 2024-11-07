@@ -71,8 +71,12 @@ HRESULT CLight::Init()
 //============================================================
 void CLight::Uninit()
 {
-	// ライトを無効にする
-	SetEnableLight(false);
+	if (GET_RENDERER != nullptr)
+	{ // レンダラーが破棄されていない場合
+
+		// ライトを無効にする
+		SetEnableLight(false);
+	}
 
 	// オブジェクトを破棄
 	Release();

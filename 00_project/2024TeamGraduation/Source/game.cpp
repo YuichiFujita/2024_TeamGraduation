@@ -151,6 +151,7 @@ HRESULT CGame::Init()
 
 	// ÉvÉåÉCÉÑÅ[Userê∂ê¨
 #if 0
+
 	CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{

@@ -165,7 +165,6 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 	case CGameManager::ESceneType::SCENE_MAIN:
 		m_bControll = true;
-		SetCameraTargetPosition();
 		UpdateAudience();
 		break;
 
@@ -214,60 +213,6 @@ void CGameManager::StartSetting()
 }
 
 //==========================================================================
-// カメラ追従の注視点設定
-//==========================================================================
-void CGameManager::SetCameraTargetPosition()
-{
-	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤー内部リスト
-	std::list<CPlayer*>::iterator itr = list.GetEnd();	// プレイヤーイテレーター
-	float fPosL, fPosR;	// 左右座標
-
-	// 先頭プレイヤーの横座標を仮設定
-	CPlayer* pPlayerFront = *list.GetBegin();
-	fPosL = fPosR = pPlayerFront->GetPosition().x;
-
-	while (list.ListLoop(itr))
-	{ // 要素数分繰り返す
-
-		CPlayer* pPlayer = (*itr);	// プレイヤー情報
-		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
-
-		// 左の更新
-		if (posPlayer.x < fPosL) { fPosL = posPlayer.x; }
-
-		// 右の更新
-		if (posPlayer.x > fPosR) { fPosR = posPlayer.x; }
-	}
-
-	// 左右座標の平均からX注視点を計算
-	float fTargetX = (fPosL + fPosR) * 0.5f;
-
-	// X注視点の補正
-	float fCourtHalfSize = Court::SIZE.x * 0.5f;	// コートの半分の大きさ
-	UtilFunc::Transformation::ValueNormalize(fTargetX, CENTER_LINE + fCourtHalfSize, CENTER_LINE - fCourtHalfSize);
-
-
-
-	float fCurDis = fPosR - fPosL;				// 左右距離
-	float fMaxDis = Court::SIZE.x * 2.0f;		// 最大距離
-	float fRate = fCurDis / fMaxDis;			// 距離割合
-	float fCameraDis = 2479.0f * fRate + 1.0f;	// カメラ距離
-	float fTargetY = UtilFunc::Correction::EasingLinear(550.0f, 320.0f, fRate);		// カメラY注視点
-	float fTargetZ = UtilFunc::Correction::EasingLinear(-1600.0f, -100.0f, fRate);	// カメラZ注視点
-
-	// 注視点を設定
-	GET_MANAGER->GetCamera()->SetTargetPosition(MyLib::Vector3(fTargetX, fTargetY, fTargetZ));
-
-	// 距離を設定
-	GET_MANAGER->GetCamera()->SetDistanceDest(fCameraDis);
-	GET_MANAGER->GetCamera()->SetDistance(fCameraDis);
-
-
-	GET_MANAGER->GetDebugProc()->Print("左右距離：%f\n", fCurDis);
-	GET_MANAGER->GetDebugProc()->Print("距離割合：%f\n", fRate);
-}
-
-//==========================================================================
 // 開始演出
 //==========================================================================
 void CGameManager::SceneStart()
@@ -290,6 +235,7 @@ void CGameManager::SceneStart()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
+	GET_MANAGER->GetDebugProc()->Print("\n----------------- 観客情報 -----------------\n");
 	for (int i = 0; i < 2; i++)
 	{
 		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// モテ情報
@@ -298,8 +244,7 @@ void CGameManager::UpdateAudience()
 
 		// 観客数を設定
 		CAudience::SetNumWatch(nNumAudience, (CGameManager::TeamSide)(i + 1));
-
-		GET_MANAGER->GetDebugProc()->Print("チーム%d：観客 %d\n", i, nNumAudience);
+		GET_MANAGER->GetDebugProc()->Print("【チーム0%d観客】[%d]\n", i, nNumAudience);
 	}
 }
 

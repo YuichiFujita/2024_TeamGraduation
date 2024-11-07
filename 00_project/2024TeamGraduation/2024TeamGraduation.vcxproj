@@ -272,12 +272,14 @@
     </ClCompile>
     <ClCompile Include="Source\ranking.cpp" />
     <ClCompile Include="Source\renderer.cpp" />
+    <ClCompile Include="Source\renderTexture.cpp" />
     <ClCompile Include="Source\result.cpp" />
     <ClCompile Include="Source\sample_character.cpp" />
     <ClCompile Include="Source\sample_obj2D.cpp" />
     <ClCompile Include="Source\sample_obj3D.cpp" />
     <ClCompile Include="Source\sample_objX.cpp" />
     <ClCompile Include="Source\scene.cpp" />
+    <ClCompile Include="Source\screen.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
@@ -409,12 +411,14 @@
     <ClInclude Include="Source\precompile.h" />
     <ClInclude Include="Source\ranking.h" />
     <ClInclude Include="Source\renderer.h" />
+    <ClInclude Include="Source\renderTexture.h" />
     <ClInclude Include="Source\result.h" />
     <ClInclude Include="Source\sample_character.h" />
     <ClInclude Include="Source\sample_obj2D.h" />
     <ClInclude Include="Source\sample_obj3D.h" />
     <ClInclude Include="Source\sample_objX.h" />
     <ClInclude Include="Source\scene.h" />
+    <ClInclude Include="Source\screen.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
     <ClInclude Include="Source\specialManager.h" />

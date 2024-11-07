@@ -34,7 +34,7 @@ CLightDir::~CLightDir()
 HRESULT CLightDir::Init()
 {
 	// ƒ‰ƒCƒg‚Ì‰Šú‰»
-	if (CLight::Init())
+	if (FAILED(CLight::Init()))
 	{ // ‰Šú‰»‚É¸”s‚µ‚½ê‡
 
 		assert(false);

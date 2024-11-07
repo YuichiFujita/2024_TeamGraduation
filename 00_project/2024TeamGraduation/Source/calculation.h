@@ -1,12 +1,12 @@
-//=============================================================================
+ï»¿//=============================================================================
 // 
-// •Ö—˜ŠÖ” [calculation.h]
-// Author : ‘Š”nèÎ‰ë
+// ä¾¿åˆ©é–¢æ•° [calculation.h]
+// Author : ç›¸é¦¬éœé›…
 // 
 //=============================================================================
 
 #ifndef _CALCULATION_H_
-#define _CALCULATION_H_		// “ñdƒCƒ“ƒNƒ‹[ƒh–h~‚Ìƒ}ƒNƒ‚ğ’è‹`‚·‚é
+#define _CALCULATION_H_		// äºŒé‡ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰é˜²æ­¢ã®ãƒã‚¯ãƒ­ã‚’å®šç¾©ã™ã‚‹
 
 #include "constans.h"
 #include "3D_effect.h"
@@ -16,92 +16,97 @@
 using namespace DirectX;
 
 /**
-@brief	ŠÈ’P‚Èà–¾
-@details Ú×‚Èà–¾
-@param	hoge	[in][out][inout]	ˆø”‚Ìà–¾
-@return	piyo	–ß‚è’l‚Ìà–¾
+@brief	ç°¡å˜ãªèª¬æ˜
+@details è©³ç´°ãªèª¬æ˜
+@param	hoge	[in][out][inout]	å¼•æ•°ã®èª¬æ˜
+@return	piyo	æˆ»ã‚Šå€¤ã®èª¬æ˜
 */
 
 //==========================================================================
-// ƒ}ƒNƒ’è‹`
+// ãƒã‚¯ãƒ­å®šç¾©
 //==========================================================================
-#define MAX_COMMENT		(512)	// ƒRƒƒ“ƒg‚ÌÅ‘å”
-#define HALF_PI			(D3DX_PI * 0.5f)	// “ñ•ª‚Ìˆê‚Ì‰~ü—¦ (ƒÎ/‚Q)
-#define QRTR_PI			(D3DX_PI * 0.25f)	// l•ª‚Ìˆê‚Ì‰~ü—¦ (ƒÎ/‚S)
-#define NUM_ARRAY(a)	(sizeof((a)) / sizeof((a)[0]))	// ”z—ñ‚Ì—v‘f”ŒvZ
+#define MAX_COMMENT		(512)	// ã‚³ãƒ¡ãƒ³ãƒˆã®æœ€å¤§æ•°
+#define HALF_PI			(D3DX_PI * 0.5f)	// äºŒåˆ†ã®ä¸€ã®å††å‘¨ç‡ (Ï€/ï¼’)
+#define QRTR_PI			(D3DX_PI * 0.25f)	// å››åˆ†ã®ä¸€ã®å††å‘¨ç‡ (Ï€/ï¼”)
+#define NUM_ARRAY(a)	(sizeof((a)) / sizeof((a)[0]))	// é…åˆ—ã®è¦ç´ æ•°è¨ˆç®—
 
-// D3DXVECTOR2ŠÖŒW
-#define VEC2_ZERO	(D3DXVECTOR2(0.0f, 0.0f))	// 0ƒNƒŠƒA
-#define VEC2_ONE	(D3DXVECTOR2(1.0f, 1.0f))	// 1ƒNƒŠƒA
-#define VEC2_ALL(f)	(D3DXVECTOR2((f), (f))		// “¯’lƒNƒŠƒA
+// D3DXVECTOR2é–¢ä¿‚
+#define VEC2_ZERO	(D3DXVECTOR2(0.0f, 0.0f))	// 0ã‚¯ãƒªã‚¢
+#define VEC2_ONE	(D3DXVECTOR2(1.0f, 1.0f))	// 1ã‚¯ãƒªã‚¢
+#define VEC2_ALL(f)	(D3DXVECTOR2((f), (f))		// åŒå€¤ã‚¯ãƒªã‚¢
+#define VEC2_SCREEN_CENT	(MyLib::Vector2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f))	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ä¸­å¤®åº§æ¨™
+#define VEC2_SCREEN_SIZE	(MyLib::Vector2((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT))	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ç”»é¢ã‚µã‚¤ã‚º
 
-// D3DXVECTOR3ŠÖŒW
-#define VEC3_ZERO	(MyLib::Vector3(0.0f, 0.0f, 0.0f))	// 0ƒNƒŠƒA
-#define VEC3_ONE	(MyLib::Vector3(1.0f, 1.0f, 1.0f))	// 1ƒNƒŠƒA
-#define VEC3_ALL(f)	(MyLib::Vector3((f), (f), (f)))		// “¯’lƒNƒŠƒA
-#define SCREEN_CENT	(MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f))	// ƒEƒCƒ“ƒhƒE‚Ì’†‰›À•W
-#define SCREEN_SIZE	(MyLib::Vector3((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f))	// ƒEƒCƒ“ƒhƒE‚Ì‰æ–ÊƒTƒCƒY
+// D3DXVECTOR3é–¢ä¿‚
+#define VEC3_ZERO	(MyLib::Vector3(0.0f, 0.0f, 0.0f))	// 0ã‚¯ãƒªã‚¢
+#define VEC3_ONE	(MyLib::Vector3(1.0f, 1.0f, 1.0f))	// 1ã‚¯ãƒªã‚¢
+#define VEC3_ALL(f)	(MyLib::Vector3((f), (f), (f)))		// åŒå€¤ã‚¯ãƒªã‚¢
+#define VEC3_SCREEN_CENT	(MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f))	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ä¸­å¤®åº§æ¨™
+#define VEC3_SCREEN_SIZE	(MyLib::Vector3((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f))	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ç”»é¢ã‚µã‚¤ã‚º
 
 /**
-@brief	•Ö—˜ŠÖ”
+@brief	ä¾¿åˆ©é–¢æ•°
 */
 namespace UtilFunc
 {
 	namespace Transformation
 	{
-		template<class T> void ValueNormalize(T& Value, T MaxValue, T MinValue);	// ’l‚Ì³‹K‰»ˆ—
+		template<class T> void ValueNormalize(T& Value, T MaxValue, T MinValue);	// å€¤ã®æ­£è¦åŒ–å‡¦ç†
 		template<class T> const T Clamp(T Value, T MinValue, T MaxValue);			
 			MyLib::Vector3 RotationChangeToForwardVector(float rot);
-		MyLib::Vector3 WorldMtxChangeToPosition(D3DXMATRIX worldmtx);	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚ğpos‚É•ÏŠ·
+		MyLib::Vector3 WorldMtxChangeToPosition(D3DXMATRIX worldmtx);	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’posã«å¤‰æ›
 		MyLib::Vector3 MtxChangeToMatrix(const D3DXMATRIX& matrix);
 		inline float DegreeChangeToRadian(float degree);
+		inline float RadianChangeToDegree(float radian);
+		inline void RotNormalize(float& fRot);
+		inline void RotUnNormalize(float& fRot);
 	}
 
 	namespace Collision
 	{
-		bool CollisionTriangle(const MyLib::Vector3& posCenter, const MyLib::Vector3& posLeft, const MyLib::Vector3& posRight, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld);	// OŠpŒ`‚Ì“à‘¤‚É‚¢‚é‚©”»’è
+		bool CollisionTriangle(const MyLib::Vector3& posCenter, const MyLib::Vector3& posLeft, const MyLib::Vector3& posRight, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld);	// ä¸‰è§’å½¢ã®å†…å´ã«ã„ã‚‹ã‹åˆ¤å®š
 
 	}
 }
 
 //==========================================================================
-// ƒl[ƒ€ƒXƒy[ƒX’è‹`
+// ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å®šç¾©
 //==========================================================================
-namespace UtilFunc	// •Ö—˜ŠÖ”
+namespace UtilFunc	// ä¾¿åˆ©é–¢æ•°
 {
 
 	/**
-	@brief	•â³ŠÖ”
+	@brief	è£œæ­£é–¢æ•°
 	*/
 	namespace Correction
 	{
 		/**
-		@brief	Šµ«•â³
-		@details •â³ŒW”‚ğ1.0f‚É‚·‚é‚Æ1F‚Å•â³‚ªŠ®—¹‚µ‚Ü‚·
-		@param	fMain	[inout]	•â³‚·‚é’l
-		@param	fTarget	[in]	–Ú•W‚Ì’l
-		@param	fFactor	[in]	•â³ŒW”(0.0f ` 1.0f)
+		@brief	æ…£æ€§è£œæ­£
+		@details è£œæ­£ä¿‚æ•°ã‚’1.0fã«ã™ã‚‹ã¨1Fã§è£œæ­£ãŒå®Œäº†ã—ã¾ã™
+		@param	fMain	[inout]	è£œæ­£ã™ã‚‹å€¤
+		@param	fTarget	[in]	ç›®æ¨™ã®å€¤
+		@param	fFactor	[in]	è£œæ­£ä¿‚æ•°(0.0f ï½ 1.0f)
 		@return	void
 		*/
 		inline void InertiaCorrection(float& fMain, float fTarget, float fFactor)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(fFactor, 1.0f, 0.0f);
 
 			fMain += (fTarget - fMain) * fFactor;
 		}
 
 		/**
-		@brief	Šµ«•â³
-		@details •â³ŒW”‚ğ1.0f‚É‚·‚é‚Æ1F‚Å•â³‚ªŠ®—¹‚µ‚Ü‚·
-		@param	main	[inout]	•â³‚·‚é’l
-		@param	target	[in]	–Ú•W‚Ì’l
-		@param	fFactor	[in]	•â³ŒW”(0.0f ` 1.0f)
+		@brief	æ…£æ€§è£œæ­£
+		@details è£œæ­£ä¿‚æ•°ã‚’1.0fã«ã™ã‚‹ã¨1Fã§è£œæ­£ãŒå®Œäº†ã—ã¾ã™
+		@param	main	[inout]	è£œæ­£ã™ã‚‹å€¤
+		@param	target	[in]	ç›®æ¨™ã®å€¤
+		@param	fFactor	[in]	è£œæ­£ä¿‚æ•°(0.0f ï½ 1.0f)
 		@return	void
 		*/
 		inline void InertiaCorrection(MyLib::Vector3& main, const MyLib::Vector3& target, float fFactor)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(fFactor, 1.0f, 0.0f);
 
 			main.x += (target.x - main.x) * fFactor;
@@ -110,48 +115,48 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(“™‘¬, ƒŠƒjƒA)
+		@brief	ç·šå½¢è£œæ­£(ç­‰é€Ÿ, ãƒªãƒ‹ã‚¢)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/linear.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½float’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingLinear(float start, float end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			return start + (end - start) * time;
 		}
 
 		/**
-		@brief	üŒ`•â³(“™‘¬, ƒŠƒjƒA)
+		@brief	ç·šå½¢è£œæ­£(ç­‰é€Ÿ, ãƒªãƒ‹ã‚¢)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/linear.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingLinear(const MyLib::Vector3& start, const MyLib::Vector3& end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			return start + (end - start) * time;
 		}
 
 		/**
-		@brief	üŒ`•â³(“™‘¬, ƒŠƒjƒA)
+		@brief	ç·šå½¢è£œæ­£(ç­‰é€Ÿ, ãƒªãƒ‹ã‚¢)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/linear.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingLinear(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -159,18 +164,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(“™‘¬, ƒŠƒjƒA)
+		@brief	ç·šå½¢è£œæ­£(ç­‰é€Ÿ, ãƒªãƒ‹ã‚¢)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/linear.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingLinear(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -178,48 +183,48 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚É‰Á‘¬, ƒC[ƒYƒCƒ“)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«åŠ é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easein_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½float’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseIn(float start, float end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			return start + (end - start) * time * time;
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚É‰Á‘¬, ƒC[ƒYƒCƒ“)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«åŠ é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easein_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingEaseIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			return start + (end - start) * time * time;
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚É‰Á‘¬, ƒC[ƒYƒCƒ“)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«åŠ é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easein_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseIn(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -227,18 +232,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚É‰Á‘¬, ƒC[ƒYƒCƒ“)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«åŠ é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easein_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingEaseIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -246,16 +251,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚ÉŒ¸‘¬, ƒC[ƒYƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeout_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½float’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseOut(float start, float end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			float fSquaredTime = time * time;
 
@@ -263,16 +268,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚ÉŒ¸‘¬, ƒC[ƒYƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeout_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingEaseOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 			float fSquaredTime = time * time;
 
@@ -280,18 +285,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚ÉŒ¸‘¬, ƒC[ƒYƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -299,18 +304,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(™X‚ÉŒ¸‘¬, ƒC[ƒYƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(å¾ã€…ã«æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½Vector3’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸVector3å€¤
 		*/
 		inline MyLib::Vector3 EasingEaseOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -318,16 +323,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(‰Á‘¬‚µ‚Ä‚©‚çŒ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(åŠ é€Ÿã—ã¦ã‹ã‚‰æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½float’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseInOut(float start, float end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 
 			float fValue = 0.0f;
@@ -346,16 +351,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(‰Á‘¬‚µ‚Ä‚©‚çŒ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(åŠ é€Ÿã—ã¦ã‹ã‚‰æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start	[in]	‰Šú’l
-		@param	end		[in]	–Ú•W’l
-		@param	time	[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•â³‚³‚ê‚½float’l
+		@param	start	[in]	åˆæœŸå€¤
+		@param	end		[in]	ç›®æ¨™å€¤
+		@param	time	[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EasingEaseInOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float time)
 		{
-			// ”ÍˆÍŠO•â³
+			// ç¯„å›²å¤–è£œæ­£
 			UtilFunc::Transformation::ValueNormalize(time, 1.0f, 0.0f);
 
 			MyLib::Vector3 fValue;
@@ -374,18 +379,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(‰Á‘¬‚µ‚Ä‚©‚çŒ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(åŠ é€Ÿã—ã¦ã‹ã‚‰æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseInOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -393,18 +398,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(‰Á‘¬‚µ‚Ä‚©‚çŒ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(åŠ é€Ÿã—ã¦ã‹ã‚‰æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EasingEaseInOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -412,18 +417,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(ƒTƒCƒ“ƒJ[ƒuƒx[ƒX‚Ì•âŠÔAŒ¸‘¬¨‰Á‘¬¨Œ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(ã‚µã‚¤ãƒ³ã‚«ãƒ¼ãƒ–ãƒ™ãƒ¼ã‚¹ã®è£œé–“ã€æ¸›é€Ÿâ†’åŠ é€Ÿâ†’æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EasingEaseInOutSine(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -431,18 +436,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	üŒ`•â³(ƒTƒCƒ“ƒJ[ƒuƒx[ƒX‚Ì•âŠÔAŒ¸‘¬¨‰Á‘¬¨Œ¸‘¬, ƒC[ƒYƒCƒ“ƒAƒEƒg)
+		@brief	ç·šå½¢è£œæ­£(ã‚µã‚¤ãƒ³ã‚«ãƒ¼ãƒ–ãƒ™ãƒ¼ã‚¹ã®è£œé–“ã€æ¸›é€Ÿâ†’åŠ é€Ÿâ†’æ¸›é€Ÿ, ã‚¤ãƒ¼ã‚ºã‚¤ãƒ³ã‚¢ã‚¦ãƒˆ)
 		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EasingEaseInOutSine(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -453,19 +458,19 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	easeInBackŠÖ”
+		@brief	easeInBacké–¢æ•°
 		@details https://easings.net/ja#easeInBack
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@param	c			[in]	ƒoƒbƒN‚Ì‹­‚³
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@param	c			[in]	ãƒãƒƒã‚¯ã®å¼·ã•
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseInBack(float start, float end, float startTime, float endTime, float currentTime, float c = 1.70158f)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -474,67 +479,67 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	easeOutBackŠÖ”
+		@brief	easeOutBacké–¢æ•°
 		@details https://easings.net/ja#easeInBack
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@param	c			[in]	ƒoƒbƒN‚Ì‹­‚³
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@param	c			[in]	ãƒãƒƒã‚¯ã®å¼·ã•
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseOutBack(float start, float end, float startTime, float endTime, float currentTime, float c = 1.70158f)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			ratio -= 1; // t ‚ğ (t - 1) ‚É•ÏŠ·
+			ratio -= 1; // t ã‚’ (t - 1) ã«å¤‰æ›
 
 			float cal = ratio * ratio * ((c + 1) * ratio + c) + 1;
 			return start + (end - start) * cal;
 		}
 
 		/**
-		@brief	easeOutBackŠÖ”
+		@brief	easeOutBacké–¢æ•°
 		@details https://easings.net/ja#easeInBack
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@param	c			[in]	ƒoƒbƒN‚Ì‹­‚³
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@param	c			[in]	ãƒãƒƒã‚¯ã®å¼·ã•
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EaseOutBack(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime, float c = 1.70158f)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			ratio -= 1; // t ‚ğ (t - 1) ‚É•ÏŠ·
+			ratio -= 1; // t ã‚’ (t - 1) ã«å¤‰æ›
 
 			float cal = ratio * ratio * ((c + 1) * ratio + c) + 1;
 			return start + (end - start) * cal;
 		}
 
 		/**
-		@brief	easeInOutBackŠÖ”
+		@brief	easeInOutBacké–¢æ•°
 		@details https://easings.net/ja#easeInBack
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@param	c			[in]	ƒoƒbƒN‚Ì‹­‚³
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@param	c			[in]	ãƒãƒƒã‚¯ã®å¼·ã•
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseInOutBack(float start, float end, float startTime, float endTime, float currentTime, float c = 1.70158f)
 		{
-			c *= 1.525f; // ‚æ‚è‹­’²‚³‚ê‚½Œø‰Ê
+			c *= 1.525f; // ã‚ˆã‚Šå¼·èª¿ã•ã‚ŒãŸåŠ¹æœ
 
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -553,110 +558,110 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	easeInExpoŠÖ”
+		@brief	easeInExpoé–¢æ•°
 		@details https://easings.net/ja#easeInExpo
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseInExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			// ƒC[ƒWƒ“ƒOŒvZ
+			// ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°è¨ˆç®—
 			float eased = (ratio == 0) ? 0 : pow(2, 10 * (ratio - 1));
 
-			// üŒ`•âŠÔiLerpj‚ğg—p‚µ‚ÄŒ‹‰Ê‚ğstart‚©‚çend‚Ì”ÍˆÍ‚É•ÏŠ·
+			// ç·šå½¢è£œé–“ï¼ˆLerpï¼‰ã‚’ä½¿ç”¨ã—ã¦çµæœã‚’startã‹ã‚‰endã®ç¯„å›²ã«å¤‰æ›
 			return start + (end - start) * eased;
 		}
 
 		/**
-		@brief	easeInExpoŠÖ”
+		@brief	easeInExpoé–¢æ•°
 		@details https://easings.net/ja#easeInExpo
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EaseInExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			// ƒC[ƒWƒ“ƒOŒvZ
+			// ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°è¨ˆç®—
 			float eased = (ratio == 0) ? 0 : pow(2, 10 * (ratio - 1));
 
-			// üŒ`•âŠÔiLerpj‚ğg—p‚µ‚ÄŒ‹‰Ê‚ğstart‚©‚çend‚Ì”ÍˆÍ‚É•ÏŠ·
+			// ç·šå½¢è£œé–“ï¼ˆLerpï¼‰ã‚’ä½¿ç”¨ã—ã¦çµæœã‚’startã‹ã‚‰endã®ç¯„å›²ã«å¤‰æ›
 			return start + (end - start) * eased;
 		}
 
 		/**
-		@brief	easeOutExpoŠÖ”
+		@brief	easeOutExpoé–¢æ•°
 		@details https://easings.net/ja#easeOutExpo
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseOutExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			// ƒC[ƒWƒ“ƒOŒvZ
+			// ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°è¨ˆç®—
 			float eased = (ratio == 1) ? 1 : (1 - pow(2, -10 * ratio));
 
-			// üŒ`•âŠÔiLerpj‚ğg—p‚µ‚ÄŒ‹‰Ê‚ğstart‚©‚çend‚Ì”ÍˆÍ‚É•ÏŠ·
+			// ç·šå½¢è£œé–“ï¼ˆLerpï¼‰ã‚’ä½¿ç”¨ã—ã¦çµæœã‚’startã‹ã‚‰endã®ç¯„å›²ã«å¤‰æ›
 			return start + (end - start) * eased;
 		}
 
 		/**
-		@brief	easeOutExpoŠÖ”
+		@brief	easeOutExpoé–¢æ•°
 		@details https://easings.net/ja#easeOutExpo
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline MyLib::Vector3 EaseOutExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
-			// ƒC[ƒWƒ“ƒOŒvZ
+			// ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°è¨ˆç®—
 			float eased = (ratio == 1) ? 1 : (1 - pow(2, -10 * ratio));
 
-			// üŒ`•âŠÔiLerpj‚ğg—p‚µ‚ÄŒ‹‰Ê‚ğstart‚©‚çend‚Ì”ÍˆÍ‚É•ÏŠ·
+			// ç·šå½¢è£œé–“ï¼ˆLerpï¼‰ã‚’ä½¿ç”¨ã—ã¦çµæœã‚’startã‹ã‚‰endã®ç¯„å›²ã«å¤‰æ›
 			return start + (end - start) * eased;
 		}
 
 		/**
-		@brief	easeInOutExpoŠÖ”
+		@brief	easeInOutExpoé–¢æ•°
 		@details https://easings.net/ja#easeInOutExpo
-		@param	start		[in]	‰Šú’l
-		@param	end			[in]	–Ú•W’l
-		@param	startTime	[in]	ŠJnŠÔ
-		@param	endTime		[in]	I—¹ŠÔ
-		@param	currentTime	[in]	Œ»İ‚ÌŠÔ
-		@return	•â³‚³‚ê‚½float’l
+		@param	start		[in]	åˆæœŸå€¤
+		@param	end			[in]	ç›®æ¨™å€¤
+		@param	startTime	[in]	é–‹å§‹æ™‚é–“
+		@param	endTime		[in]	çµ‚äº†æ™‚é–“
+		@param	currentTime	[in]	ç¾åœ¨ã®æ™‚é–“
+		@return	è£œæ­£ã•ã‚ŒãŸfloatå€¤
 		*/
 		inline float EaseInOutExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// Š„‡
+			// å‰²åˆ
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
@@ -674,7 +679,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				eased = (2 - pow(2, -20 * ratio + 10)) / 2;
 			}
 
-			// üŒ`•âŠÔiLerpj‚ğg—p‚µ‚ÄŒ‹‰Ê‚ğstart‚©‚çend‚Ì”ÍˆÍ‚É•ÏŠ·
+			// ç·šå½¢è£œé–“ï¼ˆLerpï¼‰ã‚’ä½¿ç”¨ã—ã¦çµæœã‚’startã‹ã‚‰endã®ç¯„å›²ã«å¤‰æ›
 			return start + (end - start) * eased;
 		}
 
@@ -686,18 +691,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	Catmull-Rom Spline•âŠÔ(‘S‚Ä‚Ì“_‚ğ’Ê‚éüŒ`•âŠÔ)
+		@brief	Catmull-Rom Splineè£œé–“(å…¨ã¦ã®ç‚¹ã‚’é€šã‚‹ç·šå½¢è£œé–“)
 		@details https://storage.googleapis.com/zenn-user-upload/cu4a6qn5njn0pskn6pfx6lypic0h
-		@param	PointMili1	[in]	Šî€‚Ì‘O‚Ì§Œä“_(f-1)
-		@param	Point0		[in]	Šî€‚ÌÅ‰‚Ì§Œä“_(f0)
-		@param	Point1		[in]	Šî€‚Ì2”Ô–Ú‚Ì§Œä“_(f1)
-		@param	Point2		[in]	Šî€‚ÌŸ‚Ì§Œä“_ (f2)
-		@param	time		[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•âŠÔ‚³‚ê‚½’l
+		@param	PointMili1	[in]	åŸºæº–ã®å‰ã®åˆ¶å¾¡ç‚¹(f-1)
+		@param	Point0		[in]	åŸºæº–ã®æœ€åˆã®åˆ¶å¾¡ç‚¹(f0)
+		@param	Point1		[in]	åŸºæº–ã®2ç•ªç›®ã®åˆ¶å¾¡ç‚¹(f1)
+		@param	Point2		[in]	åŸºæº–ã®æ¬¡ã®åˆ¶å¾¡ç‚¹ (f2)
+		@param	time		[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	è£œé–“ã•ã‚ŒãŸå€¤
 		*/
 		inline MyLib::Vector3 CatmullRomSplineInterp(MyLib::Vector3 PointMili1, MyLib::Vector3 Point0, MyLib::Vector3 Point1, MyLib::Vector3 Point2, float time)
 		{
-			// 4“_‚Å•â³
+			// 4ç‚¹ã§è£œæ­£
 			MyLib::Vector3 a4 = Point0;
 			MyLib::Vector3 a3 = (Point1 - PointMili1) / 2.0f;
 			MyLib::Vector3 a1 = (Point2 - Point0) / 2.0f - 2.0f * Point1 + a3 + 2.0f * a4;
@@ -707,32 +712,32 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñŸ‹Èü•â³
-		@param	Value		[inout]	•âŠ®‚³‚ê‚é’l
-		@param	nRange		[in]	•âŠ®‚Ì”ÍˆÍ
-		@param	RangeOrigin	[in]	•âŠ®”ÍˆÍ‚Ì‹N“_‚Æ‚È‚é’l
-		@param	Max			[in]	•âŠ®‚ÌÅ‘å’l
-		@param	nAlphaCnt	[in]	“ñŸ‹Èü•â³—p‚ÌƒJƒEƒ“ƒ^[•Ï”‚Ö‚ÌQÆ
+		@brief	äºŒæ¬¡æ›²ç·šè£œæ­£
+		@param	Value		[inout]	è£œå®Œã•ã‚Œã‚‹å€¤
+		@param	nRange		[in]	è£œå®Œã®ç¯„å›²
+		@param	RangeOrigin	[in]	è£œå®Œç¯„å›²ã®èµ·ç‚¹ã¨ãªã‚‹å€¤
+		@param	Max			[in]	è£œå®Œã®æœ€å¤§å€¤
+		@param	nAlphaCnt	[in]	äºŒæ¬¡æ›²ç·šè£œæ­£ç”¨ã®ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼å¤‰æ•°ã¸ã®å‚ç…§
 		@return	void
 		*/
 		template<class T> inline void CuadricCurveComp(T& Value, const int nRange, T RangeOrigin, T Max, int& nAlphaCnt)
 		{
-			// •âŠ®‚Ì’lŠ„‚èo‚µ
+			// è£œå®Œã®å€¤å‰²ã‚Šå‡ºã—
 			T Comp = (static_cast<T>(Max) / static_cast<T>((nRange * nRange)));
 
 			if (nAlphaCnt > nRange)
-			{// ”ÍˆÍ’´‚¦‚½‚ç–ß‚·
+			{// ç¯„å›²è¶…ãˆãŸã‚‰æˆ»ã™
 				nAlphaCnt = -nRange;
 			}
 			else if (nAlphaCnt < -nRange)
-			{// ”ÍˆÍ’´‚¦‚½‚ç–ß‚·
+			{// ç¯„å›²è¶…ãˆãŸã‚‰æˆ»ã™
 				nAlphaCnt = nRange;
 			}
 
-			// •s“§–¾‚ÌƒJƒEƒ“ƒg‰ÁZ
+			// ä¸é€æ˜ã®ã‚«ã‚¦ãƒ³ãƒˆåŠ ç®—
 			nAlphaCnt++;
 
-			// ‹Èü•â³
+			// æ›²ç·šè£œæ­£
 			Value = static_cast<T>(((Comp * (nAlphaCnt * nAlphaCnt)) - (2 * (Comp * nAlphaCnt * RangeOrigin)) + (Comp * (RangeOrigin * RangeOrigin))));
 			Value += RangeOrigin;
 		}
@@ -740,14 +745,14 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 	}
 
 	/**
-	@brief	ŒvZŠÖ”
+	@brief	è¨ˆç®—é–¢æ•°
 	*/
 	namespace Calculation
 	{
 		/**
-		@brief	Œ…”æ“¾
-		@param	nNum	[in]	Œ…”‚ğ‹‚ß‚½‚¢’l
-		@return	Œ…”
+		@brief	æ¡æ•°å–å¾—
+		@param	nNum	[in]	æ¡æ•°ã‚’æ±‚ã‚ãŸã„å€¤
+		@return	æ¡æ•°
 		*/
 		inline int GetDigit(int nNum)
 		{
@@ -756,11 +761,11 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				nNum = 0;
 			}
 
-			// ®”‚ğ•¶š—ñ‚É•ÏŠ·
+			// æ•´æ•°ã‚’æ–‡å­—åˆ—ã«å¤‰æ›
 			std::string number;
 			sprintf((char*)number.c_str(), "%d", nNum);
 
-			// •¶š—ñ‚Ì’·‚³iŒ…”j‚ğæ“¾
+			// æ–‡å­—åˆ—ã®é•·ã•ï¼ˆæ¡æ•°ï¼‰ã‚’å–å¾—
 			int nDigit = strlen(number.c_str());
 			if (nDigit <= 0)
 			{
@@ -771,11 +776,11 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	w’è‚³‚ê‚½‹–—eŒë·”ÍˆÍ“à‚É‚ ‚é‚©”»’è
-		@param	value	[in]	”»’è‚µ‚½‚¢’l
-		@param	target	[in]	Šî€‚É‚·‚é’l
-		@param	range	[in]	‹–—e”ÍˆÍ
-		@return	”»’èŒ‹‰Ê
+		@brief	æŒ‡å®šã•ã‚ŒãŸè¨±å®¹èª¤å·®ç¯„å›²å†…ã«ã‚ã‚‹ã‹åˆ¤å®š
+		@param	value	[in]	åˆ¤å®šã—ãŸã„å€¤
+		@param	target	[in]	åŸºæº–ã«ã™ã‚‹å€¤
+		@param	range	[in]	è¨±å®¹ç¯„å›²
+		@return	åˆ¤å®šçµæœ
 		*/
 		inline bool IsNearlyTarget(float value, float target, float range)
 		{
@@ -787,10 +792,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñ“_ŠÔ‚Ì’·‚³æ“¾(2D)
-		@param	pos1	[in]	n“_
-		@param	pos2	[in]	I“_
-		@return	’·‚³
+		@brief	äºŒç‚¹é–“ã®é•·ã•å–å¾—(2D)
+		@param	pos1	[in]	å§‹ç‚¹
+		@param	pos2	[in]	çµ‚ç‚¹
+		@return	é•·ã•
 		*/
 		inline float GetPosLength2D(MyLib::Vector3 pos1, MyLib::Vector3 pos2)
 		{
@@ -799,10 +804,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñ“_ŠÔ‚Ì’·‚³‚Ìâ‘Î’læ“¾(2D)
-		@param	pos1	[in]	n“_
-		@param	pos2	[in]	I“_
-		@return	’·‚³‚Ìâ‘Î’l
+		@brief	äºŒç‚¹é–“ã®é•·ã•ã®çµ¶å¯¾å€¤å–å¾—(2D)
+		@param	pos1	[in]	å§‹ç‚¹
+		@param	pos2	[in]	çµ‚ç‚¹
+		@return	é•·ã•ã®çµ¶å¯¾å€¤
 		*/
 		inline float GetFabsPosLength2D(MyLib::Vector3 pos1, MyLib::Vector3 pos2)
 		{
@@ -810,10 +815,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñ“_ŠÔ‚Ì’·‚³æ“¾(3D)
-		@param	pos1	[in]	n“_
-		@param	pos2	[in]	I“_
-		@return	’·‚³
+		@brief	äºŒç‚¹é–“ã®é•·ã•å–å¾—(3D)
+		@param	pos1	[in]	å§‹ç‚¹
+		@param	pos2	[in]	çµ‚ç‚¹
+		@return	é•·ã•
 		*/
 		inline float GetPosLength3D(MyLib::Vector3 pos1, MyLib::Vector3 pos2)
 		{
@@ -822,10 +827,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñ“_ŠÔ‚Ì’·‚³‚Ìâ‘Î’læ“¾(3D)
-		@param	pos1	[in]	n“_
-		@param	pos2	[in]	I“_
-		@return	’·‚³‚Ìâ‘Î’l
+		@brief	äºŒç‚¹é–“ã®é•·ã•ã®çµ¶å¯¾å€¤å–å¾—(3D)
+		@param	pos1	[in]	å§‹ç‚¹
+		@param	pos2	[in]	çµ‚ç‚¹
+		@return	é•·ã•ã®çµ¶å¯¾å€¤
 		*/
 		inline float GetFabsPosLength3D(MyLib::Vector3 pos1, MyLib::Vector3 pos2)
 		{
@@ -833,10 +838,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ñ“_‚Ì’†S“_æ“¾(3D)
-		@param	pos1	[in]	n“_
-		@param	pos2	[in]	I“_
-		@return	’†S“_
+		@brief	äºŒç‚¹ã®ä¸­å¿ƒç‚¹å–å¾—(3D)
+		@param	pos1	[in]	å§‹ç‚¹
+		@param	pos2	[in]	çµ‚ç‚¹
+		@return	ä¸­å¿ƒç‚¹
 		*/
 		inline MyLib::Vector3 GetCenterPosition3D(MyLib::Vector3 pos1, MyLib::Vector3 pos2)
 		{
@@ -847,11 +852,11 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	•Óã‚ÌˆÊ’uæ“¾(2D)
-		@param	point1	[in]	n“_‚Ì’¸“_À•W
-		@param	point2	[in]	I“_‚Ì’¸“_À•W
-		@param	fRate	[in]	Š„‡
-		@return	ˆÊ’u
+		@brief	è¾ºä¸Šã®ä½ç½®å–å¾—(2D)
+		@param	point1	[in]	å§‹ç‚¹ã®é ‚ç‚¹åº§æ¨™
+		@param	point2	[in]	çµ‚ç‚¹ã®é ‚ç‚¹åº§æ¨™
+		@param	fRate	[in]	å‰²åˆ
+		@return	ä½ç½®
 		*/
 		inline MyLib::Vector3 GetPointOnEdge2D(MyLib::Vector3 point1, MyLib::Vector3 point2, float fRate)
 		{
@@ -862,32 +867,32 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	•ú•¨ü‚ÌˆÊ’uæ“¾
-		@param	start		[in]	n“_
-		@param	end			[in]	I“_
-		@param	fMaxHeight	[in]	‚‚³‚ÌÅ‘å’l
-		@param	time		[in]	•â³Š„‡(0.0f ` 1.0f)
-		@return	•ú•¨üã‚ÌˆÊ’uæ“¾
+		@brief	æ”¾ç‰©ç·šã®ä½ç½®å–å¾—
+		@param	start		[in]	å§‹ç‚¹
+		@param	end			[in]	çµ‚ç‚¹
+		@param	fMaxHeight	[in]	é«˜ã•ã®æœ€å¤§å€¤
+		@param	time		[in]	è£œæ­£å‰²åˆ(0.0f ï½ 1.0f)
+		@return	æ”¾ç‰©ç·šä¸Šã®ä½ç½®å–å¾—
 		*/
 		inline MyLib::Vector3 GetParabola3D(const MyLib::Vector3& start, const MyLib::Vector3& end, float fMaxHeight, float time)
 		{
-			// ˆÊ’u
+			// ä½ç½®
 			MyLib::Vector3 pos;
 
-			// XZˆÚ“®
+			// XZç§»å‹•
 			pos.x = start.x + (end.x - start.x) * time;
 			pos.z = start.z + (end.z - start.z) * time;
 
-			// ‚‚³
+			// é«˜ã•
 			pos.y = start.y + (end.y - start.y) * time + sinf(D3DX_PI * time) * fMaxHeight;
 
 			return pos;
 		}
 
 		/**
-		@brief	”ä—¦‚ğŒvZ
-		@param	size		[in]	“ñŸŒ³ƒTƒCƒY
-		@return	”ä—¦
+		@brief	æ¯”ç‡ã‚’è¨ˆç®—
+		@param	size		[in]	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
+		@return	æ¯”ç‡
 		*/
 		inline float AspectRatio(const D3DXVECTOR2& size) 
 		{
@@ -895,81 +900,81 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒ‚ƒfƒ‹‚Ì’¸“_î•ñŒvZ
-		@param	RotY		[in]	ƒ‚ƒfƒ‹‚ÌY²Œü‚«
-		@param	pVtxMax		[inout]	’¸“_À•W‚ÌÅ‘å’l
-		@param	pVtxMin		[inout]	’¸“_À•W‚ÌÅ¬’l
-		@param	pMesh		[in]	ƒ‚ƒfƒ‹‚ÌƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒg
-		@param	pVtxBuff	[in]	’¸“_ƒoƒbƒtƒ@
+		@brief	ãƒ¢ãƒ‡ãƒ«ã®é ‚ç‚¹æƒ…å ±è¨ˆç®—
+		@param	RotY		[in]	ãƒ¢ãƒ‡ãƒ«ã®Yè»¸å‘ã
+		@param	pVtxMax		[inout]	é ‚ç‚¹åº§æ¨™ã®æœ€å¤§å€¤
+		@param	pVtxMin		[inout]	é ‚ç‚¹åº§æ¨™ã®æœ€å°å€¤
+		@param	pMesh		[in]	ãƒ¢ãƒ‡ãƒ«ã®ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+		@param	pVtxBuff	[in]	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
 		@return	void
 		*/
 		inline void CalModelVtx(float RotY, MyLib::Vector3* pVtxMax, MyLib::Vector3* pVtxMin, LPD3DXMESH pMesh, BYTE* pVtxBuff)
 		{
-			// ƒŠƒZƒbƒg
+			// ãƒªã‚»ãƒƒãƒˆ
 			*pVtxMin = MyLib::Vector3(10000.0f, 10000.0f, 10000.0f);
 			*pVtxMax = MyLib::Vector3(-10000.0f, -10000.0f, -10000.0f);
 
-			// ƒ‚ƒfƒ‹‚Ì’¸“_”‚ğæ“¾
+			// ãƒ¢ãƒ‡ãƒ«ã®é ‚ç‚¹æ•°ã‚’å–å¾—
 			int nNumVtx = pMesh->GetNumVertices();
 
-			// ’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌƒTƒCƒY‚ğæ“¾
+			// é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®ã‚µã‚¤ã‚ºã‚’å–å¾—
 			DWORD dwSizeFVF = D3DXGetFVFVertexSize(pMesh->GetFVF());
 
-			// ’¸“_ƒoƒbƒtƒ@‚ğƒƒbƒN
+			// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯
 			pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
-			// ‘S‚Ä‚Ì’¸“_‚ğƒ`ƒFƒbƒN‚·‚é
+			// å…¨ã¦ã®é ‚ç‚¹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 			{
-				// ¡‰ñ‚Ìƒf[ƒ^
+				// ä»Šå›ã®ãƒ‡ãƒ¼ã‚¿
 				MyLib::Vector3 vtx = *(MyLib::Vector3*)pVtxBuff;
 
 				// X
 				if (pVtxMin->x > vtx.x)
-				{// ¡‚ÌÅ¬’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‚¿‚¢‚³‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å°å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒã¡ã„ã•ã‹ã£ãŸã‚‰
 
 					pVtxMin->x = vtx.x;
 				}
 				if (pVtxMax->x < vtx.x)
-				{// ¡‚ÌÅ‘å’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‘å‚«‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒå¤§ãã‹ã£ãŸã‚‰
 
 					pVtxMax->x = vtx.x;
 				}
 
 				// Y
 				if (pVtxMin->y > vtx.y)
-				{// ¡‚ÌÅ¬’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‚¿‚¢‚³‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å°å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒã¡ã„ã•ã‹ã£ãŸã‚‰
 
 					pVtxMin->y = vtx.y;
 				}
 				if (pVtxMax->y < vtx.y)
-				{// ¡‚ÌÅ‘å’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‘å‚«‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒå¤§ãã‹ã£ãŸã‚‰
 
 					pVtxMax->y = vtx.y;
 				}
 
 				// Z
 				if (pVtxMin->z > vtx.z)
-				{// ¡‚ÌÅ¬’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‚¿‚¢‚³‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å°å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒã¡ã„ã•ã‹ã£ãŸã‚‰
 
 					pVtxMin->z = vtx.z;
 				}
 				if (pVtxMax->z < vtx.z)
-				{// ¡‚ÌÅ‘å’l‚æ‚è‚à¡‰ñ‚Ì’l‚ª‘å‚«‚©‚Á‚½‚ç
+				{// ä»Šã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚ä»Šå›ã®å€¤ãŒå¤§ãã‹ã£ãŸã‚‰
 
 					pVtxMax->z = vtx.z;
 				}
 
-				pVtxBuff += dwSizeFVF;	// ƒTƒCƒY•ªƒ|ƒCƒ“ƒ^ˆÚ“®
+				pVtxBuff += dwSizeFVF;	// ã‚µã‚¤ã‚ºåˆ†ãƒã‚¤ãƒ³ã‚¿ç§»å‹•
 			}
 
-			// ’¸“_ƒoƒbƒtƒ@‚ğƒAƒ“ƒƒbƒN
+			// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 			pMesh->UnlockVertexBuffer();
 
 			MyLib::Vector3 VtxMax = *pVtxMax, VtxMin = *pVtxMin;
 
 			if (RotY <= D3DX_PI * 0.5f + 0.05f && RotY >= D3DX_PI * 0.5f - 0.05f)
-			{// 1.57f‚Ì‚Æ‚«
+			{// 1.57fã®ã¨ã
 
 				pVtxMax->x = VtxMax.z;
 				pVtxMin->x = VtxMin.z;
@@ -978,7 +983,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				pVtxMin->z = -VtxMax.x;
 			}
 			else if (RotY <= -D3DX_PI * 0.5f + 0.05f && RotY >= -D3DX_PI * 0.5f - 0.05f)
-			{// -1.57f‚Ì‚Æ‚«
+			{// -1.57fã®ã¨ã
 
 				pVtxMax->x = -VtxMin.z;
 				pVtxMin->x = -VtxMax.z;
@@ -987,7 +992,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				pVtxMin->z = VtxMin.x;
 			}
 			else if (RotY <= D3DX_PI + 0.05f && RotY >= D3DX_PI - 0.05f)
-			{// D3DX_PI‚Ì‚Æ‚«
+			{// D3DX_PIã®ã¨ã
 
 				pVtxMax->x = -VtxMin.x;
 				pVtxMin->x = -VtxMax.x;
@@ -996,7 +1001,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				pVtxMin->z = -VtxMax.z;
 			}
 			else if (RotY <= -D3DX_PI + 0.05f && RotY >= -D3DX_PI - 0.05f)
-			{// -D3DX_PI‚Ì‚Æ‚«
+			{// -D3DX_PIã®ã¨ã
 
 				pVtxMax->x = -VtxMin.x;
 				pVtxMin->x = -VtxMax.x;
@@ -1007,47 +1012,47 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	3’¸“_‚©‚ç‚È‚é‚‚³æ“¾
-		@param	pos			[in]	”»’è‚·‚éƒIƒuƒWƒFƒNƒg‚ÌˆÊ’u
-		@param	posCenter	[in]	”»’è‚·‚éOŠpŒ`‚Ìè‘O‚Ì’¸“_À•W
-		@param	posLeft		[in]	”»’è‚·‚éOŠpŒ`‚Ì¶‚Ì’¸“_À•W
-		@param	posRight	[in]	”»’è‚·‚éOŠpŒ`‚Ì‰E‚Ì’¸“_À•W
-		@param	posRight	[out]	’…’n”»’è
-		@return	3’¸“_‚©‚ç‚È‚é‚‚³
+		@brief	3é ‚ç‚¹ã‹ã‚‰ãªã‚‹é«˜ã•å–å¾—
+		@param	pos			[in]	åˆ¤å®šã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½ç½®
+		@param	posCenter	[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®æ‰‹å‰ã®é ‚ç‚¹åº§æ¨™
+		@param	posLeft		[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®å·¦ã®é ‚ç‚¹åº§æ¨™
+		@param	posRight	[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®å³ã®é ‚ç‚¹åº§æ¨™
+		@param	posRight	[out]	ç€åœ°åˆ¤å®š
+		@return	3é ‚ç‚¹ã‹ã‚‰ãªã‚‹é«˜ã•
 		*/
 		inline float GetVtxHeight(const MyLib::Vector3& pos, const MyLib::Vector3& posCenter, const MyLib::Vector3& posRight, const MyLib::Vector3& posLeft, bool* pLand)
 		{
-			// ‚‚³
+			// é«˜ã•
 			float fHeight = 0.0f;
 
-			// ’¼Šp•”•ª‚ÆˆÊ’u‚ÌƒxƒNƒgƒ‹
+			// ç›´è§’éƒ¨åˆ†ã¨ä½ç½®ã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 calvec = pos - posCenter;
 
-			// ƒxƒNƒgƒ‹‚Æ–@ü
+			// ãƒ™ã‚¯ãƒˆãƒ«ã¨æ³•ç·š
 			MyLib::Vector3
 				vec1 = posRight - posCenter,
 				vec2 = posLeft - posRight,
 				nor = MyLib::Vector3(0.0f, 0.0f, 0.0f);
 
 			if (UtilFunc::Collision::CollisionTriangle(posCenter, posRight, posLeft, pos, pos))
-			{// OŠp‚É“ü‚Á‚Ä‚¢‚½‚ç
+			{// ä¸‰è§’ã«å…¥ã£ã¦ã„ãŸã‚‰
 
-				// ŠOÏ‚ğ‹‚ß‚é
+				// å¤–ç©ã‚’æ±‚ã‚ã‚‹
 				D3DXVec3Cross(&nor, &vec1, &vec2);
 
-				// ŠOÏ‚Ì³‹K‰»‚ğ‚µ‚Ä–@ü‚É‚·‚é
+				// å¤–ç©ã®æ­£è¦åŒ–ã‚’ã—ã¦æ³•ç·šã«ã™ã‚‹
 				D3DXVec3Normalize(&nor, &nor);
 
 				if (nor.y != 0.0f)
-				{// –@ü‚ª0.0f‚¶‚á‚È‚©‚Á‚½‚ç
+				{// æ³•ç·šãŒ0.0fã˜ã‚ƒãªã‹ã£ãŸã‚‰
 
-					// ‚‚³‚ğ‹‚ß‚é
+					// é«˜ã•ã‚’æ±‚ã‚ã‚‹
 					fHeight = -((calvec.x * nor.x) + (-posCenter.y * nor.y) + (calvec.z * nor.z)) / nor.y;
 					*pLand = true;
 				}
 				else
 				{
-					// ‚‚³‚ğ‹‚ß‚é
+					// é«˜ã•ã‚’æ±‚ã‚ã‚‹
 					fHeight = -((calvec.x * nor.x) + (-posCenter.y * nor.y) + (calvec.z * nor.z)) / nor.y;
 					*pLand = true;
 				}
@@ -1057,10 +1062,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	“ü‚ê‘Ö‚¦ˆ—
-		@param	pValue		[out]	ƒ\[ƒg‚·‚é’l
-		@param	nStart		[in]	ƒ\[ƒg‚·‚é’l‚Ì‰Šú’l
-		@param	nMax		[in]	ƒ\[ƒg‚ÌÅ‘å’l
+		@brief	å…¥ã‚Œæ›¿ãˆå‡¦ç†
+		@param	pValue		[out]	ã‚½ãƒ¼ãƒˆã™ã‚‹å€¤
+		@param	nStart		[in]	ã‚½ãƒ¼ãƒˆã™ã‚‹å€¤ã®åˆæœŸå€¤
+		@param	nMax		[in]	ã‚½ãƒ¼ãƒˆã®æœ€å¤§å€¤
 		@return	void
 		*/
 		template<class T> inline void CalSort(T* pValue, int nStart, int nMax)
@@ -1078,12 +1083,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	ƒXƒvƒ‰ƒCƒ“ƒg‹Èü•âŠÔ
-		@param	PointMili1		[in]	’n“_ -1
-		@param	Point0			[in]	’n“_ 0
-		@param	Point1			[in]	’n“_ 1
-		@param	Point2			[in]	’n“_ 2
-		@param	ratio			[in]	Š„‡
+		@brief	ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³ãƒˆæ›²ç·šè£œé–“
+		@param	PointMili1		[in]	åœ°ç‚¹ -1
+		@param	Point0			[in]	åœ°ç‚¹ 0
+		@param	Point1			[in]	åœ°ç‚¹ 1
+		@param	Point2			[in]	åœ°ç‚¹ 2
+		@param	ratio			[in]	å‰²åˆ
 		@return	void
 		*/
 		inline MyLib::Vector3 CatmullRomSplineInterp(
@@ -1093,7 +1098,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			const MyLib::Vector3& Point2,
 			float ratio)
 		{
-			// 4“_‚Å•â³
+			// 4ç‚¹ã§è£œæ­£
 			MyLib::Vector3 a4 = Point0;
 			MyLib::Vector3 a3 = (Point1 - PointMili1) / 2.0f;
 			MyLib::Vector3 a1 = (Point2 - Point0) / 2.0f - 2.0f * Point1 + a3 + 2.0f * a4;
@@ -1104,17 +1109,17 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 	}
 
 	/**
-	@brief	“–‚½‚è”»’èŠÖ”
+	@brief	å½“ãŸã‚Šåˆ¤å®šé–¢æ•°
 	*/
 	namespace Collision
 	{
 		/**
-		@brief	1‚Æ2‚Ì“–‚½‚è”»’è(‰~)(2D)
-		@param	pos1		[in]	‘ÎÛ1‚ÌˆÊ’u
-		@param	pos2		[in]	‘ÎÛ2‚ÌˆÊ’u
-		@param	fRadius1	[in]	‘ÎÛ1‚Ì”¼Œa
-		@param	fRadius2	[in]	‘ÎÛ2‚Ì”¼Œa
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	1ã¨2ã®å½“ãŸã‚Šåˆ¤å®š(å††)(2D)
+		@param	pos1		[in]	å¯¾è±¡1ã®ä½ç½®
+		@param	pos2		[in]	å¯¾è±¡2ã®ä½ç½®
+		@param	fRadius1	[in]	å¯¾è±¡1ã®åŠå¾„
+		@param	fRadius2	[in]	å¯¾è±¡2ã®åŠå¾„
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline bool CircleRange2D(const MyLib::Vector3& pos1, const MyLib::Vector3& pos2, float fRadius1, float fRadius2)
 		{
@@ -1123,7 +1128,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				(pos1.y - pos2.y) * (pos1.y - pos2.y);
 
 			if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
-			{// ‰~‚Ì’†‚É“ü‚Á‚½‚ç
+			{// å††ã®ä¸­ã«å…¥ã£ãŸã‚‰
 				return true;
 			}
 
@@ -1131,12 +1136,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	1‚Æ2‚Ì“–‚½‚è”»’è(‰~)(3D)
-		@param	pos1		[in]	‘ÎÛ1‚ÌˆÊ’u
-		@param	pos2		[in]	‘ÎÛ2‚ÌˆÊ’u
-		@param	fRadius1	[in]	‘ÎÛ1‚Ì”¼Œa
-		@param	fRadius2	[in]	‘ÎÛ2‚Ì”¼Œa
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	1ã¨2ã®å½“ãŸã‚Šåˆ¤å®š(å††)(3D)
+		@param	pos1		[in]	å¯¾è±¡1ã®ä½ç½®
+		@param	pos2		[in]	å¯¾è±¡2ã®ä½ç½®
+		@param	fRadius1	[in]	å¯¾è±¡1ã®åŠå¾„
+		@param	fRadius2	[in]	å¯¾è±¡2ã®åŠå¾„
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline bool CircleRange3D(const MyLib::Vector3& pos1, const MyLib::Vector3& pos2, float fRadius1, float fRadius2)
 		{
@@ -1145,7 +1150,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				(pos1.z - pos2.z) * (pos1.z - pos2.z);
 
 			if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
-			{// ‰~‚Ì’†‚É“ü‚Á‚½‚ç
+			{// å††ã®ä¸­ã«å…¥ã£ãŸã‚‰
 
 				MyLib::Vector3 collisionPoint = pos1 + (pos2 - pos1).Normal() * fRadius1;
 
@@ -1156,12 +1161,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	1‚Æ2‚Ì“–‚½‚è”»’è(‹…)
-		@param	pos1		[in]	‘ÎÛ1‚ÌˆÊ’u
-		@param	pos2		[in]	‘ÎÛ2‚ÌˆÊ’u
-		@param	fRadius1	[in]	‘ÎÛ1‚Ì”¼Œa
-		@param	fRadius2	[in]	‘ÎÛ2‚Ì”¼Œa
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	1ã¨2ã®å½“ãŸã‚Šåˆ¤å®š(çƒ)
+		@param	pos1		[in]	å¯¾è±¡1ã®ä½ç½®
+		@param	pos2		[in]	å¯¾è±¡2ã®ä½ç½®
+		@param	fRadius1	[in]	å¯¾è±¡1ã®åŠå¾„
+		@param	fRadius2	[in]	å¯¾è±¡2ã®åŠå¾„
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline MyLib::HitResult SphereRange(const MyLib::Vector3& pos1, const MyLib::Vector3& pos2, float fRadius1, float fRadius2)
 		{
@@ -1171,7 +1176,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				(pos1.z - pos2.z) * (pos1.z - pos2.z);
 
 			if (fLength <= (fRadius1 + fRadius2) * (fRadius1 + fRadius2))
-			{// ‹…‚Ì’†‚É“ü‚Á‚½‚ç
+			{// çƒã®ä¸­ã«å…¥ã£ãŸã‚‰
 
 				MyLib::Vector3 collisionVector = (pos2 - pos1).Normal() * fRadius1;
 				MyLib::Vector3 collisionPoint = pos1 + collisionVector;
@@ -1182,21 +1187,21 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	1‚Æ2‚Ì“–‚½‚è”»’è(“›)
-		@param	pos1		[in]	‘ÎÛ1‚ÌˆÊ’u
-		@param	pos2		[in]	‘ÎÛ2‚ÌˆÊ’u
-		@param	fRadius1	[in]	‘ÎÛ1‚Ì”¼Œa
-		@param	fRadius2	[in]	‘ÎÛ2‚Ì”¼Œa
-		@param	fHeight1	[in]	‘ÎÛ1‚Ì‚‚³
-		@param	fHeight2	[in]	‘ÎÛ2‚Ì‚‚³
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	1ã¨2ã®å½“ãŸã‚Šåˆ¤å®š(ç­’)
+		@param	pos1		[in]	å¯¾è±¡1ã®ä½ç½®
+		@param	pos2		[in]	å¯¾è±¡2ã®ä½ç½®
+		@param	fRadius1	[in]	å¯¾è±¡1ã®åŠå¾„
+		@param	fRadius2	[in]	å¯¾è±¡2ã®åŠå¾„
+		@param	fHeight1	[in]	å¯¾è±¡1ã®é«˜ã•
+		@param	fHeight2	[in]	å¯¾è±¡2ã®é«˜ã•
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline bool CylinderRange(const MyLib::Vector3& pos1, const MyLib::Vector3& pos2, float fRadius1, float fRadius2, float fHeight1, float fHeight2)
 		{
 			if (CircleRange3D(pos1, pos2, fHeight1, fHeight2) &&
 				pos1.y + fHeight1 >= pos2.y &&
 				pos1.y <= pos2.y + fHeight2)
-			{// ‰~‚Ì’†‚É“ü‚é && ‚‚³‚à‚Ô‚Â‚©‚é
+			{// å††ã®ä¸­ã«å…¥ã‚‹ && é«˜ã•ã‚‚ã¶ã¤ã‹ã‚‹
 				return true;
 			}
 
@@ -1204,19 +1209,19 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‰~‚Æ‰~’Œ‚Ì“–‚½‚è”»’è(3D)
-		@param	posCircle		[in]	‰~‚ÌˆÊ’u
-		@param	posCylinder		[in]	‰~’Œ‚ÌˆÊ’u
-		@param	radiusCircle	[in]	‰~‚Ì”¼Œa
-		@param	radiusCylinder	[in]	‰~’Œ‚Ì”¼Œa
-		@param	heightCylinder	[in]	‰~’Œ‚Ì‚‚³
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	å††ã¨å††æŸ±ã®å½“ãŸã‚Šåˆ¤å®š(3D)
+		@param	posCircle		[in]	å††ã®ä½ç½®
+		@param	posCylinder		[in]	å††æŸ±ã®ä½ç½®
+		@param	radiusCircle	[in]	å††ã®åŠå¾„
+		@param	radiusCylinder	[in]	å††æŸ±ã®åŠå¾„
+		@param	heightCylinder	[in]	å††æŸ±ã®é«˜ã•
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionCircleCylinder(
 			const MyLib::Vector3& posCircle, const MyLib::Vector3& posCylinder,
 			float radiusCircle, float radiusCylinder, float heightCylinder)
 		{
-			// ‚Ü‚¸‰~
+			// ã¾ãšå††
 			if (!CircleRange3D(posCircle, posCylinder, radiusCircle, radiusCylinder))
 			{
 				return false;
@@ -1224,7 +1229,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 			if (posCylinder.y <= posCircle.y + radiusCircle &&
 				posCylinder.y + heightCylinder >= posCircle.y - radiusCircle)
-			{// ƒVƒŠƒ“ƒ_[‚Ì‚‚³ˆÈã
+			{// ã‚·ãƒªãƒ³ãƒ€ãƒ¼ã®é«˜ã•ä»¥ä¸Š
 				return true;
 			}
 
@@ -1232,51 +1237,51 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒLƒƒƒ‰ƒNƒ^[“¯m‚Ì“–‚½‚è”»’è & •â³
-		@param	MainPos			[inout]	©•ª‚ÌˆÊ’u
-		@param	MainPosOld		[inout]	©•ª‚Ì‘O‰ñ‚ÌˆÊ’u
-		@param	MainVtxMax		[in]	©•ª‚Ì’¸“_Å‘å’l
-		@param	MainVtxMin		[in]	©•ª‚Ì’¸“_Å¬’l
-		@param	TargetPos		[inout]	‘ÎÛ‚ÌˆÊ’u
-		@param	TargetVtxMax	[in]	‘ÎÛ‚Ì’¸“_Å‘å’l
-		@param	TargetVtxMin	[in]	‘ÎÛ‚Ì’¸“_Å¬’l
+		@brief	ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š & è£œæ­£
+		@param	MainPos			[inout]	è‡ªåˆ†ã®ä½ç½®
+		@param	MainPosOld		[inout]	è‡ªåˆ†ã®å‰å›ã®ä½ç½®
+		@param	MainVtxMax		[in]	è‡ªåˆ†ã®é ‚ç‚¹æœ€å¤§å€¤
+		@param	MainVtxMin		[in]	è‡ªåˆ†ã®é ‚ç‚¹æœ€å°å€¤
+		@param	TargetPos		[inout]	å¯¾è±¡ã®ä½ç½®
+		@param	TargetVtxMax	[in]	å¯¾è±¡ã®é ‚ç‚¹æœ€å¤§å€¤
+		@param	TargetVtxMin	[in]	å¯¾è±¡ã®é ‚ç‚¹æœ€å°å€¤
 		@return	void
 		*/
 		inline void CollisionCharacter(MyLib::Vector3& MainPos, MyLib::Vector3& MainPosOld, MyLib::Vector3 MainVtxMax, MyLib::Vector3 MainVtxMin, MyLib::Vector3& TargetPos, MyLib::Vector3 TargetVtxMax, MyLib::Vector3 TargetVtxMin)
 		{
-			// ‰¡‚Ì”»’è
-			if (MainPos.z + MainVtxMax.z > TargetPos.z + TargetVtxMin.z &&	// “G‚ÌÅ¬’l‚É“ü‚Á‚Ä‚é
-				MainPos.z + MainVtxMin.z < TargetPos.z + TargetVtxMax.z)	// “G‚ÌÅ‘å’l‚É“ü‚Á‚Ä‚é
-			{// “G‚ÌZ•‚Ì’†‚É‚¢‚é‚Æ‚«
+			// æ¨ªã®åˆ¤å®š
+			if (MainPos.z + MainVtxMax.z > TargetPos.z + TargetVtxMin.z &&	// æ•µã®æœ€å°å€¤ã«å…¥ã£ã¦ã‚‹
+				MainPos.z + MainVtxMin.z < TargetPos.z + TargetVtxMax.z)	// æ•µã®æœ€å¤§å€¤ã«å…¥ã£ã¦ã‚‹
+			{// æ•µã®Zå¹…ã®ä¸­ã«ã„ã‚‹ã¨ã
 
-				if (MainPos.x + MainVtxMin.x <= TargetPos.x + TargetVtxMax.x &&		// Œ»İ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à¬‚³‚¢
-					MainPosOld.x + MainVtxMin.x >= TargetPos.x + TargetVtxMax.x)	// ‘O‰ñ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à‘å‚«‚¢
-				{// ‰E‚©‚ç
+				if (MainPos.x + MainVtxMin.x <= TargetPos.x + TargetVtxMax.x &&		// ç¾åœ¨ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+					MainPosOld.x + MainVtxMin.x >= TargetPos.x + TargetVtxMax.x)	// å‰å›ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+				{// å³ã‹ã‚‰
 
 					MainPos.x = (TargetPos.x + TargetVtxMax.x) - MainVtxMin.x + 0.1f;
 				}
-				if (MainPos.x + MainVtxMax.x >= TargetPos.x + TargetVtxMin.x &&		// Œ»İ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à‘å‚«‚¢
-					MainPosOld.x + MainVtxMax.x <= TargetPos.x + TargetVtxMin.x)	// ‘O‰ñ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à¬‚³‚¢
-				{// ¶‚©‚ç
+				if (MainPos.x + MainVtxMax.x >= TargetPos.x + TargetVtxMin.x &&		// ç¾åœ¨ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+					MainPosOld.x + MainVtxMax.x <= TargetPos.x + TargetVtxMin.x)	// å‰å›ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+				{// å·¦ã‹ã‚‰
 
 					MainPos.x = (TargetPos.x + TargetVtxMin.x) - MainVtxMax.x - 0.1f;
 				}
 			}
 
-			// c‚Ì”»’è
-			if (MainPos.x + MainVtxMax.x > TargetPos.x + TargetVtxMin.x &&	// “G‚ÌÅ¬’l‚É“ü‚Á‚Ä‚é
-				MainPos.x + MainVtxMin.x < TargetPos.x + TargetVtxMax.x)	// “G‚ÌÅ‘å’l‚É“ü‚Á‚Ä‚é
-			{// “G‚ÌX•‚Ì’†‚É‚¢‚é‚Æ‚«
+			// ç¸¦ã®åˆ¤å®š
+			if (MainPos.x + MainVtxMax.x > TargetPos.x + TargetVtxMin.x &&	// æ•µã®æœ€å°å€¤ã«å…¥ã£ã¦ã‚‹
+				MainPos.x + MainVtxMin.x < TargetPos.x + TargetVtxMax.x)	// æ•µã®æœ€å¤§å€¤ã«å…¥ã£ã¦ã‚‹
+			{// æ•µã®Xå¹…ã®ä¸­ã«ã„ã‚‹ã¨ã
 
-				if (MainPos.z + MainVtxMin.z <= TargetPos.z + TargetVtxMax.z &&		// Œ»İ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à¬‚³‚¢
-					MainPosOld.z + MainVtxMin.z >= TargetPos.z + TargetVtxMax.z)	// ‘O‰ñ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à‘å‚«‚¢
-				{// ‰œ‚©‚ç
+				if (MainPos.z + MainVtxMin.z <= TargetPos.z + TargetVtxMax.z &&		// ç¾åœ¨ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+					MainPosOld.z + MainVtxMin.z >= TargetPos.z + TargetVtxMax.z)	// å‰å›ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+				{// å¥¥ã‹ã‚‰
 
 					MainPos.z = (TargetPos.z + TargetVtxMax.z) - MainVtxMin.z + 0.1f;
 				}
-				if (MainPos.z + MainVtxMax.z >= TargetPos.z + TargetVtxMin.z &&		// Œ»İ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à‘å‚«‚¢
-					MainPosOld.z + MainVtxMax.z <= TargetPos.z + TargetVtxMin.z)	// ‘O‰ñ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à¬‚³‚¢
-				{// è‘O‚©‚ç
+				if (MainPos.z + MainVtxMax.z >= TargetPos.z + TargetVtxMin.z &&		// ç¾åœ¨ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+					MainPosOld.z + MainVtxMax.z <= TargetPos.z + TargetVtxMin.z)	// å‰å›ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+				{// æ‰‹å‰ã‹ã‚‰
 
 					MainPos.z = (TargetPos.z + TargetVtxMin.z) - MainVtxMax.z - 0.1f;
 				}
@@ -1284,48 +1289,48 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒLƒƒƒ‰ƒNƒ^[“¯m‚Ì“–‚½‚è”»’è
-		@param	MainPos			[in]	©•ª‚ÌˆÊ’u
-		@param	MainPosOld		[in]	©•ª‚Ì‘O‰ñ‚ÌˆÊ’u
-		@param	MainVtxMax		[in]	©•ª‚Ì’¸“_Å‘å’l
-		@param	MainVtxMin		[in]	©•ª‚Ì’¸“_Å¬’l
-		@param	TargetPos		[in]	‘ÎÛ‚ÌˆÊ’u
-		@param	TargetVtxMax	[in]	‘ÎÛ‚Ì’¸“_Å‘å’l
-		@param	TargetVtxMin	[in]	‘ÎÛ‚Ì’¸“_Å¬’l
-		@return	“–‚½‚Á‚½‚©‚Ìbool’l
+		@brief	ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
+		@param	MainPos			[in]	è‡ªåˆ†ã®ä½ç½®
+		@param	MainPosOld		[in]	è‡ªåˆ†ã®å‰å›ã®ä½ç½®
+		@param	MainVtxMax		[in]	è‡ªåˆ†ã®é ‚ç‚¹æœ€å¤§å€¤
+		@param	MainVtxMin		[in]	è‡ªåˆ†ã®é ‚ç‚¹æœ€å°å€¤
+		@param	TargetPos		[in]	å¯¾è±¡ã®ä½ç½®
+		@param	TargetVtxMax	[in]	å¯¾è±¡ã®é ‚ç‚¹æœ€å¤§å€¤
+		@param	TargetVtxMin	[in]	å¯¾è±¡ã®é ‚ç‚¹æœ€å°å€¤
+		@return	å½“ãŸã£ãŸã‹ã®boolå€¤
 		*/
 		inline bool bHitCharacter(MyLib::Vector3 MainPos, MyLib::Vector3 MainPosOld, MyLib::Vector3 MainVtxMax, MyLib::Vector3 MainVtxMin, MyLib::Vector3 TargetPos, MyLib::Vector3 TargetVtxMax, MyLib::Vector3 TargetVtxMin)
 		{
-			// ‰¡‚Ì”»’è
-			if (MainPos.z + MainVtxMax.z > TargetPos.z + TargetVtxMin.z &&	// “G‚ÌÅ¬’l‚É“ü‚Á‚Ä‚é
-				MainPos.z + MainVtxMin.z < TargetPos.z + TargetVtxMax.z)	// “G‚ÌÅ‘å’l‚É“ü‚Á‚Ä‚é
-			{// “G‚ÌZ•‚Ì’†‚É‚¢‚é‚Æ‚«
+			// æ¨ªã®åˆ¤å®š
+			if (MainPos.z + MainVtxMax.z > TargetPos.z + TargetVtxMin.z &&	// æ•µã®æœ€å°å€¤ã«å…¥ã£ã¦ã‚‹
+				MainPos.z + MainVtxMin.z < TargetPos.z + TargetVtxMax.z)	// æ•µã®æœ€å¤§å€¤ã«å…¥ã£ã¦ã‚‹
+			{// æ•µã®Zå¹…ã®ä¸­ã«ã„ã‚‹ã¨ã
 
-				if (MainPos.x + MainVtxMin.x <= TargetPos.x + TargetVtxMax.x &&	// Œ»İ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à¬‚³‚¢
-					MainPosOld.x + MainVtxMin.x >= TargetPos.x + TargetVtxMax.x)// ‘O‰ñ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à‘å‚«‚¢
-				{// ‰E‚©‚ç
+				if (MainPos.x + MainVtxMin.x <= TargetPos.x + TargetVtxMax.x &&	// ç¾åœ¨ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+					MainPosOld.x + MainVtxMin.x >= TargetPos.x + TargetVtxMax.x)// å‰å›ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+				{// å³ã‹ã‚‰
 					return true;
 				}
-				if (MainPos.x + MainVtxMax.x >= TargetPos.x + TargetVtxMin.x &&	// Œ»İ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à‘å‚«‚¢
-					MainPosOld.x + MainVtxMax.x <= TargetPos.x + TargetVtxMin.x)// ‘O‰ñ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à¬‚³‚¢
-				{// ¶‚©‚ç
+				if (MainPos.x + MainVtxMax.x >= TargetPos.x + TargetVtxMin.x &&	// ç¾åœ¨ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+					MainPosOld.x + MainVtxMax.x <= TargetPos.x + TargetVtxMin.x)// å‰å›ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+				{// å·¦ã‹ã‚‰
 					return true;
 				}
 			}
 
-			// c‚Ì”»’è
-			if (MainPos.x + MainVtxMax.x > TargetPos.x + TargetVtxMin.x &&	// “G‚ÌÅ¬’l‚É“ü‚Á‚Ä‚é
-				MainPos.x + MainVtxMin.x < TargetPos.x + TargetVtxMax.x)	// “G‚ÌÅ‘å’l‚É“ü‚Á‚Ä‚é
-			{// “G‚ÌX•‚Ì’†‚É‚¢‚é‚Æ‚«
+			// ç¸¦ã®åˆ¤å®š
+			if (MainPos.x + MainVtxMax.x > TargetPos.x + TargetVtxMin.x &&	// æ•µã®æœ€å°å€¤ã«å…¥ã£ã¦ã‚‹
+				MainPos.x + MainVtxMin.x < TargetPos.x + TargetVtxMax.x)	// æ•µã®æœ€å¤§å€¤ã«å…¥ã£ã¦ã‚‹
+			{// æ•µã®Xå¹…ã®ä¸­ã«ã„ã‚‹ã¨ã
 
-				if (MainPos.z + MainVtxMin.z <= TargetPos.z + TargetVtxMax.z &&	// Œ»İ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à¬‚³‚¢
-					MainPosOld.z + MainVtxMin.z >= TargetPos.z + TargetVtxMax.z)// ‘O‰ñ‚ÌÅ¬’l‚ª“G‚ÌÅ‘å’l‚æ‚è‚à‘å‚«‚¢
-				{// ‰œ‚©‚ç
+				if (MainPos.z + MainVtxMin.z <= TargetPos.z + TargetVtxMax.z &&	// ç¾åœ¨ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+					MainPosOld.z + MainVtxMin.z >= TargetPos.z + TargetVtxMax.z)// å‰å›ã®æœ€å°å€¤ãŒæ•µã®æœ€å¤§å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+				{// å¥¥ã‹ã‚‰
 					return true;
 				}
-				if (MainPos.z + MainVtxMax.z >= TargetPos.z + TargetVtxMin.z &&	// Œ»İ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à‘å‚«‚¢
-					MainPosOld.z + MainVtxMax.z <= TargetPos.z + TargetVtxMin.z)// ‘O‰ñ‚ÌÅ‘å’l‚ª“G‚ÌÅ¬’l‚æ‚è‚à¬‚³‚¢
-				{// è‘O‚©‚ç
+				if (MainPos.z + MainVtxMax.z >= TargetPos.z + TargetVtxMin.z &&	// ç¾åœ¨ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å¤§ãã„
+					MainPosOld.z + MainVtxMax.z <= TargetPos.z + TargetVtxMin.z)// å‰å›ã®æœ€å¤§å€¤ãŒæ•µã®æœ€å°å€¤ã‚ˆã‚Šã‚‚å°ã•ã„
+				{// æ‰‹å‰ã‹ã‚‰
 					return true;
 				}
 			}
@@ -1334,63 +1339,63 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ü•ª‚Ì“–‚½‚è”»’è
-		@param	pos0		[in]	ü•ª¶’[‚ÌˆÊ’u
-		@param	pos1		[in]	ü•ª‰E’[‚ÌˆÊ’u
-		@param	pPos		[inout]	©•ª‚ÌˆÊ’u
-		@param	posOld		[in]	©•ª‚Ì‘O‰ñˆÊ’u
+		@brief	ç·šåˆ†ã®å½“ãŸã‚Šåˆ¤å®š
+		@param	pos0		[in]	ç·šåˆ†å·¦ç«¯ã®ä½ç½®
+		@param	pos1		[in]	ç·šåˆ†å³ç«¯ã®ä½ç½®
+		@param	pPos		[inout]	è‡ªåˆ†ã®ä½ç½®
+		@param	posOld		[in]	è‡ªåˆ†ã®å‰å›ä½ç½®
 		@return	void
 		*/
 		inline void CollisionLimitLine(const MyLib::Vector3& pos0, const MyLib::Vector3& pos1, MyLib::Vector3& pPos, MyLib::Vector3 posOld)
 		{
-			// ‹«ŠEü‚ÌƒxƒNƒgƒ‹
+			// å¢ƒç•Œç·šã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecLine;
 			vecLine.x = pos1.x - pos0.x;
 			vecLine.z = pos1.z - pos0.z;
 
-			// ƒvƒŒƒCƒ„[‚Ì‹«ŠEü‚ÌƒxƒNƒgƒ‹
+			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¢ƒç•Œç·šã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecLinePlayer;
 			vecLinePlayer.x = pPos.x - posOld.x;
 			vecLinePlayer.z = pPos.z - posOld.z;
 
-			// ƒvƒŒƒCƒ„[‚Æ•Ç‚ÌƒxƒNƒgƒ‹
+			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨å£ã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecToPosPlayer;
 			vecToPosPlayer.x = pos1.x - posOld.x;
 			vecToPosPlayer.z = pos1.z - posOld.z;
 
-			// –ÊÏ‚ÌÅ‘å’l
+			// é¢ç©ã®æœ€å¤§å€¤
 			float fMaxAreaPlayer = (vecLinePlayer.z * vecLine.x) - (vecLinePlayer.x * vecLine.z);
 
-			// ¡‰ñ‚Ì–ÊÏ
+			// ä»Šå›ã®é¢ç©
 			float fNowAreaPlayer = (vecToPosPlayer.z * vecLine.x) - (vecToPosPlayer.x * vecLine.z);
 
-			// Š„‡
+			// å‰²åˆ
 			float fRatePlayer = fNowAreaPlayer / fMaxAreaPlayer;
 
 			if (fRatePlayer >= 0.0f && fRatePlayer <= 1.0f)
-			{// –ÊÏ‚Ì”ÍˆÍ“à‚É‚¢‚½‚ç”»’è
+			{// é¢ç©ã®ç¯„å›²å†…ã«ã„ãŸã‚‰åˆ¤å®š
 
 				if ((vecLinePlayer.z * vecToPosPlayer.x) - (vecLinePlayer.x * vecToPosPlayer.z) > 0)
-				{// •Ç‚É“–‚½‚Á‚½‚ç
+				{// å£ã«å½“ãŸã£ãŸã‚‰
 
-					// –@üƒxƒNƒgƒ‹(‹«ŠEüƒxƒNƒgƒ‹‚ÌX‚ÆZ”½“])
+					// æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«(å¢ƒç•Œç·šãƒ™ã‚¯ãƒˆãƒ«ã®Xã¨Zåè»¢)
 					MyLib::Vector3 vecNor = MyLib::Vector3(vecLine.z, 0.0f, -vecLine.x);
 
-					// ƒxƒNƒgƒ‹‚Ì³‹K‰»
+					// ãƒ™ã‚¯ãƒˆãƒ«ã®æ­£è¦åŒ–
 					D3DXVec3Normalize(&vecNor, &vecNor);
 
-					// ƒvƒŒƒCƒ„[‚Ì‹tˆÚ“®—Ê
+					// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®é€†ç§»å‹•é‡
 					MyLib::Vector3 PlayerInverceMove;
 					PlayerInverceMove.x = vecLinePlayer.x * (fRatePlayer - 1.0f);
 					PlayerInverceMove.z = vecLinePlayer.z * (fRatePlayer - 1.0f);
 
-					// “àÏ(•Ç‚Ì–@ü‚ÆƒvƒŒƒCƒ„[‚Ì‹tˆÚ“®—Ê)
+					// å†…ç©(å£ã®æ³•ç·šã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®é€†ç§»å‹•é‡)
 					float fDot = (PlayerInverceMove.x * vecNor.x) + (PlayerInverceMove.z * vecNor.z);
 
-					// •Ç‚¸‚èˆÚ“®—Ê
+					// å£ãšã‚Šç§»å‹•é‡
 					MyLib::Vector3 MoveWall = vecNor * fDot;
 
-					// ‚Ô‚Â‚©‚Á‚½“_‚É•â³
+					// ã¶ã¤ã‹ã£ãŸç‚¹ã«è£œæ­£
 					pPos += MoveWall + (vecNor * 0.1f);
 
 				}
@@ -1398,28 +1403,28 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ü•ª‚Ì‰E‚É‚¢‚é‚©‚Ç‚¤‚©(2D)
-		@details ü•ª‚É‘Î‚µ‚Ä‰E‚É‚¢‚é‚©‚Ì”»’è‚È‚Ì‚ÅA¶‚É‹‚Ä—~‚µ‚¢ê‡‚Ípos0‚Æpos1‚ğ“ü‚ê‘Ö‚¦‚Äg—p
-		@param	pos0		[in]	ü•ª¶’[‚ÌˆÊ’u
-		@param	pos1		[in]	ü•ª‰E’[‚ÌˆÊ’u
-		@param	MainPos		[in]	”»’è‚·‚é‘ÎÛ‚ÌˆÊ’u
-		@param	MainPos		[in]	”»’è‚·‚é‘ÎÛ‚Ì‘O‰ñ‚ÌˆÊ’u
-		@return	ü•ª‚Ì‰E‘¤‚É‚¢‚é‚©‚Ìbool’l
+		@brief	ç·šåˆ†ã®å³ã«ã„ã‚‹ã‹ã©ã†ã‹(2D)
+		@details ç·šåˆ†ã«å¯¾ã—ã¦å³ã«ã„ã‚‹ã‹ã®åˆ¤å®šãªã®ã§ã€å·¦ã«å±…ã¦æ¬²ã—ã„å ´åˆã¯pos0ã¨pos1ã‚’å…¥ã‚Œæ›¿ãˆã¦ä½¿ç”¨
+		@param	pos0		[in]	ç·šåˆ†å·¦ç«¯ã®ä½ç½®
+		@param	pos1		[in]	ç·šåˆ†å³ç«¯ã®ä½ç½®
+		@param	MainPos		[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®ä½ç½®
+		@param	MainPos		[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®å‰å›ã®ä½ç½®
+		@return	ç·šåˆ†ã®å³å´ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionLine2D(const MyLib::Vector3& pos0, const MyLib::Vector3& pos1, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld)
 		{
-			// ‹«ŠEü‚ÌƒxƒNƒgƒ‹
+			// å¢ƒç•Œç·šã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecLine;
 			vecLine.x = pos1.x - pos0.x;
 			vecLine.y = pos0.y - pos1.y;
 
-			// ’e‚Æ•Ç‚ÌƒxƒNƒgƒ‹
+			// å¼¾ã¨å£ã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecToPos;
 			vecToPos.x = MainPos.x - pos0.x;
 			vecToPos.y = pos0.y - MainPos.y;
 
 			if ((vecLine.y * vecToPos.x) - (vecLine.x * vecToPos.y) <= 0)
-			{// ü‚ğ’´‚¦‚½
+			{// ç·šã‚’è¶…ãˆãŸ
 				return true;
 			}
 
@@ -1427,28 +1432,28 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ü•ª‚Ì‰E‚É‚¢‚é‚©‚Ç‚¤‚©(3D)
-		@details ü•ª‚É‘Î‚µ‚Ä‰E‚É‚¢‚é‚©‚Ì”»’è‚È‚Ì‚ÅA¶‚É‹‚Ä—~‚µ‚¢ê‡‚Ípos0‚Æpos1‚ğ“ü‚ê‘Ö‚¦‚Äg—p
-		@param	pos0		[in]	ü•ª¶’[‚ÌˆÊ’u
-		@param	pos1		[in]	ü•ª‰E’[‚ÌˆÊ’u
-		@param	MainPos		[in]	”»’è‚·‚é‘ÎÛ‚ÌˆÊ’u
-		@param	MainPos		[in]	”»’è‚·‚é‘ÎÛ‚Ì‘O‰ñ‚ÌˆÊ’u
-		@return	ü•ª‚Ì‰E‘¤‚É‚¢‚é‚©‚Ìbool’l
+		@brief	ç·šåˆ†ã®å³ã«ã„ã‚‹ã‹ã©ã†ã‹(3D)
+		@details ç·šåˆ†ã«å¯¾ã—ã¦å³ã«ã„ã‚‹ã‹ã®åˆ¤å®šãªã®ã§ã€å·¦ã«å±…ã¦æ¬²ã—ã„å ´åˆã¯pos0ã¨pos1ã‚’å…¥ã‚Œæ›¿ãˆã¦ä½¿ç”¨
+		@param	pos0		[in]	ç·šåˆ†å·¦ç«¯ã®ä½ç½®
+		@param	pos1		[in]	ç·šåˆ†å³ç«¯ã®ä½ç½®
+		@param	MainPos		[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®ä½ç½®
+		@param	MainPos		[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®å‰å›ã®ä½ç½®
+		@return	ç·šåˆ†ã®å³å´ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionLine3D(const MyLib::Vector3& pos0, const MyLib::Vector3& pos1, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld)
 		{
-			// ‹«ŠEü‚ÌƒxƒNƒgƒ‹
+			// å¢ƒç•Œç·šã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecLine;
 			vecLine.x = pos1.x - pos0.x;
 			vecLine.z = pos1.z - pos0.z;
 
-			// ’e‚Æ•Ç‚ÌƒxƒNƒgƒ‹
+			// å¼¾ã¨å£ã®ãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecToPos;
 			vecToPos.x = MainPos.x - pos0.x;
 			vecToPos.z = MainPos.z - pos0.z;
 
 			if ((vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z) <= 0)
-			{// ü‚ğ’´‚¦‚½
+			{// ç·šã‚’è¶…ãˆãŸ
 				return true;
 			}
 
@@ -1456,30 +1461,30 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	OŠp‚Ì“à‘¤‚É‚¢‚é‚©”»’è
-		@param	posCenter	[in]	”»’è‚·‚éOŠpŒ`‚Ìè‘O‚Ì’¸“_À•W
-		@param	posLeft		[in]	”»’è‚·‚éOŠpŒ`‚Ì¶‚Ì’¸“_À•W
-		@param	posRight	[in]	”»’è‚·‚éOŠpŒ`‚Ì‰E‚Ì’¸“_À•W
-		@param	MainPos		[in]	©•ª‚ÌˆÊ’u
-		@param	MainPosOld	[in]	©•ª‚Ì‘O‰ñˆÊ’u
-		@return	’†‚É‚¢‚é‚©‚Ìbool’l
+		@brief	ä¸‰è§’ã®å†…å´ã«ã„ã‚‹ã‹åˆ¤å®š
+		@param	posCenter	[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®æ‰‹å‰ã®é ‚ç‚¹åº§æ¨™
+		@param	posLeft		[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®å·¦ã®é ‚ç‚¹åº§æ¨™
+		@param	posRight	[in]	åˆ¤å®šã™ã‚‹ä¸‰è§’å½¢ã®å³ã®é ‚ç‚¹åº§æ¨™
+		@param	MainPos		[in]	è‡ªåˆ†ã®ä½ç½®
+		@param	MainPosOld	[in]	è‡ªåˆ†ã®å‰å›ä½ç½®
+		@return	ä¸­ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionTriangle(const MyLib::Vector3& posCenter, const MyLib::Vector3& posLeft, const MyLib::Vector3& posRight, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld)
 		{
-			// “–‚½‚Á‚½‚©‚Ì”»’è
+			// å½“ãŸã£ãŸã‹ã®åˆ¤å®š
 			bool bHit = false;
 			bool bLine1 = false, bLine2 = false, bLine3 = false;
 
-			// ^‚ñ’†‚Æ¶‚Ìü
+			// çœŸã‚“ä¸­ã¨å·¦ã®ç·š
 			bLine1 = UtilFunc::Collision::CollisionLine3D(posCenter, posLeft, MainPos, MainPosOld);
 
-			// ¶‚Æ‰E‚Ìü
+			// å·¦ã¨å³ã®ç·š
 			bLine2 = UtilFunc::Collision::CollisionLine3D(posLeft, posRight, MainPos, MainPosOld);
 
-			// ‰E‚Æ^‚ñ’†‚Ìü
+			// å³ã¨çœŸã‚“ä¸­ã®ç·š
 			bLine3 = UtilFunc::Collision::CollisionLine3D(posRight, posCenter, MainPos, MainPosOld);
 
-			// ‘S‚Ä‚Ì”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚½‚ç
+			// å…¨ã¦ã®ç¯„å›²ã«å…¥ã£ã¦ã„ãŸã‚‰
 			if (bLine1 && bLine2 && bLine3)
 			{
 				bHit = true;
@@ -1489,37 +1494,37 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	lŠp‚Ì“à‘¤‚É‚¢‚é‚©”»’è
-		@details 4‚Â‚Ì’¸“_‚ª‘S‚ÄŒˆ‚Ü‚Á‚Ä‚¢‚éê‡‚Ég‚¤
-		@param	posLeftUP	[in]	”»’è‚·‚élŠpŒ`¶ã‚Ì’¸“_À•W
-		@param	posRightUP	[in]	”»’è‚·‚élŠpŒ`‰Eã‚Ì’¸“_À•W
-		@param	posLeftDW	[in]	”»’è‚·‚élŠpŒ`¶‰º‚Ì’¸“_À•W
-		@param	posRightDW	[in]	”»’è‚·‚élŠpŒ`‰E‰º‚Ì’¸“_À•W
-		@param	MainPos		[in]	©•ª‚ÌˆÊ’u
-		@return	’†‚É‚¢‚é‚©‚Ìbool’l
+		@brief	å››è§’ã®å†…å´ã«ã„ã‚‹ã‹åˆ¤å®š
+		@details 4ã¤ã®é ‚ç‚¹ãŒå…¨ã¦æ±ºã¾ã£ã¦ã„ã‚‹å ´åˆã«ä½¿ã†
+		@param	posLeftUP	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å·¦ä¸Šã®é ‚ç‚¹åº§æ¨™
+		@param	posRightUP	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å³ä¸Šã®é ‚ç‚¹åº§æ¨™
+		@param	posLeftDW	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å·¦ä¸‹ã®é ‚ç‚¹åº§æ¨™
+		@param	posRightDW	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å³ä¸‹ã®é ‚ç‚¹åº§æ¨™
+		@param	MainPos		[in]	è‡ªåˆ†ã®ä½ç½®
+		@return	ä¸­ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionSquare(const MyLib::Vector3& posLeftUP, const MyLib::Vector3& posRightUP, const MyLib::Vector3& posLeftDW, const MyLib::Vector3& posRightDW, const MyLib::Vector3& MainPos)
 		{
-			// “–‚½‚Á‚½‚©‚Ì”»’è
+			// å½“ãŸã£ãŸã‹ã®åˆ¤å®š
 			bool bHit = false;
 			bool bLine1 = false, bLine2 = false, bLine3 = false, bLine4 = false;
 
-			// ¶ã‚Æ‰Eã
+			// å·¦ä¸Šã¨å³ä¸Š
 			bLine1 = UtilFunc::Collision::CollisionLine3D(posRightUP, posLeftUP, MainPos, MainPos);
 
-			// ‰Eã‚Æ‰E‰º
+			// å³ä¸Šã¨å³ä¸‹
 			bLine2 = UtilFunc::Collision::CollisionLine3D(posRightDW, posRightUP, MainPos, MainPos);
 
-			// ‰E‰º‚Æ¶‰º
+			// å³ä¸‹ã¨å·¦ä¸‹
 			bLine3 = UtilFunc::Collision::CollisionLine3D(posLeftDW, posRightDW, MainPos, MainPos);
 
-			// ¶‰º‚Æ¶ã
+			// å·¦ä¸‹ã¨å·¦ä¸Š
 			bLine4 = UtilFunc::Collision::CollisionLine3D(posLeftUP, posLeftDW, MainPos, MainPos);
 
-			// ‘S‚Ä‚Ì”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚½‚ç
+			// å…¨ã¦ã®ç¯„å›²ã«å…¥ã£ã¦ã„ãŸã‚‰
 			if (bLine1 && bLine2 && bLine3 && bLine4)
 			{
-				// “–‚½‚Á‚½
+				// å½“ãŸã£ãŸ
 				bHit = true;
 			}
 
@@ -1527,45 +1532,45 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	lŠp‚Ì“à‘¤‚É‚¢‚é‚©”»’è
-		@details 4‚Â‚Ì’¸“_‚ª‚Ü‚¾‹‚ß‚ç‚ê‚Ä‚¢‚È‚¢ê‡‚Ég‚¤
-		@param	posSquare	[in]	”»’è‚·‚élŠpŒ`‚Ì’†SÀ•W
-		@param	SquareSize	[in]	”»’è‚·‚élŠpŒ`‚ÌƒTƒCƒY
-		@param	fSquareRot	[in]	”»’è‚·‚élŠpŒ`‚ÌƒTƒCƒY
-		@param	MainPos		[in]	©•ª‚ÌˆÊ’u
-		@return	’†‚É‚¢‚é‚©‚Ìbool’l
+		@brief	å››è§’ã®å†…å´ã«ã„ã‚‹ã‹åˆ¤å®š
+		@details 4ã¤ã®é ‚ç‚¹ãŒã¾ã æ±‚ã‚ã‚‰ã‚Œã¦ã„ãªã„å ´åˆã«ä½¿ã†
+		@param	posSquare	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢ã®ä¸­å¿ƒåº§æ¨™
+		@param	SquareSize	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢ã®ã‚µã‚¤ã‚º
+		@param	fSquareRot	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢ã®ã‚µã‚¤ã‚º
+		@param	MainPos		[in]	è‡ªåˆ†ã®ä½ç½®
+		@return	ä¸­ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionSquare(MyLib::Vector3 posSquare, D3DXVECTOR2 SquareSize, float fSquareRot, MyLib::Vector3 MainPos)
 		{
-			// “–‚½‚Á‚½‚©‚Ì”»’è
+			// å½“ãŸã£ãŸã‹ã®åˆ¤å®š
 			bool bHit = false;
 			bool bLine1 = false, bLine2 = false, bLine3 = false, bLine4 = false;
 
-			float fLength = sqrtf(SquareSize.x * SquareSize.x + SquareSize.y * SquareSize.y);	// ‘ÎŠpü‚Ì’·‚³
-			float fAngle = atan2f(SquareSize.x, SquareSize.y);									// ‘ÎŠpü‚ÌŒü‚«
+			float fLength = sqrtf(SquareSize.x * SquareSize.x + SquareSize.y * SquareSize.y);	// å¯¾è§’ç·šã®é•·ã•
+			float fAngle = atan2f(SquareSize.x, SquareSize.y);									// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			MyLib::Vector3 LeftUp = MyLib::Vector3(posSquare.x + sinf(fSquareRot - fAngle) * fLength, posSquare.y, posSquare.z + cosf(fSquareRot - fAngle) * fLength);
 			MyLib::Vector3 RightUp = MyLib::Vector3(posSquare.x + sinf(fSquareRot + fAngle) * fLength, posSquare.y, posSquare.z + cosf(fSquareRot + fAngle) * fLength);
 			MyLib::Vector3 LeftDown = MyLib::Vector3(posSquare.x + sinf(fSquareRot - D3DX_PI + fAngle) * fLength, posSquare.y, posSquare.z + cosf(fSquareRot - D3DX_PI + fAngle) * fLength);
 			MyLib::Vector3 RightDown = MyLib::Vector3(posSquare.x + sinf(fSquareRot + D3DX_PI - fAngle) * fLength, posSquare.y, posSquare.z + cosf(fSquareRot + D3DX_PI - fAngle) * fLength);
 
-			// ¶ã‚Æ‰Eã
+			// å·¦ä¸Šã¨å³ä¸Š
 			bLine1 = UtilFunc::Collision::CollisionLine3D(RightUp, LeftUp, MainPos, MainPos);
 
-			// ‰Eã‚Æ‰E‰º
+			// å³ä¸Šã¨å³ä¸‹
 			bLine2 = UtilFunc::Collision::CollisionLine3D(RightDown, RightUp, MainPos, MainPos);
 
-			// ‰E‰º‚Æ¶‰º
+			// å³ä¸‹ã¨å·¦ä¸‹
 			bLine3 = UtilFunc::Collision::CollisionLine3D(LeftDown, RightDown, MainPos, MainPos);
 
-			// ¶‰º‚Æ¶ã
+			// å·¦ä¸‹ã¨å·¦ä¸Š
 			bLine4 = UtilFunc::Collision::CollisionLine3D(LeftUp, LeftDown, MainPos, MainPos);
 
-			// ‘S‚Ä‚Ì”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚½‚ç
+			// å…¨ã¦ã®ç¯„å›²ã«å…¥ã£ã¦ã„ãŸã‚‰
 			if (bLine1 && bLine2 && bLine3 && bLine4)
 			{
-				// “–‚½‚Á‚½
+				// å½“ãŸã£ãŸ
 				bHit = true;
 			}
 
@@ -1573,34 +1578,34 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	lŠp‚Ì“à‘¤‚É‚¢‚é‚©”»’è(2D)
-		@details 4‚Â‚Ì’¸“_‚ª‘S‚ÄŒˆ‚Ü‚Á‚Ä‚¢‚éê‡‚Ég‚¤
-		@param	posLeftUP	[in]	”»’è‚·‚élŠpŒ`¶ã‚Ì’¸“_À•W
-		@param	posRightUP	[in]	”»’è‚·‚élŠpŒ`‰Eã‚Ì’¸“_À•W
-		@param	posLeftDW	[in]	”»’è‚·‚élŠpŒ`¶‰º‚Ì’¸“_À•W
-		@param	posRightDW	[in]	”»’è‚·‚élŠpŒ`‰E‰º‚Ì’¸“_À•W
-		@param	MainPos		[in]	©•ª‚ÌˆÊ’u
-		@return	’†‚É‚¢‚é‚©‚Ìbool’l
+		@brief	å››è§’ã®å†…å´ã«ã„ã‚‹ã‹åˆ¤å®š(2D)
+		@details 4ã¤ã®é ‚ç‚¹ãŒå…¨ã¦æ±ºã¾ã£ã¦ã„ã‚‹å ´åˆã«ä½¿ã†
+		@param	posLeftUP	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å·¦ä¸Šã®é ‚ç‚¹åº§æ¨™
+		@param	posRightUP	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å³ä¸Šã®é ‚ç‚¹åº§æ¨™
+		@param	posLeftDW	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å·¦ä¸‹ã®é ‚ç‚¹åº§æ¨™
+		@param	posRightDW	[in]	åˆ¤å®šã™ã‚‹å››è§’å½¢å³ä¸‹ã®é ‚ç‚¹åº§æ¨™
+		@param	MainPos		[in]	è‡ªåˆ†ã®ä½ç½®
+		@return	ä¸­ã«ã„ã‚‹ã‹ã®boolå€¤
 		*/
 		inline bool CollisionSquare2D(MyLib::Vector3 posLeftUP, MyLib::Vector3 posRightUP, MyLib::Vector3 posLeftDW, MyLib::Vector3 posRightDW, MyLib::Vector3 MainPos)
 		{
-			// “–‚½‚Á‚½‚©‚Ì”»’è
+			// å½“ãŸã£ãŸã‹ã®åˆ¤å®š
 			bool bHit = false;
 			bool bLine1 = false, bLine2 = false, bLine3 = false, bLine4 = false;
 
-			// ¶ã‚Æ‰Eã
+			// å·¦ä¸Šã¨å³ä¸Š
 			bLine1 = UtilFunc::Collision::CollisionLine2D(posRightUP, posLeftUP, MainPos, MainPos);
 
-			// ‰Eã‚Æ‰E‰º
+			// å³ä¸Šã¨å³ä¸‹
 			bLine2 = UtilFunc::Collision::CollisionLine2D(posRightDW, posRightUP, MainPos, MainPos);
 
-			// ‰E‰º‚Æ¶‰º
+			// å³ä¸‹ã¨å·¦ä¸‹
 			bLine3 = UtilFunc::Collision::CollisionLine2D(posLeftDW, posRightDW, MainPos, MainPos);
 
-			// ¶‰º‚Æ¶ã
+			// å·¦ä¸‹ã¨å·¦ä¸Š
 			bLine4 = UtilFunc::Collision::CollisionLine2D(posLeftUP, posLeftDW, MainPos, MainPos);
 
-			// ‘S‚Ä‚Ì”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚½‚ç
+			// å…¨ã¦ã®ç¯„å›²ã«å…¥ã£ã¦ã„ãŸã‚‰
 			if (bLine1 && bLine2 && bLine3 && bLine4)
 			{
 				bHit = true;
@@ -1610,24 +1615,24 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	lŠp‚ÆlŠp‚Ì“–‚½‚è”»’è(2D)
-		@details 4‚Â‚Ì’¸“_‚ª‚Ü‚¾‹‚ß‚ç‚ê‚Ä‚¢‚È‚¢ê‡‚Ég‚¤
-		@param	MainPos		[inout]	©•ª‚ÌˆÊ’u
-		@param	TargetPos	[inout]	‘ÎÛ‚ÌˆÊ’u
-		@param	MainSize	[in]	©•ª‚ÌƒTƒCƒY
-		@param	TargetSize	[in]	‘ÎÛ‚ÌƒTƒCƒY
-		@param	fMainRot	[in]	©•ª‚ÌY²‚ÌŒü‚«
-		@param	fTargetRot	[in]	‘ÎÛ‚ÌY²‚ÌŒü‚«
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	å››è§’ã¨å››è§’ã®å½“ãŸã‚Šåˆ¤å®š(2D)
+		@details 4ã¤ã®é ‚ç‚¹ãŒã¾ã æ±‚ã‚ã‚‰ã‚Œã¦ã„ãªã„å ´åˆã«ä½¿ã†
+		@param	MainPos		[inout]	è‡ªåˆ†ã®ä½ç½®
+		@param	TargetPos	[inout]	å¯¾è±¡ã®ä½ç½®
+		@param	MainSize	[in]	è‡ªåˆ†ã®ã‚µã‚¤ã‚º
+		@param	TargetSize	[in]	å¯¾è±¡ã®ã‚µã‚¤ã‚º
+		@param	fMainRot	[in]	è‡ªåˆ†ã®Yè»¸ã®å‘ã
+		@param	fTargetRot	[in]	å¯¾è±¡ã®Yè»¸ã®å‘ã
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionSquareSquare2D(MyLib::Vector3& MainPos, MyLib::Vector3& TargetPos, D3DXVECTOR2 MainSize, D3DXVECTOR2 TargetSize, float fMainRot, float fTargetRot)
 		{
 			float fTargetLength = sqrtf(
 				TargetSize.x * TargetSize.x +
-				TargetSize.y * TargetSize.y);							// ‘ÎŠpü‚Ì’·‚³
-			float fTargetAngle = atan2f(TargetSize.x, TargetSize.y);	// ‘ÎŠpü‚ÌŒü‚«
+				TargetSize.y * TargetSize.y);							// å¯¾è§’ç·šã®é•·ã•
+			float fTargetAngle = atan2f(TargetSize.x, TargetSize.y);	// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			MyLib::Vector3 LeftUp = MyLib::Vector3(
 				TargetPos.x + sinf(fTargetRot - fTargetAngle) * fTargetLength,
 				TargetPos.y,
@@ -1649,22 +1654,22 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				TargetPos.z + cosf(fTargetRot + D3DX_PI - fTargetAngle) * fTargetLength);
 
 			//***********************
-			// ‹éŒ`‚Ì”»’è
+			// çŸ©å½¢ã®åˆ¤å®š
 			//***********************
 			if (UtilFunc::Collision::CollisionSquare(MainPos, MainSize, fMainRot, LeftUp))
-			{// ¶ã
+			{// å·¦ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CollisionSquare(MainPos, MainSize, fMainRot, RightUp))
-			{// ‰Eã
+			{// å³ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CollisionSquare(MainPos, MainSize, fMainRot, LeftDown))
-			{// ¶‰º
+			{// å·¦ä¸‹
 				return true;
 			}
 			if (UtilFunc::Collision::CollisionSquare(MainPos, MainSize, fMainRot, RightDown))
-			{// ‰E‰º
+			{// å³ä¸‹
 				return true;
 			}
 
@@ -1672,34 +1677,34 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‰~‚Æ‹éŒ`‚Ì“–‚½‚è”»’è(2D)
-		@param	posCircle		[inout]	‰~‚Ì’†SÀ•W
-		@param	posSquare		[inout]	‹éŒ`‚Ì’†SÀ•W
-		@param	rotSquare		[in]	‹éŒ`‚ÌŒü‚«
-		@param	fCircleRadius	[in]	‰~‚Ì”¼Œa
-		@param	SquareSize		[in]	‹éŒ`‚ÌƒTƒCƒY
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	å††ã¨çŸ©å½¢ã®å½“ãŸã‚Šåˆ¤å®š(2D)
+		@param	posCircle		[inout]	å††ã®ä¸­å¿ƒåº§æ¨™
+		@param	posSquare		[inout]	çŸ©å½¢ã®ä¸­å¿ƒåº§æ¨™
+		@param	rotSquare		[in]	çŸ©å½¢ã®å‘ã
+		@param	fCircleRadius	[in]	å††ã®åŠå¾„
+		@param	SquareSize		[in]	çŸ©å½¢ã®ã‚µã‚¤ã‚º
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionCircleSquare2D(MyLib::Vector3& posCircle, MyLib::Vector3& posSquare, MyLib::Vector3 rotSquare, float fCircleRadius, D3DXVECTOR2 SquareSize)
 		{
-			float fSquareSizeX = SquareSize.x;	// ‹éŒ`‚ÌƒTƒCƒYX
-			float fSquareSizeY = SquareSize.y;	// ‹éŒ`‚ÌƒTƒCƒYY
+			float fSquareSizeX = SquareSize.x;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			float fSquareSizeY = SquareSize.y;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			float fLength = 0.0f;	// ‘ÎŠpü‚Ì’·‚³
-			float fAngle = 0.0f;	// ‘ÎŠpü‚ÌŒü‚«
+			float fLength = 0.0f;	// å¯¾è§’ç·šã®é•·ã•
+			float fAngle = 0.0f;	// å¯¾è§’ç·šã®å‘ã
 
 			MyLib::Vector3 LeftUp, RightUp, LeftDown, RightDown;
 
 			//****************************************************
-			// X‚ÌƒTƒCƒY‚É‰~‚Ì”¼Œa‚ğ‘«‚µ‚½‹éŒ`‚Ì”»’è
+			// Xã®ã‚µã‚¤ã‚ºã«å††ã®åŠå¾„ã‚’è¶³ã—ãŸçŸ©å½¢ã®åˆ¤å®š
 			//****************************************************
-			fSquareSizeX += fCircleRadius;	// ‹éŒ`‚ÌƒTƒCƒYX
-			fSquareSizeY = SquareSize.y;	// ‹éŒ`‚ÌƒTƒCƒYY
+			fSquareSizeX += fCircleRadius;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			fSquareSizeY = SquareSize.y;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// ‘ÎŠpü‚Ì’·‚³
-			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// ‘ÎŠpü‚ÌŒü‚«
+			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// å¯¾è§’ç·šã®é•·ã•
+			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			LeftUp.x = posSquare.x + sinf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.y = posSquare.y + cosf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.z = 0.0f;
@@ -1716,22 +1721,22 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			RightDown.y = posSquare.y + cosf(rotSquare.z + fAngle) * fLength;
 			RightDown.z = 0.0f;
 
-			// ‹éŒ`‚Ì”»’è
+			// çŸ©å½¢ã®åˆ¤å®š
 			if (UtilFunc::Collision::CollisionSquare2D(LeftUp, RightUp, LeftDown, RightDown, posCircle))
-			{// ‹éŒ`‚É“–‚½‚Á‚½ê‡
+			{// çŸ©å½¢ã«å½“ãŸã£ãŸå ´åˆ
 				return true;
 			}
 
 			//****************************************************
-			// Y‚ÌƒTƒCƒY‚É‰~‚Ì”¼Œa‚ğ‘«‚µ‚½‹éŒ`‚Ì”»’è
+			// Yã®ã‚µã‚¤ã‚ºã«å††ã®åŠå¾„ã‚’è¶³ã—ãŸçŸ©å½¢ã®åˆ¤å®š
 			//****************************************************
-			fSquareSizeX = SquareSize.x;	// ‹éŒ`‚ÌƒTƒCƒYX
-			fSquareSizeY += fCircleRadius;	// ‹éŒ`‚ÌƒTƒCƒYY
+			fSquareSizeX = SquareSize.x;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			fSquareSizeY += fCircleRadius;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// ‘ÎŠpü‚Ì’·‚³
-			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// ‘ÎŠpü‚ÌŒü‚«
+			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// å¯¾è§’ç·šã®é•·ã•
+			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			LeftUp.x = posSquare.x + sinf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.y = posSquare.y + cosf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.z = 0.0f;
@@ -1748,25 +1753,25 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			RightDown.y = posSquare.y + cosf(rotSquare.z + fAngle) * fLength;
 			RightDown.z = 0.0f;
 
-			// ‹éŒ`‚Ì”»’è
+			// çŸ©å½¢ã®åˆ¤å®š
 			if (UtilFunc::Collision::CollisionSquare2D(LeftUp, RightUp, LeftDown, RightDown, posCircle))
-			{// ‹éŒ`‚É“–‚½‚Á‚½ê‡
+			{// çŸ©å½¢ã«å½“ãŸã£ãŸå ´åˆ
 				return true;
 			}
 
 			//***********************
-			// Še’¸“_–ˆ‚Ì‰~‚Ì”»’è
+			// å„é ‚ç‚¹æ¯ã®å††ã®åˆ¤å®š
 			//***********************
 			//****************************************************
-			// Œ³‚ÌƒTƒCƒY
+			// å…ƒã®ã‚µã‚¤ã‚º
 			//****************************************************
-			fSquareSizeX = SquareSize.x;	// ‹éŒ`‚ÌƒTƒCƒYX
-			fSquareSizeY = SquareSize.y;	// ‹éŒ`‚ÌƒTƒCƒYY
+			fSquareSizeX = SquareSize.x;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			fSquareSizeY = SquareSize.y;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// ‘ÎŠpü‚Ì’·‚³
-			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// ‘ÎŠpü‚ÌŒü‚«
+			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// å¯¾è§’ç·šã®é•·ã•
+			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			LeftUp.x = posSquare.x + sinf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.y = posSquare.y + cosf(rotSquare.z - D3DX_PI + fAngle) * fLength;
 			LeftUp.z = 0.0f;
@@ -1784,144 +1789,144 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			RightDown.z = 0.0f;
 
 			if (UtilFunc::Collision::CircleRange2D(posCircle, LeftUp, fCircleRadius, 0.0f))
-			{// ¶ã
+			{// å·¦ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange2D(posCircle, RightUp, fCircleRadius, 0.0f))
-			{// ‰Eã
+			{// å³ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange2D(posCircle, LeftDown, fCircleRadius, 0.0f))
-			{// ¶‰º
+			{// å·¦ä¸‹
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange2D(posCircle, RightDown, fCircleRadius, 0.0f))
-			{// ‰E‰º
+			{// å³ä¸‹
 				return true;
 			}
 
-			// “–‚½‚Á‚Ä‚È‚¢”»’è‚ğ•Ô‚·
+			// å½“ãŸã£ã¦ãªã„åˆ¤å®šã‚’è¿”ã™
 			return false;
 		}
 
 		/**
-		@brief	‰~‚Æ‹éŒ`‚Ì“–‚½‚è”»’è(3D)
-		@param	posCircle		[inout]	‰~‚Ì’†SÀ•W
-		@param	posSquare		[inout]	‹éŒ`‚Ì’†SÀ•W
-		@param	rotSquare		[in]	‹éŒ`‚ÌŒü‚«
-		@param	fCircleRadius	[in]	‰~‚Ì”¼Œa
-		@param	SquareSize		[in]	‹éŒ`‚ÌƒTƒCƒY
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	å††ã¨çŸ©å½¢ã®å½“ãŸã‚Šåˆ¤å®š(3D)
+		@param	posCircle		[inout]	å††ã®ä¸­å¿ƒåº§æ¨™
+		@param	posSquare		[inout]	çŸ©å½¢ã®ä¸­å¿ƒåº§æ¨™
+		@param	rotSquare		[in]	çŸ©å½¢ã®å‘ã
+		@param	fCircleRadius	[in]	å††ã®åŠå¾„
+		@param	SquareSize		[in]	çŸ©å½¢ã®ã‚µã‚¤ã‚º
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionCircleSquare3D(MyLib::Vector3& posCircle, MyLib::Vector3& posSquare, MyLib::Vector3 rotSquare, float fCircleRadius, D3DXVECTOR2 SquareSize)
 		{
-			float fSquareSizeX = SquareSize.x;	// ‹éŒ`‚ÌƒTƒCƒYX
-			float fSquareSizeY = SquareSize.y;	// ‹éŒ`‚ÌƒTƒCƒYY
+			float fSquareSizeX = SquareSize.x;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			float fSquareSizeY = SquareSize.y;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			float fLength = 0.0f;	// ‘ÎŠpü‚Ì’·‚³
-			float fAngle = 0.0f;	// ‘ÎŠpü‚ÌŒü‚«
+			float fLength = 0.0f;	// å¯¾è§’ç·šã®é•·ã•
+			float fAngle = 0.0f;	// å¯¾è§’ç·šã®å‘ã
 
 			MyLib::Vector3 LeftUp, RightUp, LeftDown, RightDown;
 
 			//****************************************************
-			// X‚ÌƒTƒCƒY‚É‰~‚Ì”¼Œa‚ğ‘«‚µ‚½‹éŒ`‚Ì”»’è
+			// Xã®ã‚µã‚¤ã‚ºã«å††ã®åŠå¾„ã‚’è¶³ã—ãŸçŸ©å½¢ã®åˆ¤å®š
 			//****************************************************
-			fSquareSizeX += fCircleRadius;	// ‹éŒ`‚ÌƒTƒCƒYX
-			fSquareSizeY = SquareSize.y;	// ‹éŒ`‚ÌƒTƒCƒYY
+			fSquareSizeX += fCircleRadius;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			fSquareSizeY = SquareSize.y;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// ‘ÎŠpü‚Ì’·‚³
-			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// ‘ÎŠpü‚ÌŒü‚«
+			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// å¯¾è§’ç·šã®é•·ã•
+			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			LeftUp = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y - fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y - fAngle) * fLength);
 			RightUp = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y + fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y + fAngle) * fLength);
 			LeftDown = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y - D3DX_PI + fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y - D3DX_PI + fAngle) * fLength);
 			RightDown = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y + D3DX_PI - fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y + D3DX_PI - fAngle) * fLength);
 
-			// ‹éŒ`‚Ì”»’è
+			// çŸ©å½¢ã®åˆ¤å®š
 			if (UtilFunc::Collision::CollisionSquare(LeftUp, RightUp, LeftDown, RightDown, posCircle))
-			{// ‹éŒ`‚É“–‚½‚Á‚½ê‡
+			{// çŸ©å½¢ã«å½“ãŸã£ãŸå ´åˆ
 				return true;
 			}
 
 			//****************************************************
-			// Y‚ÌƒTƒCƒY‚É‰~‚Ì”¼Œa‚ğ‘«‚µ‚½‹éŒ`‚Ì”»’è
+			// Yã®ã‚µã‚¤ã‚ºã«å††ã®åŠå¾„ã‚’è¶³ã—ãŸçŸ©å½¢ã®åˆ¤å®š
 			//****************************************************
-			fSquareSizeX = SquareSize.x;	// ‹éŒ`‚ÌƒTƒCƒYX
-			fSquareSizeY += fCircleRadius;	// ‹éŒ`‚ÌƒTƒCƒYY
+			fSquareSizeX = SquareSize.x;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºX
+			fSquareSizeY += fCircleRadius;	// çŸ©å½¢ã®ã‚µã‚¤ã‚ºY
 
-			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// ‘ÎŠpü‚Ì’·‚³
-			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// ‘ÎŠpü‚ÌŒü‚«
+			fLength = sqrtf(fSquareSizeX * fSquareSizeX + fSquareSizeY * fSquareSizeY);	// å¯¾è§’ç·šã®é•·ã•
+			fAngle = atan2f(fSquareSizeX, fSquareSizeY);								// å¯¾è§’ç·šã®å‘ã
 
-			// ”»’è‚·‚élŠp‚Ì4’¸“_
+			// åˆ¤å®šã™ã‚‹å››è§’ã®4é ‚ç‚¹
 			LeftUp = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y - fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y - fAngle) * fLength);
 			RightUp = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y + fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y + fAngle) * fLength);
 			LeftDown = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y - D3DX_PI + fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y - D3DX_PI + fAngle) * fLength);
 			RightDown = MyLib::Vector3(posSquare.x + cosf(rotSquare.x) * sinf(rotSquare.y + D3DX_PI - fAngle) * fLength, posSquare.y, posSquare.z + cosf(rotSquare.x) * cosf(rotSquare.y + D3DX_PI - fAngle) * fLength);
 
-			// ‹éŒ`‚Ì”»’è
+			// çŸ©å½¢ã®åˆ¤å®š
 			if (UtilFunc::Collision::CollisionSquare(LeftUp, RightUp, LeftDown, RightDown, posCircle))
-			{// ‹éŒ`‚É“–‚½‚Á‚½ê‡
+			{// çŸ©å½¢ã«å½“ãŸã£ãŸå ´åˆ
 				return true;
 			}
 
 			//***********************
-			// Še’¸“_–ˆ‚Ì‰~‚Ì”»’è
+			// å„é ‚ç‚¹æ¯ã®å††ã®åˆ¤å®š
 			//***********************
 			if (UtilFunc::Collision::CircleRange3D(posCircle, LeftUp, fCircleRadius, fCircleRadius))
-			{// ¶ã
+			{// å·¦ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange3D(posCircle, RightUp, fCircleRadius, fCircleRadius))
-			{// ‰Eã
+			{// å³ä¸Š
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange3D(posCircle, LeftDown, fCircleRadius, fCircleRadius))
-			{// ¶‰º
+			{// å·¦ä¸‹
 				return true;
 			}
 			if (UtilFunc::Collision::CircleRange3D(posCircle, RightDown, fCircleRadius, fCircleRadius))
-			{// ‰E‰º
+			{// å³ä¸‹
 				return true;
 			}
 
-			// “–‚½‚Á‚Ä‚È‚¢”»’è‚ğ•Ô‚·
+			// å½“ãŸã£ã¦ãªã„åˆ¤å®šã‚’è¿”ã™
 			return false;
 		}
 
 		/**
-		@brief	î‚Ì“–‚½‚è”»’è(3D)
-		@param	posCenter		[in]	î‚Ìn“_’¸“_À•W
-		@param	posLeft			[in]	î‚Ì¶‘¤’¸“_À•W
-		@param	posRight		[in]	î‚Ì‰E‘¤’¸“_À•W
-		@param	TargetPos		[in]	”»’è‚·‚é‘ÎÛ‚ÌˆÊ’u
-		@param	fTargetRadius	[in]	”»’è‚·‚é‘ÎÛ‚Ì”¼Œa
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	æ‰‡ã®å½“ãŸã‚Šåˆ¤å®š(3D)
+		@param	posCenter		[in]	æ‰‡ã®å§‹ç‚¹é ‚ç‚¹åº§æ¨™
+		@param	posLeft			[in]	æ‰‡ã®å·¦å´é ‚ç‚¹åº§æ¨™
+		@param	posRight		[in]	æ‰‡ã®å³å´é ‚ç‚¹åº§æ¨™
+		@param	TargetPos		[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®ä½ç½®
+		@param	fTargetRadius	[in]	åˆ¤å®šã™ã‚‹å¯¾è±¡ã®åŠå¾„
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionFan3D(MyLib::Vector3 posCenter, MyLib::Vector3 posLeft, MyLib::Vector3 posRight, MyLib::Vector3 TargetPos, float fTargetRadius)
 		{
-			// “–‚½‚Á‚½‚©‚Ì”»’è
+			// å½“ãŸã£ãŸã‹ã®åˆ¤å®š
 			bool bHit = false;
 			bool bLine1 = false, bLine2 = false, bCircle = false;
 
-			// ¶‚Ì“_‚Æ‚Ìü•ª
+			// å·¦ã®ç‚¹ã¨ã®ç·šåˆ†
 			bLine1 = UtilFunc::Collision::CollisionLine3D(posLeft, posCenter, TargetPos, TargetPos);
 
-			// ‰E‚Ì“_‚Æ‚Ìü•ª
+			// å³ã®ç‚¹ã¨ã®ç·šåˆ†
 			bLine2 = UtilFunc::Collision::CollisionLine3D(posCenter, posRight, TargetPos, TargetPos);
 
-			// î‚Ì”¼Œa
+			// æ‰‡ã®åŠå¾„
 			float fLen =
 				sqrtf((posLeft.x - posCenter.x) * (posLeft.x - posCenter.x)
 					+ (posLeft.z - posCenter.z) * (posLeft.z - posCenter.z));
 
-			// ‰~‚Ì“–‚½‚è”»’è
+			// å††ã®å½“ãŸã‚Šåˆ¤å®š
 			if (UtilFunc::Collision::CircleRange3D(posCenter, TargetPos, fLen, fTargetRadius))
-			{// “–‚½‚Á‚Ä‚¢‚½‚ç
+			{// å½“ãŸã£ã¦ã„ãŸã‚‰
 				bCircle = true;
 			}
 
-			// ‘S‚Ä‚Ì”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚½‚ç
+			// å…¨ã¦ã®ç¯„å›²ã«å…¥ã£ã¦ã„ãŸã‚‰
 			if (bLine1 && bLine2 && bCircle)
 			{
 				bHit = true;
@@ -1931,24 +1936,43 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	Œü‚«‚Ì”ÍˆÍ“à”»’è
-		@param	angle		[in]	”»’è‚·‚éŒü‚«
-		@param	maxAngle	[in]	”»’è“à‚ÌÅ‘åŒü‚«
-		@param	minAngle	[in]	”»’è“à‚ÌÅ¬Œü‚«
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	å‘ãã®ç¯„å›²å†…åˆ¤å®š
+		@param	angle		[in]	åˆ¤å®šã™ã‚‹å‘ã
+		@param	maxAngle	[in]	åˆ¤å®šå†…ã®æœ€å¤§å‘ã
+		@param	minAngle	[in]	åˆ¤å®šå†…ã®æœ€å°å‘ã
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionRangeAngle(float angle, float maxAngle, float minAngle)
 		{
-			return (angle <= maxAngle && angle >= minAngle);
+			// æ­£è¦åŒ–è§£é™¤
+			UtilFunc::Transformation::RotUnNormalize(angle);
+			UtilFunc::Transformation::RotUnNormalize(maxAngle);
+			UtilFunc::Transformation::RotUnNormalize(minAngle);
+			
+			// åº¦æ•°æ³•ã«å¤‰æ›
+			int nAngle = UtilFunc::Transformation::RadianChangeToDegree(angle);
+			int nMaxAngle = UtilFunc::Transformation::RadianChangeToDegree(maxAngle);
+			int nMinAngle = UtilFunc::Transformation::RadianChangeToDegree(minAngle);
+
+			if (nMaxAngle <= nMinAngle)
+			{// ç¯„å›²ãŒ360Â°ã‚’è·¨ãå ´åˆ
+				return !(angle >= nMaxAngle && angle <= nMinAngle);
+			}
+			else
+			{// ç¯„å›²ãŒé€šå¸¸ã®é †åºã§æŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆ
+				return (nAngle <= nMaxAngle && nMinAngle <= nAngle);
+			}
+
+			return false;
 		}
 
 		/**
-		@brief	“_‚ªOŠpŒ`‚Ì“à•”‚É‚ ‚é‚©‚ğ”»’è‚·‚éƒwƒ‹ƒp[ŠÖ”
-		@param	p	[in]	”»’è‚·‚é“_
-		@param	a	[in]	OŠpŒ`‚Ì’¸“_1
-		@param	b	[in]	OŠpŒ`‚Ì’¸“_2
-		@param	c	[in]	OŠpŒ`‚Ì’¸“_3
-		@return	true‚È‚ç“à•”Afalse‚È‚çŠO•”
+		@brief	ç‚¹ãŒä¸‰è§’å½¢ã®å†…éƒ¨ã«ã‚ã‚‹ã‹ã‚’åˆ¤å®šã™ã‚‹ãƒ˜ãƒ«ãƒ‘ãƒ¼é–¢æ•°
+		@param	p	[in]	åˆ¤å®šã™ã‚‹ç‚¹
+		@param	a	[in]	ä¸‰è§’å½¢ã®é ‚ç‚¹1
+		@param	b	[in]	ä¸‰è§’å½¢ã®é ‚ç‚¹2
+		@param	c	[in]	ä¸‰è§’å½¢ã®é ‚ç‚¹3
+		@return	trueãªã‚‰å†…éƒ¨ã€falseãªã‚‰å¤–éƒ¨
 		*/
 		inline bool PointInTriangle(const MyLib::Vector3& p, const MyLib::Vector3& a, const MyLib::Vector3& b, const MyLib::Vector3& c) 
 		{
@@ -1956,7 +1980,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			MyLib::Vector3 v1 = b - a;
 			MyLib::Vector3 v2 = p - a;
 
-			// ƒoƒŠƒZƒ“ƒgƒŠƒbƒNÀ•W‚ğg‚Á‚½OŠpŒ`“à”»’è
+			// ãƒãƒªã‚»ãƒ³ãƒˆãƒªãƒƒã‚¯åº§æ¨™ã‚’ä½¿ã£ãŸä¸‰è§’å½¢å†…åˆ¤å®š
 			float dot00 = D3DXVec3Dot(&v0, &v0);
 			float dot01 = D3DXVec3Dot(&v0, &v1);
 			float dot02 = D3DXVec3Dot(&v0, &v2);
@@ -1967,32 +1991,32 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
 			float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
-			// u >= 0, v >= 0, u + v <= 1 ‚È‚çOŠpŒ`‚Ì“à•”
+			// u >= 0, v >= 0, u + v <= 1 ãªã‚‰ä¸‰è§’å½¢ã®å†…éƒ¨
 			return (u >= 0) && (v >= 0) && (u + v <= 1);
 		}
 
 		/**
-		@brief	‹ŠE“à‚Ì”»’è(3D)
-		@param	posMain			[in]	’†S‚Æ‚È‚él‚ÌˆÊ’u
-		@param	posTarget		[in]	‘ÎÛ‚ÌˆÊ’u
-		@param	mainRotY		[in]	Œü‚«
-		@param	fieldofview		[in]	‹–ìŠp(“x”–@)
-		@return	Õ“Ë‚µ‚½‚©‚Ìbool’l
+		@brief	è¦–ç•Œå†…ã®åˆ¤å®š(3D)
+		@param	posMain			[in]	ä¸­å¿ƒã¨ãªã‚‹äººã®ä½ç½®
+		@param	posTarget		[in]	å¯¾è±¡ã®ä½ç½®
+		@param	mainRotY		[in]	å‘ã
+		@param	fieldofview		[in]	è¦–é‡è§’(åº¦æ•°æ³•)
+		@return	è¡çªã—ãŸã‹ã®boolå€¤
 		*/
 		inline bool CollisionViewRange3D(const MyLib::Vector3& posMain, MyLib::Vector3& posTarget, float mainRotY, float fieldofview)
 		{
 
-			// 2ƒLƒƒƒ‰‚ÌƒxƒNƒgƒ‹
+			// 2ã‚­ãƒ£ãƒ©ã®ãƒ™ã‚¯ãƒˆãƒ«
 			D3DXVECTOR3 toPlayer = posTarget - posMain;
 
-			// ‘O•ûƒxƒNƒgƒ‹
+			// å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«
 			D3DXVECTOR3 forward = UtilFunc::Transformation::RotationChangeToForwardVector(mainRotY);
 
-			// ƒxƒNƒgƒ‹‚Æ‘O•ûƒxƒNƒgƒ‹‚ÌŠp“xŒvZ
+			// ãƒ™ã‚¯ãƒˆãƒ«ã¨å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«ã®è§’åº¦è¨ˆç®—
 			float angle = D3DXVec3Dot(&toPlayer, &forward) / (D3DXVec3Length(&toPlayer) * D3DXVec3Length(&forward));
 			angle = acos(angle);
 
-			// ‹ŠE‚Ì’†‚É‚¢‚é‚©”»’è
+			// è¦–ç•Œã®ä¸­ã«ã„ã‚‹ã‹åˆ¤å®š
 			fieldofview = UtilFunc::Transformation::DegreeChangeToRadian(fieldofview);
 			if (angle <= fieldofview / 2.0f)
 			{
@@ -2003,17 +2027,17 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒŒƒC‚Æ‹…‚ÌÕ“Ë”»’è(3D)
-		@param	rayPos				[in]	ƒŒƒC‚Ìn“_
-		@param	rayVec				[in]	ƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹
-		@param	spherePos			[in]	‹…‚Ì’†S“_
-		@param	sphereRadius		[in]	‹…‚Ì”¼Œa
-		@return	Õ“Ë”»’è
+		@brief	ãƒ¬ã‚¤ã¨çƒã®è¡çªåˆ¤å®š(3D)
+		@param	rayPos				[in]	ãƒ¬ã‚¤ã®å§‹ç‚¹
+		@param	rayVec				[in]	ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+		@param	spherePos			[in]	çƒã®ä¸­å¿ƒç‚¹
+		@param	sphereRadius		[in]	çƒã®åŠå¾„
+		@return	è¡çªåˆ¤å®š
 		*/
 		inline bool CollisionRaySphere(const MyLib::Vector3& rayPos, const MyLib::Vector3& rayVec,
 			const MyLib::Vector3& spherePos, float sphereRadius)
 		{
-			// •ÏŠ·Œã‚Ì‹…À•W
+			// å¤‰æ›å¾Œã®çƒåº§æ¨™
 			MyLib::Vector3 sphereCoord;
 			sphereCoord.x = rayPos.x - spherePos.x;
 			sphereCoord.y = rayPos.y - spherePos.y;
@@ -2024,36 +2048,36 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			float C = sphereCoord.Dot(rayVec) - (sphereRadius * sphereRadius);
 
 			if (A == 0.0f)
-				return false; // ƒŒƒC‚Ì’·‚³‚ª0
+				return false; // ãƒ¬ã‚¤ã®é•·ã•ãŒ0
 
 			float s = B * B - 4 * A * C;
 			if (s < 0.0f)
-				return false; // Õ“Ë‚µ‚Ä‚¢‚È‚¢
+				return false; // è¡çªã—ã¦ã„ãªã„
 
 			s = sqrtf(s);
 			float a1 = (B - s) / A;
 			float a2 = (B + s) / A;
 
 			if (a1 < 0.0f || a2 < 0.0f)
-				return false; // ƒŒƒC‚Ì”½‘Î‚ÅÕ“Ë
+				return false; // ãƒ¬ã‚¤ã®åå¯¾ã§è¡çª
 
 			return true;
 		}
 
 		/**
-		@brief	ƒŒƒC‚Æ‹…‚ÌÕ“Ë”»’è(3D)
-		@param	rayPos				[in]	ƒŒƒC‚Ìn“_
-		@param	rayVec				[in]	ƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹
-		@param	spherePos			[in]	‹…‚Ì’†S“_
-		@param	sphereRadius		[in]	‹…‚Ì”¼Œa
-		@param	collisionStartPoint	[in]	Õ“ËŠJn“_
-		@param	collisionEndPoint	[in]	Õ“ËI—¹“_
-		@return	Õ“Ë”»’è
+		@brief	ãƒ¬ã‚¤ã¨çƒã®è¡çªåˆ¤å®š(3D)
+		@param	rayPos				[in]	ãƒ¬ã‚¤ã®å§‹ç‚¹
+		@param	rayVec				[in]	ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+		@param	spherePos			[in]	çƒã®ä¸­å¿ƒç‚¹
+		@param	sphereRadius		[in]	çƒã®åŠå¾„
+		@param	collisionStartPoint	[in]	è¡çªé–‹å§‹ç‚¹
+		@param	collisionEndPoint	[in]	è¡çªçµ‚äº†ç‚¹
+		@return	è¡çªåˆ¤å®š
 		*/
 		inline bool CollisionRaySphere(const MyLib::Vector3& rayPos, const MyLib::Vector3& rayVec, const MyLib::Vector3& spherePos,
 			float sphereRadius, MyLib::Vector3& collisionStartPoint, MyLib::Vector3& collisionEndPoint) 
 		{
-			// •ÏŠ·Œã‚Ì‹…À•W
+			// å¤‰æ›å¾Œã®çƒåº§æ¨™
 			MyLib::Vector3 sphereCoord;
 			sphereCoord.x = spherePos.x - rayPos.x;
 			sphereCoord.y = spherePos.y - rayPos.y;
@@ -2064,20 +2088,20 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			float C = sphereCoord.x * sphereCoord.x + sphereCoord.y * sphereCoord.y + sphereCoord.z * sphereCoord.z - sphereRadius * sphereRadius;
 
 			if (A == 0.0f)
-				return false; // ƒŒƒC‚Ì’·‚³‚ª0
+				return false; // ãƒ¬ã‚¤ã®é•·ã•ãŒ0
 
 			float s = B * B - A * C;
 			if (s < 0.0f)
-				return false; // Õ“Ë‚µ‚Ä‚¢‚È‚¢
+				return false; // è¡çªã—ã¦ã„ãªã„
 
 			s = sqrtf(s);
 			float a1 = (B - s) / A;
 			float a2 = (B + s) / A;
 
 			if (a1 < 0.0f || a2 < 0.0f)
-				return false; // ƒŒƒC‚Ì”½‘Î‚ÅÕ“Ë
+				return false; // ãƒ¬ã‚¤ã®åå¯¾ã§è¡çª
 
-			// Õ“ËŠJnEI—¹’n“_Š„‚èo‚µ
+			// è¡çªé–‹å§‹ãƒ»çµ‚äº†åœ°ç‚¹å‰²ã‚Šå‡ºã—
 			collisionStartPoint.x = rayPos.x + a1 * rayVec.x;
 			collisionStartPoint.y = rayPos.y + a1 * rayVec.y;
 			collisionStartPoint.z = rayPos.z + a1 * rayVec.z;
@@ -2089,18 +2113,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒŒƒC‚Æ’¼•û‘Ì‚ÌÕ“Ë”»’è(3D)
-		@param	pos		[in]	ƒŒƒC‚Ìn“_
-		@param	dir_w	[in]	ƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹
-		@param	aabb	[in]	‹«ŠEƒ{ƒbƒNƒXiƒ[ƒJƒ‹j
-		@param	mat		[in]	‹«ŠEƒ{ƒbƒNƒX‚Ìƒ[ƒ‹ƒh•ÏŠ·s—ñ
-		@param	t		[in]	Õ“ËŠÔŠuio—Íj
-		@return		Õ“Ë”»’è
+		@brief	ãƒ¬ã‚¤ã¨ç›´æ–¹ä½“ã®è¡çªåˆ¤å®š(3D)
+		@param	pos		[in]	ãƒ¬ã‚¤ã®å§‹ç‚¹
+		@param	dir_w	[in]	ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+		@param	aabb	[in]	å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ï¼ˆãƒ­ãƒ¼ã‚«ãƒ«ï¼‰
+		@param	mat		[in]	å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›è¡Œåˆ—
+		@param	t		[in]	è¡çªé–“éš”ï¼ˆå‡ºåŠ›ï¼‰
+		@return		è¡çªåˆ¤å®š
 		*/
 		inline bool CollisionRayAABB(MyLib::Vector3* pos, MyLib::Vector3* dir_w, MyLib::AABB* aabb, MyLib::Matrix* mtx, float& t, MyLib::Vector3* colPos = 0)
 		{
 
-			// ƒŒƒC‚ğ‹«ŠEƒ{ƒbƒNƒX‚ÌˆÊ’u‚ÖˆÚ“®
+			// ãƒ¬ã‚¤ã‚’å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ã®ä½ç½®ã¸ç§»å‹•
 			D3DXMATRIX invMat, trans = mtx->ConvertD3DXMATRIX();
 			D3DXMatrixInverse(&invMat, 0, &trans);
 
@@ -2111,7 +2135,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			invMat._43 = 0.0f;
 			D3DXVec3TransformCoord(&dir_l, dir_w, &invMat);
 
-			// Œğ·”»’è
+			// äº¤å·®åˆ¤å®š
 			float p[3], d[3], min[3], max[3];
 			memcpy(p, &p_l, sizeof(MyLib::Vector3));
 			memcpy(d, &dir_l, sizeof(MyLib::Vector3));
@@ -2126,12 +2150,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				if (abs(d[i]) < FLT_EPSILON) 
 				{
 					if (p[i] < min[i] || p[i] > max[i])
-						return false;	// Œğ·‚µ‚Ä‚¢‚È‚¢
+						return false;	// äº¤å·®ã—ã¦ã„ãªã„
 				}
 				else 
 				{
-					// ƒXƒ‰ƒu‚Æ‚Ì‹——£‚ğZo
-					// t1‚ª‹ßƒXƒ‰ƒuAt2‚ª‰“ƒXƒ‰ƒu‚Æ‚Ì‹——£
+					// ã‚¹ãƒ©ãƒ–ã¨ã®è·é›¢ã‚’ç®—å‡º
+					// t1ãŒè¿‘ã‚¹ãƒ©ãƒ–ã€t2ãŒé ã‚¹ãƒ©ãƒ–ã¨ã®è·é›¢
 					float odd = 1.0f / d[i];
 					float t1 = (min[i] - p[i]) * odd;
 					float t2 = (max[i] - p[i]) * odd;
@@ -2143,13 +2167,13 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 					if (t1 > t) t = t1;
 					if (t2 < t_max) t_max = t2;
 
-					// ƒXƒ‰ƒuŒğ·ƒ`ƒFƒbƒN
+					// ã‚¹ãƒ©ãƒ–äº¤å·®ãƒã‚§ãƒƒã‚¯
 					if (t >= t_max)
 						return false;
 				}
 			}
 
-			// Œğ·‚µ‚Ä‚¢‚é
+			// äº¤å·®ã—ã¦ã„ã‚‹
 			if (colPos) {
 				*colPos = *pos + t * (*dir_w);
 			}
@@ -2159,53 +2183,53 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	ƒŒƒC‚Æ4“_‚©‚çì‚ç‚ê‚é•½–Ê‚ÌÕ“Ë”»’è(3D)
-		@param	pos		[in]	ƒŒƒC‚Ìn“_
-		@param	dir_w	[in]	ƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹
-		@param	v0		[in]	lŠpŒ`‚Ì1“_–Úi”½Œv‰ñ‚è‚Å’è‹`j
-		@param	v1		[in]	lŠpŒ`‚Ì2“_–Ú
-		@param	v2		[in]	lŠpŒ`‚Ì3“_–Ú
-		@param	v3		[in]	lŠpŒ`‚Ì4“_–Ú
-		@param	t		[out]	Õ“Ë‚Ü‚Å‚Ì‹——£iƒŒƒC‚Ì’·‚³‚É”ä—áj
-		@param	colPos	[out]	Õ“Ë“_À•W
-		@param	colPos	[out]	Õ“Ë“_À•W
-		@return	Õ“Ë”»’è
+		@brief	ãƒ¬ã‚¤ã¨4ç‚¹ã‹ã‚‰ä½œã‚‰ã‚Œã‚‹å¹³é¢ã®è¡çªåˆ¤å®š(3D)
+		@param	pos		[in]	ãƒ¬ã‚¤ã®å§‹ç‚¹
+		@param	dir_w	[in]	ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+		@param	v0		[in]	å››è§’å½¢ã®1ç‚¹ç›®ï¼ˆåæ™‚è¨ˆå›ã‚Šã§å®šç¾©ï¼‰
+		@param	v1		[in]	å››è§’å½¢ã®2ç‚¹ç›®
+		@param	v2		[in]	å››è§’å½¢ã®3ç‚¹ç›®
+		@param	v3		[in]	å››è§’å½¢ã®4ç‚¹ç›®
+		@param	t		[out]	è¡çªã¾ã§ã®è·é›¢ï¼ˆãƒ¬ã‚¤ã®é•·ã•ã«æ¯”ä¾‹ï¼‰
+		@param	colPos	[out]	è¡çªç‚¹åº§æ¨™
+		@param	colPos	[out]	è¡çªç‚¹åº§æ¨™
+		@return	è¡çªåˆ¤å®š
 		*/
 		inline bool CollisionRayQuad(MyLib::Vector3* pos, MyLib::Vector3* dir_w, MyLib::Vector3* v0, MyLib::Vector3* v1, MyLib::Vector3* v2, MyLib::Vector3* v3, float& t, MyLib::Vector3* colPos = 0) 
 		{
-			// lŠpŒ`‚Ì–Ê‚ğ\¬‚·‚é3‚Â‚Ì’¸“_‚©‚ç–@ü‚ğ‹‚ß‚éi”½Œv‰ñ‚è‡j
+			// å››è§’å½¢ã®é¢ã‚’æ§‹æˆã™ã‚‹3ã¤ã®é ‚ç‚¹ã‹ã‚‰æ³•ç·šã‚’æ±‚ã‚ã‚‹ï¼ˆåæ™‚è¨ˆå›ã‚Šé †ï¼‰
 			MyLib::Vector3 edge1 = *v1 - *v0;
 			MyLib::Vector3 edge2 = *v2 - *v0;
 			MyLib::Vector3 normal;
-			D3DXVec3Cross(&normal, &edge1, &edge2); // ŠOÏ‚Å–@ü‚ğ‹‚ß‚é
-			D3DXVec3Normalize(&normal, &normal);    // ³‹K‰»
+			D3DXVec3Cross(&normal, &edge1, &edge2); // å¤–ç©ã§æ³•ç·šã‚’æ±‚ã‚ã‚‹
+			D3DXVec3Normalize(&normal, &normal);    // æ­£è¦åŒ–
 
-			// •½–Ê•û’ö®‚ÌŒW”‚ğ‹‚ß‚é
+			// å¹³é¢æ–¹ç¨‹å¼ã®ä¿‚æ•°ã‚’æ±‚ã‚ã‚‹
 			float d = -D3DXVec3Dot(&normal, v0);
 
-			// ƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹‚Æ–@ü‚Ì“àÏ‚ğ‹‚ß‚é
+			// ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã¨æ³•ç·šã®å†…ç©ã‚’æ±‚ã‚ã‚‹
 			float dotDirNormal = D3DXVec3Dot(dir_w, &normal);
 			if (abs(dotDirNormal) < FLT_EPSILON) 
 			{
-				// ƒŒƒC‚ª•½–Ê‚Æ•½s‚Èê‡AÕ“Ë‚µ‚È‚¢
+				// ãƒ¬ã‚¤ãŒå¹³é¢ã¨å¹³è¡Œãªå ´åˆã€è¡çªã—ãªã„
 				return false;
 			}
 
-			// ƒŒƒC‚Æ•½–Ê‚ÌŒğ“_‚ğ‹‚ß‚é
+			// ãƒ¬ã‚¤ã¨å¹³é¢ã®äº¤ç‚¹ã‚’æ±‚ã‚ã‚‹
 			float dotPosNormal = D3DXVec3Dot(pos, &normal);
 			t = -(dotPosNormal + d) / dotDirNormal;
 
 			if (t < 0.0f) 
 			{
-				// ƒŒƒC‚ª•½–Ê‚ÌŒã‚ë‚É‚ ‚éê‡AÕ“Ë‚µ‚È‚¢
+				// ãƒ¬ã‚¤ãŒå¹³é¢ã®å¾Œã‚ã«ã‚ã‚‹å ´åˆã€è¡çªã—ãªã„
 				return false;
 			}
 
-			// Œğ“_‚ğŒvZ
+			// äº¤ç‚¹ã‚’è¨ˆç®—
 			MyLib::Vector3 intersection = *pos + t * (*dir_w);
 
-			// Œğ“_‚ªlŠpŒ`‚Ì“à•”‚É‚ ‚é‚©‚ğƒ`ƒFƒbƒN
-			// lŠpŒ`‚ğ2‚Â‚ÌOŠpŒ`‚É•ªŠ„‚µA‚»‚ê‚¼‚ê‚ÌOŠpŒ`‚Ì“à•”‚É‚ ‚é‚©‚ğ”»’è
+			// äº¤ç‚¹ãŒå››è§’å½¢ã®å†…éƒ¨ã«ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯
+			// å››è§’å½¢ã‚’2ã¤ã®ä¸‰è§’å½¢ã«åˆ†å‰²ã—ã€ãã‚Œãã‚Œã®ä¸‰è§’å½¢ã®å†…éƒ¨ã«ã‚ã‚‹ã‹ã‚’åˆ¤å®š
 
 			bool bLand1 = false, bLand2 = false;
 
@@ -2233,30 +2257,30 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‰~‚ÆAABB‚Ì“–‚½‚è”»’è
-		@param	circleCenter		[in]	‰~‚Ì’†SˆÊ’u
-		@param	radius				[in]	”¼Œa
-		@param	aabb				[in]	‹«ŠEƒ{ƒbƒNƒXiƒ[ƒJƒ‹j
-		@param	crossPosition		[inout]	Œğ“_
+		@brief	å††ã¨AABBã®å½“ãŸã‚Šåˆ¤å®š
+		@param	circleCenter		[in]	å††ã®ä¸­å¿ƒä½ç½®
+		@param	radius				[in]	åŠå¾„
+		@param	aabb				[in]	å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ï¼ˆãƒ­ãƒ¼ã‚«ãƒ«ï¼‰
+		@param	crossPosition		[inout]	äº¤ç‚¹
 		@return	void
 		*/
 		inline bool CollisionCircleToAABB(const MyLib::Vector3& circleCenter, const float radius, MyLib::AABB aabb, MyLib::Vector3& crossPosition)
 		{
-			// AABB‚Ì’†S
+			// AABBã®ä¸­å¿ƒ
 			MyLib::Vector3 aabbCenter = {
 				(aabb.vtxMin.x + aabb.vtxMax.x) * 0.5f,
 				(aabb.vtxMin.y + aabb.vtxMax.y) * 0.5f,
 				(aabb.vtxMin.z + aabb.vtxMax.z) * 0.5f
 			};
 
-			// AABB‚Ì”¼•
+			// AABBã®åŠå¹…
 			MyLib::Vector3 aabbHalfExtents = {
 				(aabb.vtxMax.x - aabb.vtxMin.x) * 0.5f,
 				(aabb.vtxMax.y - aabb.vtxMin.y) * 0.5f,
 				(aabb.vtxMax.z - aabb.vtxMin.z) * 0.5f
 			};
 
-			// AABB‚Æ‰~‚Ì’†S“_‚Ì‹——£‚Ìâ‘Î’l
+			// AABBã¨å††ã®ä¸­å¿ƒç‚¹ã®è·é›¢ã®çµ¶å¯¾å€¤
 			MyLib::Vector3 difference = {
 				std::abs(circleCenter.x - aabbCenter.x),
 				std::abs(circleCenter.y - aabbCenter.y),
@@ -2281,7 +2305,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			};
 			float distance = direction.Length();
 
-			// ‰~‚ªAABB‚Ì’†‚É‚ ‚éê‡
+			// å††ãŒAABBã®ä¸­ã«ã‚ã‚‹å ´åˆ
 			if (distance < radius)
 			{
 				crossPosition = {
@@ -2296,16 +2320,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‰~‚ÆAABB‚Ì“–‚½‚è”»’è
-		@param	circleCenter	[in]	‰~‚Ì’†SˆÊ’u
-		@param	radius			[in]	”¼Œa
-		@param	aabb			[in]	‹«ŠEƒ{ƒbƒNƒXiƒ[ƒJƒ‹j
-		@param	aabbMatrix		[in]	AABB‚Ìƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX
+		@brief	å††ã¨AABBã®å½“ãŸã‚Šåˆ¤å®š
+		@param	circleCenter	[in]	å††ã®ä¸­å¿ƒä½ç½®
+		@param	radius			[in]	åŠå¾„
+		@param	aabb			[in]	å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ï¼ˆãƒ­ãƒ¼ã‚«ãƒ«ï¼‰
+		@param	aabbMatrix		[in]	AABBã®ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
 		@return	void
 		*/
 		inline bool CollisionCircleToAABB(MyLib::Vector3& circleCenter, const float radius, MyLib::AABB aabb, MyLib::Matrix aabbMatrix)
 		{
-			// AABB‚Ì’†S
+			// AABBã®ä¸­å¿ƒ
 			MyLib::Vector3 aabbCenter = {
 				(aabb.vtxMin.x + aabb.vtxMax.x) * 0.5f,
 				(aabb.vtxMin.y + aabb.vtxMax.y) * 0.5f,
@@ -2313,59 +2337,59 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			};
 			aabbCenter += aabbMatrix.GetWorldPosition();
 
-			// AABB‚ÌƒXƒP[ƒŠƒ“ƒO‚ğl—¶‚µ‚Ä’†S‚ğŒvZ
+			// AABBã®ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã‚’è€ƒæ…®ã—ã¦ä¸­å¿ƒã‚’è¨ˆç®—
 			aabbCenter.x = aabbMatrix.GetWorldPosition().x + aabbCenter.x * aabbMatrix.GetWorldPosition().x;
 			aabbCenter.y = aabbMatrix.GetWorldPosition().y + aabbCenter.y * aabbMatrix.GetWorldPosition().y;
 			aabbCenter.z = aabbMatrix.GetWorldPosition().z + aabbCenter.z * aabbMatrix.GetWorldPosition().z;
 
-			// AABB‚Ì”¼•
+			// AABBã®åŠå¹…
 			MyLib::Vector3 aabbHalfExtents = {
 				(aabb.vtxMax.x - aabb.vtxMin.x) * 0.5f,
 				(aabb.vtxMax.y - aabb.vtxMin.y) * 0.5f,
 				(aabb.vtxMax.z - aabb.vtxMin.z) * 0.5f
 			};
 
-			// AABB‚ÌƒXƒP[ƒŠƒ“ƒO‚ğl—¶‚µ‚Ä”¼•‚ğŒvZ
+			// AABBã®ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã‚’è€ƒæ…®ã—ã¦åŠå¹…ã‚’è¨ˆç®—
 			D3DXVECTOR3 scale = aabbMatrix.GetScale();
 			aabbHalfExtents.x *= scale.x;
 			aabbHalfExtents.y *= scale.y;
 			aabbHalfExtents.z *= scale.z;
 
-			// AABB‚Ìƒ[ƒJƒ‹‹óŠÔ‚É‰~‚ÌˆÊ’u‚ğ•ÏŠ·
+			// AABBã®ãƒ­ãƒ¼ã‚«ãƒ«ç©ºé–“ã«å††ã®ä½ç½®ã‚’å¤‰æ›
 			MyLib::Vector3 localCenter, diffCenter = { circleCenter.x - aabbCenter.x, circleCenter.y - aabbCenter.y, circleCenter.z - aabbCenter.z };
 			localCenter = aabbMatrix.Coord(diffCenter);
 
-			// AABB‚Ìƒ[ƒJƒ‹‹óŠÔ“à‚Å‚ÌÅ‚à‹ß‚¢“_‚ÌÀ•W‚ğŒvZ
+			// AABBã®ãƒ­ãƒ¼ã‚«ãƒ«ç©ºé–“å†…ã§ã®æœ€ã‚‚è¿‘ã„ç‚¹ã®åº§æ¨™ã‚’è¨ˆç®—
 			float closestPointX = UtilFunc::Transformation::Clamp(localCenter.x, -aabbHalfExtents.x, aabbHalfExtents.x);
 			float closestPointY = UtilFunc::Transformation::Clamp(localCenter.y, -aabbHalfExtents.y, aabbHalfExtents.y);
 			float closestPointZ = UtilFunc::Transformation::Clamp(localCenter.z, -aabbHalfExtents.z, aabbHalfExtents.z);
 
-			// Å‚à‹ß‚¢“_‚Æ‰~‚Ì’†S“_‚Ì‹——£‚Ì2æ
+			// æœ€ã‚‚è¿‘ã„ç‚¹ã¨å††ã®ä¸­å¿ƒç‚¹ã®è·é›¢ã®2ä¹—
 			float distanceSquared = 
 				powf(closestPointX - localCenter.x, 2) +
 				powf(closestPointY - localCenter.y, 2) +
 				powf(closestPointZ - localCenter.z, 2);
 
-			// “àÏ‚ğŒvZ
+			// å†…ç©ã‚’è¨ˆç®—
 			float dotProduct = 
 				(closestPointX - localCenter.x) * (aabb.vtxMax.x - aabb.vtxMin.x) +
 				(closestPointY - localCenter.y) * (aabb.vtxMax.y - aabb.vtxMin.y) +
 				(closestPointZ - localCenter.z) * (aabb.vtxMax.z - aabb.vtxMin.z);
 
 
-			// ‰~‚ÆAABB‚ÌÕ“Ë”»’è‚ª”­¶‚µ‚½ê‡‚Ìˆ—
+			// å††ã¨AABBã®è¡çªåˆ¤å®šãŒç™ºç”Ÿã—ãŸå ´åˆã®å‡¦ç†
 			if (distanceSquared <= radius * radius)
 			{
-				// Å‚à‹ß‚¢“_‚ğ‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p‚·‚é
+				// æœ€ã‚‚è¿‘ã„ç‚¹ã‚’æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨ã™ã‚‹
 				MyLib::Vector3 pushBackVector = { 0.0f, 0.0f, 0.0f };
 
-				// Å‚à‹ß‚¢“_‚ª‰~‚ÌŠO‘¤‚É‚ ‚éê‡A‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚Í‰~‚Ì’†S‚©‚çÅ‚à‹ß‚¢“_‚ÖŒü‚©‚¤ƒxƒNƒgƒ‹‚É‚È‚é
+				// æœ€ã‚‚è¿‘ã„ç‚¹ãŒå††ã®å¤–å´ã«ã‚ã‚‹å ´åˆã€æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã¯å††ã®ä¸­å¿ƒã‹ã‚‰æœ€ã‚‚è¿‘ã„ç‚¹ã¸å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã«ãªã‚‹
 				if (distanceSquared > 0.0f)
 				{
-					// Å‚à‹ß‚¢“_‚ğ‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚Æ‚µ‚Äg—p‚·‚é
+					// æœ€ã‚‚è¿‘ã„ç‚¹ã‚’æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ä½¿ç”¨ã™ã‚‹
 					MyLib::Vector3 pushBackVector = { 0.0f, 0.0f, 0.0f };
 
-					// Å‚à‹ß‚¢“_‚ªAABB‚Ì•Óã‚É‚ ‚éê‡‚Í‰Ÿ‚µ–ß‚µ‚ğs‚í‚È‚¢
+					// æœ€ã‚‚è¿‘ã„ç‚¹ãŒAABBã®è¾ºä¸Šã«ã‚ã‚‹å ´åˆã¯æŠ¼ã—æˆ»ã—ã‚’è¡Œã‚ãªã„
 					if (closestPointX != localCenter.x)
 					{
 						float distance = sqrt(distanceSquared);
@@ -2382,12 +2406,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 						pushBackVector.z = (localCenter.z - closestPointZ) * (radius / distance);
 					}
 
-					// ‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚ğAABB‚Ìƒ[ƒJƒ‹‹óŠÔ‚©‚çŒ³‚ÌÀ•WŒn‚É•ÏŠ·
+					// æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã‚’AABBã®ãƒ­ãƒ¼ã‚«ãƒ«ç©ºé–“ã‹ã‚‰å…ƒã®åº§æ¨™ç³»ã«å¤‰æ›
 					D3DXMATRIX inverseAABBMatrix, invAABBMTX = aabbMatrix.ConvertD3DXMATRIX();
 					D3DXMatrixInverse(&inverseAABBMatrix, nullptr, &invAABBMTX);
 					D3DXVec3TransformCoord(&pushBackVector, &pushBackVector, &inverseAABBMatrix);
 
-					// ‰~‚Ì’†S‚ğ‰Ÿ‚µ–ß‚·
+					// å††ã®ä¸­å¿ƒã‚’æŠ¼ã—æˆ»ã™
 					circleCenter.x += pushBackVector.x;
 					circleCenter.y += pushBackVector.y;
 					circleCenter.z += pushBackVector.z;
@@ -2400,32 +2424,32 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 
-		// ‰ñ“]‚·‚éAABB‚Æƒ{ƒbƒNƒX‚Ì“–‚½‚è”»’è‚ğs‚¤ŠÖ”
+		// å›è»¢ã™ã‚‹AABBã¨ãƒœãƒƒã‚¯ã‚¹ã®å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã†é–¢æ•°
 		inline bool checkCollision(MyLib::AABB aabb, const MyLib::Vector3& boxCenter, const MyLib::Vector3& boxSize, const D3DXMATRIX& rotationMatrix)
 		{
-			// AABB‚Ì’†S
+			// AABBã®ä¸­å¿ƒ
 			MyLib::Vector3 aabbCenter = {
 				(aabb.vtxMin.x + aabb.vtxMax.x) * 0.5f,
 				(aabb.vtxMin.y + aabb.vtxMax.y) * 0.5f,
 				(aabb.vtxMin.z + aabb.vtxMax.z) * 0.5f
 			};
 
-			// AABB‚Ì”¼•
+			// AABBã®åŠå¹…
 			MyLib::Vector3 aabbSize = {
 				(aabb.vtxMax.x - aabb.vtxMin.x) * 0.5f,
 				(aabb.vtxMax.y - aabb.vtxMin.y) * 0.5f,
 				(aabb.vtxMax.z - aabb.vtxMin.z) * 0.5f
 			};
 
-			// ‰ñ“]‘O‚ÌAABB‚ÌÅ¬‚¨‚æ‚ÑÅ‘åÀ•W‚ğŒvZ
+			// å›è»¢å‰ã®AABBã®æœ€å°ãŠã‚ˆã³æœ€å¤§åº§æ¨™ã‚’è¨ˆç®—
 			MyLib::Vector3 aabbMin = aabbCenter - aabbSize;
 			MyLib::Vector3 aabbMax = aabbCenter + aabbSize;
 
-			// ƒ{ƒbƒNƒX‚ÌÅ¬‚¨‚æ‚ÑÅ‘åÀ•W‚ğŒvZ
+			// ãƒœãƒƒã‚¯ã‚¹ã®æœ€å°ãŠã‚ˆã³æœ€å¤§åº§æ¨™ã‚’è¨ˆç®—
 			MyLib::Vector3 boxMin = boxCenter - boxSize;
 			MyLib::Vector3 boxMax = boxCenter + boxSize;
 
-			// ‰ñ“]‚µ‚½AABB‚ÌÅ¬‚¨‚æ‚ÑÅ‘åÀ•W‚ğŒvZ
+			// å›è»¢ã—ãŸAABBã®æœ€å°ãŠã‚ˆã³æœ€å¤§åº§æ¨™ã‚’è¨ˆç®—
 			MyLib::Vector3 rotatedAABBMin, rotatedAABBMax;
 			D3DXVec3TransformCoord(&rotatedAABBMin, &aabbMin, &rotationMatrix);
 			D3DXVec3TransformCoord(&rotatedAABBMax, &aabbMax, &rotationMatrix);
@@ -2441,7 +2465,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
 				40.0f, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
-			// AABB‚Ì‹«ŠEƒ{ƒbƒNƒX‚Æƒ{ƒbƒNƒX‚Ì‹«ŠEƒ{ƒbƒNƒX‚ªˆê•”‚Å‚àd‚È‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğŠm”F
+			// AABBã®å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ã¨ãƒœãƒƒã‚¯ã‚¹ã®å¢ƒç•Œãƒœãƒƒã‚¯ã‚¹ãŒä¸€éƒ¨ã§ã‚‚é‡ãªã£ã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’ç¢ºèª
 			bool collisionX = rotatedAABBMax.x >= boxMin.x && rotatedAABBMin.x <= boxMax.x;
 			bool collisionY = rotatedAABBMax.y >= boxMin.y && rotatedAABBMin.y <= boxMax.y;
 			bool collisionZ = rotatedAABBMax.z >= boxMin.z && rotatedAABBMin.z <= boxMax.z;
@@ -2451,11 +2475,11 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 		/**
-		@brief	²‚É‘Î‚·‚éË‰eæ“¾
-		@param	vertices		[in]	’¸“_”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		@param	numVertices		[in]	’¸“_”
-		@param	axis			[in]	²
-		@return	D3DXVECTOR2 Ë‰e
+		@brief	è»¸ã«å¯¾ã™ã‚‹å°„å½±å–å¾—
+		@param	vertices		[in]	é ‚ç‚¹é…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		@param	numVertices		[in]	é ‚ç‚¹æ•°
+		@param	axis			[in]	è»¸
+		@return	D3DXVECTOR2 å°„å½±
 		*/
 		inline D3DXVECTOR2 ProjectOntoAxis(const MyLib::Vector3* vertices, int numVertices, const MyLib::Vector3& axis)
 		{
@@ -2473,10 +2497,10 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	Ë‰e‚ÌŒğ·ƒ`ƒFƒbƒN
-		@param	projection1		[in]	Ë‰e1
-		@param	projection2		[in]	Ë‰e2
-		@return	bool Œğ·Œ‹‰Ê
+		@brief	å°„å½±ã®äº¤å·®ãƒã‚§ãƒƒã‚¯
+		@param	projection1		[in]	å°„å½±1
+		@param	projection2		[in]	å°„å½±2
+		@return	bool äº¤å·®çµæœ
 		*/
 		inline bool Intersect(const D3DXVECTOR2& projection1, const D3DXVECTOR2& projection2) 
 		{
@@ -2484,48 +2508,48 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ŠOÏ‚Ì¶‰E”»’è
-		@param	posLeft		[in]	‹«ŠEü¶À•W
-		@param	posRight	[in]	‹«ŠEü‰EÀ•W
-		@param	pos			[in]	”»’èˆÊ’u
-		@return	float ‹«ŠEü‚©‚ç‚Ì‹——£
+		@brief	å¤–ç©ã®å·¦å³åˆ¤å®š
+		@param	posLeft		[in]	å¢ƒç•Œç·šå·¦åº§æ¨™
+		@param	posRight	[in]	å¢ƒç•Œç·šå³åº§æ¨™
+		@param	pos			[in]	åˆ¤å®šä½ç½®
+		@return	float å¢ƒç•Œç·šã‹ã‚‰ã®è·é›¢
 		*/
 		inline float LineOuterProduct(MyLib::Vector3 posLeft, MyLib::Vector3 posRight, MyLib::Vector3 pos)
 		{
-			MyLib::Vector3 vecLine;		// ‹«ŠEüƒxƒNƒgƒ‹
-			MyLib::Vector3 vecToPos;	// ¶’[‚ÆˆÊ’u‚ÌƒxƒNƒgƒ‹
+			MyLib::Vector3 vecLine;		// å¢ƒç•Œç·šãƒ™ã‚¯ãƒˆãƒ«
+			MyLib::Vector3 vecToPos;	// å·¦ç«¯ã¨ä½ç½®ã®ãƒ™ã‚¯ãƒˆãƒ«
 
-			// ‹«ŠEüƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+			// å¢ƒç•Œç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 			vecLine = posRight - posLeft;
 
-			// ¶’[‚ÆˆÊ’u‚ÌƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+			// å·¦ç«¯ã¨ä½ç½®ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 			vecToPos = pos - posLeft;
 
-			// ŠOÏ‚ÌŒvZŒ‹‰Ê‚ğ•Ô‚·
+			// å¤–ç©ã®è¨ˆç®—çµæœã‚’è¿”ã™
 			return (vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z);
 		}
 
 		/**
-		@brief	AABB‚Æƒ{ƒbƒNƒX‚Ì“–‚½‚è”»’è
-		@param	aabb		[in]	ƒƒCƒ“‚ÌAABBî•ñ
-		@param	aabbMtx		[in]	ƒƒCƒ“‚Ìƒ}ƒgƒŠƒbƒNƒX
-		@param	boxAABB		[in]	ƒ{ƒbƒNƒX‚ÌAABBî•ñ
-		@param	boxMtx		[in]	ƒ{ƒbƒNƒX‚Ìƒ}ƒgƒŠƒbƒNƒX
-		@return	bool Õ“ËŒ‹‰Ê
+		@brief	AABBã¨ãƒœãƒƒã‚¯ã‚¹ã®å½“ãŸã‚Šåˆ¤å®š
+		@param	aabb		[in]	ãƒ¡ã‚¤ãƒ³ã®AABBæƒ…å ±
+		@param	aabbMtx		[in]	ãƒ¡ã‚¤ãƒ³ã®ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@param	boxAABB		[in]	ãƒœãƒƒã‚¯ã‚¹ã®AABBæƒ…å ±
+		@param	boxMtx		[in]	ãƒœãƒƒã‚¯ã‚¹ã®ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@return	bool è¡çªçµæœ
 		*/
 		inline bool IsAABBCollidingWithBox(const MyLib::AABB& aabb, MyLib::Matrix aabbMtx, const MyLib::AABB& boxAABB, MyLib::Matrix boxMtx)
 		{
 			//=============================
-			// AABBî•ñ
+			// AABBæƒ…å ±
 			//=============================
-			// AABB‚Ì’†S
+			// AABBã®ä¸­å¿ƒ
 			MyLib::Vector3 aabbCenter = {
 				(aabb.vtxMin.x + aabb.vtxMax.x) * 0.5f,
 				(aabb.vtxMin.y + aabb.vtxMax.y) * 0.5f,
 				(aabb.vtxMin.z + aabb.vtxMax.z) * 0.5f
 			};
 
-			// AABB‚ÌƒTƒCƒY
+			// AABBã®ã‚µã‚¤ã‚º
 			MyLib::Vector3 aabbExtents = {
 				(aabb.vtxMax.x - aabb.vtxMin.x) * 0.5f,
 				(aabb.vtxMax.y - aabb.vtxMin.y) * 0.5f,
@@ -2533,16 +2557,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			};
 
 			//=============================
-			// ƒ{ƒbƒNƒXî•ñ
+			// ãƒœãƒƒã‚¯ã‚¹æƒ…å ±
 			//=============================
-			// ƒ{ƒbƒNƒX‚Ì’†S
+			// ãƒœãƒƒã‚¯ã‚¹ã®ä¸­å¿ƒ
 			MyLib::Vector3 boxCenter = {
 				(boxAABB.vtxMin.x + boxAABB.vtxMax.x) * 0.5f,
 				(boxAABB.vtxMin.y + boxAABB.vtxMax.y) * 0.5f,
 				(boxAABB.vtxMin.z + boxAABB.vtxMax.z) * 0.5f
 			};
 
-			// ƒ{ƒbƒNƒX‚ÌƒTƒCƒY
+			// ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚º
 			MyLib::Vector3 boxExtents = {
 				(boxAABB.vtxMax.x - boxAABB.vtxMin.x) * 0.5f,
 				(boxAABB.vtxMax.y - boxAABB.vtxMin.y) * 0.5f,
@@ -2551,69 +2575,69 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 
 			//=============================
-			// ’¸“_•ÏŠ·
+			// é ‚ç‚¹å¤‰æ›
 			//=============================
-			// AABB‚Ì8’¸“_‚ğƒ[ƒ‹ƒhÀ•W‚É‚·‚é
+			// AABBã®8é ‚ç‚¹ã‚’ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã«ã™ã‚‹
 			MyLib::Vector3 aabbVertices[8];
 			for (int i = 0; i < 8; ++i) 
 			{
-				// ‹ô”‚Íƒ}ƒCƒiƒXAŠï”‚Íƒvƒ‰ƒX•ûŒü
+				// å¶æ•°ã¯ãƒã‚¤ãƒŠã‚¹ã€å¥‡æ•°ã¯ãƒ—ãƒ©ã‚¹æ–¹å‘
 				MyLib::Vector3 corner(
 					(i & 1) ? aabbExtents.x : -aabbExtents.x,
 					(i & 2) ? aabbExtents.y : -aabbExtents.y,
 					(i & 4) ? aabbExtents.z : -aabbExtents.z);
 
-				// ƒ}ƒgƒŠƒbƒNƒX‚ğŒ³‚É’¸“_•ÏŠ·
+				// ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å…ƒã«é ‚ç‚¹å¤‰æ›
 				aabbVertices[i] = aabbMtx.Coord(corner);
 			}
 
-			// ƒ{ƒbƒNƒX‚Ì8’¸“_‚ğƒ[ƒ‹ƒhÀ•W‚É‚·‚é
+			// ãƒœãƒƒã‚¯ã‚¹ã®8é ‚ç‚¹ã‚’ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã«ã™ã‚‹
 			MyLib::Vector3 boxVertices[8];
 			for (int i = 0; i < 8; ++i) 
 			{
-				// ‹ô”‚Íƒ}ƒCƒiƒXAŠï”‚Íƒvƒ‰ƒX•ûŒü
+				// å¶æ•°ã¯ãƒã‚¤ãƒŠã‚¹ã€å¥‡æ•°ã¯ãƒ—ãƒ©ã‚¹æ–¹å‘
 				MyLib::Vector3 corner(
 					(i & 1) ? boxExtents.x : -boxExtents.x,
 					(i & 2) ? boxExtents.y : -boxExtents.y,
 					(i & 4) ? boxExtents.z : -boxExtents.z);
 
-				// ƒ}ƒgƒŠƒbƒNƒX‚ğŒ³‚É’¸“_•ÏŠ·
+				// ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’å…ƒã«é ‚ç‚¹å¤‰æ›
 				boxVertices[i] = boxMtx.Coord(corner);
 			}
 
 			//=============================
-			// •ª—£²’è—
+			// åˆ†é›¢è»¸å®šç†
 			//=============================
-			// AABBŒ³‚Ì”»’è
+			// AABBå…ƒã®åˆ¤å®š
 			for (int i = 0; i < 3; ++i)
 			{
 				MyLib::Vector3 axis(aabbMtx.m[i][0], aabbMtx.m[i][1], aabbMtx.m[i][2]);
 
-				// AABB‚ÌË‰e
+				// AABBã®å°„å½±
 				D3DXVECTOR2 aabbProjection = ProjectOntoAxis(aabbVertices, 8, axis);
 
-				// ƒ{ƒbƒNƒX‚ÌË‰e
+				// ãƒœãƒƒã‚¯ã‚¹ã®å°„å½±
 				D3DXVECTOR2 boxProjection = ProjectOntoAxis(boxVertices, 8, axis);
 
-				// AABB‚Æƒ{ƒbƒNƒX‚ÌŒğ·”»’è
+				// AABBã¨ãƒœãƒƒã‚¯ã‚¹ã®äº¤å·®åˆ¤å®š
 				if (!Intersect(aabbProjection, boxProjection)) 
 				{
 					return false;
 				}
 			}
 
-			// ƒ{ƒbƒNƒXŒ³‚Ì”»’è
+			// ãƒœãƒƒã‚¯ã‚¹å…ƒã®åˆ¤å®š
 			for (int i = 0; i < 3; ++i)
 			{
 				MyLib::Vector3 axis(boxMtx.m[i][0], boxMtx.m[i][1], boxMtx.m[i][2]);
 
-				// AABB‚ÌË‰e
+				// AABBã®å°„å½±
 				D3DXVECTOR2 aabbProjection = ProjectOntoAxis(aabbVertices, 8, axis);
 
-				// ƒ{ƒbƒNƒX‚ÌË‰e
+				// ãƒœãƒƒã‚¯ã‚¹ã®å°„å½±
 				D3DXVECTOR2 boxProjection = ProjectOntoAxis(boxVertices, 8, axis);
 
-				// AABB‚Æƒ{ƒbƒNƒX‚ÌŒğ·”»’è
+				// AABBã¨ãƒœãƒƒã‚¯ã‚¹ã®äº¤å·®åˆ¤å®š
 				if (!Intersect(aabbProjection, boxProjection))
 				{
 					return false;
@@ -2625,21 +2649,21 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 	}
 
 	/**
-	@brief	•ÏŠ·ŠÖ”
+	@brief	å¤‰æ›é–¢æ•°
 	*/
 	namespace Transformation
 	{
 		/**
-		@brief	Šp“x‚Ì³‹K‰»(’P²)
-		@details -ƒÎ or ƒÎ‚ğ’´‚¦‚½Šp“x‚ğ•â³‚·‚éB”ÍˆÍ“à‚Éû‚Ü‚é‚Ü‚Å–³ŒÀƒ‹[ƒv
-		@param	fRot	[inout]	•â³‚·‚éŠp“x
+		@brief	è§’åº¦ã®æ­£è¦åŒ–(å˜è»¸)
+		@details -Ï€ or Ï€ã‚’è¶…ãˆãŸè§’åº¦ã‚’è£œæ­£ã™ã‚‹ã€‚ç¯„å›²å†…ã«åã¾ã‚‹ã¾ã§ç„¡é™ãƒ«ãƒ¼ãƒ—
+		@param	fRot	[inout]	è£œæ­£ã™ã‚‹è§’åº¦
 		@return	void
 		*/
 		inline void RotNormalize(float& fRot)
 		{
 			while (1)
 			{
-				// 1ü•ª‰z‚¦‚½‚ç•â³‚·‚é
+				// 1å‘¨åˆ†è¶ŠãˆãŸã‚‰è£œæ­£ã™ã‚‹
 				if (fRot < -D3DX_PI)
 				{
 					fRot += D3DX_PI * 2.0f;
@@ -2650,30 +2674,49 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				}
 
 				if (fRot >= -D3DX_PI && fRot <= D3DX_PI)
-				{// ‘S‚Ä³‹K‰»Ï‚İ‚ÅI—¹
+				{// å…¨ã¦æ­£è¦åŒ–æ¸ˆã¿ã§çµ‚äº†
 					break;
 				}
 			}
 		}
 
 		/**
-		@brief	Šp“x‚Ì³‹K‰»(VECTOR3)
-		@details -ƒÎ or ƒÎ‚ğ’´‚¦‚½Šp“x‚ğ•â³‚·‚éB”ÍˆÍ“à‚Éû‚Ü‚é‚Ü‚Å–³ŒÀƒ‹[ƒv
-		@param	fRot	[inout]	•â³‚·‚éŠp“x
+		@brief	è§’åº¦ã®æ­£è¦åŒ–è§£é™¤(å˜è»¸)
+		@details -Ï€ or Ï€ã‚’è¶…ãˆãŸè§’åº¦ã‚’è£œæ­£ã™ã‚‹ã€‚ç¯„å›²å†…ã«åã¾ã‚‹ã¾ã§ç„¡é™ãƒ«ãƒ¼ãƒ—
+		@param	fRot	[inout]	è£œæ­£ã™ã‚‹è§’åº¦
+		@return	void
+		*/
+		inline void RotUnNormalize(float& fRot)
+		{
+			// 1å‘¨åˆ†è¶ŠãˆãŸã‚‰è£œæ­£ã™ã‚‹
+			if (fRot < 0)
+			{
+				fRot = D3DX_PI + fabsf(fRot);
+			}
+			else if (fRot > 0 && fRot < D3DX_PI)
+			{
+				fRot = D3DX_PI - fabsf(fRot);
+			}
+		}
+
+		/**
+		@brief	è§’åº¦ã®æ­£è¦åŒ–(VECTOR3)
+		@details -Ï€ or Ï€ã‚’è¶…ãˆãŸè§’åº¦ã‚’è£œæ­£ã™ã‚‹ã€‚ç¯„å›²å†…ã«åã¾ã‚‹ã¾ã§ç„¡é™ãƒ«ãƒ¼ãƒ—
+		@param	fRot	[inout]	è£œæ­£ã™ã‚‹è§’åº¦
 		@return	void
 		*/
 		inline void RotNormalize(MyLib::Vector3& rot)
 		{
-			// ‚»‚ê‚¼‚ê‚Ì³‹K‰»
+			// ãã‚Œãã‚Œã®æ­£è¦åŒ–
 			UtilFunc::Transformation::RotNormalize(rot.x);
 			UtilFunc::Transformation::RotNormalize(rot.y);
 			UtilFunc::Transformation::RotNormalize(rot.z);
 		}
 
 		/**
-		@brief	“x”–@‚ğƒ‰ƒWƒAƒ“‚É•ÏŠ·
-		@param	degree	[in]	“x”–@‚ÌŠp“x
-		@return	ƒ‰ƒWƒAƒ“Šp“x
+		@brief	åº¦æ•°æ³•ã‚’ãƒ©ã‚¸ã‚¢ãƒ³ã«å¤‰æ›
+		@param	degree	[in]	åº¦æ•°æ³•ã®è§’åº¦
+		@return	ãƒ©ã‚¸ã‚¢ãƒ³è§’åº¦
 		*/
 		inline float DegreeChangeToRadian(float degree)
 		{
@@ -2681,9 +2724,9 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒ‰ƒWƒAƒ“Šp“x‚ğ“x”–@‚É•ÏŠ·
-		@param	radian	[in]	ƒ‰ƒWƒAƒ“Šp“x
-		@return	“x”–@
+		@brief	ãƒ©ã‚¸ã‚¢ãƒ³è§’åº¦ã‚’åº¦æ•°æ³•ã«å¤‰æ›
+		@param	radian	[in]	ãƒ©ã‚¸ã‚¢ãƒ³è§’åº¦
+		@return	åº¦æ•°æ³•
 		*/
 		inline float RadianChangeToDegree(float radian)
 		{
@@ -2691,52 +2734,52 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	’l‚Ì³‹K‰»ˆ—
-		@param	Value		[inout]	•â³‚µ‚½‚¢’l
-		@param	MaxValue	[in]	Å‘å’l
-		@param	MinValue	[in]	Å¬’l
+		@brief	å€¤ã®æ­£è¦åŒ–å‡¦ç†
+		@param	Value		[inout]	è£œæ­£ã—ãŸã„å€¤
+		@param	MaxValue	[in]	æœ€å¤§å€¤
+		@param	MinValue	[in]	æœ€å°å€¤
 		@return	void
 		*/
 		template<class T>inline void ValueNormalize(T& Value, T MaxValue, T MinValue)
 		{
 			if (Value >= MaxValue)
 			{
-				// Å‘å’l‚É•â³
+				// æœ€å¤§å€¤ã«è£œæ­£
 				Value = MaxValue;
 			}
 			else if (Value <= MinValue)
 			{
-				// Å¬’l‚É•â³
+				// æœ€å°å€¤ã«è£œæ­£
 				Value = MinValue;
 			}
 		}
 
 		/**
-		@brief	’l‚Ì³‹K‰»ˆ—
-		@param	Value		[in]	•â³‚µ‚½‚¢’l
-		@param	MinValue	[in]	Å¬’l
-		@param	MaxValue	[in]	Å‘å’l
+		@brief	å€¤ã®æ­£è¦åŒ–å‡¦ç†
+		@param	Value		[in]	è£œæ­£ã—ãŸã„å€¤
+		@param	MinValue	[in]	æœ€å°å€¤
+		@param	MaxValue	[in]	æœ€å¤§å€¤
 		@return	void
 		*/
 		template<class T>inline const T Clamp(T Value, T MinValue, T MaxValue)
 		{
 			if (Value >= MaxValue)
 			{
-				// Å‘å’l‚É•â³
+				// æœ€å¤§å€¤ã«è£œæ­£
 				return MaxValue;
 			}
 			else if (Value <= MinValue)
 			{
-				// Å¬’l‚É•â³
+				// æœ€å°å€¤ã«è£œæ­£
 				return MinValue;
 			}
 			return Value;
 		}
 
 		/**
-		@brief	ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚ğpos‚É•ÏŠ·
-		@param	worldmtx	[in]	ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX
-		@return	ˆÊ’u
+		@brief	ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’posã«å¤‰æ›
+		@param	worldmtx	[in]	ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@return	ä½ç½®
 		*/
 		inline MyLib::Vector3 WorldMtxChangeToPosition(D3DXMATRIX worldmtx)
 		{
@@ -2753,9 +2796,9 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚ğrot‚É•ÏŠ·
-		@param	worldmtx	[in]	ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX
-		@return	Œü‚«(â‘Î’l)
+		@brief	ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã‚’rotã«å¤‰æ›
+		@param	worldmtx	[in]	ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@return	å‘ã(çµ¶å¯¾å€¤)
 		*/
 		inline MyLib::Vector3 WorldMtxChangeToRotation(D3DXMATRIX worldmtx)
 		{
@@ -2765,17 +2808,17 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			rot.y = atan2f(-worldmtx._31, sqrtf(worldmtx._32 * worldmtx._32 + worldmtx._33 * worldmtx._33));
 			rot.z = atan2f(worldmtx._21, worldmtx._11);
 
-			// XYZ ‡˜ (ƒ[ƒ‹ ¨ ƒsƒbƒ` ¨ ƒˆ[)
+			// XYZ é †åº (ãƒ­ãƒ¼ãƒ« â†’ ãƒ”ãƒƒãƒ â†’ ãƒ¨ãƒ¼)
 			/*rot.x = atan2f(-worldmtx._23, worldmtx._22);
 			rot.y = asinf(worldmtx._21);
 			rot.z = atan2f(-worldmtx._12, worldmtx._11);*/
 
-			// ZYX ‡˜ (ƒˆ[ ¨ ƒsƒbƒ` ¨ ƒ[ƒ‹)
+			// ZYX é †åº (ãƒ¨ãƒ¼ â†’ ãƒ”ãƒƒãƒ â†’ ãƒ­ãƒ¼ãƒ«)
 			// rot.z = atan2f(worldmtx._21, worldmtx._11);
 			// rot.y = asinf(-worldmtx._31);
 			// rot.x = atan2f(worldmtx._32, worldmtx._33);
 
-			// ZYZ ‡˜ (ƒˆ[ ¨ ƒsƒbƒ` ¨ ƒˆ[)
+			// ZYZ é †åº (ãƒ¨ãƒ¼ â†’ ãƒ”ãƒƒãƒ â†’ ãƒ¨ãƒ¼)
 			// rot.z = atan2f(worldmtx._32, worldmtx._31);
 			// rot.y = acosf(worldmtx._33);
 			// rot.z = atan2f(worldmtx._23, -worldmtx._13);
@@ -2783,9 +2826,9 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	Œü‚«‚ğ‘O•ûƒxƒNƒgƒ‹‚É•ÏŠ·
-		@param	rot	[in]	Œü‚«
-		@return	‘O•ûƒxƒNƒgƒ‹
+		@brief	å‘ãã‚’å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«ã«å¤‰æ›
+		@param	rot	[in]	å‘ã
+		@return	å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«
 		*/
 		inline MyLib::Vector3 RotationChangeToForwardVector(float rot)
 		{
@@ -2793,19 +2836,19 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€’læ“¾
-		@param	nMinNum	[in]	”ÍˆÍ‚ÌÅ¬’l
-		@param	nMaxNum	[in]	”ÍˆÍ‚ÌÅ‘å’l
-		@return	’Š‘I‚³‚ê‚½ƒ‰ƒ“ƒ_ƒ€’l
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ å€¤å–å¾—
+		@param	nMinNum	[in]	ç¯„å›²ã®æœ€å°å€¤
+		@param	nMaxNum	[in]	ç¯„å›²ã®æœ€å¤§å€¤
+		@return	æŠ½é¸ã•ã‚ŒãŸãƒ©ãƒ³ãƒ€ãƒ å€¤
 		*/
 		inline int Random(int nMinNum, int nMaxNum)
 		{
-			// ”ÍˆÍ
+			// ç¯„å›²
 			int nRange = nMaxNum - nMinNum;
 
 			if (nMinNum == 0)
 			{
-				// ”ÍˆÍ‚É1‰ÁZ
+				// ç¯„å›²ã«1åŠ ç®—
 				nRange += 1;
 			}
 
@@ -2814,13 +2857,13 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 				nRange += 1;
 			}
 
-			// ƒ‰ƒ“ƒ_ƒ€¶¬
+			// ãƒ©ãƒ³ãƒ€ãƒ ç”Ÿæˆ
 			return (rand() % nRange + nMinNum);
 		}
 
 		/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€‚È‰~ü—¦æ“¾
-		@return	’Š‘I‚³‚ê‚½ƒ‰ƒ“ƒ_ƒ€’l
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ ãªå††å‘¨ç‡å–å¾—
+		@return	æŠ½é¸ã•ã‚ŒãŸãƒ©ãƒ³ãƒ€ãƒ å€¤
 		*/
 		inline float GetRandomPi()
 		{
@@ -2828,15 +2871,15 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‹…”ÍˆÍ‚Ìƒ‰ƒ“ƒ_ƒ€ƒxƒNƒgƒ‹æ“¾
-		@return	‹…‚Ìƒ‰ƒ“ƒ_ƒ€‚ÈƒxƒNƒgƒ‹’l
+		@brief	çƒç¯„å›²ã®ãƒ©ãƒ³ãƒ€ãƒ ãƒ™ã‚¯ãƒˆãƒ«å–å¾—
+		@return	çƒã®ãƒ©ãƒ³ãƒ€ãƒ ãªãƒ™ã‚¯ãƒˆãƒ«å€¤
 		*/
 		inline MyLib::Vector3 GetRandomVecSphere()
 		{
-			// ‹…ƒxƒNƒgƒ‹
+			// çƒãƒ™ã‚¯ãƒˆãƒ«
 			MyLib::Vector3 vecSphere;
 
-			// ‹…‚Ì”ÍˆÍ“à‚Åƒ‰ƒ“ƒ_ƒ€¶¬
+			// çƒã®ç¯„å›²å†…ã§ãƒ©ãƒ³ãƒ€ãƒ ç”Ÿæˆ
 			float fRot = UtilFunc::Transformation::GetRandomPi(), fRotPhi = UtilFunc::Transformation::GetRandomPi();
 
 			vecSphere.x = cosf(fRot) * sinf(fRotPhi);
@@ -2847,17 +2890,17 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‹…”ÍˆÍ‚Ìƒ‰ƒ“ƒ_ƒ€‚ÈˆÊ’uæ“¾
-		@param	pos		[in]	‹…‚Ì’†SÀ•W
-		@param	fRadius	[in]	æ“¾‚·‚é‹…‚Ì”¼Œa
-		@return	’Š‘I‚³‚ê‚½ƒ‰ƒ“ƒ_ƒ€‚ÈˆÊ’u
+		@brief	çƒç¯„å›²ã®ãƒ©ãƒ³ãƒ€ãƒ ãªä½ç½®å–å¾—
+		@param	pos		[in]	çƒã®ä¸­å¿ƒåº§æ¨™
+		@param	fRadius	[in]	å–å¾—ã™ã‚‹çƒã®åŠå¾„
+		@return	æŠ½é¸ã•ã‚ŒãŸãƒ©ãƒ³ãƒ€ãƒ ãªä½ç½®
 		*/
 		inline MyLib::Vector3 GetRandomPositionSphere(MyLib::Vector3 pos, float fRadius)
 		{
 			MyLib::Vector3 spherepos;
 			MyLib::Vector3 vec = GetRandomVecSphere();
 
-			// ˆø”î•ñŒvZ
+			// å¼•æ•°æƒ…å ±è¨ˆç®—
 			spherepos = vec * fRadius;
 			spherepos += pos;
 
@@ -2865,76 +2908,76 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	‚‚³‚ğŠî€‚É•‚ğ©“®•ÏŠ·
-		@param	size		[in]	Œ³‚ÌƒTƒCƒY
-		@param	height		[in]	•ÏXŒã‚Ì‚‚³
-		@return	“ñŸŒ³ƒTƒCƒY
+		@brief	é«˜ã•ã‚’åŸºæº–ã«å¹…ã‚’è‡ªå‹•å¤‰æ›
+		@param	size		[in]	å…ƒã®ã‚µã‚¤ã‚º
+		@param	height		[in]	å¤‰æ›´å¾Œã®é«˜ã•
+		@return	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
 		*/
 		inline D3DXVECTOR2 AdjustSizeByHeight(D3DXVECTOR2 size, float height)
 		{
 			D3DXVECTOR2 result = size;
 			result.y = height;
 
-			// ‚‚³‚Æ”ä—¦‚©‚ç•‚ğŒvZ
+			// é«˜ã•ã¨æ¯”ç‡ã‹ã‚‰å¹…ã‚’è¨ˆç®—
 			result.x = height * UtilFunc::Calculation::AspectRatio(size);
 			return result;
 		}
 
 		/**
-		@brief	•‚ğŠî€‚É‚‚³‚ğ©“®ŒvZ
-		@param	size		[in]	Œ³‚ÌƒTƒCƒY
-		@param	width		[in]	•ÏXŒã‚Ì•
-		@return	“ñŸŒ³ƒTƒCƒY
+		@brief	å¹…ã‚’åŸºæº–ã«é«˜ã•ã‚’è‡ªå‹•è¨ˆç®—
+		@param	size		[in]	å…ƒã®ã‚µã‚¤ã‚º
+		@param	width		[in]	å¤‰æ›´å¾Œã®å¹…
+		@return	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
 		*/
 		inline D3DXVECTOR2 AdjustSizeByWidth(D3DXVECTOR2 size, float width)
 		{
 			D3DXVECTOR2 result = size;
 			result.x = width;
 
-			// •‚Æ”ä—¦‚©‚ç‚‚³‚ğŒvZ
+			// å¹…ã¨æ¯”ç‡ã‹ã‚‰é«˜ã•ã‚’è¨ˆç®—
 			result.y = width / UtilFunc::Calculation::AspectRatio(size);
 			return result;
 		}
 
 		/**
-		@brief	ƒeƒNƒXƒ`ƒƒ‚‚³‚ğŠî€‚É•‚ğ©“®ŒvZ
-		@param	fWidth		[in]	Šî€‚É‚·‚éc•
-		@param	width		[in]	ƒAƒXƒyƒNƒg”ä‚ğQÆ‚·‚éƒeƒNƒXƒ`ƒƒƒCƒ“ƒfƒbƒNƒX
-		@return	“ñŸŒ³ƒTƒCƒY
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£é«˜ã•ã‚’åŸºæº–ã«å¹…ã‚’è‡ªå‹•è¨ˆç®—
+		@param	fWidth		[in]	åŸºæº–ã«ã™ã‚‹ç¸¦å¹…
+		@param	width		[in]	ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’å‚ç…§ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+		@return	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
 		*/
 		inline D3DXVECTOR2 GetTexWidthFromAspect(const float fHeight, const int nTexID)
 		{
-			// ƒeƒNƒXƒ`ƒƒƒAƒXƒyƒNƒg”ä‚ğæ“¾
+			// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’å–å¾—
 			D3DXVECTOR2 aspect = CTexture::GetInstance()->GetTextureInfo(nTexID).aspectratio;
 		
-			// ƒAƒXƒyƒNƒg”ä‚©‚çŒvZ‚µ‚½‰¡•‚ğ•Ô‚·
+			// ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‹ã‚‰è¨ˆç®—ã—ãŸæ¨ªå¹…ã‚’è¿”ã™
 			return D3DXVECTOR2(fHeight * aspect.x, fHeight);
 		}
 
 		/**
-		@brief	ƒeƒNƒXƒ`ƒƒ•‚ğŠî€‚É‚‚³‚ğ©“®ŒvZ
-		@param	fWidth		[in]	Šî€‚É‚·‚é‰¡•
-		@param	width		[in]	ƒAƒXƒyƒNƒg”ä‚ğQÆ‚·‚éƒeƒNƒXƒ`ƒƒƒCƒ“ƒfƒbƒNƒX
-		@return	“ñŸŒ³ƒTƒCƒY
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£å¹…ã‚’åŸºæº–ã«é«˜ã•ã‚’è‡ªå‹•è¨ˆç®—
+		@param	fWidth		[in]	åŸºæº–ã«ã™ã‚‹æ¨ªå¹…
+		@param	width		[in]	ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’å‚ç…§ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+		@return	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
 		*/
 		inline D3DXVECTOR2 GetTexHeightFromAspect(const float fWidth, const int nTexID)
 		{
-			// ƒeƒNƒXƒ`ƒƒƒAƒXƒyƒNƒg”ä‚ğæ“¾
+			// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’å–å¾—
 			D3DXVECTOR2 aspect = CTexture::GetInstance()->GetTextureInfo(nTexID).aspectratio;
 
-			// ƒAƒXƒyƒNƒg”ä‚©‚çŒvZ‚µ‚½c•‚ğ•Ô‚·
+			// ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‹ã‚‰è¨ˆç®—ã—ãŸç¸¦å¹…ã‚’è¿”ã™
 			return D3DXVECTOR2(fWidth, fWidth * aspect.y);
 		}
 
 		/**
-		@brief	ƒXƒNƒŠ[ƒ“À•W‚ğƒ[ƒ‹ƒhÀ•W‚É•ÏŠ·
-		@param	Sx			[in]	ƒXƒNƒŠ[ƒ“XÀ•W
-		@param	Sy			[in]	ƒXƒNƒŠ[ƒ“YÀ•W
-		@param	fZ			[in]	Ë‰e‹óŠÔ‚Å‚ÌZ’li0`1j
-		@param	ScreenSize	[in]	ƒXƒNƒŠ[ƒ“ƒTƒCƒY
-		@param	View		[in]	ƒrƒ…[ƒ}ƒgƒŠƒbƒNƒX
-		@param	Prj			[in]	ƒvƒƒWƒFƒNƒVƒ‡ƒ“ƒ}ƒgƒŠƒbƒNƒX
-		@return	“ñŸŒ³ƒTƒCƒY
+		@brief	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‚’ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã«å¤‰æ›
+		@param	Sx			[in]	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³Xåº§æ¨™
+		@param	Sy			[in]	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³Yåº§æ¨™
+		@param	fZ			[in]	å°„å½±ç©ºé–“ã§ã®Zå€¤ï¼ˆ0ï½1ï¼‰
+		@param	ScreenSize	[in]	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚µã‚¤ã‚º
+		@param	View		[in]	ãƒ“ãƒ¥ãƒ¼ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@param	Prj			[in]	ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+		@return	äºŒæ¬¡å…ƒã‚µã‚¤ã‚º
 		*/
 		inline MyLib::Vector3 CalcScreenToWorld(
 			int Sx, int Sy, float fZ,
@@ -2943,7 +2986,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		{
 			MyLib::Vector3 pos;
 
-			// Šes—ñ‚Ì‹ts—ñ‚ğZo
+			// å„è¡Œåˆ—ã®é€†è¡Œåˆ—ã‚’ç®—å‡º
 			D3DXMATRIX InvView, InvPrj, VP, InvViewport;
 			D3DXMatrixInverse(&InvView, NULL, &View);
 			D3DXMatrixInverse(&InvPrj, NULL, &Prj);
@@ -2954,17 +2997,17 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			VP._42 = ScreenSize.y / 2.0f;
 			D3DXMatrixInverse(&InvViewport, NULL, &VP);
 
-			// ‹t•ÏŠ·
+			// é€†å¤‰æ›
 			D3DXMATRIX tmp = InvViewport * InvPrj * InvView;
 
-			// •ÏŠ·Œã‚ÌÀ•W‚É•ÏŠ·
+			// å¤‰æ›å¾Œã®åº§æ¨™ã«å¤‰æ›
 			MyLib::Vector3 screenPos(static_cast<float>(Sx), static_cast<float>(Sy), fZ);
 			D3DXVec3TransformCoord(&pos, &screenPos, &tmp);
 
 			return pos;
 		}
 
-		// XZ•½–Ê‚ÆƒXƒNƒŠ[ƒ“À•W‚ÌŒğ“_ZoŠÖ”
+		// XZå¹³é¢ã¨ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã®äº¤ç‚¹ç®—å‡ºé–¢æ•°
 		inline MyLib::Vector3  CalcScreenToXZ(
 			D3DXVECTOR2 mousepos,
 			D3DXVECTOR2 ScreenSize,
@@ -2982,13 +3025,13 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			ray = farpos - nearpos;
 			D3DXVec3Normalize(&ray, &ray);
 
-			// °‚Æ‚ÌŒğ·‚ª‹N‚«‚Ä‚¢‚éê‡‚ÍŒğ“_‚ğ
-			// ‹N‚«‚Ä‚¢‚È‚¢ê‡‚Í‰“‚­‚Ì•Ç‚Æ‚ÌŒğ“_‚ğo—Í
+			// åºŠã¨ã®äº¤å·®ãŒèµ·ãã¦ã„ã‚‹å ´åˆã¯äº¤ç‚¹ã‚’
+			// èµ·ãã¦ã„ãªã„å ´åˆã¯é ãã®å£ã¨ã®äº¤ç‚¹ã‚’å‡ºåŠ›
 			if (ray.y <= 0) {
 
 				MyLib::Vector3 planevec(0.0f, 1.0f, 0.0f);
 
-				// °Œğ“_
+				// åºŠäº¤ç‚¹
 				float Lray = ray.Dot(planevec);
 
 				MyLib::Vector3 transNearPos = -nearpos;
@@ -3002,7 +3045,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			return pos;
 		}
 
-		// XZ•½–Ê‚ÆƒXƒNƒŠ[ƒ“À•W‚ÌŒğ“_ZoŠÖ”
+		// XZå¹³é¢ã¨ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã®äº¤ç‚¹ç®—å‡ºé–¢æ•°
 		inline MyLib::Vector3  CalcScreenToXZ(
 			D3DXVECTOR2 mousepos,
 			D3DXVECTOR2 ScreenSize,
@@ -3021,16 +3064,16 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			ray = farpos - nearpos;
 			D3DXVec3Normalize(&ray, &ray);
 
-			// farpos‚ğÄŒvZ‚·‚é
+			// farposã‚’å†è¨ˆç®—ã™ã‚‹
 			farpos = nearpos + ray * farDistance;
 
-			// °‚Æ‚ÌŒğ·‚ª‹N‚«‚Ä‚¢‚éê‡‚ÍŒğ“_‚ğ
-			// ‹N‚«‚Ä‚¢‚È‚¢ê‡‚Í‰“‚­‚Ì•Ç‚Æ‚ÌŒğ“_‚ğo—Í
+			// åºŠã¨ã®äº¤å·®ãŒèµ·ãã¦ã„ã‚‹å ´åˆã¯äº¤ç‚¹ã‚’
+			// èµ·ãã¦ã„ãªã„å ´åˆã¯é ãã®å£ã¨ã®äº¤ç‚¹ã‚’å‡ºåŠ›
 			if (ray.y <= 0) {
 
 				MyLib::Vector3 planevec(0.0f, 1.0f, 0.0f);
 
-				// °Œğ“_
+				// åºŠäº¤ç‚¹
 				float Lray = ray.Dot(planevec);
 
 				MyLib::Vector3 transNearPos = -nearpos;
@@ -3044,21 +3087,21 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			return pos;
 		}
 
-		// Y•½–Ê‚ÆƒXƒNƒŠ[ƒ“À•W‚ÌŒğ“_ZoŠÖ”
+		// Yå¹³é¢ã¨ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã®äº¤ç‚¹ç®—å‡ºé–¢æ•°
 		inline MyLib::Vector3  CalcScreenToY(
 			D3DXVECTOR2 mousepos,
 			D3DXVECTOR2 ScreenSize,
 			D3DXMATRIX View, D3DXMATRIX Prj)
 		{
-			// ƒXƒNƒŠ[ƒ“À•W‚ğ³‹K‰»ƒfƒoƒCƒXÀ•WŒniNDCj‚É•ÏŠ·
+			// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‚’æ­£è¦åŒ–ãƒ‡ãƒã‚¤ã‚¹åº§æ¨™ç³»ï¼ˆNDCï¼‰ã«å¤‰æ›
 			float ndcX = (2.0f * mousepos.x / ScreenSize.x) - 1.0f;
 			float ndcY = 1.0f - (2.0f * mousepos.y / ScreenSize.y);
 			float ndcZ = 2.0f * 0.0f - 1.0f;
 
-			// ƒXƒNƒŠ[ƒ“À•W‚ğNDCÀ•W‚É•ÏŠ·
+			// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‚’NDCåº§æ¨™ã«å¤‰æ›
 			D3DXVECTOR4 ndcPos(ndcX, ndcY, ndcZ, 1.0f);
 
-			// ‹tƒrƒ…[•ÏŠ·s—ñ‚Æ‹tË‰e•ÏŠ·s—ñ‚ğ‘g‚İ‡‚í‚¹‚Äƒ[ƒ‹ƒhÀ•W‚É•ÏŠ·
+			// é€†ãƒ“ãƒ¥ãƒ¼å¤‰æ›è¡Œåˆ—ã¨é€†å°„å½±å¤‰æ›è¡Œåˆ—ã‚’çµ„ã¿åˆã‚ã›ã¦ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã«å¤‰æ›
 			D3DXMATRIX invViewProjection;
 			D3DXMATRIX mtx = (View * Prj);
 
@@ -3067,11 +3110,11 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			D3DXVECTOR4 worldPos;
 			D3DXVec4Transform(&worldPos, &ndcPos, &invViewProjection);
 
-			// ƒ[ƒ‹ƒhÀ•W‚ğ•Ô‚·
+			// ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’è¿”ã™
 			return MyLib::Vector3(worldPos.x / worldPos.w, worldPos.y / worldPos.w, worldPos.z / worldPos.w);
 		}
 
-		// Y•½–Ê‚ÆƒXƒNƒŠ[ƒ“À•W‚ÌŒğ“_ZoŠÖ”
+		// Yå¹³é¢ã¨ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã®äº¤ç‚¹ç®—å‡ºé–¢æ•°
 		inline MyLib::Vector3  CalcScreenToY(
 			D3DXVECTOR2 mousepos,
 			D3DXVECTOR2 ScreenSize,
@@ -3090,7 +3133,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			ray = farpos - nearpos;
 			D3DXVec3Normalize(&ray, &ray);
 
-			// farpos‚ğÄŒvZ‚·‚é
+			// farposã‚’å†è¨ˆç®—ã™ã‚‹
 			farpos = nearpos + ray * farDistance;
 
 			pos = farpos;
@@ -3099,12 +3142,12 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	HSV’l‚ğRGB’l‚É•ÏŠ·
+		@brief	HSVå€¤ã‚’RGBå€¤ã«å¤‰æ›
 		@details https://ja.wikipedia.org/wiki/HSV%E8%89%B2%E7%A9%BA%E9%96%93
-		@param	H	[in]	F‘Š
-		@param	S	[in]	Ê“x
-		@param	V	[in]	–¾“x
-		@return	RGB’l
+		@param	H	[in]	è‰²ç›¸
+		@param	S	[in]	å½©åº¦
+		@param	V	[in]	æ˜åº¦
+		@return	RGBå€¤
 		*/
 		inline D3DXCOLOR HSVtoRGB(float H, float S, float V)
 		{
@@ -3120,7 +3163,7 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 			float X = C * (1 - (float)abs(fmod(H / 60.0f, 2) - 1));
 			float m = V - C;
 
-			// RGB•Ê‚Ì”’l
+			// RGBåˆ¥ã®æ•°å€¤
 			float R = 0.0f, G = 0.0f, B = 0.0f;
 			if (H >= 0.0f && H < 60.0f)
 			{
@@ -3163,64 +3206,64 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	”’l‚ğŒ…”‚²‚Æ‚É•ª‰ğ‚·‚éŠÖ”
-		@param	pNumDivide	[in]	•ª‰ğŒ‹‰Ê‚ÌŠi”[”z—ñ
-		@param	nNum		[in]	•ª‰ğ‚·‚é”’l
-		@param	nMaxDigit	[in]	•ª‰ğ‚·‚é”š‚ÌŒ…”
+		@brief	æ•°å€¤ã‚’æ¡æ•°ã”ã¨ã«åˆ†è§£ã™ã‚‹é–¢æ•°
+		@param	pNumDivide	[in]	åˆ†è§£çµæœã®æ ¼ç´é…åˆ—
+		@param	nNum		[in]	åˆ†è§£ã™ã‚‹æ•°å€¤
+		@param	nMaxDigit	[in]	åˆ†è§£ã™ã‚‹æ•°å­—ã®æ¡æ•°
 		*/
 		inline void DivideDigitNum(int *pNumDivide, const int nNum, const int nMaxDigit)
 		{
-			int nDigit = 1;	// ŠeŒ…‚Ì”’l‚ÌŒvZ—p
+			int nDigit = 1;	// å„æ¡ã®æ•°å€¤ã®è¨ˆç®—ç”¨
 			for (int nCntDigit = 0; nCntDigit < nMaxDigit; nCntDigit++)
-			{ // Œ…‚ÌÅ‘å”•ªŒJ‚è•Ô‚·
+			{ // æ¡ã®æœ€å¤§æ•°åˆ†ç¹°ã‚Šè¿”ã™
 
-				// Œ…”•ªæZ‚·‚é
+				// æ¡æ•°åˆ†ä¹—ç®—ã™ã‚‹
 				nDigit *= 10;
 			}
 
 			for (int nCntTex = nMaxDigit - 1; nCntTex >= 0; nCntTex--, pNumDivide++)
-			{ // Œ…”‚ÌÅ‘å‚©‚çŒ…”‚ÌÅ¬‚Ü‚ÅŒJ‚è•Ô‚·
+			{ // æ¡æ•°ã®æœ€å¤§ã‹ã‚‰æ¡æ•°ã®æœ€å°ã¾ã§ç¹°ã‚Šè¿”ã™
 
-				// Œ…”‚²‚Æ‚Ì”’l‚ğ‹‚ß‚é
+				// æ¡æ•°ã”ã¨ã®æ•°å€¤ã‚’æ±‚ã‚ã‚‹
 				*pNumDivide = (nNum % nDigit) / (nDigit / 10);
 
-				// œZ‚µ‚ÄŸ‚ÌŒ…”‚É‡‚í‚¹‚é
+				// é™¤ç®—ã—ã¦æ¬¡ã®æ¡æ•°ã«åˆã‚ã›ã‚‹
 				nDigit /= 10;
 			}
 		}
 
 		/**
-		@brief	ƒƒCƒh•¶š—ñ‚©‚çƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚É•ÏŠ·‚·‚éŠÖ”
-		@param	wideStr		[in]	ƒƒCƒh•¶š—ñ
-		@return	ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ
+		@brief	ãƒ¯ã‚¤ãƒ‰æ–‡å­—åˆ—ã‹ã‚‰ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹é–¢æ•°
+		@param	wideStr		[in]	ãƒ¯ã‚¤ãƒ‰æ–‡å­—åˆ—
+		@return	ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—
 		*/
 		inline std::string WideToMultiByte(const wchar_t* wideStr)
 		{
 			if (wideStr == nullptr)
 				return std::string();
 
-			// ƒƒCƒh•¶š—ñ‚Ì’·‚³‚ğæ“¾
+			// ãƒ¯ã‚¤ãƒ‰æ–‡å­—åˆ—ã®é•·ã•ã‚’å–å¾—
 			int wideLength = wcslen(wideStr);
 
-			// ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚Ì’·‚³‚ğŒvZ
+			// ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã®é•·ã•ã‚’è¨ˆç®—
 			int multiLength = WideCharToMultiByte(CP_UTF8, 0, wideStr, wideLength, nullptr, 0, nullptr, nullptr);
 
 			if (multiLength == 0)
 				return std::string();
 
-			// ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚ğŠi”[‚·‚é‚½‚ß‚Ìƒoƒbƒtƒ@‚ğŠm•Û
+			// ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã‚’æ ¼ç´ã™ã‚‹ãŸã‚ã®ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 			std::string multiString(multiLength, 0);
 
-			// ƒƒCƒh•¶š—ñ‚ğƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚É•ÏŠ·
+			// ãƒ¯ã‚¤ãƒ‰æ–‡å­—åˆ—ã‚’ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã«å¤‰æ›
 			WideCharToMultiByte(CP_UTF8, 0, wideStr, wideLength, &multiString[0], multiLength, nullptr, nullptr);
 
 			return multiString;
 		}
 
 		/**
-		@brief	\\\\‚ğ\\‚É’uŠ·‚·‚é
-		@param	str		[in]	•¶š—ñ
-		@return	•ÏŠ·‚³‚ê‚½string•¶š
+		@brief	\\\\ã‚’\\ã«ç½®æ›ã™ã‚‹
+		@param	str		[in]	æ–‡å­—åˆ—
+		@return	å¤‰æ›ã•ã‚ŒãŸstringæ–‡å­—
 		*/
 		inline std::string ReplaceBackslash(std::string str)
 		{
@@ -3228,19 +3271,19 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 
 			while ((pos = str.find("\\\\", pos)) != std::string::npos)
 			{
-				// \\\\‚ğ\\‚É’uŠ·
+				// \\\\ã‚’\\ã«ç½®æ›
 				str.replace(pos, 2, "\\");
 
-				// \\‚ÌŸ‚©‚çŒŸõ‚ğÄŠJ
+				// \\ã®æ¬¡ã‹ã‚‰æ¤œç´¢ã‚’å†é–‹
 				pos += 1;
 			}
 			return str;
 		}
 
 		/**
-		@brief	/‚ğ\\‚É’uŠ·‚·‚é
-		@param	str		[in]	•¶š—ñ
-		@return	•ÏŠ·‚³‚ê‚½string•¶š
+		@brief	/ã‚’\\ã«ç½®æ›ã™ã‚‹
+		@param	str		[in]	æ–‡å­—åˆ—
+		@return	å¤‰æ›ã•ã‚ŒãŸstringæ–‡å­—
 		*/
 		inline std::string ReplaceForwardSlashes(std::string str)
 		{
@@ -3255,18 +3298,18 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒtƒ@ƒCƒ‹ƒpƒX‚ğÁ‚·
-		@param	filePath	[in]	•¶š—ñ
-		@return	•ÏŠ·‚³‚ê‚½string•¶š
+		@brief	ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’æ¶ˆã™
+		@param	filePath	[in]	æ–‡å­—åˆ—
+		@return	å¤‰æ›ã•ã‚ŒãŸstringæ–‡å­—
 		*/
 		inline std::string RemoveFilePath(const std::string& filePath)
 		{
-			// ÅŒã‚ÌƒXƒ‰ƒbƒVƒ…‚Ü‚½‚ÍƒoƒbƒNƒXƒ‰ƒbƒVƒ…‚ğŒ©‚Â‚¯‚é
+			// æœ€å¾Œã®ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ã¾ãŸã¯ãƒãƒƒã‚¯ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ã‚’è¦‹ã¤ã‘ã‚‹
 			size_t pos = filePath.find_last_of("/\\");
 
 			if (pos != std::string::npos) 
 			{
-				// Œ©‚Â‚©‚Á‚½ˆÊ’u‚ÌŸ‚Ì•¶š‚©‚çÅŒã‚Ü‚Å‚ğæ“¾
+				// è¦‹ã¤ã‹ã£ãŸä½ç½®ã®æ¬¡ã®æ–‡å­—ã‹ã‚‰æœ€å¾Œã¾ã§ã‚’å–å¾—
 				return filePath.substr(pos + 1);
 			}
 
@@ -3274,30 +3317,30 @@ namespace UtilFunc	// •Ö—˜ŠÖ”
 		}
 
 		/**
-		@brief	ƒpƒX‚Ìƒx[ƒXƒl[ƒ€•ÏŠ·
-		@param	pPath	[in]	•ÏŠ·‚·‚éƒpƒX
+		@brief	ãƒ‘ã‚¹ã®ãƒ™ãƒ¼ã‚¹ãƒãƒ¼ãƒ å¤‰æ›
+		@param	pPath	[in]	å¤‰æ›ã™ã‚‹ãƒ‘ã‚¹
 		*/
 		inline void PathToBaseName(std::string *pPath)
 		{
-			// ƒpƒX‹æØ‚è‚ğ\\‚É•ÏŠ·
+			// ãƒ‘ã‚¹åŒºåˆ‡ã‚Šã‚’\\ã«å¤‰æ›
 			*pPath = UtilFunc::Transformation::ReplaceBackslash(*pPath);
 			*pPath = UtilFunc::Transformation::ReplaceForwardSlashes(*pPath);
 
-			// ƒpƒX‹æØ‚è‚æ‚èè‘O‚Ì•¶š—ñ‚ğíœ
+			// ãƒ‘ã‚¹åŒºåˆ‡ã‚Šã‚ˆã‚Šæ‰‹å‰ã®æ–‡å­—åˆ—ã‚’å‰Šé™¤
 			std::size_t posTop = pPath->rfind("\\");
 			if (posTop != std::string::npos)
-			{ // ƒpƒX‹æØ‚è‚ªŒ©‚Â‚©‚Á‚½ê‡
+			{ // ãƒ‘ã‚¹åŒºåˆ‡ã‚ŠãŒè¦‹ã¤ã‹ã£ãŸå ´åˆ
 
-				// •¶š—ñ‚Ìè‘O‚ğíœ
+				// æ–‡å­—åˆ—ã®æ‰‹å‰ã‚’å‰Šé™¤
 				pPath->erase(0, posTop + 1);
 			}
 
-			// Šg’£q‚æ‚èŒã‚Ì•¶š—ñ‚ğíœ
+			// æ‹¡å¼µå­ã‚ˆã‚Šå¾Œã®æ–‡å­—åˆ—ã‚’å‰Šé™¤
 			std::size_t posCur = pPath->rfind(".");
 			if (posCur != std::string::npos)
-			{ // Šg’£q‚ªŒ©‚Â‚©‚Á‚½ê‡
+			{ // æ‹¡å¼µå­ãŒè¦‹ã¤ã‹ã£ãŸå ´åˆ
 
-				// •¶š—ñ‚ÌŒã‚ğíœ
+				// æ–‡å­—åˆ—ã®å¾Œã‚’å‰Šé™¤
 				pPath->erase(posCur, std::string::npos);
 			}
 		}
