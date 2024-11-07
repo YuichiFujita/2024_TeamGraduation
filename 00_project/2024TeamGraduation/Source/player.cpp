@@ -483,7 +483,7 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	m_bAlign = false;	// 揃え
 
 	// 足左右の更新
-	//UpdateFootLR();
+	UpdateFootLR();
 
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -507,39 +507,8 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
-		// モーションの種類
-		EMotion motionType;
-		if (m_pBall == nullptr) // ボール所持によって分ける
-		{
-			motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
-		}
-		else
-		{
-			motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
-		}
-
-		// ダッシュリセット
-		m_bDash = false;
-
-		// 歩行の情報取得
-		CMotion::Info info = pMotion->GetInfo(motionType);
-
-		// 開始キー
-		int nStartKey = 0;
-		if (m_bFootLR)
-		{
-			nStartKey = info.nNumKey / 2;
-		}
-
-		// モーション設定
-		if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
-		{
-			MotionCrab(nStartKey);
-		}
-		else
-		{
-			SetMotion(motionType, nStartKey);
-		}
+		// 移動モーション設定
+		SetMoveMotion(false);
 
 		if (nOldType != pMotion->GetType())
 		{
@@ -558,6 +527,53 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	{
 		// デフォルトモーションの設定
 		DefaultMotionSet(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// 移動モーション設定
+//==========================================================================
+void CPlayer::SetMoveMotion(bool bNowDrop)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 再生中モーション
+	int nType = pMotion->GetType();
+
+	// モーションの種類
+	EMotion motionType;
+	if (m_pBall == nullptr) // ボール所持によって分ける
+	{
+		motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+	}
+	else
+	{
+		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
+	}
+
+	// ダッシュリセット
+	m_bDash = false;
+
+	// 歩行の情報取得
+	CMotion::Info info = pMotion->GetInfo(motionType);
+
+	// 開始キー
+	int nStartKey = 0;
+	if (m_bFootLR)
+	{
+		nStartKey = info.nNumKey / 2;
+	}
+
+	// モーション設定
+	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	{
+		MotionCrab(nStartKey);
+	}
+	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
+	{
+		SetMotion(motionType, nStartKey);
 	}
 }
 
@@ -582,15 +598,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 	}
 	else if (nType == EMotion::MOTION_WALK)
 	{// ニュートラルモーション設定
-		//SetMotion(EMotion::MOTION_GRIP_DEF);
-		//return;
-
-		//if (m_bFootLR)
-		//{
-		//	// ニュートラルモーション設定
-		//	SetMotion(EMotion::MOTION_GRIP_DEF);
-		//}
-		 if (!pMotion->IsAlignFrame(info))
+		
+		if (!pMotion->IsAlignFrame(info))
 		{// 足が揃ってない
 
 			// 移動量取得
@@ -648,18 +657,22 @@ void CPlayer::UpdateFootLR()
 	int nType = pMotion->GetType();
 
 	// 歩き以外は抜ける
-	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN &&
-		nType != EMotion::MOTION_WALK_BALL && nType != EMotion::MOTION_RUN_BALL) return;
+	if (nType != EMotion::MOTION_DROPCATCH_WALK) return;
 
 	if (pMotion->IsImpactFrame(info))
 	{// 衝撃のフレーム
-		m_bFootLR = !m_bFootLR;
+
+		if (nType == EMotion::MOTION_DROPCATCH_WALK)
+		{// 落ちてるのを拾うとき
+
+			// 移動モーション設定
+			SetMoveMotion(true);
+		}
+
+		// 足左右切り替え : 落ちてるの拾うためにいるかも
+		//m_bFootLR = !m_bFootLR;
 	}
 
-	ImGui::Checkbox("m_bFootLR", &m_bFootLR);
-
-	float a = pMotion->GetAllCount();
-	ImGui::DragFloat("frame", &a, 1.0f, 0.0f, 0.0f, "%.2f");
 }
 
 //==========================================================================
@@ -1049,6 +1062,9 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
+
+		// 落ちてるのキャッチ
+		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
 		return false;
 	}
 
@@ -1069,13 +1085,14 @@ bool CPlayer::Hit(CBall* pBall)
 			pCoverPlayer->GetStatus()->LifeHeal(10);
 		}
 
-		//演出
+		// 演出
 		CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
 			80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
+		// 攻撃キャッチ処理
 		pBall->CatchAttack(this);
 
 		return false;

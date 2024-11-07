@@ -60,6 +60,7 @@ public:
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
+		MOTION_DROPCATCH_WALK,		// 落ちてるのキャッチ(歩き)
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
@@ -327,6 +328,7 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 	void MotionCrab(int nStartKey);		// キャッチ時処理(地上・ジャスト)
+	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
 
 	//=============================
 	// メンバ変数

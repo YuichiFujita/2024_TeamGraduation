@@ -531,6 +531,11 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 	// 現在の情報
 	Info& nowInfo = m_vecInfo[m_nType];
 
+	for (int nCntKey = 0; nCntKey < nStartKey; nCntKey++)
+	{
+		m_fAllFrame += nowInfo.aKey[nCntKey].nFrame;	// 全てのカウント
+	}
+
 	for (int nCntKey = 0; nCntKey < nowInfo.nNumKey; nCntKey++)
 	{
 		m_fMaxAllFrame += nowInfo.aKey[nCntKey].nFrame;	// 全てのカウントの最大値
@@ -542,6 +547,12 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 		attackInfo.bInpactAct = false;
 		attackInfo.bInpactActSet = false;
 		attackInfo.bEndAtk = false;
+
+		// 初期フレームより前の物は設定済み
+		if (m_fAllFrame >= static_cast<float>(attackInfo.nInpactCnt))
+		{
+			attackInfo.bInpactActSet = true;
+		}
 	}
 
 	// パーツサイズ

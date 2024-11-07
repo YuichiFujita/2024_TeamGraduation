@@ -114,9 +114,31 @@ public:
 
 private:
 
+	//=============================
+	// 構造体定義
+	//=============================
+	struct SDebugEasing
+	{
+		float maxtime;		// 最大時間
+		float time;			// 時間
+		float aftertime;	// 終わった後の時間
+		float backPower;	// バックの強さ
+
+		// コンストラクタ
+		SDebugEasing() : maxtime(2.0f), time(0.0f), aftertime(1.0f), backPower(1.70158f) {}
+	};
+
+	//=============================
+	// メンバ関数
+	//=============================
 	void Reset(CScene::MODE mode);
 	void NoLoadSetMode(CScene::MODE mode);		// 次のモード設定
+	void Debug();			// デバッグ
+	void SampleEasing();	// イージングのサンプル
 
+	//=============================
+	// メンバ変数
+	//=============================
 	CRenderer *m_pRenderer;				// レンダラー
 	CInput*m_pInput;					// 入力機器
 	CSound* m_pSound;					// サウンド
@@ -156,6 +178,7 @@ private:
 
 	static CManager *m_pManager;	// マネージャ
 
+	SDebugEasing m_debugEasing;			// デバッグのイージング情報
 	static bool m_bDisp_ImGui;			// ImGuiの描画判定
 	static bool m_bDisp_BoxColliders;	// 当たり判定ボックスの描画判定
 	static bool m_bDisp_CheckPoint;		// チェックポイントの描画判定
