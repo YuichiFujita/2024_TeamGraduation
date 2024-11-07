@@ -36,11 +36,12 @@ namespace
 //************************************************************
 CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
-	nullptr,						// 何もしない更新
-	&CSpecialManager::UpdateCutIn,	// カットイン更新
-	&CSpecialManager::UpdateHype,	// 盛り上がり更新
-	&CSpecialManager::UpdateStag,	// スペシャル演出更新
-	&CSpecialManager::UpdateEnd,	// 終了更新
+	nullptr,							// 何もしない更新
+	&CSpecialManager::UpdateCutIn,		// カットイン更新
+	&CSpecialManager::UpdateHypeTrans,	// 盛り上がり遷移更新
+	&CSpecialManager::UpdateHype,		// 盛り上がり更新
+	&CSpecialManager::UpdateStag,		// スペシャル演出更新
+	&CSpecialManager::UpdateEnd,		// 終了更新
 };
 CSpecialManager::AFuncUpdateSpecial CSpecialManager::m_aFuncUpdateSpecial[] =	// スペシャル更新関数
 {
@@ -146,6 +147,10 @@ HRESULT CSpecialManager::Init(void)
 	// ゲームをスペシャル演出シーンに変更
 	CGame::GetInstance()->GetGameManager()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
 #endif
+
+	// 通常カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_NONE, false);
 
 // 成功を返す
 return S_OK;
@@ -258,21 +263,87 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);
 
-		// スペシャル盛り上げモーションを設定
-		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse);
-
 		// 攻撃側プレイヤーチームの観客を盛り上げる
 		CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
 
 		// プレイヤー盛り上げ位置の設定
 		SetPlayerHypePosition(bInverse);
 
-		// 盛り上がり状態にする
-		m_state = STATE_HYPE;
+		// TODO
+#if 1
+		pCamera->SetPositionROrigin(pCamera->GetPositionR());
+		pCamera->SetOriginRotation(pCamera->GetRotation());
+		pCamera->SetDistanceOrigin(pCamera->GetDistance());
+#endif
+
+		// 盛り上がり遷移状態にする
+		m_state = STATE_HYPE_TRANS;
 	}
 
 	// ライト位置の設定
 	SetLightPosition();
+}
+
+//============================================================
+//	盛り上がり遷移の更新処理
+//============================================================
+void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const float END = 1.2f;
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();					// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();		// カメラモーション情報
+	CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(CCameraMotion::MOTION::MOTION_SPECIAL_HYPE, 0);		// 先頭キー情報
+	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+
+	if (bInverse)
+	{ // 反転する場合
+
+		// 向きをY軸に反転させる
+		key.rotDest.y *= -1.0f;
+
+		// 向きを正規化
+		UtilFunc::Transformation::RotNormalize(key.rotDest.y);
+	}
+
+	// カメラ情報の取得
+	MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
+	MyLib::Vector3 rot  = pCamera->GetRotation();	// 向き
+	float fDistance     = pCamera->GetDistance();	// 距離
+
+	// 現在の待機時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+
+	posR      = UtilFunc::Correction::EaseOutBack(pCamera->GetPositionROrigin(), key.posRDest + m_pAttackPlayer->GetPosition(), 0.0f, END, m_fCurTime, 0.9f);
+	rot       = UtilFunc::Correction::EaseOutBack(pCamera->GetOriginRotation(),  key.rotDest,  0.0f, END, m_fCurTime, 0.9f);
+	fDistance = UtilFunc::Correction::EaseOutBack(pCamera->GetDistanceOrigin(),  key.distance, 0.0f, END, m_fCurTime, 0.9f);
+
+	// カメラ情報の反映
+	pCamera->SetPositionR(posR);		// 注視点
+	pCamera->SetRotation(rot);			// 向き
+	pCamera->SetDistance(fDistance);	// 距離
+
+	if (m_fCurTime >= END)
+	{ // 時間が経過しきった場合
+
+		// タイマーを初期化
+		m_fCurTime = 0.0f;
+
+		// カメラ情報の補正
+		pCamera->SetPositionR(key.posRDest + m_pAttackPlayer->GetPosition());	// 注視点
+		pCamera->SetRotation(key.rotDest);		// 向き
+		pCamera->SetDistance(key.distance);		// 距離
+
+		// スペシャル盛り上げモーションを設定
+#if 0
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, false, true, false);
+#else
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse);
+#endif
+
+		// 盛り上がり状態にする
+		m_state = STATE_HYPE;
+	}
 }
 
 //============================================================
@@ -285,6 +356,35 @@ void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate,
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// カメラ位置を攻撃プレイヤーの位置に
 
+	// TODO
+#if 0
+	if (pCameraMotion->GetWholeMaxTimer() * 0.7f > pCameraMotion->GetWholeCurTimer())
+	{
+		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
+		float fDistance = pCamera->GetDistance();	// 距離
+		fDistance = UtilFunc::Correction::EasingEaseOut(pCamera->GetDistanceOrigin(), key.distance, 0.0f, pCameraMotion->GetWholeMaxTimer() * 0.7f, pCameraMotion->GetWholeCurTimer());
+		pCamera->SetDistance(fDistance);	// 距離反映
+	}
+	else
+	{
+		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
+		pCamera->SetDistance(key.distance);	// 距離反映
+	}
+
+	if (pCameraMotion->GetWholeMaxTimer() * 0.3f > pCameraMotion->GetWholeCurTimer())
+	{
+		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
+		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
+		posR = UtilFunc::Correction::EasingEaseOut(pCamera->GetPositionROrigin(), key.posRDest + pCameraMotion->GetPosition(), 0.0f, pCameraMotion->GetWholeMaxTimer() * 0.3f, pCameraMotion->GetWholeCurTimer());
+		pCamera->SetPositionR(posR);	// 注視点反映
+	}
+	else
+	{
+		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
+		pCamera->SetPositionR(key.posRDest + pCameraMotion->GetPosition());	// 注視点反映
+	}
+#endif
+
 	if (pCameraMotion->IsFinish())
 	{ // カメラモーションが終了した場合
 
@@ -294,20 +394,9 @@ void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate,
 		// 攻撃側プレイヤーにスペシャル攻撃を設定
 		m_pAttackPlayer->SetSpecialAttack();
 
-		// TODO：プレイヤー位置の調整
-#if 0
-		// 攻撃プレイヤーの位置を設定
-		m_pAttackPlayer->SetPosition(MyLib::Vector3(-800.0f, 0.0f, 0.0f));
-
-		// 攻撃プレイヤーの向きを設定
-		m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
-		m_pAttackPlayer->SetRotDest(-HALF_PI);
-#else
-		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
-
 		// プレイヤー盛り上げ位置の設定
+		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 		SetPlayerHypePosition(bInverse);
-#endif
 
 		// プレイヤースペシャル演出状態にする
 		m_state = STATE_STAG;
@@ -339,8 +428,9 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 	if (pCameraMotion->IsFinish())
 	{ // カメラモーションが終わった場合
 
-		// カメラ配置をリセット
-		pCamera->Reset();	// TODO：ここでカメラ追従に戻す
+		// 追従カメラの設定
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+		pCamera->SetState(CCamera::STATE_FOLLOW, false);
 	}
 
 	// TODO：投げた瞬間の解除はちょっと...

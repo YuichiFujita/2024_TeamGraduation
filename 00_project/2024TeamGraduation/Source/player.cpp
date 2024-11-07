@@ -1026,10 +1026,10 @@ bool CPlayer::Hit(CBall* pBall)
 	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
 
-	//死亡状態ならすり抜け
+	// 死亡状態ならすり抜け
 	if (m_sMotionFrag.bDead)
 	{
-		return true;
+		return false;
 	}
 
 	if (stateBall == CBall::STATE_LAND)
@@ -1057,7 +1057,7 @@ bool CPlayer::Hit(CBall* pBall)
 			pCoverPlayer->GetStatus()->LifeHeal(10);
 		}
 
-		//演出
+		// 演出
 		CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),

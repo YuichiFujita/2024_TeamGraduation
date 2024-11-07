@@ -422,46 +422,47 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 	//=============================
 	// モーション更新
 	//=============================
-	MotionKey nowKey = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
+	MotionKey nowKey  = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
 	MotionKey nextKey = nowInfo.Key[nextKeyID];		// 次のキー
-	MyLib::Vector3 posR, rot;	// 注視点/向き
-	float fDistance;			// 距離
 
 	if (m_bMovePos)
 	{ // 注視点が動作する場合
 
 		// 注視点の線形補正
+		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
 		posR = (m_Vec3EasingFunc[m_EasingType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
 	}
 
 	if (m_bMoveRot)
 	{ // 向きが動作する場合
 
 		// 向きの線形補正
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
 		rot = (m_Vec3EasingFunc[m_EasingType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetRotation(rot);	// 向き反映
 	}
 
 	if (m_bMoveDis)
 	{ // 距離が動作する場合
 
 		// 距離の線形補正
+		float fDistance = pCamera->GetDistance();	// 距離
 		fDistance = (m_FloatEasingFunc[m_EasingType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetDistance(fDistance);	// 距離反映
 	}
 
 	if (m_bInverse)
 	{ // 反転する場合
 
 		// 向きをY軸に反転させる
-		rot.y += D3DX_PI;
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
+		rot.y *= -1.0f;
 
 		// 向きを正規化
 		UtilFunc::Transformation::RotNormalize(rot.y);
+		pCamera->SetRotation(rot);	// 向き反映
 	}
-
-	// カメラ情報の反映
-	pCamera->SetPositionR(m_pos + posR);	// 注視点
-	pCamera->SetRotation(rot);				// 向き
-	pCamera->SetDistance(fDistance);		// 距離
 }
 
 //==========================================================================
@@ -500,6 +501,52 @@ void CCameraMotion::SetMotion
 	m_fTriggerTimer	 = 0.0f;
 	m_bFinish	= false;
 	m_bPause	= false;
+}
+
+//==========================================================================
+// キー情報取得
+//==========================================================================
+CCameraMotion::MotionKey CCameraMotion::GetKeyData(const MOTION motion, const int nKeyIdx)
+{
+	// 引数インデックスのキー情報を返す
+	return m_vecMotionInfo[(int)motion].Key[nKeyIdx];
+}
+
+//==========================================================================
+// 現在の全体時間取得
+//==========================================================================
+float CCameraMotion::GetWholeCurTimer()
+{
+	float fTimer = 0.0f;	// 全体時間
+	for (int i = 0; i < m_nNowKeyIdx; i++)
+	{ // 現在進んでいるキーまで繰り返す
+
+		// キーの総時間を加算
+		fTimer += m_vecMotionInfo[m_nNowMotionIdx].Key[i].playTime;
+	}
+
+	// 現在キーのタイマーを加算
+	fTimer += m_fMotionTimer;
+
+	// 全体時間を返す
+	return fTimer;
+}
+
+//==========================================================================
+// 最大の全体時間取得
+//==========================================================================
+float CCameraMotion::GetWholeMaxTimer()
+{
+	float fTimer = 0.0f;	// 全体時間
+	for (int i = 0; i < m_vecMotionInfo[m_nNowMotionIdx].Key.size(); i++)
+	{ // キーの総数分繰り返す
+
+		// キーの総時間を加算
+		fTimer += m_vecMotionInfo[m_nNowMotionIdx].Key[i].playTime;
+	}
+
+	// 全体時間を返す
+	return fTimer;
 }
 
 //==========================================================================
