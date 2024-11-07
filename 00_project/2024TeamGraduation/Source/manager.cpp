@@ -98,6 +98,10 @@ CManager::CManager()
 	// ロードのフェード設定フラグ
 	m_bLoadFadeSet = false;
 	m_bNowLoading = false;				// ロード完了のフラグ
+
+	// デバッグ情報
+	m_debugEasing = SDebugEasing();			// デバッグのイージング情報
+
 }
 
 //==========================================================================
@@ -800,26 +804,8 @@ void CManager::Update()
 		}
 
 #if _DEBUG
-
-		// 描画判定
-		if (pInputKeyboard->GetTrigger(DIK_F1))
-		{// F1でワイヤーフレーム切り替え
-			m_bDisp_ImGui = m_bDisp_ImGui ? false : true;
-		}
-		ImGui::Checkbox("Disp BoxColliders", &m_bDisp_BoxColliders);
-		ImGui::Checkbox("Disp CheckPoint", &m_bDisp_CheckPoint);
-		ImGui::Checkbox("Disp 2D", &m_bDisp_2D);
-
-		if (pInputKeyboard->GetTrigger(DIK_F2))
-		{// F2でワイヤーフレーム切り替え
-			m_bWireframe = m_bWireframe ? false : true;
-		}
-
-		if (pInputKeyboard->GetTrigger(DIK_F6))
-		{
-			MyFog::ToggleFogFrag();
-		}
-
+		// デバッグ処理
+		Debug();
 #endif
 
 		if (m_pScene != nullptr)
@@ -841,6 +827,109 @@ void CManager::Update()
 
 		// デバッグ表示の更新処理
 		m_pDebugProc->Update();
+	}
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CManager::Debug()
+{
+	// キーボード情報取得
+	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
+	CInputGamepad* pInputGamepad = CInputGamepad::GetInstance();
+
+	// 描画判定
+	if (pInputKeyboard->GetTrigger(DIK_F1))
+	{// F1でワイヤーフレーム切り替え
+		m_bDisp_ImGui = m_bDisp_ImGui ? false : true;
+	}
+	ImGui::Checkbox("Disp BoxColliders", &m_bDisp_BoxColliders);
+	ImGui::Checkbox("Disp CheckPoint", &m_bDisp_CheckPoint);
+	ImGui::Checkbox("Disp 2D", &m_bDisp_2D);
+
+	if (pInputKeyboard->GetTrigger(DIK_F2))
+	{// F2でワイヤーフレーム切り替え
+		m_bWireframe = m_bWireframe ? false : true;
+	}
+
+	if (pInputKeyboard->GetTrigger(DIK_F6))
+	{
+		MyFog::ToggleFogFrag();
+	}
+
+
+	// イージングのサンプル
+	SampleEasing();
+
+}
+
+//==========================================================================
+// イージングのサンプル / FUJITA
+//==========================================================================
+void CManager::SampleEasing()
+{
+	if (ImGui::TreeNode("Easing"))
+	{
+		if (ImGui::Button("Reset"))
+		{
+			m_debugEasing = SDebugEasing();
+		}
+
+		//--------------------------
+		// 最大時間変更
+		//--------------------------
+		if (ImGui::DragFloat("playtime", &m_debugEasing.maxtime, 0.001f, 0.0f, 0.0f, "%.2f"))
+		{
+			m_debugEasing.maxtime = UtilFunc::Transformation::Clamp(m_debugEasing.maxtime, 0.001f, 100.0f);
+		}
+
+		ImGui::DragFloat("backPower", &m_debugEasing.backPower, 0.001f, 0.0f, 0.0f, "%.2f");
+
+		//--------------------------
+		// タイマー加算
+		//--------------------------
+		m_debugEasing.time += m_fDeltaTime * m_fDeltaRate * m_fSlowRate;
+
+		if (m_debugEasing.maxtime + m_debugEasing.aftertime <= m_debugEasing.time)
+		{// 終わった後の時間も経過
+			m_debugEasing.time = 0.0f;
+		}
+
+
+		// プログレスバーの背景色とバーの色を一時的に変更
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, IM_COL32(20, 140, 20, 255));    // プログレスバーの色
+
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+		ImGui::Separator();
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+		//--------------------------
+		// イージング
+		//--------------------------
+		// Linear
+		ImGui::ProgressBar(UtilFunc::Correction::EasingLinear(0.0f, 1.0f, m_debugEasing.time / m_debugEasing.maxtime) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "Linear");
+
+		// InOut
+		ImGui::ProgressBar(UtilFunc::Correction::EasingEaseIn(0.0f, 1.0f, m_debugEasing.time / m_debugEasing.maxtime) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseIn");
+		ImGui::ProgressBar(UtilFunc::Correction::EasingEaseOut(0.0f, 1.0f, m_debugEasing.time / m_debugEasing.maxtime) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseOut");
+		ImGui::ProgressBar(UtilFunc::Correction::EasingEaseInOut(0.0f, 1.0f, m_debugEasing.time / m_debugEasing.maxtime) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseInOut");
+
+		// Back
+		ImGui::ProgressBar(UtilFunc::Correction::EaseInBack(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time, m_debugEasing.backPower) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseInBack");
+		ImGui::ProgressBar(UtilFunc::Correction::EaseOutBack(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time, m_debugEasing.backPower) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseOutBack");
+		ImGui::ProgressBar(UtilFunc::Correction::EaseInOutBack(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time, m_debugEasing.backPower) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseInOutBack");
+
+		// Expo
+		ImGui::ProgressBar(UtilFunc::Correction::EaseInExpo(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseInExpo");
+		ImGui::ProgressBar(UtilFunc::Correction::EaseOutExpo(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseOutExpo");
+		ImGui::ProgressBar(UtilFunc::Correction::EaseInOutExpo(0.0f, 1.0f, 0.0f, m_debugEasing.maxtime, m_debugEasing.time) * 0.25f + 0.5f, ImVec2(0.0f, 0.0f), "EaseInOutExpo");
+
+
+		// カラーの設定を元に戻す
+		ImGui::PopStyleColor(1);
+
+		ImGui::TreePop();
 	}
 }
 

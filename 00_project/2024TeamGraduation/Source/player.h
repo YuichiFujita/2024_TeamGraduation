@@ -60,6 +60,7 @@ public:
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
+		MOTION_DROPCATCH_WALK,		// 落ちてるのキャッチ(歩き)
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
@@ -118,6 +119,17 @@ public:
 		ANGLE_LEFT,
 		ANGLE_LEFTUP,
 		ANGLE_MAX
+	};
+
+	// カニ歩き方向
+	enum CRAB_DIRECTION
+	{
+		CRAB_NONE = -1,
+		CRAB_UP,
+		CRAB_DOWN,
+		CRAB_LEFT,
+		CRAB_RIGHT,
+		CRAB_MAX,
 	};
 
 	// ユーザーの種類列挙
@@ -342,7 +354,8 @@ private:
 	//TOKODO: 空中キャッチモーション出来たら実装
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
-	void MotionCrab(int nStartKey);		// キャッチ時処理(地上・ジャスト)
+	void MotionCrab(int nStartKey);		// カニ歩き変化処理
+	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
 
 	//=============================
 	// メンバ変数

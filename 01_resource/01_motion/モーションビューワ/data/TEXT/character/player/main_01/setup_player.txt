@@ -220,8 +220,8 @@ CHARACTERSET
 	
 	PARTSSET
 		INDEX = 16
-		PARENT = 8
-		POS = 6.50 -12.00 0.00
+		PARENT = 5
+		POS = -6.50 -12.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -244,7 +244,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # ƒ‚[ƒVƒ‡ƒ“”
 #------------------------------------------------------------------------------
-NUM_MOTION = 26
+NUM_MOTION = 27
 
 
 #------------------------------------------------------------------------------
@@ -266,6 +266,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_jump.txt			# ’
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_normal.txt	# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dropcatch_walk.txt		# —‚¿‚Ä‚é‚ÌƒLƒƒƒbƒ`(•à‚«)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt			# “Š‚°
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_dash.txt		# “Š‚°(ƒ_ƒbƒVƒ…)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)

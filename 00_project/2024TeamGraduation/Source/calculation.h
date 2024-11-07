@@ -1956,11 +1956,14 @@ namespace UtilFunc	// 便利関数
 
 			if (nMaxAngle <= nMinAngle)
 			{// 範囲が360°を跨ぐ場合
-				return !(angle >= nMaxAngle && angle <= nMinAngle);
+
+				bool bRange = !(nAngle >= nMaxAngle && nAngle <= nMinAngle);
+				return bRange;
 			}
 			else
 			{// 範囲が通常の順序で指定されている場合
-				return (nAngle <= nMaxAngle && nMinAngle <= nAngle);
+				bool bRange = (nAngle <= nMaxAngle && nMinAngle <= nAngle);
+				return bRange;
 			}
 
 			return false;

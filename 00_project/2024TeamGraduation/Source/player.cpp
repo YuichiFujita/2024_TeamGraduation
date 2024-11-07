@@ -90,6 +90,90 @@ namespace Align	// 足揃え
 	const float MULTIPLY_MOTION = 1.5f;	// モーション倍率
 }
 
+namespace Crab
+{
+	const float RANGE = D3DX_PI * 0.25f;	// 判定角度の半分
+
+	const float RANGE_MIN_MAX[] =	// 判定角度列挙
+	{
+		D3DX_PI * 1.0f + RANGE,		// 下Max
+		D3DX_PI * 1.0f - RANGE,		// 下Min
+		D3DX_PI * 0.0f + RANGE,		// 上Max
+		D3DX_PI * 0.0f - RANGE,		// 上Min
+		D3DX_PI * -0.5f + RANGE,	// 左Max
+		D3DX_PI * -0.5f - RANGE,	// 左Min
+		D3DX_PI * 0.5f + RANGE,		// 右Max
+		D3DX_PI * 0.5f - RANGE,		// 右Min
+	};
+
+	// カニ歩きモーション設定列挙
+	const CPlayer::EMotion MOTION_WALK[CPlayer::CRAB_DIRECTION::CRAB_MAX][CPlayer::CRAB_DIRECTION::CRAB_MAX] =
+	{
+		// [ プレイヤー向き ][ インプット向き ]
+
+		{// UP(プレイヤーが上向き)
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// UP 
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// DOWN
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// LEFT
+			CPlayer::EMotion::MOTION_CRAB_RIGHT		// RIGHT
+		},
+		{// DOWN(プレイヤーが下向き)
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// UP 
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// DOWN
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// LEFT
+			CPlayer::EMotion::MOTION_CRAB_LEFT 		// RIGHT
+		},
+		{// LEFT(プレイヤーが左向き)
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// UP 
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// DOWN
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// LEFT
+			CPlayer::EMotion::MOTION_CRAB_BACK 		// RIGHT
+		},
+		{// RIGHT(プレイヤーが右向き)
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// UP 
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// DOWN
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// LEFT
+			CPlayer::EMotion::MOTION_CRAB_FRONT 	// RIGHT
+		},
+	};
+}
+
+namespace Motion
+{
+	const std::map<CPlayer::EMotion, std::string> NAME_MAP =
+	{
+	  {CPlayer::EMotion::MOTION_DEF,				"MOTION_DEF"},
+	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK"},
+	  {CPlayer::EMotion::MOTION_CRAB_FRONT,			"MOTION_CRAB_FRONT"},
+	  {CPlayer::EMotion::MOTION_CRAB_BACK,			"MOTION_CRAB_BACK"},
+	  {CPlayer::EMotion::MOTION_CRAB_LEFT,			"MOTION_CRAB_LEFT"},
+	  {CPlayer::EMotion::MOTION_CRAB_RIGHT,			"MOTION_CRAB_RIGHT"},
+	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN"},
+	  {CPlayer::EMotion::MOTION_BLINK,				"MOTION_BLINK"},
+	  {CPlayer::EMotion::MOTION_DODGE,				"MOTION_DODGE"},
+	  {CPlayer::EMotion::MOTION_JUMP,				"MOTION_JUMP"},
+	  {CPlayer::EMotion::MOTION_JUMP_BALL,			"MOTION_JUMP_BALL"},
+	  {CPlayer::EMotion::MOTION_LAND,				"MOTION_LAND"},
+	  {CPlayer::EMotion::MOTION_CATCH_STANCE,		"MOTION_CATCH_STANCE"},
+	  {CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP,	"MOTION_CATCH_STANCE_JUMP"},
+	  {CPlayer::EMotion::MOTION_CATCH_NORMAL,		"MOTION_CATCH_NORMAL"},
+	  {CPlayer::EMotion::MOTION_CATCH_JUMP,			"MOTION_CATCH_JUMP"},
+	  {CPlayer::EMotion::MOTION_JUSTCATCH_NORMAL,	"MOTION_JUSTCATCH_NORMAL"},
+	  {CPlayer::EMotion::MOTION_JUSTCATCH_JUMP,		"MOTION_JUSTCATCH_JUMP"},
+	  {CPlayer::EMotion::MOTION_THROW,				"MOTION_THROW"},
+	  {CPlayer::EMotion::MOTION_THROW_RUN,			"MOTION_THROW_RUN"},
+	  {CPlayer::EMotion::MOTION_THROW_JUMP,			"MOTION_THROW_JUMP"},
+	  {CPlayer::EMotion::MOTION_HYPE,				"MOTION_HYPE"},
+	  {CPlayer::EMotion::MOTION_SPECIAL,			"MOTION_SPECIAL"},
+	  {CPlayer::EMotion::MOTION_WIN,				"MOTION_WIN"},
+	  {CPlayer::EMotion::MOTION_DAMAGE,				"MOTION_DAMAGE"},
+	  {CPlayer::EMotion::MOTION_DEAD,				"MOTION_DEAD"},
+	  {CPlayer::EMotion::MOTION_DEAD_AFTER,			"MOTION_DEAD_AFTER"},
+	  {CPlayer::EMotion::MOTION_GRIP_DEF,			"MOTION_GRIP_DEF"},
+	  {CPlayer::EMotion::MOTION_GRIP_FRONT,			"MOTION_GRIP_FRONT"},
+	};
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -483,7 +567,7 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	m_bAlign = false;	// 揃え
 
 	// 足左右の更新
-	//UpdateFootLR();
+	UpdateFootLR();
 
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -507,39 +591,8 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
-		// モーションの種類
-		EMotion motionType;
-		if (m_pBall == nullptr) // ボール所持によって分ける
-		{
-			motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
-		}
-		else
-		{
-			motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
-		}
-
-		// ダッシュリセット
-		m_bDash = false;
-
-		// 歩行の情報取得
-		CMotion::Info info = pMotion->GetInfo(motionType);
-
-		// 開始キー
-		int nStartKey = 0;
-		if (m_bFootLR)
-		{
-			nStartKey = info.nNumKey / 2;
-		}
-
-		// モーション設定
-		if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
-		{
-			MotionCrab(nStartKey);
-		}
-		else
-		{
-			SetMotion(motionType, nStartKey);
-		}
+		// 移動モーション設定
+		SetMoveMotion(false);
 
 		if (nOldType != pMotion->GetType())
 		{
@@ -558,6 +611,53 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	{
 		// デフォルトモーションの設定
 		DefaultMotionSet(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// 移動モーション設定
+//==========================================================================
+void CPlayer::SetMoveMotion(bool bNowDrop)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 再生中モーション
+	int nType = pMotion->GetType();
+
+	// モーションの種類
+	EMotion motionType;
+	if (m_pBall == nullptr) // ボール所持によって分ける
+	{
+		motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+	}
+	else
+	{
+		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
+	}
+
+	// ダッシュリセット
+	m_bDash = false;
+
+	// 歩行の情報取得
+	CMotion::Info info = pMotion->GetInfo(motionType);
+
+	// 開始キー
+	int nStartKey = 0;
+	if (m_bFootLR)
+	{
+		nStartKey = info.nNumKey / 2;
+	}
+
+	// モーション設定
+	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	{
+		MotionCrab(nStartKey);
+	}
+	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
+	{
+		SetMotion(motionType, nStartKey);
 	}
 }
 
@@ -582,15 +682,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 	}
 	else if (nType == EMotion::MOTION_WALK)
 	{// ニュートラルモーション設定
-		//SetMotion(EMotion::MOTION_GRIP_DEF);
-		//return;
-
-		//if (m_bFootLR)
-		//{
-		//	// ニュートラルモーション設定
-		//	SetMotion(EMotion::MOTION_GRIP_DEF);
-		//}
-		 if (!pMotion->IsAlignFrame(info))
+		
+		if (!pMotion->IsAlignFrame(info))
 		{// 足が揃ってない
 
 			// 移動量取得
@@ -648,18 +741,22 @@ void CPlayer::UpdateFootLR()
 	int nType = pMotion->GetType();
 
 	// 歩き以外は抜ける
-	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN &&
-		nType != EMotion::MOTION_WALK_BALL && nType != EMotion::MOTION_RUN_BALL) return;
+	if (nType != EMotion::MOTION_DROPCATCH_WALK) return;
 
 	if (pMotion->IsImpactFrame(info))
 	{// 衝撃のフレーム
-		m_bFootLR = !m_bFootLR;
+
+		if (nType == EMotion::MOTION_DROPCATCH_WALK)
+		{// 落ちてるのを拾うとき
+
+			// 移動モーション設定
+			SetMoveMotion(true);
+		}
+
+		// 足左右切り替え : 落ちてるの拾うためにいるかも
+		//m_bFootLR = !m_bFootLR;
 	}
 
-	ImGui::Checkbox("m_bFootLR", &m_bFootLR);
-
-	float a = pMotion->GetAllCount();
-	ImGui::DragFloat("frame", &a, 1.0f, 0.0f, 0.0f, "%.2f");
 }
 
 //==========================================================================
@@ -850,7 +947,8 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 //==========================================================================
 void CPlayer::MotionCrab(int nStartKey)
 {
-	EMotion motionType = MOTION_WALK;
+	CRAB_DIRECTION playerDir = CRAB_DIRECTION::CRAB_NONE;
+	CRAB_DIRECTION inputDir = CRAB_DIRECTION::CRAB_NONE;
 
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
@@ -859,142 +957,160 @@ void CPlayer::MotionCrab(int nStartKey)
 	// 向き
 	MyLib::Vector3 rot = GetRotation();
 
-
+	// ラムダ(bool)
+	auto CollisionRangeAngle = [](float angle, float maxAngle, float minAngle)
 	{
-		MyLib::Vector3 move(
-			sinf(rot.y + D3DX_PI) * 15.0f,
-			0.0f,
-			cosf(rot.y + D3DX_PI) * 15.0f
-		);
+		// 正規化解除
+		UtilFunc::Transformation::RotUnNormalize(angle);
+		UtilFunc::Transformation::RotUnNormalize(maxAngle);
+		UtilFunc::Transformation::RotUnNormalize(minAngle);
 
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
-			move,
-			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
+		// 度数法に変換
+		int nAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(angle));
+		int nMaxAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(maxAngle));
+		int nMinAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(minAngle));
 
+		if (nMaxAngle <= nMinAngle)
+		{// 範囲が360°を跨ぐ場合
 
+			// nAngleがMin以上Max以下。
+			bool bRange = (nMaxAngle <= nAngle && nAngle <= nMinAngle);
+			return bRange;
+		}
+		else
+		{// 範囲が通常の順序で指定されている場合
 
+			// nAngleがMin以上Max以下。
+			bool bRange = (nMaxAngle >= nAngle && nAngle >= nMinAngle);
+			return bRange;
+		}
 
-
-
-	float fRange = D3DX_PI * 0.25f;
-
-	float fRangeMinMax[] =
-	{
-		D3DX_PI * 1.0f + fRange,	// 上
-		D3DX_PI * 1.0f - fRange,	// 上
-		D3DX_PI * 0.0f + fRange,	// 下
-		D3DX_PI * 0.0f - fRange,	// 下
-		D3DX_PI * -0.5f + fRange,	// 右
-		D3DX_PI * -0.5f - fRange,	// 右
-		D3DX_PI * 0.5f + fRange,	// 左
-		D3DX_PI * 0.5f - fRange,	// 左
+		return false;
 	};
 
-	for (int i = 0; i < sizeof(fRangeMinMax) / sizeof(fRangeMinMax[0]); i++)
-	{
-		UtilFunc::Transformation::RotNormalize(fRangeMinMax[i]);
-
-		MyLib::Vector3 move(
-			sinf(fRangeMinMax[i] + D3DX_PI) * 15.0f,
-			0.0f,
-			cosf(fRangeMinMax[i] + D3DX_PI) * 15.0f
-			);
-
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
-			move,
-			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-	ImGui::Text("%f", rot.y);
-
-	// デバッグ
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
-	MyLib::Vector3 posBallP = pBall->GetPlayer()->GetPosition();
-	
-	
-
 	// プレイヤーどこ見てる
+	bool bRot = false;
+	D3DXCOLOR col = D3DXCOLOR();
 	float fRotY = D3DX_PI * 1.0f + rot.y;
 	UtilFunc::Transformation::RotNormalize(fRotY);
-	if (UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeMinMax[0], fRangeMinMax[1]))
-	{// 上
-		ImGui::Text("PLAYER_ROT_HIGH");
 
+#if 0
+	for (int i = 0; i < CRAB_DIRECTION::CRAB_MAX; i++)
+	{
+		int maxCnt = i * 2;
+		int minCnt = maxCnt + 1;
+
+		float max = Crab::RANGE_MIN_MAX[maxCnt];
+		float min = Crab::RANGE_MIN_MAX[minCnt];
+		if (i == 0) UtilFunc::Transformation::RotNormalize(max);
+		UtilFunc::Transformation::RotNormalize(min);
+
+		bool bIn = CollisionRangeAngle(fRotY, max, min);
+		if (i == 0) !bIn;
+
+		if (bIn)
+		{// 向き
+			playerDir = CRAB_DIRECTION(i);
+			bRot = true;
+			ImGui::Text("%d", i);
+			break;
+		}
+	}
+#endif
+
+#if 1
+	float fRangeZero = Crab::RANGE_MIN_MAX[0];
+	UtilFunc::Transformation::RotNormalize(fRangeZero);
+	if (!CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+	{// 下向き
+		playerDir = CRAB_DIRECTION::CRAB_DOWN;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+		ImGui::Text("DOWN");
+	}
+	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+	{// 上向き
+		playerDir = CRAB_DIRECTION::CRAB_UP;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+		ImGui::Text("UP");
+	}
+	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+	{// 左向き
+		playerDir = CRAB_DIRECTION::CRAB_LEFT;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		ImGui::Text("LEFT");
+	}
+	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+	{// 右向き
+		playerDir = CRAB_DIRECTION::CRAB_RIGHT;
+		bRot = true;
+		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		ImGui::Text("RIGHT");
+	}
+	else
+	{// 抜けちゃった
+		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
+	}
+#endif
+
+	// デバッグエフェクト
+#if 1
+	if (bRot)
+	{
 		CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 5.0f, 0.0f),
-			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+			col,
 			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-
-#if 0
-	if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[0], fRangeMinMax[1]))
-	{// 上
-		ImGui::Text("PLAYER_ROT_HIGH");
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[3], fRangeMinMax[3]))
-	{// 下
-		ImGui::Text("PLAYER_ROT_LOW");
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[6], fRangeMinMax[7]))
-	{// 左
-		ImGui::Text("PLAYER_ROT_LEFT");
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(rot.y, fRangeMinMax[4], fRangeMinMax[5]))
-	{// 右
-		ImGui::Text("PLAYER_ROT_RIGHT");
-	}
-	else
-	{// 上
-		ImGui::Text("NONE: %f", rot.y);
 	}
 #endif
 
 	// 入力方向
 	EDashAngle* angle = m_pControlMove->GetInputAngle();
-	float fRot = 0.0f;
-	if (angle != nullptr)
+	if (angle == nullptr) return;
+
+	switch (*angle)
 	{
-		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-		fRot = division * (*angle) + D3DX_PI + Camerarot.y;
-		UtilFunc::Transformation::RotNormalize(fRot);
+	case EDashAngle::ANGLE_UP:
+		inputDir = CRAB_DIRECTION::CRAB_UP;
+		ImGui::Text("UP");
+		break;
+
+	case EDashAngle::ANGLE_DOWN:
+		inputDir = CRAB_DIRECTION::CRAB_DOWN;
+		ImGui::Text("DOWN");
+		break;
+	
+	case EDashAngle::ANGLE_RIGHT:
+	case EDashAngle::ANGLE_RIGHTUP:
+	case EDashAngle::ANGLE_RIGHTDW:
+		inputDir = CRAB_DIRECTION::CRAB_RIGHT;
+		ImGui::Text("RIGHT");
+		break;
+	
+	case EDashAngle::ANGLE_LEFT:
+	case EDashAngle::ANGLE_LEFTUP:
+	case EDashAngle::ANGLE_LEFTDW:
+		inputDir = CRAB_DIRECTION::CRAB_LEFT;
+		ImGui::Text("LEFT");
+		break;
+
+	default:
+		break;
 	}
 
-#if 0
-	// 入力方向を4方向に変換
-	if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[0], fRangeMinMax[1]))
-	{// 上
-		ImGui::Text("INPUT_ROT_HIGH");
+	if (playerDir == CRAB_DIRECTION::CRAB_NONE ||
+		inputDir == CRAB_DIRECTION::CRAB_NONE)
+	{// 判定に引っかかっていない
+		return;
 	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[2], fRangeMinMax[3]))
-	{// 下
-		ImGui::Text("INPUT_ROT_LOW");
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[4], fRangeMinMax[5]))
-	{// 右
-		ImGui::Text("INPUT_ROT_RIGHT");
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRot, fRangeMinMax[6], fRangeMinMax[7]))
-	{// 左
-		ImGui::Text("INPUT_ROT_LEFT");
-	}
-#endif
-
-	// プレイヤーから見た方向に変換
-#if 0
-	motionType = MOTION_CRAB_FRONT;
-	motionType = MOTION_CRAB_BACK;
-	motionType = MOTION_CRAB_LEFT;
-	motionType = MOTION_CRAB_RIGHT;
-#endif
 
 	// モーション設定
-	SetMotion(motionType, nStartKey);
+	SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
 }
+
 //==========================================================================
 // 位置制限
 //==========================================================================
@@ -1053,6 +1169,9 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 		// ボールをキャッチ
 		pBall->CatchLand(this);
 
+		// 落ちてるのキャッチ
+		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+
 		// キャッチ状態
 		hitInfo.eHit = EHit::HIT_CATCH;
 
@@ -1076,13 +1195,14 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 			pCoverPlayer->GetStatus()->LifeHeal(10);
 		}
 
-		//演出
+		// 演出
 		CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
 			80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
+		// 攻撃キャッチ処理
 		pBall->CatchAttack(this);
 
 		// キャッチ状態
@@ -1694,7 +1814,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("Motion : [%d]", motion->GetType());
+		ImGui::Text("Motion : [%s]", Motion::NAME_MAP.at(static_cast<CPlayer::EMotion>(motion->GetType())).c_str());
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;
