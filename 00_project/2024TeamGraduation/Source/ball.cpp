@@ -979,8 +979,8 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		if (bHit)
 		{ // 当たっていた場合
 
-			// プレイヤーヒット処理
-			if (pPlayer->Hit(this))
+		  // プレイヤーヒット処理
+			if (pPlayer->Hit(this).bHit)
 			{ // ヒット処理内でダメージを受けた場合
 
 				// ホーミング対象の初期化

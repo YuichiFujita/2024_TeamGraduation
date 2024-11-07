@@ -1043,18 +1043,21 @@ void CPlayer::LimitPos()
 //==========================================================================
 // ヒット処理
 //==========================================================================
-bool CPlayer::Hit(CBall* pBall)
+CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall = pBall->GetState();	// ボール状態
 	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
+	CPlayer::SHitInfo hitInfo;	// ヒット情報
+	hitInfo.eHit = HIT_NONE;
+	hitInfo.bHit = false;
 
 	//死亡状態ならすり抜け
 	if (m_sMotionFrag.bDead)
 	{
-		return true;
+		return hitInfo;
 	}
 
 	if (stateBall == CBall::STATE_LAND)
@@ -1065,18 +1068,22 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// 落ちてるのキャッチ
 		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
-		return false;
+
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return false; }
+	if (!m_sDamageInfo.bReceived) { return hitInfo; }
 
 	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
 		// カバー対象を回復
 		CPlayer* pCoverPlayer = pBall->GetCover();
-		if (pCoverPlayer == nullptr) return false;
+		if (pCoverPlayer == nullptr) return hitInfo;
 
 		// 死んでいない味方回復
 		if (!pCoverPlayer->GetMotionFrag().bDead &&
@@ -1095,14 +1102,17 @@ bool CPlayer::Hit(CBall* pBall)
 		// 攻撃キャッチ処理
 		pBall->CatchAttack(this);
 
-		return false;
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// 攻撃状態以外ならすり抜ける
-	if (atkBall == CBall::EAttack::ATK_NONE) { return false; }
+	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
 	
 	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return false; }
+	if (m_pStatus->GetTeam() == sideBall) { return hitInfo; }
 
 	if (m_sMotionFrag.bCatch &&
 		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
@@ -1110,7 +1120,11 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// キャッチ時処理
 		CatchSetting(pBall);
-		return false;
+
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// ダメージを与える
@@ -1128,7 +1142,7 @@ bool CPlayer::Hit(CBall* pBall)
 		DamageSetting(pBall);
 	}
 
-	return true;
+	return hitInfo;
 }
 
 //==========================================================================
@@ -1237,6 +1251,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
+
+	// 今切り替えられました
+
 }
 
 //==========================================================================

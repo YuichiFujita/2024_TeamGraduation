@@ -32,7 +32,7 @@ bool CPlayerAIControlAction::m_bAutoThrow = true;
 //==========================================================================
 CPlayerAIControlAction::CPlayerAIControlAction()
 {
-
+	ZeroMemory(&m_sFlag, sizeof(m_sFlag));
 }
 
 //==========================================================================
@@ -62,19 +62,16 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 {
 	CBall* pBall = player->GetBall();
 
-	if (pBall == nullptr) return;
-
-	if (m_bAutoThrow)
+	if (m_sFlag.bThrow)
 	{
-		fThrowTime += fDeltaTime;
-	}
+		if (pBall == nullptr)
+		{
+			m_sFlag.bThrow = false;
 
-	// ボタン
-	if (ImGui::Button("PlayerAI : ThrowBall") || fThrowTime > 1.0f)
-	{
+			return;
+		}
 
-		fThrowTime = 0.0f;
-
+		// 投げる
 		ThrowSetting(player);
 	}
 }
@@ -89,8 +86,11 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 	if (bJump) return;
 
 	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
-	if (false)
+	if (m_sFlag.bJump)
 	{
+		// フラグリセット
+		m_sFlag.bJump = false;
+
 		JumpSetting(player);
 	}
 }
@@ -108,8 +108,11 @@ void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, co
 	if (pBall == nullptr || !pTeamStatus->IsMaxSpecial()) return;
 
 	//TODO: フラグか何かで発動操作
-	if (false)
+	if (m_sFlag.bSpecial)
 	{
+		// フラグリセット
+		m_sFlag.bSpecial = false;
+
 		//発動
 		SpecialSetting(player, pBall, pTeamStatus);
 	}
