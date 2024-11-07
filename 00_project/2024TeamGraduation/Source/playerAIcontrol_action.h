@@ -14,6 +14,12 @@
 #include "playercontrol_action.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerUserControlAction;
+class CPlayerAIControlAction;
+
+//==========================================================================
 // プレイヤーAIコントロール_アクションクラス定義
 //==========================================================================
 //=============================
@@ -21,10 +27,34 @@
 //=============================
 class CPlayerAIControlAction : public CPlayerControlAction
 {
+private:
+	//=============================
+	// 構造体
+	//=============================
+	struct SFlag
+	{
+		bool bThrow;		// 投げるか
+		bool bJump;			// ジャンプ
+		bool bSpecial;		// スペシャル
+	};
+
 public:
 
 	// コンストラクタ
 	CPlayerAIControlAction();
+
+	//=============================
+	// 仮想関数
+	//=============================
+	virtual CPlayerAIControlAction* GetAI() { return this; };
+	virtual CPlayerUserControlAction* GetUser() { return nullptr; };
+
+	//=============================
+	// メンバ関数
+	//=============================
+	void SetIsThrow(bool bThrow) { m_sFlag.bThrow = bThrow; }			// 投げるか設定
+	void SetIsJump(bool bJump) { m_sFlag.bJump = bJump; }				// ジャンプするか設定
+	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }	// スペシャル撃つか設定
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
@@ -52,6 +82,7 @@ private:
 	// メンバ変数
 	//=============================
 	float fThrowTime = 0.0f;
+	SFlag m_sFlag;
 
 };
 

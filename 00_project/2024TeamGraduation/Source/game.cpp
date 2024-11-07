@@ -383,7 +383,7 @@ void CGame::ChangeEdit()
 	static bool no_titlebar = false;
 	static bool no_scrollbar = true;
 	static bool no_menu = true;
-	static bool no_move = true;
+	static bool no_move = false;
 	static bool no_resize = false;
 	static bool no_collapse = false;
 	static bool no_close = false;
