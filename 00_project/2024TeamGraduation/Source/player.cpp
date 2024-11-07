@@ -49,6 +49,7 @@ namespace
 		"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
 		"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
 	};
+
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
@@ -482,7 +483,7 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	m_bAlign = false;	// 揃え
 
 	// 足左右の更新
-	//UpdateFootLR();
+	UpdateFootLR();
 
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -506,29 +507,8 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 
 		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
-		// モーションの種類
-		EMotion motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
-		m_bDash = false;
-
-		// 歩行の情報取得
-		CMotion::Info info = pMotion->GetInfo(motionType);
-
-		// 開始キー
-		int nStartKey = 0;
-		if (m_bFootLR)
-		{
-			nStartKey = info.nNumKey / 2;
-		}
-
-		// モーション設定
-		if (IsCrab() && motionType == MOTION_WALK)
-		{
-			MotionCrab(nStartKey);
-		}
-		else
-		{
-			SetMotion(motionType, nStartKey);
-		}
+		// 移動モーション設定
+		SetMoveMotion(false);
 
 		if (nOldType != pMotion->GetType())
 		{
@@ -547,6 +527,53 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	{
 		// デフォルトモーションの設定
 		DefaultMotionSet(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// 移動モーション設定
+//==========================================================================
+void CPlayer::SetMoveMotion(bool bNowDrop)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr)	return;
+
+	// 再生中モーション
+	int nType = pMotion->GetType();
+
+	// モーションの種類
+	EMotion motionType;
+	if (m_pBall == nullptr) // ボール所持によって分ける
+	{
+		motionType = m_bDash ? MOTION_RUN : MOTION_WALK;
+	}
+	else
+	{
+		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
+	}
+
+	// ダッシュリセット
+	m_bDash = false;
+
+	// 歩行の情報取得
+	CMotion::Info info = pMotion->GetInfo(motionType);
+
+	// 開始キー
+	int nStartKey = 0;
+	if (m_bFootLR)
+	{
+		nStartKey = info.nNumKey / 2;
+	}
+
+	// モーション設定
+	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	{
+		MotionCrab(nStartKey);
+	}
+	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
+	{
+		SetMotion(motionType, nStartKey);
 	}
 }
 
@@ -571,15 +598,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 	}
 	else if (nType == EMotion::MOTION_WALK)
 	{// ニュートラルモーション設定
-		//SetMotion(EMotion::MOTION_GRIP_DEF);
-		//return;
-
-		//if (m_bFootLR)
-		//{
-		//	// ニュートラルモーション設定
-		//	SetMotion(EMotion::MOTION_GRIP_DEF);
-		//}
-		 if (!pMotion->IsAlignFrame(info))
+		
+		if (!pMotion->IsAlignFrame(info))
 		{// 足が揃ってない
 
 			// 移動量取得
@@ -637,17 +657,22 @@ void CPlayer::UpdateFootLR()
 	int nType = pMotion->GetType();
 
 	// 歩き以外は抜ける
-	if (nType != EMotion::MOTION_WALK && nType != EMotion::MOTION_RUN) return;
+	if (nType != EMotion::MOTION_DROPCATCH_WALK) return;
 
 	if (pMotion->IsImpactFrame(info))
 	{// 衝撃のフレーム
-		m_bFootLR = !m_bFootLR;
+
+		if (nType == EMotion::MOTION_DROPCATCH_WALK)
+		{// 落ちてるのを拾うとき
+
+			// 移動モーション設定
+			SetMoveMotion(true);
+		}
+
+		// 足左右切り替え : 落ちてるの拾うためにいるかも
+		//m_bFootLR = !m_bFootLR;
 	}
 
-	ImGui::Checkbox("m_bFootLR", &m_bFootLR);
-
-	float a = pMotion->GetAllCount();
-	ImGui::DragFloat("frame", &a, 1.0f, 0.0f, 0.0f, "%.2f");
 }
 
 //==========================================================================
@@ -1018,18 +1043,21 @@ void CPlayer::LimitPos()
 //==========================================================================
 // ヒット処理
 //==========================================================================
-bool CPlayer::Hit(CBall* pBall)
+CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 {
 	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
 	CBall::EState stateBall = pBall->GetState();	// ボール状態
 	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::HitResult_Character hitresult = {};
+	CPlayer::SHitInfo hitInfo;	// ヒット情報
+	hitInfo.eHit = HIT_NONE;
+	hitInfo.bHit = false;
 
-	// 死亡状態ならすり抜け
+	//死亡状態ならすり抜け
 	if (m_sMotionFrag.bDead)
 	{
-		return false;
+		return hitInfo;
 	}
 
 	if (stateBall == CBall::STATE_LAND)
@@ -1037,18 +1065,25 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
-		return false;
+
+		// 落ちてるのキャッチ
+		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return false; }
+	if (!m_sDamageInfo.bReceived) { return hitInfo; }
 
 	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
 		// カバー対象を回復
 		CPlayer* pCoverPlayer = pBall->GetCover();
-		if (pCoverPlayer == nullptr) return false;
+		if (pCoverPlayer == nullptr) return hitInfo;
 
 		// 死んでいない味方回復
 		if (!pCoverPlayer->GetMotionFrag().bDead &&
@@ -1064,16 +1099,20 @@ bool CPlayer::Hit(CBall* pBall)
 			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
 			80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
+		// 攻撃キャッチ処理
 		pBall->CatchAttack(this);
 
-		return false;
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// 攻撃状態以外ならすり抜ける
-	if (atkBall == CBall::EAttack::ATK_NONE) { return false; }
+	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
 	
 	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return false; }
+	if (m_pStatus->GetTeam() == sideBall) { return hitInfo; }
 
 	if (m_sMotionFrag.bCatch &&
 		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
@@ -1081,7 +1120,11 @@ bool CPlayer::Hit(CBall* pBall)
 
 		// キャッチ時処理
 		CatchSetting(pBall);
-		return false;
+
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
 	}
 
 	// ダメージを与える
@@ -1099,7 +1142,7 @@ bool CPlayer::Hit(CBall* pBall)
 		DamageSetting(pBall);
 	}
 
-	return true;
+	return hitInfo;
 }
 
 //==========================================================================
@@ -1208,6 +1251,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
+
+	// 今切り替えられました
+
 }
 
 //==========================================================================
@@ -1639,6 +1685,7 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fRadius", (float*)&parameter.fRadius, 0.5f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fJumpStartMove", &parameter.fJumpStartMove, 0.001f, 0.0f, 100.0f, "%.3f");
 		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");
+		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
 
 		// 設定
 		SetRadius(parameter.fRadius);

@@ -10,6 +10,10 @@
 
 #include "playercontrol.h"
 
+// 前方宣言
+class CPlayerUserControlAction;
+class CPlayerAIControlAction;
+
 //==========================================================================
 // プレイヤーコントロールクラス定義
 //==========================================================================
@@ -24,6 +28,9 @@ public:
 	CPlayerControlAction();
 
 	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
+
+	virtual CPlayerAIControlAction* GetAI() = 0;
+	virtual CPlayerUserControlAction* GetUser() = 0;
 
 protected:
 	//=============================

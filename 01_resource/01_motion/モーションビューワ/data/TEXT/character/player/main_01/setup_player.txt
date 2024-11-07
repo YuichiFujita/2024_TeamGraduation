@@ -14,7 +14,7 @@ SCRIPT			# ‚±‚Ìs‚Íâ‘ÎÁ‚³‚È‚¢‚±‚ÆI
 #------------------------------------------------------------------------------
 # ƒ‚ƒfƒ‹”
 #------------------------------------------------------------------------------
-NUM_MODEL = 16
+NUM_MODEL = 17
 
 #------------------------------------------------------------------------------
 # ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼
@@ -35,6 +35,7 @@ MODEL_FILENAME = data/MODEL/player/12_legUP_L.x	# [12]¶‹r(ã)
 MODEL_FILENAME = data/MODEL/player/13_legDW_L.x	# [13]¶‹r(‰º)
 MODEL_FILENAME = data/MODEL/player/14_shoes_L.x	# [14]¶‘«
 MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]”¯
+MODEL_FILENAME = data/MODEL/dodgeball.x			# [16]ƒ{[ƒ‹
 
 #------------------------------------------------------------------------------
 # ƒLƒƒƒ‰ƒNƒ^[î•ñ
@@ -61,7 +62,7 @@ CHARACTERSET
 	
 	BALLSET
 		PARTS = 5		# ’†S‚É‚·‚éƒp[ƒc
-		OFFSET = 0.00 0.0 0.00		# ƒIƒtƒZƒbƒgˆÊ’u
+		OFFSET = -6.50 -4.00 0.00		# ƒIƒtƒZƒbƒgˆÊ’u
 	END_BALLSET
 
 	PARTSSET
@@ -217,6 +218,14 @@ CHARACTERSET
 		START = 1
 	END_PARTSSET
 	
+	PARTSSET
+		INDEX = 16
+		PARENT = 5
+		POS = -6.50 -12.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
 END_CHARACTERSET
 
 
@@ -235,7 +244,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # ƒ‚[ƒVƒ‡ƒ“”
 #------------------------------------------------------------------------------
-NUM_MOTION = 24
+NUM_MOTION = 27
 
 
 #------------------------------------------------------------------------------
@@ -243,7 +252,9 @@ NUM_MOTION = 24
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt				# ƒfƒtƒHƒ‹ƒg
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt			# •à‚«
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk_ball.txt		# •à‚«(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt				# ‘–‚è
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run_ball.txt		# ‘–‚è(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt			# ƒuƒŠƒ“ƒN
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt			# ‰ñ”ğ¬Œ÷
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt			# ƒWƒƒƒ“ƒv
@@ -255,6 +266,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_jump.txt			# ’
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_normal.txt	# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dropcatch_walk.txt		# —‚¿‚Ä‚é‚ÌƒLƒƒƒbƒ`(•à‚«)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt			# “Š‚°
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_dash.txt		# “Š‚°(ƒ_ƒbƒVƒ…)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)

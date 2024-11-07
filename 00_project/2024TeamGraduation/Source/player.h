@@ -42,11 +42,13 @@ public:
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
 		MOTION_WALK,				// 移動
+		MOTION_WALK_BALL,			// 移動(ボール所持)
 		MOTION_CRAB_FRONT,			// カニ歩き(前)
 		MOTION_CRAB_BACK,			// カニ歩き(後)
 		MOTION_CRAB_LEFT,			// カニ歩き(左)
 		MOTION_CRAB_RIGHT,			// カニ歩き(右)
 		MOTION_RUN,					// 走り
+		MOTION_RUN_BALL,			// 走り(ボール所持)
 		MOTION_BLINK,				// ブリンク
 		MOTION_DODGE,				// 回避成功時
 		MOTION_JUMP,				// ジャンプ
@@ -58,6 +60,7 @@ public:
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
+		MOTION_DROPCATCH_WALK,		// 落ちてるのキャッチ(歩き)
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
@@ -134,6 +137,15 @@ public:
 		HAND_MAX
 	};
 
+	// 動作状態
+	enum EHit
+	{
+		HIT_NONE = 0,	// 通常
+		HIT_CATCH,		// キャッチ
+		HIT_DODGE,		// 回避
+		HIT_MAX
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -180,6 +192,13 @@ public:
 		MyLib::Vector3 posEnd;		// 終点
 
 		SKnockbackInfo() : posStart(MyLib::Vector3()), posEnd(MyLib::Vector3()) {}
+	};
+
+	// 
+	struct SHitInfo
+	{
+		bool bHit;	// 当たったか
+		EHit eHit;	// 動作状態
 	};
 
 	//=============================
@@ -229,7 +248,7 @@ public:
 	//=============================
 	// その他
 	//=============================
-	bool Hit(CBall* pBall);			// ヒット処理
+	virtual SHitInfo Hit(CBall* pBall);			// ヒット処理
 	void SetSpecialAttack();		// スペシャル攻撃設定
 	void SetState(EState state);	// 状態設定
 	EState GetState() { return m_state; }					// 状態取得
@@ -325,6 +344,7 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 	void MotionCrab(int nStartKey);		// キャッチ時処理(地上・ジャスト)
+	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
 
 	//=============================
 	// メンバ変数
