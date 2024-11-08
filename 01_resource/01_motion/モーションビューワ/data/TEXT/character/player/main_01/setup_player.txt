@@ -244,7 +244,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 27
+NUM_MOTION = 31
 
 
 #------------------------------------------------------------------------------
@@ -253,6 +253,10 @@ NUM_MOTION = 27
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt				# デフォルト
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt			# 歩き
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk_ball.txt		# 歩き(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_front.txt		# カニ歩き(前)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_back.txt		# カニ歩き(後)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_left.txt		# カニ歩き(左)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_right.txt		# カニ歩き(右)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt				# 走り
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run_ball.txt		# 走り(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt			# ブリンク
@@ -275,7 +279,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt			# スペ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt				# 勝利
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt			# ダメージ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt			# 死亡
-MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt		# 前グリップ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt		# 通常グリップ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt		# 前グリップ
 
 
