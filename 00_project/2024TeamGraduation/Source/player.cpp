@@ -649,9 +649,6 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
 	}
 
-	// ダッシュリセット
-	m_bDash = false;
-
 	// 歩行の情報取得
 	CMotion::Info info = pMotion->GetInfo(motionType);
 
@@ -663,7 +660,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	if (!m_bDash && IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
 		MotionCrab(nStartKey);
 	}
@@ -671,6 +668,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	{
 		SetMotion(motionType, nStartKey);
 	}
+
+	// ダッシュリセット
+	m_bDash = false;
 }
 
 //==========================================================================
@@ -1136,7 +1136,7 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 	hitInfo.eHit = HIT_NONE;
 	hitInfo.bHit = false;
 
-	//死亡状態ならすり抜け
+	// 死亡状態ならすり抜け
 	if (m_sMotionFrag.bDead)
 	{
 		return hitInfo;
@@ -1208,6 +1208,9 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 
 		return hitInfo;
 	}
+
+	// ダメージを受ける場合はフラグをONにする
+	hitInfo.bHit = true;
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成

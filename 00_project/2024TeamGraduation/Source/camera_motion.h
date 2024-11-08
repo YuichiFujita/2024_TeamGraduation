@@ -40,60 +40,6 @@ public:
 		MAX
 	};
 
-
-	// トリガー情報
-	struct TriggerInfo
-	{
-		bool bTrigger;	// トリガー判定
-		int nIdx;		// インデックス
-
-		TriggerInfo() : bTrigger(false), nIdx(0) {}
-		TriggerInfo(bool _bTrigger, int _nIdx) : bTrigger(_bTrigger), nIdx(_nIdx) {}
-	};
-
-
-	CCameraMotion();
-	~CCameraMotion();
-
-	//=============================
-	// メンバ関数
-	//=============================
-	HRESULT Init();		// 初期化
-	void LoadText();	// テキスト読み込み
-	void Uninit();		// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-
-	TriggerInfo GetTrigger();	// トリガー判定取得
-	void SetMotion				// モーション設定
-	(
-		int nMotion,			// モーション種類
-		bool bInverse = false,	// 反転フラグ
-		bool bPos = true,		// 位置動作フラグ
-		bool bRot = true,		// 向き動作フラグ
-		bool bDis = true,		// 距離動作フラグ
-		EASING easing = Linear	// イージング種類
-	);
-
-	// 情報操作
-	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
-	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
-	inline int GetNowMotionIdx()		{ return m_nNowMotionIdx; }
-	inline void SetFinish(bool bFinish)	{ m_bFinish = bFinish; }
-	inline bool IsFinish()	{ return m_bFinish; }
-	inline bool IsEdit()	{ return m_bEdit; }
-
-	inline void SetEnablePause(bool bPause)			{ m_bPause = bPause; }			// ポーズ判定
-	inline void SetEnableSystemPause(bool bPause)	{ m_bSystemPause = bPause; }	// システムポーズ判定
-	inline bool IsPause()							{ return m_bPause; }			// ポーズ判定
-
-	inline int GetNowKeyIdx() { return m_nNowKeyIdx; }
-	inline int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
-
-	// 静的関数
-	static CCameraMotion* Create();	// 生成処理
-
-private:
-
 	//=============================
 	// 構造体定義
 	//=============================
@@ -132,6 +78,62 @@ private:
 		EditInfo() : motionIdx(0), keyIdx(0), triggerIdx(0), playRatio(0.0f), bSlide(false), motionInfo(),
 			Key_copyData(MotionKey()) {}
 	};
+
+	// トリガー情報
+	struct TriggerInfo
+	{
+		bool bTrigger;	// トリガー判定
+		int nIdx;		// インデックス
+
+		TriggerInfo() : bTrigger(false), nIdx(0) {}
+		TriggerInfo(bool _bTrigger, int _nIdx) : bTrigger(_bTrigger), nIdx(_nIdx) {}
+	};
+
+	CCameraMotion();
+	~CCameraMotion();
+
+	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT Init();		// 初期化
+	void LoadText();	// テキスト読み込み
+	void Uninit();		// 終了
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
+
+	TriggerInfo GetTrigger();	// トリガー判定取得
+	void SetMotion				// モーション設定
+	(
+		int nMotion,			// モーション種類
+		bool bInverse = false,	// 反転フラグ
+		bool bPos = true,		// 位置動作フラグ
+		bool bRot = true,		// 向き動作フラグ
+		bool bDis = true,		// 距離動作フラグ
+		EASING easing = Linear	// イージング種類
+	);
+
+	// 情報操作
+	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
+	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
+	inline int GetNowMotionIdx()		{ return m_nNowMotionIdx; }
+	inline void SetFinish(bool bFinish)	{ m_bFinish = bFinish; }
+	inline bool IsFinish()	{ return m_bFinish; }
+	inline bool IsEdit()	{ return m_bEdit; }
+
+	inline void SetEnablePause(bool bPause)			{ m_bPause = bPause; }			// ポーズ判定
+	inline void SetEnableSystemPause(bool bPause)	{ m_bSystemPause = bPause; }	// システムポーズ判定
+	inline bool IsPause()							{ return m_bPause; }			// ポーズ判定
+
+	inline int GetNowKeyIdx() { return m_nNowKeyIdx; }
+	inline int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
+
+	MotionKey GetKeyData(const MOTION motion, const int nKeyIdx);	// キー情報取得
+	float GetWholeCurTimer();	// 現在の全体時間取得
+	float GetWholeMaxTimer();	// 最大の全体時間取得
+
+	// 静的関数
+	static CCameraMotion* Create();	// 生成処理
+
+private:
 
 	//=============================
 	// 関数リスト

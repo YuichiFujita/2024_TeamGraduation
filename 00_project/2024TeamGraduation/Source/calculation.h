@@ -556,6 +556,37 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * cal;
 		}
 
+		/**
+		@brief	easeInOutBack関数
+		@details https://easings.net/ja#easeInBack
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@param	c			[in]	バックの強さ
+		@return	補正されたfloat値
+		*/
+		inline const MyLib::Vector3 EaseInOutBack(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime, float c = 1.70158f)
+		{
+			c *= 1.525f; // より強調された効果
+
+			// 割合
+			float ratio = (currentTime - startTime) / (endTime - startTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+
+			float cal = 0.0f;
+			if (ratio < 0.5f)
+			{
+				cal = 0.5f * (ratio * 2) * (ratio * 2) * ((c + 1) * (ratio * 2) - c);
+			}
+			else 
+			{
+				ratio = ratio * 2 - 2;
+				cal = 0.5f * (ratio * ratio * ((c + 1) * ratio + c) + 2);
+			}
+			return start + (end - start) * cal;
+		}
 
 		/**
 		@brief	easeInExpo関数
