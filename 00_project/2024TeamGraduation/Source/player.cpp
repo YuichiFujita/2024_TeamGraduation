@@ -140,37 +140,43 @@ namespace Crab
 
 namespace Motion
 {
+	// デバッグ表示用
 	const std::map<CPlayer::EMotion, std::string> NAME_MAP =
 	{
-	  {CPlayer::EMotion::MOTION_DEF,				"MOTION_DEF"},
-	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK"},
-	  {CPlayer::EMotion::MOTION_CRAB_FRONT,			"MOTION_CRAB_FRONT"},
-	  {CPlayer::EMotion::MOTION_CRAB_BACK,			"MOTION_CRAB_BACK"},
-	  {CPlayer::EMotion::MOTION_CRAB_LEFT,			"MOTION_CRAB_LEFT"},
-	  {CPlayer::EMotion::MOTION_CRAB_RIGHT,			"MOTION_CRAB_RIGHT"},
-	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN"},
-	  {CPlayer::EMotion::MOTION_BLINK,				"MOTION_BLINK"},
-	  {CPlayer::EMotion::MOTION_DODGE,				"MOTION_DODGE"},
-	  {CPlayer::EMotion::MOTION_JUMP,				"MOTION_JUMP"},
-	  {CPlayer::EMotion::MOTION_JUMP_BALL,			"MOTION_JUMP_BALL"},
-	  {CPlayer::EMotion::MOTION_LAND,				"MOTION_LAND"},
-	  {CPlayer::EMotion::MOTION_CATCH_STANCE,		"MOTION_CATCH_STANCE"},
-	  {CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP,	"MOTION_CATCH_STANCE_JUMP"},
-	  {CPlayer::EMotion::MOTION_CATCH_NORMAL,		"MOTION_CATCH_NORMAL"},
-	  {CPlayer::EMotion::MOTION_CATCH_JUMP,			"MOTION_CATCH_JUMP"},
-	  {CPlayer::EMotion::MOTION_JUSTCATCH_NORMAL,	"MOTION_JUSTCATCH_NORMAL"},
-	  {CPlayer::EMotion::MOTION_JUSTCATCH_JUMP,		"MOTION_JUSTCATCH_JUMP"},
-	  {CPlayer::EMotion::MOTION_THROW,				"MOTION_THROW"},
-	  {CPlayer::EMotion::MOTION_THROW_RUN,			"MOTION_THROW_RUN"},
-	  {CPlayer::EMotion::MOTION_THROW_JUMP,			"MOTION_THROW_JUMP"},
-	  {CPlayer::EMotion::MOTION_HYPE,				"MOTION_HYPE"},
-	  {CPlayer::EMotion::MOTION_SPECIAL,			"MOTION_SPECIAL"},
-	  {CPlayer::EMotion::MOTION_WIN,				"MOTION_WIN"},
-	  {CPlayer::EMotion::MOTION_DAMAGE,				"MOTION_DAMAGE"},
-	  {CPlayer::EMotion::MOTION_DEAD,				"MOTION_DEAD"},
-	  {CPlayer::EMotion::MOTION_DEAD_AFTER,			"MOTION_DEAD_AFTER"},
-	  {CPlayer::EMotion::MOTION_GRIP_DEF,			"MOTION_GRIP_DEF"},
-	  {CPlayer::EMotion::MOTION_GRIP_FRONT,			"MOTION_GRIP_FRONT"},
+	  {CPlayer::EMotion::MOTION_DEF,				"MOTION_DEF"},					// ニュートラルモーション
+	  {CPlayer::EMotion::MOTION_DEF_BALL,			"MOTION_DEF_BALL"},				// ニュートラルモーション(ボール所持)
+	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK"},					// 移動
+	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK_BALL"},			// 移動(ボール所持)
+	  {CPlayer::EMotion::MOTION_CRAB_FRONT,			"MOTION_CRAB_FRONT"},			// カニ歩き(前)
+	  {CPlayer::EMotion::MOTION_CRAB_BACK,			"MOTION_CRAB_BACK"},			// カニ歩き(後)
+	  {CPlayer::EMotion::MOTION_CRAB_LEFT,			"MOTION_CRAB_LEFT"},			// カニ歩き(左)
+	  {CPlayer::EMotion::MOTION_CRAB_RIGHT,			"MOTION_CRAB_RIGHT"},			// カニ歩き(右)
+	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN"},					// 走り
+	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN_BALL"},				// 走り(ボール所持)
+	  {CPlayer::EMotion::MOTION_BLINK,				"MOTION_BLINK"},				// ブリンク
+	  {CPlayer::EMotion::MOTION_DODGE,				"MOTION_DODGE"},				// 回避成功時
+	  {CPlayer::EMotion::MOTION_JUMP,				"MOTION_JUMP"},					// ジャンプ
+	  {CPlayer::EMotion::MOTION_JUMP_BALL,			"MOTION_JUMP_BALL"},			// ジャンプ(ボール所持)
+	  {CPlayer::EMotion::MOTION_LAND,				"MOTION_LAND"},					// 着地
+	  {CPlayer::EMotion::MOTION_CATCH_STANCE,		"MOTION_CATCH_STANCE"},			// キャッチの構え
+	  {CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP,	"MOTION_CATCH_STANCE_JUMP"},	// キャッチの構え(ジャンプ)
+	  {CPlayer::EMotion::MOTION_CATCH_NORMAL,		"MOTION_CATCH_NORMAL"},			// キャッチ(通常)
+	  {CPlayer::EMotion::MOTION_CATCH_JUMP,			"MOTION_CATCH_JUMP"},			// キャッチ(ジャンプ)
+	  {CPlayer::EMotion::MOTION_JUSTCATCH_NORMAL,	"MOTION_JUSTCATCH_NORMAL"},		// ジャストキャッチ(通常)
+	  {CPlayer::EMotion::MOTION_JUSTCATCH_JUMP,		"MOTION_JUSTCATCH_JUMP"},		// ジャストキャッチ(ジャンプ)
+	  {CPlayer::EMotion::MOTION_DROPCATCH_WALK,		"MOTION_DROPCATCH_WALK"},		// 落ちてるのキャッチ(歩き)
+	  {CPlayer::EMotion::MOTION_THROW,				"MOTION_THROW"},				// 投げ
+	  {CPlayer::EMotion::MOTION_THROW_RUN,			"MOTION_THROW_RUN"},			// 投げ(走り)
+	  {CPlayer::EMotion::MOTION_THROW_JUMP,			"MOTION_THROW_JUMP"},			// 投げ(ジャンプ)
+	  {CPlayer::EMotion::MOTION_HYPE,				"MOTION_HYPE"},					// 盛り上げ
+	  {CPlayer::EMotion::MOTION_SPECIAL,			"MOTION_SPECIAL"},				// スペシャル
+	  {CPlayer::EMotion::MOTION_WIN,				"MOTION_WIN"},					// 勝利
+	  {CPlayer::EMotion::MOTION_DAMAGE,				"MOTION_DAMAGE"},				// ダメージ
+	  {CPlayer::EMotion::MOTION_DEAD,				"MOTION_DEAD"},					// 死亡
+	  {CPlayer::EMotion::MOTION_DEAD_AFTER,			"MOTION_DEAD_AFTER"},			// 死亡後
+	  {CPlayer::EMotion::MOTION_GRIP_DEF,			"MOTION_GRIP_DEF"},				// デフォグリップ
+	  {CPlayer::EMotion::MOTION_GRIP_FRONT,			"MOTION_GRIP_FRONT"},			// 前グリップ
+	  {CPlayer::EMotion::MOTION_MAX,				"MOTION_MAX"},				
 	};
 }
 
@@ -678,7 +684,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 	if (nType != EMotion::MOTION_WALK)
 	{
 		// ニュートラルモーション設定
-		SetMotion(MOTION_DEF);
+		if (m_pBall != nullptr)	{ SetMotion(MOTION_DEF_BALL); }
+		else					{ SetMotion(MOTION_DEF); }
 	}
 	else if (nType == EMotion::MOTION_WALK)
 	{// ニュートラルモーション設定
@@ -722,7 +729,8 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 		else
 		{
 			// ニュートラルモーション設定
-			SetMotion(MOTION_DEF);
+			if (m_pBall != nullptr) { SetMotion(MOTION_DEF_BALL); }
+			else					{ SetMotion(MOTION_DEF); }
 		}
 	}
 }
