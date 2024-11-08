@@ -60,6 +60,10 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+#if _DEBUG
+	if (!m_bAutoThrow) { return; }
+#endif
+
 	CBall* pBall = player->GetBall();
 
 	if (m_sFlag.bThrow)
