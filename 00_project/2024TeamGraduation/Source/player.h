@@ -41,6 +41,7 @@ public:
 	enum EMotion
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
+		MOTION_DEF_BALL,			// ニュートラルモーション(ボール所持)
 		MOTION_WALK,				// 移動
 		MOTION_WALK_BALL,			// 移動(ボール所持)
 		MOTION_CRAB_FRONT,			// カニ歩き(前)
