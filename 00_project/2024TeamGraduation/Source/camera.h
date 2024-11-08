@@ -134,11 +134,12 @@ public:
 	//-----------------------------
 	// 注視点
 	//-----------------------------
-	inline void SetPositionR(const MyLib::Vector3& pos)		{ m_posR = pos; }			// 注視点の設定
-	inline MyLib::Vector3 GetPositionR()					{ return m_posR; }			// 注視点の取得
-	inline void SetPositionRDest(const MyLib::Vector3& pos)	{ m_posRDest = pos; }		// 目標注視点の設定
-	inline MyLib::Vector3 GetPositionRDest()				{ return m_posRDest; }		// 目標注視点の取得
-	inline MyLib::Vector3 GetPositionROrigin()				{ return m_posROrigin; }	// 原点注視点の取得
+	inline void SetPositionR(const MyLib::Vector3& pos)			{ m_posR = pos; }			// 注視点の設定
+	inline MyLib::Vector3 GetPositionR()						{ return m_posR; }			// 注視点の取得
+	inline void SetPositionRDest(const MyLib::Vector3& pos)		{ m_posRDest = pos; }		// 目標注視点の設定
+	inline MyLib::Vector3 GetPositionRDest()					{ return m_posRDest; }		// 目標注視点の取得
+	inline void SetPositionROrigin(const MyLib::Vector3& pos)	{ m_posROrigin = pos; }		// 原点注視点の設定
+	inline MyLib::Vector3 GetPositionROrigin()					{ return m_posROrigin; }	// 原点注視点の取得
 
 	//-----------------------------
 	// 視点

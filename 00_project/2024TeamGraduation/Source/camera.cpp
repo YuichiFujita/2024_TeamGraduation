@@ -407,27 +407,14 @@ void CCamera::SetState(const STATE state, const bool bReset)
 void CCamera::UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 向きの正規化
-	UtilFunc::Transformation::RotNormalize(m_rotDest);		// 目標向き
-	UtilFunc::Transformation::RotNormalize(m_rotOrigin);	// 原点向き
-
-	// 向きの設定
-	m_rot = m_rotDest;
+	UtilFunc::Transformation::RotNormalize(m_rot);
 
 	// 目標距離の補正
 	if (m_fDestDistance < MIN_DIS)	 { m_fDestDistance = MIN_DIS; }
 	if (m_fOriginDistance < MIN_DIS) { m_fOriginDistance = MIN_DIS; }
 
-	// 距離の設定
-	m_fDistance = m_fDestDistance;
-
-	// 視野角の設定
-	m_fViewAngle = m_fDestViewAngle;
-
-	// 注視点の設定
-	m_posR = m_posRDest;
-
 	// 球面座標変換による目標視点の相対位置取得
-	m_posV = m_posVDest = CalcSpherePosition(m_posRDest, m_rotDest, -m_fDestDistance);
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);
 }
 
 //==========================================================================
