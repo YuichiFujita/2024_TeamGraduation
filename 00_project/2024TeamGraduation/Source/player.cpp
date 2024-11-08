@@ -652,7 +652,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 
 	// モーション設定
 	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
-	{
+	{// カニ歩き
 		MotionCrab(nStartKey);
 	}
 	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
@@ -988,37 +988,14 @@ void CPlayer::MotionCrab(int nStartKey)
 		return false;
 	};
 
-	// プレイヤーどこ見てる
+	//--------------------------------
+	// プレイヤー方向
+	//--------------------------------
 	bool bRot = false;
 	D3DXCOLOR col = D3DXCOLOR();
 	float fRotY = D3DX_PI * 1.0f + rot.y;
 	UtilFunc::Transformation::RotNormalize(fRotY);
 
-#if 0
-	for (int i = 0; i < CRAB_DIRECTION::CRAB_MAX; i++)
-	{
-		int maxCnt = i * 2;
-		int minCnt = maxCnt + 1;
-
-		float max = Crab::RANGE_MIN_MAX[maxCnt];
-		float min = Crab::RANGE_MIN_MAX[minCnt];
-		if (i == 0) UtilFunc::Transformation::RotNormalize(max);
-		UtilFunc::Transformation::RotNormalize(min);
-
-		bool bIn = CollisionRangeAngle(fRotY, max, min);
-		if (i == 0) !bIn;
-
-		if (bIn)
-		{// 向き
-			playerDir = CRAB_DIRECTION(i);
-			bRot = true;
-			ImGui::Text("%d", i);
-			break;
-		}
-	}
-#endif
-
-#if 1
 	float fRangeZero = Crab::RANGE_MIN_MAX[0];
 	UtilFunc::Transformation::RotNormalize(fRangeZero);
 	if (!CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
@@ -1026,48 +1003,33 @@ void CPlayer::MotionCrab(int nStartKey)
 		playerDir = CRAB_DIRECTION::CRAB_DOWN;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
-		ImGui::Text("DOWN");
 	}
 	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
 	{// 上向き
 		playerDir = CRAB_DIRECTION::CRAB_UP;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		ImGui::Text("UP");
 	}
 	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
 	{// 左向き
 		playerDir = CRAB_DIRECTION::CRAB_LEFT;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		ImGui::Text("LEFT");
 	}
 	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
 	{// 右向き
 		playerDir = CRAB_DIRECTION::CRAB_RIGHT;
 		bRot = true;
 		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-		ImGui::Text("RIGHT");
 	}
 	else
 	{// 抜けちゃった
 		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
 	}
-#endif
 
-	// デバッグエフェクト
-#if 1
-	if (bRot)
-	{
-		CEffect3D::Create(
-			GetPosition(),
-			MyLib::Vector3(0.0f, 5.0f, 0.0f),
-			col,
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-#endif
-
+	//--------------------------------
 	// 入力方向
+	//--------------------------------
 	EDashAngle* angle = m_pControlMove->GetInputAngle();
 	if (angle == nullptr) return;
 
@@ -1075,26 +1037,22 @@ void CPlayer::MotionCrab(int nStartKey)
 	{
 	case EDashAngle::ANGLE_UP:
 		inputDir = CRAB_DIRECTION::CRAB_UP;
-		ImGui::Text("UP");
 		break;
 
 	case EDashAngle::ANGLE_DOWN:
 		inputDir = CRAB_DIRECTION::CRAB_DOWN;
-		ImGui::Text("DOWN");
 		break;
 	
 	case EDashAngle::ANGLE_RIGHT:
 	case EDashAngle::ANGLE_RIGHTUP:
 	case EDashAngle::ANGLE_RIGHTDW:
 		inputDir = CRAB_DIRECTION::CRAB_RIGHT;
-		ImGui::Text("RIGHT");
 		break;
 	
 	case EDashAngle::ANGLE_LEFT:
 	case EDashAngle::ANGLE_LEFTUP:
 	case EDashAngle::ANGLE_LEFTDW:
 		inputDir = CRAB_DIRECTION::CRAB_LEFT;
-		ImGui::Text("LEFT");
 		break;
 
 	default:
@@ -1734,11 +1692,12 @@ bool CPlayer::IsCrab()
 	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
 	if (pBall == nullptr) return false;
 
-	// ボールは敵が所持しているか
+	// ボールの状態：敵側であるか
 	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
-	if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
+	if (pBall->GetTypeTeam() == CGameManager::TeamSide::SIDE_NONE) return false;
+	//if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
 
-	// ブリンク＆走りでない
+	// 自身の状態：ブリンク＆走りでない
 	if (action == CPlayer::EAction::ACTION_BLINK) return false;
 	if (action == CPlayer::EAction::ACTION_JUMP && m_bDash) return false;
 	if (m_bDash) return false;

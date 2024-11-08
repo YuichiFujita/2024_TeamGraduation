@@ -133,68 +133,6 @@ void CPlayerAI::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 状態更新
 	UpdateMode(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 向き
-	MyLib::Vector3 rot = GetRotation();
-
-	float fRange = D3DX_PI * 0.25f;
-
-	float fRangeMinMax[] =
-	{
-		D3DX_PI * 1.0f + fRange,	// 上
-		D3DX_PI * 1.0f - fRange,	// 上
-		D3DX_PI * 0.0f + fRange,	// 下
-		D3DX_PI * 0.0f - fRange,	// 下
-		D3DX_PI * -0.5f + fRange,	// 右
-		D3DX_PI * -0.5f - fRange,	// 右
-		D3DX_PI * 0.5f + fRange,	// 左
-		D3DX_PI * 0.5f - fRange,	// 左
-	};
-
-	for (int i = 0; i < sizeof(fRangeMinMax) / sizeof(fRangeMinMax[0]); i++)
-	{
-		UtilFunc::Transformation::RotNormalize(fRangeMinMax[i]);
-
-		MyLib::Vector3 move(
-			sinf(fRangeMinMax[i] + D3DX_PI) * 15.0f,
-			0.0f,
-			cosf(fRangeMinMax[i] + D3DX_PI) * 15.0f
-		);
-
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
-			move,
-			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-
-	{
-		MyLib::Vector3 move(
-			sinf(fRangeMinMax[0] + D3DX_PI) * 15.0f,
-			0.0f,
-			cosf(fRangeMinMax[0] + D3DX_PI) * 15.0f
-		);
-
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
-			move,
-			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-
-	{
-		MyLib::Vector3 move(
-			sinf(fRangeMinMax[1] + D3DX_PI) * 15.0f,
-			0.0f,
-			cosf(fRangeMinMax[1] + D3DX_PI) * 15.0f
-		);
-
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 50.0f, 0.0f),
-			move,
-			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-			20.0f, 0.5f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
 }
 
 //==========================================================================
