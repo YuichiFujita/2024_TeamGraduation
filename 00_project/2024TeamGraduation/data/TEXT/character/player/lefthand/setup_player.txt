@@ -217,11 +217,14 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 # ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def.txt					# ƒfƒtƒHƒ‹ƒg
+MOTION_FILENAME = data/TEXT/character/player/common/motion_def_ball.txt					# ƒfƒtƒHƒ‹ƒg(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt				# •à‚«
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt		# •à‚«(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt		# ƒJƒj•à‚«(‘O)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# ƒJƒj•à‚«(Œã)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# ƒJƒj•à‚«(¶)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt		# ƒJƒj•à‚«(Œã)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt		# ƒJƒj•à‚«(¶)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt		# ƒJƒj•à‚«(‰E)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# ‘–‚è
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_run_ball.txt			# ‘–‚è(ƒ{[ƒ‹Š)
@@ -247,7 +250,9 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ƒ_ƒ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt				# €–S
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# €–SŒã
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt			# ‘OƒOƒŠƒbƒv
+MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt			# ’ÊíƒOƒŠƒbƒv
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# ‘OƒOƒŠƒbƒv
+
 
 
 END_SCRIPT		# ‚±‚Ìs‚Íâ‘ÎÁ‚³‚È‚¢‚±‚ÆI
