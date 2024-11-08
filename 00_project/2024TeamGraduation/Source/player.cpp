@@ -643,9 +643,6 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
 	}
 
-	// ダッシュリセット
-	m_bDash = false;
-
 	// 歩行の情報取得
 	CMotion::Info info = pMotion->GetInfo(motionType);
 
@@ -657,7 +654,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	if (!m_bDash && IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
 		MotionCrab(nStartKey);
 	}
@@ -665,6 +662,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	{
 		SetMotion(motionType, nStartKey);
 	}
+
+	// ダッシュリセット
+	m_bDash = false;
 }
 
 //==========================================================================
