@@ -501,6 +501,52 @@ void CCameraMotion::SetMotion
 	m_fTriggerTimer	 = 0.0f;
 	m_bFinish	= false;
 	m_bPause	= false;
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();			// カメラ情報
+	MotionInfo nowInfo = m_vecMotionInfo[m_nNowMotionIdx];	// 現在のモーション
+	int nKeySize = static_cast<int>(nowInfo.Key.size());	// 現在のキー総数
+	int nNextKeyID = (m_nNowKeyIdx + 1) % nKeySize;	// 次のキーインデックス
+	MotionKey nowKey = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
+	MotionKey nextKey = nowInfo.Key[nNextKeyID];	// 次のキー
+
+	if (m_bMovePos)
+	{ // 注視点が動作する場合
+
+		// 注視点の線形補正
+		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
+		posR = (m_Vec3EasingFunc[m_EasingType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
+	}
+
+	if (m_bMoveRot)
+	{ // 向きが動作する場合
+
+		// 向きの線形補正
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
+		rot = (m_Vec3EasingFunc[m_EasingType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetRotation(rot);	// 向き反映
+	}
+
+	if (m_bMoveDis)
+	{ // 距離が動作する場合
+
+		// 距離の線形補正
+		float fDistance = pCamera->GetDistance();	// 距離
+		fDistance = (m_FloatEasingFunc[m_EasingType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
+		pCamera->SetDistance(fDistance);	// 距離反映
+	}
+
+	if (m_bInverse)
+	{ // 反転する場合
+
+		// 向きをY軸に反転させる
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
+		rot.y *= -1.0f;
+
+		// 向きを正規化
+		UtilFunc::Transformation::RotNormalize(rot.y);
+		pCamera->SetRotation(rot);	// 向き反映
+	}
 }
 
 //==========================================================================

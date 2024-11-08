@@ -35,6 +35,7 @@ public:
 		STATE_NONE = 0,		// 何もしない状態
 		STATE_CUTIN,		// カットイン状態
 		STATE_HYPE_TRANS,	// 盛り上がり遷移状態
+		STATE_HYPE_WAIT,	// 盛り上がり待機状態
 		STATE_HYPE,			// 盛り上がり状態
 		STATE_STAG,			// スペシャル演出状態	// この状態はスペシャルごとにカメラワーク変更
 		STATE_END,			// 終了状態
@@ -74,6 +75,7 @@ private:
 	// メンバ関数
 	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// カットイン更新
 	void UpdateHypeTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 盛り上がり遷移更新
+	void UpdateHypeWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 盛り上がり待機更新
 	void UpdateHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 盛り上がり更新
 	void UpdateStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル演出更新
 	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 終了更新

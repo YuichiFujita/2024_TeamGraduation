@@ -1054,7 +1054,7 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 	hitInfo.eHit = HIT_NONE;
 	hitInfo.bHit = false;
 
-	//死亡状態ならすり抜け
+	// 死亡状態ならすり抜け
 	if (m_sMotionFrag.bDead)
 	{
 		return hitInfo;
@@ -1126,6 +1126,9 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 
 		return hitInfo;
 	}
+
+	// ダメージを受ける場合はフラグをONにする
+	hitInfo.bHit = true;
 
 	// ダメージを与える
 	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成

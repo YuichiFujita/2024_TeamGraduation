@@ -29,6 +29,19 @@ namespace
 	const int	PRIORITY = 4;			// —Dæ‡ˆÊ
 	const float	LIGHT_RANGE = 600.0f;	// ŒõŒ¹”ÍˆÍ
 	const MyLib::Vector3 LIGHT_OFFSET = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ƒ‰ƒCƒgƒIƒtƒZƒbƒg
+
+	namespace hype
+	{
+		namespace trans
+		{
+			const float END_TIME = 0.8f;
+		}
+
+		namespace wait
+		{
+			const float END_TIME = 0.2f;
+		}
+	}
 }
 
 //************************************************************
@@ -39,6 +52,7 @@ CSpecialManager::AFuncUpdateState CSpecialManager::m_aFuncUpdateState[] =	// ó‘
 	nullptr,							// ‰½‚à‚µ‚È‚¢XV
 	&CSpecialManager::UpdateCutIn,		// ƒJƒbƒgƒCƒ“XV
 	&CSpecialManager::UpdateHypeTrans,	// ·‚èã‚ª‚è‘JˆÚXV
+	&CSpecialManager::UpdateHypeWait,	// ·‚èã‚ª‚è‘Ò‹@XV
 	&CSpecialManager::UpdateHype,		// ·‚èã‚ª‚èXV
 	&CSpecialManager::UpdateStag,		// ƒXƒyƒVƒƒƒ‹‰‰oXV
 	&CSpecialManager::UpdateEnd,		// I—¹XV
@@ -289,10 +303,8 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 //============================================================
 void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float END = 1.2f;
-
-	CCamera* pCamera = GET_MANAGER->GetCamera();					// ƒJƒƒ‰î•ñ
-	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();		// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“î•ñ
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// ƒJƒƒ‰î•ñ
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“î•ñ
 	CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(CCameraMotion::MOTION::MOTION_SPECIAL_HYPE, 0);		// æ“ªƒL[î•ñ
 	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“‚Ì”½“]ƒtƒ‰ƒO
 
@@ -309,21 +321,22 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 	// ƒJƒƒ‰î•ñ‚ÌŽæ“¾
 	MyLib::Vector3 posR = pCamera->GetPositionR();	// ’Ž‹“_
 	MyLib::Vector3 rot  = pCamera->GetRotation();	// Œü‚«
-	float fDistance     = pCamera->GetDistance();	// ‹——£
+	float fDis          = pCamera->GetDistance();	// ‹——£
 
 	// Œ»Ý‚Ì‘Ò‹@ŽžŠÔ‚ð‰ÁŽZ
 	m_fCurTime += fDeltaTime * fSlowRate;
 
-	posR      = UtilFunc::Correction::EaseOutBack(pCamera->GetPositionROrigin(), key.posRDest + m_pAttackPlayer->GetPosition(), 0.0f, END, m_fCurTime, 0.9f);
-	rot       = UtilFunc::Correction::EaseOutBack(pCamera->GetOriginRotation(),  key.rotDest,  0.0f, END, m_fCurTime, 0.9f);
-	fDistance = UtilFunc::Correction::EaseOutBack(pCamera->GetDistanceOrigin(),  key.distance, 0.0f, END, m_fCurTime, 0.9f);
+	// ƒJƒƒ‰î•ñ‚ÌüŒ`•â³
+	posR = UtilFunc::Correction::EaseInOutBack(pCamera->GetPositionROrigin(), key.posRDest + m_pAttackPlayer->GetPosition(), 0.0f, hype::trans::END_TIME, m_fCurTime, 0.2f);
+	rot  = UtilFunc::Correction::EaseInOutBack(pCamera->GetOriginRotation(),  key.rotDest,  0.0f, hype::trans::END_TIME, m_fCurTime, 0.2f);
+	fDis = UtilFunc::Correction::EaseInOutBack(pCamera->GetDistanceOrigin(),  key.distance, 0.0f, hype::trans::END_TIME, m_fCurTime, 0.2f);
 
 	// ƒJƒƒ‰î•ñ‚Ì”½‰f
-	pCamera->SetPositionR(posR);		// ’Ž‹“_
-	pCamera->SetRotation(rot);			// Œü‚«
-	pCamera->SetDistance(fDistance);	// ‹——£
+	pCamera->SetPositionR(posR);	// ’Ž‹“_
+	pCamera->SetRotation(rot);		// Œü‚«
+	pCamera->SetDistance(fDis);		// ‹——£
 
-	if (m_fCurTime >= END)
+	if (m_fCurTime >= hype::trans::END_TIME)
 	{ // ŽžŠÔ‚ªŒo‰ß‚µ‚«‚Á‚½ê‡
 
 		// ƒ^ƒCƒ}[‚ð‰Šú‰»
@@ -331,15 +344,36 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 
 		// ƒJƒƒ‰î•ñ‚Ì•â³
 		pCamera->SetPositionR(key.posRDest + m_pAttackPlayer->GetPosition());	// ’Ž‹“_
-		pCamera->SetRotation(key.rotDest);		// Œü‚«
-		pCamera->SetDistance(key.distance);		// ‹——£
+		pCamera->SetRotation(key.rotDest);	// Œü‚«
+		pCamera->SetDistance(key.distance);	// ‹——£
+
+		// ·‚èã‚ª‚è‘Ò‹@ó‘Ô‚É‚·‚é
+		m_state = STATE_HYPE_WAIT;
+	}
+}
+
+//============================================================
+//	·‚èã‚ª‚è‘Ò‹@‚ÌXVˆ—
+//============================================================
+void CSpecialManager::UpdateHypeWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// Œ»Ý‚Ì‘Ò‹@ŽžŠÔ‚ð‰ÁŽZ
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= hype::wait::END_TIME)
+	{ // ŽžŠÔ‚ªŒo‰ß‚µ‚«‚Á‚½ê‡
+
+		CCamera* pCamera = GET_MANAGER->GetCamera();				// ƒJƒƒ‰î•ñ
+		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“î•ñ
+		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“‚Ì”½“]ƒtƒ‰ƒO
+
+		// ƒ^ƒCƒ}[‚ð‰Šú‰»
+		m_fCurTime = 0.0f;
+
+		// ƒJƒƒ‰ˆÊ’u‚ðUŒ‚ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É‚·‚é
+		pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
 
 		// ƒXƒyƒVƒƒƒ‹·‚èã‚°ƒ‚[ƒVƒ‡ƒ“‚ðÝ’è
-#if 0
-		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, false, true, false);
-#else
 		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse);
-#endif
 
 		// ·‚èã‚ª‚èó‘Ô‚É‚·‚é
 		m_state = STATE_HYPE;
@@ -351,40 +385,8 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 //============================================================
 void CSpecialManager::UpdateHype(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// TODOFƒvƒŒƒCƒ„[‚ÌÀ•W‚ÉƒJƒƒ‰ˆÊ’u‚ð•â³
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// ƒJƒƒ‰î•ñ
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“î•ñ
-	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// ƒJƒƒ‰ˆÊ’u‚ðUŒ‚ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É
-
-	// TODO
-#if 0
-	if (pCameraMotion->GetWholeMaxTimer() * 0.7f > pCameraMotion->GetWholeCurTimer())
-	{
-		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
-		float fDistance = pCamera->GetDistance();	// ‹——£
-		fDistance = UtilFunc::Correction::EasingEaseOut(pCamera->GetDistanceOrigin(), key.distance, 0.0f, pCameraMotion->GetWholeMaxTimer() * 0.7f, pCameraMotion->GetWholeCurTimer());
-		pCamera->SetDistance(fDistance);	// ‹——£”½‰f
-	}
-	else
-	{
-		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
-		pCamera->SetDistance(key.distance);	// ‹——£”½‰f
-	}
-
-	if (pCameraMotion->GetWholeMaxTimer() * 0.3f > pCameraMotion->GetWholeCurTimer())
-	{
-		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
-		MyLib::Vector3 posR = pCamera->GetPositionR();	// ’Ž‹“_
-		posR = UtilFunc::Correction::EasingEaseOut(pCamera->GetPositionROrigin(), key.posRDest + pCameraMotion->GetPosition(), 0.0f, pCameraMotion->GetWholeMaxTimer() * 0.3f, pCameraMotion->GetWholeCurTimer());
-		pCamera->SetPositionR(posR);	// ’Ž‹“_”½‰f
-	}
-	else
-	{
-		CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(pCameraMotion->GetNowKeyMax() - 1);
-		pCamera->SetPositionR(key.posRDest + pCameraMotion->GetPosition());	// ’Ž‹“_”½‰f
-	}
-#endif
-
 	if (pCameraMotion->IsFinish())
 	{ // ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½ê‡
 
@@ -420,11 +422,8 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 		(this->*(m_aFuncUpdateSpecial[typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// TODOFƒvƒŒƒCƒ„[‚ÌÀ•W‚ÉƒJƒƒ‰ˆÊ’u‚ð•â³
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// ƒJƒƒ‰î•ñ
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“î•ñ
-	pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());	// ƒJƒƒ‰ˆÊ’u‚ðUŒ‚ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É
-
 	if (pCameraMotion->IsFinish())
 	{ // ƒJƒƒ‰ƒ‚[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½ê‡
 
