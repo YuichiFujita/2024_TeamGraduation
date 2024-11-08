@@ -275,6 +275,37 @@ void CGameManager::SetType(ESceneType type)
 	m_SceneType = type;
 }
 
+/**
+@brief	コートサイズ取得(チーム)
+@param	team[in]	取得したいチーム
+@param	pos[out]	取得したコートの中心点
+@return	コートサイズ
+*/
+MyLib::Vector3 CGameManager::GetCourtSize(const TeamSide team, MyLib::Vector3& pos)
+{
+	// 片側コートサイズ
+	MyLib::Vector3 size = m_courtSize;
+	size.x *= 0.5f;
+
+	// チームに応じた位置
+	pos = MyLib::Vector3();
+	switch (team)
+	{
+	case SIDE_LEFT:
+		pos.x = -size.x;
+		break;
+
+	case SIDE_RIGHT:
+		pos.x = size.x;
+		break;
+
+	default:
+		break;
+	}
+
+	return size;
+}
+
 //==========================================================================
 // コート移動制限
 //==========================================================================
