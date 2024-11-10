@@ -12,8 +12,13 @@
 
 #include "playercontrol_move.h"
 
+//==========================================================================
+// 前方宣言
+//==========================================================================
 class CSuffocation;
 class CEffekseerObj;
+class CPlayerUserControlMove;
+class CPlayerAIControlMove;
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -27,6 +32,12 @@ public:
 
 	// コンストラクタ
 	CPlayerUserControlMove();
+
+	//=============================
+	// 仮想関数
+	//=============================
+	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
+	virtual CPlayerUserControlMove* GetUser() { return this; }
 
 private:
 	

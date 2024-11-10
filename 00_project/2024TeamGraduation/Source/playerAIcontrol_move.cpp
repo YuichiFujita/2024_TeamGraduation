@@ -299,52 +299,27 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 		return;
 	}
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, 0) &&
-		!pKey->GetPress(DIK_W);
-
-	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) &&
-		!pKey->GetPress(DIK_S);
-
-	bool bRight = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) &&
-		!pKey->GetPress(DIK_D);
-
-	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, 0) &&
-		!pKey->GetPress(DIK_A);
-
-	// 左スティック判定
-	bool bStick = pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_X) && pPad->IsTipStickL(0, CInputGamepad::STICK_AXIS::STICK_Y);
-
-	if (bUP && bDown && bRight && bLeft && !bStick)
-	{
-		bBlink = false;
-	}
-
 	SetBlink(bBlink);	//走るフラグ設定
-
-	ImGui::Checkbox("UP", &bUP);
-	ImGui::Checkbox("Down", &bDown);
-	ImGui::Checkbox("Right", &bRight);
-	ImGui::Checkbox("Left", &bLeft);
 }
 
 //==========================================================================
 // ウォーク
 //==========================================================================
 void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	if (!m_bWalk) { return; }
+{	
+	// モーションフラグ取得
+	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+	if (!m_bWalk) {
+		motionFrag.bMove = false;
+		return; 
+	}
+
+	motionFrag.bMove = true;	// モーションフラグ(歩く)
 
 	bool bDash = IsBlink();	//走るフラグ
 
@@ -357,7 +332,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
 
-	MyLib::Vector3 move = player->GetMove();
+	MyLib::Vector3 move = VEC3_ZERO;
 	MyLib::Vector3 rot = player->GetRotation();
 
 	move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
@@ -365,6 +340,9 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// 移動量設定
 	player->SetMove(move);
+
+	// モーションフラグ設定
+	player->SetMotionFrag(motionFrag);
 }
 
 //==========================================================================
