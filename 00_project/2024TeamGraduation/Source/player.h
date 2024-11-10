@@ -88,8 +88,9 @@ public:
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
 		STATE_SPECIAL,			// スペシャル
-		STATE_OUTCOURT,			// コート越え
-		STATE_OUTCOURT_RETURN,	// コート越えから戻る
+		STATE_OUTCOURT,			// コート越え(ノックバック)
+		STATE_OUTCOURT_RETURN,	// コート越えから戻る(ノックバック)
+		STATE_INVADE_RETURN,	// 相手コートに侵入から戻る
 		STATE_MAX
 	};
 
@@ -305,7 +306,6 @@ protected:
 	void SetPlayerControlAction(CPlayerControlAction* pControlAction) { m_pControlAction = pControlAction; }	// 操作設定(アクション)
 
 private:
-
 	//=============================
 	// 関数リスト
 	//=============================
@@ -333,6 +333,7 @@ private:
 	void StateSpecial();			// スペシャル
 	void StateOutCourt();			// コート越え
 	void StateOutCourt_Return();	// コート越えから戻る
+	void StateInvade_Return();		// 相手コート侵入から戻る
 
 	//-----------------------------
 	// その他関数
@@ -341,6 +342,7 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void LimitPos();	// 位置制限
 	void ResetFrag();	// フラグリセット
+	void TeamCourt_Return(MyLib::Vector3& pos);		// チームコート内に戻る
 
 	//-----------------------------
 	// モーション系関数
@@ -355,8 +357,8 @@ private:
 	//TOKODO: 空中キャッチモーション出来たら実装
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
-	void MotionCrab(int nStartKey);		// カニ歩き変化処理
-	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
+	void MotionCrab(int nStartKey);							// カニ歩き変化処理
+	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
 
 	//=============================
 	// メンバ変数

@@ -90,7 +90,12 @@ namespace Align	// 足揃え
 	const float MULTIPLY_MOTION = 1.5f;	// モーション倍率
 }
 
-namespace Crab
+namespace Court	// 移動制限
+{
+	const float COMEBACK_LINE = 100.0f;	// 戻ってくるライン
+}
+
+namespace Crab	// カニ歩き
 {
 	const float RANGE = D3DX_PI * 0.25f;	// 判定角度の半分
 
@@ -196,6 +201,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateSpecial,				// スペシャル
 	&CPlayer::StateOutCourt,			// コート越え
 	&CPlayer::StateOutCourt_Return,		// コートに戻る
+	&CPlayer::StateInvade_Return,		// 相手コート侵入から戻る
 };
 
 //==========================================================================
@@ -643,9 +649,6 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 		motionType = m_bDash ? MOTION_RUN_BALL : MOTION_WALK_BALL;
 	}
 
-	// ダッシュリセット
-	m_bDash = false;
-
 	// 歩行の情報取得
 	CMotion::Info info = pMotion->GetInfo(motionType);
 
@@ -657,7 +660,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (IsCrab() && (motionType == MOTION_WALK || MOTION_WALK_BALL))
+	if (!m_bDash && IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
 		MotionCrab(nStartKey);
 	}
@@ -665,6 +668,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	{
 		SetMotion(motionType, nStartKey);
 	}
+
+	// ダッシュリセット
+	m_bDash = false;
 }
 
 //==========================================================================
@@ -1090,6 +1096,13 @@ void CPlayer::LimitPos()
 		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
 	}
 
+#if 0	//TAKADA: コート補正
+	if (!m_bJump && !m_sMotionFrag.bDead)
+	{// 相手コートに侵入したとき用コート内に補正
+		TeamCourt_Return(pos);
+	}
+#endif
+
 	if (pos.y <= 0.0f)
 	{
 		pos.y = 0.0f;
@@ -1351,6 +1364,29 @@ void CPlayer::OutCourtSetting()
 }
 
 //==========================================================================
+// チームコート内に戻る
+//==========================================================================
+void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
+{
+	// 自陣サイズ取得
+	CGameManager::TeamSide team = GetStatus()->GetTeam();
+	MyLib::Vector3 posCourt = MyLib::Vector3();
+	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
+
+	Court::COMEBACK_LINE;
+
+	// 
+	if (pos.x > posCourt.x + sizeCourt.x)
+	{// 右
+		SetState(EState::STATE_INVADE_RETURN);
+	}
+	else if (pos.x < posCourt.x - sizeCourt.x)
+	{// 左
+		SetState(EState::STATE_INVADE_RETURN);
+	}
+}
+
+//==========================================================================
 // 回避範囲取得
 //==========================================================================
 float CPlayer::GetDodgeDistance()
@@ -1570,7 +1606,7 @@ void CPlayer::StateSpecial()
 //==========================================================================
 // コート越え
 //==========================================================================
-void CPlayer::StateOutCourt()		
+void CPlayer::StateOutCourt()
 {
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1612,6 +1648,40 @@ void CPlayer::StateOutCourt_Return()
 	if (pMotion == nullptr) return;
 
 	if (m_fStateTime >= StateTime::COURT_RETURN)
+	{// キャンセル可能
+		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// 相手コート侵入から戻る
+//==========================================================================
+void CPlayer::StateInvade_Return()
+{
+	// 自陣サイズ取得
+	CGameManager::TeamSide team = GetStatus()->GetTeam();
+	MyLib::Vector3 posCourt = MyLib::Vector3();
+	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
+	MyLib::Vector3 pos = GetPosition();
+
+	Court::COMEBACK_LINE;
+
+	// 補正
+	if (pos.x > posCourt.x + sizeCourt.x)
+	{// 右
+
+	}
+	else if (pos.x < posCourt.x - sizeCourt.x)
+	{// 左
+
+	}
+
+	// 走る
+	float fMove = GetParameter().fVelocityNormal;
+	MyLib::Vector3  move = GetMove();
+	SetMotion(CPlayer::EMotion::MOTION_RUN);
+
+	if (1)
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}

@@ -222,8 +222,6 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt				# 歩き
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt		# 歩き(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt		# カニ歩き(前)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# カニ歩き(後)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# カニ歩き(左)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt		# カニ歩き(後)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt		# カニ歩き(左)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt		# カニ歩き(右)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# 走り
@@ -249,7 +247,6 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt					# 勝利
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ダメージ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt				# 死亡
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死亡後
-MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt			# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt			# 通常グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# 前グリップ
 
