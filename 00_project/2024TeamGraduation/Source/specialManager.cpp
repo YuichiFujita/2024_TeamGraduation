@@ -162,7 +162,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// ゲームをスペシャル演出シーンに変更
-	CGame::GetInstance()->GetGameManager()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
+	CGameManager::GetInstance()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
 #endif
 
 	// 通常カメラの設定
@@ -216,7 +216,7 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 	if (m_pAttackPlayer->GetBall() != nullptr)
 	{ // ボールを投げていない場合
 
-		CBall::ESpecial typeSpecial = CGame::GetInstance()->GetGameManager()->GetBall()->GetTypeSpecial();	// スペシャル種類
+		CBall::ESpecial typeSpecial = CGameManager::GetInstance()->GetBall()->GetTypeSpecial();	// スペシャル種類
 		assert(typeSpecial > CBall::SPECIAL_NONE && typeSpecial < CBall::SPECIAL_MAX);
 		if (m_aFuncUpdateState[typeSpecial] != nullptr)
 		{ // 更新関数が指定されている場合
@@ -485,7 +485,7 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetStatus()->GetTeam());
 
 	// ゲームをメインシーンに変更
-	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();	// ゲームマネージャー
+	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー
 	pGameManager->SetType(CGameManager::ESceneType::SCENE_MAIN);
 
 	// 追従カメラの設定

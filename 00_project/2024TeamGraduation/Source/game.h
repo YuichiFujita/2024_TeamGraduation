@@ -46,10 +46,9 @@ public:
 	virtual void Draw() override;
 
 	EditType GetEditType() { return m_EditType; }
-	CGameManager *GetGameManager();
-	void SetEnableClear(bool bClear) { m_clear = bClear; }		// クリアのフラグ
+	void SetEnableClear(bool bClear) { m_clear = bClear; }	// クリアのフラグ
 	bool IsClear() { return m_clear; }						// クリアフラグの取得
-	bool IsEdit() { return m_bEdit; }							// エディットの判定
+	bool IsEdit() { return m_bEdit; }						// エディットの判定
 
 	// 静的関数
 	static CGame* GetInstance() { return m_pThisPtr; }	// インスタンス取得

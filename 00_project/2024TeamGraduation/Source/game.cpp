@@ -241,7 +241,6 @@ void CGame::Uninit()
 	{
 		// 終了処理
 		m_pGameManager->Uninit();
-		delete m_pGameManager;
 		m_pGameManager = nullptr;
 	}
 
@@ -344,13 +343,13 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 #if 1
 		// 左チームのモテ値増減
-		CTeamStatus* pTeamLeft = GetGameManager()->GetTeamStatus(0);	// チーム情報
+		CTeamStatus* pTeamLeft = CGameManager::GetInstance()->GetTeamStatus(0);	// チーム情報
 		CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
 		ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
 		pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
 
 		// 右チームのモテ値増減
-		CTeamStatus* pTeamRight = GetGameManager()->GetTeamStatus(1);	// チーム情報
+		CTeamStatus* pTeamRight = CGameManager::GetInstance()->GetTeamStatus(1);	// チーム情報
 		CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
 		ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
 		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
@@ -481,14 +480,6 @@ void CGame::ChangeEdit()
 void CGame::Draw()
 {
 
-}
-
-//==========================================================================
-// ゲームマネージャの取得
-//==========================================================================
-CGameManager *CGame::GetGameManager()
-{
-	return m_pGameManager;
 }
 
 //==========================================================================

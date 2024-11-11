@@ -14,6 +14,7 @@
 #include "constans.h"
 #include "instantfade.h"
 #include "scene.h"
+#include "charmManager.h"
 
 //==========================================================================
 // 前方宣言
@@ -85,8 +86,10 @@ public:
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
 	CTeamStatus* GetTeamStatus(const int nTeam) { return m_pTeamStatus[nTeam]; }	// チームステータス取得
+	void AddCharmValue(TeamSide side, CCharmManager::EType charmType);	// モテ加算
 
-	static CGameManager *Create(CScene::MODE mode);	// 生成処理
+	static CGameManager* Create(CScene::MODE mode);				// 生成処理
+	static CGameManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 private:
 	
@@ -110,6 +113,7 @@ private:
 
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
 	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];	// チームステータス
+	static CGameManager* m_pThisPtr;				// 自身のポインタ
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス

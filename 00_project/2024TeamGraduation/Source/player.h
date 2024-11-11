@@ -275,6 +275,7 @@ public:
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
 	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
+	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
 	void OutCourtSetting();												// コート越え処理
 	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
 

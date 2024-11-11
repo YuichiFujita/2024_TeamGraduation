@@ -105,7 +105,7 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 void CPlayerUserControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CGameManager* pGameManager = CGameManager::GetInstance();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
 	
 	//スペシャルゲージMAX＋ボール所持か
