@@ -20,6 +20,7 @@
 //==========================================================================
 class CSuffocation;
 class CEffekseerObj;
+class CPlayerUserControlMove;
 
 //==========================================================================
 // プレイヤーAIコントロール_移動クラス定義
@@ -34,7 +35,17 @@ public:
 	// コンストラクタ
 	CPlayerAIControlMove();
 
+	void SetIsBlink(bool bBlink) { m_bBlink = bBlink; }
+	void SetIsDash(bool bDash) { m_bDash = bDash; }
+	void SetIsWalk(bool bWalk) { m_bWalk = bWalk; }
+
 private:
+
+	//=============================
+	// 仮想関数
+	//=============================
+	virtual CPlayerAIControlMove* GetAI() { return this; }
+	virtual CPlayerUserControlMove* GetUser() { return nullptr; }
 	
 	//=============================
 	// メンバ関数
@@ -47,6 +58,9 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	bool m_bBlink;
+	bool m_bDash;
+	bool m_bWalk;
 };
 
 

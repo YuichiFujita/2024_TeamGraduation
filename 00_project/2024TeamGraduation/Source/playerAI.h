@@ -57,9 +57,11 @@ private:
 	enum EThrowTiming	// 投げのタイミング
 	{
 		TIMING_NORMAL = 0,	// 通常
-		TIMING_QUICK,		// 速く
-		TIMING_DELAY,		// 遅く
 		TIMING_FEINT,		// フェイント
+		TIMING_JUMP_NORMAL,	// 通常(ジャンプ)
+		TIMING_JUMP_QUICK,		// 速く(ジャンプ)
+		TIMING_JUMP_DELAY,		// 遅く(ジャンプ)
+		TIMING_JUMP_FEINT,		// フェイント(ジャンプ)
 		TIMING_MAX
 	};
 
@@ -114,7 +116,6 @@ private:
 	typedef void(CPlayerAI::* TIMING_FUNC)(const float, const float, const float);
 	static TIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
-
 	//=============================
 	// メンバ関数
 	//=============================
@@ -134,7 +135,7 @@ private:
 	void TypeJumpThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ投げ
 	void TypeSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ
 	
-	// 投げの状態
+	// 移動の状態
 	void MoveNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 歩いて投げる
 	void MoveDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 走って投げる
@@ -142,15 +143,19 @@ private:
 	// 投げのタイミング
 	void TimingManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void TimingQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void TimingDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	void TimingJumpNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void TimingJumpQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void TimingJumpDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void TimingJumpFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	//-----------------------------
 	// その他関数
 	//-----------------------------
 	void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 操作
 	void DeleteControl() override;	// 操作削除
+	void Reset();	// 列挙リセット
 
 	//=============================
 	// メンバ変数
@@ -160,8 +165,12 @@ private:
 	EThrowMove m_eThrowMove;
 	EThrowTiming m_eThrowTiming;
 
-	float m_fTimingCount;	// タイミングカウント
+	float m_fTiming;	// タイミングカウント
+	float m_fTimingRate;	// タイミングの割合
 	bool m_bTiming;			// タイミングフラグ
+	bool m_bFoldJump;		// ジャンプの折り返しフラグ
+
+	float m_fJumpEnd;	// ジャンプの終了位置
 };
 
 #endif

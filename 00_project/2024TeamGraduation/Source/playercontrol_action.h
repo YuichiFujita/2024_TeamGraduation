@@ -10,7 +10,9 @@
 
 #include "playercontrol.h"
 
+//==========================================================================
 // ‘O•ûéŒ¾
+//==========================================================================
 class CPlayerUserControlAction;
 class CPlayerAIControlAction;
 
@@ -29,6 +31,9 @@ public:
 
 	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// “Š‡
 
+	//=============================
+	// ƒˆ‰¼‘zŠÖ”
+	//=============================
 	virtual CPlayerAIControlAction* GetAI() = 0;
 	virtual CPlayerUserControlAction* GetUser() = 0;
 

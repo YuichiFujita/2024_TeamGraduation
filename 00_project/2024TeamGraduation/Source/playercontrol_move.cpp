@@ -114,46 +114,24 @@ void CPlayerControlMove::SetCntTrigger(int* nTrigger)
 void CPlayerControlMove::CrabSetting(CPlayer* player)
 {
 	// 目標の向き取得
-	float fRotDest = player->GetRotDest();
-	MyLib::Vector3 posCourt = MyLib::Vector3();
 	MyLib::Vector3 pos = player->GetPosition();
 
+	// コートサイズ取得
 	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();
 	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	if (pBall == nullptr) return;
+
+	// ボールの持っているプレイヤー取得
 	CPlayer* pHaveP = pBall->GetPlayer();
-	if (pHaveP != nullptr) posCourt = pHaveP->GetPosition();
+	if (pHaveP == nullptr) return;
 
-#if 0
-	posCourt.z = pos.z;
+	// ボールの位置
+	MyLib::Vector3 posBall = pBall->GetPosition();
 
-	// 相手コート奥を見る
-	switch (player->GetStatus()->GetTeam())
-	{
-	case CGameManager::TeamSide::SIDE_LEFT:
-	
-		posCourt.x = sizeCourt.x;
-		
-		break;
-
-	case CGameManager::TeamSide::SIDE_RIGHT:
-	
-		posCourt.x = -sizeCourt.x;
-		
-		break;
-
-	default:
-		break;
-	}
-#endif
-
-	D3DXVECTOR3 vecDiff = D3DXVECTOR3(pos.x - posCourt.x,
-		0.0f,
-		pos.z - posCourt.z);
-	float fAngle = atan2f(vecDiff.x, vecDiff.z);		//目標の向き
+	// 目標の向き
+	float fAngle = pos.AngleXZ(posBall);
 	UtilFunc::Transformation::RotNormalize(fAngle);
 
-	//pos取得ー線に対する角度
-	fRotDest = fAngle;
-
-	player->SetRotDest(fRotDest);
+	// プレイヤーの目標の向き設定
+	player->SetRotDest(fAngle);
 }
