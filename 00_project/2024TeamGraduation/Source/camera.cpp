@@ -762,3 +762,30 @@ MyLib::Vector3 CCamera::GetScreenPos(const MyLib::Vector3& pos)
 
 	return screenPos;
 }
+
+//==========================================================================
+// 現在の追従カメラ情報取得処理
+//==========================================================================
+CCamera::SCameraData CCamera::FollowPoint()
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return {}; }
+
+	const float fDisRate = CalcDistanceRate();	// 左右間の距離割合
+	SCameraData data;	// カメラ情報
+
+	// 注視点を計算
+	data.posR = CalcFollowPositionR(fDisRate);
+
+	// 距離を計算
+	data.fDistance = CalcFollowDistance(fDisRate);
+
+	// 向きを設定
+	data.rot = follow::INIT_ROT;
+
+	// 球面座標変換による目標視点の相対位置取得
+	data.posV = CalcSpherePosition(data.posR, data.rot, -data.fDistance);
+
+	// カメラ情報を返す
+	return data;
+}

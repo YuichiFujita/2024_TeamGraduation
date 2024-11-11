@@ -65,6 +65,16 @@ private:
 		TIMING_MAX
 	};
 
+	enum ECatchType
+	{
+		CATCH_TYPE_NONE = 0,	// なし
+		CATCH_TYPE_NORMAL,	// 通常
+		CATCH_TYPE_JUST,		// ジャスト
+		CATCH_TYPE_DASH,		// ダッシュ
+		CATCH_TYPE_FIND,		// 取りに行く
+		CATCH_TYPE_MAX
+	};
+
 	//=============================
 	// 構造体定義
 	//=============================
@@ -116,6 +126,9 @@ private:
 	typedef void(CPlayerAI::* TIMING_FUNC)(const float, const float, const float);
 	static TIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
+	typedef void(CPlayerAI::* FIND_FUNC)(const float, const float, const float);
+	static FIND_FUNC m_CatchFunc[];	// 投げタイミング関数
+
 	//=============================
 	// メンバ関数
 	//=============================
@@ -136,19 +149,26 @@ private:
 	void TypeSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ
 	
 	// 移動の状態
-	void MoveNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 歩いて投げる
-	void MoveDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 走って投げる
+	void MoveNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// その場投げ
+	void MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 歩いて投げ
+	void MoveDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 走って投げ
 
 	// 投げのタイミング
-	void TimingManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void TimingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void TimingFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void TimingManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
+	void TimingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
+	void TimingFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
 
 	void TimingJumpNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingJumpQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingJumpDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingJumpFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	// キャッチ
+	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
+	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	//-----------------------------
 	// その他関数
@@ -157,6 +177,8 @@ private:
 	void DeleteControl() override;	// 操作削除
 	void Reset();	// 列挙リセット
 
+	void Target();
+
 	//=============================
 	// メンバ変数
 	//=============================
@@ -164,6 +186,8 @@ private:
 	EThrowType m_eThrowType;
 	EThrowMove m_eThrowMove;
 	EThrowTiming m_eThrowTiming;
+
+	ECatchType m_eCatchType;
 
 	float m_fTiming;	// タイミングカウント
 	float m_fTimingRate;	// タイミングの割合

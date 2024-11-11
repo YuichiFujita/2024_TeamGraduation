@@ -1,6 +1,6 @@
 //==========================================================================
 // 
-//  観客_アニメーション3D処理 [audienceHighPoly.cpp]
+//  観客_ハイポリキャラ処理 [audienceHighPoly.cpp]
 //  Author : 相馬靜雅
 // 
 //==========================================================================
@@ -27,8 +27,8 @@ namespace
 // コンストラクタ
 //==========================================================================
 CAudienceHighPoly::CAudienceHighPoly(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pChara	(nullptr),			// キャラクター情報
-	m_pLight		(nullptr)		// ペンライト情報
+	m_pChara	(nullptr),	// キャラクター情報
+	m_pLight	(nullptr)	// ペンライト情報
 {
 }
 
@@ -128,9 +128,8 @@ HRESULT CAudienceHighPoly::CreateCharacter(const MyLib::Vector3& pos)
 	// モーションを設定
 	m_pChara->GetMotion()->Set(EMotion::MOTION_SPAWN);
 
-	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
+	// ハイポリキャラの自動更新/自動描画/自動破棄をしない種類にする
 	m_pChara->SetType(CObject::TYPE::TYPE_NONE);
-
 
 	return S_OK;
 }
@@ -183,24 +182,6 @@ void CAudienceHighPoly::Update(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CAudienceHighPoly::Draw()
 {
-	if (m_pChara != nullptr)
-	{
-		LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
-
-		// アルファテストを有効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 180);
-
-		// オブジェクトキャラクターの描画
-		m_pChara->Draw();
-
-		// アルファテストを無効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	}
-
 	// 親クラスの描画
 	CAudience::Draw();
 }
@@ -288,7 +269,6 @@ int CAudienceHighPoly::UpdateDespawn(const float fDeltaTime, const float fDeltaR
 //==========================================================================
 bool CAudienceHighPoly::SetDespawn()
 {
-	
 	// 退場位置を作成
 	MyLib::Vector3 posDespawn = GetSpawnPosition();	// 退場位置
 	posDespawn.x = -GetSpawnPosition().x;			// X座標を反転させる
@@ -310,7 +290,6 @@ void CAudienceHighPoly::SetMotion(const int nMotion)
 	CMotion* pMotion = m_pChara->GetMotion();
 
 	int nAnimMotion = pMotion->GetType();	// 現在再生中のモーション
-
 	if (nAnimMotion != nMotion)
 	{ // 現在のモーションが再生中のモーションと一致しない場合
 

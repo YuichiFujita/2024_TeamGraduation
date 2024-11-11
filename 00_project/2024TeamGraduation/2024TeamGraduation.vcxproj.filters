@@ -503,6 +503,9 @@
     <ClCompile Include="Source\screen.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\audienceLowPoly.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -915,6 +918,9 @@
     </ClInclude>
     <ClInclude Include="Source\screen.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceLowPoly.h">
+      <Filter>ingame\audience</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

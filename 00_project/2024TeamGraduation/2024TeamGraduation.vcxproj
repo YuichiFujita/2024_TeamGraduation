@@ -173,6 +173,7 @@
     <ClCompile Include="Source\audience.cpp" />
     <ClCompile Include="Source\audienceAnim.cpp" />
     <ClCompile Include="Source\audienceHighPoly.cpp" />
+    <ClCompile Include="Source\audienceLowPoly.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="Source\audience.h" />
     <ClInclude Include="Source\audienceAnim.h" />
     <ClInclude Include="Source\audienceHighPoly.h" />
+    <ClInclude Include="Source\audienceLowPoly.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
