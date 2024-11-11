@@ -840,7 +840,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 		if (m_pBall != nullptr)
 		{// トス
-			m_pBall->ThrowNormal(this);
+			m_pBall->Toss(this);
 		}
 
 		break;
@@ -1441,6 +1441,9 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 		}
 		else
 		{
+			// トスモーション設定
+			SetMotion(EMotion::MOTION_TOSS);
+
 			// トスへ遷移
 			SetState(EState::STATE_INVADE_TOSS);
 		}
