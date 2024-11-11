@@ -1156,25 +1156,19 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (stateBall == CBall::STATE_LAND)
-	{ // ボールが着地している場合
+	if (stateBall == CBall::STATE_LAND
+	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
+	{ // ボールが着地している、またはフリーボール且つ自分のチームボールではない場合
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
 
-		// 落ちてるのキャッチ
-		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+		if (pBall->IsLanding())
+		{ // ボールが着地している場合
 
-		// キャッチ状態
-		hitInfo.eHit = EHit::HIT_CATCH;
-
-		return hitInfo;
-	}
-	else if (stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
-	{ // フリーボール且つ自分のチームボールではない場合
-
-		// ボールをキャッチ
-		pBall->CatchLand(this);
+			// 落ちてるのキャッチ
+			SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+		}
 
 		// キャッチ状態
 		hitInfo.eHit = EHit::HIT_CATCH;
@@ -1399,7 +1393,8 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
 
 	// もう戻ってる場合は抜ける
-	if (m_state == EState::STATE_INVADE_RETURN) return;
+	if (m_state == EState::STATE_INVADE_RETURN ||
+		m_state == EState::STATE_INVADE_TOSS) return;
 
 	// 場外判定
 	bool bOut = false;
@@ -1737,6 +1732,12 @@ void CPlayer::StateInvade_Toss()
 
 	// トスするまで以下return
 	if (m_pBall != nullptr)
+	{
+		m_fStateTime = 0.0f;
+		return;
+	}
+
+	if (pMotion->GetType() == EMotion::MOTION_TOSS && !pMotion->IsGetCancelable())
 	{
 		m_fStateTime = 0.0f;
 		return;
