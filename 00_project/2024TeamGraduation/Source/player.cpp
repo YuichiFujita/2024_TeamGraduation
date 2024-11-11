@@ -1156,25 +1156,19 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (stateBall == CBall::STATE_LAND)
-	{ // ボールが着地している場合
+	if (stateBall == CBall::STATE_LAND
+	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
+	{ // ボールが着地している、またはフリーボール且つ自分のチームボールではない場合
 
 		// ボールをキャッチ
 		pBall->CatchLand(this);
 
-		// 落ちてるのキャッチ
-		SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+		if (pBall->IsLanding())
+		{ // ボールが着地している場合
 
-		// キャッチ状態
-		hitInfo.eHit = EHit::HIT_CATCH;
-
-		return hitInfo;
-	}
-	else if (stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
-	{ // フリーボール且つ自分のチームボールではない場合
-
-		// ボールをキャッチ
-		pBall->CatchLand(this);
+			// 落ちてるのキャッチ
+			SetMotion(EMotion::MOTION_DROPCATCH_WALK);
+		}
 
 		// キャッチ状態
 		hitInfo.eHit = EHit::HIT_CATCH;
