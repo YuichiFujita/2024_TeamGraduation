@@ -82,7 +82,7 @@ namespace StateTime
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
-	const float INVADE_RETURN = 0.8f;		// 侵入から戻ってくる
+	const float INVADE_TOSS = 0.3f;		// 侵入後トス
 }
 
 namespace Align	// 足揃え
@@ -150,39 +150,40 @@ namespace Motion
 	// デバッグ表示用
 	const std::string NAME_MAP[CPlayer::EMotion::MOTION_MAX] =
 	{
-	  "MOTION_DEF",					// ニュートラルモーション
-	  "MOTION_DEF_BALL",			// ニュートラルモーション(ボール所持)
-	  "MOTION_WALK",				// 移動
-	  "MOTION_WALK_BALL",			// 移動(ボール所持)
-	  "MOTION_CRAB_FRONT",			// カニ歩き(前)
-	  "MOTION_CRAB_BACK",			// カニ歩き(後)
-	  "MOTION_CRAB_LEFT",			// カニ歩き(左)
-	  "MOTION_CRAB_RIGHT",			// カニ歩き(右)
-	  "MOTION_RUN",					// 走り
-	  "MOTION_RUN_BALL",			// 走り(ボール所持)
-	  "MOTION_BLINK",				// ブリンク
-	  "MOTION_DODGE",				// 回避成功時
-	  "MOTION_JUMP",				// ジャンプ
-	  "MOTION_JUMP_BALL",			// ジャンプ(ボール所持)
-	  "MOTION_LAND",				// 着地
-	  "MOTION_CATCH_STANCE",		// キャッチの構え
-	  "MOTION_CATCH_STANCE_JUMP",	// キャッチの構え(ジャンプ)
-	  "MOTION_CATCH_NORMAL",		// キャッチ(通常)
-	  "MOTION_CATCH_JUMP",			// キャッチ(ジャンプ)
-	  "MOTION_JUSTCATCH_NORMAL",	// ジャストキャッチ(通常)
-	  "MOTION_JUSTCATCH_JUMP",		// ジャストキャッチ(ジャンプ)
-	  "MOTION_DROPCATCH_WALK",		// 落ちてるのキャッチ(歩き)
-	  "MOTION_THROW",				// 投げ
-	  "MOTION_THROW_RUN",			// 投げ(走り)
-	  "MOTION_THROW_JUMP",			// 投げ(ジャンプ)
-	  "MOTION_HYPE",				// 盛り上げ
-	  "MOTION_SPECIAL",				// スペシャル
-	  "MOTION_WIN",					// 勝利
-	  "MOTION_DAMAGE",				// ダメージ
-	  "MOTION_DEAD",				// 死亡
-	  "MOTION_DEAD_AFTER",			// 死亡後
-	  "MOTION_GRIP_DEF",			// デフォグリップ
-	  "MOTION_GRIP_FRONT",			// 前グリップ
+		"MOTION_DEF",				// ニュートラルモーション
+		"MOTION_DEF_BALL",			// ニュートラルモーション(ボール所持)
+		"MOTION_WALK",				// 移動
+		"MOTION_WALK_BALL",			// 移動(ボール所持)
+		"MOTION_CRAB_FRONT",		// カニ歩き(前)
+		"MOTION_CRAB_BACK",			// カニ歩き(後)
+		"MOTION_CRAB_LEFT",			// カニ歩き(左)
+		"MOTION_CRAB_RIGHT",		// カニ歩き(右)
+		"MOTION_RUN",				// 走り
+		"MOTION_RUN_BALL",			// 走り(ボール所持)
+		"MOTION_BLINK",				// ブリンク
+		"MOTION_DODGE",				// 回避成功時
+		"MOTION_JUMP",				// ジャンプ
+		"MOTION_JUMP_BALL",			// ジャンプ(ボール所持)
+		"MOTION_LAND",				// 着地
+		"MOTION_CATCH_STANCE",		// キャッチの構え
+		"MOTION_CATCH_STANCE_JUMP",	// キャッチの構え(ジャンプ)
+		"MOTION_CATCH_NORMAL",		// キャッチ(通常)
+		"MOTION_CATCH_JUMP",		// キャッチ(ジャンプ)
+		"MOTION_JUSTCATCH_NORMAL",	// ジャストキャッチ(通常)
+		"MOTION_JUSTCATCH_JUMP",	// ジャストキャッチ(ジャンプ)
+		"MOTION_DROPCATCH_WALK",	// 落ちてるのキャッチ(歩き)
+		"MOTION_THROW",				// 投げ
+		"MOTION_THROW_RUN",			// 投げ(走り)
+		"MOTION_THROW_JUMP",		// 投げ(ジャンプ)
+		"MOTION_TOSS",				// トス
+		"MOTION_HYPE",				// 盛り上げ
+		"MOTION_SPECIAL",			// スペシャル
+		"MOTION_WIN",				// 勝利
+		"MOTION_DAMAGE",			// ダメージ
+		"MOTION_DEAD",				// 死亡
+		"MOTION_DEAD_AFTER",		// 死亡後
+		"MOTION_GRIP_DEF",			// デフォグリップ
+		"MOTION_GRIP_FRONT",		// 前グリップ
 	};
 }
 
@@ -202,6 +203,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateSpecial,				// スペシャル
 	&CPlayer::StateOutCourt,			// コート越え
 	&CPlayer::StateOutCourt_Return,		// コートに戻る
+	&CPlayer::StateInvade_Toss,			// 相手コートに侵入トス
 	&CPlayer::StateInvade_Return,		// 相手コート侵入から戻る
 };
 
@@ -796,11 +798,7 @@ void CPlayer::ResetFrag()
 	// オートモーション設定
 	m_bAutoMotionSet = true;
 
-	switch (nType)
-	{
-	default:
-		break;
-	}
+	
 }
 
 //==========================================================================
@@ -834,6 +832,15 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		if (m_pBall != nullptr)
 		{// ジャンプ投げ
 			m_pBall->ThrowJump(this);
+		}
+
+		break;
+
+	case EMotion::MOTION_TOSS:
+
+		if (m_pBall != nullptr)
+		{// トス
+			m_pBall->ThrowNormal(this);
 		}
 
 		break;
@@ -1105,12 +1112,10 @@ void CPlayer::LimitPos()
 		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
 	}
 
-#if 1	//TAKADA: コート補正
 	if (!m_bJump && !m_sMotionFrag.bDead)
 	{// 相手コートに侵入したとき用コート内に補正
 		TeamCourt_Return(pos);
 	}
-#endif
 
 	if (pos.y <= 0.0f)
 	{
@@ -1385,6 +1390,8 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 	// もう戻ってる場合は抜ける
 	if (m_state == EState::STATE_INVADE_RETURN) return;
 
+	// 場外判定
+	bool bOut = false;
 	switch (team)
 	{
 	case CGameManager::SIDE_LEFT:	// 左チーム
@@ -1392,11 +1399,7 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 		if (pos.x > Court::COMEBACK_LINE)
 		{// ライン越え
 
-			// ノックバックの開始位置
-			m_sKnockback.posStart = GetPosition();
-
-			// 侵入から戻る状態へ遷移
-			SetState(EState::STATE_INVADE_RETURN);
+			bOut = true;
 		}
 		break;
 
@@ -1405,17 +1408,31 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 		if (pos.x < -Court::COMEBACK_LINE)
 		{// ライン越え
 
-			// ノックバックの開始位置
-			m_sKnockback.posStart = GetPosition();
-
-			// 侵入から戻る状態へ遷移
-			SetState(EState::STATE_INVADE_RETURN);
+			bOut = true;
 		}
 		break;
 
 	default:
 		return;
 		break;
+	}
+
+	if (bOut)
+	{
+		// ノックバックの開始位置
+		m_sKnockback.posStart = GetPosition();
+
+		// ボールの有無で遷移別
+		if (m_pBall == nullptr)
+		{
+			// 侵入から戻る状態へ遷移
+			SetState(EState::STATE_INVADE_RETURN);
+		}
+		else
+		{
+			// トスへ遷移
+			SetState(EState::STATE_INVADE_TOSS);
+		}
 	}
 }
 
@@ -1690,6 +1707,64 @@ void CPlayer::StateOutCourt_Return()
 }
 
 //==========================================================================
+// 相手コートに侵入トス
+//==========================================================================
+void CPlayer::StateInvade_Toss()
+{
+	// オートモーション設定解除
+	m_bAutoMotionSet = false;
+
+	// 移動不可
+	m_bPossibleMove = false;
+
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	// トスするまで以下return
+	if (m_pBall != nullptr)
+	{
+		m_fStateTime = 0.0f;
+		return;
+	}
+
+	//-----------------------------
+	// ボールのトス終了後処理
+	//-----------------------------
+	
+	// 走って戻す
+	SetMotion(CPlayer::EMotion::MOTION_WALK);
+
+	// チーム別向き設定
+	float fRotDest = 0.0f;
+	switch (GetStatus()->GetTeam())
+	{
+	case CGameManager::SIDE_LEFT:	// 左チーム
+		fRotDest = HALF_PI;
+		break;
+
+	case CGameManager::SIDE_RIGHT:	// 右チーム
+		fRotDest = -HALF_PI;
+		break;
+
+	default:
+		return;
+		break;
+	}
+
+	// 向き設定
+	SetRotDest(fRotDest);
+
+	// 遷移タイマー
+	if (StateTime::INVADE_TOSS <= m_fStateTime)
+	{
+		// 相手コート侵入から戻る
+		SetState(EState::STATE_INVADE_RETURN);
+	}
+
+}
+
+//==========================================================================
 // 相手コート侵入から戻る
 //==========================================================================
 void CPlayer::StateInvade_Return()
@@ -1746,9 +1821,10 @@ void CPlayer::StateInvade_Return()
 	UtilFunc::Transformation::RotNormalize(rotDest);
 	SetRotDest(rotDest);
 
-	// 無敵にするならこれ有効に
+#if 0	// 無敵にするならこれ有効に
 	// ダメージ受付判定リセット
-	//m_sDamageInfo.bReceived = false;
+	m_sDamageInfo.bReceived = false;
+#endif
 
 	// X軸の位置で割合
 	float ratio = GetPosition().x / posDest.x;

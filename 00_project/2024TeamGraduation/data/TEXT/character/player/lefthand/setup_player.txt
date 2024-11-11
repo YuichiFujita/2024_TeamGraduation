@@ -19,22 +19,22 @@ NUM_MODEL = 17
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/player/00_waist.x	# [0]腰
-MODEL_FILENAME = data/MODEL/player/01_body.x	# [1]体
-MODEL_FILENAME = data/MODEL/player/02_head.x	# [2]頭
-MODEL_FILENAME = data/MODEL/player/03_armUP_R.x	# [3]右腕(上)
-MODEL_FILENAME = data/MODEL/player/04_armDW_R.x	# [4]右腕(下)
-MODEL_FILENAME = data/MODEL/player/05_handR.x	# [5]右手
-MODEL_FILENAME = data/MODEL/player/06_armUP_L.x	# [6]左腕(上)
-MODEL_FILENAME = data/MODEL/player/07_armDW_L.x	# [7]左腕(下)
-MODEL_FILENAME = data/MODEL/player/08_hand_L.x	# [8]左手
-MODEL_FILENAME = data/MODEL/player/09_legUP_R.x	# [9]右脚(上)
-MODEL_FILENAME = data/MODEL/player/10_legDW_R.x	# [10]右脚(下)
-MODEL_FILENAME = data/MODEL/player/11_shoes_R.x	# [11]右足
-MODEL_FILENAME = data/MODEL/player/12_legUP_L.x	# [12]左脚(上)
-MODEL_FILENAME = data/MODEL/player/13_legDW_L.x	# [13]左脚(下)
-MODEL_FILENAME = data/MODEL/player/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair/bobobo.x	# [15]髪
+MODEL_FILENAME = data/MODEL/player/normal/00_waist.x	# [0]腰
+MODEL_FILENAME = data/MODEL/player/normal/01_body.x		# [1]体
+MODEL_FILENAME = data/MODEL/player/normal/02_head.x		# [2]頭
+MODEL_FILENAME = data/MODEL/player/normal/03_armUP_R.x	# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/player/normal/04_armDW_R.x	# [4]右腕(下)
+MODEL_FILENAME = data/MODEL/player/normal/05_hand_R.x	# [5]右手
+MODEL_FILENAME = data/MODEL/player/normal/06_armUP_L.x	# [6]左腕(上)
+MODEL_FILENAME = data/MODEL/player/normal/07_armDW_L.x	# [7]左腕(下)
+MODEL_FILENAME = data/MODEL/player/normal/08_hand_L.x	# [8]左手
+MODEL_FILENAME = data/MODEL/player/normal/09_legUP_R.x	# [9]右脚(上)
+MODEL_FILENAME = data/MODEL/player/normal/10_legDW_R.x	# [10]右脚(下)
+MODEL_FILENAME = data/MODEL/player/normal/11_shoes_R.x	# [11]右足
+MODEL_FILENAME = data/MODEL/player/normal/12_legUP_L.x	# [12]左脚(上)
+MODEL_FILENAME = data/MODEL/player/normal/13_legDW_L.x	# [13]左脚(下)
+MODEL_FILENAME = data/MODEL/player/normal/14_shoes_L.x	# [14]左足
+MODEL_FILENAME = data/MODEL/player/hair/bobobo.x		# [15]髪
 MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
 
 #------------------------------------------------------------------------------
@@ -217,37 +217,38 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 # モデルファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def.txt					# デフォルト
-MOTION_FILENAME = data/TEXT/character/player/common/motion_def_ball.txt					# デフォルト(ボール所持)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt				# 歩き
-MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt		# 歩き(ボール所持)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt		# カニ歩き(前)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_def_ball.txt				# デフォルト(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt					# 歩き
+MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt			# 歩き(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt			# カニ歩き(前)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# カニ歩き(後)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt		# カニ歩き(左)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt		# カニ歩き(右)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# カニ歩き(左)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt			# カニ歩き(右)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# 走り
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_run_ball.txt			# 走り(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_blink.txt				# ブリンク
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dodge.txt				# 回避成功時
-MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt				# ジャンプ
+MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt					# ジャンプ
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_jump_ball.txt			# ジャンプ(ボール所持)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_land.txt				# 着地
+MOTION_FILENAME = data/TEXT/character/player/common/motion_land.txt					# 着地
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance.txt		# キャッチ構え
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance_jump.txt	# キャッチ構え
-MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_normal.txt		# 通常キャッチ(通常)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_normal.txt			# 通常キャッチ(通常)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_jump.txt			# 通常キャッチ(ジャンプ)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_normal.txt	# ジャストキャッチ(通常)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_normal.txt		# ジャストキャッチ(通常)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_jump.txt		# ジャストキャッチ(ジャンプ)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dropcatch_walk.txt		# 落ちてるのキャッチ(歩き)
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw.txt				# 投げ
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_dash.txt			# 投げ(ダッシュ)
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_jump.txt			# 投げ(ジャンプ)
-MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt				# 盛り上げ
+MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# トス
+MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# 盛り上げ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# スペシャル
 MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt					# 勝利
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ダメージ
-MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt				# 死亡
+MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# 死亡
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死亡後
-MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt			# 通常グリップ
+MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# 通常グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# 前グリップ
 
 
