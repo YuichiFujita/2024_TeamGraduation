@@ -37,6 +37,8 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 //==========================================================================
 void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (!m_bBlink) { return; }
+
 	// 入力フラグ
 	bool bInput = false;
 
@@ -332,11 +334,24 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
 
-	MyLib::Vector3 move = VEC3_ZERO;
+	// 移動量更新
+	MyLib::Vector3 move = player->GetMove();
 	MyLib::Vector3 rot = player->GetRotation();
 
-	move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
-	move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+
+	// TODO : 方向に応じてカニ歩き
+
+	if (player->IsCrab())
+	{//カニ歩き
+		move.x += sinf(0 * division + (D3DX_PI * 0.0f)) * fMove;
+		move.z += cosf(0 * division + (D3DX_PI * 0.0f)) * fMove;
+	}
+	else
+	{
+		move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+		move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+	}
 
 	// 移動量設定
 	player->SetMove(move);

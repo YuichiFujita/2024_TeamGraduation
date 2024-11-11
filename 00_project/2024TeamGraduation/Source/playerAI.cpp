@@ -10,6 +10,7 @@
 #include "game.h"
 #include "teamStatus.h"
 
+#include "ball.h"
 
 // 使用クラス
 #include "playerStatus.h"
@@ -60,10 +61,19 @@ CPlayerAI::TIMING_FUNC CPlayerAI::m_ThrowTimingFunc[] =	// タイミング関数
 	&CPlayerAI::TimingNormal,			// 通常
 	&CPlayerAI::TimingFeint,			// フェイント
 
-	& CPlayerAI::TimingJumpNormal,			// 通常
-	& CPlayerAI::TimingJumpQuick,			// 速く
-	& CPlayerAI::TimingJumpDelay,			// 遅く
-	& CPlayerAI::TimingJumpFeint,			// フェイント
+	&CPlayerAI::TimingJumpNormal,			// 通常
+	&CPlayerAI::TimingJumpQuick,			// 速く
+	&CPlayerAI::TimingJumpDelay,			// 遅く
+	&CPlayerAI::TimingJumpFeint,			// フェイント
+};
+
+CPlayerAI::FIND_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
+{
+	&CPlayerAI::CatchNone,
+	&CPlayerAI::CatchNormal,
+	&CPlayerAI::CatchJust,
+	&CPlayerAI::CatchDash,
+	&CPlayerAI::FindBall,
 };
 
 //==========================================================================
@@ -75,6 +85,8 @@ CPlayerAI::CPlayerAI()
 	m_eThrowType = EThrowType::TYPE_NONE;
 	m_eThrowMove = EThrowMove::MOVE_NORMAL;
 	m_eThrowTiming = EThrowTiming::TIMING_NORMAL;
+
+	m_eCatchType = ECatchType::CATCH_TYPE_NONE;
 
 	m_fTiming = 0.0f;	// タイミングカウント
 	m_fTimingRate = 0.0f;	// タイミングの割合
@@ -158,6 +170,14 @@ void CPlayerAI::Draw()
 //==========================================================================
 void CPlayerAI::UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボールの取得
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+
+	if (pBall != nullptr && pBall->GetPlayer() == nullptr) {
+		
+		m_eMode = EMode::MODE_CATCH;
+	}
+
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -173,9 +193,7 @@ CPlayerAI::SHitInfo CPlayerAI::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (hitInfo.eHit == EHit::HIT_CATCH)
-	{// キャッチ状態
-
+	if (hitInfo.eHit == EHit::HIT_CATCH){// キャッチ状態
 		// 投げモード
 		m_eMode = EMode::MODE_THROW;
 	}
@@ -220,6 +238,8 @@ void CPlayerAI::ModeThrowManager(const float fDeltaTime, const float fDeltaRate,
 		}
 	}
 
+	Target();
+
 	// 投げる種類更新
 	(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -229,7 +249,10 @@ void CPlayerAI::ModeThrowManager(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 void CPlayerAI::ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	m_eCatchType = ECatchType::CATCH_TYPE_FIND;
 
+	// 投げる種類更新
+	(this->*(m_CatchFunc[m_eCatchType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -322,7 +345,7 @@ void CPlayerAI::TimingManager(const float fDeltaTime, const float fDeltaRate, co
 	{// 通常投げ
 		// ランダムでタイミングを決める
 		m_fTiming = timing::TIMING_NORMAL + UtilFunc::Transformation::Random(timing::TIMING_RAND_MIN, timing::TIMING_RAND_MAX) * 0.01f;
-
+		
 		m_eThrowTiming = EThrowTiming::TIMING_NORMAL;	// 通常投げ
 		m_bTiming = true;	// タイミング設定完了フラグオン
 	}
@@ -331,7 +354,7 @@ void CPlayerAI::TimingManager(const float fDeltaTime, const float fDeltaRate, co
 
 		// タイミングの設定
 		int n = rand() % 3;
-		//int n = 0;
+		//int n = 3;
 
 		switch (n)
 		{
@@ -350,10 +373,10 @@ void CPlayerAI::TimingManager(const float fDeltaTime, const float fDeltaRate, co
 			m_bTiming = true;
 			break;
 
-		/*case 3:
+		case 3:
 			m_eThrowTiming = EThrowTiming::TIMING_JUMP_FEINT;
 			m_bTiming = true;
-			break;*/
+			break;
 		default:
 			break;
 		}
@@ -402,28 +425,25 @@ void CPlayerAI::TimingJumpNormal(const float fDeltaTime, const float fDeltaRate,
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	//if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && (m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH))
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && (m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH))
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
-
-			return;
-		}
-
-		pControlAIMove->SetIsWalk(false);	// 歩きリセット
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
-
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
-
-			// 変数リセット
-			Reset();
-		}
+		return;
 	}
+
+	pControlAIMove->SetIsWalk(false);	// 歩きリセット
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
+
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
+
+		// 変数リセット
+		Reset();
+	}
+	
 }
 
 //==========================================================================
@@ -437,27 +457,23 @@ void CPlayerAI::TimingJumpQuick(const float fDeltaTime, const float fDeltaRate, 
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
+		return;
+	}
 
-			return;
-		}
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
-		pControlAIMove->SetIsWalk(false);	// 歩きオフ
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
+	if (GetPosition().y >= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
 
-		if (GetPosition().y >= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
-
-			// それぞれの状態のリセット
-			Reset();
-		}
+		// それぞれの状態のリセット
+		Reset();
 	}
 }
 
@@ -472,34 +488,30 @@ void CPlayerAI::TimingJumpDelay(const float fDeltaTime, const float fDeltaRate, 
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
+		return;
+	}
 
-			return;
-		}
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
-		pControlAIMove->SetIsWalk(false);	// 歩きオフ
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
-
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			m_bFoldJump = true;	// 折り返しオン
-		}
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		m_bFoldJump = true;	// 折り返しオン
+	}
 		
-		if (!m_bFoldJump) { return; }
+	if (!m_bFoldJump) { return; }
 
-		if (GetPosition().y <= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
+	if (GetPosition().y <= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
 
-			// それぞれの状態のリセット
-			Reset();
-		}
+		// それぞれの状態のリセット
+		Reset();
 	}
 }
 
@@ -511,17 +523,161 @@ void CPlayerAI::TimingJumpFeint(const float fDeltaTime, const float fDeltaRate, 
 	// AIコントロール情報の取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
-		pControlAIAction->SetIsJump(true);
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			// それぞれの状態のリセット
-			Reset();
+		return;
+	}
+
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
+
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		// それぞれの状態のリセット
+		Reset();
+
+		//m_eMode = EMode::MODE_THROW;
+	}
+}
+
+//==========================================================================
+// 通常キャッチ
+//==========================================================================
+void CPlayerAI::CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// ジャストキャッチ
+//==========================================================================
+void CPlayerAI::CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// ダッシュキャッチ
+//==========================================================================
+void CPlayerAI::CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// ターゲット
+//==========================================================================
+void CPlayerAI::Target()
+{
+	CPlayer* pTarget = nullptr;	// 目標ターゲット
+	float fMinDis = 1000000.0f;	// ボールから近いプレイヤー
+
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+
+		// ボールの取得
+		CBall* pBall = GetBall();
+		if (pBall == nullptr) { return; }
+		CGameManager::TeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
+
+		// 同じチームの場合次へ
+		if (typeTeam == pPlayer->GetStatus()->GetTeam()) { continue; }
+
+		// 敵との距離を求める
+		float fLength = sqrtf(
+			(pPlayer->GetPosition().x - GetPosition().x) * (pPlayer->GetPosition().x - GetPosition().x) +
+			(pPlayer->GetPosition().z - GetPosition().z) * (pPlayer->GetPosition().z - GetPosition().z));
+
+		if (fLength < fMinDis)
+		{ // より近い相手プレイヤーがいた場合
+
+			// ターゲットを更新
+			pTarget = pPlayer;
+
+			// 方向設定
+			SetRotDest(GetPosition().AngleXZ(pTarget->GetPosition()));
 		}
 	}
+}
+
+//==========================================================================
+// 待て
+//==========================================================================
+bool CPlayerAI::IsWait()
+{
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+
+	bool b = false;
+
+	if (!pBall) { return b; }
+
+	CGameManager::TeamSide typeTeam = GetStatus()->GetTeam();
+
+	if (typeTeam == CGameManager::TeamSide::SIDE_LEFT)
+	{
+		if (pBall->GetPosition().x > 0.0f)
+		{
+			//m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+			Reset();
+			b = true;
+		}
+	}
+	else if (typeTeam == CGameManager::TeamSide::SIDE_RIGHT)
+	{
+		if (pBall->GetPosition().x < 0.0f)
+		{
+			//m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+			Reset();
+			b = true;
+		}
+	}
+
+	return b;
+}
+
+//==========================================================================
+// 取りに行く
+//==========================================================================
+void CPlayerAI::FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (IsWait()) { return; }
+
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// ボールの取得
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+
+	if (pBall == nullptr || pBall->GetPlayer() != nullptr) {
+		Reset();
+		return;
+	}
+
+	// 角度を求める(playerからみたボール)
+	float fAngle = GetPosition().AngleXZ(pBall->GetPosition());
+
+	// 長さを求める
+	//float fLength = sqrtf((pBall->GetPosition().x - player->GetPosition().x) * (pBall->GetPosition().x - player->GetPosition().x) +
+	//	(pBall->GetPosition().z - player->GetPosition().z) * (pBall->GetPosition().z - player->GetPosition().z));
+
+	// 歩きオン
+	pControlAIMove->SetIsWalk(true);
+
+	// 方向設定
+	SetRotDest(fAngle);
 }
 
 //==========================================================================
@@ -540,7 +696,7 @@ void CPlayerAI::Reset()
 	m_bTiming = false;
 
 	// 折り返しリセット
-	m_bFoldJump = false;	
+	m_bFoldJump = false;
 
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
