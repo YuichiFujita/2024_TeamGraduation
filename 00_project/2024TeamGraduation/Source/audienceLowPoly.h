@@ -1,25 +1,30 @@
 //==========================================================================
 // 
-//  観客_アニメーション3Dヘッダー [audienceAnim.h]
+//  観客_ローポリキャラヘッダー [audienceLowPoly.h]
 //  Author : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _AUDIENCE_ANIM_H_
-#define _AUDIENCE_ANIM_H_	// 二重インクルード防止
+#ifndef _AUDIENCE_LOWPOLY_H_
+#define _AUDIENCE_LOWPOLY_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
 #include "audience.h"
 #include "gamemanager.h"
-#include "object3D_Anim.h"
+#include "objectChara.h"
+
+//==========================================================================
+// 前方宣言
+//==========================================================================
+class CObjectX;
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// 観客_アニメーション3Dクラス定義
-class CAudienceAnim : public CAudience
+// 観客_ローポリキャラクラス定義
+class CAudienceLowPoly : public CAudience
 {
 public:
 
@@ -30,10 +35,24 @@ public:
 	static constexpr float FAR_LINE = 1750.0f; 	// 奥の生成位置上限
 
 	//=============================
+	// 列挙型定義
+	//=============================
+	// モーション列挙
+	enum EMotion
+	{
+		MOTION_DEF = 0,	// 通常状態
+		MOTION_SPAWN,	// 入場状態
+		MOTION_JUMP,	// 盛り上がり状態
+		MOTION_SPECIAL,	// スペシャル状態
+		MOTION_DESPAWN,	// 退場状態
+		MOTION_MAX		// この列挙型の総数
+	};
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudienceAnim(EObjType type, CGameManager::TeamSide team);
-	~CAudienceAnim();
+	CAudienceLowPoly(EObjType type, CGameManager::TeamSide team);
+	~CAudienceLowPoly();
 
 	//=============================
 	// オーバーライド関数
@@ -43,19 +62,41 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
 	void Kill() override;	// 削除処理
-	inline void SetPosition(const MyLib::Vector3& pos) override	{ m_pAnim3D->SetPosition(pos); }		// 位置設定
-	inline MyLib::Vector3 GetPosition() const override			{ return m_pAnim3D->GetPosition(); }	// 位置取得
-	inline void SetMove(const MyLib::Vector3& move) override	{ m_pAnim3D->SetMove(move); }			// 移動量設定
-	inline MyLib::Vector3 GetMove() const override				{ return m_pAnim3D->GetMove(); }		// 移動量取得
-	inline void SetRotation(const MyLib::Vector3& rot) override	{ m_pAnim3D->SetRotation(rot); }		// 向き設定
-	inline MyLib::Vector3 GetRotation() const override			{ return m_pAnim3D->GetRotation(); }	// 向き取得
+	inline void SetPosition(const MyLib::Vector3& pos) override	{ m_pChara->SetPosition(pos); }		// 位置設定
+	inline MyLib::Vector3 GetPosition() const override			{ return m_pChara->GetPosition(); }	// 位置取得
+	inline void SetMove(const MyLib::Vector3& move) override	{ m_pChara->SetMove(move); }		// 移動量設定
+	inline MyLib::Vector3 GetMove() const override				{ return m_pChara->GetMove(); }		// 移動量取得
+	inline void SetRotation(const MyLib::Vector3& rot) override	{ m_pChara->SetRotation(rot); }		// 向き設定
+	inline MyLib::Vector3 GetRotation() const override			{ return m_pChara->GetRotation(); }	// 向き取得
+
+protected:
+	//=============================
+	// オーバーライド関数
+	//=============================
+	// 状態関数
+	int UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 入場状態の更新
+	int UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 通常状態の更新
+	int UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// 盛り上がり状態の更新
+	int UpdateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// スペシャル状態の更新
+	int UpdateDespawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 退場状態の更新
+
+	// ゲッター/セッター
+	void SetMotion(const int nMotion) override;	// モーション設定
+	void EndSettingSpawn() override;			// スポーン終了時の設定
+	virtual bool SetDespawn()override ;			// 退場設定
 
 private:
 
 	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT CreateCharacter(const MyLib::Vector3& pos);	// キャラクター生成
+
+	//=============================
 	// メンバ変数
 	//=============================
-	CObject3DAnim* m_pAnim3D;	// アニメーション3D情報
+	CObjectChara* m_pChara;	// キャラクター情報
+	CObjectX* m_pLight;		// ペンライト情報
 };
 
 #endif

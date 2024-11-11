@@ -45,6 +45,7 @@ namespace
 		"[S_STAG]   スペシャル演出状態 (開始前演出)",
 		"[S_THROW]  スペシャル投げ状態 (攻撃判定ON)",
 		"[REBOUND]  リバウンド状態 (ぶつかった時の落下)",
+		"[FREE]     フリー状態 (敵のみとれる)",
 		"[LAND]     着地状態 (地面落下)",
 	};
 	const char* DEBUG_TEAM_PRINT[] =	// デバッグ表示用チーム
@@ -107,6 +108,12 @@ namespace
 #endif
 		const float MOVE_SPEED = 2.5f;	// 移動速度
 	}
+
+	namespace toss
+	{
+		const float THROW_MOVE = 2.5f;	// トス移動速度
+		const float MOVE_UP = 3.5f;		// トス上移動量
+	}
 }
 
 //==========================================================================
@@ -123,6 +130,7 @@ CBall::STATE_FUNC CBall::m_StateFuncList[] =
 	&CBall::UpdateSpecialStag,	// スペシャル演出状態の更新
 	&CBall::UpdateSpecialThrow,	// スペシャル投げ状態の更新
 	&CBall::UpdateReBound,		// リバウンド状態の更新
+	&CBall::UpdateFree,			// フリー状態の更新
 	&CBall::UpdateLand,			// 着地状態の更新
 };
 
@@ -447,6 +455,26 @@ void CBall::Special(CPlayer* pPlayer)
 
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
+}
+
+//==========================================================================
+// トス処理
+//==========================================================================
+void CBall::Toss(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// フリー状態にする
+	SetState(STATE_FREE);
+
+	// 上移動量を与える
+	MyLib::Vector3 move = GetMove();
+	move.y = toss::MOVE_UP;
+	SetMove(move);
+
+	// 移動量を設定
+	m_fMoveSpeed = toss::THROW_MOVE;
 }
 
 //==========================================================================
@@ -793,6 +821,34 @@ void CBall::UpdateReBound(const float fDeltaTime, const float fDeltaRate, const 
 }
 
 //==========================================================================
+// フリー状態の更新処理
+//==========================================================================
+void CBall::UpdateFree(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
+
+	// 移動
+	UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
+
+	// 地面の着地
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(vecMove);	// 移動量
+}
+
+//==========================================================================
 // 着地状態の更新処理
 //==========================================================================
 void CBall::UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -883,7 +939,6 @@ void CBall::UpdateDecay(const float fDeltaRate, const float fSlowRate)
 {
 	// 移動量を減衰させる
 	m_fMoveSpeed += (0.0f - m_fMoveSpeed) * (REV_MOVE * fDeltaRate * fSlowRate);
-	
 }
 
 //==========================================================================
@@ -1158,6 +1213,9 @@ void CBall::UpdateTypeTeam()
 {
 	// 攻撃判定がある場合は現在のチームを保持
 	if (IsAttack()) { return; }
+
+	// フリーボールの場合も現在のチームを保持
+	if (m_state == STATE_FREE) { return; }
 
 	// プレイヤーが所持していない場合チーム指定なし
 	if (m_pPlayer == nullptr) { m_typeTeam = CGameManager::SIDE_NONE; return; }

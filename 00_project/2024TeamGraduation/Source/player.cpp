@@ -1165,6 +1165,17 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 
 		return hitInfo;
 	}
+	else if (stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
+	{ // フリーボール且つ自分のチームボールではない場合
+
+		// ボールをキャッチ
+		pBall->CatchLand(this);
+
+		// キャッチ状態
+		hitInfo.eHit = EHit::HIT_CATCH;
+
+		return hitInfo;
+	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_sDamageInfo.bReceived) { return hitInfo; }
