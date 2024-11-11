@@ -81,7 +81,7 @@ public:
 	struct SSide
 	{
 	public:
-		// コンストラクタ
+		// デフォルトコンストラクタ
 		SSide() :
 			l (0.0f),	// 左
 			r (0.0f)	// 右
@@ -103,6 +103,27 @@ public:
 		// メンバ変数
 		float l;	// 左
 		float r;	// 右
+	};
+
+	// カメラ情報
+	struct SCameraData
+	{
+		// デフォルトコンストラクタ
+		SCameraData() :
+			posR		(VEC3_ZERO),	// 注視点
+			posV		(VEC3_ZERO),	// 視点
+			rot			(VEC3_ZERO),	// 向き
+			fDistance	(0.0f)			// 距離
+		{}
+
+		// デストラクタ
+		~SCameraData() {}
+
+		// メンバ変数
+		MyLib::Vector3 posR;	// 注視点
+		MyLib::Vector3 posV;	// 視点
+		MyLib::Vector3 rot;		// 向き
+		float fDistance;		// 距離
 	};
 
 	//-----------------------------
@@ -198,6 +219,11 @@ public:
 	inline D3DXMATRIX* GetMtxViewPtr()			{ return &m_mtxView; }			// ビューマトリックスポインタ取得
 	inline D3DXMATRIX GetMtxProjection()		{ return m_mtxProjection; }		// プロジェクションマトリックス取得
 	inline D3DXMATRIX* GetMtxProjectionPtr()	{ return &m_mtxProjection; }	// プロジェクションマトリックスポインタ取得
+
+	//-----------------------------
+	// 追従
+	//-----------------------------
+	SCameraData FollowPoint();	// 現在の追従カメラ情報
 
 private:
 
