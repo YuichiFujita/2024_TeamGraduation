@@ -114,8 +114,9 @@ public:
 	// 情報操作
 	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
 	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
-	inline int GetNowMotionIdx()		{ return m_nNowMotionIdx; }
-	inline void SetFinish(bool bFinish)	{ m_bFinish = bFinish; }
+	inline void SetEasing(EASING easing)	{ m_EasingType = easing; }
+	inline int GetNowMotionIdx()			{ return m_nNowMotionIdx; }
+	inline void SetFinish(bool bFinish)		{ m_bFinish = bFinish; }
 	inline bool IsFinish()	{ return m_bFinish; }
 	inline bool IsEdit()	{ return m_bEdit; }
 
@@ -125,6 +126,7 @@ public:
 
 	inline int GetNowKeyIdx() { return m_nNowKeyIdx; }
 	inline int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
+	inline int GetKeyMax(const MOTION motion) { return m_vecMotionInfo[motion].Key.size(); }
 
 	MotionKey GetKeyData(const MOTION motion, const int nKeyIdx);	// キー情報取得
 	float GetWholeCurTimer();	// 現在の全体時間取得

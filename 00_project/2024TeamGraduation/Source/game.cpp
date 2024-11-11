@@ -119,9 +119,9 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
@@ -135,7 +135,7 @@ HRESULT CGame::Init()
 	}
 
 	// プレイヤーUser二人生成(左)
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
@@ -150,8 +150,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 1
-
+#if 0
 	CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{
@@ -173,7 +172,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
 	CPlayer* pAI = CPlayer::Create(CPlayer::EUserType::TYPE_AI, CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
@@ -203,6 +202,9 @@ HRESULT CGame::Init()
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_FOLLOW);
+
+	// 体育館を明るくする
+	GET_MANAGER->GetLight()->SetEnableBright(true);
 
 	// クリアの判定
 	SetEnableClear(true);

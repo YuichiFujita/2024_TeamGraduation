@@ -52,8 +52,9 @@ namespace UtilFunc
 	namespace Transformation
 	{
 		template<class T> void ValueNormalize(T& Value, T MaxValue, T MinValue);	// 値の正規化処理
+		template<class T> float ValueToRate(const T num, const T min, const T max);	// 値の割合変換
 		template<class T> const T Clamp(T Value, T MinValue, T MaxValue);			
-			MyLib::Vector3 RotationChangeToForwardVector(float rot);
+		MyLib::Vector3 RotationChangeToForwardVector(float rot);
 		MyLib::Vector3 WorldMtxChangeToPosition(D3DXMATRIX worldmtx);	// ワールドマトリックスをposに変換
 		MyLib::Vector3 MtxChangeToMatrix(const D3DXMATRIX& matrix);
 		inline float DegreeChangeToRadian(float degree);
@@ -74,12 +75,55 @@ namespace UtilFunc
 //==========================================================================
 namespace UtilFunc	// 便利関数
 {
-
 	/**
 	@brief	補正関数
 	*/
 	namespace Correction
 	{
+		// イージング関数空間
+		namespace easing
+		{
+			// 通常関数
+			inline float Liner(const float x)		{ return x; }
+			inline float InSine(const float x)		{ return 1.0f - cosf((x * D3DX_PI) * 0.5f); }
+			inline float OutSine(const float x)		{ return sinf((x * D3DX_PI) * 0.5f); }
+			inline float InOutSine(const float x)	{ return -(cosf(x * D3DX_PI) - 1.0f) * 0.5f; }
+			inline float InQuad(const float x)		{ return x * x; }
+			inline float OutQuad(const float x)		{ return 1.0f - (1.0f - x) * (1.0f - x); }
+			inline float InOutQuad(const float x)	{ return (x < 0.5f) ? (2.0f * x * x) : (1.0f - powf(-2.0f * x + 2.0f, 2.0f) * 0.5f); }
+			inline float InCubic(const float x)		{ return x * x * x; }
+			inline float OutCubic(const float x)	{ return 1.0f - powf(1.0f - x, 3.0f); }
+			inline float InOutCubic(const float x)	{ return (x < 0.5f) ? (4.0f * x * x * x) : (1.0f - powf(-2.0f * x + 2.0f, 3.0f) * 0.5f); }
+			inline float InQuart(const float x)		{ return x * x * x * x; }
+			inline float OutQuart(const float x)	{ return 1.0f - powf(1.0f - x, 4.0f); }
+			inline float InOutQuart(const float x)	{ return (x < 0.5f) ? (8.0f * x * x * x * x) : (1.0f - powf(-2.0f * x + 2.0f, 4.0f) * 0.5f); }
+			inline float InQuint(const float x)		{ return x * x * x * x * x; }
+			inline float OutQuint(const float x)	{ return 1.0f - powf(1.0f - x, 5.0f); }
+			inline float InOutQuint(const float x)	{ return (x < 0.5f) ? (16.0f * x * x * x * x * x) : (1.0f - powf(-2.0f * x + 2.0f, 5.0f) * 0.5f); }
+			inline float InElastic(const float x)	{ return (x == 0.0f) ? 0.0f : (x == 1.0f) ? 1.0f : -powf(2.0f, 10.0f * (x - 1.0f)) * sinf((x - 1.1f) * 5.0f * D3DX_PI); }
+			inline float OutElastic(const float x)	{ return (x == 0.0f) ? 0.0f : (x == 1.0f) ? 1.0f : powf(2.0f, -10.0f * x) * sinf((x - 0.1f) * 5.0f * D3DX_PI) + 1.0f; }
+		
+			// テンプレート関数
+			template<class T> inline float Liner(T num, const T min, const T max)		{ return Liner(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InSine(T num, const T min, const T max)		{ return InSine(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutSine(T num, const T min, const T max)		{ return OutSine(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InOutSine(T num, const T min, const T max)	{ return InOutSine(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InQuad(T num, const T min, const T max)		{ return InQuad(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutQuad(T num, const T min, const T max)		{ return OutQuad(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InOutQuad(T num, const T min, const T max)	{ return InOutQuad(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InCubic(T num, const T min, const T max)		{ return InCubic(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutCubic(T num, const T min, const T max)	{ return OutCubic(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InOutCubic(T num, const T min, const T max)	{ return InOutCubic(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InQuart(T num, const T min, const T max)		{ return InQuart(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutQuart(T num, const T min, const T max)	{ return OutQuart(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InOutQuart(T num, const T min, const T max)	{ return InOutQuart(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InQuint(T num, const T min, const T max)		{ return InQuint(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutQuint(T num, const T min, const T max)	{ return OutQuint(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InOutQuint(T num, const T min, const T max)	{ return InOutQuint(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float InElastic(T num, const T min, const T max)	{ return InElastic(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+			template<class T> inline float OutElastic(T num, const T min, const T max)	{ return OutElastic(UtilFunc::Transformation::ValueToRate(num, min, max)); }
+		}
+
 		/**
 		@brief	慣性補正
 		@details 補正係数を1.0fにすると1Fで補正が完了します
@@ -428,11 +472,9 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EasingEaseInOutSine(float start, float end, float startTime, float endTime, float currentTime)
 		{
-			// 割合
-			float ratio = (currentTime - startTime) / (endTime - startTime);
+			float ratio = UtilFunc::Correction::easing::InOutSine(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
-
-			return 0.5f * (1.0f - cosf(D3DX_PI * ratio));
+			return start + (end - start) * ratio;
 		}
 
 		/**
@@ -443,15 +485,79 @@ namespace UtilFunc	// 便利関数
 		@param	startTime	[in]	開始時間
 		@param	endTime		[in]	終了時間
 		@param	currentTime	[in]	現在の時間
-		@return	補正されたfloat値
+		@return	補正されたVector3値
 		*/
 		inline MyLib::Vector3 EasingEaseInOutSine(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
-			// 割合
-			float ratio = (currentTime - startTime) / (endTime - startTime);
+			float ratio = UtilFunc::Correction::easing::InOutSine(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
 
-			return 0.5f * (1.0f - cosf(D3DX_PI * ratio));
+		/**
+		@brief	線形補正(四次関数ベースの補間、減速→加速→減速, イーズインアウト)
+		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@return	補正されたfloat値
+		*/
+		inline float EasingEaseInOutQuart(float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutQuart(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		/**
+		@brief	線形補正(四次関数ベースの補間、減速→加速→減速, イーズインアウト)
+		@details https://mo-no.design/blog/wp-content/uploads/2023/02/easeinout_1.mp4
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@return	補正されたVector3値
+		*/
+		inline MyLib::Vector3 EasingEaseInOutQuart(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutQuart(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		/**
+		@brief	線形補正(三次関数ベースの補間、減速→加速→減速, イーズインアウト)
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@return	補正されたfloat値
+		*/
+		inline float EasingEaseInOutCubic(float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutCubic(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		/**
+		@brief	線形補正(三次関数ベースの補間、減速→加速→減速, イーズインアウト)
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@return	補正されたVector3値
+		*/
+		inline MyLib::Vector3 EasingEaseInOutCubic(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutCubic(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
 		}
 
 
@@ -714,8 +820,105 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * eased;
 		}
 
+		/**
+		@brief	easeInOutExpo関数
+		@details https://easings.net/ja#easeInOutExpo
+		@param	start		[in]	初期値
+		@param	end			[in]	目標値
+		@param	startTime	[in]	開始時間
+		@param	endTime		[in]	終了時間
+		@param	currentTime	[in]	現在の時間
+		@return	補正されたfloat値
+		*/
+		inline MyLib::Vector3 EaseInOutExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			// 割合
+			float ratio = (currentTime - startTime) / (endTime - startTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 
+			float eased;
+			if (ratio == 0) {
+				eased = 0;
+			}
+			else if (ratio == 1) {
+				eased = 1;
+			}
+			else if (ratio < 0.5f) {
+				eased = pow(2, 20 * ratio - 10) / 2;
+			}
+			else {
+				eased = (2 - pow(2, -20 * ratio + 10)) / 2;
+			}
 
+			// 線形補間（Lerp）を使用して結果をstartからendの範囲に変換
+			return start + (end - start) * eased;
+		}
+
+		inline MyLib::Vector3 EasingQuintIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingQuintIn(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline MyLib::Vector3 EasingQuintOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingQuintOut(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline MyLib::Vector3 EasingQuintInOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingQuintInOut(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutQuint(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
+
+		inline MyLib::Vector3 EasingElasticIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InElastic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingElasticIn(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InElastic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
+
+		inline MyLib::Vector3 EasingElasticOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutElastic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingElasticOut(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutElastic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
 
 
 
@@ -2786,6 +2989,23 @@ namespace UtilFunc	// 便利関数
 				// 最小値に補正
 				Value = MinValue;
 			}
+		}
+
+		/**
+		@brief	値の割合変換処理
+		@param	num	[in]	割合化する数値
+		@param	min	[in]	最小範囲
+		@param	max	[in]	最大範囲
+		@return	void
+		*/
+		template<class T>inline float ValueToRate(const T num, const T min, const T max)
+		{
+			// 割る数を求める
+			float fDiv = static_cast<float>(max) - static_cast<float>(min);
+			if (fDiv == 0.0f) { return 0.0f; }	// 0除算対策
+		
+			// 割合変換した値を返す
+			return (static_cast<float>(num) - static_cast<float>(min)) / fDiv;
 		}
 
 		/**
