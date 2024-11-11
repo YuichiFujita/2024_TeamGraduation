@@ -65,6 +65,7 @@ public:
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
+		MOTION_TOSS,				// トス
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
 		MOTION_WIN,					// 勝利
@@ -90,6 +91,7 @@ public:
 		STATE_SPECIAL,			// スペシャル
 		STATE_OUTCOURT,			// コート越え(ノックバック)
 		STATE_OUTCOURT_RETURN,	// コート越えから戻る(ノックバック)
+		STATE_INVADE_TOSS,		// 相手コートに侵入トス
 		STATE_INVADE_RETURN,	// 相手コートに侵入から戻る
 		STATE_MAX
 	};
@@ -333,6 +335,7 @@ private:
 	void StateSpecial();			// スペシャル
 	void StateOutCourt();			// コート越え
 	void StateOutCourt_Return();	// コート越えから戻る
+	void StateInvade_Toss();		// 相手コートに侵入トス
 	void StateInvade_Return();		// 相手コート侵入から戻る
 
 	//-----------------------------
