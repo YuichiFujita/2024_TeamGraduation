@@ -31,8 +31,8 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float NEAR_LINE = 1350.0f;	// 手前の生成位置上限
-	static constexpr float FAR_LINE = 1750.0f; 	// 奥の生成位置上限
+	static constexpr float NEAR_LINE = 1100.0f;	// 手前の生成位置上限
+	static constexpr float FAR_LINE = 1200.0f; 	// 奥の生成位置上限
 
 	//=============================
 	// 列挙型定義
@@ -83,7 +83,7 @@ protected:
 	// ゲッター/セッター
 	void SetMotion(const int nMotion) override;	// モーション設定
 	void EndSettingSpawn() override;			// スポーン終了時の設定
-	virtual bool SetDespawn()override ;			// 退場設定
+	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE) override;	// 退場設定
 
 private:
 

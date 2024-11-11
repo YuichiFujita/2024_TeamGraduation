@@ -182,6 +182,12 @@ void CAudienceHighPoly::Update(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CAudienceHighPoly::Draw()
 {
+	if (m_pChara != nullptr)
+	{
+		// オブジェクトキャラクターの描画
+		m_pChara->Draw();
+	}
+
 	// 親クラスの描画
 	CAudience::Draw();
 }
@@ -267,17 +273,23 @@ int CAudienceHighPoly::UpdateDespawn(const float fDeltaTime, const float fDeltaR
 //==========================================================================
 // 退場の設定処理
 //==========================================================================
-bool CAudienceHighPoly::SetDespawn()
+bool CAudienceHighPoly::SetDespawn(EObjType type)
 {
-	// 退場位置を作成
-	MyLib::Vector3 posDespawn = GetSpawnPosition();	// 退場位置
-	posDespawn.x = -GetSpawnPosition().x;			// X座標を反転させる
+	// 退場の設定
+	bool bDespawn = CAudience::SetDespawn(type);
+	if (bDespawn)
+	{ // 退場した場合
 
-	// 向きを退場方向へ
-	SetRotation(MyLib::Vector3(0.0f, MyLib::Vector3().AngleXZ(posDespawn), 0.0f));
+		// 退場位置を作成
+		MyLib::Vector3 posDespawn = GetSpawnPosition();	// 退場位置
+		posDespawn.x = -GetSpawnPosition().x;			// X座標を反転させる
 
-	// 退場の設定処理
-	return CAudience::SetDespawn();
+		// 向きを退場方向へ
+		SetRotation(MyLib::Vector3(0.0f, MyLib::Vector3().AngleXZ(posDespawn), 0.0f));
+	}
+
+	// 退場フラグを返す
+	return bDespawn;
 }
 
 //==========================================================================
