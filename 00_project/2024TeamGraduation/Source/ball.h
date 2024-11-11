@@ -97,6 +97,7 @@ public:
 	EState GetState() const			{ return m_state; }			// 状態取得
 	CPlayer* GetPlayer() const		{ return m_pPlayer; }		// 所持プレイヤー取得
 	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
+	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
 	bool IsSpecial() const;			// スペシャルフラグ取得
@@ -181,6 +182,7 @@ private:
 	float m_fMoveSpeed;		// 移動速度
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
+	bool m_bLanding;		// 着地フラグ
 	CGameManager::TeamSide m_typeTeam;	// チームサイド
 	ESpecial m_typeSpecial;	// スペシャル種類
 	EAttack m_typeAtk;		// 攻撃種類

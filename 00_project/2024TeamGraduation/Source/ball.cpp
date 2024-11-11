@@ -33,7 +33,7 @@ namespace
 	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
 	const float REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
 	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
-	const float MAX_BOUND_MOVE = 1.0f;	// バウンド時の上移動量最大値
+	const float MAX_BOUND_MOVE = 0.8f;	// バウンド時の上移動量最大値
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
@@ -66,17 +66,22 @@ namespace
 		"[NONE]    (指定なし)",
 		"[かめはめ波]",
 	};
+	const char* DEBUG_BOOL_PRINT[] =	// デバッグ表示用フラグ
+	{
+		"[FALSE]",
+		"[TRUE]",
+	};
 
 	namespace normal
 	{
-		const float THROW_MOVE = 19.5f;	// 通常投げ移動速度
+		const float THROW_MOVE = 22.5f;	// 通常投げ移動速度
 		const float REV_HOMING = 0.3f;	// ホーミングの慣性補正係数
 		const float TIME_HOMING = 1.2f;	// ホーミングが切れるまでの時間
 	}
 
 	namespace jump
 	{
-		const float THROW_MOVE = 24.0f;		// ジャンプ投げ移動速度
+		const float THROW_MOVE = 27.0f;		// ジャンプ投げ移動速度
 		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
 		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
@@ -111,8 +116,8 @@ namespace
 
 	namespace toss
 	{
-		const float THROW_MOVE = 2.5f;	// トス移動速度
-		const float MOVE_UP = 3.5f;		// トス上移動量
+		const float THROW_MOVE = 3.5f;	// トス移動速度
+		const float MOVE_UP = 2.5f;		// トス上移動量
 	}
 }
 
@@ -157,6 +162,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
+	m_bLanding		(false),		// 着地フラグ
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
@@ -262,6 +268,9 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 前回の位置を更新
 	SetOldPosition(GetPosition());
 
+	// 着地していない状態にする
+	m_bLanding = false;
+
 	// 初速移動量の更新
 	if (IsAttack())
 	{ // 攻撃中の場合
@@ -297,6 +306,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		"【チーム方向】%s\n"
 		"【 攻撃状態 】%s\n"
 		"【スペシャル】%s\n"
+		"【着地フラグ】%s\n"
 		"【 所有対象 】[%s]\n"
 		"【ターゲット】[%s]\n"
 		"【カバー対象】[%s]\n",
@@ -304,6 +314,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		DEBUG_TEAM_PRINT[m_typeTeam],
 		DEBUG_ATK_PRINT[m_typeAtk],
 		DEBUG_SPECIAL_PRINT[m_typeSpecial],
+		DEBUG_BOOL_PRINT[(int)m_bLanding],
 		(m_pPlayer == nullptr) ? "nullptr" : "player",
 		(m_pTarget == nullptr) ? "nullptr" : "player",
 		(m_pCover  == nullptr) ? "nullptr" : "player"
@@ -833,12 +844,7 @@ void CBall::UpdateFree(const float fDeltaTime, const float fDeltaRate, const flo
 	UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// 地面の着地
-	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
-	{ // 着地した場合
-
-		// 着地遷移
-		Landing();
-	}
+	UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// プレイヤーとの当たり判定
 	CollisionPlayer(&pos);
@@ -1002,6 +1008,9 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 
 		// 重力を初期化
 		m_fGravity = 0.0f;
+
+		// 着地している状態にする
+		m_bLanding = true;
 		return true;
 	}
 
