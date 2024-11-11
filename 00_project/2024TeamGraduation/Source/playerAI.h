@@ -178,6 +178,7 @@ private:
 	void Reset();	// 列挙リセット
 
 	void Target();
+	bool IsWait();
 
 	//=============================
 	// メンバ変数

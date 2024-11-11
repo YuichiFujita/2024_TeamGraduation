@@ -425,28 +425,25 @@ void CPlayerAI::TimingJumpNormal(const float fDeltaTime, const float fDeltaRate,
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	//if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && (m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH))
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && (m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH))
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
-
-			return;
-		}
-
-		pControlAIMove->SetIsWalk(false);	// 歩きリセット
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
-
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
-
-			// 変数リセット
-			Reset();
-		}
+		return;
 	}
+
+	pControlAIMove->SetIsWalk(false);	// 歩きリセット
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
+
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
+
+		// 変数リセット
+		Reset();
+	}
+	
 }
 
 //==========================================================================
@@ -460,27 +457,23 @@ void CPlayerAI::TimingJumpQuick(const float fDeltaTime, const float fDeltaRate, 
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
+		return;
+	}
 
-			return;
-		}
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
-		pControlAIMove->SetIsWalk(false);	// 歩きオフ
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
+	if (GetPosition().y >= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
 
-		if (GetPosition().y >= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
-
-			// それぞれの状態のリセット
-			Reset();
-		}
+		// それぞれの状態のリセット
+		Reset();
 	}
 }
 
@@ -495,34 +488,30 @@ void CPlayerAI::TimingJumpDelay(const float fDeltaTime, const float fDeltaRate, 
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
+		return;
+	}
 
-			return;
-		}
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
-		pControlAIMove->SetIsWalk(false);	// 歩きオフ
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
-
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			m_bFoldJump = true;	// 折り返しオン
-		}
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		m_bFoldJump = true;	// 折り返しオン
+	}
 		
-		if (!m_bFoldJump) { return; }
+	if (!m_bFoldJump) { return; }
 
-		if (GetPosition().y <= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
-		{
-			// 投げる
-			pControlAIAction->SetIsThrow(true);
+	if (GetPosition().y <= timing::JUMP_END_POS * 0.5f)	// 高さによって変わる
+	{
+		// 投げる
+		pControlAIAction->SetIsThrow(true);
 
-			// それぞれの状態のリセット
-			Reset();
-		}
+		// それぞれの状態のリセット
+		Reset();
 	}
 }
 
@@ -537,26 +526,22 @@ void CPlayerAI::TimingJumpFeint(const float fDeltaTime, const float fDeltaRate, 
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
-	{// ジャンプするぞ――
+	if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+	{
+		m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
-		{
-			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
+		return;
+	}
 
-			return;
-		}
+	pControlAIMove->SetIsWalk(false);	// 歩きオフ
+	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
-		pControlAIMove->SetIsWalk(false);	// 歩きオフ
-		pControlAIAction->SetIsJump(true);	// ジャンプオン
+	if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
+	{
+		// それぞれの状態のリセット
+		Reset();
 
-		if (GetPosition().y >= timing::JUMP_END_POS)	// 高さによって変わる
-		{
-			// それぞれの状態のリセット
-			Reset();
-
-			//m_eMode = EMode::MODE_THROW;
-		}
+		//m_eMode = EMode::MODE_THROW;
 	}
 }
 
@@ -626,10 +611,47 @@ void CPlayerAI::Target()
 }
 
 //==========================================================================
+// 待て
+//==========================================================================
+bool CPlayerAI::IsWait()
+{
+	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+
+	bool b = false;
+
+	if (!pBall) { return b; }
+
+	CGameManager::TeamSide typeTeam = GetStatus()->GetTeam();
+
+	if (typeTeam == CGameManager::TeamSide::SIDE_LEFT)
+	{
+		if (pBall->GetPosition().x > 0.0f)
+		{
+			//m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+			Reset();
+			b = true;
+		}
+	}
+	else if (typeTeam == CGameManager::TeamSide::SIDE_RIGHT)
+	{
+		if (pBall->GetPosition().x < 0.0f)
+		{
+			//m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+			Reset();
+			b = true;
+		}
+	}
+
+	return b;
+}
+
+//==========================================================================
 // 取りに行く
 //==========================================================================
 void CPlayerAI::FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (IsWait()) { return; }
+
 	// AIコントロール情報の取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
