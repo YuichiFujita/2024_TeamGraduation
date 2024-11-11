@@ -191,33 +191,37 @@ void CPlayerAI::ModeThrowManager(const float fDeltaTime, const float fDeltaRate,
 	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(this->GetCharStatus()->GetTeam());
 
-	if (pTeamStatus->IsMaxSpecial())
-	{// スペシャル
-		m_eThrowType = EThrowType::TYPE_SPECIAL;
-	}
-	else
+	if (m_eThrowType == EThrowType::TYPE_NONE)
 	{
-		// 今はランダムで決定
-		//int n = rand() % 2;
-		int n = 1;
-
-		switch (n)
-		{
-		case 0:
-			m_eThrowType = EThrowType::TYPE_NORMAL;
-			break;
-
-		case 1:
-			m_eThrowType = EThrowType::TYPE_JUMP;
-			break;
-
-		default:
-			break;
+		if (pTeamStatus->IsMaxSpecial())
+		{// スペシャル
+			m_eThrowType = EThrowType::TYPE_SPECIAL;
 		}
+		else
+		{
+			int n = 0;
+			// 今はランダムで決定
+			n = rand() % 2;
+			//n = 1;
 
-		// 投げる種類更新
-		(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
+			switch (n)
+			{
+			case 0:
+				m_eThrowType = EThrowType::TYPE_NORMAL;
+				break;
+
+			case 1:
+				m_eThrowType = EThrowType::TYPE_JUMP;
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
+
+	// 投げる種類更新
+	(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -257,6 +261,7 @@ void CPlayerAI::TypeJumpThrow(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAI::TypeSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// AIコントロール情報の取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
@@ -284,6 +289,7 @@ void CPlayerAI::MoveNormal(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CPlayerAI::MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
@@ -324,8 +330,8 @@ void CPlayerAI::TimingManager(const float fDeltaTime, const float fDeltaRate, co
 	{// ジャンプ投げ
 
 		// タイミングの設定
-		//int n = rand() % 3;
-		int n = 0;
+		int n = rand() % 3;
+		//int n = 0;
 
 		switch (n)
 		{
@@ -396,10 +402,10 @@ void CPlayerAI::TimingJumpNormal(const float fDeltaTime, const float fDeltaRate,
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (m_eThrowType == EThrowType::TYPE_JUMP)
+	//if (m_eThrowType == EThrowType::TYPE_JUMP)
 	{// ジャンプするぞ――
 
-		if (m_fTiming > 0.0f && m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH)
+		if (m_fTiming > 0.0f && (m_eThrowMove == EThrowMove::MOVE_WALK || m_eThrowMove == EThrowMove::MOVE_DASH))
 		{
 			m_fTiming -= fDeltaTime * fDeltaRate * fSlowRate;
 
@@ -539,11 +545,15 @@ void CPlayerAI::Reset()
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
 	// 行動フラグリセット
 	pControlAIMove->SetIsWalk(false);
 	pControlAIMove->SetIsDash(false);
 	pControlAIMove->SetIsBlink(false);
+
+	pControlAIAction->SetIsJump(false);
 }
 
 //==========================================================================
