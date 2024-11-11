@@ -135,7 +135,7 @@ private:
 	void TypeJumpThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャンプ投げ
 	void TypeSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ
 	
-	// 投げの状態
+	// 移動の状態
 	void MoveNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void MoveWalk(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 歩いて投げる
 	void MoveDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 走って投げる
@@ -149,7 +149,6 @@ private:
 	void TimingJumpQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingJumpDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void TimingJumpFeint(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-
 
 	//-----------------------------
 	// その他関数

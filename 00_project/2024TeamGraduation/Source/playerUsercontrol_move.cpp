@@ -360,7 +360,7 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
-
+	
 	// 全ての方向入力チェック
 	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) &&
 		!pKey->GetPress(DIK_W);

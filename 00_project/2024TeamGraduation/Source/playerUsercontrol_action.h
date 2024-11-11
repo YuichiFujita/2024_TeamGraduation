@@ -32,8 +32,8 @@ public:
 	//=============================
 	// âºëzä÷êî
 	//=============================
-	virtual CPlayerAIControlAction* GetAI() { return nullptr; };
-	virtual CPlayerUserControlAction* GetUser() { return this; };
+	virtual CPlayerAIControlAction* GetAI() { return nullptr; }
+	virtual CPlayerUserControlAction* GetUser() { return this; }
 
 private:
 	

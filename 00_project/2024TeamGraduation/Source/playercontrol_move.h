@@ -13,6 +13,12 @@
 #include "playercontrol.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerUserControlMove;
+class CPlayerAIControlMove;
+
+//==========================================================================
 // プレイヤーコントロールクラス定義
 //==========================================================================
 //=============================
@@ -24,6 +30,12 @@ public:
 
 	// コンストラクタ
 	CPlayerControlMove();
+
+	//=============================
+	// 純粋仮想関数
+	//=============================
+	virtual CPlayerAIControlMove* GetAI() = 0;
+	virtual CPlayerUserControlMove* GetUser() = 0;
 
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
 
