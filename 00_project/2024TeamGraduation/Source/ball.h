@@ -43,6 +43,7 @@ public:
 		STATE_SPECIAL_STAG,		// スペシャル演出状態
 		STATE_SPECIAL_THROW,	// スペシャル投げ状態
 		STATE_REBOUND,			// リバウンド状態 (ぶつかった時の落下)
+		STATE_FREE,				// フリー状態 (触れただけで取れる)
 		STATE_LAND,				// 着地状態 (地面に転がっている)
 		STATE_MAX				// この列挙型の総数
 	};
@@ -83,11 +84,12 @@ public:
 	// メンバ関数
 	//=============================
 	void Kill();	// 削除
-	void CatchAttack(CPlayer* pPlayer);		// 攻撃キャッチ
-	void CatchLand(CPlayer* pPlayer);		// 着地キャッチ
-	void ThrowNormal(CPlayer* pPlayer);		// 通常投げ
-	void ThrowJump(CPlayer* pPlayer);		// ジャンプ投げ
-	void Special(CPlayer* pPlayer);			// スペシャル発動
+	void CatchAttack(CPlayer* pPlayer);	// 攻撃キャッチ
+	void CatchLand(CPlayer* pPlayer);	// 着地キャッチ
+	void ThrowNormal(CPlayer* pPlayer);	// 通常投げ
+	void ThrowJump(CPlayer* pPlayer);	// ジャンプ投げ
+	void Special(CPlayer* pPlayer);		// スペシャル発動
+	void Toss(CPlayer* pPlayer);		// トス
 
 	CGameManager::TeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
 	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }	// スペシャル種類取得
@@ -137,6 +139,7 @@ private:
 	void UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル演出状態の更新
 	void UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ状態の更新
 	void UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// リバウンド状態の更新
+	void UpdateFree(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// フリー状態の更新
 	void UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 着地状態の更新
 
 	// スペシャル関数

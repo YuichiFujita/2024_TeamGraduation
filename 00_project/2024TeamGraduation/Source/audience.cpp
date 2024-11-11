@@ -9,6 +9,7 @@
 
 // 派生先
 #include "audienceAnim.h"
+#include "audienceLowPoly.h"
 #include "audienceHighPoly.h"
 
 //==========================================================================
@@ -19,8 +20,8 @@ namespace
 	const int MIN_JUMP = 6;		// 最低ジャンプ量
 	const int MAX_JUMP = 12;	// 最大ジャンプ量
 	const float GRAVITY_RATE = 0.5f;	// 重力にかける割合
-	const float JUMP_RATE = 0.5f;		// ジャンプ力にかける割合
-	const float TIME_SPAWN = 2.4f;		// 入場時間
+	const float JUMP_RATE	 = 0.5f;	// ジャンプ力にかける割合
+	const float TIME_SPAWN	 = 2.4f;	// 入場時間
 	const float TIME_DESPAWN = 3.2f;	// 退場時間
 }
 
@@ -77,6 +78,10 @@ CAudience* CAudience::Create(EObjType type, CGameManager::TeamSide team)
 	{ // オブジェクト種類ごとの処理
 	case CAudience::OBJTYPE_ANIM:
 		pAudience = DEBUG_NEW CAudienceAnim(type, team);
+		break;
+
+	case CAudience::OBJTYPE_LOWPOLY:
+		pAudience = DEBUG_NEW CAudienceLowPoly(type, team);
 		break;
 
 	case CAudience::EObjType::OBJTYPE_HIGHPOLY:
@@ -240,7 +245,7 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
 		{ // 登場人数分繰り返す
 
 			// 観客を生成
-			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, team)))
+			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_LOWPOLY, team)))
 			{ // 生成に失敗した場合
 
 				return E_FAIL;

@@ -88,7 +88,7 @@ public:
 	// メンバ関数
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
-	void SetSpecial();	// スペシャル設定
+	void SetSpecial();			// スペシャル設定
 	virtual bool SetDespawn();	// 退場設定
 
 	//=============================

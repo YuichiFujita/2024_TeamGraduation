@@ -37,18 +37,18 @@ CCameraMotion::MOTION_FUNC CCameraMotion::m_MotionFunc[] =
 CCameraMotion::VEC3_EASING_FUNC CCameraMotion::m_Vec3EasingFunc[] =
 {
 	&UtilFunc::Correction::EasingLinear,
-	&UtilFunc::Correction::EasingEaseIn,
-	&UtilFunc::Correction::EasingEaseOut,
-	&UtilFunc::Correction::EasingEaseInOut,
+	&UtilFunc::Correction::EasingQuintIn,
+	&UtilFunc::Correction::EasingQuintOut,
+	&UtilFunc::Correction::EasingEaseInOutQuart,
 };
 
 // floatê¸å`ï‚ê≥ÉäÉXÉg
 CCameraMotion::FLOAT_EASING_FUNC CCameraMotion::m_FloatEasingFunc[] =
 {
 	&UtilFunc::Correction::EasingLinear,
-	&UtilFunc::Correction::EasingEaseIn,
-	&UtilFunc::Correction::EasingEaseOut,
-	&UtilFunc::Correction::EasingEaseInOut,
+	&UtilFunc::Correction::EasingQuintIn,
+	&UtilFunc::Correction::EasingQuintOut,
+	&UtilFunc::Correction::EasingEaseInOutQuart,
 };
 
 //==========================================================================
