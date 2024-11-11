@@ -146,42 +146,41 @@ namespace Crab	// カニ歩き
 namespace Motion
 {
 	// デバッグ表示用
-	const std::map<CPlayer::EMotion, std::string> NAME_MAP =
+	const std::string NAME_MAP[CPlayer::EMotion::MOTION_MAX] =
 	{
-	  {CPlayer::EMotion::MOTION_DEF,				"MOTION_DEF"},					// ニュートラルモーション
-	  {CPlayer::EMotion::MOTION_DEF_BALL,			"MOTION_DEF_BALL"},				// ニュートラルモーション(ボール所持)
-	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK"},					// 移動
-	  {CPlayer::EMotion::MOTION_WALK,				"MOTION_WALK_BALL"},			// 移動(ボール所持)
-	  {CPlayer::EMotion::MOTION_CRAB_FRONT,			"MOTION_CRAB_FRONT"},			// カニ歩き(前)
-	  {CPlayer::EMotion::MOTION_CRAB_BACK,			"MOTION_CRAB_BACK"},			// カニ歩き(後)
-	  {CPlayer::EMotion::MOTION_CRAB_LEFT,			"MOTION_CRAB_LEFT"},			// カニ歩き(左)
-	  {CPlayer::EMotion::MOTION_CRAB_RIGHT,			"MOTION_CRAB_RIGHT"},			// カニ歩き(右)
-	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN"},					// 走り
-	  {CPlayer::EMotion::MOTION_RUN,				"MOTION_RUN_BALL"},				// 走り(ボール所持)
-	  {CPlayer::EMotion::MOTION_BLINK,				"MOTION_BLINK"},				// ブリンク
-	  {CPlayer::EMotion::MOTION_DODGE,				"MOTION_DODGE"},				// 回避成功時
-	  {CPlayer::EMotion::MOTION_JUMP,				"MOTION_JUMP"},					// ジャンプ
-	  {CPlayer::EMotion::MOTION_JUMP_BALL,			"MOTION_JUMP_BALL"},			// ジャンプ(ボール所持)
-	  {CPlayer::EMotion::MOTION_LAND,				"MOTION_LAND"},					// 着地
-	  {CPlayer::EMotion::MOTION_CATCH_STANCE,		"MOTION_CATCH_STANCE"},			// キャッチの構え
-	  {CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP,	"MOTION_CATCH_STANCE_JUMP"},	// キャッチの構え(ジャンプ)
-	  {CPlayer::EMotion::MOTION_CATCH_NORMAL,		"MOTION_CATCH_NORMAL"},			// キャッチ(通常)
-	  {CPlayer::EMotion::MOTION_CATCH_JUMP,			"MOTION_CATCH_JUMP"},			// キャッチ(ジャンプ)
-	  {CPlayer::EMotion::MOTION_JUSTCATCH_NORMAL,	"MOTION_JUSTCATCH_NORMAL"},		// ジャストキャッチ(通常)
-	  {CPlayer::EMotion::MOTION_JUSTCATCH_JUMP,		"MOTION_JUSTCATCH_JUMP"},		// ジャストキャッチ(ジャンプ)
-	  {CPlayer::EMotion::MOTION_DROPCATCH_WALK,		"MOTION_DROPCATCH_WALK"},		// 落ちてるのキャッチ(歩き)
-	  {CPlayer::EMotion::MOTION_THROW,				"MOTION_THROW"},				// 投げ
-	  {CPlayer::EMotion::MOTION_THROW_RUN,			"MOTION_THROW_RUN"},			// 投げ(走り)
-	  {CPlayer::EMotion::MOTION_THROW_JUMP,			"MOTION_THROW_JUMP"},			// 投げ(ジャンプ)
-	  {CPlayer::EMotion::MOTION_HYPE,				"MOTION_HYPE"},					// 盛り上げ
-	  {CPlayer::EMotion::MOTION_SPECIAL,			"MOTION_SPECIAL"},				// スペシャル
-	  {CPlayer::EMotion::MOTION_WIN,				"MOTION_WIN"},					// 勝利
-	  {CPlayer::EMotion::MOTION_DAMAGE,				"MOTION_DAMAGE"},				// ダメージ
-	  {CPlayer::EMotion::MOTION_DEAD,				"MOTION_DEAD"},					// 死亡
-	  {CPlayer::EMotion::MOTION_DEAD_AFTER,			"MOTION_DEAD_AFTER"},			// 死亡後
-	  {CPlayer::EMotion::MOTION_GRIP_DEF,			"MOTION_GRIP_DEF"},				// デフォグリップ
-	  {CPlayer::EMotion::MOTION_GRIP_FRONT,			"MOTION_GRIP_FRONT"},			// 前グリップ
-	  {CPlayer::EMotion::MOTION_MAX,				"MOTION_MAX"},				
+	  "MOTION_DEF",					// ニュートラルモーション
+	  "MOTION_DEF_BALL",			// ニュートラルモーション(ボール所持)
+	  "MOTION_WALK",				// 移動
+	  "MOTION_WALK_BALL",			// 移動(ボール所持)
+	  "MOTION_CRAB_FRONT",			// カニ歩き(前)
+	  "MOTION_CRAB_BACK",			// カニ歩き(後)
+	  "MOTION_CRAB_LEFT",			// カニ歩き(左)
+	  "MOTION_CRAB_RIGHT",			// カニ歩き(右)
+	  "MOTION_RUN",					// 走り
+	  "MOTION_RUN_BALL",			// 走り(ボール所持)
+	  "MOTION_BLINK",				// ブリンク
+	  "MOTION_DODGE",				// 回避成功時
+	  "MOTION_JUMP",				// ジャンプ
+	  "MOTION_JUMP_BALL",			// ジャンプ(ボール所持)
+	  "MOTION_LAND",				// 着地
+	  "MOTION_CATCH_STANCE",		// キャッチの構え
+	  "MOTION_CATCH_STANCE_JUMP",	// キャッチの構え(ジャンプ)
+	  "MOTION_CATCH_NORMAL",		// キャッチ(通常)
+	  "MOTION_CATCH_JUMP",			// キャッチ(ジャンプ)
+	  "MOTION_JUSTCATCH_NORMAL",	// ジャストキャッチ(通常)
+	  "MOTION_JUSTCATCH_JUMP",		// ジャストキャッチ(ジャンプ)
+	  "MOTION_DROPCATCH_WALK",		// 落ちてるのキャッチ(歩き)
+	  "MOTION_THROW",				// 投げ
+	  "MOTION_THROW_RUN",			// 投げ(走り)
+	  "MOTION_THROW_JUMP",			// 投げ(ジャンプ)
+	  "MOTION_HYPE",				// 盛り上げ
+	  "MOTION_SPECIAL",				// スペシャル
+	  "MOTION_WIN",					// 勝利
+	  "MOTION_DAMAGE",				// ダメージ
+	  "MOTION_DEAD",				// 死亡
+	  "MOTION_DEAD_AFTER",			// 死亡後
+	  "MOTION_GRIP_DEF",			// デフォグリップ
+	  "MOTION_GRIP_FRONT",			// 前グリップ
 	};
 }
 
@@ -1850,11 +1849,12 @@ void CPlayer::Debug()
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
+		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("Motion : [%s]", Motion::NAME_MAP.at(static_cast<CPlayer::EMotion>(motion->GetType())).c_str());
+		ImGui::Text("Motion : [%s]", Motion::NAME_MAP[static_cast<CPlayer::EMotion>(motion->GetType())].c_str());
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;
