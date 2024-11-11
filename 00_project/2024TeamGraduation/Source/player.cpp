@@ -82,6 +82,7 @@ namespace StateTime
 	const float INVINCIBLE = 0.8f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
+	const float INVADE_RETURN = 0.8f;		// 侵入から戻ってくる
 }
 
 namespace Align	// 足揃え
@@ -93,6 +94,7 @@ namespace Align	// 足揃え
 namespace Court	// 移動制限
 {
 	const float COMEBACK_LINE = 100.0f;	// 戻ってくるライン
+	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
 }
 
 namespace Crab	// カニ歩き
@@ -224,6 +226,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// 行動フラグ
 	m_bPossibleMove = false;		// 移動可能フラグ
+	m_bAutoMotionSet = false;		// オートモーション設定
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_bFootLR = false;				// 足左右判定
@@ -444,14 +447,15 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 操作
 	Controll(fDeltaTime, fDeltaRate, fSlowRate);
 
+
+	// 状態更新
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// モーションの設定処理
 	if (CGame::GetInstance()->GetGameManager()->IsControll())
 	{
 		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-	// 状態更新
-	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// アクション更新
 	if (m_pActionPattern != nullptr)
@@ -587,6 +591,9 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	// 現在の種類取得
 	int nType = pMotion->GetType();
 	int nOldType = pMotion->GetOldType();
+
+	// オートモーション設定
+	if (!m_bAutoMotionSet) return;
 
 	// 移動できないと通さない
 	if (!m_bPossibleMove) return;
@@ -785,6 +792,9 @@ void CPlayer::ResetFrag()
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
 	m_bDash = false;
+
+	// オートモーション設定
+	m_bAutoMotionSet = true;
 
 	switch (nType)
 	{
@@ -1095,7 +1105,7 @@ void CPlayer::LimitPos()
 		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
 	}
 
-#if 0	//TAKADA: コート補正
+#if 1	//TAKADA: コート補正
 	if (!m_bJump && !m_sMotionFrag.bDead)
 	{// 相手コートに侵入したとき用コート内に補正
 		TeamCourt_Return(pos);
@@ -1372,16 +1382,40 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 	MyLib::Vector3 posCourt = MyLib::Vector3();
 	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
 
-	Court::COMEBACK_LINE;
+	// もう戻ってる場合は抜ける
+	if (m_state == EState::STATE_INVADE_RETURN) return;
 
-	// 
-	if (pos.x > posCourt.x + sizeCourt.x)
-	{// 右
-		SetState(EState::STATE_INVADE_RETURN);
-	}
-	else if (pos.x < posCourt.x - sizeCourt.x)
-	{// 左
-		SetState(EState::STATE_INVADE_RETURN);
+	switch (team)
+	{
+	case CGameManager::SIDE_LEFT:	// 左チーム
+
+		if (pos.x > Court::COMEBACK_LINE)
+		{// ライン越え
+
+			// ノックバックの開始位置
+			m_sKnockback.posStart = GetPosition();
+
+			// 侵入から戻る状態へ遷移
+			SetState(EState::STATE_INVADE_RETURN);
+		}
+		break;
+
+	case CGameManager::SIDE_RIGHT:	// 右チーム
+
+		if (pos.x < -Court::COMEBACK_LINE)
+		{// ライン越え
+
+			// ノックバックの開始位置
+			m_sKnockback.posStart = GetPosition();
+
+			// 侵入から戻る状態へ遷移
+			SetState(EState::STATE_INVADE_RETURN);
+		}
+		break;
+
+	default:
+		return;
+		break;
 	}
 }
 
@@ -1412,6 +1446,7 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ダメージ受付判定リセット
 	m_sDamageInfo.bReceived = false;
 
 	// ダメージ受け付け時間減算
@@ -1455,15 +1490,17 @@ void CPlayer::StateDamage()
 	MyLib::Vector3 pos = GetPosition();
 	CMotion* pMotion = GetMotion();
 	
+	// ノックバック
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
-
 	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT,time);
-
 	SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::DAMAGE)
 	{
+		// 移動可能
+		SetEnableMove(true);
+
 		pMotion->ToggleFinish(true);
 		SetState(STATE_INVINCIBLE);
 	}
@@ -1483,7 +1520,7 @@ void CPlayer::StateDead()
 
 	SetPosition(pos);
 
-	//死亡状態をキャンセル不能にする
+	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
 	//m_sMotionFrag.bDead = true;
 
@@ -1663,25 +1700,61 @@ void CPlayer::StateInvade_Return()
 	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
 	MyLib::Vector3 pos = GetPosition();
 
-	Court::COMEBACK_LINE;
+	// チーム別でラインの位置まで戻す
+	MyLib::Vector3 posDest = m_sKnockback.posStart;
+	switch (team)
+	{
+	case CGameManager::SIDE_LEFT:	// 左チーム
 
-	// 補正
-	if (pos.x > posCourt.x + sizeCourt.x)
-	{// 右
+		posDest.x = -Court::COMEBACK_LINE;
+		break;
 
+	case CGameManager::SIDE_RIGHT:	// 右チーム
+
+		posDest.x = Court::COMEBACK_LINE;
+		break;
+
+	default:
+		return;
+		break;
 	}
-	else if (pos.x < posCourt.x - sizeCourt.x)
-	{// 左
 
-	}
+	// オートモーション設定解除
+	m_bAutoMotionSet = false;
 
-	// 走る
-	float fMove = GetParameter().fVelocityNormal;
-	MyLib::Vector3  move = GetMove();
-	SetMotion(CPlayer::EMotion::MOTION_RUN);
+	// 移動不可
+	m_bPossibleMove = false;
 
-	if (1)
-	{// キャンセル可能
+	// 走って戻す
+	SetMotion(CPlayer::EMotion::MOTION_WALK);
+
+	// 移動量更新
+	MyLib::Vector3 move = GetMove();
+	MyLib::Vector3 rot = GetRotation();
+#if 1
+	move.x += sinf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
+	move.z += cosf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
+#else
+	move.x += sinf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
+	move.z += cosf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
+#endif
+	SetMove(move);
+
+
+	// 戻る方向向く
+	float rotDest = m_sKnockback.posStart.AngleXZ(posDest);
+	UtilFunc::Transformation::RotNormalize(rotDest);
+	SetRotDest(rotDest);
+
+	// 無敵にするならこれ有効に
+	// ダメージ受付判定リセット
+	//m_sDamageInfo.bReceived = false;
+
+	// X軸の位置で割合
+	float ratio = GetPosition().x / posDest.x;
+	if (ratio >= 1.0f)
+	{// 完了
+		m_bPossibleMove = true;
 		SetState(EState::STATE_NONE);
 	}
 }
@@ -1855,6 +1928,7 @@ void CPlayer::Debug()
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
 		ImGui::Text("Motion : [%s]", Motion::NAME_MAP[static_cast<CPlayer::EMotion>(motion->GetType())].c_str());
+		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;

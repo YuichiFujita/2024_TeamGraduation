@@ -380,6 +380,7 @@ private:
 	// 行動フラグ
 	//-----------------------------
 	bool m_bPossibleMove;		// 移動可能フラグ
+	bool m_bAutoMotionSet;		// オートモーション設定
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定
 	bool m_bFootLR;				// 足左右判定 (t: 右 / f: 左)
