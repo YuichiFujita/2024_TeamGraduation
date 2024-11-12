@@ -67,7 +67,7 @@ CPlayerAI::TIMING_FUNC CPlayerAI::m_ThrowTimingFunc[] =	// タイミング関数
 	&CPlayerAI::TimingJumpFeint,			// フェイント
 };
 
-CPlayerAI::FIND_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
+CPlayerAI::CATCH_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
 {
 	&CPlayerAI::CatchNone,
 	&CPlayerAI::CatchNormal,

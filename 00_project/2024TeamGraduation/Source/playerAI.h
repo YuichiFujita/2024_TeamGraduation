@@ -126,8 +126,8 @@ private:
 	typedef void(CPlayerAI::* TIMING_FUNC)(const float, const float, const float);
 	static TIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
-	typedef void(CPlayerAI::* FIND_FUNC)(const float, const float, const float);
-	static FIND_FUNC m_CatchFunc[];	// 投げタイミング関数
+	typedef void(CPlayerAI::* CATCH_FUNC)(const float, const float, const float);
+	static CATCH_FUNC m_CatchFunc[];	// 投げタイミング関数
 
 	//=============================
 	// メンバ関数
@@ -177,25 +177,25 @@ private:
 	void DeleteControl() override;	// 操作削除
 	void Reset();	// 列挙リセット
 
-	void Target();
-	bool IsWait();
+	void Target();	// ターゲット
+	bool IsWait();	// 待て
 
 	//=============================
 	// メンバ変数
 	//=============================
-	EMode m_eMode;
-	EThrowType m_eThrowType;
-	EThrowMove m_eThrowMove;
-	EThrowTiming m_eThrowTiming;
+	EMode m_eMode;					// モード
+	EThrowType m_eThrowType;		// 投げ種類
+	EThrowMove m_eThrowMove;		// 投げ行動
+	EThrowTiming m_eThrowTiming;	// 投げタイミング
 
-	ECatchType m_eCatchType;
+	ECatchType m_eCatchType;	// キャッチ種類
 
-	float m_fTiming;	// タイミングカウント
+	float m_fTiming;		// タイミングカウント
 	float m_fTimingRate;	// タイミングの割合
 	bool m_bTiming;			// タイミングフラグ
 	bool m_bFoldJump;		// ジャンプの折り返しフラグ
 
-	float m_fJumpEnd;	// ジャンプの終了位置
+	float m_fJumpEnd;		// ジャンプの終了位置
 };
 
 #endif
