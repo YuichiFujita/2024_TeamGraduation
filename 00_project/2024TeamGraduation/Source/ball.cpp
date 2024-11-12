@@ -1033,9 +1033,24 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 		m_bLanding = true;
 
 		// サウンド再生
-		if (!UtilFunc::Calculation::IsNearlyTarget(pMove->y, 0.0f, 0.01f))
+		// TODO : 値の調整と定数化する
+		if (!UtilFunc::Calculation::IsNearlyTarget(m_fMoveSpeed, 0.0f, 0.75f))
 		{
-			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_MEDIUM);
+			// 割合
+			float ratio = UtilFunc::Transformation::Clamp(fabsf(m_fMoveSpeed) / 5.0f, 0.0f, 1.0f);
+
+			if (ratio > 0.5f)
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+			}
+			else if (ratio <= 0.5f && ratio > 0.2f)
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_MEDIUM);
+			}
+			else
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_LOW);
+			}
 		}
 		return true;
 	}
