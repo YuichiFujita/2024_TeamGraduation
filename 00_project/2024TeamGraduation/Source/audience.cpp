@@ -23,6 +23,15 @@ namespace
 	const float JUMP_RATE	 = 0.5f;	// ジャンプ力にかける割合
 	const float TIME_SPAWN	 = 2.4f;	// 入場時間
 	const float TIME_DESPAWN = 3.2f;	// 退場時間
+
+#if _DEBUG	// TODO：ローポリ完成したら見直し
+	const float RATE_HIGH = 0.1f;	// ハイポリ比率
+	const float RATE_LOW  = 0.1f;	// ローポリ比率
+#else
+	const float RATE_HIGH = 0.12f;	// ハイポリ比率
+	const float RATE_LOW = 0.28f;	// ローポリ比率
+#endif
+	const float RATE_ANIM = 1.0f - (RATE_HIGH + RATE_LOW);	// アニメーション比率
 }
 
 //==========================================================================
@@ -201,10 +210,13 @@ void CAudience::SetSpecial()
 //==========================================================================
 // 退場の設定処理
 //==========================================================================
-bool CAudience::SetDespawn()
+bool CAudience::SetDespawn(EObjType type)
 {
 	// 既に退場中の場合抜ける
 	if (m_state == STATE_DESPAWN) { return false; }
+
+	// 指定種類ではない場合抜ける
+	if (type != OBJTYPE_NONE && type != m_type) { return false; }
 
 	// 退場開始位置を保存
 	m_posDespawnStart = GetPosition();	// 現在の位置
@@ -244,8 +256,13 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
 		for (int i = 0; i < nNumSpawn; i++)
 		{ // 登場人数分繰り返す
 
+			CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
+			if		(m_aNumWatchAll[nIdxTeam] < (int)(MAX_WATCH * RATE_HIGH))				{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+			else if	(m_aNumWatchAll[nIdxTeam] < (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+			else																			{ type = OBJTYPE_ANIM; }		// アニメーション
+
 			// 観客を生成
-			if (FAILED(CAudience::Create(CAudience::EObjType::OBJTYPE_LOWPOLY, team)))
+			if (FAILED(CAudience::Create(type, team)))
 			{ // 生成に失敗した場合
 
 				return E_FAIL;
@@ -321,6 +338,16 @@ void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn
 	// チームが設定されていない場合抜ける
 	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
 
+	CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
+	int nIdxTeam = team - 1;	// チームインデックス
+	if (nNumDespawn > 0)
+	{ // 削除数が指定されている場合
+
+		if		(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
+		else if	(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+		else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+	}
+
 	int nCurDespawn = 0;	// 現在の退場人数
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
@@ -332,13 +359,22 @@ void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn
 		if (pAudience->m_team != team) { continue; }
 
 		// 退場を設定
-		if (!pAudience->SetDespawn()) { continue; }	// 既に退場中の場合は次へ
+		if (!pAudience->SetDespawn(type)) { continue; }	// 既に退場中の場合は次へ
 
-		// 現在の退場人数を加算
-		nCurDespawn++;
+		if (nNumDespawn > 0)
+		{ // 削除数が指定されている場合
 
-		// 引数の人数分退場させた場合抜ける
-		if (nCurDespawn == nNumDespawn) { return; }
+			// 現在の退場人数を加算
+			nCurDespawn++;
+
+			// 引数の人数分退場させた場合抜ける
+			if (nCurDespawn == nNumDespawn) { return; }
+
+			// 次の削除対象オブジェクト種類を設定
+			if		(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
+			else if	(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+			else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+		}
 	}
 }
 

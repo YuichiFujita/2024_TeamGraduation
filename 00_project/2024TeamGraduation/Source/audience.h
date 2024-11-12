@@ -26,8 +26,8 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float MAX_LEFT_LINE = -2200.0f;	// 左の生成位置上限
-	static constexpr float MAX_RIGHT_LINE = 2200.0f;	// 右の生成位置上限
+	static constexpr float MAX_LEFT_LINE = -2100.0f;	// 左の生成位置上限
+	static constexpr float MAX_RIGHT_LINE = 2100.0f;	// 右の生成位置上限
 	static constexpr float SPAWN_SIDE_LINE = 2500.0f;	// 生成する横位置
 	static constexpr int MAX_WATCH = 500;				// 観戦する最大人数
 
@@ -37,7 +37,8 @@ public:
 	// オブジェクト種類
 	enum EObjType
 	{
-		OBJTYPE_ANIM = 0,	// 3Dポリゴン
+		OBJTYPE_NONE = 0,	// なし
+		OBJTYPE_ANIM,		// 3Dポリゴン
 		OBJTYPE_LOWPOLY,	// ローポリキャラクター
 		OBJTYPE_HIGHPOLY,	// ハイポリキャラクター
 		OBJTYPE_MAX			// この列挙型の総数
@@ -88,8 +89,8 @@ public:
 	// メンバ関数
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
-	void SetSpecial();			// スペシャル設定
-	virtual bool SetDespawn();	// 退場設定
+	void SetSpecial();						// スペシャル設定
+	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE);	// 退場設定
 
 	//=============================
 	// 静的メンバ関数

@@ -31,7 +31,7 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float NEAR_LINE = 1350.0f;	// 手前の生成位置上限
+	static constexpr float NEAR_LINE = 1200.0f;	// 手前の生成位置上限
 	static constexpr float FAR_LINE = 1750.0f; 	// 奥の生成位置上限
 
 	//=============================
