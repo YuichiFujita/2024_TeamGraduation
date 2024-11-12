@@ -809,7 +809,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// 通常投げ
 			m_pBall->ThrowNormal(this);
 		}
-
 		break;
 
 	case EMotion::MOTION_THROW_JUMP:
@@ -818,7 +817,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// ジャンプ投げ
 			m_pBall->ThrowJump(this);
 		}
-
 		break;
 
 	case EMotion::MOTION_TOSS:
@@ -827,7 +825,20 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// トス
 			m_pBall->Toss(this);
 		}
+		break;
 
+	case EMotion::MOTION_WALK:
+	case EMotion::MOTION_WALK_BALL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+		break;
+
+	case EMotion::MOTION_RUN:
+	case EMotion::MOTION_RUN_BALL:
+	{
+		// 設定するラベル
+		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
+		PLAY_SOUND(label);
+	}
 		break;
 
 	default:
