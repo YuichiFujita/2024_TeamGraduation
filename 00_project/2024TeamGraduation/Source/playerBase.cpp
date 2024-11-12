@@ -142,6 +142,13 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		m_pPlayer->DamageSetting(pBall);
 	}
 
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return hitInfo;
+
+	// モテ加算(ボール投げた側)
+	pGameMgr->AddCharmValue(sideBall, CCharmManager::EType::TYPE_HIT);
+
 	return hitInfo;
 }
 
