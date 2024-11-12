@@ -160,6 +160,23 @@ public:
 		HIT_MAX
 	};
 
+	// 体系列挙
+	enum EBody
+	{
+		BODY_NORMAL = 0,	// 標準体系
+		BODY_DEBU,			// デブ
+		BODY_GARI,			// ガリ
+		BODY_MAX			// この列挙型の総数
+	};
+
+	// ポジション列挙
+	enum EFieldArea
+	{
+		FIELD_IN = 0,	// 内野
+		FIELD_OUT,		// 外野
+		FIELD_MAX		// この列挙型の総数
+	};
+
 	//=============================
 	// 構造体
 	//=============================
@@ -218,7 +235,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayer(int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CPlayer(const EFieldArea typeArea, int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CPlayer();
 
 	//=============================
@@ -233,16 +250,16 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;				// モーションの設定
-	void SetEnableMove(bool bPossible) { m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
-	bool IsPossibleMove()			{ return m_bPossibleMove; }			// 移動可能フラグ取得
-	void SetEnableDash(bool bDash)	{ m_bDash = bDash; }				// ダッシュ状況設定
-	bool IsDash()					{ return m_bDash; }					// ダッシュ判定
-	void SetEnableJump(bool bJump)	{ m_bJump = bJump; }				// ジャンプ状況設定
-	bool IsJump()					{ return m_bJump; }					// ジャンプ判定
-	void SetFootLR(bool bFootLR) { m_bFootLR = bFootLR; }				// 足左右判定設定
-	bool IsFootLR() { return m_bFootLR; }								// 足左右判定取得
-	void InverseFootLR() { m_bFootLR = !m_bFootLR; }					// 足左右判定反転
+	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;	// モーションの設定
+	void SetEnableMove(bool bPossible)		{ m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
+	bool IsPossibleMove()					{ return m_bPossibleMove; }	// 移動可能フラグ取得
+	void SetEnableDash(bool bDash)			{ m_bDash = bDash; }		// ダッシュ状況設定
+	bool IsDash()							{ return m_bDash; }			// ダッシュ判定
+	void SetEnableJump(bool bJump)			{ m_bJump = bJump; }		// ジャンプ状況設定
+	bool IsJump()							{ return m_bJump; }			// ジャンプ判定
+	void SetFootLR(bool bFootLR)			{ m_bFootLR = bFootLR; }	// 足左右判定設定
+	bool IsFootLR()							{ return m_bFootLR; }		// 足左右判定取得
+	void InverseFootLR()					{ m_bFootLR = !m_bFootLR; }	// 足左右判定反転
 	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
 	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
 	void SetDamageInfo(SDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
@@ -294,7 +311,15 @@ public:
 		@param	team	[in]	チームサイド
 		@param	rPos	[in]	初期位置
 	*/
-	static CPlayer* Create(EBaseType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype = EHandedness::HAND_R);
+	static CPlayer* Create
+	(
+		const MyLib::Vector3& rPos,					// 位置
+		CGameManager::TeamSide team,				// チームサイド
+		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
+		EFieldArea areatype = EFieldArea::FIELD_IN,	// ポジション
+		EBody bodytype = EBody::BODY_NORMAL,		// 体系
+		EHandedness handtype = EHandedness::HAND_R	// 利き手
+	);
 
 protected:
 	//=============================
@@ -409,6 +434,7 @@ private:
 	CBall* m_pBall;		// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	EHandedness m_Handress;		// 利き手
+	const EFieldArea m_typeArea;			// ポジション
 	static CListManager<CPlayer> m_List;	// リスト
 };
 
