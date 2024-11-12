@@ -1,0 +1,160 @@
+#====================================================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_player.txt]
+# Author : 相馬 靜雅
+#
+#====================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 8
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/audience/face.x	# [0]顔
+MODEL_FILENAME = data/MODEL/audience/body.x	# [1]体
+MODEL_FILENAME = data/MODEL/audience/kosi.x	# [2]腰
+MODEL_FILENAME = data/MODEL/audience/armUP_R.x	# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/audience/armDW_R.x	# [4]右腕(下)
+MODEL_FILENAME = data/MODEL/audience/armUP_L.x	# [5]左腕(上)
+MODEL_FILENAME = data/MODEL/audience/armDW_L.x	# [6]左腕(下)
+MODEL_FILENAME = data/MODEL/audience/Hand_R.x	# [7]手(右)
+MODEL_FILENAME = data/MODEL/audience/Hand_L.x	# [8]手(左)
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+	VELOCITY_NORMAL = 1.6	# 通常移動量
+	VELOCITY_RUN = 2.67		# ダッシュ移動量
+	VELOCITY_BLINK = 29.61	# ブリンク移動量
+	
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
+	
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 60.00	# 半径
+	HEIGHT = 100.00	# 高さ
+	LIFE = 50		# 体力
+	
+	CENTERSET
+		PARTS = 0		# 中心にするパーツ
+		OFFSET = 0.00 30.50 0.00		# オフセット位置
+	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
+
+	PARTSSET
+		INDEX = 0
+		PARENT = 1
+		POS = 0.00 37.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 2
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 1
+		POS = 0.00 31.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 3
+		POS = -12.00 28.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5
+		PARENT = 1
+		POS = -11.50 0.00 0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6
+		PARENT = 5
+		POS = 12.00 28.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 4
+		POS = 12.50 0.00 0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 0
+		POS = -5.50 -7.50 1.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8
+		PARENT = 6
+		POS = 0.00 -14.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+END_CHARACTERSET
+
+
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/audience/Mii/sphere_collider.json
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モーション数
+#------------------------------------------------------------------------------
+NUM_MOTION = 5
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def.txt			# デフォ
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_spawn.txt			# 入場
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_jump.txt			# 盛り上がり
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_special.txt			# スペシャル
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_despawn.txt			# 退場
+
+
+END_SCRIPT		# この行は絶対消さないこと！
