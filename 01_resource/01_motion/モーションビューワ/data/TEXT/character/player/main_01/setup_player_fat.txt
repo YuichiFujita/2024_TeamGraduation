@@ -68,7 +68,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 0
 		PARENT = -1
-		POS = 0.00 98.50 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 74.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -76,6 +78,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 1
 		PARENT = 0
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 7.00 -4.50
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -84,6 +88,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 2
 		PARENT = 1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 44.00 3.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -92,7 +98,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		POS = -10.50 33.00 4.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -16.50 35.50 6.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -100,7 +108,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
-		POS = -19.50 -0.50 2.25
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -15.00 -0.50 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -108,6 +118,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 5
 		PARENT = 4
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = -17.00 0.50 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -116,7 +128,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 6
 		PARENT = 1
-		POS = 11.00 33.50 4.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 16.50 35.50 6.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -124,7 +138,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 7
 		PARENT = 6
-		POS = 27.00 -1.00 0.25
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 15.00 -0.50 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -132,7 +148,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 8
 		PARENT = 7
-		POS = 23.50 -0.50 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 17.00 -0.50 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -140,7 +158,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 9
 		PARENT = 0
-		POS = -9.50 -13.00 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -9.50 -9.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -148,7 +168,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 10
 		PARENT = 9
-		POS = -0.50 -42.50 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 -32.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -156,7 +178,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 11
 		PARENT = 10
-		POS = 2.00 -29.00 1.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 1.00 -23.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -164,7 +188,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 12
 		PARENT = 0
-		POS = 9.50 -13.00 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 9.50 -9.50 -1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -172,7 +198,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 13
 		PARENT = 12
-		POS = 0.50 -40.50 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 -32.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -180,7 +208,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 14
 		PARENT = 13
-		POS = -2.00 -29.50 1.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -1.00 -23.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -188,6 +218,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 15
 		PARENT = 2
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -196,6 +228,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 16
 		PARENT = 5
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = -6.50 -12.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1

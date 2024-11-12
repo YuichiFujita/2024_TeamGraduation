@@ -2486,6 +2486,11 @@ void CPlayer::SaveSetUpInfo(void)
 		GetCenterOffset().z,
 		GetVelocity(), 0.00f, GetRadius(), 0.00f, 5);
 
+
+
+	// “Ç‚İ‚İî•ñæ“¾
+	Load loadData = GetLoadData(GetIdxFile());
+
 	for (int nCntParts = 0; nCntParts < GetObjectChara()->GetNumModel(); nCntParts++)
 	{
 		// ¡‰ñ‚Ìƒ‚ƒfƒ‹æ“¾
@@ -2500,15 +2505,22 @@ void CPlayer::SaveSetUpInfo(void)
 		D3DXVECTOR3 rotParts = pModel->GetRotation();
 		posParts *= m_fSetUpBuff;
 
+		loadData.LoadData[nCntParts].nInverseIdx;
+
+		int side = loadData.LoadData[nCntParts].side;
 		fprintf(pFile,
 			"\n"
 			"\tPARTSSET\n"
 			"\t\tINDEX = %d\n"
 			"\t\tPARENT = %d\n"
+			"\t\tSIDE = %d\t\t\t\t\t# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]\n"
+			"\t\tINVERSE = %d\t\t\t\t\t# ”½“]æ\n"
 			"\t\tPOS = %.2f %.2f %.2f\n"
 			"\t\tROT = %.2f %.2f %.2f\n"
 			"\t\tSTART = %d\n"
 			"\tEND_PARTSSET\n", nCntParts, pModel->GetParentIdx(),
+			side,
+			loadData.LoadData[nCntParts].nInverseIdx,
 			posParts.x, posParts.y, posParts.z,
 			rotParts.x, rotParts.y, rotParts.z,
 			1);
