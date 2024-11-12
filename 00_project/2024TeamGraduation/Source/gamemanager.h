@@ -23,6 +23,7 @@ class CBall;
 class CCollisionLine_Box;
 class CTeamStatus;
 class CGymWallManager;
+class CCharmManager;
 
 //==========================================================================
 // クラス定義
@@ -109,7 +110,8 @@ private:
 	bool m_bControll;			// 操作できるか
 	float m_fSceneTimer;		// シーンタイマー
 
-	CGymWallManager* m_pGymWallManager;
+	CGymWallManager* m_pGymWallManager;	// 体育館の壁
+	CCharmManager* m_pCharmManager;		// モテマネージャ
 
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
 	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];	// チームステータス
