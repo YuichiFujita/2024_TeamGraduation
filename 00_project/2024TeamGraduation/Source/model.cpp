@@ -190,6 +190,8 @@ void CModel::Update()
 	// Xファイルのデータ取得
 	CXLoad::SXFile *pXData = CXLoad::GetInstance()->GetMyObject(m_nIdxXFile);
 
+
+
 	// 全頂点チェック
 	UtilFunc::Calculation::CalModelVtx(GetRotation().y, &pXData->vtxMax, &pXData->vtxMin, pXData->pMesh, pXData->pVtxBuff);
 }

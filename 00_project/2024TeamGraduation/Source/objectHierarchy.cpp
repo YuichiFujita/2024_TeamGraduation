@@ -24,8 +24,11 @@ CObjectHierarchy::CObjectHierarchy(int nPriority) : CObject(nPriority)
 {
 	// 値のクリア
 	//D3DXMatrixIdentity(&m_mtxWorld);			// ワールドマトリックス
-	m_posOrigin = 0.0f;			// 最初の位置
-	m_posCenter = 0.0f;			// 中心位置
+	m_posOrigin = 0.0f;					// 最初の位置
+	m_posInit = 0.0f;					// 初期の位置
+	m_posCenter = 0.0f;					// 中心位置
+	m_fScale = 1.0f;						// スケール
+
 	m_fRadius = 0.0f;			// 半径
 	m_nNumModel = 0;			// モデルの数
 	m_nIdxFile = 0;				// ファイルのインデックス番号
@@ -117,6 +120,7 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 
 	// 最初の位置設定
 	m_posOrigin = loadData.posOrigin;
+	m_posInit = m_posOrigin;
 
 	// 半径
 	m_fRadius = loadData.parameter.fRadius;
@@ -210,6 +214,10 @@ void CObjectHierarchy::Kill()
 //==========================================================================
 void CObjectHierarchy::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 原点
+	m_posOrigin = m_posInit * (m_fScale / 1.0f);
+	m_apModel[0]->SetOriginScale(m_fScale);
+
 	// 判定するパーツ取得
 	CModel* pModel = m_apModel[m_nCenterPartsIdx];
 	if (pModel == nullptr)
@@ -698,38 +706,6 @@ MyLib::Matrix CObjectHierarchy::GetmtxWorld() const
 MyLib::Vector3 CObjectHierarchy::GetCenterPosition() const
 {
 	return m_posCenter;
-}
-
-//==========================================================================
-// 位置設定
-//==========================================================================
-void CObjectHierarchy::SetOriginPosition(const MyLib::Vector3& pos)
-{
-	m_posOrigin = pos;
-}
-
-//==========================================================================
-// 位置取得
-//==========================================================================
-MyLib::Vector3 CObjectHierarchy::GetOriginPosition() const
-{
-	return m_posOrigin;
-}
-
-//==========================================================================
-// 半径設定
-//==========================================================================
-void CObjectHierarchy::SetRadius(const float fRadius)
-{
-	m_fRadius = fRadius;
-}
-
-//==========================================================================
-// 半径取得
-//==========================================================================
-float CObjectHierarchy::GetRadius() const
-{
-	return m_fRadius;
 }
 
 //==========================================================================
