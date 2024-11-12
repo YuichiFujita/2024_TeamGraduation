@@ -188,19 +188,22 @@ void CXLoad::Unload()
 //==========================================================================
 // Xファイルの読み込み
 //==========================================================================
-int CXLoad::XLoad(std::string file)
+int CXLoad::XLoad(const std::string& file)
 {
 	if (file == "")
 	{
 		return 0;
 	}
 
+	// 読み込むファイル名
+	std::string loadFile = file;
+
 	// \\変換
-	file = UtilFunc::Transformation::ReplaceBackslash(file);
-	file = UtilFunc::Transformation::ReplaceForwardSlashes(file);
+	loadFile = UtilFunc::Transformation::ReplaceBackslash(loadFile);
+	loadFile = UtilFunc::Transformation::ReplaceForwardSlashes(loadFile);
 
 	// 同名検索
-	auto itr = std::find(m_ImageNames.begin(), m_ImageNames.end(), file);
+	auto itr = std::find(m_ImageNames.begin(), m_ImageNames.end(), loadFile);
 	if (itr != m_ImageNames.end())
 	{// 同じのがあった
 		return itr - m_ImageNames.begin();
@@ -210,7 +213,7 @@ int CXLoad::XLoad(std::string file)
 	int nNumAll = GetNumAll();
 
 	// 読み込み
-	HRESULT hr = Load(file);
+	HRESULT hr = Load(loadFile);
 	if (FAILED(hr))
 	{
 		return 0;
@@ -222,7 +225,7 @@ int CXLoad::XLoad(std::string file)
 //==========================================================================
 // ロード処理
 //==========================================================================
-HRESULT CXLoad::Load(std::string file)
+HRESULT CXLoad::Load(const std::string& file)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();

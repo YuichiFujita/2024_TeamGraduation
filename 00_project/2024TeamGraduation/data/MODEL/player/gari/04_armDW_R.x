@@ -835,7 +835,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "00_body.jpg";
+    "data\\TEXTURE\\player\\00_body.jpg";
    }
   }
   Material {
