@@ -37,8 +37,6 @@ CPlayerUserControlMove::CPlayerUserControlMove()
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
-
 	// 入力フラグ
 	bool bInput = false;
 
@@ -53,7 +51,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	//コントロール系取得
+	// コントロール系取得
 	int* nCntTrigger = GetCntTrigger();						// トリガーのカウント取得
 	CPlayer::EDashAngle HoldDashAngle = GetHoldDashAngle();	// ダッシュ方向取得
 	float fInputInterval = GetInputInterval();				// 入力の受け付け猶予取得
@@ -74,7 +72,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y >= RATIO_STICKBLINK) ||
-				pKey->GetTrigger(DIK_W))
+			pKey->GetTrigger(DIK_W))
 		{// 上
 			bInput = true;
 
@@ -97,7 +95,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
 			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y <= -RATIO_STICKBLINK) ||
-				pKey->GetTrigger(DIK_S))
+			pKey->GetTrigger(DIK_S))
 		{// 下
 			bInput = true;
 
@@ -120,7 +118,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
 			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x >= RATIO_STICKBLINK) ||
-				pKey->GetTrigger(DIK_D))
+			pKey->GetTrigger(DIK_D))
 		{// 右
 			bInput = true;
 
@@ -143,7 +141,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
 			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x <= -RATIO_STICKBLINK) ||
-				pKey->GetTrigger(DIK_A))
+			pKey->GetTrigger(DIK_A))
 		{// 左
 			bInput = true;
 
@@ -165,7 +163,6 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 			}
 		}
 	}
-
 
 	if (bInput)
 	{// 入力された
@@ -254,7 +251,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 			fInputInterval = 0.0f;
 		}
 	}
-	SetHoldDashAngle(HoldDashAngle);		// ダッシュ方向設定
+	SetHoldDashAngle(HoldDashAngle);	// ダッシュ方向設定
 
 	// 受け付け猶予減算
 	float oldTime = fInputInterval;
@@ -270,14 +267,11 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 		info = Trigger(player, HoldDashAngle);
 	}
 
-	//
-
 	// ダッシュする
 	if (info.bDash && !bDash)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
-
 		if (player->GetBall() == nullptr)
 		{//ボール所持では使用不可
 
@@ -332,7 +326,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	SetTriggerInterval(fTriggerInterval);
 
 	// コントロール系
-	SetBlink(bDash);							// 走るフラグ設定
+	SetBlink(bDash);	// 走るフラグ設定
 }
 
 //==========================================================================
@@ -340,8 +334,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bDash = IsBlink();	//走るフラグ取得
-	
+	bool bDash = IsBlink();	// 走るフラグ取得
 	if (!bDash)
 	{
 		return;

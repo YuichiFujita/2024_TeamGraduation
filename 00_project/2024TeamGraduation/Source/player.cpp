@@ -46,10 +46,20 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE[] =		// キャラクターファイル
-	{
-		"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
-		"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
+	const std::string CHARAFILE[CPlayer::EBody::BODY_MAX][CPlayer::EHandedness::HAND_MAX] =		// キャラクターファイル
+	{ 
+		{
+			"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
+			"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
+		},
+		{
+			"data\\TEXT\\character\\player\\righthand\\setup_player_fat.txt",
+			"data\\TEXT\\character\\player\\lefthand\\setup_player_fat.txt",
+		},
+		{
+			"data\\TEXT\\character\\player\\righthand\\setup_player_gari.txt",
+			"data\\TEXT\\character\\player\\lefthand\\setup_player_gari.txt",
+		}
 	};
 
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
@@ -235,7 +245,7 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
 	m_bFootLR = false;				// 足左右判定
-	m_bAlign = false;	// 揃え
+	m_bAlign = false;				// 揃え
 	m_sMotionFrag = SMotionFrag();	// モーションのフラグ
 
 	// パターン用インスタンス
@@ -252,6 +262,8 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 	m_pShadow = nullptr;			// 影の情報
 	m_pBall = nullptr;				// ボールの情報
 	m_sDamageInfo = SDamageInfo();	// ダメージ情報
+	m_Handress = EHandedness::HAND_R;		// 利き手
+	m_BodyType = EBody::BODY_NORMAL;		// 体型
 }
 
 //==========================================================================
@@ -281,6 +293,9 @@ CPlayer* CPlayer::Create
 	{
 		// 利き手を設定
 		pPlayer->m_Handress = handtype;
+
+		// 体型
+		pPlayer->m_BodyType = bodytype;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -322,7 +337,7 @@ HRESULT CPlayer::Init()
 	m_bPossibleMove = true;
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE[m_Handress]);
+	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handress]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;
@@ -841,6 +856,10 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	}
 		break;
 
+	case EMotion::MOTION_GRIP_FRONT:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_GRIP01);
+		break;
+
 	default:
 		break;
 	}
@@ -963,6 +982,9 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	default:
 		break;
 	}
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_JUSTCATCH);
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_JUST);
@@ -1864,11 +1886,11 @@ void CPlayer::ChangeBase(EBaseType type)
 	switch (type)
 	{ // ユーザー種類ごとの処理
 	case TYPE_USER:
-		m_pBase = DEBUG_NEW CPlayerUser(this);
+		m_pBase = DEBUG_NEW CPlayerUser(this, m_typeArea);
 		break;
 
 	case TYPE_AI:
-		m_pBase = DEBUG_NEW CPlayerAI(this);
+		m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
 		break;
 
 	default:

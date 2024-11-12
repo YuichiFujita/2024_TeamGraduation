@@ -270,6 +270,7 @@ public:
 	//=============================
 	CPlayerAction* GetActionPattern()	{ return m_pActionPattern; }	// アクション取得
 	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
+	CPlayerBase* GetBase() { return m_pBase; }							// ベース取得
 
 	//=============================
 	// 着せ替え
@@ -434,6 +435,7 @@ private:
 	CBall* m_pBall;		// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	EHandedness m_Handress;		// 利き手
+	EBody m_BodyType;			// 体型
 	const EFieldArea m_typeArea;			// ポジション
 	static CListManager<CPlayer> m_List;	// リスト
 };

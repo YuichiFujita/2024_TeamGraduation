@@ -143,7 +143,7 @@ HRESULT CGame::Init()
 	}
 
 	// プレイヤーUser二人生成(左)
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
@@ -153,9 +153,30 @@ HRESULT CGame::Init()
 			CGameManager::SIDE_LEFT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
 			CPlayer::EFieldArea::FIELD_IN,	// ポジション
-			CPlayer::EBody::BODY_NORMAL,	// 体系
+			CPlayer::EBody::BODY_DEBU,	// 体系
+			CPlayer::EHandedness::HAND_R	// 利き手
+		);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+		pUser->SetRotDest(-HALF_PI);
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
+		CPlayer* pUser = CPlayer::Create
+		(
+			pos + offset, 					// 位置
+			CGameManager::SIDE_LEFT,		// チームサイド
+			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
+			CPlayer::EFieldArea::FIELD_IN,	// ポジション
+			CPlayer::EBody::BODY_GARI,	// 体系
 			CPlayer::EHandedness::HAND_L	// 利き手
-			);
+		);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;

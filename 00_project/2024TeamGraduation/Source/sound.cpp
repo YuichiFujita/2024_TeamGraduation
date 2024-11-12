@@ -23,10 +23,14 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/walk.wav",0},				// 歩き
 	{ TYPE_SE,"data/SE/run00.wav",0},				// 走り1
 	{ TYPE_SE,"data/SE/run01.wav",0},				// 走り2
+	{ TYPE_SE,"data/SE/grip01.wav",0},				// グリップ
 
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
+
+	// キャッチ
+	{ TYPE_SE,"data/SE/justcatch.wav",0},				// ジャストキャッチ
 
 	// バウンド
 	{ TYPE_SE,"data/SE/Bound00.wav",0},				// バウンド(高め)
