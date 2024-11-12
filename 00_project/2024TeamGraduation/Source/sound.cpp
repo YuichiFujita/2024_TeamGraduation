@@ -10,14 +10,15 @@
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-CSound::SOUNDINFO CSound::m_aSoundInfo[LABEL_MAX] = 
+CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] = 
 {
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
 	{ TYPE_BGM,"data/BGM/BGM_game_000.wav", -1 },	// ゲーム
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
-	{ TYPE_SE,"data/SE/coin.wav",0},			// コイン取得
+	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
+	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
 
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
@@ -98,7 +99,7 @@ HRESULT CSound::Init(HWND hWnd)
 	}
 
 	// サウンドデータの初期化
-	for(int nCntSound = 0; nCntSound < LABEL_MAX; nCntSound++)
+	for(int nCntSound = 0; nCntSound < ELabel::LABEL_MAX; nCntSound++)
 	{
 		HANDLE hFile;
 		DWORD dwChunkSize = 0;
@@ -189,8 +190,8 @@ HRESULT CSound::Init(HWND hWnd)
 		SetVolume.dwFlags = DSBCAPS_CTRLVOLUME;		//音量調整のフラグ
 
 		m_fMasterVolume = 1.0f;
-		m_aVolume[CSound::TYPE::TYPE_BGM] = 1.0f;
-		m_aVolume[CSound::TYPE::TYPE_SE] = 1.0f;
+		m_aVolume[CSound::EType::TYPE_BGM] = 1.0f;
+		m_aVolume[CSound::EType::TYPE_SE] = 1.0f;
 
 		//音量をセットする
 		m_pMasteringVoice->SetVolume(m_fMasterVolume);
@@ -213,7 +214,7 @@ HRESULT CSound::Init(HWND hWnd)
 void CSound::Uninit()
 {
 	// 一時停止
-	for(int nCntSound = 0; nCntSound < LABEL_MAX; nCntSound++)
+	for(int nCntSound = 0; nCntSound < ELabel::LABEL_MAX; nCntSound++)
 	{
 		if(m_apSourceVoice[nCntSound] != nullptr)
 		{
@@ -248,7 +249,7 @@ void CSound::Uninit()
 //==========================================================================
 // セグメント再生(再生中なら停止)
 //==========================================================================
-HRESULT CSound::PlaySound(LABEL label, bool stop)
+HRESULT CSound::PlaySound(ELabel label, bool stop)
 {
 
 	// オーディオのバッファ
@@ -303,7 +304,7 @@ HRESULT CSound::PlaySound(LABEL label, bool stop)
 //==========================================================================
 // セグメント停止(ラベル指定)
 //==========================================================================
-void CSound::StopSound(LABEL label)
+void CSound::StopSound(ELabel label)
 {
 	XAUDIO2_VOICE_STATE xa2state;
 
@@ -334,7 +335,7 @@ void CSound::StopSound(LABEL label)
 void CSound::StopSound()
 {
 	// 一時停止
-	for(int nCntSound = 0; nCntSound < LABEL_MAX; nCntSound++)
+	for(int nCntSound = 0; nCntSound < ELabel::LABEL_MAX; nCntSound++)
 	{
 		if(m_apSourceVoice[nCntSound] != nullptr)
 		{
@@ -437,7 +438,7 @@ HRESULT CSound::ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, D
 //==========================================================================
 // 音量設定
 //==========================================================================
-void CSound::VolumeChange(LABEL label, float volume)
+void CSound::VolumeChange(ELabel label, float volume)
 {
 	if (m_apSourceVoice[label] == nullptr)
 	{
@@ -464,17 +465,17 @@ void CSound::VolumeChange(float fVolume)
 //==========================================================================
 // 音量調整(種類別ボリューム設定)
 //==========================================================================
-void CSound::VolumeChange(TYPE type, float fVolume)
+void CSound::VolumeChange(EType type, float fVolume)
 {
 	m_aVolume[type] = fVolume;
 	UtilFunc::Transformation::ValueNormalize(m_aVolume[type], 2.0f, 0.0f);
 
 	//音量をセットする
-	for (int cnt = 0; cnt < CSound::LABEL::LABEL_MAX; cnt++)
+	for (int cnt = 0; cnt < CSound::ELabel::LABEL_MAX; cnt++)
 	{
 		if (m_aSoundInfo[cnt].type == type)
 		{
-			VolumeChange((LABEL)cnt, m_aVolume[type]);
+			VolumeChange((ELabel)cnt, m_aVolume[type]);
 		}
 	}
 }
@@ -482,7 +483,7 @@ void CSound::VolumeChange(TYPE type, float fVolume)
 //==========================================================================
 // 周波数設定
 //==========================================================================
-void CSound::SetFrequency(LABEL label, float fValue)
+void CSound::SetFrequency(ELabel label, float fValue)
 {
 	XAUDIO2_VOICE_STATE state;
 
