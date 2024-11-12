@@ -403,6 +403,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
 
 //==========================================================================
@@ -447,6 +450,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_JUMP);
 }
 
 //==========================================================================

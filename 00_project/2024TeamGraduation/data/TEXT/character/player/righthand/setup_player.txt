@@ -214,7 +214,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 # モーション情報
 #
 #==============================================================================
-# モデルファイル名
+# モーションファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def.txt					# デフォルト
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def_ball.txt				# デフォルト(ボール所持)
