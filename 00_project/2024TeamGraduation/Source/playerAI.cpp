@@ -24,7 +24,6 @@
 CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeArea)
 {
 	// 初期操作の設定
-<<<<<<< HEAD
 	switch (typeArea)
 	{ // ポジションごとの処理
 	case CPlayer::EFieldArea::FIELD_IN:
@@ -45,14 +44,10 @@ CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPl
 		assert(false);
 		break;
 	}
-=======
-	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
 	// プレイヤーAIコントロールの生成
 	m_pControl = nullptr;
 	m_pControl = CPlayerAIControl::Create(pPlayer);
->>>>>>> e8dd3a85f44bf87a78864b1b7520d38d2f4fe1ef
 }
 
 //==========================================================================
