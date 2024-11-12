@@ -125,7 +125,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_RIGHT, pos + offset, CPlayer::EHandedness::HAND_R);
+		CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_RIGHT, pos + offset, CPlayer::EHandedness::HAND_R);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -139,7 +139,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, pos + offset, CPlayer::EHandedness::HAND_L);
+		CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_LEFT, pos + offset, CPlayer::EHandedness::HAND_L);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -151,7 +151,7 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser生成(左)
 #if 1
-	CPlayer* pUser = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
+	CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
 	if (pUser == nullptr)
 	{
 		return E_FAIL;
@@ -162,7 +162,7 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser二世生成(右)
 #if 0
-	CPlayer* pUser2 = CPlayer::Create(CPlayer::EUserType::TYPE_USER, CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
+	CPlayer* pUser2 = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
 	if (pUser2 == nullptr)
 	{
 		return E_FAIL;
@@ -174,7 +174,7 @@ HRESULT CGame::Init()
 	// プレイヤーAI一人生成(右)
 #if 1
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
-	CPlayer* pAI = CPlayer::Create(CPlayer::EUserType::TYPE_AI, CGameManager::SIDE_RIGHT, pos);
+	CPlayer* pAI = CPlayer::Create(CPlayer::EBaseType::TYPE_AI, CGameManager::SIDE_RIGHT, pos);
 	if (pAI == nullptr)
 	{
 		return E_FAIL;
@@ -189,7 +189,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
-		CPlayer* pAI = CPlayer::Create(CPlayer::EUserType::TYPE_AI, CGameManager::SIDE_RIGHT, pos + offset);
+		CPlayer* pAI = CPlayer::Create(CPlayer::EBaseType::TYPE_AI, CGameManager::SIDE_RIGHT, pos + offset);
 		if (pAI == nullptr)
 		{
 			return E_FAIL;
@@ -210,7 +210,7 @@ HRESULT CGame::Init()
 	SetEnableClear(true);
 
 	// BGM再生
-	//CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_GAME);
+	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_GAME);
 
 	return S_OK;
 }
@@ -291,6 +291,18 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 操作
 	if (ImGui::TreeNode("Control"))
 	{
+		if (ImGui::Button("Player : ChangeBase"))
+		{
+			// ベースを設定
+			CPlayer* pHeadPlayer = (*CPlayer::GetList().GetBegin());	// 先頭プレイヤー
+			CPlayer::EBaseType type = pHeadPlayer->GetBaseType();		// プレイヤーベース種類
+
+			// プレイヤーAIフラグ
+			bool bAI = (type == CPlayer::TYPE_AI) ? true : false;
+			if (bAI) { pHeadPlayer->ChangeBase(CPlayer::TYPE_USER); }
+			else	 { pHeadPlayer->ChangeBase(CPlayer::TYPE_AI); }
+		}
+
 		if (ImGui::Button("Camera : Swing"))
 		{
 			// カメラを適当に揺らす

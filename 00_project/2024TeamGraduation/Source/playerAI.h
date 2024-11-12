@@ -1,9 +1,9 @@
-//=============================================================================
+//==========================================================================
 // 
 //  AIプレイヤーヘッダー [playerAI.h]
 //  Author : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 
 #ifndef _PLAYER_AI_
 #define _PLAYER_AI_		// 二重インクルード防止
@@ -11,7 +11,7 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "player.h"
+#include "playerBase.h"
 
 //==========================================================================
 // 前方宣言
@@ -23,9 +23,10 @@ class CPlayerAIControlAction;	// アクション(AI)
 // クラス定義
 //==========================================================================
 // AIプレイヤークラス
-class CPlayerAI : public CPlayer
+class CPlayerAI : public CPlayerBase
 {
 private:
+
 	//=============================
 	// 列挙型定義
 	//=============================
@@ -48,7 +49,7 @@ private:
 
 	enum EThrowMove	// 投げの状態
 	{
-		MOVE_NORMAL = 0,		// 通常
+		MOVE_NORMAL = 0,	// 通常
 		MOVE_WALK,			// 歩き
 		MOVE_DASH,			// 走り
 		MOVE_MAX
@@ -59,46 +60,36 @@ private:
 		TIMING_NORMAL = 0,	// 通常
 		TIMING_FEINT,		// フェイント
 		TIMING_JUMP_NORMAL,	// 通常(ジャンプ)
-		TIMING_JUMP_QUICK,		// 速く(ジャンプ)
-		TIMING_JUMP_DELAY,		// 遅く(ジャンプ)
-		TIMING_JUMP_FEINT,		// フェイント(ジャンプ)
+		TIMING_JUMP_QUICK,	// 速く(ジャンプ)
+		TIMING_JUMP_DELAY,	// 遅く(ジャンプ)
+		TIMING_JUMP_FEINT,	// フェイント(ジャンプ)
 		TIMING_MAX
 	};
 
 	enum ECatchType
 	{
 		CATCH_TYPE_NONE = 0,	// なし
-		CATCH_TYPE_NORMAL,	// 通常
+		CATCH_TYPE_NORMAL,		// 通常
 		CATCH_TYPE_JUST,		// ジャスト
 		CATCH_TYPE_DASH,		// ダッシュ
 		CATCH_TYPE_FIND,		// 取りに行く
 		CATCH_TYPE_MAX
 	};
 
-	//=============================
-	// 構造体定義
-	//=============================
-
 public:
 	
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAI();
+	CPlayerAI(CPlayer* pPlayer);
 	~CPlayerAI();
 
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual HRESULT Init() override;
-	virtual void Uninit() override;
-	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
-	virtual void Draw() override;
-
-	//=============================
-	// メンバ関数
-	//=============================
-	void Kill();	// 削除
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
+	virtual void Debug() override;	// デバッグ
 
 	//=============================
 	// パターン
@@ -106,41 +97,36 @@ public:
 	void ChangeMoveControl(CPlayerAIControlMove* control);		// 移動の操作変更
 	void ChangeActionControl(CPlayerAIControlAction* control);	// アクションの操作変更
 
-protected:
-
-	virtual void Debug() override;	// デバッグ処理
-
 private:
+
 	//=============================
 	// 関数リスト
 	//=============================
 	typedef void(CPlayerAI::* MODE_FUNC)(const float , const float, const float);
-	static MODE_FUNC m_ModeFunc[];	// モード関数
+	static MODE_FUNC m_ModeFunc[];			// モード関数
 
 	typedef void(CPlayerAI::* TYPE_FUNC)(const float, const float, const float);
-	static TYPE_FUNC m_ThrowTypeFunc[];	// 投げ種類関数
+	static TYPE_FUNC m_ThrowTypeFunc[];		// 投げ種類関数
 
 	typedef void(CPlayerAI::* MOVE_FUNC)(const float, const float, const float);
-	static MOVE_FUNC m_ThrowMoveFunc[];	// 投げ状態関数
+	static MOVE_FUNC m_ThrowMoveFunc[];		// 投げ状態関数
 
 	typedef void(CPlayerAI::* TIMING_FUNC)(const float, const float, const float);
 	static TIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
 	typedef void(CPlayerAI::* CATCH_FUNC)(const float, const float, const float);
-	static CATCH_FUNC m_CatchFunc[];	// 投げタイミング関数
+	static CATCH_FUNC m_CatchFunc[];		// 投げタイミング関数
 
 	//=============================
 	// メンバ関数
 	//=============================
-	SHitInfo Hit(CBall* pBall) override;
-
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 状態更新
-	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};			// なし
-	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ統括
-	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ統括
+	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
+	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
+	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
 
 	// 投げの種類関数
 	void TypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
@@ -173,10 +159,7 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 操作
-	void DeleteControl() override;	// 操作削除
 	void Reset();	// 列挙リセット
-
 	void Target();	// ターゲット
 	bool IsWait();	// 待て
 
@@ -187,14 +170,11 @@ private:
 	EThrowType m_eThrowType;		// 投げ種類
 	EThrowMove m_eThrowMove;		// 投げ行動
 	EThrowTiming m_eThrowTiming;	// 投げタイミング
-
-	ECatchType m_eCatchType;	// キャッチ種類
-
+	ECatchType m_eCatchType;		// キャッチ種類
 	float m_fTiming;		// タイミングカウント
 	float m_fTimingRate;	// タイミングの割合
 	bool m_bTiming;			// タイミングフラグ
 	bool m_bFoldJump;		// ジャンプの折り返しフラグ
-
 	float m_fJumpEnd;		// ジャンプの終了位置
 };
 

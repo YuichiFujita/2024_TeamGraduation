@@ -20,8 +20,7 @@
 // 前方宣言
 //==========================================================================
 class CShadow;			// 影
-class CPlayerControlAction;	// 操作(アクション)
-class CPlayerControlMove;	// 操作(移動)
+class CPlayerBase;		// ベースプレイヤー
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
@@ -136,8 +135,8 @@ public:
 		CRAB_MAX,
 	};
 
-	// ユーザーの種類列挙
-	enum EUserType
+	// ベース種類列挙
+	enum EBaseType
 	{
 		TYPE_USER = 0,
 		TYPE_AI,
@@ -209,7 +208,7 @@ public:
 		SKnockbackInfo() : posStart(MyLib::Vector3()), posEnd(MyLib::Vector3()) {}
 	};
 
-	// 
+	// 判定情報
 	struct SHitInfo
 	{
 		bool bHit;	// 当たったか
@@ -263,9 +262,11 @@ public:
 	//=============================
 	// その他
 	//=============================
-	virtual SHitInfo Hit(CBall* pBall);			// ヒット処理
-	void SetSpecialAttack();		// スペシャル攻撃設定
-	void SetState(EState state);	// 状態設定
+	SHitInfo Hit(CBall* pBall);			// ヒット処理
+	void SetSpecialAttack();			// スペシャル攻撃設定
+	void SetState(EState state);		// 状態設定
+	void ChangeBase(EBaseType type);	// ベース変更
+	EBaseType GetBaseType() const;		// ベース取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
@@ -293,20 +294,14 @@ public:
 		@param	team	[in]	チームサイド
 		@param	rPos	[in]	初期位置
 	*/
-	static CPlayer* Create(EUserType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype = EHandedness::HAND_R);
+	static CPlayer* Create(EBaseType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype = EHandedness::HAND_R);
 
 protected:
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual void Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 操作
-	virtual void DeleteControl();	// 操作削除
-	virtual void Debug();			// デバッグ処理
-	void UpdateFootLR();			// 足左右の更新
-	CPlayerControlMove* GetPlayerControlMove();		// 操作取得(移動)
-	CPlayerControlAction* GetPlayerControlAction();	// 操作取得(アクション)
-	void SetPlayerControlMove(CPlayerControlMove* pControlMove) { m_pControlMove = pControlMove; }				// 操作設定(移動)
-	void SetPlayerControlAction(CPlayerControlAction* pControlAction) { m_pControlAction = pControlAction; }	// 操作設定(アクション)
+	void Debug();			// デバッグ処理
+	void UpdateFootLR();	// 足左右の更新
 
 private:
 	//=============================
@@ -346,7 +341,7 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void LimitPos();	// 位置制限
 	void ResetFrag();	// フラグリセット
-	void TeamCourt_Return(MyLib::Vector3& pos);		// チームコート内に戻る
+	void TeamCourt_Return(MyLib::Vector3& pos);	// チームコート内に戻る
 
 	//-----------------------------
 	// モーション系関数
@@ -358,9 +353,11 @@ private:
 
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
-	//TOKODO: 空中キャッチモーション出来たら実装
-	//void CatchSettingFlyNormal(CBall::EAttack atkBall);		// キャッチ時処理(空中・通常)
+
+	// TAKADA : 空中キャッチモーション出来たら実装
+	//void CatchSettingFlyNormal(CBall::EAttack atkBall);	// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
+
 	void MotionCrab(int nStartKey);							// カニ歩き変化処理
 	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
 
@@ -378,7 +375,7 @@ private:
 	// オブジェクトのパラメータ
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
-	SKnockbackInfo m_sKnockback;		// ノックバックの位置
+	SKnockbackInfo m_sKnockback;	// ノックバックの位置
 	
 	//-----------------------------
 	// 行動フラグ
@@ -396,8 +393,7 @@ private:
 	//-----------------------------
 	CPlayerAction* m_pActionPattern;	// アクションパターン
 	CPlayerStatus* m_pStatus;			// ステータス
-	CPlayerControlMove* m_pControlMove;		// 移動操作
-	CPlayerControlAction* m_pControlAction;	// アクション操作
+	CPlayerBase*   m_pBase;				// ベース
 
 	//-----------------------------
 	// 着せ替え
