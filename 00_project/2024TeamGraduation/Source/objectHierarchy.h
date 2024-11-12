@@ -77,11 +77,13 @@ public:
 	void SetmtxWorld(const MyLib::Matrix mtxWorld);
 	MyLib::Matrix GetWorldMtx() const { return m_mtxWorld; }			// マトリックス取得
 	MyLib::Matrix GetmtxWorld() const;			// ワールドマトリックス取得
-	MyLib::Vector3 GetCenterPosition() const;		// 中心の位置取得
-	void SetOriginPosition(const MyLib::Vector3& pos);	// 最初の位置設定
-	MyLib::Vector3 GetOriginPosition() const;		// 最初の位置取得
-	void SetRadius(const float fRadius);		// 半径設定
-	float GetRadius() const;				// 半径取得
+	MyLib::Vector3 GetCenterPosition() const;			// 中心の位置取得
+	void SetOriginPosition(const MyLib::Vector3& pos) { m_posOrigin = pos; }	// 最初の位置設定
+	MyLib::Vector3 GetOriginPosition() const { return m_posOrigin; }			// 最初の位置取得
+	void SetRadius(const float fRadius) { m_fRadius = fRadius; }	// 半径設定
+	float GetRadius() const { return m_fRadius; }					// 半径取得
+	void SetScale(const float scale) { m_fScale = scale; }			// スケール設定
+	float GetScale() { return m_fScale; }							// スケール取得
 	void CalWorldMtx();		// ワールドマトリックスの計算処理
 
 	HRESULT ReadText(const std::string& file);	// 外部ファイル読み込み処理
@@ -117,7 +119,9 @@ private:
 	//=============================
 	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
 	MyLib::Vector3 m_posOrigin;	// 最初の位置
+	MyLib::Vector3 m_posInit;	// 初期の位置
 	MyLib::Vector3 m_posCenter;	// 中心位置
+	float m_fScale;				// スケール
 
 	int m_nCenterPartsIdx;			// 中心にするパーツのインデックス
 	MyLib::Vector3 m_CenterOffset;	// 中心のオフセット
