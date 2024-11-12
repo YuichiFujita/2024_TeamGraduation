@@ -30,7 +30,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerUser(CPlayer* pPlayer);
+	CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 	~CPlayerUser() override;
 
 	//=============================

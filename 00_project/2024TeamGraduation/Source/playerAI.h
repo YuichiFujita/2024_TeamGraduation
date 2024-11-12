@@ -81,7 +81,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAI(CPlayer* pPlayer);
+	CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 	~CPlayerAI();
 
 	//=============================

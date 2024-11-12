@@ -79,7 +79,7 @@ CPlayerAI::CATCH_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAI::CPlayerAI(CPlayer* pPlayer) : CPlayerBase(pPlayer)
+CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeArea)
 {
 	// メンバ変数の初期化
 	m_eMode = EMode::MODE_NONE;
@@ -94,8 +94,26 @@ CPlayerAI::CPlayerAI(CPlayer* pPlayer) : CPlayerBase(pPlayer)
 	m_fJumpEnd = timing::JUMP_END_POS;	// 投げの最大位置
 
 	// 初期操作の設定
-	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
+	switch (typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::EFieldArea::FIELD_IN:
+
+		// 内野操作の割当
+		ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+		ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
+		break;
+
+	case CPlayer::EFieldArea::FIELD_OUT:
+
+		// 外野操作の割当
+		ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+		ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //==========================================================================

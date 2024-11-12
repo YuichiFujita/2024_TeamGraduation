@@ -1853,11 +1853,11 @@ void CPlayer::ChangeBase(EBaseType type)
 	switch (type)
 	{ // ユーザー種類ごとの処理
 	case TYPE_USER:
-		m_pBase = DEBUG_NEW CPlayerUser(this);
+		m_pBase = DEBUG_NEW CPlayerUser(this, m_typeArea);
 		break;
 
 	case TYPE_AI:
-		m_pBase = DEBUG_NEW CPlayerAI(this);
+		m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
 		break;
 
 	default:

@@ -19,7 +19,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerBase::CPlayerBase(CPlayer* pPlayer) :
+CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) :
 	m_pPlayer		 (pPlayer),	// プレイヤー情報
 	m_pControlMove	 (nullptr),	// 移動操作
 	m_pControlAction (nullptr)	// アクション操作

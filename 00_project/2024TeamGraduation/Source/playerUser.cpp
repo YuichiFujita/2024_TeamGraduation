@@ -24,11 +24,29 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUser::CPlayerUser(CPlayer* pPlayer) : CPlayerBase(pPlayer)
+CPlayerUser::CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeArea)
 {
 	// 初期操作の設定
-	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+	switch (typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::EFieldArea::FIELD_IN:
+
+		// 内野操作の割当
+		ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+		ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+		break;
+
+	case CPlayer::EFieldArea::FIELD_OUT:
+
+		// 外野操作の割当
+		ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+		ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //==========================================================================
