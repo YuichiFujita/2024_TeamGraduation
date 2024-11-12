@@ -1,9 +1,9 @@
-//=============================================================================
+//==========================================================================
 // 
 //  ユーザープレイヤー処理 [playerUser.cpp]
 //  Author : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 #include "playerUser.h"
 #include "manager.h"
 #include "calculation.h"
@@ -24,9 +24,11 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUser::CPlayerUser()
+CPlayerUser::CPlayerUser(CPlayer* pPlayer) : CPlayerBase(pPlayer)
 {
-
+	// 初期操作の設定
+	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
 }
 
 //==========================================================================
@@ -34,44 +36,7 @@ CPlayerUser::CPlayerUser()
 //==========================================================================
 CPlayerUser::~CPlayerUser()
 {
-	
-}
 
-//==========================================================================
-// 初期化処理
-//==========================================================================
-HRESULT CPlayerUser::Init()
-{
-	// 種類の設定
-	CObject::SetType(TYPE_OBJECTX);
-
-	// 親クラスの初期化
-	HRESULT hr = CPlayer::Init();
-	if (FAILED(hr)) { return E_FAIL; }
-
-	// 操作関連
-	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
-
-	return S_OK;
-}
-
-//==========================================================================
-// 終了処理
-//==========================================================================
-void CPlayerUser::Uninit()
-{
-	// 親クラスの終了
-	CPlayer::Uninit();
-}
-
-//==========================================================================
-// 削除
-//==========================================================================
-void CPlayerUser::Kill()
-{
-	// 親クラスの終了
-	CPlayer::Kill();
 }
 
 //==========================================================================
@@ -79,31 +44,18 @@ void CPlayerUser::Kill()
 //==========================================================================
 void CPlayerUser::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 親クラスの更新
-	CPlayer::Update(fDeltaTime, fDeltaRate, fSlowRate);
-}
+	// プレイヤーの取得
+	CPlayer* pPlayer = GetPlayer();
 
-//==========================================================================
-// 描画処理
-//==========================================================================
-void CPlayerUser::Draw()
-{
-	// 親クラスの描画
-	CPlayer::Draw();
-}
-
-//==========================================================================
-// 操作処理
-//==========================================================================
-void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
+	// 操作クラスの取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 
-	// 移動操作
-	pControlMove->Move(this, fDeltaTime, fDeltaRate, fSlowRate);
-	pControlAction->Action(this, fDeltaTime, fDeltaRate, fSlowRate);
+	// 操作の更新
+	pControlMove->Move(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+	pControlAction->Action(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
 
+	// 操作クラスの反映
 	SetPlayerControlMove(pControlMove);
 	SetPlayerControlAction(pControlAction);
 }
@@ -113,11 +65,14 @@ void CPlayerUser::Operate(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 {
+	// 操作クラスの取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 
+	// 操作クラスの入替
 	delete pControlMove;
 	pControlMove = control;
 
+	// 操作クラスの反映
 	SetPlayerControlMove(pControlMove);
 }
 
@@ -126,37 +81,13 @@ void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 //==========================================================================
 void CPlayerUser::ChangeActionControl(CPlayerUserControlAction* control)
 {
+	// 操作クラスの取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 
+	// 操作クラスの入替
 	delete pControlAction;
 	pControlAction = control;
 
-	SetPlayerControlAction(pControlAction);
-}
-
-//==========================================================================
-// 操作関連削除
-//==========================================================================
-void CPlayerUser::DeleteControl()
-{
-	CPlayerControlMove* pControlMove = GetPlayerControlMove();
-	CPlayerControlAction* pControlAction = GetPlayerControlAction();
-
-	if (pControlMove != nullptr)
-	{// 移動操作
-		delete pControlMove;
-		pControlMove = nullptr;
-	}
-
-	if (pControlAction != nullptr)
-	{// アクション操作
-		delete pControlAction;
-		pControlAction = nullptr;
-	}
-
-	// 操作関連削除
-	CPlayer::DeleteControl();
-
-	SetPlayerControlMove(pControlMove);
+	// 操作クラスの反映
 	SetPlayerControlAction(pControlAction);
 }

@@ -64,6 +64,7 @@ namespace Knockback
 	const float DEAD = 100.0f;		// 死亡
 }
 
+// TODO：ボールステータスに移行
 namespace Catch
 {
 	const float Impact[CBall::EAttack::ATK_MAX] =	// 衝撃
@@ -226,7 +227,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
-	m_sKnockback = SKnockbackInfo();		// ノックバック情報
+	m_sKnockback = SKnockbackInfo();	// ノックバック情報
 
 	// 行動フラグ
 	m_bPossibleMove = false;		// 移動可能フラグ
@@ -240,8 +241,7 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	// パターン用インスタンス
 	m_pActionPattern = nullptr;	// アクションパターン
 	m_pStatus = nullptr;		// ステータス
-	m_pControlMove = nullptr;	// 移動操作
-	m_pControlAction = nullptr;	// アクション操作
+	m_pBase = nullptr;			// ベース
 
 	// 着せ替え
 	m_pDressup_Hair = nullptr;		// 髪着せ替え
@@ -265,26 +265,10 @@ CPlayer::~CPlayer()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayer* CPlayer::Create(EUserType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype)
+CPlayer* CPlayer::Create(EBaseType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype)
 {
 	// メモリの確保
-	CPlayer* pPlayer = nullptr;
-
-	switch (type)
-	{
-	case CPlayer::TYPE_USER:
-		pPlayer = DEBUG_NEW CPlayerUser;
-		break;
-
-	case CPlayer::TYPE_AI:
-		pPlayer = DEBUG_NEW CPlayerAI;
-		break;
-
-	default:
-		return pPlayer;
-		break;
-	}
-
+	CPlayer* pPlayer = DEBUG_NEW CPlayer;
 	if (pPlayer != nullptr)
 	{
 		// 利き手
@@ -298,6 +282,9 @@ CPlayer* CPlayer::Create(EUserType type, const CGameManager::TeamSide team, cons
 			SAFE_UNINIT(pPlayer);
 			return nullptr;
 		}
+
+		// ベースを設定
+		pPlayer->ChangeBase(type);
 
 		// チームサイドを設定
 		pPlayer->GetStatus()->SetTeam(team);
@@ -351,7 +338,6 @@ HRESULT CPlayer::Init()
 		m_pStatus = DEBUG_NEW CPlayerStatus(this);
 	}
 
-
 	// 着せ替え
 	if (m_pDressup_Hair == nullptr)
 	{
@@ -375,11 +361,14 @@ void CPlayer::Uninit()
 	// 影
 	m_pShadow = nullptr;
 	
-	//ボール
+	// ボール
 	m_pBall = nullptr;
 
-	// 操作系
-	DeleteControl();
+	// アクションパターン
+	SAFE_DELETE(m_pActionPattern);
+
+	// ベース
+	SAFE_DELETE(m_pBase);
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
@@ -451,7 +440,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 操作
 	Controll(fDeltaTime, fDeltaRate, fSlowRate);
 
-
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -502,12 +490,11 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll() &&
-		m_bPossibleMove)
-	{// 行動できるとき
+	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
+	{ // 行動できるとき
 
-		// 操作
-		Operate(fDeltaTime, fDeltaRate, fSlowRate);
+		// ベースの更新
+		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -547,18 +534,6 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 向き設定
 	SetRotation(rot);
-}
-
-//==========================================================================
-// 操作関連削除
-//==========================================================================
-void CPlayer::DeleteControl()
-{
-	if (m_pActionPattern != nullptr)
-	{// アクションパターン
-		delete m_pActionPattern;
-		m_pActionPattern = nullptr;
-	}
 }
 
 //==========================================================================
@@ -1066,7 +1041,7 @@ void CPlayer::MotionCrab(int nStartKey)
 	//--------------------------------
 	// 入力方向
 	//--------------------------------
-	EDashAngle* angle = m_pControlMove->GetInputAngle();
+	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 	if (angle == nullptr) return;
 
 	switch (*angle)
@@ -1147,94 +1122,8 @@ void CPlayer::LimitPos()
 //==========================================================================
 CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 {
-	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
-	CBall::EAttack atkBall	= pBall->GetTypeAtk();	// ボール攻撃種類
-	CBall::EState stateBall = pBall->GetState();	// ボール状態
-	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
-	MyLib::HitResult_Character hitresult = {};
-	CPlayer::SHitInfo hitInfo;	// ヒット情報
-	hitInfo.eHit = HIT_NONE;
-	hitInfo.bHit = false;
-
-	// 死亡状態ならすり抜け
-	if (m_sMotionFrag.bDead)
-	{
-		return hitInfo;
-	}
-
-	if (stateBall == CBall::STATE_LAND
-	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pStatus->GetTeam())
-	{ // ボールが着地している、またはフリーボール且つ自分のチームボールではない場合
-
-		// ボールをキャッチ
-		pBall->CatchLand(this);
-
-		if (pBall->IsLanding())
-		{ // ボールが着地している場合
-
-			// 落ちてるのキャッチ
-			SetMotion(EMotion::MOTION_DROPCATCH_WALK);
-		}
-
-		// キャッチ状態
-		hitInfo.eHit = EHit::HIT_CATCH;
-
-		return hitInfo;
-	}
-
-	// ダメージを受け付けないならすり抜ける
-	if (!m_sDamageInfo.bReceived) { return hitInfo; }
-
-	// リバウンドボールの場合キャッチする
-	if (stateBall == CBall::STATE_REBOUND)
-	{
-		// キャッチ状態
-		hitInfo.eHit = EHit::HIT_CATCH;
-
-		// カバーキャッチ時の設定
-		CoverCatchSetting(pBall);
-
-		return hitInfo;
-	}
-
-	// 攻撃状態以外ならすり抜ける
-	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
-	
-	// 味方のボールならすり抜ける
-	if (m_pStatus->GetTeam() == sideBall) { return hitInfo; }
-
-	if (m_sMotionFrag.bCatch &&
-		UtilFunc::Collision::CollisionViewRange3D(GetPosition(), posB, GetRotation().y, Catch::ANGLE))
-	{ // キャッチアクション中だった中でも受け付け中の場合
-
-		// キャッチ時処理
-		CatchSetting(pBall);
-
-		// キャッチ状態
-		hitInfo.eHit = EHit::HIT_CATCH;
-
-		return hitInfo;
-	}
-
-	// ダメージを受ける場合はフラグをONにする
-	hitInfo.bHit = true;
-
-	// ダメージを与える
-	//m_pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
-	m_pStatus->LifeDamage(10);
-
-	if (GetLife() <= 0)
-	{
-		// 終活
-		DeadSetting(&hitresult, pBall);
-	}
-	else
-	{
-		// ダメージ状態にする
-		DamageSetting(pBall);
-	}
-
-	return hitInfo;
+	// ベースのヒット処理
+	return m_pBase->Hit(pBall);
 }
 
 //==========================================================================
@@ -1310,8 +1199,8 @@ void CPlayer::CatchSetting(CBall* pBall)
 	pBall->CatchAttack(this);
 
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
-	MyLib::Vector3 posB = pBall->GetPosition();	// ボール位置
-	MyLib::Vector3 pos = GetPosition();	// ボール位置
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
+	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
 	
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
@@ -1319,7 +1208,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 入力判定
 	bool bInput = false;
-	EDashAngle* angle = m_pControlMove->GetInputAngle();
+	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 	if (angle != nullptr)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
@@ -1338,14 +1227,13 @@ void CPlayer::CatchSetting(CBall* pBall)
 	else
 	{// 通常キャッチ
 
-		CatchSettingLandNormal(atkBall);		// キャッチ時処理(地上・通常)
+		CatchSettingLandNormal(atkBall);	// キャッチ時処理(地上・通常)
 	}
 
 	// 受けた種類
 	m_sDamageInfo.eReiceiveType = atkBall;
 
 	// 今切り替えられました
-
 }
 
 //==========================================================================
@@ -1946,6 +1834,45 @@ void CPlayer::SetState(EState state)
 }
 
 //==========================================================================
+// ベースの変更処理
+//==========================================================================
+void CPlayer::ChangeBase(EBaseType type)
+{
+	// ベースクラスの破棄
+	SAFE_DELETE(m_pBase);
+
+	// ベースクラスの変更
+	switch (type)
+	{ // ユーザー種類ごとの処理
+	case TYPE_USER:
+		m_pBase = DEBUG_NEW CPlayerUser(this);
+		break;
+
+	case TYPE_AI:
+		m_pBase = DEBUG_NEW CPlayerAI(this);
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+}
+
+//==========================================================================
+// ベースの取得処理
+//==========================================================================
+CPlayer::EBaseType CPlayer::GetBaseType() const
+{
+	// クラス型からベースを判定
+	if		(typeid(*m_pBase) == typeid(CPlayerUser))	{ return TYPE_USER; }
+	else if	(typeid(*m_pBase) == typeid(CPlayerAI))		{ return TYPE_AI; }
+
+	// ベース指定なし
+	assert(false);
+	return (EBaseType)-1;
+}
+
+//==========================================================================
 // カニ歩き判定
 //==========================================================================
 bool CPlayer::IsCrab()
@@ -2045,7 +1972,7 @@ void CPlayer::Debug()
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;
-		EDashAngle* angle = m_pControlMove->GetInputAngle();
+		EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 		if (angle != nullptr)
 		{
 			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
@@ -2099,21 +2026,10 @@ void CPlayer::Debug()
 		OutCourtSetting();
 	}
 
+	//-----------------------------
+	// ベースのデバッグ表示
+	//-----------------------------
+	m_pBase->Debug();
+
 #endif
-}
-
-//==========================================================================
-// 操作取得(アクション)
-//==========================================================================
-CPlayerControlAction* CPlayer::GetPlayerControlAction()
-{
-	return m_pControlAction;
-}
-
-//==========================================================================
-// 操作取得(移動)
-//==========================================================================
-CPlayerControlMove* CPlayer::GetPlayerControlMove()
-{
-	return m_pControlMove;
 }

@@ -105,6 +105,12 @@
     <Filter Include="ingame\charm">
       <UniqueIdentifier>{deec6407-196d-40c5-ba44-68a5ca664611}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerControl">
+      <UniqueIdentifier>{f70dbe5e-1d32-45ef-8932-0918f140956c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player\playerBase">
+      <UniqueIdentifier>{9074fc87-61e9-49c5-8a5c-4885ee7098ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -440,15 +446,6 @@
     <ClCompile Include="Source\characterStatus.cpp">
       <Filter>character</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playercontrol.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playercontrol_action.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playercontrol_move.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ball.cpp">
       <Filter>ingame\ball</Filter>
     </ClCompile>
@@ -511,6 +508,18 @@
     </ClCompile>
     <ClCompile Include="Source\charmManager.cpp">
       <Filter>ingame\charm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol.cpp">
+      <Filter>player\playerControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol_action.cpp">
+      <Filter>player\playerControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playercontrol_move.cpp">
+      <Filter>player\playerControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerBase.cpp">
+      <Filter>player\playerBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -859,15 +868,6 @@
     <ClInclude Include="Source\characterStatus.h">
       <Filter>character</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playercontrol.h">
-      <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playercontrol_action.h">
-      <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playercontrol_move.h">
-      <Filter>player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ball.h">
       <Filter>ingame\ball</Filter>
     </ClInclude>
@@ -930,6 +930,18 @@
     </ClInclude>
     <ClInclude Include="Source\charmManager.h">
       <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol.h">
+      <Filter>player\playerControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol_action.h">
+      <Filter>player\playerControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playercontrol_move.h">
+      <Filter>player\playerControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerBase.h">
+      <Filter>player\playerBase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
