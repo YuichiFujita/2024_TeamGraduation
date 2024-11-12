@@ -972,6 +972,10 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_JUST);
+
+	// モテ加算
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_JUSTCATCH);
 }
 
 //==========================================================================
