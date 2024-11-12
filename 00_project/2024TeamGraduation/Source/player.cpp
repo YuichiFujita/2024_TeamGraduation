@@ -218,7 +218,7 @@ CListManager<CPlayer> CPlayer::m_List = {};	// リスト
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
+CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPriority), m_typeArea(typeArea)
 {
 	// 値のクリア
 	m_state = STATE_NONE;			// 状態
@@ -265,13 +265,21 @@ CPlayer::~CPlayer()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayer* CPlayer::Create(EBaseType type, const CGameManager::TeamSide team, const MyLib::Vector3& rPos, EHandedness handtype)
+CPlayer* CPlayer::Create
+(
+	const MyLib::Vector3& rPos,		// 位置
+	CGameManager::TeamSide team,	// チームサイド
+	EBaseType basetype,				// ベースタイプ
+	EFieldArea areatype,			// ポジション
+	EBody bodytype,					// 体系
+	EHandedness handtype			// 利き手
+)
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer;
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(areatype);
 	if (pPlayer != nullptr)
 	{
-		// 利き手
+		// 利き手を設定
 		pPlayer->m_Handress = handtype;
 
 		// クラスの初期化
@@ -283,14 +291,14 @@ CPlayer* CPlayer::Create(EBaseType type, const CGameManager::TeamSide team, cons
 			return nullptr;
 		}
 
-		// ベースを設定
-		pPlayer->ChangeBase(type);
+		// 位置を設定
+		pPlayer->SetPosition(rPos);
 
 		// チームサイドを設定
 		pPlayer->GetStatus()->SetTeam(team);
 
-		// 位置を設定
-		pPlayer->SetPosition(rPos);
+		// ベースタイプを設定
+		pPlayer->ChangeBase(basetype);
 	}
 
 	return pPlayer;
@@ -801,7 +809,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// 通常投げ
 			m_pBall->ThrowNormal(this);
 		}
-
 		break;
 
 	case EMotion::MOTION_THROW_JUMP:
@@ -810,7 +817,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// ジャンプ投げ
 			m_pBall->ThrowJump(this);
 		}
-
 		break;
 
 	case EMotion::MOTION_TOSS:
@@ -819,7 +825,20 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// トス
 			m_pBall->Toss(this);
 		}
+		break;
 
+	case EMotion::MOTION_WALK:
+	case EMotion::MOTION_WALK_BALL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+		break;
+
+	case EMotion::MOTION_RUN:
+	case EMotion::MOTION_RUN_BALL:
+	{
+		// 設定するラベル
+		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
+		PLAY_SOUND(label);
+	}
 		break;
 
 	default:

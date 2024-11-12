@@ -135,9 +135,9 @@ void CTimeUI::Uninit(void)
 	CObject::Release();
 }
 
-//==========================================================================
+//============================================================
 // ìÆìIçÌèúèàóù
-//==========================================================================
+//============================================================
 void CTimeUI::Kill()
 {
 	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
@@ -261,7 +261,7 @@ CTimeUI *CTimeUI::Create
 )
 {
 	// É^ÉCÉÄUIÇÃê∂ê¨
-	CTimeUI *pTimeUI = new CTimeUI;
+	CTimeUI *pTimeUI = DEBUG_NEW CTimeUI;
 	if (pTimeUI == nullptr)
 	{ // ê∂ê¨Ç…é∏îsÇµÇΩèÍçá
 

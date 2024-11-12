@@ -19,6 +19,11 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
 
+	// 歩き
+	{ TYPE_SE,"data/SE/walk.wav",0},				// 歩き
+	{ TYPE_SE,"data/SE/run00.wav",0},				// 走り1
+	{ TYPE_SE,"data/SE/run01.wav",0},				// 走り2
+
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ

@@ -68,7 +68,7 @@ public:
 	// オーバーライド関数
 	HRESULT Init(void) override;	// 初期化
 	void Uninit(void) override;		// 終了
-	void Kill() override;			// 動的削除処理
+	void Kill() override;			// 動的削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw(void) override;						// 描画
 	void SetEnableDisp(const bool bDisp) override;	// 描画状況設定

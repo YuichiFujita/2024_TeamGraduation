@@ -53,6 +53,7 @@ CGameManager::CGameManager()
 	m_fSceneTimer = 0.0f;		// シーンタイマー
 
 	m_pGymWallManager = nullptr;	// ジム壁マネジャー
+	m_pCharmManager = nullptr;		// モテマネージャ
 
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 
@@ -130,7 +131,7 @@ HRESULT CGameManager::Init()
 	CreateTeamStatus();
 
 	// モテマネージャ生成
-	CCharmManager::Create();
+	m_pCharmManager = CCharmManager::Create();
 
 	m_OldSceneType = m_SceneType;
 
@@ -159,6 +160,13 @@ void CGameManager::Uninit()
 		m_pCourtSizeBox = nullptr;
 	}
 #endif
+
+	// モテマネージャ
+	if (m_pCharmManager != nullptr)
+	{
+		m_pCharmManager->Uninit();
+		m_pCharmManager = nullptr;
+	}
 
 	// 自身の開放
 	delete m_pThisPtr;

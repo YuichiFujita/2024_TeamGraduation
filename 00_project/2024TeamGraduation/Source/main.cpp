@@ -151,9 +151,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 			}
 
 #ifdef _DEBUG
-			if ((dwCurrentTime - dwExecLastTime) >= (1000 / g_DebugFps))
+			if ((int)(dwCurrentTime - dwExecLastTime) >= (1000 / g_DebugFps))
 #else
-			if ((dwCurrentTime - dwExecLastTime) >= (1000 / FPS))
+			if ((int)(dwCurrentTime - dwExecLastTime) >= (1000 / FPS))
 #endif
 			{// 60•ª‚Ì1•bŒo‰ß
 
