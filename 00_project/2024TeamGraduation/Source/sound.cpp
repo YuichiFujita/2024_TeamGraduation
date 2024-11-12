@@ -29,6 +29,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
 
+	// キャッチ
+	{ TYPE_SE,"data/SE/justcatch.wav",0},				// ジャストキャッチ
+
 	// バウンド
 	{ TYPE_SE,"data/SE/Bound00.wav",0},				// バウンド(高め)
 	{ TYPE_SE,"data/SE/Bound01.wav",0},				// バウンド(普通)

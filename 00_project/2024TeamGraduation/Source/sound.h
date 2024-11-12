@@ -42,6 +42,7 @@ public:
 		LABEL_SE_GRIP01,		// グリップ
 		LABEL_SE_THROW_NORMAL,	// 通常投げ
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
+		LABEL_SE_JUSTCATCH,		// ジャストキャッチ
 		LABEL_SE_BOUND_HIGH,	// バウンド(高め)
 		LABEL_SE_BOUND_MEDIUM,	// バウンド(普通)
 		LABEL_SE_BOUND_LOW,		// バウンド(低め)
