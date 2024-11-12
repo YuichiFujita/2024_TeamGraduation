@@ -43,7 +43,7 @@ public:
 
 	HRESULT Init();
 	void Uninit();
-	int XLoad(std::string file);
+	int XLoad(const std::string& file);
 	HRESULT LoadAll();	// 全てのモデル読み込み
 	void Unload();
 
@@ -55,7 +55,7 @@ public:
 protected:
 
 private:
-	HRESULT Load(std::string file);
+	HRESULT Load(const std::string& file);
 	void SearchAllXModel(const std::wstring& folderPath);	// 全検索
 
 	std::vector<SXFile> m_XFileInfo;	// Xファイルの情報
