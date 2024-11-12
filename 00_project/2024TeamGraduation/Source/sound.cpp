@@ -12,13 +12,22 @@
 //==========================================================================
 CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] = 
 {
+	// モード別BGM
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
-	{ TYPE_BGM,"data/BGM/BGM_game_000.wav", -1 },	// ゲーム
+	{ TYPE_BGM,"data/BGM/game.wav", -1 },			// ゲーム
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
+
+	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
+
+	// バウンド
+	{ TYPE_SE,"data/SE/Bound00.wav",0},				// バウンド(高め)
+	{ TYPE_SE,"data/SE/Bound01.wav",0},				// バウンド(普通)
+	{ TYPE_SE,"data/SE/Bound02.wav",0},				// バウンド(低め)
+	{ TYPE_SE,"data/SE/Bound03.wav",0},				// バウンド(繰り返し)
 
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
