@@ -3519,19 +3519,20 @@ namespace UtilFunc	// 便利関数
 		@param	str		[in]	文字列
 		@return	変換されたstring文字
 		*/
-		inline std::string ReplaceBackslash(std::string str)
+		inline std::string ReplaceBackslash(const std::string& str)
 		{
 			size_t pos = 0;
+			std::string returnStr = str;
 
-			while ((pos = str.find("\\\\", pos)) != std::string::npos)
+			while ((pos = returnStr.find("\\\\", pos)) != std::string::npos)
 			{
 				// \\\\を\\に置換
-				str.replace(pos, 2, "\\");
+				returnStr.replace(pos, 2, "\\");
 
 				// \\の次から検索を再開
 				pos += 1;
 			}
-			return str;
+			return returnStr;
 		}
 
 		/**
@@ -3539,16 +3540,17 @@ namespace UtilFunc	// 便利関数
 		@param	str		[in]	文字列
 		@return	変換されたstring文字
 		*/
-		inline std::string ReplaceForwardSlashes(std::string str)
+		inline std::string ReplaceForwardSlashes(const std::string& str)
 		{
-			for (size_t i = 0; i < str.size(); i++) 
+			std::string returnStr = str;
+			for (size_t i = 0; i < returnStr.size(); i++)
 			{
-				if (str[i] == '/') 
+				if (returnStr[i] == '/')
 				{
-					str.replace(i, 1, "\\");
+					returnStr.replace(i, 1, "\\");
 				}
 			}
-			return str;
+			return returnStr;
 		}
 
 		/**

@@ -2,13 +2,13 @@ Metasequoia Document
 Format Text Ver 1.0
 
 Scene {
-	pos 0.0000 0.0000 3840.0000
+	pos 0.0000 0.0000 2400.0000
 	lookat 0.0000 0.0000 0.0000
-	head 0.0364
-	pich 0.0636
+	head 0.0964
+	pich 0.4236
 	bank 0.0000
 	ortho 0
-	zoom2 1.9531
+	zoom2 3.1250
 	amb 0.250 0.250 0.250
 	dirlights 1 {
 		light {
@@ -17,11 +17,8 @@ Scene {
 		}
 	}
 }
-Material 4 {
+Material 1 {
 	"lambert7SG" col(1.000 1.000 1.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("data\TEXTURE\player\00_body.jpg")
-	"lambert29SG" col(0.030 0.010 0.230 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00)
-	"lambert35SG" col(0.260 0.610 0.240 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00)
-	"lambert36SG" col(0.070 1.000 0.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00)
 }
 Object "obj1" {
 	visible 15
