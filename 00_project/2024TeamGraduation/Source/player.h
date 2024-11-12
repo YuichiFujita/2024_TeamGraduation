@@ -253,6 +253,7 @@ public:
 	//=============================
 	CPlayerAction* GetActionPattern()	{ return m_pActionPattern; }	// アクション取得
 	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
+	CPlayerBase* GetBase() { return m_pBase; }							// ベース取得
 
 	//=============================
 	// 着せ替え
