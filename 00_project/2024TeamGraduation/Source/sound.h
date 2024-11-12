@@ -39,6 +39,7 @@ public:
 		LABEL_SE_WALK,			// 歩き
 		LABEL_SE_RUN01,			// 走り
 		LABEL_SE_RUN02,			// 走り
+		LABEL_SE_GRIP01,		// グリップ
 		LABEL_SE_THROW_NORMAL,	// 通常投げ
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
 		LABEL_SE_BOUND_HIGH,	// バウンド(高め)

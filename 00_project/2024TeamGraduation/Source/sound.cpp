@@ -23,6 +23,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/walk.wav",0},				// •à‚«
 	{ TYPE_SE,"data/SE/run00.wav",0},				// ‘–‚è1
 	{ TYPE_SE,"data/SE/run01.wav",0},				// ‘–‚è2
+	{ TYPE_SE,"data/SE/grip01.wav",0},				// ƒOƒŠƒbƒv
 
 	// “Š‚°
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// ’Êí“Š‚°
