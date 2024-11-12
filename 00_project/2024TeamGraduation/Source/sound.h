@@ -38,6 +38,10 @@ public:
 		LABEL_BGM_RANKING,		// ランキング
 		LABEL_SE_THROW_NORMAL,	// 通常投げ
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
+		LABEL_SE_BOUND_HIGH,	// バウンド(高め)
+		LABEL_SE_BOUND_MEDIUM,	// バウンド(普通)
+		LABEL_SE_BOUND_LOW,		// バウンド(低め)
+		LABEL_SE_BOUND_REPEAT,	// バウンド(繰り返し)
 		LABEL_MAX
 	};
 
