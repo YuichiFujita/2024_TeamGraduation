@@ -119,13 +119,21 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_RIGHT, pos + offset, CPlayer::EHandedness::HAND_R);
+		CPlayer* pUser = CPlayer::Create
+		(
+			pos + offset, 					// 位置
+			CGameManager::SIDE_RIGHT,		// チームサイド
+			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
+			CPlayer::EFieldArea::FIELD_IN,	// ポジション
+			CPlayer::EBody::BODY_NORMAL,	// 体系
+			CPlayer::EHandedness::HAND_R	// 利き手
+		);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -139,7 +147,15 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-		CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_LEFT, pos + offset, CPlayer::EHandedness::HAND_L);
+		CPlayer* pUser = CPlayer::Create
+		(
+			pos + offset, 					// 位置
+			CGameManager::SIDE_LEFT,		// チームサイド
+			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
+			CPlayer::EFieldArea::FIELD_IN,	// ポジション
+			CPlayer::EBody::BODY_NORMAL,	// 体系
+			CPlayer::EHandedness::HAND_L	// 利き手
+			);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
@@ -150,8 +166,8 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 1
-	CPlayer* pUser = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_LEFT, MyLib::Vector3(-200.0f, 0.0f, 0.0f));
+#if 0
+	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
 		return E_FAIL;
@@ -162,7 +178,7 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser二世生成(右)
 #if 0
-	CPlayer* pUser2 = CPlayer::Create(CPlayer::EBaseType::TYPE_USER, CGameManager::SIDE_RIGHT, MyLib::Vector3(200.0f, 0.0f, 0.0f));
+	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
 		return E_FAIL;
@@ -172,9 +188,8 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
-	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
-	CPlayer* pAI = CPlayer::Create(CPlayer::EBaseType::TYPE_AI, CGameManager::SIDE_RIGHT, pos);
+#if 0
+	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
 		return E_FAIL;
@@ -189,7 +204,7 @@ HRESULT CGame::Init()
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
-		CPlayer* pAI = CPlayer::Create(CPlayer::EBaseType::TYPE_AI, CGameManager::SIDE_RIGHT, pos + offset);
+		CPlayer* pAI = CPlayer::Create(pos + offset, CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_AI);
 		if (pAI == nullptr)
 		{
 			return E_FAIL;

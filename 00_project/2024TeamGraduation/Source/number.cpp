@@ -117,20 +117,23 @@ void CNumber::SetType(const CObject::TYPE type)
 //==========================================================================
 void CNumber::SetNum(int num)
 {
-	// TODO:ほんとにこんなことして大丈夫？
+	// 数字の設定
+	m_nNum = num;
 
+#if 0
 	float fWidthRate	= 1.0f / 10;		// 横の分割数の割合
 	float fHeightRate	= 1.0f / 1;			// 縦の分割数の割合
 	int nWidthCurrent	= num % 10;			// 現在の横のパターン
 	int nHeightCurrent	= (num / 10) % 1;	// 現在の縦のパターン
 
-	// テクスチャ座標の設定
+	// テクスチャ座標の計算
 	D3DXVECTOR2 tex[4];
-	tex[0] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate *  nHeightCurrent);
-	tex[1] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate *  nHeightCurrent);
-	tex[2] = D3DXVECTOR2(fWidthRate *  nWidthCurrent,		fHeightRate * (nHeightCurrent + 1));
-	tex[3] = D3DXVECTOR2(fWidthRate * (nWidthCurrent + 1),	fHeightRate * (nHeightCurrent + 1));
+	tex[0] = D3DXVECTOR2(num       * fWidthRate, (num / 10) * fHeightRate);
+	tex[1] = D3DXVECTOR2((num + 1) * fWidthRate, (num / 10) * fHeightRate);
+	tex[2] = D3DXVECTOR2(num       * fWidthRate, (num / 10) * fHeightRate + fHeightRate);
+	tex[3] = D3DXVECTOR2((num + 1) * fWidthRate, (num / 10) * fHeightRate + fHeightRate);
 
-	m_nNum = num;
+	// テクスチャ座標の反映
 	SetTex(&tex[0]);
+#endif
 }
