@@ -24,6 +24,8 @@
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
+#include "charmManager.h"
+#include "teamStatus.h"
 
 // 派生先
 #include "playerAI.h"
@@ -454,7 +456,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// モーションの設定処理
-	if (CGame::GetInstance()->GetGameManager()->IsControll())
+	if (CGameManager::GetInstance()->IsControll())
 	{
 		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
@@ -500,7 +502,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGame::GetInstance()->GetGameManager()->IsControll() &&
+	if (CGameManager::GetInstance()->IsControll() &&
 		m_bPossibleMove)
 	{// 行動できるとき
 
@@ -1109,7 +1111,7 @@ void CPlayer::LimitPos()
 	if (m_state != EState::STATE_OUTCOURT &&
 		m_state != EState::STATE_OUTCOURT_RETURN)
 	{//コート越え状態以外はコート内補正
-		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos);
+		CGameManager::GetInstance()->SetPosLimit(pos);
 	}
 
 	if (!m_bJump && !m_sMotionFrag.bDead)
@@ -1182,29 +1184,11 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
-		// カバー対象を回復
-		CPlayer* pCoverPlayer = pBall->GetCover();
-		if (pCoverPlayer == nullptr) return hitInfo;
-
-		// 死んでいない味方回復
-		if (!pCoverPlayer->GetMotionFrag().bDead &&
-			m_pStatus->GetTeam() == pCoverPlayer->GetStatus()->GetTeam())
-		{
-			pCoverPlayer->GetStatus()->LifeHeal(10);
-		}
-
-		// 演出
-		CEffect3D::Create(
-			GetPosition(),
-			MyLib::Vector3(0.0f, 0.0f, 0.0f),
-			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
-			80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-
-		// 攻撃キャッチ処理
-		pBall->CatchAttack(this);
-
 		// キャッチ状態
 		hitInfo.eHit = EHit::HIT_CATCH;
+
+		// カバーキャッチ時の設定
+		CoverCatchSetting(pBall);
 
 		return hitInfo;
 	}
@@ -1361,6 +1345,40 @@ void CPlayer::CatchSetting(CBall* pBall)
 }
 
 //==========================================================================
+// カバーキャッチ時処理
+//==========================================================================
+void CPlayer::CoverCatchSetting(CBall* pBall)
+{
+	// カバー対象を回復
+	CPlayer* pCoverPlayer = pBall->GetCover();
+	if (pCoverPlayer == nullptr) return;
+
+	// 死んでいない味方回復
+	if (!pCoverPlayer->GetMotionFrag().bDead &&
+		m_pStatus->GetTeam() == pCoverPlayer->GetStatus()->GetTeam())
+	{
+		pCoverPlayer->GetStatus()->LifeHeal(10);
+	}
+
+	// 演出
+	CEffect3D::Create(
+		GetPosition(),
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+
+	// 攻撃キャッチ処理
+	pBall->CatchAttack(this);
+
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return;
+
+	// モテ加算
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_COVERCATCH);
+}
+
+//==========================================================================
 // コート越え処理
 //==========================================================================
 void CPlayer::OutCourtSetting()
@@ -1390,7 +1408,7 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 	// 自陣サイズ取得
 	CGameManager::TeamSide team = GetStatus()->GetTeam();
 	MyLib::Vector3 posCourt = MyLib::Vector3();
-	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
+	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
 
 	// もう戻ってる場合は抜ける
 	if (m_state == EState::STATE_INVADE_RETURN ||
@@ -1623,7 +1641,7 @@ void CPlayer::StateCatch_Normal()
 
 	//スペシャル時ライン越え判定
 	if (m_sDamageInfo.eReiceiveType == CBall::EAttack::ATK_SPECIAL &&
-		CGame::GetInstance()->GetGameManager()->SetPosLimit(pos) &&
+		CGameManager::GetInstance()->SetPosLimit(pos) &&
 		m_state != EState::STATE_OUTCOURT)
 	{
 		OutCourtSetting();
@@ -1696,7 +1714,7 @@ void CPlayer::StateOutCourt()
 void CPlayer::StateOutCourt_Return()
 {
 	MyLib::Vector3 pos = GetPosition();
-	MyLib::Vector3 posStart = CGame::GetInstance()->GetGameManager()->GetCourtSize();
+	MyLib::Vector3 posStart = CGameManager::GetInstance()->GetCourtSize();
 	posStart.y = 0.0f;
 	posStart.z = 0.0f;
 	posStart.x *= 0.5f;
@@ -1787,7 +1805,7 @@ void CPlayer::StateInvade_Return()
 	// 自陣サイズ取得
 	CGameManager::TeamSide team = GetStatus()->GetTeam();
 	MyLib::Vector3 posCourt = MyLib::Vector3();
-	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize(team, posCourt);
+	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
 	MyLib::Vector3 pos = GetPosition();
 
 	// チーム別でラインの位置まで戻す
@@ -1933,7 +1951,7 @@ bool CPlayer::IsCrab()
 	CPlayer::EAction action = GetActionPattern()->GetAction();
 	int motionType = GetMotion()->GetType();
 	
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return false;
 
 	// ボールの状態：敵側であるか

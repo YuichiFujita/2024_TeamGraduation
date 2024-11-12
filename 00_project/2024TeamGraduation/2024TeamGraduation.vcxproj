@@ -184,6 +184,7 @@
     <ClCompile Include="Source\char2D.cpp" />
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
+    <ClCompile Include="Source\charmManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
@@ -325,6 +326,7 @@
     <ClInclude Include="Source\char2D.h" />
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
+    <ClInclude Include="Source\charmManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />

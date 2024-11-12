@@ -67,7 +67,7 @@ CPlayerAI::TIMING_FUNC CPlayerAI::m_ThrowTimingFunc[] =	// タイミング関数
 	&CPlayerAI::TimingJumpFeint,			// フェイント
 };
 
-CPlayerAI::FIND_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
+CPlayerAI::CATCH_FUNC CPlayerAI::m_CatchFunc[] =	// キャッチ関数
 {
 	&CPlayerAI::CatchNone,
 	&CPlayerAI::CatchNormal,
@@ -171,7 +171,7 @@ void CPlayerAI::Draw()
 void CPlayerAI::UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ボールの取得
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	if (pBall != nullptr && pBall->GetPlayer() == nullptr) {
 		
@@ -206,7 +206,7 @@ CPlayerAI::SHitInfo CPlayerAI::Hit(CBall* pBall)
 //==========================================================================
 void CPlayerAI::ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CGameManager* pGameManager = CGameManager::GetInstance();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(this->GetCharStatus()->GetTeam());
 
 	if (m_eThrowType == EThrowType::TYPE_NONE)
@@ -615,7 +615,7 @@ void CPlayerAI::Target()
 //==========================================================================
 bool CPlayerAI::IsWait()
 {
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	bool b = false;
 
@@ -659,7 +659,7 @@ void CPlayerAI::FindBall(const float fDeltaTime, const float fDeltaRate, const f
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	// ボールの取得
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr) {
 		Reset();

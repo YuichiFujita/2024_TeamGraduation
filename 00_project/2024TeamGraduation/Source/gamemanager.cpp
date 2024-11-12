@@ -32,9 +32,14 @@ namespace
 	//ドッジボールコート情報
 	namespace Court
 	{
-		const D3DXVECTOR3 SIZE = D3DXVECTOR3(950.0f, 100.0f, 560.0f);	// サイズ
+		const MyLib::Vector3 SIZE = MyLib::Vector3(950.0f, 100.0f, 560.0f);	// サイズ
 	}
 }
+
+//==========================================================================
+// 静的メンバ変数
+//==========================================================================
+CGameManager* CGameManager::m_pThisPtr = nullptr;	// 自身のポインタ
 
 //==========================================================================
 // コンストラクタ
@@ -67,23 +72,24 @@ CGameManager::~CGameManager()
 //==========================================================================
 CGameManager* CGameManager::Create(CScene::MODE mode)
 {
-	// メモリ確保
-	CGameManager* pManager = nullptr;
+	if (m_pThisPtr != nullptr)
+	{// 既にある場合
+		return m_pThisPtr;
+	}
 
 	// インスタンス生成
 	switch (mode)
 	{
 	case CScene::MODE_GAME:
-		pManager = DEBUG_NEW CGameManager;
+		m_pThisPtr = DEBUG_NEW CGameManager;
 		break;
-
 	}
 
-	if (pManager != nullptr)
+	if (m_pThisPtr != nullptr)
 	{// メモリの確保が出来ていたら
 
 		// 初期化処理
-		HRESULT hr = pManager->Init();
+		HRESULT hr = m_pThisPtr->Init();
 
 		if (FAILED(hr))
 		{// 失敗していたら
@@ -91,7 +97,7 @@ CGameManager* CGameManager::Create(CScene::MODE mode)
 		}
 	}
 
-	return pManager;
+	return m_pThisPtr;
 }
 
 //==========================================================================
@@ -123,6 +129,9 @@ HRESULT CGameManager::Init()
 	//チームステータス
 	CreateTeamStatus();
 
+	// モテマネージャ生成
+	CCharmManager::Create();
+
 	m_OldSceneType = m_SceneType;
 
 	return S_OK;
@@ -150,6 +159,10 @@ void CGameManager::Uninit()
 		m_pCourtSizeBox = nullptr;
 	}
 #endif
+
+	// 自身の開放
+	delete m_pThisPtr;
+	m_pThisPtr = nullptr;
 }
 
 //==========================================================================
@@ -336,6 +349,16 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
 	}
 
 	return bHit;
+}
+
+//==========================================================================
+// モテ加算
+//==========================================================================
+void CGameManager::AddCharmValue(TeamSide side, CCharmManager::EType charmType)
+{
+	// チームステータス
+	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
+	m_pTeamStatus[side]->AddCharmValue(value);
 }
 
 //==========================================================================

@@ -102,6 +102,9 @@
     <Filter Include="ingame\gym">
       <UniqueIdentifier>{0dbbc4f5-752b-4029-8650-3a11ccbbb442}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\charm">
+      <UniqueIdentifier>{deec6407-196d-40c5-ba44-68a5ca664611}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -505,6 +508,9 @@
     </ClCompile>
     <ClCompile Include="Source\audienceLowPoly.cpp">
       <Filter>ingame\audience</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\charmManager.cpp">
+      <Filter>ingame\charm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -921,6 +927,9 @@
     </ClInclude>
     <ClInclude Include="Source\audienceLowPoly.h">
       <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmManager.h">
+      <Filter>ingame\charm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

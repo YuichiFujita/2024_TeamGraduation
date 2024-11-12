@@ -572,7 +572,7 @@ CCamera::SSide CCamera::GetPlayerMaxSide()
 //==========================================================================
 float CCamera::CalcDistanceRate()
 {
-	const MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();	// コートサイズ
+	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
 	const SSide posSide = GetPlayerMaxSide();		// プレイヤー左右最大位置
 	const float fCurDis = posSide.r - posSide.l;	// 左右間の距離
 	const float fMaxDis = sizeCourt.x * 2.0f;		// 左右間の最大距離
@@ -595,7 +595,7 @@ float CCamera::CalcFollowDistance(const float fDisRate)
 //==========================================================================
 MyLib::Vector3 CCamera::CalcFollowPositionR(const float fDisRate)
 {
-	const MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();	// コートサイズ
+	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
 	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
 
 	// 左右座標の平均からX注視点を計算
@@ -617,7 +617,7 @@ MyLib::Vector3 CCamera::CalcFollowPositionR(const float fDisRate)
 //==========================================================================
 void CCamera::RevFollowPositionR(float* pTargetX, const float fDisRate)
 {
-	const MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();	// コートサイズ
+	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
 	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
 
 	// X注視点の補正

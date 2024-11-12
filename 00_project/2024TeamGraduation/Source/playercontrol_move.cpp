@@ -117,8 +117,8 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 	MyLib::Vector3 pos = player->GetPosition();
 
 	// コートサイズ取得
-	MyLib::Vector3 sizeCourt = CGame::GetInstance()->GetGameManager()->GetCourtSize();
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
 	// ボールの持っているプレイヤー取得

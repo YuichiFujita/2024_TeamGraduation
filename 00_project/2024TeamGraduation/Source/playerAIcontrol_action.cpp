@@ -45,7 +45,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 	CMotion* pMotion = player->GetMotion();
 
 	// TODO：全自動キャッチ機構
-	CBall* pBall = CGame::GetInstance()->GetGameManager()->GetBall();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetCharStatus()->GetTeam()) return;
 
 	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
@@ -105,7 +105,7 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
-	CGameManager* pGameManager = CGame::GetInstance()->GetGameManager();
+	CGameManager* pGameManager = CGameManager::GetInstance();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
 
 	//スペシャルゲージMAX＋ボール所持か
