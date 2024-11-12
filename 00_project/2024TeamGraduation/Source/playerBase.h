@@ -27,7 +27,7 @@ class CPlayerBase
 {
 public:
 	// コンストラクタ
-	CPlayerBase(CPlayer* pPlayer);
+	CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 
 	// デストラクタ
 	virtual ~CPlayerBase();

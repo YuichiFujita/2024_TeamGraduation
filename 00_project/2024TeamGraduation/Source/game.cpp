@@ -155,7 +155,7 @@ HRESULT CGame::Init()
 			CPlayer::EFieldArea::FIELD_IN,	// ƒ|ƒWƒVƒ‡ƒ“
 			CPlayer::EBody::BODY_NORMAL,	// ‘ÌŒn
 			CPlayer::EHandedness::HAND_L	// —˜‚«Žè
-			);
+		);
 		if (pUser == nullptr)
 		{
 			return E_FAIL;
