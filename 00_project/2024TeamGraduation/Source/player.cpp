@@ -1988,9 +1988,9 @@ void CPlayer::Debug()
 		pStatus->SetParameter(parameter);
 
 		// 拡大率の調整
-		float scale = GetModel()[0]->GetOriginScale().x;
+		float scale = GetScale();
 		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
-		GetModel()[0]->SetOriginScale(scale);
+		SetScale(scale);
 
 		ImGui::TreePop();
 	}

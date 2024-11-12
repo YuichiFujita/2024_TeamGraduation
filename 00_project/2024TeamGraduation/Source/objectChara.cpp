@@ -372,6 +372,33 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].parameter.nLife);	// 体力
 	}
 
+	// ボールのオフセット読み込み
+	if (file.find("BALLSET") != std::string::npos)
+	{// BALLSETで中心位置読み込み
+
+		while (strcmp(hoge, "END_BALLSET") != 0)
+		{// END_BALLSETが来るまで繰り返す
+
+			fscanf(pFile, "%s", &hoge[0]);	//確認する
+
+			if (strcmp(hoge, "PARTS") == 0)
+			{// PARTSが来たらパーツ番号読み込み
+
+				fscanf(pFile, "%s", &hoge[0]);	// =の分
+				fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].parameter.nBallPartsIdx);	// モデル種類の列挙
+			}
+
+			if (strcmp(hoge, "OFFSET") == 0)
+			{// OFFSETが来たら位置読み込み
+
+				fscanf(pFile, "%s", &hoge[0]);	// =の分
+				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.x);	// X座標
+				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.y);	// Y座標
+				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.z);	// Z座標
+			}
+		}
+	}
+
 	if (file.find("BALLSET") != std::string::npos)
 	{// BALLSETで中心位置読み込み
 
