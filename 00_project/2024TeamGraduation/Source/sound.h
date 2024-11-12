@@ -17,13 +17,18 @@ class CSound
 {
 public:
 
+	//=============================
 	// 列挙型定義
+	//=============================
+	// サウンドタイプ
 	enum TYPE
 	{
 		TYPE_BGM,
 		TYPE_SE,
 		TYPE_MAX
 	};
+
+	// サウンドラベル
 	enum LABEL
 	{
 		LABEL_BGM_TITLE = 0,	// タイトル
@@ -35,35 +40,45 @@ public:
 		LABEL_MAX
 	};
 
-	typedef struct
+	//=============================
+	// 構造体定義
+	//=============================
+	struct SOUNDINFO
 	{
 		CSound::TYPE type;	// 音種類
 		std::string file;	// ファイル名
 		int nCntLoop;		// ループカウント
-	} SOUNDINFO;
+	};
 
 	CSound();
 	~CSound();
 
 	HRESULT Init(HWND hWnd);
 	void Uninit();
-	HRESULT PlaySound(LABEL label, bool stop = false);
-	void StopSound();
-	void StopSound(LABEL label);
-	void VolumeChange(LABEL label, float volume);	// 音量設定
-	void VolumeChange(float fVolume);				// マスターボリューム設定
-	void VolumeChange(TYPE type, float fVolume);	// 種類別ボリューム設定
+	HRESULT PlaySound(LABEL label, bool stop = false);		// サウンド再生
+	void StopSound();										// サウンド停止
+	void StopSound(LABEL label);							// サウンド停止(ラベル指定)
+	void VolumeChange(LABEL label, float volume);			// 音量設定
+	void VolumeChange(float fVolume);						// マスターボリューム設定
+	void VolumeChange(TYPE type, float fVolume);			// 種類別ボリューム設定
 	float GetVolume() { return m_fMasterVolume; }			// 音量取得（マスターボリューム）
 	float GetVolume(TYPE type) { return m_aVolume[type]; }	// 音量取得（種類別）
-	void SetFrequency(LABEL label, float fValue);	// 周波数設定
+	void SetFrequency(LABEL label, float fValue);			// 周波数設定
 
-	static CSound* Create(HWND hWnd);	// 生成処理
-	static CSound* GetInstance() { return m_pThisPtr; }
+	static CSound* Create(HWND hWnd);						// 生成処理
+	static CSound* GetInstance() { return m_pThisPtr; }		// インスタンス取得
 
 private:
-	HRESULT CheckChunk(HANDLE hFile, DWORD format, DWORD *pChunkSize, DWORD *pChunkDataPosition);
-	HRESULT ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, DWORD dwBufferoffset);
 
+	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT CheckChunk(HANDLE hFile, DWORD format, DWORD *pChunkSize, DWORD *pChunkDataPosition);	// チャンクのチェック
+	HRESULT ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, DWORD dwBufferoffset);	// チャンクデータの読み込み
+
+	//=============================
+	// メンバ変数
+	//=============================
 	IXAudio2 *m_pXAudio2;								// XAudio2オブジェクトへのインターフェイス
 	IXAudio2MasteringVoice *m_pMasteringVoice;			// マスターボイス
 	IXAudio2SourceVoice *m_apSourceVoice[LABEL_MAX];	// ソースボイス
@@ -74,7 +89,7 @@ private:
 	float m_aVolume[TYPE_MAX];							// 音量（種類別）
 	static SOUNDINFO m_aSoundInfo[LABEL_MAX];			// サウンドの情報
 	WAVEFORMATEXTENSIBLE m_wfx[LABEL_MAX];
-	static CSound* m_pThisPtr;	// 自身のポインタ
+	static CSound* m_pThisPtr;							// 自身のポインタ
 };
 
 
