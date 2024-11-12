@@ -1982,12 +1982,16 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fJumpStartMove", &parameter.fJumpStartMove, 0.001f, 0.0f, 100.0f, "%.3f");
 		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");
 		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
+		SetRadius(parameter.fRadius);	// 半径反映
 
-		// 設定
-		SetRadius(parameter.fRadius);
-
+		// パラメーター反映
 		pStatus->SetParameter(parameter);
-		
+
+		// 拡大率の調整
+		float scale = GetModel()[0]->GetOriginScale().x;
+		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
+		GetModel()[0]->SetOriginScale(scale);
+
 		ImGui::TreePop();
 	}
 

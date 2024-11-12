@@ -8,8 +8,6 @@
 #ifndef _PLAYER_CONTROL_MOVE_H_
 #define _PLAYER_CONTROL_MOVE_H_	// 二重インクルード防止
 
-#define BRESSRANGE (0)
-
 #include "playercontrol.h"
 
 //==========================================================================
