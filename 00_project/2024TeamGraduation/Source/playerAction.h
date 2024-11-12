@@ -56,6 +56,7 @@ private:
 
 	// 状態スタート系
 	void StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ(ジャンプ)
+	void StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 回避
 
 	void Debug();
 

@@ -44,7 +44,7 @@ CPlayerAction::START_FUNC CPlayerAction::m_StartFunc[] =	// 行動関数
 {
 	nullptr,								// なし
 	nullptr,								// ブリンク
-	nullptr,								// 回避
+	&CPlayerAction::StartDodge,				// 回避
 	nullptr,								// 走り
 	nullptr,								// ジャンプ
 	nullptr,								// キャッチ
@@ -119,13 +119,14 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	CListManager<CBall> sampleList = CBall::GetListObj();
 	std::list<CBall*>::iterator itr = sampleList.GetEnd();
 	CBall* pObj = nullptr;
+	CGameManager::TeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
 
 	while (sampleList.ListLoop(itr))
 	{
 		pObj = (*itr);
 
 		if (!pObj->IsAttack() ||
-			pObj->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())
+			pObj->GetTypeTeam() == teamPlayer)
 		{
 			return;
 		}
@@ -133,17 +134,8 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 		if (UtilFunc::Collision::CollisionCircleCylinder(
 			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetParameter().fHeight))
 		{
-			//ダメージ受付しない時間設定
-			CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
-			DmgInfo.fReceiveTime = 0.5f;
-			m_pPlayer->SetDamageInfo(DmgInfo);
-
-			// 回避状態に移行
-			// 操作不能状態
-			m_pPlayer->SetEnableMove(false);
+			// アクション設定
 			SetAction(CPlayer::EAction::ACTION_DODGE);
-			m_pPlayer->SetState(CPlayer::STATE_DODGE);
-			m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
 		}
 	}
 }
@@ -270,6 +262,32 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 
 	move.y = fMoveY;
 	m_pPlayer->SetMove(move);
+}
+
+//==========================================================================
+// 回避(スタート)
+//==========================================================================
+void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CGameManager::TeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
+
+	//ダメージ受付しない時間設定
+	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	DmgInfo.fReceiveTime = 0.5f;
+	m_pPlayer->SetDamageInfo(DmgInfo);
+
+	// 回避状態に移行
+	// 操作不能状態
+	m_pPlayer->SetEnableMove(false);
+	m_pPlayer->SetState(CPlayer::STATE_DODGE);
+	m_pPlayer->SetMotion(CPlayer::MOTION_DODGE);
+
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return;
+
+	// モテ加算(ボール投げた側)
+	pGameMgr->AddCharmValue(teamPlayer, CCharmManager::EType::TYPE_DODGE);
 }
 
 //==========================================================================
