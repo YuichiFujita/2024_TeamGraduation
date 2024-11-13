@@ -32,8 +32,8 @@ public:
 	//=============================
 	// ƒˆ‰¼‘zŠÖ”
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() = 0;
-	virtual CPlayerUserControlMove* GetUser() = 0;
+	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
+	virtual CPlayerUserControlMove* GetUser() { return nullptr; }
 
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ˆÚ“®
 

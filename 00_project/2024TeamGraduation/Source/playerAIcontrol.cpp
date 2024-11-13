@@ -532,7 +532,7 @@ void CPlayerAIControl::CatchDash(const float fDeltaTime, const float fDeltaRate,
 void CPlayerAIControl::Target()
 {
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
-	float fMinDis = 1000000.0f;	// ボールから近いプレイヤー
+	float fMinDis = 1000000.0f;	// 近いプレイヤー
 
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();	// 位置情報の取得
 

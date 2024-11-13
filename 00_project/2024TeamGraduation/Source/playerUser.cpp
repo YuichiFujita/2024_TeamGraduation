@@ -12,6 +12,7 @@
 #include "playerStatus.h"
 #include "playerUsercontrol_move.h"
 #include "playerUsercontrol_action.h"
+#include "playerUserOut_controlMove.h"
 
 //==========================================================================
 // 定数定義
@@ -39,7 +40,7 @@ CPlayerUser::CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) :
 	case CPlayer::EFieldArea::FIELD_OUT:
 
 		// 外野操作の割当
-		ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+		ChangeMoveControl(DEBUG_NEW CPlayerUserOutControlMove());
 		ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
 		break;
 
@@ -81,7 +82,7 @@ void CPlayerUser::Update(const float fDeltaTime, const float fDeltaRate, const f
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
+void CPlayerUser::ChangeMoveControl(CPlayerControlMove* control)
 {
 	// 操作クラスの取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
@@ -97,7 +98,7 @@ void CPlayerUser::ChangeMoveControl(CPlayerUserControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerUser::ChangeActionControl(CPlayerUserControlAction* control)
+void CPlayerUser::ChangeActionControl(CPlayerControlAction* control)
 {
 	// 操作クラスの取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
