@@ -21,12 +21,13 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) :
+CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) :
 	m_pPlayer		 (pPlayer),	// プレイヤー情報
 	m_pControlMove	 (nullptr),	// 移動操作
 	m_pControlAction (nullptr)	// アクション操作
 {
-
+	// 位置補正の割当
+	pPlayer->ChangePosAdjuster(typeTeam, typeArea);
 }
 
 //==========================================================================

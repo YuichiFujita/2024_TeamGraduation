@@ -39,6 +39,10 @@
 #include "ObjectLine.h"
 
 // 使用クラス
+#include "playerPosAdj_in.h"
+#include "playerPosAdj_inLeft.h"
+#include "playerPosAdj_inRight.h"
+#include "playerPosAdj_out.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -110,7 +114,6 @@ namespace Align	// 足揃え
 
 namespace Court	// 移動制限
 {
-	const float COMEBACK_LINE = 100.0f;	// 戻ってくるライン
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
 }
 
@@ -254,6 +257,7 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 
 	// パターン用インスタンス
 	m_pActionPattern = nullptr;	// アクションパターン
+	m_pPosAdj = nullptr;		// プレイヤー位置補正
 	m_pStatus = nullptr;		// ステータス
 	m_pBase = nullptr;			// ベース
 
@@ -482,8 +486,11 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pActionPattern->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// 位置の制限
-	LimitPos();
+	// 位置の補正
+	if (m_pPosAdj != nullptr)
+	{
+		m_pPosAdj->UpdateAdjuster(this);
+	}
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
@@ -1127,43 +1134,6 @@ void CPlayer::MotionCrab(int nStartKey)
 }
 
 //==========================================================================
-// 位置制限
-//==========================================================================
-void CPlayer::LimitPos()
-{
-	MyLib::Vector3 pos = GetPosition();
-	
-	if (m_state != EState::STATE_OUTCOURT &&
-		m_state != EState::STATE_OUTCOURT_RETURN)
-	{//コート越え状態以外はコート内補正
-		CGameManager::GetInstance()->SetPosLimit(pos);
-	}
-
-	if (!m_bJump && !m_sMotionFrag.bDead)
-	{// 相手コートに侵入したとき用コート内に補正
-		TeamCourt_Return(pos);
-	}
-
-	if (pos.y <= 0.0f)
-	{
-		pos.y = 0.0f;
-
-		if (m_bJump && !m_sMotionFrag.bDead)
-		{// ジャンプ中着地
-			SetMotion(EMotion::MOTION_LAND);
-		}
-
-		// 重力リセット
-		m_bJump = false;
-		MyLib::Vector3 move = GetMove();
-		move.y = 0.0f;
-		SetMove(move);
-	}
-	SetPosition(pos);
-	return;
-}
-
-//==========================================================================
 // ヒット処理
 //==========================================================================
 CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
@@ -1360,78 +1330,6 @@ void CPlayer::OutCourtSetting()
 	m_sKnockback.posEnd = posE;
 
 	SetState(EState::STATE_OUTCOURT);
-}
-
-//==========================================================================
-// チームコート内に戻る
-//==========================================================================
-void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
-{
-	// ゲームマネージャ取得
-	CGameManager* pGameMgr = CGameManager::GetInstance();
-	if (pGameMgr == nullptr) return;	// 自陣サイズ取得
-
-	CGameManager::ETeamSide team = GetStatus()->GetTeam();
-	MyLib::Vector3 posCourt = MyLib::Vector3();
-	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
-
-	// もう戻ってる場合は抜ける
-	if (m_state == EState::STATE_INVADE_RETURN ||
-		m_state == EState::STATE_INVADE_TOSS) return;
-
-	// 場外判定
-	bool bOut = false;
-	switch (team)
-	{
-	case CGameManager::SIDE_LEFT:	// 左チーム
-
-		if (pos.x > Court::COMEBACK_LINE)
-		{// ライン越え
-
-			bOut = true;
-		}
-		break;
-
-	case CGameManager::SIDE_RIGHT:	// 右チーム
-
-		if (pos.x < -Court::COMEBACK_LINE)
-		{// ライン越え
-
-			bOut = true;
-		}
-		break;
-
-	default:
-		return;
-		break;
-	}
-
-	if (bOut)
-	{
-		// ノックバックの開始位置
-		m_sKnockback.posStart = GetPosition();
-
-		// ボールの有無で遷移別
-		if (m_pBall == nullptr)
-		{
-			// 侵入から戻る状態へ遷移
-			SetState(EState::STATE_INVADE_RETURN);
-		}
-		else
-		{
-			// トスモーション設定
-			SetMotion(EMotion::MOTION_TOSS);
-
-			// トスへ遷移
-			SetState(EState::STATE_INVADE_TOSS);
-
-			// モテ減算
-			if (m_bDash)
-			{
-				pGameMgr->SubCharmValue(team, CCharmManager::ETypeSub::SUB_INVADE_RUN);
-			}
-		}
-	}
 }
 
 //==========================================================================
@@ -1785,12 +1683,12 @@ void CPlayer::StateInvade_Return()
 	{
 	case CGameManager::SIDE_LEFT:	// 左チーム
 
-		posDest.x = -Court::COMEBACK_LINE;
+		posDest.x = -CPlayerPosAdjIn::COMEBACK_LINE;
 		break;
 
 	case CGameManager::SIDE_RIGHT:	// 右チーム
 
-		posDest.x = Court::COMEBACK_LINE;
+		posDest.x = CPlayerPosAdjIn::COMEBACK_LINE;
 		break;
 
 	default:
@@ -1836,6 +1734,44 @@ void CPlayer::StateInvade_Return()
 	{// 完了
 		m_bPossibleMove = true;
 		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// プレイヤー位置補正の変更
+//==========================================================================
+void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
+{
+	// プレイヤー位置補正の破棄
+	SAFE_DELETE(m_pPosAdj);
+
+	// 位置補正クラスの変更
+	switch (area)
+	{ // ポジションごとの処理
+	case EFieldArea::FIELD_IN:
+		switch (team)
+		{ // チームコートごとの処理
+		case CGameManager::ETeamSide::SIDE_LEFT:
+			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
+			break;
+
+		case CGameManager::ETeamSide::SIDE_RIGHT:
+			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
+		break;
+
+	case EFieldArea::FIELD_OUT:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
+		break;
+
+	default:
+		assert(false);
+		break;
 	}
 }
 
@@ -1917,6 +1853,8 @@ void CPlayer::SetState(EState state)
 //==========================================================================
 void CPlayer::ChangeBase(EBaseType type)
 {
+	CGameManager::ETeamSide team = GetStatus()->GetTeam();	// チームサイド
+
 	// ベースクラスの破棄
 	SAFE_DELETE(m_pBase);
 
@@ -1927,11 +1865,11 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerUserIn(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerUserIn(this, team, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerUserOut(this, team, m_typeArea);
 			break;
 
 		default:
@@ -1944,11 +1882,11 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIIn(this, team, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIOut(this, team, m_typeArea);
 			break;
 
 		default:
