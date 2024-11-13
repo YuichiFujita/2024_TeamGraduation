@@ -36,10 +36,19 @@ public:
 	};
 
 private:
-
 	//=============================
 	// 列挙型定義
 	//=============================
+	enum EHeart
+	{
+		HEART_NONE = 0,	// 抜け殻人
+		HEART_NORMAL,	// 通常
+		HEART_STRONG,	// 強気
+		HEART_TIMID,	// 弱気
+		HEART_MAX
+	};
+
+
 	enum EThrowType	// 投げの種類
 	{
 		TYPE_NONE = 0,	// なし
@@ -161,18 +170,23 @@ private:
 	// その他関数
 	//-----------------------------
 	void Reset();			// 変数リセット
-	void ThrowTarget(CPlayer* target = nullptr);		// 投げるターゲット
+	void ThrowTarget(CPlayer** ppTarget = nullptr);		// 投げるターゲット
 	bool IsWait();			// 待て
 	void DistanceThrow();	// 投げる距離
 	void DistanceCatch();	// キャッチ距離
 
-	void PlanThrow();	// 投げるプラン
-	void PlanThrowDistance(CPlayer* target);	// 投げる距離プラン
+	void PlanThrowFlow();	// 投げる流れ
+	void PlanHeart();		// 心のプラン
+	void PlanThrow(CPlayer* pTarget);		// 投げるプラン
+	void PlanThrowDistance(CPlayer* pTarget);	// 投げる距離プラン
+	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
+	void PlanMove(CPlayer* pTarget);
 
 	//=============================
 	// メンバ変数
 	//=============================
 	EMode m_eMode;					// モード
+	EHeart m_eHeart;				// 心の種類
 	EThrowType m_eThrowType;		// 投げ種類
 	EThrowMove m_eThrowMove;		// 投げ行動
 	EThrowTiming m_eThrowTiming;	// 投げタイミング
@@ -185,6 +199,8 @@ private:
 	float m_fJumpEnd;		// ジャンプの終了位置
 
 	CPlayer* m_pAI;
+
+	bool m_bGOThrow;		// 投げてよし！
 };
 
 #endif
