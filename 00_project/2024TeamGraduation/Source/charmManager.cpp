@@ -12,13 +12,21 @@
 //==========================================================================
 namespace
 {
-	const float ADDVALUE[CCharmManager::EType::TYPE_MAX] =	// 加算量
+	const float ADDVALUE[CCharmManager::ETypeAdd::ADD_MAX] =	// 加算量
 	{
 		2.0f,	// ヒット
 		5.0f,	// ジャストキャッチ
 		2.0f,	// カバーキャッチ
 		8.0f,	// 回避
 		30.0f,	// スペシャル
+	};
+
+	const float SUBVALUE[CCharmManager::ETypeSub::SUB_MAX] =	// 減算量
+	{
+		1.0f,	// ライン越えて戻ってる最中にあたる
+		4.0f,	// 端に逃げまくる
+		3.0f,	// 走っていってライン越え(ボール所持)
+		6.0f,	// ずっとボール持って投げない
 	};
 }
 
@@ -70,9 +78,14 @@ CCharmManager* CCharmManager::Create()
 //==========================================================================
 HRESULT CCharmManager::Init()
 {
-	for (int i = 0; i < CCharmManager::EType::TYPE_MAX; i++)
+	for (int i = 0; i < CCharmManager::ETypeAdd::ADD_MAX; i++)
 	{
 		m_fAddValue[i] = ADDVALUE[i];
+	}
+	
+	for (int i = 0; i < CCharmManager::ETypeSub::SUB_MAX; i++)
+	{
+		m_fSubValue[i] = SUBVALUE[i];
 	}
 
 	return S_OK;
@@ -90,10 +103,21 @@ void CCharmManager::Uninit()
 //==========================================================================
 // 加算量取得
 //==========================================================================
-float CCharmManager::GetAddValue(EType type)
+float CCharmManager::GetAddValue(ETypeAdd type)
 {
 	// 範囲外
-	if (EType::TYPE_MAX <= type) return 0.0f;
+	if (ETypeAdd::ADD_MAX <= type) return 0.0f;
 
 	return m_fAddValue[type];
+}
+
+//==========================================================================
+// 加算量取得
+//==========================================================================
+float CCharmManager::GetSubValue(ETypeSub type)
+{
+	// 範囲外
+	if (ETypeSub::SUB_MAX <= type) return 0.0f;
+
+	return m_fSubValue[type];
 }

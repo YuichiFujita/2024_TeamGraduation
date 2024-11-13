@@ -79,8 +79,8 @@ public:
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
 	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
-	void AddCharmValue(ETeamSide side, CCharmManager::EType charmType);	// モテ加算
-	void SubCharmValue(ETeamSide side, CCharmManager::EType charmType);	// モテ減算
+	void AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType);	// モテ加算
+	void SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType);	// モテ減算
 
 	static CGameManager* Create(CScene::MODE mode);				// 生成処理
 	static CGameManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得

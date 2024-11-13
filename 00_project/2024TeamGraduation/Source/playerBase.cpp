@@ -139,7 +139,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (pGameMgr == nullptr) return hitInfo;
 
 	// ƒ‚ƒe‰ÁŽZ(ƒ{[ƒ‹“Š‚°‚½‘¤)
-	pGameMgr->AddCharmValue(sideBall, CCharmManager::EType::TYPE_HIT);
+	pGameMgr->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
 
 	return hitInfo;
 }

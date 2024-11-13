@@ -362,7 +362,7 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
 //==========================================================================
 // モテ加算
 //==========================================================================
-void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::EType charmType)
+void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType)
 {
 	// チームステータス
 	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
@@ -372,10 +372,10 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::EType charmType)
 //==========================================================================
 // モテ減算
 //==========================================================================
-void CGameManager::SubCharmValue(ETeamSide side, CCharmManager::EType charmType)
+void CGameManager::SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType)
 {
 	// チームステータス
-	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
+	float value = CCharmManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
 }
 

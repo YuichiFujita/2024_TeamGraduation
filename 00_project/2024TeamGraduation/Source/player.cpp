@@ -996,7 +996,7 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 	// モテ加算
 	CGameManager* pGameMgr = CGameManager::GetInstance();
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_JUSTCATCH);
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
 }
 
 //==========================================================================
@@ -1337,7 +1337,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_COVERCATCH);
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_COVERCATCH);
 }
 
 //==========================================================================
@@ -1367,7 +1367,10 @@ void CPlayer::OutCourtSetting()
 //==========================================================================
 void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 {
-	// 自陣サイズ取得
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return;	// 自陣サイズ取得
+
 	CGameManager::ETeamSide team = GetStatus()->GetTeam();
 	MyLib::Vector3 posCourt = MyLib::Vector3();
 	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
@@ -1421,6 +1424,12 @@ void CPlayer::TeamCourt_Return(MyLib::Vector3& pos)
 
 			// トスへ遷移
 			SetState(EState::STATE_INVADE_TOSS);
+
+			// モテ減算
+			if (m_bDash)
+			{
+				pGameMgr->SubCharmValue(team, CCharmManager::ETypeSub::SUB_INVADE_RUN);
+			}
 		}
 	}
 }
