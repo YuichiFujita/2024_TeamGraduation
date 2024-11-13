@@ -47,9 +47,9 @@ public:
 			fThrowMoveJump(0.0f),		// 投げ速度(ジャンプ)
 			fThrowMoveSpecial(0.0f),	// 投げ速度(スペシャル)
 			fCatchRange(0.0f),			// キャッチ範囲
-			nDamageNormal(0.0f),		// ダメージ(通常)
-			nDamageJump(0.0f),			// ダメージ(ジャンプ)
-			nDamageSpecial(0.0f)		// ダメージ(スペシャル)
+			nDamageNormal(0),			// ダメージ(通常)
+			nDamageJump(0),				// ダメージ(ジャンプ)
+			nDamageSpecial(0)			// ダメージ(スペシャル)
 		{}
 
 		// パラメーター付きコンストラクタ

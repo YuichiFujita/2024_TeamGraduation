@@ -179,5 +179,5 @@ void CPlayerControlAction::UpdateThrowDrop(const float fDeltaTime, const float f
 	m_fThrowDropTime = UtilFunc::Transformation::Clamp(m_fThrowDropTime - fDeltaTime * fDeltaRate * fSlowRate, 0.0f, TIME_THROWDROP);
 
 	// “Š‚°‚Ì”»’è
-	m_bThrowDrop = m_fThrowDropTime >= 0.0f;
+	m_bThrowDrop = m_fThrowDropTime > 0.0f;
 }

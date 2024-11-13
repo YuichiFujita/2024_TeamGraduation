@@ -20,7 +20,7 @@ namespace
 CBallStatus::CBallStatus(const SBallParameter& parameter) :
 	m_Parameter(parameter)		// パラメーター
 {
-
+	m_pBall = nullptr;
 }
 
 //==========================================================================

@@ -96,8 +96,10 @@ public:
 	int GetLife() const { return m_nLife; }									// 体力取得
 	void SetLifeOrigin(const int nLife) { m_nLifeOrigin = nLife; }			// 元の体力設定
 	int GetLifeOrigin() const { return m_nLifeOrigin; }						// 元の体力取得
-	CCharacterStatus* GetCharStatus() { return m_pStatus; }					// キャラクターステータス取得
-	CCharacterStatus::CharParameter GetParameter() { return m_pStatus->GetParameter(); }	// キャラクターパラメーター取得
+	CCharacterStatus* GetCharStatus() { return m_pStatus; }										// キャラクターステータス取得
+	CCharacterStatus::CharParameter GetParameter() { return m_pStatus->GetParameter(); }		// キャラクターパラメーター取得
+	CBallStatus* GetBallStatus() { return m_pStatusBall; }										// ボールステータス取得
+	CBallStatus::SBallParameter GetBallParameter() { return m_pStatusBall->GetParameter(); }	// ボールパラメーター取得
 
 	//--------------------------
 	// コライダー関連
@@ -145,6 +147,7 @@ protected:
 
 	void LoadObjectData(FILE* pFile, const std::string& file) override;					// オブジェクト毎のデータ読み込み
 	void LoadPartsData(FILE* pFile, const std::string& file, int *pCntParts) override;	// パーツ毎のデータ読み込み
+	void LoadBallData(FILE* pFile, const std::string& file);							// ボールのステータス読み込み
 	void BindObjectData(int nCntData) override;											// オブジェクト毎のデータ割り当て
 	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK);				// 攻撃時処理
 	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK);			// 攻撃判定中処理
@@ -160,6 +163,7 @@ private:
 	void SaveSphereColliders();
 	void MotionInProgressAction();	// モーション中の行動処理
 	void CreateStatus(const CCharacterStatus::CharParameter& parameter);	// ステータス生成
+	void CreateStatusBall(const CBallStatus::SBallParameter& parameter);	// ステータス(ボール)生成
 
 	//=============================
 	// メンバ変数
@@ -168,6 +172,7 @@ private:
 	int m_nLife;					// 体力
 	int m_nLifeOrigin;				// 元の体力
 	CCharacterStatus* m_pStatus;	// ステータス
+	CBallStatus* m_pStatusBall;		// ステータス(ボール)
 	CMotion *m_pMotion;				// モーションの情報
 	std::vector<SphereCollider> m_SphereColliders;	// スフィアコライダー
 	static std::vector<ColliderData> m_LoadColliderData;	// コライダー情報
