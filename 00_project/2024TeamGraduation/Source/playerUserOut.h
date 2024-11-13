@@ -26,6 +26,25 @@ public:
 	//=============================
 	CPlayerUserOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 	virtual ~CPlayerUserOut() override;
+
+	//=============================
+	// オーバーライド関数
+	//=============================
+	virtual CPlayerUserOut* GetPlayerUserOut() override { return this; }	// ユーザー外野プレイヤー取得
+
+	//=============================
+	// メンバ関数
+	//=============================
+	MyLib::Vector3 GetPosLeft()	 { return m_posLeft; }	// 移動可能な左位置の取得
+	MyLib::Vector3 GetPosRight() { return m_posRight; }	// 移動可能な右位置の取得
+
+private:
+
+	//=============================
+	// メンバ変数
+	//=============================
+	MyLib::Vector3 m_posLeft;	// 移動可能左位置
+	MyLib::Vector3 m_posRight;	// 移動可能右位置
 };
 
 #endif

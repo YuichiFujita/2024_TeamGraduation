@@ -145,31 +145,35 @@ void CPlayerAIControl::Uninit()
 //==========================================================================
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// ボールの取得
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall != nullptr && pBall->GetPlayer() == nullptr) {
-
-		m_eMode = EMode::MODE_CATCH;
-	}
+	// モード管理
+	ModeManager();
 
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
+}
 
-	//// AIコントロール情報の取得
-	//CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	//CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+//==========================================================================
+// モード管理
+//==========================================================================
+void CPlayerAIControl::ModeManager()
+{
+	if (m_eMode == EMode::MODE_THROW) return;
 
-	//// 歩きフラグ設定
-	//if (m_eMoveType == EMoveType::MOVETYPE_DISTANCE)
-	//{
-	//	pControlAIMove->SetIsWalk(true);
-	//}
-	//else
-	//{
-	//	pControlAIMove->SetIsWalk(false);
-	//}
+	// ボールの取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall == nullptr) return;
 
-	//Distance();
+	CGameManager::TeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
+
+	if (pBall->GetPlayer() == nullptr) 
+	{// ボールが取得されていない場合
+		m_eMode = EMode::MODE_CATCH;
+	}
+
+	if (typeTeam == m_pAI->GetStatus()->GetTeam())
+	{// 自分とボールを持っているチームが違う場合
+		m_eMode = EMode::MODE_CATCH;
+	}
 }
 
 //==========================================================================
@@ -209,7 +213,8 @@ void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDel
 		}
 	}
 
-	Target();
+	// 投げるターゲット設定
+	ThrowTarget();
 
 	// 投げる種類更新
 	(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -220,7 +225,18 @@ void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDel
 //==========================================================================
 void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_eCatchType = ECatchType::CATCH_TYPE_FIND;
+	// ボールの取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall == nullptr) return;
+
+	if (pBall->GetPlayer() != nullptr) {	// キャッチ状態
+		m_eCatchType = ECatchType::CATCH_TYPE_NORMAL;
+	}
+	else if (pBall->GetPlayer() == nullptr)
+	{
+		// ボールを取りに行く
+		m_eCatchType = ECatchType::CATCH_TYPE_FIND;
+	}
 
 	// 投げる種類更新
 	(this->*(m_CatchFunc[m_eCatchType]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -524,7 +540,8 @@ void CPlayerAIControl::TimingJumpFeint(const float fDeltaTime, const float fDelt
 //==========================================================================
 void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	// 距離を取る
+	DistanceCatch();
 }
 
 //==========================================================================
@@ -546,7 +563,7 @@ void CPlayerAIControl::CatchDash(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 // ターゲット
 //==========================================================================
-void CPlayerAIControl::Target()
+void CPlayerAIControl::ThrowTarget()
 {
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
 	float fMinDis = 1000000.0f;	// 近いプレイヤー
@@ -622,14 +639,27 @@ bool CPlayerAIControl::IsWait()
 }
 
 //==========================================================================
-// 距離を取る
+// 投げる距離
 //==========================================================================
-void CPlayerAIControl::Distance()
+void CPlayerAIControl::DistanceThrow()
 {
+
+}
+
+//==========================================================================
+// キャッチの時距離を取る
+//==========================================================================
+void CPlayerAIControl::DistanceCatch()
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
 	float fMinDis = 400.0f;	// 近いプレイヤー
 
 	MyLib::Vector3 pos = m_pAI->GetPosition();	// 位置情報の取得
+	CGameManager::TeamSide myTeam = m_pAI->GetStatus()->GetTeam();
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -637,7 +667,7 @@ void CPlayerAIControl::Distance()
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
-		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
 		// ボールの取得
 		CBall* pBall = CGameManager::GetInstance()->GetBall();
@@ -649,31 +679,44 @@ void CPlayerAIControl::Distance()
 			(typeTeam == CGameManager::ETeamSide::SIDE_NONE))
 		{ continue; }
 
+		// 味方は見ない
+		if (pPlayer->GetStatus()->GetTeam() == myTeam) continue;
+
 		// 相手との距離を求める
-		float fLength = sqrtf(
-			(pPlayer->GetPosition().x - pos.x) * (pPlayer->GetPosition().x - pos.x) +
-			(pPlayer->GetPosition().z - pos.z) * (pPlayer->GetPosition().z - pos.z));
+		float fLength = posPlayer.DistanceXZ(pos);
 
 		if (fLength < fMinDis)
-		{ // より近い相手プレイヤーがいた場合
+		{ // 数値より近い相手プレイヤーがいた場合
 
+			// 離れる行動状態へ
 			m_eMoveType = EMoveType::MOVETYPE_DISTANCE;
 
+			// ターゲット設定
 			pTarget = pPlayer;
 
-			float fRotDest = m_pAI->GetRotDest();
+			// カニ進行方向の設定
+			float direction = pTarget->GetPosition().AngleXZ(pos);
+			pControlAIMove->SetClabDirection(direction);
 
-			float fSpeed = m_pAI->GetParameter().fVelocityNormal;
+			// 歩きオン
+			pControlAIMove->SetIsWalk(true);
+		}
+		else
+		{
+			m_eMoveType = EMoveType::MOVETYPE_NONE;
 
-	
-
-			/*m_pAI->SetMove({ 
-				sinf(-fRotDest) * fSpeed,
-				0.0f,
-				cosf(-fRotDest) * fSpeed
-				});*/
+			// 歩きオフ
+			pControlAIMove->SetIsWalk(false);
 		}
 	}
+}
+
+//==========================================================================
+// 何を投げるか考える
+//==========================================================================
+void CPlayerAIControl::PlanThrow()
+{
+
 }
 
 //==========================================================================
@@ -693,16 +736,12 @@ void CPlayerAIControl::FindBall(const float fDeltaTime, const float fDeltaRate, 
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr) {
-		Reset();
+		Reset();	// 変数リセット
 		return;
 	}
 
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAI->GetPosition().AngleXZ(pBall->GetPosition());
-
-	// 長さを求める
-	//float fLength = sqrtf((pBall->GetPosition().x - player->GetPosition().x) * (pBall->GetPosition().x - player->GetPosition().x) +
-	//	(pBall->GetPosition().z - player->GetPosition().z) * (pBall->GetPosition().z - player->GetPosition().z));
 
 	// 歩きオン
 	pControlAIMove->SetIsWalk(true);

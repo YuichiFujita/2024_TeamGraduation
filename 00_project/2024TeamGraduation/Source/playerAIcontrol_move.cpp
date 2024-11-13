@@ -30,7 +30,7 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 	m_bBlink = false;
 	m_bDash = false;
 	m_bWalk = false;
-	m_ClabDirection = 0.0f;
+	m_fClabDirection = 0.0f;
 }
 
 //==========================================================================
@@ -322,6 +322,10 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 		return; 
 	}
 
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
 	motionFrag.bMove = true;	// モーションフラグ(歩く)
 
 	bool bDash = IsBlink();	//走るフラグ
@@ -341,17 +345,15 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// 向き取得
 	MyLib::Vector3 rot = player->GetRotation();
-	float fRotDest = player->GetRotDest();
 	
 	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 
 	// TODO : 方向に応じてカニ歩き
 
-
 	if (player->IsCrab())
 	{// カニ歩き
-		move.x += sinf(fRotDest + (D3DX_PI * 1.0f)) * fMove;
-		move.z += cosf(fRotDest + (D3DX_PI * 1.0f)) * fMove;
+		move.x += sinf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;
+		move.z += cosf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;
 	}
 	else
 	{
