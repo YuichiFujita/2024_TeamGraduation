@@ -554,6 +554,9 @@
     <ClCompile Include="Source\playerPosAdj_inLeft.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_out.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1007,6 +1010,9 @@
       <Filter>player\playerPosAdj</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj_inLeft.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_out.h">
       <Filter>player\playerPosAdj</Filter>
     </ClInclude>
   </ItemGroup>

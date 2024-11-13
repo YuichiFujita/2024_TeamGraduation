@@ -42,6 +42,7 @@
 #include "playerPosAdj_in.h"
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
+#include "playerPosAdj_out.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -1002,7 +1003,7 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 	// モテ加算
 	CGameManager* pGameMgr = CGameManager::GetInstance();
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_JUSTCATCH);
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
 }
 
 //==========================================================================
@@ -1306,7 +1307,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::EType::TYPE_COVERCATCH);
+	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_COVERCATCH);
 }
 
 //==========================================================================
@@ -1744,7 +1745,6 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 	// プレイヤー位置補正の破棄
 	SAFE_DELETE(m_pPosAdj);
 
-	// TODO
 	// 位置補正クラスの変更
 	switch (area)
 	{ // ポジションごとの処理
@@ -1766,7 +1766,7 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 		break;
 
 	case EFieldArea::FIELD_OUT:
-		//m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
 		break;
 
 	default:

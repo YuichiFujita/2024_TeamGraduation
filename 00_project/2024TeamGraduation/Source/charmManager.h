@@ -22,14 +22,26 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum EType
+	enum ETypeAdd
 	{
-		TYPE_HIT = 0,		// ヒット
-		TYPE_JUSTCATCH,		// ジャストキャッチ
-		TYPE_COVERCATCH,	// カバーキャッチ
-		TYPE_DODGE,			// 回避
-		TYPE_SPECIAL,		// スペシャル
-		TYPE_MAX
+		ADD_HIT = 0,		// ヒット
+		ADD_JUSTCATCH,		// ジャストキャッチ
+		ADD_COVERCATCH,		// カバーキャッチ
+		ADD_DODGE,			// 回避
+		ADD_SPECIAL,		// スペシャル
+		ADD_MAX
+	};
+
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum ETypeSub
+	{
+		SUB_INVADE_RETURN_HIT = 0,		// ライン越えて戻ってる最中にあたる
+		SUB_EDGE_ESCAPE,				// 端に逃げまくる
+		SUB_INVADE_RUN,					// 走っていってライン越え(ボール所持)
+		SUB_LONG_HOLD,					// ずっとボール持って投げない
+		SUB_MAX
 	};
 
 	CCharmManager();
@@ -44,7 +56,8 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	virtual float GetAddValue(EType type);	// 加算量取得
+	virtual float GetAddValue(ETypeAdd type);	// 加算量取得
+	virtual float GetSubValue(ETypeSub type);	// 減算量取得
 
 	// 静的関数
 	static CCharmManager* Create();	// 生成処理
@@ -56,7 +69,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fAddValue[EType::TYPE_MAX];	// 加算量
+	float m_fAddValue[ETypeAdd::ADD_MAX];	// 加算量
+	float m_fSubValue[ETypeSub::SUB_MAX];	// 減算量
 	static CCharmManager* m_pThisPtr;	// 自身のポインタ
 };
 
