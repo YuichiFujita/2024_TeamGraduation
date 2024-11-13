@@ -19,44 +19,34 @@ NUM_MODEL = 9
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/player/Mii/face.x	        # [0]顔
-MODEL_FILENAME = data/MODEL/player/Mii/body.x	        # [1]体
-MODEL_FILENAME = data/MODEL/player/Mii/kosi.x	        # [2]腰
-MODEL_FILENAME = data/MODEL/player/Mii/armUP_R.x	    # [3]右腕(上)
-MODEL_FILENAME = data/MODEL/player/Mii/armDW_R.x	    # [4]右腕(下)
-MODEL_FILENAME = data/MODEL/player/Mii/armUP_L.x        # [5]左腕(上)
-MODEL_FILENAME = data/MODEL/player/Mii/armDW_L.x	    # [6]左腕(下)
-MODEL_FILENAME = data/MODEL/player/Mii/Hand_R.x	        # [7]右手(右)
-MODEL_FILENAME = data/MODEL/player/Mii/Hand_L.x	        # [8]左手(左)
+MODEL_FILENAME = data/MODEL/audience/Mii/kosi.x	        # [0]腰
+MODEL_FILENAME = data/MODEL/audience/Mii/body.x	        # [1]体
+MODEL_FILENAME = data/MODEL/audience/Mii/face.x	        # [2]顔
+MODEL_FILENAME = data/MODEL/audience/Mii/armUP_R.x	    # [3]右腕(上)
+MODEL_FILENAME = data/MODEL/audience/Mii/armDW_R.x	    # [4]右腕(下)
+MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x        # [5]左腕(上)
+MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	    # [6]左腕(下)
+MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	        # [7]右手(右)
+MODEL_FILENAME = data/MODEL/audience/Mii/Hand_L.x	        # [8]左手(左)
 #------------------------------------------------------------------------------
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	VELOCITY_NORMAL = 1.6	# 通常移動量
-	VELOCITY_RUN = 2.67	# ダッシュ移動量
-	VELOCITY_BLINK = 29.61	# ブリンク移動量
-	
-	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
-	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
-	
-	JUMP = 0.00		# ジャンプ量
-	RADIUS = 60.00	# 半径
-	HEIGHT = 100.00	# 高さ
-	LIFE = 50		# 体力
-	
+
 	CENTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
 	END_CENTERSET
-	
-	BALLSET
-		PARTS = 5		# 中心にするパーツ
-		OFFSET = 0.00 0.0 0.00		# オフセット位置
-	END_BALLSET
+
+	VELOCITY = 0.00		# 移動量
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 60.00		# 半径
+	HEIGHT = 0.00		# 高さ
+	LIFE = 5		# 体力
 
 	PARTSSET
 		INDEX = 0
-		PARENT = 1
+		PARENT = -1
 		POS = 0.00 37.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -64,7 +54,7 @@ CHARACTERSET
 
 	PARTSSET
 		INDEX = 1
-		PARENT = 2
+		PARENT = 0
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -73,7 +63,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 2
 		PARENT = 1
-		POS = 0.00 31.50 0.00
+		POS = 0.00 19.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -81,7 +71,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		POS = -12.00 28.00 0.00
+		POS = -5.00 18.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -89,7 +79,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
-		POS = -11.50 0.00 0.50
+		POS = -3.50 0.00 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -97,7 +87,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 5
 		PARENT = 1
-		POS = 12.00 28.00 0.00
+		POS = 5.00 18.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -105,7 +95,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 6
 		PARENT = 5
-		POS = 12.50 0.00 0.50
+		POS = 4.50 0.00 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -113,7 +103,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 7
 		PARENT = 4
-		POS = -5.50 -7.50 1.00
+		POS = -9.50 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -121,13 +111,12 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 8
 		PARENT = 6
-		POS = 0.00 -14.00 0.00
+		POS = 9.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
-	
-END_CHARACTERSET
 
+END_CHARACTERSET
 
 #==============================================================================
 #
