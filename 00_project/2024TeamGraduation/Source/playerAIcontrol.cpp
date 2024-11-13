@@ -184,6 +184,9 @@ void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDel
 	CGameManager* pGameManager = CGameManager::GetInstance();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetCharStatus()->GetTeam());
 
+	PlanThrow();
+	return;
+
 	if (m_eThrowType == EThrowType::TYPE_NONE)
 	{
 		if (pTeamStatus->IsMaxSpecial())
@@ -214,7 +217,7 @@ void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDel
 	}
 
 	// 投げるターゲット設定
-	ThrowTarget();
+	//ThrowTarget();
 
 	// 投げる種類更新
 	(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -563,7 +566,7 @@ void CPlayerAIControl::CatchDash(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 // ターゲット
 //==========================================================================
-void CPlayerAIControl::ThrowTarget()
+void CPlayerAIControl::ThrowTarget(CPlayer* target)
 {
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
 	float fMinDis = 1000000.0f;	// 近いプレイヤー
@@ -596,6 +599,7 @@ void CPlayerAIControl::ThrowTarget()
 
 			// ターゲットを更新
 			pTarget = pPlayer;
+			target = pTarget;
 
 			// 方向設定
 			m_pAI->SetRotDest(pos.AngleXZ(pTarget->GetPosition()));
@@ -712,11 +716,51 @@ void CPlayerAIControl::DistanceCatch()
 }
 
 //==========================================================================
-// 何を投げるか考える
+// 何投げるまでを考える
 //==========================================================================
 void CPlayerAIControl::PlanThrow()
 {
+	// ターゲット
+	CPlayer* pTarget = nullptr;
 
+	// ターゲットを決める
+	ThrowTarget(pTarget);
+
+	// 距離を決める
+	PlanThrowDistance(pTarget);
+
+	// ジャンプするorｓない
+
+	// 歩かないor歩くor走る
+
+	// 何を投げるか考える
+}
+
+//==========================================================================
+// 投げる距離プラン
+//==========================================================================
+void CPlayerAIControl::PlanThrowDistance(CPlayer* target)
+{
+	if (target == nullptr) return;
+
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// 距離を見る
+	MyLib::Vector3 posTarget = target->GetPosition();
+	MyLib::Vector3 posMy = m_pAI->GetPosition();
+
+	// 自分から相手の距離
+	float fDistance = posMy.DistanceXZ(posTarget);
+
+	if (fDistance < 400.0f)
+	{
+		// 相手から自分の方向
+		//pControlAIMove->SetClabDirection(posTarget.AngleXZ(posMy));
+
+		m_pAI->SetRotDest(posTarget.AngleXZ(posMy));
+	}
 }
 
 //==========================================================================

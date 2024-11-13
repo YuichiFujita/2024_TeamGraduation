@@ -160,13 +160,14 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void Reset();		// 列挙リセット
-	void ThrowTarget();		// 投げるターゲット
-	bool IsWait();		// 待て
+	void Reset();			// 変数リセット
+	void ThrowTarget(CPlayer* target = nullptr);		// 投げるターゲット
+	bool IsWait();			// 待て
 	void DistanceThrow();	// 投げる距離
 	void DistanceCatch();	// キャッチ距離
 
-	void PlanThrow();
+	void PlanThrow();	// 投げるプラン
+	void PlanThrowDistance(CPlayer* target);	// 投げる距離プラン
 
 	//=============================
 	// メンバ変数
