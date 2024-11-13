@@ -11,13 +11,13 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playercontrol_action.h"
-#include "playercontrol_move.h"
 #include "player.h"
 
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CPlayerControlMove;
+class CPlayerControlAction;
 class CBall;
 
 //==========================================================================
@@ -41,10 +41,10 @@ public:
 
 	// メンバ関数
 	void DeleteControl();	// 操作破棄
+	void SetPlayerControlMove(CPlayerControlMove* pControlMove);		// 操作設定 (移動)
+	void SetPlayerControlAction(CPlayerControlAction* pControlAction);	// 操作設定 (アクション)
 	CPlayerControlMove* GetPlayerControlMove()		{ return m_pControlMove; }		// 操作取得 (移動)
 	CPlayerControlAction* GetPlayerControlAction()	{ return m_pControlAction; }	// 操作取得 (アクション)
-	void SetPlayerControlMove(CPlayerControlMove* pControlMove)			{ m_pControlMove = pControlMove; }		// 操作設定 (移動)
-	void SetPlayerControlAction(CPlayerControlAction* pControlAction)	{ m_pControlAction = pControlAction; }	// 操作設定 (アクション)
 
 protected:
 	// メンバ関数

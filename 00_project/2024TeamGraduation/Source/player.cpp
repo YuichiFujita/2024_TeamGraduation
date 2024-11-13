@@ -30,6 +30,8 @@
 // 派生先
 #include "playerAI.h"
 #include "playerUser.h"
+#include "playerUserIn.h"
+#include "playerUserOut.h"
 
 // デバッグ
 #include "ObjectLine.h"
@@ -1886,11 +1888,37 @@ void CPlayer::ChangeBase(EBaseType type)
 	switch (type)
 	{ // ユーザー種類ごとの処理
 	case TYPE_USER:
-		m_pBase = DEBUG_NEW CPlayerUser(this, m_typeArea);
+		switch (m_typeArea)
+		{ // ポジションごとの処理
+		case FIELD_IN:
+			m_pBase = DEBUG_NEW CPlayerUserIn(this, m_typeArea);
+			break;
+
+		case FIELD_OUT:
+			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeArea);
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
 		break;
 
 	case TYPE_AI:
-		m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+		switch (m_typeArea)
+		{ // ポジションごとの処理
+		case FIELD_IN:
+			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			break;
+
+		case FIELD_OUT:
+			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
 		break;
 
 	default:
