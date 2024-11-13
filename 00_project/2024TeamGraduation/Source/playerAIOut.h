@@ -1,37 +1,37 @@
 //==========================================================================
 // 
-//  ユーザー内野プレイヤーヘッダー [playerUserIn.h]
+//  AI外野プレイヤーヘッダー [playerAIOut.h]
 //  Author : 藤田勇一
-//  Adder  : 髙田佳依
+//  Adder  : 小笠原彪
 // 
 //==========================================================================
 
-#ifndef _PLAYER_USER_IN_
-#define _PLAYER_USER_IN_	// 二重インクルード防止
+#ifndef _PLAYER_AI_OUT_
+#define _PLAYER_AI_OUT_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerUser.h"
+#include "playerAI.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// ユーザー内野プレイヤークラス
-class CPlayerUserIn : public CPlayerUser
+// AI外野プレイヤークラス
+class CPlayerAIOut : public CPlayerAI
 {
 public:
-	
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerUserIn(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
-	virtual ~CPlayerUserIn() override;
+	CPlayerAIOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
+	virtual ~CPlayerAIOut() override;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerUserIn* GetPlayerUserIn() override { return nullptr; }	// ユーザー内野プレイヤー取得
+	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
 };
 
 #endif
