@@ -30,7 +30,7 @@ public:
 	CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 
 	// デストラクタ
-	virtual ~CPlayerBase();
+	virtual ~CPlayerBase() = 0;
 
 	// 純粋仮想関数
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 更新
