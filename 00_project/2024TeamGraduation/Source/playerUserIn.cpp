@@ -22,7 +22,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserIn::CPlayerUserIn(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea)
+CPlayerUserIn::CPlayerUserIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea)
 {
 	// 内野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());

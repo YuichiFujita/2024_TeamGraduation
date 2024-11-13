@@ -1739,7 +1739,7 @@ void CPlayer::StateInvade_Return()
 //==========================================================================
 // プレイヤー位置補正の変更
 //==========================================================================
-void CPlayer::ChangePosAdjuster(CGameManager::TeamSide team, EFieldArea area)
+void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 {
 	// プレイヤー位置補正の破棄
 	SAFE_DELETE(m_pPosAdj);
@@ -1751,11 +1751,11 @@ void CPlayer::ChangePosAdjuster(CGameManager::TeamSide team, EFieldArea area)
 	case EFieldArea::FIELD_IN:
 		switch (team)
 		{ // チームコートごとの処理
-		case CGameManager::TeamSide::SIDE_LEFT:
+		case CGameManager::ETeamSide::SIDE_LEFT:
 			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
 			break;
 
-		case CGameManager::TeamSide::SIDE_RIGHT:
+		case CGameManager::ETeamSide::SIDE_RIGHT:
 			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
 			break;
 
@@ -1853,7 +1853,7 @@ void CPlayer::SetState(EState state)
 //==========================================================================
 void CPlayer::ChangeBase(EBaseType type)
 {
-	CGameManager::TeamSide team = GetStatus()->GetTeam();	// チームサイド
+	CGameManager::ETeamSide team = GetStatus()->GetTeam();	// チームサイド
 
 	// ベースクラスの破棄
 	SAFE_DELETE(m_pBase);

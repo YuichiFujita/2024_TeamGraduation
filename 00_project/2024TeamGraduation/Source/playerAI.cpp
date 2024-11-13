@@ -14,7 +14,7 @@
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea)
+CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea)
 {
 
 }

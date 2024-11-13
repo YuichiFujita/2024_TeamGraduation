@@ -22,7 +22,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUser::CPlayerUser(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea)
+CPlayerUser::CPlayerUser(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea)
 {
 
 }
