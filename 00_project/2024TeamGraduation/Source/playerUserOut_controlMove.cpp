@@ -1,17 +1,19 @@
-#if 0
 //=============================================================================
 // 
-//  プレイヤーコントロール処理 [playerUsercontrol_move.cpp]
+//  外野プレイヤーコントロール処理 [playerUserOut_controlMove.cpp]
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playerUsercontrol_move.h"
+#include "playerUserOut_controlMove.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
 #include "camera.h"
 #include "game.h"
 #include "playerAction.h"
+
+// TODO:いらない
+#include "3D_effect.h"
 
 //==========================================================================
 // 定数定義
@@ -28,7 +30,14 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserControlMove::CPlayerUserControlMove()
+CPlayerUserOutControlMove::CPlayerUserOutControlMove() :
+#if 0	// TODO
+	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
+	m_posRight	(VEC3_ZERO)		// 移動可能右位置
+#else
+	m_posLeft	(MyLib::Vector3(900.0f, 0.0f, 650.0f)),	// 移動可能左位置
+	m_posRight	(MyLib::Vector3(50.0f, 0.0f, 650.0f))	// 移動可能右位置
+#endif
 {
 
 }
@@ -36,7 +45,7 @@ CPlayerUserControlMove::CPlayerUserControlMove()
 //==========================================================================
 // ブリンク
 //==========================================================================
-void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -48,6 +57,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if 0
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -328,12 +338,15 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 
 	// コントロール系
 	SetBlink(bDash);	// 走るフラグ設定
+#else
+
+#endif
 }
 
 //==========================================================================
 // 走り
 //==========================================================================
-void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bDash = IsBlink();	// 走るフラグ取得
 	if (!bDash)
@@ -345,6 +358,7 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if 0
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -391,17 +405,21 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	player->SetMotionFrag(motionFrag);
 	
 	SetBlink(bDash);	//走るフラグ設定
+#else
+
+#endif
 }
 
 //==========================================================================
 // ウォーク
 //==========================================================================
-void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if 0
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -614,12 +632,36 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	SetInputAngleCtr(INPUT_COUNTER);
 
 	SetBlink(bDash);	//走るフラグ設定
+#else
+	MyLib::Vector3 playerMove = player->GetMove();
+	MyLib::Vector3 vecMove = m_posLeft - m_posRight;
+	vecMove = vecMove.Normal();
+
+	float fMove = player->GetParameter().fVelocityNormal;
+	fMove *= fDeltaRate;
+	fMove *= fSlowRate;
+
+	if (pKey->GetPress(DIK_A))
+	{
+		playerMove += vecMove * fMove;
+	}
+	if (pKey->GetPress(DIK_D))
+	{
+		playerMove += -vecMove * fMove;
+	}
+
+	// 移動量反映
+	player->SetMove(playerMove);
+
+	CEffect3D::Create(m_posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
+	CEffect3D::Create(m_posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
+#endif
 }
 
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
+CPlayer::SDashInfo CPlayerUserOutControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;
@@ -651,4 +693,3 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDa
 
 	return info;
 }
-#endif

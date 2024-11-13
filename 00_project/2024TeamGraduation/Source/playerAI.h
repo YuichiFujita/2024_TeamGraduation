@@ -43,11 +43,11 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerAIControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerAIControlAction* control);	// アクションの操作変更
+	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
 
 private:
-	CPlayerAIControl* m_pControl;
+	CPlayerAIControl* m_pAIControl;
 	
 };
 

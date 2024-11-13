@@ -31,7 +31,7 @@ public:
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
-	~CPlayerUser() override;
+	virtual ~CPlayerUser() override = 0;
 
 	//=============================
 	// オーバーライド関数
@@ -41,8 +41,8 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangeMoveControl(CPlayerUserControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerUserControlAction* control);	// アクションの操作変更
+	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
 };
 
 #endif

@@ -271,6 +271,8 @@
     <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
     <ClCompile Include="Source\playerUser.cpp" />
+    <ClCompile Include="Source\playerUserIn.cpp" />
+    <ClCompile Include="Source\playerUserOut.cpp" />
     <ClCompile Include="Source\playerUserOut_controlMove.cpp" />
     <ClCompile Include="Source\precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -419,6 +421,8 @@
     <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />
     <ClInclude Include="Source\playerUser.h" />
+    <ClInclude Include="Source\playerUserIn.h" />
+    <ClInclude Include="Source\playerUserOut.h" />
     <ClInclude Include="Source\playerUserOut_controlMove.h" />
     <ClInclude Include="Source\precompile.h" />
     <ClInclude Include="Source\ranking.h" />

@@ -46,8 +46,8 @@ CPlayerAI::CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPl
 	}
 
 	// プレイヤーAIコントロールの生成
-	m_pControl = nullptr;
-	m_pControl = CPlayerAIControl::Create(pPlayer);
+	m_pAIControl = nullptr;
+	m_pAIControl = CPlayerAIControl::Create(pPlayer);
 }
 
 //==========================================================================
@@ -79,9 +79,9 @@ void CPlayerAI::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	SetPlayerControlAction(pControlAction);
 
 	// コントロール更新
-	if (m_pControl)
+	if (m_pAIControl)
 	{
-		m_pControl->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		m_pAIControl->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
@@ -98,7 +98,7 @@ CPlayer::SHitInfo CPlayerAI::Hit(CBall* pBall)
 
 	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
 		// 投げモード
-		m_pControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
+		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
 	}
 
 	return hitInfo;
@@ -107,7 +107,7 @@ CPlayer::SHitInfo CPlayerAI::Hit(CBall* pBall)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
+void CPlayerAI::ChangeMoveControl(CPlayerControlMove* control)
 {
 	// 操作クラスの取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
@@ -123,7 +123,7 @@ void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
+void CPlayerAI::ChangeActionControl(CPlayerControlAction* control)
 {
 	// 操作クラスの取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();

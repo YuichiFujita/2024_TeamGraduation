@@ -19,7 +19,7 @@
 //==========================================================================
 namespace
 {
-
+	const float TIME_THROWDROP = 0.5f;	// 投げ(ドロップボール)の猶予
 }
 
 //==========================================================================
@@ -27,7 +27,8 @@ namespace
 //==========================================================================
 CPlayerControlAction::CPlayerControlAction()
 {
-
+	m_fThrowDropTime = 0.0f;	// 投げ(ドロップボール)の猶予
+	m_bThrowDrop = false;		// 投げ(ドロップボール)可能判定
 }
 
 //==========================================================================
@@ -58,6 +59,9 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 投げ(ドロップボール)の猶予
+	UpdateThrowDrop(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
 	if (pPlayerAction == nullptr) return; 
@@ -79,7 +83,7 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 {
 	pBall->Special(player);
 
-	//スペシャルゲージ消費
+	// スペシャルゲージ消費
 	pTeamStatus->ZeroSpecialValue();
 
 	// アクションパターン変更
@@ -95,6 +99,10 @@ void CPlayerControlAction::ThrowSetting(CPlayer* player)
 	if (player->IsJump())
 	{
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
+	}
+	else if (player->GetBase()->GetPlayerControlAction()->IsThrowDrop())
+	{
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_DROP, CPlayer::EAction::ACTION_THROW);
 	}
 	else if (player->IsDash())
 	{
@@ -147,4 +155,29 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 
 	// サウンド再生
 	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+}
+
+//==========================================================================
+// 投げ(ドロップボール)可能
+//==========================================================================
+void CPlayerControlAction::SetThrowDrop()
+{
+	// 投げ(ドロップボール)の猶予設定
+	m_fThrowDropTime = TIME_THROWDROP;
+
+	// 投げの判定
+	m_bThrowDrop = true;
+}
+
+//==========================================================================
+// 投げ(ドロップボール)の猶予
+//==========================================================================
+void CPlayerControlAction::UpdateThrowDrop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 投げ(ドロップボール)の猶予減算
+	m_fThrowDropTime -= fDeltaTime * fDeltaRate * fSlowRate;
+	m_fThrowDropTime = UtilFunc::Transformation::Clamp(m_fThrowDropTime - fDeltaTime * fDeltaRate * fSlowRate, 0.0f, TIME_THROWDROP);
+
+	// 投げの判定
+	m_bThrowDrop = m_fThrowDropTime >= 0.0f;
 }
