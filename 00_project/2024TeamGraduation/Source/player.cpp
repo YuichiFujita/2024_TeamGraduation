@@ -823,6 +823,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	{
 	case EMotion::MOTION_THROW:
 	case EMotion::MOTION_THROW_RUN:
+	case EMotion::MOTION_THROW_DROP:
 
 		if (m_pBall != nullptr)
 		{// 通常投げ

@@ -13,6 +13,7 @@
 //==========================================================================
 #include "object.h"
 #include "characterStatus.h"
+#include "BallStatus.h"
 
 //==========================================================================
 // 前方宣言
@@ -52,6 +53,7 @@ public:
 		int nNumModel;								// モデル数
 		MyLib::Vector3 posOrigin;					// 最初の位置
 		CCharacterStatus::CharParameter parameter;	// パラメーター
+		CBallStatus::SBallParameter parameterBall;	// パラメーター(ボール)
 		std::vector<LoadData> LoadData;	// 読み込む子データ
 	};
 
