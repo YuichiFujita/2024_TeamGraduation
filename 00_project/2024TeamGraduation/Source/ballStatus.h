@@ -88,7 +88,7 @@ public:
 #if _DEBUG
 	void SetParameter(const SBallParameter& parameter) { m_Parameter = parameter; };	// パラメーター設定
 #endif
-	SBallParameter GetParameter() { return m_Parameter; }
+	SBallParameter GetParameter() { return m_Parameter; }	// パラメーター取得
 
 private:
 	
