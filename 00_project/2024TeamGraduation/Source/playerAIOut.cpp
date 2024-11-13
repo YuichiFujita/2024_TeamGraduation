@@ -1,14 +1,15 @@
 //==========================================================================
 // 
-//  ユーザープレイヤー処理 [playerUserOut.cpp]
+//  AIプレイヤー処理 [playerAIOut.cpp]
 //  Author : 藤田勇一
+//  Adder  : 小笠原彪
 // 
 //==========================================================================
-#include "playerUserOut.h"
+#include "playerAIOut.h"
 
 // 使用クラス
-#include "playerUserOut_controlMove.h"
-#include "playerUsercontrol_action.h"
+#include "playerAIcontrol_move.h"
+#include "playerAIcontrol_action.h"
 
 //==========================================================================
 // 定数定義
@@ -21,17 +22,17 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeArea)
+CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerAI(pPlayer, typeArea)
 {
 	// 外野操作の割当	// TODO：外野操作に変更
-	ChangeMoveControl(DEBUG_NEW CPlayerUserOutControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 }
 
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerUserOut::~CPlayerUserOut()
+CPlayerAIOut::~CPlayerAIOut()
 {
 
 }
