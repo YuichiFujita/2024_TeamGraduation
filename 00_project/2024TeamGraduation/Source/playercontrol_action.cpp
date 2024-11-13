@@ -19,7 +19,7 @@
 //==========================================================================
 namespace
 {
-	const float TIME_THROWDROP = 0.5f;	// 投げ(ドロップボール)の猶予
+	const float TIME_THROWDROP = 15.0f / 60.0f;	// 投げ(ドロップボール)の猶予
 }
 
 //==========================================================================
@@ -179,5 +179,7 @@ void CPlayerControlAction::UpdateThrowDrop(const float fDeltaTime, const float f
 	m_fThrowDropTime = UtilFunc::Transformation::Clamp(m_fThrowDropTime - fDeltaTime * fDeltaRate * fSlowRate, 0.0f, TIME_THROWDROP);
 
 	// 投げの判定
-	m_bThrowDrop = m_fThrowDropTime >= 0.0f;
+	m_bThrowDrop = m_fThrowDropTime > 0.0f;
+
+	ImGui::Text("m_bThrowDrop: [%s]", m_bThrowDrop ? "true" : "false");
 }

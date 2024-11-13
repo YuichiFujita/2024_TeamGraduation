@@ -11,6 +11,8 @@
 #include "camera.h"
 #include "game.h"
 #include "playerAction.h"
+#include "playerBase.h"
+#include "playerUserOut.h"
 
 // TODO:いらない
 #include "3D_effect.h"
@@ -30,14 +32,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserOutControlMove::CPlayerUserOutControlMove() :
-#if 0	// TODO
-	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
-	m_posRight	(VEC3_ZERO)		// 移動可能右位置
-#else
-	m_posLeft	(MyLib::Vector3(900.0f, 0.0f, 650.0f)),	// 移動可能左位置
-	m_posRight	(MyLib::Vector3(50.0f, 0.0f, 650.0f))	// 移動可能右位置
-#endif
+CPlayerUserOutControlMove::CPlayerUserOutControlMove()
 {
 
 }
@@ -633,28 +628,31 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 
 	SetBlink(bDash);	//走るフラグ設定
 #else
-	MyLib::Vector3 playerMove = player->GetMove();
-	MyLib::Vector3 vecMove = m_posLeft - m_posRight;
-	vecMove = vecMove.Normal();
+	CPlayerBase* pBase = player->GetBase();					// プレイヤーベース情報
+	CPlayerUserOut* pPlayerOut = pBase->GetPlayerUserOut();	// プレイヤー外野情報
+	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();		// 移動可能な左位置
+	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();	// 移動可能な右位置
+	MyLib::Vector3 playerMove = player->GetMove();			// プレイヤー移動量
+	float fMoveValue = player->GetParameter().fVelocityNormal * fDeltaRate * fSlowRate;	// 移動数値
 
-	float fMove = player->GetParameter().fVelocityNormal;
-	fMove *= fDeltaRate;
-	fMove *= fSlowRate;
+	// 移動ベクトルの作成
+	MyLib::Vector3 vecMove = posLeft - posRight;	// ベクトルの作成
+	vecMove = vecMove.Normal();						// ベクトルの正規化
 
 	if (pKey->GetPress(DIK_A))
 	{
-		playerMove += vecMove * fMove;
+		playerMove += -vecMove * fMoveValue;
 	}
 	if (pKey->GetPress(DIK_D))
 	{
-		playerMove += -vecMove * fMove;
+		playerMove += vecMove * fMoveValue;
 	}
 
 	// 移動量反映
 	player->SetMove(playerMove);
 
-	CEffect3D::Create(m_posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
-	CEffect3D::Create(m_posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
+	CEffect3D::Create(posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
+	CEffect3D::Create(posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
 #endif
 }
 

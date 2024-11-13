@@ -584,7 +584,7 @@ float CCameraMotion::GetWholeCurTimer()
 float CCameraMotion::GetWholeMaxTimer()
 {
 	float fTimer = 0.0f;	// 全体時間
-	for (int i = 0; i < m_vecMotionInfo[m_nNowMotionIdx].Key.size(); i++)
+	for (int i = 0; i < (int)m_vecMotionInfo[m_nNowMotionIdx].Key.size(); i++)
 	{ // キーの総数分繰り返す
 
 		// キーの総時間を加算

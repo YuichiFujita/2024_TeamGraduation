@@ -38,6 +38,10 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/Bound02.wav",0},				// バウンド(低め)
 	{ TYPE_SE,"data/SE/Bound03.wav",0},				// バウンド(繰り返し)
 
+	// ヒット
+	{ TYPE_SE,"data/SE/hit00.wav",0},				// 通常投げ
+	{ TYPE_SE,"data/SE/hit01.wav",0},				// ジャンプ投げ
+
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
 

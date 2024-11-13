@@ -47,6 +47,8 @@ public:
 		LABEL_SE_BOUND_MEDIUM,	// バウンド(普通)
 		LABEL_SE_BOUND_LOW,		// バウンド(低め)
 		LABEL_SE_BOUND_REPEAT,	// バウンド(繰り返し)
+		LABEL_SE_HIT_NORMAL,	// ヒット(通常)
+		LABEL_SE_HIT_JUMP,		// ヒット(ジャンプ)
 		LABEL_MAX
 	};
 

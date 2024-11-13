@@ -533,6 +533,12 @@
     <ClCompile Include="Source\playerUserOut.cpp">
       <Filter>player\playerUser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerAIIn.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIOut.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -969,6 +975,12 @@
     </ClInclude>
     <ClInclude Include="Source\playerUserOut.h">
       <Filter>player\playerUser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIIn.h">
+      <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIOut.h">
+      <Filter>player\playerAI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

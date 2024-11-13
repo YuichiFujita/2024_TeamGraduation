@@ -29,6 +29,8 @@
 
 // 派生先
 #include "playerAI.h"
+#include "playerAIIn.h"
+#include "playerAIOut.h"
 #include "playerUser.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
@@ -821,6 +823,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	{
 	case EMotion::MOTION_THROW:
 	case EMotion::MOTION_THROW_RUN:
+	case EMotion::MOTION_THROW_DROP:
 
 		if (m_pBall != nullptr)
 		{// 通常投げ
@@ -1231,6 +1234,30 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
+
+
+	// ボール攻撃種類
+	CBall::EAttack atkBall = pBall->GetTypeAtk();
+
+	// サウンド再生
+	switch (atkBall)
+	{
+	case CBall::ATK_NORMAL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_NORMAL);
+		break;
+
+	case CBall::ATK_JUMP:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+		break;
+
+	case CBall::ATK_SPECIAL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 //==========================================================================
@@ -1908,11 +1935,11 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeArea);
 			break;
 
 		default:
