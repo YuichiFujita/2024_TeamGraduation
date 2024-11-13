@@ -16,6 +16,10 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CPlayerUserIn;
+class CPlayerUserOut;
+class CPlayerAIIn;
+class CPlayerAIOut;
 class CPlayerControlMove;
 class CPlayerControlAction;
 class CBall;
@@ -37,7 +41,11 @@ public:
 
 	// 仮想関数
 	virtual CPlayer::SHitInfo Hit(CBall* pBall);	// ヒット
-	virtual void Debug();	// デバッグ
+	virtual void Debug();							// デバッグ
+	virtual CPlayerUserIn* GetPlayerUserIn()	{ return nullptr; }	// ユーザー内野プレイヤー取得
+	virtual CPlayerUserOut* GetPlayerUserOut()	{ return nullptr; }	// ユーザー外野プレイヤー取得
+	virtual CPlayerAIIn* GetPlayerAIIn()		{ return nullptr; }	// AI内野プレイヤー取得
+	virtual CPlayerAIOut* GetPlayerAIOut()		{ return nullptr; }	// AI外野プレイヤー取得
 
 	// メンバ関数
 	void DeleteControl();	// 操作破棄

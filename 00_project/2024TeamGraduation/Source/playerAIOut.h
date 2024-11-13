@@ -27,6 +27,11 @@ public:
 	//=============================
 	CPlayerAIOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
 	virtual ~CPlayerAIOut() override;
+
+	//=============================
+	// オーバーライド関数
+	//=============================
+	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
 };
 
 #endif

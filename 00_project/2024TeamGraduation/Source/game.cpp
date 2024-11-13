@@ -236,6 +236,17 @@ HRESULT CGame::Init()
 	}
 #endif
 
+	// プレイヤー外野User生成(右)
+#if 1
+	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
+	if (pUserOut == nullptr)
+	{
+		return E_FAIL;
+	}
+	pUserOut->SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+	pUserOut->SetRotDest(0.0f);
+#endif
+
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_FOLLOW);

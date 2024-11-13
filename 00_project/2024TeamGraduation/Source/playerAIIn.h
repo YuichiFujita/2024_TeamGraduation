@@ -39,6 +39,7 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
 	virtual void Debug() override;	// デバッグ
+	virtual CPlayerAIIn* GetPlayerAIIn() override { return nullptr; }	// AI内野プレイヤー取得
 
 private:
 
