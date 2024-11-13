@@ -37,6 +37,9 @@ public:
 
 private:
 
+	//=============================
+	// 列挙型定義
+	//=============================
 	enum EThrowType	// 投げの種類
 	{
 		TYPE_NONE = 0,	// なし
@@ -65,7 +68,7 @@ private:
 		TIMING_MAX
 	};
 
-	enum ECatchType
+	enum ECatchType	// キャッチ種類
 	{
 		CATCH_TYPE_NONE = 0,	// なし
 		CATCH_TYPE_NORMAL,		// 通常
@@ -75,6 +78,12 @@ private:
 		CATCH_TYPE_MAX
 	};
 
+	enum EMoveType	// 行動種類
+	{
+		MOVETYPE_NONE = 0,
+		MOVETYPE_DISTANCE,
+		MOVETYPE_MAX
+	};
 
 public:
 
@@ -88,8 +97,7 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	void SetMode(EMode mode) { m_eMode = mode; }	// モード設定
-	void SetPlayerInfo(CPlayer* player) { m_pPlayer = player; }
-	//void Set
+	void SetPlayerInfo(CPlayer* player) { m_pAI = player; }
 
 private:
 	//=============================
@@ -116,7 +124,6 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
 	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
 	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
@@ -152,9 +159,10 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void Reset();	// 列挙リセット
-	void Target();	// ターゲット
-	bool IsWait();	// 待て
+	void Reset();		// 列挙リセット
+	void Target();		// ターゲット
+	bool IsWait();		// 待て
+	void Distance();	// 距離を取る
 
 	//=============================
 	// メンバ変数
@@ -164,13 +172,14 @@ private:
 	EThrowMove m_eThrowMove;		// 投げ行動
 	EThrowTiming m_eThrowTiming;	// 投げタイミング
 	ECatchType m_eCatchType;		// キャッチ種類
+	EMoveType m_eMoveType;			// 行動種類
 	float m_fTiming;		// タイミングカウント
 	float m_fTimingRate;	// タイミングの割合
 	bool m_bTiming;			// タイミングフラグ
 	bool m_bFoldJump;		// ジャンプの折り返しフラグ
 	float m_fJumpEnd;		// ジャンプの終了位置
 
-	CPlayer* m_pPlayer;
+	CPlayer* m_pAI;
 };
 
 #endif

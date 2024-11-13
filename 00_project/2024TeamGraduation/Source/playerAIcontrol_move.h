@@ -58,6 +58,7 @@ private:
 	bool m_bBlink;
 	bool m_bDash;
 	bool m_bWalk;
+	float m_ClabDirection;
 };
 
 

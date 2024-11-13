@@ -47,7 +47,7 @@ public:
 	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
 
 private:
-	CPlayerAIControl* m_pControl;
+	CPlayerAIControl* m_pAIControl;
 	
 };
 
