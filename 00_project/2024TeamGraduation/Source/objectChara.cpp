@@ -23,11 +23,12 @@ std::vector<CObjectChara::ColliderData> CObjectChara::m_LoadColliderData = {};	/
 CObjectChara::CObjectChara(int nPriority) : CObjectHierarchy(nPriority)
 {
 	// 値のクリア
-	m_fRotDest = 0.0f;		// 目標の向き
-	m_nLife = 0;			// 体力
-	m_nLifeOrigin = 0;		// 元の体力
-	m_pStatus = nullptr;	// ステータス
-	m_bInDicision = false;	// 攻撃判定中フラグ
+	m_fRotDest = 0.0f;			// 目標の向き
+	m_nLife = 0;				// 体力
+	m_nLifeOrigin = 0;			// 元の体力
+	m_pStatus = nullptr;		// ステータス
+	m_pStatusBall = nullptr;	// ステータス(ボール)
+	m_bInDicision = false;		// 攻撃判定中フラグ
 }
 
 //==========================================================================
@@ -97,6 +98,9 @@ void CObjectChara::BindObjectData(int nCntData)
 	// ステータス生成
 	CreateStatus(m_aLoadData[m_nIdxFile].parameter);
 
+	// ステータス(ボール)生成
+	CreateStatusBall(m_aLoadData[m_nIdxFile].parameterBall);
+
 	// 体力
 	m_nLife = m_aLoadData[m_nIdxFile].parameter.nLife;
 	m_nLifeOrigin = m_nLife;
@@ -115,6 +119,21 @@ void CObjectChara::CreateStatus(const CCharacterStatus::CharParameter& parameter
 
 	// 生成
 	m_pStatus = DEBUG_NEW CCharacterStatus(parameter);
+}
+
+//==========================================================================
+// ステータス(ボール)生成
+//==========================================================================
+void CObjectChara::CreateStatusBall(const CBallStatus::SBallParameter& parameter)
+{
+	if (m_pStatusBall != nullptr)
+	{
+		delete m_pStatusBall;
+		m_pStatusBall = nullptr;
+	}
+
+	// 生成
+	m_pStatusBall = DEBUG_NEW CBallStatus(parameter);
 }
 
 //==========================================================================
@@ -372,6 +391,13 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 		fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].parameter.nLife);	// 体力
 	}
 
+	// ボールのステータス読み込み
+	if (file.find("BALLSTATUSSET") != std::string::npos)
+	{// BALLSTATUSSETで読み込み
+
+		LoadBallData(pFile, file);
+	}
+
 	// ボールのオフセット読み込み
 	if (file.find("BALLSET") != std::string::npos)
 	{// BALLSETで中心位置読み込み
@@ -398,32 +424,71 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 			}
 		}
 	}
+}
 
-	if (file.find("BALLSET") != std::string::npos)
-	{// BALLSETで中心位置読み込み
+//==========================================================================
+// ボールのステータス読み込み
+//==========================================================================
+void CObjectChara::LoadBallData(FILE* pFile, const std::string& file)
+{
+	char hoge[MAX_COMMENT];	// コメント
+	CBallStatus::SBallParameter param = CBallStatus::SBallParameter();
 
-		while (strcmp(hoge, "END_BALLSET") != 0)
-		{// END_BALLSETが来るまで繰り返す
+	while (strcmp(hoge, "END_BALLSTATUSSET") != 0)
+	{
+		fscanf(pFile, "%s", &hoge[0]);	//確認する
 
-			fscanf(pFile, "%s", &hoge[0]);	//確認する
+		if (strcmp(hoge, "THROW_NORMAL") == 0)
+		{// 投げ速度(通常)
 
-			if (strcmp(hoge, "PARTS") == 0)
-			{// PARTSが来たらパーツ番号読み込み
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fThrowMoveNormal);	// 投げ速度(通常)
+		}
 
-				fscanf(pFile, "%s", &hoge[0]);	// =の分
-				fscanf(pFile, "%d", &m_aLoadData[m_nNumLoad].parameter.nBallPartsIdx);	// モデル種類の列挙
-			}
+		if (strcmp(hoge, "THROW_JUMP") == 0)
+			{// 投げ速度(ジャンプ)
 
-			if (strcmp(hoge, "OFFSET") == 0)
-			{// OFFSETが来たら位置読み込み
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fThrowMoveJump);		// 投げ速度(ジャンプ)
+		}
 
-				fscanf(pFile, "%s", &hoge[0]);	// =の分
-				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.x);	// X座標
-				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.y);	// Y座標
-				fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.ballOffset.z);	// Z座標
-			}
+		if (strcmp(hoge, "THROW_SPECIAL") == 0)
+		{// 投げ速度(スペシャル)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fThrowMoveSpecial);	// 投げ速度(スペシャル)
+		}
+
+		if (strcmp(hoge, "CATCH_RANGE") == 0)
+		{// キャッチ範囲
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fCatchRange);		// キャッチ範囲
+		}
+
+		if (strcmp(hoge, "DAMAGE_NORMAL") == 0)
+			{// ダメージ(通常)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%d", &param.nDamageNormal);		// ダメージ(通常)
+		}
+
+		if (strcmp(hoge, "DAMAGE_JUMP") == 0)
+		{// ダメージ(ジャンプ)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%d", &param.nDamageJump);		// ダメージ(ジャンプ)
+		}
+
+		if (strcmp(hoge, "DAMAGE_SPECIAL") == 0)
+			{// ダメージ(スペシャル)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%d", &param.nDamageSpecial);		// ダメージ(スペシャル)
 		}
 	}
+	
+	m_aLoadData[m_nNumLoad].parameterBall = param;
 }
 
 //==========================================================================
