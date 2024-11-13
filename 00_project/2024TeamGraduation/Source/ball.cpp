@@ -331,6 +331,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("m_fMoveSpeed : [%.2f]", m_fMoveSpeed);
 		ImGui::Text("m_fGravity : [%.2f]", m_fGravity);
+		ImGui::Text("m_nDamage : [%d]", m_nDamage);
 
 		ImGui::TreePop();
 	}
@@ -415,8 +416,11 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// 通常攻撃を設定
 	m_typeAtk = ATK_NORMAL;
 
-	// 移動量を設定
-	m_fMoveSpeed = normal::THROW_MOVE;
+	// ダメージ設定
+	m_nDamage = pPlayer->GetBallParameter().nDamageNormal;
+
+	// 移動量設定
+	m_fMoveSpeed = pPlayer->GetBallParameter().fThrowMoveNormal;
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
@@ -462,8 +466,11 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	// ジャンプ攻撃を設定
 	m_typeAtk = ATK_JUMP;
 
-	// 移動量を設定
-	m_fMoveSpeed = jump::THROW_MOVE;
+	// ダメージ設定
+	m_nDamage = pPlayer->GetBallParameter().nDamageJump;
+	
+	// 移動量設定
+	m_fMoveSpeed = pPlayer->GetBallParameter().fThrowMoveJump;
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
@@ -486,6 +493,9 @@ void CBall::Special(CPlayer* pPlayer)
 
 	// TODO：スペシャルの種類設定
 	m_typeSpecial = SPECIAL_KAMEHAMEHA;
+
+	// ダメージ設定
+	m_nDamage = pPlayer->GetBallParameter().nDamageSpecial;
 
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
@@ -1284,6 +1294,9 @@ void CBall::UpdateTypeAtk()
 
 	// 攻撃種類を破棄
 	m_typeAtk = ATK_NONE;
+
+	// ダメージ量をリセット
+	m_nDamage = 0;
 }
 
 //==========================================================================

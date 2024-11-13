@@ -30,6 +30,7 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 	m_bBlink = false;
 	m_bDash = false;
 	m_bWalk = false;
+	m_ClabDirection = 0.0f;
 }
 
 //==========================================================================
@@ -335,17 +336,22 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	fMove *= fSlowRate;
 
 	// 移動量更新
-	MyLib::Vector3 move = player->GetMove();
-	MyLib::Vector3 rot = player->GetRotation();
+	MyLib::Vector3 move = {};
+	move = player->GetMove();
 
+	// 向き取得
+	MyLib::Vector3 rot = player->GetRotation();
+	float fRotDest = player->GetRotDest();
+	
 	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 
 	// TODO : 方向に応じてカニ歩き
 
+
 	if (player->IsCrab())
-	{//カニ歩き
-		move.x += sinf(0 * division + (D3DX_PI * 0.0f)) * fMove;
-		move.z += cosf(0 * division + (D3DX_PI * 0.0f)) * fMove;
+	{// カニ歩き
+		move.x += sinf(fRotDest + (D3DX_PI * 1.0f)) * fMove;
+		move.z += cosf(fRotDest + (D3DX_PI * 1.0f)) * fMove;
 	}
 	else
 	{
