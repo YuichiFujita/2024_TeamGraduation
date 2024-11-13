@@ -42,6 +42,7 @@
 #include "playerPosAdj_in.h"
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
+#include "playerPosAdj_out.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -1744,7 +1745,6 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 	// プレイヤー位置補正の破棄
 	SAFE_DELETE(m_pPosAdj);
 
-	// TODO
 	// 位置補正クラスの変更
 	switch (area)
 	{ // ポジションごとの処理
@@ -1766,7 +1766,7 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 		break;
 
 	case EFieldArea::FIELD_OUT:
-		//m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
 		break;
 
 	default:
