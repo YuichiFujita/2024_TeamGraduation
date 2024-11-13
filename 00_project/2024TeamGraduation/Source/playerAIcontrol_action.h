@@ -45,8 +45,7 @@ public:
 	//=============================
 	// ‰¼‘zŠÖ”
 	//=============================
-	virtual CPlayerAIControlAction* GetAI() { return this; };
-	virtual CPlayerUserControlAction* GetUser() { return nullptr; };
+	virtual CPlayerAIControlAction* GetAI() override { return this; };
 
 	//=============================
 	// ƒƒ“ƒoŠÖ”

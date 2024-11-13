@@ -8,8 +8,6 @@
 #ifndef _PLAYERAI_CONTROL_MOVE_H_
 #define _PLAYERAI_CONTROL_MOVE_H_	// 二重インクルード防止
 
-#define BRESSRANGE (0)
-
 //==========================================================================
 // インクルードファイル
 //==========================================================================
@@ -44,8 +42,7 @@ private:
 	//=============================
 	// 仮想関数
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() { return this; }
-	virtual CPlayerUserControlMove* GetUser() { return nullptr; }
+	virtual CPlayerAIControlMove* GetAI() override { return this; }
 	
 	//=============================
 	// メンバ関数

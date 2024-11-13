@@ -34,8 +34,7 @@ public:
 	//=============================
 	// âºëzä÷êî
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
-	virtual CPlayerUserControlMove* GetUser() { return this; }
+	virtual CPlayerUserControlMove* GetUser() override { return this; }
 
 private:
 	
