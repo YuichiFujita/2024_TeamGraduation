@@ -10,8 +10,7 @@
 // コンストラクタ
 //==========================================================================
 CCharacterStatus::CCharacterStatus() :
-	m_Parameter(CharParameter()),		// パラメーター
-	m_typeTeam(CGameManager::SIDE_NONE)	// チームサイド
+	m_Parameter(CharParameter())	// パラメーター
 {
 
 }

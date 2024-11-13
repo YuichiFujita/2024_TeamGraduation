@@ -26,7 +26,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
+CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pAnimChara	(nullptr),		// キャラクターアニメーション情報
 	m_pLight		(nullptr),		// ペンライト情報
 	m_moveMotion	(MOTION_IDOL)	// 移動モーション

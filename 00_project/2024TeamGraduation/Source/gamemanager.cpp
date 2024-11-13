@@ -144,7 +144,7 @@ HRESULT CGameManager::Init()
 void CGameManager::Uninit()
 {
 	// チームステータス
-	for (int i = 0; i < TeamType::TYPE_MAX; i++)
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] != nullptr)
 		{
@@ -264,7 +264,7 @@ void CGameManager::UpdateAudience()
 		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// 現在の観客数
 
 		// 観客数を設定
-		CAudience::SetNumWatch(nNumAudience, (CGameManager::TeamSide)(i + 1));
+		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i + 1));
 		GET_MANAGER->GetDebugProc()->Print("【チーム0%d観客】[%d]\n", i, nNumAudience);
 	}
 }
@@ -302,7 +302,7 @@ void CGameManager::SetType(ESceneType type)
 @param	pos[out]	取得したコートの中心点
 @return	コートサイズ
 */
-MyLib::Vector3 CGameManager::GetCourtSize(const TeamSide team, MyLib::Vector3& pos)
+MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& pos)
 {
 	// 片側コートサイズ
 	MyLib::Vector3 size = m_courtSize;
@@ -362,7 +362,7 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
 //==========================================================================
 // モテ加算
 //==========================================================================
-void CGameManager::AddCharmValue(TeamSide side, CCharmManager::EType charmType)
+void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::EType charmType)
 {
 	// チームステータス
 	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
@@ -374,9 +374,9 @@ void CGameManager::AddCharmValue(TeamSide side, CCharmManager::EType charmType)
 //==========================================================================
 void CGameManager::CreateTeamStatus()
 {
-	CGameManager::TeamSide side = CGameManager::SIDE_NONE;
+	ETeamSide side = CGameManager::SIDE_NONE;
 
-	for (int i = 0; i < TYPE_MAX; i++)
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] != nullptr)
 		{
@@ -386,20 +386,8 @@ void CGameManager::CreateTeamStatus()
 
 		m_pTeamStatus[i] = CTeamStatus::Create();
 
-		switch (static_cast<CGameManager::TeamType>(i + 1))
-		{
-		case TYPE_LEFT:
-			side = CGameManager::SIDE_LEFT;
-			break;
-
-		case TYPE_RIGHT:
-			side = CGameManager::SIDE_RIGHT;
-			break;
-
-		default:
-			break;
-		}
-		
+		// チーム設定
+		side = static_cast<ETeamSide>(i);
 		m_pTeamStatus[i]->TeamSetting(side);
 
 	}
@@ -441,7 +429,7 @@ void CGameManager::Debug()
 	}
 
 	// チームステータス
-	for (int i = 0; i < TeamType::TYPE_MAX; i++)
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		//-----------------------------
 		// コート

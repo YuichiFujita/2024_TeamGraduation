@@ -26,7 +26,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceLowPoly::CAudienceLowPoly(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
+CAudienceLowPoly::CAudienceLowPoly(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pChara	(nullptr),	// キャラクター情報
 	m_pLight	(nullptr)	// ペンライト情報
 {

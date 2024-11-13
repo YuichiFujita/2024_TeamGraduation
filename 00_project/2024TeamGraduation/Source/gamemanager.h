@@ -50,20 +50,12 @@ public:
 	};
 
 	// チームサイド列挙
-	enum TeamSide
+	enum ETeamSide
 	{
-		SIDE_NONE = 0,	// コート不明
+		SIDE_NONE = -1,	// コート不明
 		SIDE_LEFT,		// 左コート
 		SIDE_RIGHT,		// 右コート
 		SIDE_MAX		// この列挙型の総数
-	};
-
-	// チーム種類列挙
-	enum TeamType
-	{
-		TYPE_LEFT = 1,	// 左コート
-		TYPE_RIGHT,		// 右コート
-		TYPE_MAX = 2	// この列挙型の総数
 	};
 
 	CGameManager();
@@ -79,15 +71,15 @@ public:
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }	// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }							// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }					// コートサイズ取得
-	MyLib::Vector3 GetCourtSize(const TeamSide team, MyLib::Vector3& pos);	// コートサイズ取得(チーム)
+	MyLib::Vector3 GetCourtSize(const ETeamSide team, MyLib::Vector3& pos);	// コートサイズ取得(チーム)
 	bool SetPosLimit(MyLib::Vector3& pos);									// コート移動制限
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }
 
 	void Debug();			// デバッグ
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
-	CTeamStatus* GetTeamStatus(const int nTeam) { return m_pTeamStatus[nTeam]; }	// チームステータス取得
-	void AddCharmValue(TeamSide side, CCharmManager::EType charmType);	// モテ加算
+	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
+	void AddCharmValue(ETeamSide side, CCharmManager::EType charmType);	// モテ加算
 
 	static CGameManager* Create(CScene::MODE mode);				// 生成処理
 	static CGameManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
@@ -114,7 +106,7 @@ private:
 	CCharmManager* m_pCharmManager;		// モテマネージャ
 
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
-	CTeamStatus* m_pTeamStatus[TeamType::TYPE_MAX];	// チームステータス
+	CTeamStatus* m_pTeamStatus[ETeamSide::SIDE_MAX];	// チームステータス
 	static CGameManager* m_pThisPtr;				// 自身のポインタ
 
 #if _DEBUG
