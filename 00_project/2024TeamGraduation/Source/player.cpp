@@ -29,6 +29,8 @@
 
 // 派生先
 #include "playerAI.h"
+#include "playerAIIn.h"
+#include "playerAIOut.h"
 #include "playerUser.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
@@ -1933,11 +1935,11 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerAI(this, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeArea);
 			break;
 
 		default:

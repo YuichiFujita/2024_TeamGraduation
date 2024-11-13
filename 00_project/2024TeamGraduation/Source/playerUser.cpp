@@ -6,13 +6,10 @@
 //==========================================================================
 #include "playerUser.h"
 #include "manager.h"
-#include "calculation.h"
 
 // 使用クラス
-#include "playerStatus.h"
-#include "playerUsercontrol_move.h"
-#include "playerUsercontrol_action.h"
-#include "playerUserOut_controlMove.h"
+#include "playercontrol_move.h"
+#include "playercontrol_action.h"
 
 //==========================================================================
 // 定数定義
@@ -27,27 +24,7 @@ namespace
 //==========================================================================
 CPlayerUser::CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeArea)
 {
-	// 初期操作の設定
-	switch (typeArea)
-	{ // ポジションごとの処理
-	case CPlayer::EFieldArea::FIELD_IN:
 
-		// 内野操作の割当
-		ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-		ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
-		break;
-
-	case CPlayer::EFieldArea::FIELD_OUT:
-
-		// 外野操作の割当
-		ChangeMoveControl(DEBUG_NEW CPlayerUserOutControlMove());
-		ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
-		break;
-
-	default:
-		assert(false);
-		break;
-	}
 }
 
 //==========================================================================
