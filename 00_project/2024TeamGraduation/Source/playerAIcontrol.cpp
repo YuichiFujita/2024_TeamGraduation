@@ -169,14 +169,12 @@ void CPlayerAIControl::ModeManager()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
-	CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
-
 	if (pBall->GetPlayer() == nullptr) 
 	{// ボールが取得されていない場合
 		m_eMode = EMode::MODE_CATCH;
 	}
 
-	if (typeTeam == m_pAI->GetStatus()->GetTeam())
+	if (pBall->GetTypeTeam() == m_pAI->GetStatus()->GetTeam())
 	{// 自分とボールを持っているチームが違う場合
 		m_eMode = EMode::MODE_CATCH;
 	}
@@ -664,7 +662,7 @@ void CPlayerAIControl::DistanceCatch()
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
-	float fMinDis = 400.0f;	// 近いプレイヤー
+	float fMinDis = LENGTH_MAX;	// 近いプレイヤー
 
 	MyLib::Vector3 pos = m_pAI->GetPosition();	// 位置情報の取得
 	CGameManager::ETeamSide myTeam = m_pAI->GetStatus()->GetTeam();
