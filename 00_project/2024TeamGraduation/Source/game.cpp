@@ -429,12 +429,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Audience : DespawnLeft"))
 		{
 			// オーディエンス全退場
-			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::SetDespawnAll(CGameManager::ETeamSide::SIDE_LEFT);
 		}
 		if (ImGui::Button("Audience : DespawnRight"))
 		{
 			// オーディエンス全退場
-			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::SetDespawnAll(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 #endif
 

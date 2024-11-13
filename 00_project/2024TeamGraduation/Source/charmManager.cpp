@@ -70,6 +70,11 @@ CCharmManager* CCharmManager::Create()
 //==========================================================================
 HRESULT CCharmManager::Init()
 {
+	for (int i = 0; i < CCharmManager::EType::TYPE_MAX; i++)
+	{
+		m_fAddValue[i] = ADDVALUE[i];
+	}
+
 	return S_OK;
 }
 

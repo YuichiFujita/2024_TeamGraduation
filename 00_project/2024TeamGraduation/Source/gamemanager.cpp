@@ -257,14 +257,14 @@ void CGameManager::SceneStart()
 void CGameManager::UpdateAudience()
 {
 	GET_MANAGER->GetDebugProc()->Print("\n----------------- 観客情報 -----------------\n");
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
 		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// モテ情報
 		float fMoteRate = info.fValue / info.fValueMax;				// モテ割合
 		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// 現在の観客数
 
 		// 観客数を設定
-		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i + 1));
+		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i));
 		GET_MANAGER->GetDebugProc()->Print("【チーム0%d観客】[%d]\n", i, nNumAudience);
 	}
 }
@@ -367,6 +367,16 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::EType charmType)
 	// チームステータス
 	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
+}
+
+//==========================================================================
+// モテ減算
+//==========================================================================
+void CGameManager::SubCharmValue(ETeamSide side, CCharmManager::EType charmType)
+{
+	// チームステータス
+	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
+	m_pTeamStatus[side]->SubCharmValue(value);
 }
 
 //==========================================================================
