@@ -321,10 +321,10 @@ public:
 	static CPlayer* Create
 	(
 		const MyLib::Vector3& rPos,					// 位置
-		CGameManager::TeamSide team,				// チームサイド
+		CGameManager::ETeamSide team,				// チームサイド
 		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
 		EFieldArea areatype = EFieldArea::FIELD_IN,	// ポジション
-		EBody bodytype = EBody::BODY_NORMAL,		// 体系
+		EBody bodytype = EBody::BODY_NORMAL,		// 体型
 		EHandedness handtype = EHandedness::HAND_R	// 利き手
 	);
 

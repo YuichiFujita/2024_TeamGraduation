@@ -26,7 +26,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::TeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
+CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pAnimChara	(nullptr),		// キャラクターアニメーション情報
 	m_pLight		(nullptr),		// ペンライト情報
 	m_moveMotion	(MOTION_IDOL)	// 移動モーション
@@ -73,7 +73,7 @@ HRESULT CAudienceAnim::Init()
 #endif
 
 	// ランダムに観戦位置を設定
-	int nIdxTeam = GetTeam() - 1;
+	int nIdxTeam = GetTeam();
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(LEFT_LINE[nIdxTeam], RIGHT_LINE[nIdxTeam]);
 	posWatch.y = CGameManager::FIELD_LIMIT;

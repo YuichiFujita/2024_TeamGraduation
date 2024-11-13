@@ -93,8 +93,8 @@ public:
 
 	// コンストラクタ
 	CCharacterStatus(CharParameter status) :
-		m_Parameter(status),					// パラメーター
-		m_typeTeam(CGameManager::SIDE_NONE) {}	// チームサイド
+		m_Parameter(status)					// パラメーター
+	{}	
 
 	// デストラクタ
 	~CCharacterStatus();
@@ -102,8 +102,6 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetTeam(const CGameManager::TeamSide team) { m_typeTeam = team; }	// チームサイド設定
-	CGameManager::TeamSide GetTeam()	{ return m_typeTeam; }				// チームサイド取得
 	CharParameter GetParameter() { return m_Parameter; }					// パラメーター取得
 
 #if _DEBUG
@@ -116,7 +114,6 @@ private:
 	// メンバ変数
 	//=============================
 	CharParameter m_Parameter;			// パラメーター
-	CGameManager::TeamSide m_typeTeam;	// チームサイド
 };
 
 #endif

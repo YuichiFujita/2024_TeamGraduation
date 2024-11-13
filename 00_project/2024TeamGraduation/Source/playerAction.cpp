@@ -119,7 +119,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	CListManager<CBall> sampleList = CBall::GetListObj();
 	std::list<CBall*>::iterator itr = sampleList.GetEnd();
 	CBall* pObj = nullptr;
-	CGameManager::TeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
+	CGameManager::ETeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
 
 	while (sampleList.ListLoop(itr))
 	{
@@ -269,7 +269,7 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CGameManager::TeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
+	CGameManager::ETeamSide teamPlayer = m_pPlayer->GetStatus()->GetTeam();
 
 	//ダメージ受付しない時間設定
 	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();

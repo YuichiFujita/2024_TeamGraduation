@@ -147,8 +147,8 @@ HRESULT CSpecialManager::Init(void)
 	}
 
 	// 両チームの観客を通常状態にする
-	CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
-	CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
+	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
+	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 
 #if 1
 	// 体育館を暗くする
@@ -288,7 +288,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 
 		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 
 		// 世界の時はうごきだす
 		GET_MANAGER->SerEnableWorldPaused(false);
@@ -320,7 +320,7 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 	CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(CCameraMotion::MOTION::MOTION_SPECIAL_HYPE, 0);		// 先頭キー情報
-	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	if (bInverse)
 	{ // 反転する場合
 
@@ -421,7 +421,7 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 	CCamera::SCameraData key = pCamera->FollowPoint();			// 追従目標情報
 	CCameraMotion::MotionKey keyEnd = pCameraMotion->GetKeyData((CCameraMotion::MOTION)pCameraMotion->GetNowMotionIdx(), pCameraMotion->GetNowKeyMax() - 1);	// 終端キー情報
 
-	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	if (bInverse)
 	{ // 反転する場合
 

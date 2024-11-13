@@ -287,7 +287,7 @@ CPlayer::~CPlayer()
 CPlayer* CPlayer::Create
 (
 	const MyLib::Vector3& rPos,		// 位置
-	CGameManager::TeamSide team,	// チームサイド
+	CGameManager::ETeamSide team,	// チームサイド
 	EBaseType basetype,				// ベースタイプ
 	EFieldArea areatype,			// ポジション
 	EBody bodytype,					// 体系
@@ -1146,7 +1146,7 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 //==========================================================================
 void CPlayer::SetSpecialAttack()
 {
-	bool bInverse = (m_pStatus->GetTeam() == CGameManager::TeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	bool bInverse = (m_pStatus->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 
@@ -1671,7 +1671,7 @@ void CPlayer::StateInvade_Toss()
 void CPlayer::StateInvade_Return()
 {
 	// 自陣サイズ取得
-	CGameManager::TeamSide team = GetStatus()->GetTeam();
+	CGameManager::ETeamSide team = GetStatus()->GetTeam();
 	MyLib::Vector3 posCourt = MyLib::Vector3();
 	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
 	MyLib::Vector3 pos = GetPosition();
@@ -1930,7 +1930,7 @@ bool CPlayer::IsCrab()
 
 	// ボールの状態：敵側であるか
 	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
-	if (pBall->GetTypeTeam() == CGameManager::TeamSide::SIDE_NONE) return false;
+	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE) return false;
 	//if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
 
 	// 自身の状態：ブリンク＆走りでない
