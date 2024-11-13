@@ -6,6 +6,8 @@
 //==========================================================================
 #include "playerBase.h"
 #include "playerStatus.h"
+#include "playercontrol_action.h"
+#include "playercontrol_move.h"
 #include "ball.h"
 
 //==========================================================================
@@ -34,18 +36,6 @@ CPlayerBase::~CPlayerBase()
 {
 	// 操作の破棄
 	DeleteControl();
-}
-
-//==========================================================================
-// 操作の破棄
-//==========================================================================
-void CPlayerBase::DeleteControl()
-{
-	// 移動操作の破棄
-	SAFE_DELETE(m_pControlMove);
-
-	// アクション操作の破棄
-	SAFE_DELETE(m_pControlAction);
 }
 
 //==========================================================================
@@ -128,8 +118,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	hitInfo.bHit = true;
 
 	// ダメージを与える
-	//pStatus->LifeDamage(pBall->GetDamage());	// TODO : 後からBall内の攻撃演出をストラテジーにして、GetDamageを作成
-	pStatus->LifeDamage(10);
+	pStatus->LifeDamage(pBall->GetDamage());
 
 	if (m_pPlayer->GetLife() <= 0)
 	{
@@ -158,4 +147,34 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 void CPlayerBase::Debug()
 {
 
+}
+
+//==========================================================================
+// 操作の破棄
+//==========================================================================
+void CPlayerBase::DeleteControl()
+{
+	// 移動操作の破棄
+	SAFE_DELETE(m_pControlMove);
+
+	// アクション操作の破棄
+	SAFE_DELETE(m_pControlAction);
+}
+
+//==========================================================================
+// 操作の設定 (移動)
+//==========================================================================
+void CPlayerBase::SetPlayerControlMove(CPlayerControlMove* pControlMove)
+{
+	// 操作クラスの設定
+	m_pControlMove = pControlMove;
+}
+
+//==========================================================================
+// 操作の設定 (アクション)
+//==========================================================================
+void CPlayerBase::SetPlayerControlAction(CPlayerControlAction* pControlAction)
+{
+	// 操作クラスの設定
+	m_pControlAction = pControlAction;
 }

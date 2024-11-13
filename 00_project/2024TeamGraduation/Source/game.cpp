@@ -120,6 +120,24 @@ HRESULT CGame::Init()
 
 	// プレイヤーUser四人生成(左右)
 #if 1
+	{
+		CPlayer* pUser = CPlayer::Create
+		(
+			MyLib::Vector3(900.0f, 0.0f, 650.0f),	// 位置
+			CGameManager::SIDE_RIGHT,		// チームサイド
+			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
+			CPlayer::EFieldArea::FIELD_OUT,	// ポジション
+			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EHandedness::HAND_R	// 利き手
+		);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pUser->SetRotDest(HALF_PI);
+	}
+
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 1; i++)
 	{

@@ -31,7 +31,7 @@ public:
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerUser(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
-	~CPlayerUser() override;
+	virtual ~CPlayerUser() override = 0;
 
 	//=============================
 	// オーバーライド関数
