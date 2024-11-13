@@ -153,23 +153,23 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 	}
 
 	// 状態更新
-	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
+	//(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 
-	//// AIコントロール情報の取得
-	//CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	//CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	//// 歩きフラグ設定
-	//if (m_eMoveType == EMoveType::MOVETYPE_DISTANCE)
-	//{
-	//	pControlAIMove->SetIsWalk(true);
-	//}
-	//else
-	//{
-	//	pControlAIMove->SetIsWalk(false);
-	//}
+	// 歩きフラグ設定
+	if (m_eMoveType == EMoveType::MOVETYPE_DISTANCE)
+	{
+		pControlAIMove->SetIsWalk(true);
+	}
+	else
+	{
+		pControlAIMove->SetIsWalk(false);
+	}
 
-	//Distance();
+	Distance();
 }
 
 //==========================================================================
@@ -626,6 +626,10 @@ bool CPlayerAIControl::IsWait()
 //==========================================================================
 void CPlayerAIControl::Distance()
 {
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
 	float fMinDis = 400.0f;	// 近いプレイヤー
 
@@ -650,9 +654,7 @@ void CPlayerAIControl::Distance()
 		{ continue; }
 
 		// 相手との距離を求める
-		float fLength = sqrtf(
-			(pPlayer->GetPosition().x - pos.x) * (pPlayer->GetPosition().x - pos.x) +
-			(pPlayer->GetPosition().z - pos.z) * (pPlayer->GetPosition().z - pos.z));
+		float fLength = pPlayer->GetPosition().DistanceXZ(pos);
 
 		if (fLength < fMinDis)
 		{ // より近い相手プレイヤーがいた場合
@@ -663,15 +665,8 @@ void CPlayerAIControl::Distance()
 
 			float fRotDest = m_pAI->GetRotDest();
 
-			float fSpeed = m_pAI->GetParameter().fVelocityNormal;
-
-	
-
-			/*m_pAI->SetMove({ 
-				sinf(-fRotDest) * fSpeed,
-				0.0f,
-				cosf(-fRotDest) * fSpeed
-				});*/
+			// カニ進行方向の設定
+			pControlAIMove->SetClabDirection(fRotDest);
 		}
 	}
 }
@@ -699,10 +694,6 @@ void CPlayerAIControl::FindBall(const float fDeltaTime, const float fDeltaRate, 
 
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAI->GetPosition().AngleXZ(pBall->GetPosition());
-
-	// 長さを求める
-	//float fLength = sqrtf((pBall->GetPosition().x - player->GetPosition().x) * (pBall->GetPosition().x - player->GetPosition().x) +
-	//	(pBall->GetPosition().z - player->GetPosition().z) * (pBall->GetPosition().z - player->GetPosition().z));
 
 	// 歩きオン
 	pControlAIMove->SetIsWalk(true);
