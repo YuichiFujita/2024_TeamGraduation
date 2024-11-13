@@ -1234,6 +1234,30 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
+
+
+	// ボール攻撃種類
+	CBall::EAttack atkBall = pBall->GetTypeAtk();
+
+	// サウンド再生
+	switch (atkBall)
+	{
+	case CBall::ATK_NORMAL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_NORMAL);
+		break;
+
+	case CBall::ATK_JUMP:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+		break;
+
+	case CBall::ATK_SPECIAL:
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 //==========================================================================
