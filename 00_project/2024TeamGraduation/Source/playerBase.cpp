@@ -43,7 +43,7 @@ CPlayerBase::~CPlayerBase()
 //==========================================================================
 CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 {
-	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
+	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();			// ボール攻撃種類
 	CBall::EState stateBall = pBall->GetState();			// ボール状態
 	MyLib::Vector3 posB = pBall->GetPosition();				// ボール位置

@@ -56,9 +56,9 @@ public:
 	// メンバ関数
 	//=============================
 
-	void SetTeam(const CGameManager::TeamSide team) { m_typeTeam = team; }	// チームサイド設定
-	CGameManager::TeamSide GetTeam() { return m_typeTeam; }					// チームサイド取得
-	void TeamSetting(const CGameManager::TeamSide team);	// チームサイドからなる設定
+	void SetTeam(const CGameManager::ETeamSide team) { m_typeTeam = team; }	// チームサイド設定
+	CGameManager::ETeamSide GetTeam() { return m_typeTeam; }					// チームサイド取得
+	void TeamSetting(const CGameManager::ETeamSide team);	// チームサイドからなる設定
 
 	//-----------------------------
 	// モテ情報
@@ -91,7 +91,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CGameManager::TeamSide m_typeTeam;	// チームサイド
+	CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	SCharmInfo m_sCharmInfo;			// モテ情報
 	SSpecialInfo m_sSpecialInfo;		// スペシャル情報
 };

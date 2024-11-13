@@ -13,6 +13,7 @@
 #include "ball.h"
 #include "playerAction.h"
 #include "teamStatus.h"
+#include "playerStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -106,9 +107,10 @@ void CPlayerUserControlAction::Special(CPlayer* player, const float fDeltaTime, 
 {
 	CBall* pBall = player->GetBall();
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
+	CGameManager::ETeamSide playerTeam = player->GetStatus()->GetTeam();
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(playerTeam);
 	
-	//スペシャルゲージMAX＋ボール所持か
+	// スペシャルゲージMAX＋ボール所持か
 	if (pBall == nullptr ||	!pTeamStatus->IsMaxSpecial()) return;
 
 	// インプット情報取得

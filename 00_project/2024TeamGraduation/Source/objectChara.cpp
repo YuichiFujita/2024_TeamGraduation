@@ -432,7 +432,8 @@ void CObjectChara::LoadObjectData(FILE* pFile, const std::string& file)
 void CObjectChara::LoadBallData(FILE* pFile, const std::string& file)
 {
 	char hoge[MAX_COMMENT];	// コメント
-	CBallStatus::SBallParameter param = CBallStatus::SBallParameter();
+	CBallStatus::SBallParameter param = CBallStatus::SBallParameter();	// 受け取り用パラメータ
+	int nCatchRange = 0;	// キャッチ範囲受け取り
 
 	while (strcmp(hoge, "END_BALLSTATUSSET") != 0)
 	{
@@ -463,7 +464,8 @@ void CObjectChara::LoadBallData(FILE* pFile, const std::string& file)
 		{// キャッチ範囲
 
 			fscanf(pFile, "%s", &hoge[0]);	// =の分
-			fscanf(pFile, "%f", &param.fCatchRange);		// キャッチ範囲
+			fscanf(pFile, "%d", &nCatchRange);
+			param.fCatchRange = UtilFunc::Transformation::DegreeChangeToRadian(static_cast<float>(nCatchRange));		// キャッチ範囲
 		}
 
 		if (strcmp(hoge, "DAMAGE_NORMAL") == 0)

@@ -89,7 +89,7 @@ void CTeamStatus::Uninit()
 //==========================================================================
 // チーム設定による
 //==========================================================================
-void CTeamStatus::TeamSetting(const CGameManager::TeamSide team)
+void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 {
 	CObject2D::AnchorPoint anchor = CObject2D::AnchorPoint::CENTER;
 	MyLib::Vector3 pos = MyLib::Vector3();
@@ -100,14 +100,14 @@ void CTeamStatus::TeamSetting(const CGameManager::TeamSide team)
 
 	switch (team)
 	{
-	case CGameManager::TYPE_LEFT:
+	case CGameManager::ETeamSide::SIDE_LEFT:
 
 		anchor = CObject2D::LEFT;
 		pos += MyLib::Vector3(0.0f, SCREEN_HEIGHT, 0.0f);	// 右下
 		pos += MyLib::Vector3(dest.x, -dest.y, 0.0f);
 		break;
 
-	case CGameManager::TYPE_RIGHT:
+	case CGameManager::ETeamSide::SIDE_RIGHT:
 
 		anchor = CObject2D::RIGHT;
 		pos += MyLib::Vector3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);	// 左下
@@ -164,6 +164,7 @@ void CTeamStatus::InitSpecialInfo()
 	m_sSpecialInfo.pGauge = CObject2D::Create();
 	ZeroSpecialValue();
 
+	// 上限設定
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
 }
 
@@ -183,6 +184,7 @@ void CTeamStatus::SetSpecialValue(float fValue)
 
 		size.x *= fRad;
 
+		// サイズ設定
 		m_sSpecialInfo.pGauge->SetSize(size);
 	}
 }

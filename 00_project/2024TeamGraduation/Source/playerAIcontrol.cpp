@@ -178,7 +178,7 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetCharStatus()->GetTeam());
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetStatus()->GetTeam());
 
 	if (m_eThrowType == EThrowType::TYPE_NONE)
 	{
@@ -564,7 +564,7 @@ void CPlayerAIControl::Target()
 		// ボールの取得
 		CBall* pBall = m_pAI->GetBall();
 		if (pBall == nullptr) { return; }
-		CGameManager::TeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
+		CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 		// 同じチームの場合次へ
 		if (typeTeam == pPlayer->GetStatus()->GetTeam()) { continue; }
@@ -597,9 +597,9 @@ bool CPlayerAIControl::IsWait()
 
 	if (!pBall) { return b; }
 
-	CGameManager::TeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
+	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
 
-	if (typeTeam == CGameManager::TeamSide::SIDE_LEFT)
+	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
 	{
 		if (pBall->GetPosition().x > 0.0f)
 		{
@@ -608,7 +608,7 @@ bool CPlayerAIControl::IsWait()
 			b = true;
 		}
 	}
-	else if (typeTeam == CGameManager::TeamSide::SIDE_RIGHT)
+	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
 	{
 		if (pBall->GetPosition().x < 0.0f)
 		{
@@ -642,11 +642,11 @@ void CPlayerAIControl::Distance()
 		// ボールの取得
 		CBall* pBall = CGameManager::GetInstance()->GetBall();
 		if (pBall == nullptr) { return; }
-		CGameManager::TeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
+		CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 		// 同じチームまたはボールがどのサイドでも無い場合
 		if ((typeTeam == m_pAI->GetStatus()->GetTeam()) || 
-			(typeTeam == CGameManager::TeamSide::SIDE_NONE))
+			(typeTeam == CGameManager::ETeamSide::SIDE_NONE))
 		{ continue; }
 
 		// 相手との距離を求める

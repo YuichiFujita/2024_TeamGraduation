@@ -55,7 +55,7 @@ int CAudience::m_aNumWatchAll[2] = {};	// 観戦中の人数
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudience::CAudience(EObjType type, CGameManager::TeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
+CAudience::CAudience(EObjType type, CGameManager::ETeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel		(UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
 	m_team				(team),			// 応援チーム
 	m_type				(type),			// オブジェクト種類
@@ -79,7 +79,7 @@ CAudience::~CAudience()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CAudience* CAudience::Create(EObjType type, CGameManager::TeamSide team)
+CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team)
 {
 	// メモリの確保
 	CAudience* pAudience = nullptr;
@@ -233,10 +233,10 @@ bool CAudience::SetDespawn(EObjType type)
 //==========================================================================
 // 観戦中の人数設定処理
 //==========================================================================
-HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
+HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return E_FAIL; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return E_FAIL; }
 
 	// 観戦人数が同一の場合抜ける
 	int nIdxTeam = team - 1;	// チームインデックス
@@ -276,10 +276,10 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
 //==========================================================================
 // 全観戦中の人数取得処理
 //==========================================================================
-int CAudience::GetNumWatchAll(CGameManager::TeamSide team)
+int CAudience::GetNumWatchAll(CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return -1; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return -1; }
 
 	// 引数サイドの観戦人数を返す
 	int nIdxTeam = team - 1;
@@ -289,10 +289,10 @@ int CAudience::GetNumWatchAll(CGameManager::TeamSide team)
 //==========================================================================
 // 全盛り上がりの設定処理
 //==========================================================================
-void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
+void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
@@ -311,10 +311,10 @@ void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
 //==========================================================================
 // 全スペシャルの設定処理
 //==========================================================================
-void CAudience::SetSpecialAll(CGameManager::TeamSide team)
+void CAudience::SetSpecialAll(CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
@@ -333,10 +333,10 @@ void CAudience::SetSpecialAll(CGameManager::TeamSide team)
 //==========================================================================
 // 全退場の設定処理
 //==========================================================================
-void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn)
+void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespawn)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
 	int nIdxTeam = team - 1;	// チームインデックス
