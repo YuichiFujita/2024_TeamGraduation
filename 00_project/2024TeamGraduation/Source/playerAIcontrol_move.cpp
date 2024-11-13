@@ -345,7 +345,6 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// Œü‚«Žæ“¾
 	MyLib::Vector3 rot = player->GetRotation();
-	float rotDestY = player->GetRotDest();
 	
 	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// Œü‚«
 
@@ -361,9 +360,6 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 		move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
 		move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
 	}
-
-	// Œü‚«Ý’è
-	player->SetRotDest(rotDestY * division + D3DX_PI + Camerarot.y);
 
 	// ˆÚ“®—ÊÝ’è
 	player->SetMove(move);
