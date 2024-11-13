@@ -1,11 +1,10 @@
-#if 0
 //=============================================================================
 // 
-//  プレイヤーコントロール処理 [playerUsercontrol_move.cpp]
+//  外野プレイヤーコントロール処理 [playerUserOut_controlMove.cpp]
 //  Author : 相馬靜雅
 // 
 //=============================================================================
-#include "playerUsercontrol_move.h"
+#include "playerUserOut_controlMove.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -28,7 +27,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserControlMove::CPlayerUserControlMove()
+CPlayerUserOutControlMove::CPlayerUserOutControlMove()
 {
 
 }
@@ -36,7 +35,7 @@ CPlayerUserControlMove::CPlayerUserControlMove()
 //==========================================================================
 // ブリンク
 //==========================================================================
-void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 入力フラグ
 	bool bInput = false;
@@ -333,7 +332,7 @@ void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 // 走り
 //==========================================================================
-void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bDash = IsBlink();	// 走るフラグ取得
 	if (!bDash)
@@ -396,7 +395,7 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 // ウォーク
 //==========================================================================
-void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -619,7 +618,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 // トリガー
 //==========================================================================
-CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
+CPlayer::SDashInfo CPlayerUserOutControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
 {
 	CPlayer::SDashInfo info;
 	info.bDash = false;
@@ -651,4 +650,3 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDa
 
 	return info;
 }
-#endif
