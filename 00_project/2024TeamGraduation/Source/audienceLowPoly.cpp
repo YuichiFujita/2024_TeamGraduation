@@ -72,7 +72,7 @@ HRESULT CAudienceLowPoly::Init()
 #endif
 
 	// ƒ‰ƒ“ƒ_ƒ€‚ÉŠÏíˆÊ’u‚ğİ’è
-	int nIdxTeam = GetTeam() - 1;
+	int nIdxTeam = GetTeam();
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(LEFT_LINE[nIdxTeam], RIGHT_LINE[nIdxTeam]);
 	posWatch.y = CGameManager::FIELD_LIMIT;
