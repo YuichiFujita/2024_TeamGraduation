@@ -97,6 +97,7 @@ public:
 	EState GetState() const			{ return m_state; }			// 状態取得
 	CPlayer* GetPlayer() const		{ return m_pPlayer; }		// 所持プレイヤー取得
 	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
+	int GetDamage() const			{ return m_nDamage; }		// ダメージ取得
 	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
@@ -188,6 +189,7 @@ private:
 	EAttack m_typeAtk;		// 攻撃種類
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態カウンター
+	int m_nDamage;			// ダメージ
 };
 
 #endif
