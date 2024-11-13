@@ -163,7 +163,7 @@ void CPlayerAIControl::ModeManager()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
-	CGameManager::TeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
+	CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 	if (pBall->GetPlayer() == nullptr) 
 	{// ボールが取得されていない場合
@@ -659,7 +659,7 @@ void CPlayerAIControl::DistanceCatch()
 	float fMinDis = 400.0f;	// 近いプレイヤー
 
 	MyLib::Vector3 pos = m_pAI->GetPosition();	// 位置情報の取得
-	CGameManager::TeamSide myTeam = m_pAI->GetStatus()->GetTeam();
+	CGameManager::ETeamSide myTeam = m_pAI->GetStatus()->GetTeam();
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
