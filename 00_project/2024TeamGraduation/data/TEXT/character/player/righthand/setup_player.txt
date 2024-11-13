@@ -53,6 +53,16 @@ CHARACTERSET
 	HEIGHT = 100.00	# 高さ
 	LIFE = 50		# 体力
 	
+	BALLSTATUSSET
+		THROW_NORMAL = 22.50	#投げ速度(通常)
+		THROW_JUMP = 27.00		#投げ速度(ジャンプ)
+		THROW_SPECIAL = 0.00	#投げ速度(スペシャル)
+		CATCH_RANGE = 160		#キャッチ範囲(度数法)
+		DAMAGE_NORMAL = 10		#ダメージ(通常)
+		DAMAGE_JUMP = 15		#ダメージ(ジャンプ)
+		DAMAGE_SPECIAL = 30		#ダメージ(スペシャル)
+	END_BALLSTATUSSET
+	
 	CENTERSET
 		PARTS = 0		# 中心にするパーツ
 		OFFSET = 0.00 30.50 0.00		# オフセット位置
