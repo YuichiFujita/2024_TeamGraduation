@@ -23,7 +23,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIIn::CPlayerAIIn(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerAI(pPlayer, typeArea)
+CPlayerAIIn::CPlayerAIIn(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerAI(pPlayer, typeTeam, typeArea)
 {
 	// 内野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());

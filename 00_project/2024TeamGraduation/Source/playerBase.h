@@ -31,7 +31,7 @@ class CPlayerBase
 {
 public:
 	// コンストラクタ
-	CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
+	CPlayerBase(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea);
 
 	// デストラクタ
 	virtual ~CPlayerBase() = 0;

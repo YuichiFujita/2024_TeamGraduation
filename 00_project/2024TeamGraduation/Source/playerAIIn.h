@@ -30,7 +30,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAIIn(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
+	CPlayerAIIn(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea);
 	virtual ~CPlayerAIIn() override;
 
 	//=============================

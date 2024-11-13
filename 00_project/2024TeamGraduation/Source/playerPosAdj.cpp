@@ -1,15 +1,10 @@
 //==========================================================================
 // 
-//  ユーザープレイヤー処理 [playerUserIn.cpp]
+//  プレイヤー位置補正処理 [playerPosAdj.cpp]
 //  Author : 藤田勇一
-//  Adder  : 髙田佳依
 // 
 //==========================================================================
-#include "playerUserIn.h"
-
-// 使用クラス
-#include "playerUsercontrol_move.h"
-#include "playerUsercontrol_action.h"
+#include "playerPosAdj.h"
 
 //==========================================================================
 // 定数定義
@@ -22,17 +17,15 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserIn::CPlayerUserIn(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea)
+CPlayerPosAdj::CPlayerPosAdj()
 {
-	// 内野操作の割当
-	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+
 }
 
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerUserIn::~CPlayerUserIn()
+CPlayerPosAdj::~CPlayerPosAdj()
 {
 
 }

@@ -269,6 +269,10 @@
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerPosAdj.cpp" />
+    <ClCompile Include="Source\playerPosAdj_in.cpp" />
+    <ClCompile Include="Source\playerPosAdj_inLeft.cpp" />
+    <ClCompile Include="Source\playerPosAdj_inRight.cpp" />
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
     <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
@@ -421,6 +425,10 @@
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerPosAdj.h" />
+    <ClInclude Include="Source\playerPosAdj_in.h" />
+    <ClInclude Include="Source\playerPosAdj_inLeft.h" />
+    <ClInclude Include="Source\playerPosAdj_inRight.h" />
     <ClInclude Include="Source\playerUsercontrol_move.h" />
     <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />

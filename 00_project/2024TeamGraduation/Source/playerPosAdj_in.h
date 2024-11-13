@@ -1,50 +1,52 @@
 //==========================================================================
 // 
-//  ユーザー外野プレイヤーヘッダー [playerUserOut.h]
+//  プレイヤー位置補正_内野コートヘッダー [playerPosAdj_in.h]
 //  Author : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _PLAYER_USER_OUT_
-#define _PLAYER_USER_OUT_	// 二重インクルード防止
+#ifndef _PLAYER_POSADJ_IN_H_
+#define _PLAYER_POSADJ_IN_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerUser.h"
+#include "playerPosAdj.h"
 
 //==========================================================================
-// クラス定義
+// プレイヤー位置補正_内野コート定義
 //==========================================================================
-// ユーザー外野プレイヤークラス
-class CPlayerUserOut : public CPlayerUser
+class CPlayerPosAdjIn : public CPlayerPosAdj
 {
 public:
 
 	//=============================
+	// 定数
+	//=============================
+	static constexpr float COMEBACK_LINE = 100.0f;	// 相手コートから戻ってくるライン
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerUserOut(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea);
-	virtual ~CPlayerUserOut() override;
+	CPlayerPosAdjIn();
+	virtual ~CPlayerPosAdjIn() override;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerUserOut* GetPlayerUserOut() override { return this; }	// ユーザー外野プレイヤー取得
+	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// 調整
 
+protected:
+	//=============================
+	// 純粋仮想関数
+	//=============================
+	virtual bool IsLineOut(CPlayer* pPlayer) = 0;	// ライン越えフラグ取得
+
+private:
 	//=============================
 	// メンバ関数
 	//=============================
-	MyLib::Vector3 GetPosLeft()	 { return m_posLeft; }	// 移動可能な左位置の取得
-	MyLib::Vector3 GetPosRight() { return m_posRight; }	// 移動可能な右位置の取得
-
-private:
-
-	//=============================
-	// メンバ変数
-	//=============================
-	MyLib::Vector3 m_posLeft;	// 移動可能左位置
-	MyLib::Vector3 m_posRight;	// 移動可能右位置
+	void ReturnTeamCourt(CPlayer* pPlayer, const MyLib::Vector3& rPos);	// チームコート復帰
 };
 
 #endif

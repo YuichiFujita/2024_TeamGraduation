@@ -1,37 +1,36 @@
 //==========================================================================
 // 
-//  AI外野プレイヤーヘッダー [playerAIOut.h]
+//  プレイヤー位置補正_左内野コートヘッダー [playerPosAdj_inLeft.h]
 //  Author : 藤田勇一
-//  Adder  : 小笠原彪
 // 
 //==========================================================================
 
-#ifndef _PLAYER_AI_OUT_
-#define _PLAYER_AI_OUT_	// 二重インクルード防止
+#ifndef _PLAYER_POSADJ_INLEFT_H_
+#define _PLAYER_POSADJ_INLEFT_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerAI.h"
+#include "playerPosAdj_in.h"
 
 //==========================================================================
-// クラス定義
+// プレイヤー位置補正_左内野コート定義
 //==========================================================================
-// AI外野プレイヤークラス
-class CPlayerAIOut : public CPlayerAI
+class CPlayerPosAdjInLeft : public CPlayerPosAdjIn
 {
 public:
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAIOut(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea);
-	virtual ~CPlayerAIOut() override;
+	CPlayerPosAdjInLeft();
+	virtual ~CPlayerPosAdjInLeft() override;
 
+private:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
+	virtual bool IsLineOut(CPlayer* pPlayer) override;	// ライン越えフラグ取得
 };
 
 #endif

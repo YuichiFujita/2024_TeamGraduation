@@ -1,15 +1,11 @@
 //==========================================================================
 // 
-//  ユーザープレイヤー処理 [playerUserIn.cpp]
+//  プレイヤー位置補正_右内野コート処理 [playerPosAdj_inRight.cpp]
 //  Author : 藤田勇一
-//  Adder  : 髙田佳依
 // 
 //==========================================================================
-#include "playerUserIn.h"
-
-// 使用クラス
-#include "playerUsercontrol_move.h"
-#include "playerUsercontrol_action.h"
+#include "playerPosAdj_inRight.h"
+#include "player.h"
 
 //==========================================================================
 // 定数定義
@@ -22,17 +18,27 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserIn::CPlayerUserIn(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea)
+CPlayerPosAdjInRight::CPlayerPosAdjInRight()
 {
-	// 内野操作の割当
-	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+
 }
 
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerUserIn::~CPlayerUserIn()
+CPlayerPosAdjInRight::~CPlayerPosAdjInRight()
 {
 
+}
+
+//==========================================================================
+// ライン越えフラグ取得
+//==========================================================================
+bool CPlayerPosAdjInRight::IsLineOut(CPlayer* pPlayer)
+{
+	// ラインを越えている場合フラグONを返す
+	if (pPlayer->GetPosition().x < -CPlayerPosAdjIn::COMEBACK_LINE) { return true; }
+
+	// ラインを越えていない場合フラグOFFを返す
+	return false;
 }

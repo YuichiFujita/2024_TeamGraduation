@@ -30,7 +30,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAI(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
+	CPlayerAI(CPlayer* pPlayer, const CGameManager::TeamSide typeTeam, const CPlayer::EFieldArea typeArea);
 	virtual ~CPlayerAI() = 0;
 
 	//=============================

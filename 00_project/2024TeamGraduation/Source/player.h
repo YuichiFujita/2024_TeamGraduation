@@ -14,6 +14,7 @@
 #include "gamemanager.h"
 #include "objectChara.h"
 #include "listmanager.h"
+#include "playerPosAdj.h"
 #include "ball.h"
 
 //==========================================================================
@@ -251,27 +252,31 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;	// モーションの設定
-	void SetEnableMove(bool bPossible)		{ m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
-	bool IsPossibleMove()					{ return m_bPossibleMove; }	// 移動可能フラグ取得
-	void SetEnableDash(bool bDash)			{ m_bDash = bDash; }		// ダッシュ状況設定
-	bool IsDash()							{ return m_bDash; }			// ダッシュ判定
-	void SetEnableJump(bool bJump)			{ m_bJump = bJump; }		// ジャンプ状況設定
-	bool IsJump()							{ return m_bJump; }			// ジャンプ判定
-	void SetFootLR(bool bFootLR)			{ m_bFootLR = bFootLR; }	// 足左右判定設定
-	bool IsFootLR()							{ return m_bFootLR; }		// 足左右判定取得
-	void InverseFootLR()					{ m_bFootLR = !m_bFootLR; }	// 足左右判定反転
-	void SetMotionFrag(SMotionFrag frag)	{ m_sMotionFrag = frag; }	// モーションのフラグ設定
-	SMotionFrag GetMotionFrag()				{ return m_sMotionFrag; }	// モーションのフラグ取得
-	void SetDamageInfo(SDamageInfo info)	{ m_sDamageInfo = info; }	// ダメージ情報設定
-	SDamageInfo GetDamageInfo()				{ return m_sDamageInfo; }	// ダメージ情報取得
+	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;		// モーションの設定
+	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
+	bool IsPossibleMove()						{ return m_bPossibleMove; }	// 移動可能フラグ取得
+	void SetEnableDash(bool bDash)				{ m_bDash = bDash; }		// ダッシュ状況設定
+	bool IsDash()								{ return m_bDash; }			// ダッシュ判定
+	void SetEnableJump(bool bJump)				{ m_bJump = bJump; }		// ジャンプ状況設定
+	bool IsJump()								{ return m_bJump; }			// ジャンプ判定
+	void SetFootLR(bool bFootLR)				{ m_bFootLR = bFootLR; }	// 足左右判定設定
+	bool IsFootLR()								{ return m_bFootLR; }		// 足左右判定取得
+	void InverseFootLR()						{ m_bFootLR = !m_bFootLR; }	// 足左右判定反転
+	void SetMotionFrag(SMotionFrag& frag)		{ m_sMotionFrag = frag; }	// モーションのフラグ設定
+	SMotionFrag GetMotionFrag()					{ return m_sMotionFrag; }	// モーションのフラグ取得
+	void SetDamageInfo(SDamageInfo& info)		{ m_sDamageInfo = info; }	// ダメージ情報設定
+	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }	// ダメージ情報取得
+	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }	// ノックバック情報設定
+	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }	// ノックバック情報取得
 
 	//=============================
 	// パターン
 	//=============================
-	CPlayerAction* GetActionPattern()	{ return m_pActionPattern; }	// アクション取得
-	CPlayerStatus* GetStatus() const	{ return m_pStatus; }			// ステータス取得
-	CPlayerBase* GetBase() { return m_pBase; }							// ベース取得
+	void ChangePosAdjuster(CGameManager::TeamSide team, EFieldArea area);	// プレイヤー位置補正変更
+	CPlayerPosAdj* GetPosAdjuster() const	{ return m_pPosAdj; }			// プレイヤー位置補正取得
+	CPlayerAction* GetActionPattern() const	{ return m_pActionPattern; }	// アクション取得
+	CPlayerStatus* GetStatus() const		{ return m_pStatus; }			// ステータス取得
+	CPlayerBase* GetBase() const			{ return m_pBase; }				// ベース取得
 
 	//=============================
 	// 着せ替え
@@ -366,9 +371,7 @@ private:
 	//-----------------------------
 	void UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ダメージ受付時間更新
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
-	void LimitPos();	// 位置制限
 	void ResetFrag();	// フラグリセット
-	void TeamCourt_Return(MyLib::Vector3& pos);	// チームコート内に戻る
 
 	//-----------------------------
 	// モーション系関数
@@ -419,6 +422,7 @@ private:
 	// パターン用インスタンス
 	//-----------------------------
 	CPlayerAction* m_pActionPattern;	// アクションパターン
+	CPlayerPosAdj* m_pPosAdj;			// プレイヤー位置補正
 	CPlayerStatus* m_pStatus;			// ステータス
 	CPlayerBase*   m_pBase;				// ベース
 
