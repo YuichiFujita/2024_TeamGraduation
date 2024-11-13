@@ -108,6 +108,9 @@
     <Filter Include="player\playerControl">
       <UniqueIdentifier>{f70dbe5e-1d32-45ef-8932-0918f140956c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerPosAdj">
+      <UniqueIdentifier>{a682c9d2-6154-41c3-9869-71e82bd4c3c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -538,6 +541,21 @@
     </ClCompile>
     <ClCompile Include="Source\playerAIOut.cpp">
       <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_in.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_inRight.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_inLeft.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_out.cpp">
+      <Filter>player\playerPosAdj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -981,6 +999,21 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIOut.h">
       <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_in.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_inRight.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_inLeft.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_out.h">
+      <Filter>player\playerPosAdj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

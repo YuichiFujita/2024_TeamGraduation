@@ -220,6 +220,17 @@ HRESULT CGame::Init()
 	pAI->SetRotDest(HALF_PI);
 #endif
 
+	// プレイヤーAI一人生成(左)
+#if 0
+	CPlayer* pAI2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_AI);
+	if (pAI2 == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI2->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI2->SetRotDest(HALF_PI);
+#endif
+
 	// プレイヤーAI四人生成(右)
 #if 0
 	for (int i = 0; i < 4; i++)
@@ -237,7 +248,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(右)
-#if 1
+#if 0
 	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
 	if (pUserOut == nullptr)
 	{
@@ -322,13 +333,13 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Audience : AnimLeft"))
 		{
 			// オーディエンス生成
-			CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::Create(CAudience::EObjType::OBJTYPE_HIGHPOLY, CGameManager::ETeamSide::SIDE_LEFT);
 		}
 
 		if (ImGui::Button("Audience : AnimRight"))
 		{
 			// オーディエンス生成
-			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 #endif
 
@@ -372,44 +383,44 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Audience : NormalLeft"))
 		{
 			// オーディエンス全通常
-			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
 		}
 		if (ImGui::Button("Audience : JumpLeft"))
 		{
 			// オーディエンス全盛り上がり
-			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::SetEnableJumpAll(true, CGameManager::ETeamSide::SIDE_LEFT);
 		}
 		if (ImGui::Button("Audience : SpecialLeft"))
 		{
 			// オーディエンス全スペシャル
-			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::SetSpecialAll(CGameManager::ETeamSide::SIDE_LEFT);
 		}
 
 		if (ImGui::Button("Audience : NormalRight"))
 		{
 			// オーディエンス全通常
-			CAudience::SetEnableJumpAll(false, CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 		if (ImGui::Button("Audience : JumpRight"))
 		{
 			// オーディエンス全盛り上がり
-			CAudience::SetEnableJumpAll(true, CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::SetEnableJumpAll(true, CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 		if (ImGui::Button("Audience : SpecialRight"))
 		{
 			// オーディエンス全スペシャル
-			CAudience::SetSpecialAll(CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::SetSpecialAll(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 
 #if 1
 		// 左チームのモテ値増減
-		CTeamStatus* pTeamLeft = CGameManager::GetInstance()->GetTeamStatus(0);	// チーム情報
+		CTeamStatus* pTeamLeft = CGameManager::GetInstance()->GetTeamStatus(CGameManager::ETeamSide::SIDE_LEFT);	// チーム情報
 		CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
 		ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
 		pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
 
 		// 右チームのモテ値増減
-		CTeamStatus* pTeamRight = CGameManager::GetInstance()->GetTeamStatus(1);	// チーム情報
+		CTeamStatus* pTeamRight = CGameManager::GetInstance()->GetTeamStatus(CGameManager::ETeamSide::SIDE_RIGHT);	// チーム情報
 		CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
 		ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
 		pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
@@ -418,12 +429,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Audience : DespawnLeft"))
 		{
 			// オーディエンス全退場
-			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_LEFT);
+			CAudience::SetDespawnAll(CGameManager::ETeamSide::SIDE_LEFT);
 		}
 		if (ImGui::Button("Audience : DespawnRight"))
 		{
 			// オーディエンス全退場
-			CAudience::SetDespawnAll(CGameManager::TeamSide::SIDE_RIGHT);
+			CAudience::SetDespawnAll(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 #endif
 

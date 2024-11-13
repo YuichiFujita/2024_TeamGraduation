@@ -1,37 +1,35 @@
 //==========================================================================
 // 
-//  AI外野プレイヤーヘッダー [playerAIOut.h]
+//  プレイヤー位置補正_外野コートヘッダー [playerPosAdj_out.h]
 //  Author : 藤田勇一
-//  Adder  : 小笠原彪
 // 
 //==========================================================================
 
-#ifndef _PLAYER_AI_OUT_
-#define _PLAYER_AI_OUT_	// 二重インクルード防止
+#ifndef _PLAYER_POSADJ_OUT_H_
+#define _PLAYER_POSADJ_OUT_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerAI.h"
+#include "playerPosAdj.h"
 
 //==========================================================================
-// クラス定義
+// プレイヤー位置補正_外野コート定義
 //==========================================================================
-// AI外野プレイヤークラス
-class CPlayerAIOut : public CPlayerAI
+class CPlayerPosAdjOut : public CPlayerPosAdj
 {
 public:
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
-	virtual ~CPlayerAIOut() override;
+	CPlayerPosAdjOut();
+	virtual ~CPlayerPosAdjOut() override;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
+	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// 調整
 };
 
 #endif

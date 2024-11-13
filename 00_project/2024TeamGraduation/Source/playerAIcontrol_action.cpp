@@ -13,6 +13,7 @@
 #include "ball.h"
 #include "playerAction.h"
 #include "teamStatus.h"
+#include "playerStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -46,7 +47,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetCharStatus()->GetTeam()) return;
+	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetStatus()->GetTeam()) return;
 
 	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
 	{
@@ -106,7 +107,7 @@ void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, co
 {
 	CBall* pBall = player->GetBall();
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetCharStatus()->GetTeam());
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetStatus()->GetTeam());
 
 	//スペシャルゲージMAX＋ボール所持か
 	if (pBall == nullptr || !pTeamStatus->IsMaxSpecial()) return;

@@ -37,6 +37,9 @@ public:
 	void SetIsDash(bool bDash) { m_bDash = bDash; }
 	void SetIsWalk(bool bWalk) { m_bWalk = bWalk; }
 
+	void SetClabDirection(float clabDirection) { m_fClabDirection = clabDirection; }
+	float GetClabDirection() { return m_fClabDirection; }	// カニ進行方向の取得
+
 private:
 
 	//=============================
@@ -58,7 +61,7 @@ private:
 	bool m_bBlink;
 	bool m_bDash;
 	bool m_bWalk;
-	float m_ClabDirection;
+	float m_fClabDirection;	// カニのしんこう方向
 };
 
 

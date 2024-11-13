@@ -173,7 +173,6 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 
 	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,       "ERROR : State Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_TEAM_PRINT)    == CGameManager::SIDE_MAX, "ERROR : Team Count Mismatch");
 	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,         "ERROR : Attack Count Mismatch");
 	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX,     "ERROR : Special Count Mismatch");
 }
@@ -311,7 +310,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		"ÅyÉ^Å[ÉQÉbÉgÅz[%s]\n"
 		"ÅyÉJÉoÅ[ëŒè€Åz[%s]\n",
 		DEBUG_STATE_PRINT[m_state],
-		DEBUG_TEAM_PRINT[m_typeTeam],
+		DEBUG_TEAM_PRINT[m_typeTeam + 1],
 		DEBUG_ATK_PRINT[m_typeAtk],
 		DEBUG_SPECIAL_PRINT[m_typeSpecial],
 		DEBUG_BOOL_PRINT[(int)m_bLanding],

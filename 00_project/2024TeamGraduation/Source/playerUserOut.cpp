@@ -21,7 +21,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeArea),
+CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea),
 #if 0	// TODO
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
 	m_posRight	(VEC3_ZERO)		// 移動可能右位置

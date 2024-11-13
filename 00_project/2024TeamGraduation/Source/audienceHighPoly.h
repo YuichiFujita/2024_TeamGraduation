@@ -51,7 +51,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudienceHighPoly(EObjType type, CGameManager::TeamSide team);
+	CAudienceHighPoly(EObjType type, CGameManager::ETeamSide team);
 	~CAudienceHighPoly();
 
 	//=============================

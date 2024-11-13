@@ -55,7 +55,7 @@ int CAudience::m_aNumWatchAll[2] = {};	// 観戦中の人数
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudience::CAudience(EObjType type, CGameManager::TeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
+CAudience::CAudience(EObjType type, CGameManager::ETeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel		(UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
 	m_team				(team),			// 応援チーム
 	m_type				(type),			// オブジェクト種類
@@ -79,7 +79,7 @@ CAudience::~CAudience()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CAudience* CAudience::Create(EObjType type, CGameManager::TeamSide team)
+CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team)
 {
 	// メモリの確保
 	CAudience* pAudience = nullptr;
@@ -126,7 +126,7 @@ HRESULT CAudience::Init()
 	m_list.Regist(this);
 
 	// 観戦中の人数を加算
-	int nIdxTeam = m_team - 1;
+	int nIdxTeam = m_team;
 	m_aNumWatchAll[nIdxTeam]++;
 
 	return S_OK;
@@ -222,7 +222,7 @@ bool CAudience::SetDespawn(EObjType type)
 	m_posDespawnStart = GetPosition();	// 現在の位置
 
 	// 観戦中の人数を減算
-	int nIdxTeam = m_team - 1;
+	int nIdxTeam = m_team;
 	m_aNumWatchAll[nIdxTeam]--;
 
 	// 退場状態にする
@@ -233,33 +233,32 @@ bool CAudience::SetDespawn(EObjType type)
 //==========================================================================
 // 観戦中の人数設定処理
 //==========================================================================
-HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
+HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return E_FAIL; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return E_FAIL; }
 
 	// 観戦人数が同一の場合抜ける
-	int nIdxTeam = team - 1;	// チームインデックス
-	if (nNumWatch == m_aNumWatchAll[nIdxTeam]) { return E_FAIL; }
+	if (nNumWatch == m_aNumWatchAll[team]) { return E_FAIL; }
 
-	if (nNumWatch < m_aNumWatchAll[nIdxTeam])
+	if (nNumWatch < m_aNumWatchAll[team])
 	{ // 観戦人数が多い場合
 
 		// 人数分退場
-		int nNumDespawn = m_aNumWatchAll[nIdxTeam] - nNumWatch;	// 退場人数
+		int nNumDespawn = m_aNumWatchAll[team] - nNumWatch;	// 退場人数
 		SetDespawnAll(team, nNumDespawn);
 	}
-	else if (nNumWatch > m_aNumWatchAll[nIdxTeam])
+	else if (nNumWatch > m_aNumWatchAll[team])
 	{ // 観戦人数が少ない場合
 
-		int nNumSpawn = nNumWatch - m_aNumWatchAll[nIdxTeam];	// 登場人数
+		int nNumSpawn = nNumWatch - m_aNumWatchAll[team];	// 登場人数
 		for (int i = 0; i < nNumSpawn; i++)
 		{ // 登場人数分繰り返す
 
 			CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
-			if		(m_aNumWatchAll[nIdxTeam] < (int)(MAX_WATCH * RATE_HIGH))				{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
-			else if	(m_aNumWatchAll[nIdxTeam] < (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
-			else																			{ type = OBJTYPE_ANIM; }		// アニメーション
+			if		(m_aNumWatchAll[team] < (int)(MAX_WATCH * RATE_HIGH))				{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+			else if	(m_aNumWatchAll[team] < (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+			else																		{ type = OBJTYPE_ANIM; }		// アニメーション
 
 			// 観客を生成
 			if (FAILED(CAudience::Create(type, team)))
@@ -276,23 +275,22 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::TeamSide team)
 //==========================================================================
 // 全観戦中の人数取得処理
 //==========================================================================
-int CAudience::GetNumWatchAll(CGameManager::TeamSide team)
+int CAudience::GetNumWatchAll(CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return -1; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return -1; }
 
 	// 引数サイドの観戦人数を返す
-	int nIdxTeam = team - 1;
-	return m_aNumWatchAll[nIdxTeam];
+	return m_aNumWatchAll[team];
 }
 
 //==========================================================================
 // 全盛り上がりの設定処理
 //==========================================================================
-void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
+void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
@@ -311,10 +309,10 @@ void CAudience::SetEnableJumpAll(const bool bJump, CGameManager::TeamSide team)
 //==========================================================================
 // 全スペシャルの設定処理
 //==========================================================================
-void CAudience::SetSpecialAll(CGameManager::TeamSide team)
+void CAudience::SetSpecialAll(CGameManager::ETeamSide team)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	std::list<CAudience*>::iterator itr = m_list.GetEnd();
 	while (m_list.ListLoop(itr))
@@ -333,18 +331,18 @@ void CAudience::SetSpecialAll(CGameManager::TeamSide team)
 //==========================================================================
 // 全退場の設定処理
 //==========================================================================
-void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn)
+void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespawn)
 {
 	// チームが設定されていない場合抜ける
-	if (team != CGameManager::TeamSide::SIDE_LEFT && team != CGameManager::TeamSide::SIDE_RIGHT) { return; }
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
 
 	CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
-	int nIdxTeam = team - 1;	// チームインデックス
+
 	if (nNumDespawn > 0)
 	{ // 削除数が指定されている場合
 
-		if		(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
-		else if	(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+		if		(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
+		else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
 		else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
 	}
 
@@ -371,8 +369,8 @@ void CAudience::SetDespawnAll(CGameManager::TeamSide team, const int nNumDespawn
 			if (nCurDespawn == nNumDespawn) { return; }
 
 			// 次の削除対象オブジェクト種類を設定
-			if		(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
-			else if	(m_aNumWatchAll[nIdxTeam] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
+			if		(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
+			else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
 			else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
 		}
 	}
