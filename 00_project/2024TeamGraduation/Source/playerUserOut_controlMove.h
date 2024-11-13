@@ -1,13 +1,12 @@
-#if 0
 //==========================================================================
 // 
-//  プレイヤーコントロールヘッダー [playerUsercontrol_move.h]
+//  外野プレイヤーコントロールヘッダー [playerUserOut_controlMove.h]
 //  Author : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _PLAYERUSER_CONTROL_MOVE_H_
-#define _PLAYERUSER_CONTROL_MOVE_H_	// 二重インクルード防止
+#ifndef _PLAYERUSER_OUT_CONTROL_MOVE_H_
+#define _PLAYERUSER_OUT_CONTROL_MOVE_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -17,29 +16,27 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CSuffocation;
-class CEffekseerObj;
-class CPlayerUserControlMove;
+class CPlayerUserOutControlMove;
 class CPlayerAIControlMove;
 
 //==========================================================================
-// プレイヤーコントロールクラス定義
+// 外野プレイヤーコントロールクラス定義
 //==========================================================================
 //=============================
 // 移動
 //=============================
-class CPlayerUserControlMove : public CPlayerControlMove
+class CPlayerUserOutControlMove : public CPlayerControlMove
 {
 public:
 
 	// コンストラクタ
-	CPlayerUserControlMove();
+	CPlayerUserOutControlMove();
 
 	//=============================
-	// 仮想関数
+	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
-	virtual CPlayerUserControlMove* GetUser() { return this; }
+	virtual CPlayerAIControlMove* GetAI() override { return nullptr; }
+	virtual CPlayerUserControlMove* GetUser() override { return nullptr; }
 
 private:
 	
@@ -57,5 +54,4 @@ private:
 
 };
 
-#endif
 #endif

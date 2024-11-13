@@ -107,7 +107,7 @@ CPlayer::SHitInfo CPlayerAI::Hit(CBall* pBall)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
+void CPlayerAI::ChangeMoveControl(CPlayerControlMove* control)
 {
 	// 操作クラスの取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
@@ -123,7 +123,7 @@ void CPlayerAI::ChangeMoveControl(CPlayerAIControlMove* control)
 //==========================================================================
 // 移動の操作変更
 //==========================================================================
-void CPlayerAI::ChangeActionControl(CPlayerAIControlAction* control)
+void CPlayerAI::ChangeActionControl(CPlayerControlAction* control)
 {
 	// 操作クラスの取得
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
