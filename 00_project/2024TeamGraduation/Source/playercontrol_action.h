@@ -37,6 +37,9 @@ public:
 	virtual CPlayerAIControlAction* GetAI() { return nullptr; }
 	virtual CPlayerUserControlAction* GetUser() { return nullptr; }
 
+	void SetThrowDrop();	// 投げ(ドロップボール)設定
+	inline bool IsThrowDrop() { return m_bThrowDrop; }	// 投げ(ドロップボール)可能判定取得
+
 protected:
 	//=============================
 	// メンバ関数
@@ -52,15 +55,21 @@ private:
 	//=============================
 	void ConditionalAction(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 基本アクション操作
 
+	// 基本アクション操作
 	virtual void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// キャッチ
 	virtual void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 投げ
 	virtual void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// ジャンプ
 	virtual void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// スペシャル
 	virtual void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// モテ
 
+	// その他
+	void UpdateThrowDrop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ドロップボール)の猶予
+
 	//=============================
 	// メンバ変数
 	//=============================
+	float m_fThrowDropTime;	// 投げ(ドロップボール)の猶予
+	bool m_bThrowDrop;		// 投げ(ドロップボール)可能判定
 };
 
 

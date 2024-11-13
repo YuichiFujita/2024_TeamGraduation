@@ -83,6 +83,9 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 			// 落ちてるのキャッチ
 			m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_DROPCATCH_WALK);
+
+			// 投げの猶予設定
+			m_pPlayer->GetBase()->GetPlayerControlAction()->SetThrowDrop();
 		}
 
 		// キャッチ状態
