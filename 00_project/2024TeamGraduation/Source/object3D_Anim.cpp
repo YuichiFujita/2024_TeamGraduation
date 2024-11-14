@@ -47,11 +47,12 @@ CObject3DAnim *CObject3DAnim::Create
 	const MyLib::PosGrid2& rPtrn,	// テクスチャ分割数
 	const MyLib::Vector3& rPos,		// 位置
 	const float fNextTime,			// パターン変更時間
-	const bool bAutoDeath			// 自動破棄フラグ
+	const bool bAutoDeath,			// 自動破棄フラグ
+	int nPriority
 )
 {
 	// メモリの確保
-	CObject3DAnim* pObject3D = DEBUG_NEW CObject3DAnim;
+	CObject3DAnim* pObject3D = DEBUG_NEW CObject3DAnim(nPriority);
 	if (pObject3D != nullptr)
 	{// メモリの確保が出来ていたら
 
@@ -115,7 +116,7 @@ void CObject3DAnim::Update(const float fDeltaTime, const float fDeltaRate, const
 
 	// パターンの更新
 	assert(m_funcPattern != nullptr);
-	if (m_funcPattern(fDeltaTime, fSlowRate))
+	if (m_funcPattern(fDeltaTime, fDeltaRate, fSlowRate))
 	{ // 関数内部で破棄された場合
 
 		return;
@@ -304,13 +305,13 @@ void CObject3DAnim::SetEnablePlayBack(const bool bPlayBack)
 	{ // 通常再生の場合
 
 		// パターン加算関数を設定
-		m_funcPattern = std::bind(&CObject3DAnim::NextPtrn, this, std::placeholders::_1, std::placeholders::_2);
+		m_funcPattern = std::bind(&CObject3DAnim::NextPtrn, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	}
 	else
 	{ // 逆再生の場合
 
 		// パターン減算関数を設定
-		m_funcPattern = std::bind(&CObject3DAnim::BackPtrn, this, std::placeholders::_1, std::placeholders::_2);
+		m_funcPattern = std::bind(&CObject3DAnim::BackPtrn, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	}
 }
 
@@ -431,14 +432,14 @@ HRESULT CObject3DAnim::SetMaxPtrn(const int nMaxPtrn)
 //============================================================
 //	パターン加算処理
 //============================================================
-bool CObject3DAnim::NextPtrn(const float fDeltaTime, const float fSlowRate)
+bool CObject3DAnim::NextPtrn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// アニメーションが終了している場合抜ける
 	if (m_bFinish) { return false; }
 
 	// 現在の待機時間を加算
-	m_fCurTime += fDeltaTime * fSlowRate;
-	m_fCurWholeTime += fDeltaTime * fSlowRate;
+	m_fCurTime += fDeltaTime * fDeltaRate * fSlowRate;
+	m_fCurWholeTime += fDeltaTime * fDeltaRate * fSlowRate;
 
 	if (m_fCurTime >= m_pNextTime[m_nCurPtrn])
 	{ // 待機し終わった場合
@@ -489,14 +490,14 @@ bool CObject3DAnim::NextPtrn(const float fDeltaTime, const float fSlowRate)
 //============================================================
 //	パターン減算処理
 //============================================================
-bool CObject3DAnim::BackPtrn(const float fDeltaTime, const float fSlowRate)
+bool CObject3DAnim::BackPtrn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// アニメーションが終了している場合抜ける
 	if (m_bFinish) { return false; }
 
 	// 現在の待機時間を加算
-	m_fCurTime -= fDeltaTime * fSlowRate;
-	m_fCurWholeTime -= fDeltaTime * fSlowRate;
+	m_fCurTime -= fDeltaTime * fDeltaRate * fSlowRate;
+	m_fCurWholeTime -= fDeltaTime * fDeltaRate * fSlowRate;
 
 	if (m_fCurTime <= 0.0f)
 	{ // 待機し終わった場合

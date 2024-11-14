@@ -77,7 +77,7 @@ HRESULT CTimeUI::Init(void)
 	{ // ”š‚Ì”•ªŒJ‚è•Ô‚·
 
 		// ”š‚Ì¶¬
-		m_apValue[nCntValue] = CNumber::Create(CNumber::EObjectType::OBJECTTYPE_2D, PRIORITY);
+		m_apValue[nCntValue] = CNumber::Create(CMultiNumber::EObjType::OBJTYPE_2D, PRIORITY);
 		if (m_apValue[nCntValue] == nullptr)
 		{ // ¶¬‚É¸”s‚µ‚½ê‡
 

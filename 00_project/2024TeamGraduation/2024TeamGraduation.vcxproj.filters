@@ -218,18 +218,6 @@
     <ClCompile Include="Source\handle_Scale.cpp">
       <Filter>handle</Filter>
     </ClCompile>
-    <ClCompile Include="Source\number.cpp">
-      <Filter>number</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\number_2D.cpp">
-      <Filter>number</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\number_3D.cpp">
-      <Filter>number</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\number_Billboard.cpp">
-      <Filter>number</Filter>
-    </ClCompile>
     <ClCompile Include="Source\multinumber.cpp">
       <Filter>number</Filter>
     </ClCompile>
@@ -542,6 +530,18 @@
     <ClCompile Include="Source\playerAIOut.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\number.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_2D.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_3D.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\number_Billboard.cpp">
+      <Filter>number</Filter>
+    </ClCompile>
     <ClCompile Include="Source\playerPosAdj.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
@@ -660,18 +660,6 @@
     </ClInclude>
     <ClInclude Include="Source\handle_Scale.h">
       <Filter>handle</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\number.h">
-      <Filter>number</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\number_2D.h">
-      <Filter>number</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\number_3D.h">
-      <Filter>number</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\number_Billboard.h">
-      <Filter>number</Filter>
     </ClInclude>
     <ClInclude Include="Source\multinumber.h">
       <Filter>number</Filter>
@@ -999,6 +987,18 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIOut.h">
       <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_2D.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_3D.h">
+      <Filter>number</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\number_Billboard.h">
+      <Filter>number</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj.h">
       <Filter>player\playerPosAdj</Filter>

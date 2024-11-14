@@ -27,13 +27,29 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void SetVtx() override;
 
-	void SetDesableAutoDeath() { m_bAutoDeath = false; }	// 自動削除の判定削除
-	bool IsFinish() { return m_bFinish; }					// 終了の判定
-	static CObject2D_Anim *Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath = true);
+	//--------------------------
+	// 設定
+	//--------------------------
+	void SetDesableAutoDeath() { m_bAutoDeath = false; }		// 自動削除の判定削除
+	void SetEnableAutoPlay(bool bAuto) { m_bAutoPlay = bAuto; }	// 自動再生の判定設定
+	bool IsFinish() { return m_bFinish; }						// 終了の判定
+	
+	//--------------------------
+	// アニメーション関連
+	//--------------------------
+	void SetPatternAnim(int nPattern) { m_nPatternAnim = nPattern; }	// アニメーションのパターン
+
+	//--------------------------
+	// その他
+	//--------------------------
+	static CObject2D_Anim *Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath = true, int nPriority = mylib_const::PRIORITY_DEF2D);
 	CObject2D_Anim *GetObject2DAnim() { return this; }
-protected:
 
 private:
+
+	//=============================
+	// メンバ関数
+	//=============================
 	float m_fTimerAnim;		// アニメーションのカウンター
 	float m_fIntervalAnim;	// アニメーションのインターバル
 	int m_nPatternAnim;		// アニメーションのパターン
@@ -42,6 +58,7 @@ private:
 	float m_fSplitValueU;	// Uのスプライト量
 	float m_fSplitValueV;	// Vのスプライト量
 	bool m_bAutoDeath;		// 自動削除のフラグ
+	bool m_bAutoPlay;		// 自動再生のフラグ
 	bool m_bFinish;			// アニメーションが終わった判定
 };
 
