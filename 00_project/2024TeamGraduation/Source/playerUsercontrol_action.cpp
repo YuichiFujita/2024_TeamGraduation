@@ -73,7 +73,7 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 	CMotion* pMotion = player->GetMotion();
 
 	if (pKey->GetTrigger(DIK_K) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_X, player->GetMyPlayerIdx()))
+		pPad->GetTap(CInputGamepad::BUTTON_X, player->GetMyPlayerIdx(), 1.0f))
 	{// TAKADA: ‚Ì‚¿‚ÉTap‰»
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
 	}
