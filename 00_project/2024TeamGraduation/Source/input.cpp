@@ -146,9 +146,9 @@ void CInput::Uninit()
 //==========================================================================
 // XVˆ—
 //==========================================================================
-void CInput::Update()
+void CInput::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	m_pMouse->Update();
-	m_pKeyboard->Update();
-	m_pGamepad->Update();
+	m_pMouse->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	m_pKeyboard->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	m_pGamepad->Update(fDeltaTime, fDeltaRate, fSlowRate);
 }

@@ -53,7 +53,9 @@ public:
 	CPlayer::EDashAngle* GetInputAngle() { return m_pInputAngle; }								// 現在の入力方向取得
 	void SetInputAngleCtr(float fInputAngleCtr) { m_fInputAngleCtr = fInputAngleCtr; }			// 現在の入力方向カウンター設定
 	float GetInputAngleCtr() { return m_fInputAngleCtr; }										// 現在の入力方向カウンター取得
-
+	void SetCrabMoveEasingTime(float fCrabMoveEasingTime) { m_fCrabMoveEasingTime = fCrabMoveEasingTime; }		// 現在のカニ歩き移動補正値設定
+	float GetCrabMoveEasingTime() { return m_fCrabMoveEasingTime; }												// 現在のカニ歩き移動補正値取得
+	
 	void CrabSetting(CPlayer* player);				// カニ歩き状態
 
 private:
@@ -70,12 +72,14 @@ private:
 	// メンバ変数
 	//=============================
 	int m_nCntTrigger[CPlayer::EDashAngle::ANGLE_MAX];	// トリガーのカウント
-	CPlayer::EDashAngle m_HoldDashAngle;					// 保持してるダッシュの移動方向
+	CPlayer::EDashAngle m_HoldDashAngle;				// 保持してるダッシュの移動方向
 	float m_fInputInterval;								// 入力の受け付け猶予
 	float m_fTriggerInterval;							// トリガーのインターバル
 	bool m_bBlink;										// 走るフラグ
 	CPlayer::EDashAngle* m_pInputAngle;					// 現在の入力方向
 	float m_fInputAngleCtr;								// 現在の入力方向の保持カウンター
+	
+	float m_fCrabMoveEasingTime;		// 現在のカニ歩き移動補正値
 };
 
 #endif

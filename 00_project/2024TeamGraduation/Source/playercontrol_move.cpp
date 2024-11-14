@@ -34,6 +34,7 @@ CPlayerControlMove::CPlayerControlMove()
 	m_bBlink = false;
 	m_pInputAngle = nullptr;					// 現在の入力方向
 	m_fInputAngleCtr = 0.0f;					// 現在の入力方向の保持カウンター
+	m_fCrabMoveEasingTime = 0.0f;				// 現在のカニ歩き移動補正値
 }
 
 //==========================================================================
@@ -86,6 +87,14 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		}
 	}
 	
+	if (m_fCrabMoveEasingTime > 1.0f)
+	{// 1を超えたら範囲内にする
+		m_fCrabMoveEasingTime = static_cast<int>(m_fCrabMoveEasingTime * 1000) % static_cast<int>(1000);
+	}
+	
+	// 補正用時間加算
+	m_fCrabMoveEasingTime += 1.0f * fDeltaTime * fDeltaRate * fSlowRate;
+
 #if 1
 	// カニ歩き判定
 	if (player->GetBase()->IsCrab())

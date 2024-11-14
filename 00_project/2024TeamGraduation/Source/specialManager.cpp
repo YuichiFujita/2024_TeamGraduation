@@ -45,15 +45,6 @@ namespace
 			const float END_TIME = 1.8f;
 		}
 	}
-
-	const float ADDVALUE[CCharmManager::ETypeAdd::ADD_MAX] =	// 加算量
-	{
-		2.0f,	// ヒット
-		5.0f,	// ジャストキャッチ
-		2.0f,	// カバーキャッチ
-		8.0f,	// 回避
-		30.0f,	// スペシャル
-	};
 }
 
 //************************************************************
@@ -171,7 +162,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// ゲームをスペシャル演出シーンに変更
-	CGameManager::GetInstance()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
+	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
 #endif
 
 	// 通常カメラの設定
@@ -495,7 +486,7 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 
 	// ゲームをメインシーンに変更
 	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー
-	pGameManager->SetType(CGameManager::ESceneType::SCENE_MAIN);
+	pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_MAIN);
 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
