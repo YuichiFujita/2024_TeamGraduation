@@ -292,6 +292,7 @@ public:
 	void SetState(EState state);		// 状態設定
 	void ChangeBase(EBaseType type);	// ベース変更
 	EBaseType GetBaseType() const;		// ベース取得
+	EFieldArea GetAreaType() const { return m_typeArea; }	// ポジション取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得

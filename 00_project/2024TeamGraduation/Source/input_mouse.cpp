@@ -133,7 +133,7 @@ void CInputMouse::Uninit()
 //==========================================================================
 // マウスの更新処理
 //==========================================================================
-void CInputMouse::Update()
+void CInputMouse::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	DIMOUSESTATE2 mouse; // マウスの入力情報
 
