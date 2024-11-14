@@ -45,6 +45,15 @@ namespace
 			const float END_TIME = 1.8f;
 		}
 	}
+
+	const float ADDVALUE[CCharmManager::ETypeAdd::ADD_MAX] =	// 加算量
+	{
+		2.0f,	// ヒット
+		5.0f,	// ジャストキャッチ
+		2.0f,	// カバーキャッチ
+		8.0f,	// 回避
+		30.0f,	// スペシャル
+	};
 }
 
 //************************************************************

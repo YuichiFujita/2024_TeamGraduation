@@ -407,6 +407,9 @@ void CPlayer::Uninit()
 	// 着せ替え
 	SAFE_UNINIT(m_pDressup_Hair);
 	SAFE_UNINIT(m_pDressup_Accessory);
+	
+	// ステータス
+	SAFE_DELETE(m_pPosAdj);
 
 	// 終了処理
 	CObjectChara::Uninit();
