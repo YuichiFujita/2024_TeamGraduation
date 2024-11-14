@@ -21,7 +21,7 @@ CListManager<CEffekseerObj> CEffekseerObj::m_List = {};	// リスト
 //==========================================================================
 CEffekseerObj::CEffekseerObj()
 {
-	m_Label = CMyEffekseer::EFKLABEL::EFKLABEL_SAMPLE_LASER;	// エフェクトのラベル
+	m_Label = CMyEffekseer::EEfkLabel::EFKLABEL_SAMPLE_LASER;	// エフェクトのラベル
 	m_bDeath = false;		// 死亡フラグ
 	m_bDeleteLater = false;	// 後で死亡フラグ
 	m_fDeleteTimer = 0.0f;	// 死亡タイマー
@@ -38,7 +38,7 @@ CEffekseerObj::~CEffekseerObj()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CEffekseerObj* CEffekseerObj::Create(const CMyEffekseer::EFKLABEL& label, const MyLib::Vector3& pos, const MyLib::Vector3& rot, const MyLib::Vector3 move, float scale, bool bAutoDeath)
+CEffekseerObj* CEffekseerObj::Create(const CMyEffekseer::EEfkLabel& label, const MyLib::Vector3& pos, const MyLib::Vector3& rot, const MyLib::Vector3 move, float scale, bool bAutoDeath)
 {
 	// メモリの確保
 	CEffekseerObj* pObj = DEBUG_NEW CEffekseerObj;

@@ -30,6 +30,9 @@ CNumberBillboard::~CNumberBillboard()
 //==========================================================================
 HRESULT CNumberBillboard::Init()
 {
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
+
 	// ¶¬ˆ—
 	m_pObjBillboard = CObjectBillboardAnim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
 	

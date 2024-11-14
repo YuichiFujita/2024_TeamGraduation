@@ -20,6 +20,7 @@
 //==========================================================================
 class CShadow;
 class CPlayer;
+class CEffekseerObj;
 
 //==========================================================================
 // クラス定義
@@ -136,7 +137,9 @@ private:
 	// オーバーライド関数
 	void CalWorldMtx();	// ワールドマトリックスの計算
 
+	//--------------------------
 	// 状態関数
+	//--------------------------
 	void UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 生成状態の更新
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ状態の更新
 	void UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常ホーミング状態の更新
@@ -150,16 +153,25 @@ private:
 	void UpdateFree(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// フリー状態の更新
 	void UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 着地状態の更新
 
+	//--------------------------
 	// スペシャル関数
+	//--------------------------
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
+	//--------------------------
 	// 汎用関数
+	//--------------------------
 	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
 	void UpdateDecay(const float fDeltaRate, const float fSlowRate);	// 移動量減速
 	void UpdateGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に重力反映
 	void UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に移動量反映
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
+
+	//--------------------------
+	// エフェクト
+	//--------------------------
+	void UpdateThrowLine();	// 投げた線の更新
 
 	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);				// プレイヤーとの当たり判定
 	CPlayer* CollisionThrowTarget(const bool bAbsLock = false);	// 投げる対象との当たり判定
@@ -199,6 +211,8 @@ private:
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態カウンター
 	int m_nDamage;			// ダメージ
+
+	CEffekseerObj* m_pThrowLine;	// 投げのライン
 };
 
 #endif
