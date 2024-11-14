@@ -199,6 +199,10 @@ private:
 
 	void Reset();			// 変数リセット
 
+	bool IsWhoPicksUpTheBall();
+
+	void Debug(CPlayer* pTarget);
+
 	//=============================
 	// メンバ変数
 	//=============================

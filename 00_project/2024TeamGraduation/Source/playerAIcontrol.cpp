@@ -12,6 +12,8 @@
 #include "game.h"
 #include "teamStatus.h"
 
+// デバッグ用
+#include "3D_effect.h"
 
 // player関連
 #include "playerBase.h"
@@ -171,7 +173,7 @@ void CPlayerAIControl::PlanThrowFlow(const float fDeltaTime, const float fDeltaR
 	PlanThrowDistance(pTarget);
 
 	// 行動
-	PlanMove(pTarget);
+	//PlanMove(pTarget);
 
 	// ジャンプするorｓしない関数	// 一瞬
 	//PlanIsJump(pTarget);
@@ -182,7 +184,9 @@ void CPlayerAIControl::PlanThrowFlow(const float fDeltaTime, const float fDeltaR
 	//LineOverPlayer();	// 常
 
 	// 何を投げるか考える関数	// 常
-	//PlanThrow(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
+	PlanThrow(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
+
+	Debug(pTarget);
 }
 
 //==========================================================================
@@ -633,6 +637,8 @@ void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDel
 	}
 	else if (pBall->GetPlayer() == nullptr)
 	{
+		if (!IsWhoPicksUpTheBall()) return;
+
 		// ボールを取りに行く
 		m_sInfo.sCatchInfo.eCatchType = ECatchType::CATCH_TYPE_FIND;
 	}
@@ -825,7 +831,7 @@ void CPlayerAIControl::FindBall(const float fDeltaTime, const float fDeltaRate, 
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr) 
-	{// ボールがnullptr且つプレイヤーがボールを取っている場合
+	{// ボールがnullptr&&プレイヤーがボールを取っている場合
 		Reset();	// 変数リセット
 		return;
 	}
@@ -838,10 +844,75 @@ void CPlayerAIControl::FindBall(const float fDeltaTime, const float fDeltaRate, 
 
 	// 方向設定
 	m_pAI->SetRotDest(fAngle);
+
+
+#ifdef _DEBUG
+
+	CEffect3D::Create
+	(// デバッグ用エフェクト(ターゲット)
+		m_pAI->GetPosition(),
+		VEC3_ZERO,
+		MyLib::color::Purple(),
+		20.0f,
+		0.1f,
+		1,
+		CEffect3D::TYPE::TYPE_NORMAL
+	);	// 
+#endif
+
 }
 
+//==========================================================================
+// 誰がボールを取りにいくか
+//==========================================================================
+bool CPlayerAIControl::IsWhoPicksUpTheBall()
+{
+	float fMyDis = 1000000.0f;	// 自分のボールとの距離
+	float fTeamMemberDis = 1000000.0f;	// チームメンバーのボールとの距離
 
+	// 自分の情報取得
+	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();	// チームタイプ
+	MyLib::Vector3 Mypos = m_pAI->GetPosition();	// 位置情報
 
+	// ボールの取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+
+	// ボール位置取得
+	MyLib::Vector3 posBall = pBall->GetPosition();
+	fMyDis = Mypos.DistanceXZ(posBall);	// 自分からボールとの距離
+
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		// 違うチーム||外野の場合
+		if ((typeTeam != pPlayer->GetStatus()->GetTeam()) ||
+			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
+		{
+			continue;
+		}
+
+		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+
+		// チームからボールとの距離を求める
+		float fLength = posPlayer.DistanceXZ(posBall);
+
+		if (fLength < fMyDis)
+		{ // より近い味方プレイヤーがいた場合
+
+			//Reset();	// 変数リセット
+
+			return false;
+
+			break;
+		}
+	}
+
+	return true;
+}
 
 //==========================================================================
 // ターゲット設定
@@ -851,7 +922,12 @@ void CPlayerAIControl::SetThrowTarget(CPlayer** ppTarget)
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
 	float fMinDis = 1000000.0f;	// 近いプレイヤー
 
-	MyLib::Vector3 pos = m_pAI->GetPosition();	// 位置情報の取得
+	MyLib::Vector3 Mypos = m_pAI->GetPosition();	// 位置情報の取得
+
+	// ボールの取得
+	CBall* pBall = m_pAI->GetBall();
+	if (pBall == nullptr) { return; }
+	CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -861,32 +937,29 @@ void CPlayerAIControl::SetThrowTarget(CPlayer** ppTarget)
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
-		// ボールの取得
-		CBall* pBall = m_pAI->GetBall();
-		if (pBall == nullptr) { return; }
-		CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
-
-		// 同じチームの場合次へ
-		if (typeTeam == pPlayer->GetStatus()->GetTeam()) { continue; }
+		// 同じチーム||外野の場合
+		if ((typeTeam == pPlayer->GetStatus()->GetTeam()) || 
+			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
+		{ continue; }
 
 		// 敵との距離を求める
-		float fLength = sqrtf(
-			(pPlayer->GetPosition().x - pos.x) * (pPlayer->GetPosition().x - pos.x) +
-			(pPlayer->GetPosition().z - pos.z) * (pPlayer->GetPosition().z - pos.z));
+		float fLength = Mypos.DistanceXZ(posPlayer);
 
 		if (fLength < fMinDis)
 		{ // より近い相手プレイヤーがいた場合
+
+			// 最小距離の更新
+			fMinDis = fLength;
 
 			// ターゲットを更新
 			pTarget = pPlayer;
 			*ppTarget = pTarget;
 
 			// 方向設定
-			m_pAI->SetRotDest(pos.AngleXZ(pTarget->GetPosition()));
+			m_pAI->SetRotDest(Mypos.AngleXZ(pTarget->GetPosition()));
 		}
 	}
 }
-
 
 //==========================================================================
 // 変数のリセット
@@ -907,4 +980,19 @@ void CPlayerAIControl::Reset()
 	pControlAIMove->SetIsDash(false);
 	pControlAIMove->SetIsBlink(false);
 	pControlAIAction->SetIsJump(false);
+}
+
+// デバッグ用
+void CPlayerAIControl::Debug(CPlayer* pTarget)
+{
+	CEffect3D::Create
+	(// デバッグ用エフェクト(ターゲット)
+		pTarget->GetPosition(),
+		VEC3_ZERO,
+		MyLib::color::Red(),
+		20.0f,
+		0.1f,
+		1,
+		CEffect3D::TYPE::TYPE_NORMAL
+	);	// 
 }
