@@ -165,48 +165,6 @@ namespace Crab	// カニ歩き
 	};
 }
 
-namespace Motion
-{
-	// デバッグ表示用
-	const std::string NAME_MAP[CPlayer::EMotion::MOTION_MAX] =
-	{
-		"MOTION_DEF",				// ニュートラルモーション
-		"MOTION_DEF_BALL",			// ニュートラルモーション(ボール所持)
-		"MOTION_WALK",				// 移動
-		"MOTION_WALK_BALL",			// 移動(ボール所持)
-		"MOTION_CRAB_FRONT",		// カニ歩き(前)
-		"MOTION_CRAB_BACK",			// カニ歩き(後)
-		"MOTION_CRAB_LEFT",			// カニ歩き(左)
-		"MOTION_CRAB_RIGHT",		// カニ歩き(右)
-		"MOTION_RUN",				// 走り
-		"MOTION_RUN_BALL",			// 走り(ボール所持)
-		"MOTION_BLINK",				// ブリンク
-		"MOTION_DODGE",				// 回避成功時
-		"MOTION_JUMP",				// ジャンプ
-		"MOTION_JUMP_BALL",			// ジャンプ(ボール所持)
-		"MOTION_LAND",				// 着地
-		"MOTION_CATCH_STANCE",		// キャッチの構え
-		"MOTION_CATCH_STANCE_JUMP",	// キャッチの構え(ジャンプ)
-		"MOTION_CATCH_NORMAL",		// キャッチ(通常)
-		"MOTION_CATCH_JUMP",		// キャッチ(ジャンプ)
-		"MOTION_JUSTCATCH_NORMAL",	// ジャストキャッチ(通常)
-		"MOTION_JUSTCATCH_JUMP",	// ジャストキャッチ(ジャンプ)
-		"MOTION_DROPCATCH_WALK",	// 落ちてるのキャッチ(歩き)
-		"MOTION_THROW",				// 投げ
-		"MOTION_THROW_RUN",			// 投げ(走り)
-		"MOTION_THROW_JUMP",		// 投げ(ジャンプ)
-		"MOTION_TOSS",				// トス
-		"MOTION_HYPE",				// 盛り上げ
-		"MOTION_SPECIAL",			// スペシャル
-		"MOTION_WIN",				// 勝利
-		"MOTION_DAMAGE",			// ダメージ
-		"MOTION_DEAD",				// 死亡
-		"MOTION_DEAD_AFTER",		// 死亡後
-		"MOTION_GRIP_DEF",			// デフォグリップ
-		"MOTION_GRIP_FRONT",		// 前グリップ
-	};
-}
-
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -854,6 +812,16 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		if (m_pBall != nullptr)
 		{// トス
 			m_pBall->Toss(this);
+		}
+		break;
+
+	case EMotion::MOTION_THROW_PASS:
+		if (m_pBall != nullptr)
+		{// パス
+
+#if 0	// FUJITA: #if外して
+			m_pBall->Pass(this);
+#endif
 		}
 		break;
 
@@ -1994,7 +1962,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("Motion : [%s]", Motion::NAME_MAP[static_cast<CPlayer::EMotion>(motion->GetType())].c_str());
+		ImGui::Text("Motion : [%s]", motion->GetType());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 
 		//現在の入力方向を取る(向き)

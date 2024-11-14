@@ -252,6 +252,7 @@ MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw.txt				# “Š‚
 MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_dash.txt		# “Š‚°(ƒ_ƒbƒVƒ…)
 MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_drop.txt		# “Š‚°(ƒhƒƒbƒvƒ{[ƒ‹)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_pass.txt		# “Š‚°(ƒpƒX)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# ƒgƒX
 MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# ·‚èã‚°
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# ƒXƒyƒVƒƒƒ‹

@@ -42,6 +42,8 @@ public:
 		STATE_MOVE,				// 移動状態
 		STATE_SPECIAL_STAG,		// スペシャル演出状態
 		STATE_SPECIAL_THROW,	// スペシャル投げ状態
+		STATE_HOM_PASS,			// パスホーミング状態
+		STATE_PASS,				// パス状態
 		STATE_REBOUND,			// リバウンド状態 (ぶつかった時の落下)
 		STATE_FREE,				// フリー状態 (触れただけで取れる)
 		STATE_LAND,				// 着地状態 (地面に転がっている)
@@ -89,6 +91,7 @@ public:
 	void ThrowNormal(CPlayer* pPlayer);	// 通常投げ
 	void ThrowJump(CPlayer* pPlayer);	// ジャンプ投げ
 	void Special(CPlayer* pPlayer);		// スペシャル発動
+	void Pass(CPlayer* pPlayer);		// パス
 	void Toss(CPlayer* pPlayer);		// トス
 
 	CGameManager::ETeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
@@ -101,6 +104,7 @@ public:
 	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
+	bool IsPass() const;			// パスフラグ取得
 	bool IsSpecial() const;			// スペシャルフラグ取得
 
 	//=============================
@@ -140,6 +144,8 @@ private:
 	void UpdateMove(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 移動状態の更新
 	void UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル演出状態の更新
 	void UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ状態の更新
+	void UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// パスホーミング状態の更新
+	void UpdatePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// パス状態の更新
 	void UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// リバウンド状態の更新
 	void UpdateFree(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// フリー状態の更新
 	void UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 着地状態の更新
@@ -155,8 +161,9 @@ private:
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
 
-	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);			// プレイヤーとの当たり判定
-	CPlayer* CollisionThrow(const bool bAbsLock = false);	// ホーミング対象との当たり判定
+	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);				// プレイヤーとの当たり判定
+	CPlayer* CollisionThrowTarget(const bool bAbsLock = false);	// 投げる対象との当たり判定
+	CPlayer* CollisionPassTarget();		// パスする対象との当たり判定
 	void SetState(const EState state);	// 状態設定
 	void Catch(CPlayer* pPlayer);		// キャッチ
 	void Throw(CPlayer* pPlayer);		// 投げ
@@ -184,6 +191,8 @@ private:
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
 	bool m_bLanding;		// 着地フラグ
+	MyLib::Vector3 m_posPassStart;	// パス開始位置
+
 	CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	ESpecial m_typeSpecial;	// スペシャル種類
 	EAttack m_typeAtk;		// 攻撃種類

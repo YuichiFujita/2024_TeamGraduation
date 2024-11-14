@@ -66,6 +66,7 @@ public:
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
 		MOTION_THROW_DROP,			// 投げ(ドロップボール)
+		MOTION_THROW_PASS,			// 投げ(パス)
 		MOTION_TOSS,				// トス
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
@@ -291,6 +292,7 @@ public:
 	void SetState(EState state);		// 状態設定
 	void ChangeBase(EBaseType type);	// ベース変更
 	EBaseType GetBaseType() const;		// ベース取得
+	EFieldArea GetAreaType() const { return m_typeArea; }	// ポジション取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
