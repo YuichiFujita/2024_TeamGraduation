@@ -30,6 +30,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
 
 	// キャッチ
+	{ TYPE_SE,"data/SE/catch01.wav",0},				// キャッチ
 	{ TYPE_SE,"data/SE/justcatch.wav",0},			// ジャストキャッチ
 
 	// バウンド

@@ -927,6 +927,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		break;
 	}
 
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
+
 	// キャッチ状態
 	SetState(EState::STATE_CATCH_NORMAL);
 }
