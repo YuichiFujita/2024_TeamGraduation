@@ -22,6 +22,7 @@ CObject2D_Anim::CObject2D_Anim(int nPriority) : CObject2D(nPriority)
 	m_fSplitValueU = 0.0f;	// Uのスプライト量
 	m_fSplitValueV = 0.0f;	// Vのスプライト量
 	m_bAutoDeath = false;	// 自動削除のフラグ
+	m_bAutoPlay = true;		// 自動再生のフラグ
 	m_bFinish = false;		// アニメーションが終わった判定
 }
 
@@ -36,10 +37,10 @@ CObject2D_Anim::~CObject2D_Anim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath)
+CObject2D_Anim* CObject2D_Anim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath, int nPriority)
 {
 	// メモリの確保
-	CObject2D_Anim* pObject2D = DEBUG_NEW CObject2D_Anim;
+	CObject2D_Anim* pObject2D = DEBUG_NEW CObject2D_Anim(nPriority);
 
 	if (pObject2D != nullptr)
 	{// メモリの確保が出来ていたら
@@ -117,7 +118,10 @@ HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const f
 void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// カウントを更新
-	m_fTimerAnim += fDeltaTime * fSlowRate;
+	if (m_bAutoPlay)
+	{
+		m_fTimerAnim += fDeltaTime * fDeltaRate * fSlowRate;
+	}
 
 	// パターン更新
 	if (m_fTimerAnim >= m_fIntervalAnim)
