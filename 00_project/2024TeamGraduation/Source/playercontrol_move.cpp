@@ -88,7 +88,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	
 #if 1
 	// ƒJƒj•à‚«”»’è
-	if (player->IsCrab())
+	if (player->GetBase()->IsCrab())
 	{
 		CrabSetting(player);
 	}

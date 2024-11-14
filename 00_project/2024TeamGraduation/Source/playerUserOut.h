@@ -31,6 +31,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual CPlayerUserOut* GetPlayerUserOut() override { return this; }	// ユーザー外野プレイヤー取得
+	virtual bool IsCrab() override { return false; }	// カニ歩き判定
 
 	//=============================
 	// メンバ関数

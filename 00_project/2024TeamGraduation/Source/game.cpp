@@ -248,7 +248,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(右)
-#if 0
+#if 1
 	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
 	if (pUserOut == nullptr)
 	{
