@@ -66,6 +66,7 @@ public:
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
 		MOTION_THROW_DROP,			// 投げ(ドロップボール)
+		MOTION_THROW_PASS,			// 投げ(パス)
 		MOTION_TOSS,				// トス
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
