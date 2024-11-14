@@ -407,6 +407,9 @@ void CPlayer::Uninit()
 	// 着せ替え
 	SAFE_UNINIT(m_pDressup_Hair);
 	SAFE_UNINIT(m_pDressup_Accessory);
+	
+	// ステータス
+	SAFE_DELETE(m_pPosAdj);
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -679,7 +682,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (!m_bDash && IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
+	if (!m_bDash && m_pBase->IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
 		MotionCrab(nStartKey);
 	}
@@ -1913,32 +1916,6 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// ベース指定なし
 	assert(false);
 	return (EBaseType)-1;
-}
-
-//==========================================================================
-// カニ歩き判定
-//==========================================================================
-bool CPlayer::IsCrab()
-{
-	if (m_pBall != nullptr) return false;
-
-	CPlayer::EAction action = GetActionPattern()->GetAction();
-	int motionType = GetMotion()->GetType();
-	
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall == nullptr) return false;
-
-	// ボールの状態：敵側であるか
-	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
-	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE) return false;
-	//if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
-
-	// 自身の状態：ブリンク＆走りでない
-	if (action == CPlayer::EAction::ACTION_BLINK) return false;
-	if (action == CPlayer::EAction::ACTION_JUMP && m_bDash) return false;
-	if (m_bDash) return false;
-
-	return true;
 }
 
 //==========================================================================

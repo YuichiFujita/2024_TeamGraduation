@@ -119,7 +119,7 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 1; i++)
 	{
@@ -188,7 +188,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 1
+#if 0
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -210,7 +210,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -248,7 +248,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(右)
-#if 0
+#if 1
 	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
 	if (pUserOut == nullptr)
 	{
@@ -513,12 +513,12 @@ void CGame::ChangeEdit()
 					if (i != 0)
 					{
 						// デバッグモード
-						m_pGameManager->SetType(CGameManager::ESceneType::SCENE_DEBUG);
+						m_pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_DEBUG);
 					}
 					else
 					{
 						// デバッグモード
-						m_pGameManager->SetType(m_pGameManager->GetOldType());
+						m_pGameManager->SetSceneType(m_pGameManager->GetOldType());
 					}
 
 					// エディット終了

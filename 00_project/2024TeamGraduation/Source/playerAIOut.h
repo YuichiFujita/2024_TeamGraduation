@@ -32,6 +32,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
+	virtual bool IsCrab() override { return false; }	// カニ歩き判定
 };
 
 #endif

@@ -42,6 +42,14 @@ public:
 		STATE_MAX			// この列挙型の総数
 	};
 
+	// 加算列挙
+	enum ETypeAdd
+	{
+		ADD_HIT = 0,		// ヒット
+		ADD_JUSTCATCH,		// ジャストキャッチ
+		ADD_MAX
+	};
+
 	// コンストラクタ
 	CSpecialManager(CPlayer* pAttack, CPlayer* pTarget);
 
@@ -93,6 +101,7 @@ private:
 	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
+	float m_fAddValue[ETypeAdd::ADD_MAX];	// 加算量
 };
 
 #endif	// _SPECIAL_MANAGER_H_

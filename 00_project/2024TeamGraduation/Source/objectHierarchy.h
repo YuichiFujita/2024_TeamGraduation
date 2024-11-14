@@ -52,9 +52,13 @@ public:
 		MyLib::Vector3 centerOffSet;				// 中心位置のオフセット
 		int nNumModel;								// モデル数
 		MyLib::Vector3 posOrigin;					// 最初の位置
+		float scale;								// スケール
 		CCharacterStatus::CharParameter parameter;	// パラメーター
 		CBallStatus::SBallParameter parameterBall;	// パラメーター(ボール)
 		std::vector<LoadData> LoadData;	// 読み込む子データ
+
+		// コンストラクタ
+		Load() : scale(1.0f) {}
 	};
 
 	// 列挙型定義
@@ -115,6 +119,11 @@ protected:
 	static std::vector<Load> m_aLoadData;
 	static int m_nNumLoad;	// 読み込んだ数
 private:
+
+	//=============================
+	// メンバ関数
+	//=============================
+	void AdjustPositionByScale();	// スケールをもとに位置調整
 
 	//=============================
 	// メンバ変数

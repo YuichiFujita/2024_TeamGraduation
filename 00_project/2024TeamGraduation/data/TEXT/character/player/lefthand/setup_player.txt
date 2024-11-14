@@ -41,6 +41,9 @@ MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
+	
+	SCALE = 1.0		# キャラスケール
+	
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 29.61	# ブリンク移動量
