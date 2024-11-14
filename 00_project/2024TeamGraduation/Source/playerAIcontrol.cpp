@@ -229,7 +229,7 @@ void CPlayerAIControl::PlanThrowFlow(const float fDeltaTime, const float fDeltaR
 	// 歩かないor歩くor走る関数		// 常
 
 	// ライン越え
-	LineOverPlayer();	// 常
+	//LineOverPlayer();	// 常
 
 	// 何を投げるか考える関数	// 常
 	PlanThrow(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
@@ -308,17 +308,17 @@ void CPlayerAIControl::PlanThrowDistance(CPlayer* pTarget)
 
 	// 距離を見る
 	MyLib::Vector3 posTarget = pTarget->GetPosition();
-	MyLib::Vector3 posMy = m_pAI->GetPosition();
+	MyLib::Vector3 MyPos = m_pAI->GetPosition();
 
 	// 自分から相手の距離
-	float fDistance = posMy.DistanceXZ(posTarget);
+	float fDistance = MyPos.DistanceXZ(posTarget);
 
 	if (fDistance < LENGTH_MAX - 50.0f)
 	{// 離れろ！
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 		
 		// 相手から自分の方向
-		m_pAI->SetRotDest(posTarget.AngleXZ(posMy));
+		m_pAI->SetRotDest(posTarget.AngleXZ(MyPos));
 
 		// 歩け！
 		pControlAIMove->SetIsWalk(true);
@@ -330,7 +330,7 @@ void CPlayerAIControl::PlanThrowDistance(CPlayer* pTarget)
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
 
 		// 相手から自分の方向
-		m_pAI->SetRotDest(posMy.AngleXZ(posTarget));
+		m_pAI->SetRotDest(MyPos.AngleXZ(posTarget));
 
 		// 歩け！
 		pControlAIMove->SetIsWalk(true);
@@ -364,10 +364,10 @@ void CPlayerAIControl::PlanIsJump(CPlayer* pTarget)
 
 	// 距離を見る
 	MyLib::Vector3 posTarget = pTarget->GetPosition();
-	MyLib::Vector3 posMy = m_pAI->GetPosition();
+	MyLib::Vector3 MyPos = m_pAI->GetPosition();
 
 	// 自分から相手の距離
-	float fDistance = posMy.DistanceXZ(posTarget);
+	float fDistance = MyPos.DistanceXZ(posTarget);
 	
 	if (fDistance > LENGTH_MAX + 50.0f && fDistance < LENGTH_MAX - 50.0f)
 	{// 離れていたら
@@ -409,10 +409,10 @@ void CPlayerAIControl::LineOverPlayer()
 
 	// 距離を見る
 	MyLib::Vector3 posTarget = {};
-	MyLib::Vector3 posMy = m_pAI->GetPosition();
+	MyLib::Vector3 MyPos = m_pAI->GetPosition();
 
 	// 自分から相手の距離
-	float fDistance = posMy.DistanceXZ(posTarget);
+	float fDistance = MyPos.DistanceXZ(posTarget);
 
 	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
 	{
@@ -421,10 +421,10 @@ void CPlayerAIControl::LineOverPlayer()
 			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 
 			// 相手から自分の方向
-			//m_pAI->SetRotDest(posTarget.AngleXZ(posMy));
+			//m_pAI->SetRotDest(posTarget.AngleXZ(MyPos));
 
 			// 相手から自分の方向
-			m_pAI->SetRotDest(posMy.AngleXZ(posTarget));
+			m_pAI->SetRotDest(MyPos.AngleXZ(posTarget));
 
 			// 歩け！
 			pControlAIMove->SetIsWalk(true);
@@ -540,52 +540,6 @@ void CPlayerAIControl::StrategyTiming(CPlayer* pTarget)
 	}
 }
 
-//==========================================================================
-// 線に対しての思考
-//==========================================================================
-void CPlayerAIControl::StrategyLine(CPlayer* pTarget)
-{
-	// AIコントロール情報の取得
-	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-	// チームタイプの取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
-
-	// ターゲット距離(中央)
-	MyLib::Vector3 posTarget = {};	// ターゲット位置
-	MyLib::Vector3 posMy = m_pAI->GetPosition();	// 自身位置
-
-	// 自分から相手(中央)の距離
-	float fDistance = posMy.DistanceXZ(posTarget);
-
-	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
-	{// チームが左の場合
-		if (fDistance < 100.0f)
-		{// 離れろ！
-			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
-
-			// 相手から自分の方向
-			//m_pAI->SetRotDest(posTarget.AngleXZ(posMy));
-
-			// 相手から自分の方向
-			m_pAI->SetRotDest(posMy.AngleXZ(posTarget));
-
-			// 歩け！
-			pControlAIMove->SetIsWalk(true);
-
-			return;
-		}
-	}
-	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{// 右の場合
-		if (m_pAI->GetPosition().x < 0.0f)
-		{
-			// 
-		}
-	}
-}
-
 //--------------------------------------------------------------------------
 // 跳び投げ通常タイミング
 //--------------------------------------------------------------------------
@@ -689,6 +643,83 @@ void CPlayerAIControl::ThrowJumpTimingDelay(const float fDeltaTime, const float 
 	}
 }
 
+//==========================================================================
+// 線に対しての思考
+//==========================================================================
+void CPlayerAIControl::StrategyLine(CPlayer* pTarget)
+{
+	// チームタイプの取得
+	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
+
+	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
+	{// 左側チーム
+		LineLeftTeam(pTarget);
+	}
+	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
+	{// 右側チーム
+		LineRightTeam(pTarget);
+	}
+}
+
+//--------------------------------------------------------------------------
+// 線に対して左側チーム
+//--------------------------------------------------------------------------
+void CPlayerAIControl::LineLeftTeam(CPlayer* pTarget)
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// ターゲット距離(中央)
+	MyLib::Vector3 posTarget = {};	// ターゲット位置
+	MyLib::Vector3 MyPos = m_pAI->GetPosition();	// 自身位置
+
+	// 自分からターゲット(中央)までのx距離
+	float fDistance = sqrtf((posTarget.x - MyPos.x) * (posTarget.x - MyPos.x));
+
+	if (fDistance < 10.0f)
+	{// 距離が指定値以内の場合
+
+		// 移動状態を離れろ！
+		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
+
+		// カニ進行方向の設定
+		float direction = posTarget.AngleXZ(MyPos);
+		pControlAIMove->SetClabDirection(direction);
+
+		// 歩け！
+		pControlAIMove->SetIsWalk(true);
+	}
+}
+
+//--------------------------------------------------------------------------
+// 線に対して右側チーム
+//--------------------------------------------------------------------------
+void CPlayerAIControl::LineRightTeam(CPlayer* pTarget)
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// ターゲット距離(中央)
+	MyLib::Vector3 posTarget = {};	// ターゲット位置
+	MyLib::Vector3 MyPos = m_pAI->GetPosition();	// 自身位置
+
+	// 自分からターゲット(中央)までのx距離
+	float fDistance = sqrtf((posTarget.x - MyPos.x) * (posTarget.x - MyPos.x));
+
+	if (fDistance < 10.0f)
+	{// 距離が指定値以内の場合
+
+		// 移動状態を離れろ！
+		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
+
+
+
+		// 歩け！
+		pControlAIMove->SetIsWalk(true);
+	}
+}
 
 
 

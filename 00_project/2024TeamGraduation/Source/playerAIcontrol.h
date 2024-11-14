@@ -199,6 +199,8 @@ private:
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void StrategyTiming(CPlayer* pTarget);	// タイミングの思考
 	void StrategyLine(CPlayer* pTarget);
+	void LineLeftTeam(CPlayer* pTarget);
+	void LineRightTeam(CPlayer* pTarget);
 
 	//=============================
 	// メンバ変数

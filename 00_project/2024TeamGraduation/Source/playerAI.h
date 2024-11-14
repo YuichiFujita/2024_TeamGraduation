@@ -37,6 +37,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	virtual void MotionCrab(int nStartKey) override;
 
 	//=============================
 	// パターン
