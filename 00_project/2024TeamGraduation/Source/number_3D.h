@@ -8,56 +8,86 @@
 #ifndef _NUMBER_3D_H_
 #define _NUMBER_3D_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include "number.h"
-#include "object3D.h"
+#include "object3D_Anim.h"
 
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CObject3D;
+class CObject3DAnim;
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// 背景クラス定義
+// 数字(3D)クラス定義
 class CNumber3D : public CNumber
 {
 public:
 
-	CNumber3D(int nPriority = 6);
+	CNumber3D(int nPriority = 7, const LAYER layer = LAYER::LAYER_DEFAULT);
 	~CNumber3D();
 
-	// メンバ関数
-	HRESULT Init() override;
-	void Uninit() override;
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
-	void Draw() override;
+	//--------------------------
+	// パイプライン
+	//--------------------------
+	virtual HRESULT Init() override;
+	virtual void Uninit() override;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	virtual void Draw() override;
+	virtual void Kill();	// 削除
 
-	void Kill() override;	// 削除処理
+	//--------------------------
+	// 位置
+	//--------------------------
+	virtual void SetPosition(const MyLib::Vector3& pos) override		{ m_pObj3D->SetPosition(pos); }	// 位置設定
+	virtual void SetOldPosition(const MyLib::Vector3& pos) override		{ m_pObj3D->SetPosition(pos); }	// 過去の位置設定
+	virtual void SetOriginPosition(const MyLib::Vector3& pos) override	{ m_pObj3D->SetPosition(pos); }	// 元の位置設定
 
-	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
-	MyLib::Vector3 GetPosition() const override;		// 位置取得
-	void SetMove(const MyLib::Vector3& move) override;		// 移動量設定
-	MyLib::Vector3 GetMove() const override;			// 移動量取得
-	void SetRotation(const MyLib::Vector3& rot) override;	// 向き設定
-	MyLib::Vector3 GetRotation() const override;		// 向き取得
+	//--------------------------
+	// 向き
+	//--------------------------
+	virtual void SetRotation(const MyLib::Vector3& rot) override		{ m_pObj3D->SetRotation(rot); }			// 向き設定
+	virtual void SetOldRotation(const MyLib::Vector3& rot) override		{ m_pObj3D->SetOldRotation(rot); }		// 前回の向き設定
+	virtual void SetOriginRotation(const MyLib::Vector3& rot) override	{ m_pObj3D->SetOriginRotation(rot); }	// 元の向き設定
 
-	void SetColor(const D3DXCOLOR col) override;			// 色設定
-	D3DXCOLOR GetColor() const override;				// 色取得
-	void SetSize(const D3DXVECTOR2 size) override;		// サイズの設定
-	D3DXVECTOR2 GetSize() const override;			// サイズの取得
-	void SetSizeOrigin(const D3DXVECTOR2 size) override;	// 元のサイズの設定
-	D3DXVECTOR2 GetSizeOrigin() const override;		// 元のサイズの取得
-	void SetTex(D3DXVECTOR2 *tex) override;				// テクスチャ座標の設定
-	D3DXVECTOR2 *GetTex() override;					// テクスチャ座標の取得
+	//--------------------------
+	// サイズ
+	//--------------------------
+	virtual void SetSize(const MyLib::Vector2& size) override		{ m_pObj3D->SetSize(size); }			// サイズ設定
+	virtual MyLib::Vector2 GetSize() const override					{ return m_pObj3D->GetSize(); }			// サイズ取得
+	virtual void SetSizeOrigin(const MyLib::Vector2& size) override	{ m_pObj3D->SetSizeOrigin(size); }		// 元のサイズ設定
+	virtual MyLib::Vector2 GetSizeOrigin() const override			{ return m_pObj3D->GetSizeOrigin(); }	// 元のサイズ取得
 
-	void SetVtx() override;
-	void BindTexture(int nIdx) override;
-	void SetType(const CObject::TYPE type) override;
+	//--------------------------
+	// 色
+	//--------------------------
+	virtual void SetColor(const D3DXCOLOR& col) override		{ m_pObj3D->SetColor(col); }			// 色設定
+	virtual D3DXCOLOR GetColor() const override					{ return m_pObj3D->GetColor(); }		// 色取得
+	virtual void SetOriginColor(const D3DXCOLOR& col) override	{ m_pObj3D->SetColorOrigin(col); }		// 元の色設定
+	virtual D3DXCOLOR GetOriginColor() const override			{ return m_pObj3D->GetColorOrigin(); }	// 元の色取得
+	virtual void SetAlpha(const float alpha) override			{ m_pObj3D->SetAlpha(alpha); }			// 不透明度設定
+	virtual float GetAlpha() const override						{ return m_pObj3D->GetAlpha(); }		// 不透明度取得
+
+	//--------------------------
+	// 値
+	//--------------------------
+	virtual void SetNum(int nNum) override	{ m_pObj3D->SetCurPtrn(nNum); }	// 値設定
+
+	//--------------------------
+	// その他
+	//--------------------------
+	virtual void BindTexture(int nIdxTexture) override { m_pObj3D->BindTexture(nIdxTexture); }						// テクスチャ割り当て
+	void SetVtx();	// 頂点情報設定処理
 
 private:
-	CObject3D *m_aObject3D;				// オブジェクト3Dのオブジェクト
-	bool m_bAddAlpha;
+
+	//=============================
+	// メンバ変数
+	//=============================
+	CObject3DAnim* m_pObj3D;	// オブジェクト3D
 };
 
 #endif

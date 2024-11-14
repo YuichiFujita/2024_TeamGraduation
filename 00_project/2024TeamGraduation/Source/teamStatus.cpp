@@ -135,18 +135,14 @@ void CTeamStatus::InitCharmInfo()
 //==========================================================================
 void CTeamStatus::AddCharmValue(float fValue)
 {
-	m_sCharmInfo.fValue += fValue;
-
-	UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue, 0.0f, m_sCharmInfo.fValueMax);
+	m_sCharmInfo.fValue = UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue + fValue, 0.0f, m_sCharmInfo.fValueMax);
 }
 //==========================================================================
 // モテゲージ値増加
 //==========================================================================
 void CTeamStatus::SubCharmValue(float fValue)
 {
-	m_sCharmInfo.fValue -= fValue;
-
-	UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue, 0.0f, m_sCharmInfo.fValueMax);
+	m_sCharmInfo.fValue = UtilFunc::Transformation::Clamp(m_sCharmInfo.fValue - fValue, 0.0f, m_sCharmInfo.fValueMax);
 }
 
 //==========================================================================
@@ -173,9 +169,7 @@ void CTeamStatus::InitSpecialInfo()
 //==========================================================================
 void CTeamStatus::SetSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue = fValue;
-
-	UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue, 0.0f, m_sSpecialInfo.fValueMax);
+	m_sSpecialInfo.fValue =	UtilFunc::Transformation::Clamp(fValue, 0.0f, m_sSpecialInfo.fValueMax);
 
 	if (m_sSpecialInfo.pGauge != nullptr)
 	{
@@ -194,9 +188,7 @@ void CTeamStatus::SetSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::AddSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue += fValue;
-
-	UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue, 0.0f, m_sSpecialInfo.fValueMax);
+	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue + fValue, 0.0f, m_sSpecialInfo.fValueMax);
 
 	if (m_sSpecialInfo.pGauge != nullptr)
 	{
@@ -214,9 +206,7 @@ void CTeamStatus::AddSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::SubSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue += fValue;
-
-	UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue, 0.0f, m_sSpecialInfo.fValueMax);
+	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue - fValue, 0.0f, m_sSpecialInfo.fValueMax);
 
 	if (m_sSpecialInfo.pGauge != nullptr)
 	{

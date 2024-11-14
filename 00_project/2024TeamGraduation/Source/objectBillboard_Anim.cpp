@@ -20,6 +20,7 @@ CObjectBillboardAnim::CObjectBillboardAnim(int nPriority) : CObjectBillboard(nPr
 	m_fSplitValueU = 0.0f;	// Uのスプライト量
 	m_fSplitValueV = 0.0f;	// Vのスプライト量
 	m_bAutoDeath = false;	// 自動削除のフラグ
+	m_bAutoPlay = true;		// 自動再生のフラグ
 	m_bFinish = false;		// アニメーションが終わった判定
 }
 
@@ -34,10 +35,10 @@ CObjectBillboardAnim::~CObjectBillboardAnim()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CObjectBillboardAnim* CObjectBillboardAnim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath)
+CObjectBillboardAnim* CObjectBillboardAnim::Create(const MyLib::Vector3& pos, const int nDivisionU, const int nDivisionV, const float fInterval, bool bAutoDeath, int nPriority)
 {
 	// メモリの確保
-	CObjectBillboardAnim* pObject3D = DEBUG_NEW CObjectBillboardAnim;
+	CObjectBillboardAnim* pObject3D = DEBUG_NEW CObjectBillboardAnim(nPriority);
 
 	if (pObject3D != nullptr)
 	{// メモリの確保が出来ていたら
@@ -112,8 +113,12 @@ HRESULT CObjectBillboardAnim::Init(const int nDivisionU, const int nDivisionV, c
 //==========================================================================
 void CObjectBillboardAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
 	// カウントを更新
-	m_fTimerAnim += fDeltaTime * fSlowRate;
+	if (m_bAutoPlay)
+	{
+		m_fTimerAnim += fDeltaTime * fDeltaRate * fSlowRate;
+	}
 
 	// パターン更新
 	if (m_fTimerAnim >= m_fIntervalAnim)
