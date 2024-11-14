@@ -42,6 +42,8 @@ public:
 	// 仮想関数
 	virtual CPlayer::SHitInfo Hit(CBall* pBall);	// ヒット
 	virtual bool IsCrab();	// カニ歩き判定
+	virtual void MotionCrab(int nStartKey) = 0;		// カニ歩き変化処理
+
 	virtual void Debug();	// デバッグ
 	virtual CPlayerUserIn* GetPlayerUserIn()	{ return nullptr; }	// ユーザー内野プレイヤー取得
 	virtual CPlayerUserOut* GetPlayerUserOut()	{ return nullptr; }	// ユーザー外野プレイヤー取得

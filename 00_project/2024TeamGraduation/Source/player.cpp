@@ -684,7 +684,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	// モーション設定
 	if (!m_bDash && m_pBase->IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
-		MotionCrab(nStartKey);
+		GetBase()->MotionCrab(nStartKey);
 	}
 	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
 	{
@@ -1007,133 +1007,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	// モテ加算
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
-}
-
-//==========================================================================
-// カニ歩きモーション設定
-//==========================================================================
-void CPlayer::MotionCrab(int nStartKey)
-{
-	CRAB_DIRECTION playerDir = CRAB_DIRECTION::CRAB_NONE;
-	CRAB_DIRECTION inputDir = CRAB_DIRECTION::CRAB_NONE;
-
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 向き
-	MyLib::Vector3 rot = GetRotation();
-
-	// ラムダ(bool)
-	auto CollisionRangeAngle = [](float angle, float maxAngle, float minAngle)
-	{
-		// 正規化解除
-		UtilFunc::Transformation::RotUnNormalize(angle);
-		UtilFunc::Transformation::RotUnNormalize(maxAngle);
-		UtilFunc::Transformation::RotUnNormalize(minAngle);
-
-		// 度数法に変換
-		int nAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(angle));
-		int nMaxAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(maxAngle));
-		int nMinAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(minAngle));
-
-		if (nMaxAngle <= nMinAngle)
-		{// 範囲が360°を跨ぐ場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle <= nAngle && nAngle <= nMinAngle);
-			return bRange;
-		}
-		else
-		{// 範囲が通常の順序で指定されている場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle >= nAngle && nAngle >= nMinAngle);
-			return bRange;
-		}
-
-		return false;
-	};
-
-	//--------------------------------
-	// プレイヤー方向
-	//--------------------------------
-	bool bRot = false;
-	D3DXCOLOR col = D3DXCOLOR();
-	float fRotY = D3DX_PI * 1.0f + rot.y;
-	UtilFunc::Transformation::RotNormalize(fRotY);
-
-	float fRangeZero = Crab::RANGE_MIN_MAX[0];
-	UtilFunc::Transformation::RotNormalize(fRangeZero);
-	if (!CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
-	{// 下向き
-		playerDir = CRAB_DIRECTION::CRAB_DOWN;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
-	{// 上向き
-		playerDir = CRAB_DIRECTION::CRAB_UP;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
-	{// 左向き
-		playerDir = CRAB_DIRECTION::CRAB_LEFT;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
-	{// 右向き
-		playerDir = CRAB_DIRECTION::CRAB_RIGHT;
-		bRot = true;
-		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else
-	{// 抜けちゃった
-		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
-	}
-
-	//--------------------------------
-	// 入力方向
-	//--------------------------------
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-	if (angle == nullptr) return;
-
-	switch (*angle)
-	{
-	case EDashAngle::ANGLE_UP:
-		inputDir = CRAB_DIRECTION::CRAB_UP;
-		break;
-
-	case EDashAngle::ANGLE_DOWN:
-		inputDir = CRAB_DIRECTION::CRAB_DOWN;
-		break;
-	
-	case EDashAngle::ANGLE_RIGHT:
-	case EDashAngle::ANGLE_RIGHTUP:
-	case EDashAngle::ANGLE_RIGHTDW:
-		inputDir = CRAB_DIRECTION::CRAB_RIGHT;
-		break;
-	
-	case EDashAngle::ANGLE_LEFT:
-	case EDashAngle::ANGLE_LEFTUP:
-	case EDashAngle::ANGLE_LEFTDW:
-		inputDir = CRAB_DIRECTION::CRAB_LEFT;
-		break;
-
-	default:
-		break;
-	}
-
-	if (playerDir == CRAB_DIRECTION::CRAB_NONE ||
-		inputDir == CRAB_DIRECTION::CRAB_NONE)
-	{// 判定に引っかかっていない
-		return;
-	}
-
-	// モーション設定
-	SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
 }
 
 //==========================================================================
