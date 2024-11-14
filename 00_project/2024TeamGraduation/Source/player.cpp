@@ -818,10 +818,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_THROW_PASS:
 		if (m_pBall != nullptr)
 		{// パス
-
-#if 0	// FUJITA: #if外して
 			m_pBall->Pass(this);
-#endif
 		}
 		break;
 
