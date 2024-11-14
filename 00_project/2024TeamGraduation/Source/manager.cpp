@@ -771,7 +771,7 @@ void CManager::Update()
 	{// ロード完了
 
 		// 入力機器の更新処理
-		m_pInput->Update();
+		m_pInput->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 
 		if (m_pPause != nullptr)
 		{

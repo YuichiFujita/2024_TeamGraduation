@@ -18,23 +18,9 @@
 //==========================================================================
 std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェクトのファイル名
 {
-	"data/Effekseer/Laser01.efkefc",		// サンプルのレーザー
-	"data/Effekseer/bress.efkefc",			// 息
-	"data/Effekseer/sample_river.efkefc",	// 川サンプル
-	"data/Effekseer/impact.efkefc",			// 衝撃
-	"data/Effekseer/spraywater.efkefc",		// 衝撃
-	"data/Effekseer/spraywater_mini.efkefc",// 衝撃
-	"data/Effekseer/waterjump.efkefc",		// 魚入水
-	"data/Effekseer/playermoveLine.efkefc",	// プレイヤーの移動線
-	"data/Effekseer/photon.efkefc",			// 死亡
-	"data/Effekseer/ItemGet.efkefc",		// 荷物獲得
-	"data/Effekseer/air.efkefc",			// 空気
-	"data/Effekseer/crowd.efkefc",			// 群衆
-	"data/Effekseer/teleport.efkefc",		// テレポート
-	"data/Effekseer/hit.efkefc",			// ヒット
-	"data/Effekseer/wing.efkefc",			// 羽ばたき
-	"data/Effekseer/smash.efkefc",			// 潰れる
-	"data/Effekseer/aura.efkefc",			// オール
+	"data/Effekseer/Laser01.efkefc",			// サンプルのレーザー
+	"data/Effekseer/throwLine_normal.efkefc",	// 投げた時の線(通常)
+	"data/Effekseer/throwLine_fast.efkefc",		// 投げた時の線(早い)
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
@@ -129,7 +115,7 @@ Effekseer::EffectRef CMyEffekseer::LoadEffect(std::string efkpath)
 //==========================================================================
 // エフェクト読み込み
 //==========================================================================
-Effekseer::EffectRef CMyEffekseer::LoadEffect(EFKLABEL label)
+Effekseer::EffectRef CMyEffekseer::LoadEffect(EEfkLabel label)
 {
 	// char16_tに変換
 	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;

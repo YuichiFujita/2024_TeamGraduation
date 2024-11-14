@@ -389,7 +389,6 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);	// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
-	void MotionCrab(int nStartKey);							// カニ歩き変化処理
 	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
 
 	//=============================

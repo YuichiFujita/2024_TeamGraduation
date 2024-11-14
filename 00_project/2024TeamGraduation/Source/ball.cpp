@@ -181,7 +181,8 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
-	m_fStateTime	(0.0f)			// 状態カウンター
+	m_fStateTime	(0.0f),			// 状態カウンター
+	m_pThrowLine	(nullptr)		// 投げのライン
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -1579,4 +1580,66 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 {
 	// 初速を与える
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
+}
+
+//==========================================================================
+// 投げた線の更新
+//==========================================================================
+void CBall::UpdateThrowLine()
+{
+	if (IsAttack())
+	{// 攻撃中
+
+		// 情報を取得
+		MyLib::Vector3 pos = GetPosition();	// 位置
+		MyLib::Vector3 vecMove = GetMove();	// 移動量
+
+		// Y軸の向き
+		MyLib::Vector3 rot;
+		rot.y = vecMove.AngleXZ(0.0f) - D3DX_PI * 0.5f;
+
+		// Z軸の向き
+		rot.z = vecMove.y;
+
+		// 投げのライン
+		if (m_pThrowLine == nullptr)
+		{
+			switch (GetTypeAtk())
+			{
+			case ATK_NORMAL:	// 通常攻撃
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_NORMAL,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+				break;
+				
+			case ATK_JUMP:	// ジャンプ攻撃
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_FAST,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+				break;
+
+			default:
+				break;
+			}
+		}
+		m_pThrowLine->SetPosition(pos);
+		m_pThrowLine->SetRotation(rot);
+	}
+	else if(m_pThrowLine != nullptr)
+	{// 投げ終わり
+
+		// 停止
+		if (m_pThrowLine != nullptr)
+		{
+			m_pThrowLine->SetTrigger(0);
+			m_pThrowLine->SetTrigger(1);
+			m_pThrowLine = nullptr;
+		}
+	}
 }
