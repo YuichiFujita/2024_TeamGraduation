@@ -111,11 +111,7 @@ void CObjectChara::BindObjectData(int nCntData)
 //==========================================================================
 void CObjectChara::CreateStatus(const CCharacterStatus::CharParameter& parameter)
 {
-	if (m_pStatus != nullptr)
-	{
-		delete m_pStatus;
-		m_pStatus = nullptr;
-	}
+	SAFE_DELETE(m_pStatus);
 
 	// 生成
 	m_pStatus = DEBUG_NEW CCharacterStatus(parameter);
@@ -126,11 +122,7 @@ void CObjectChara::CreateStatus(const CCharacterStatus::CharParameter& parameter
 //==========================================================================
 void CObjectChara::CreateStatusBall(const CBallStatus::SBallParameter& parameter)
 {
-	if (m_pStatusBall != nullptr)
-	{
-		delete m_pStatusBall;
-		m_pStatusBall = nullptr;
-	}
+	SAFE_DELETE(m_pStatusBall);
 
 	// 生成
 	m_pStatusBall = DEBUG_NEW CBallStatus(parameter);
@@ -161,11 +153,10 @@ void CObjectChara::Uninit()
 	}
 
 	// ステータス削除
-	if (m_pStatus != nullptr)
-	{
-		delete m_pStatus;
-		m_pStatus = nullptr;
-	}
+	SAFE_DELETE(m_pStatus);
+
+	// ステータス(ボール)削除
+	SAFE_DELETE(m_pStatusBall);
 
 	// 終了処理
 	CObjectHierarchy::Uninit();
