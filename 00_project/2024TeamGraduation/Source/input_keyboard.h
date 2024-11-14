@@ -21,9 +21,10 @@ public:
 	CInputKeyboard();
 	~CInputKeyboard();
 
-	HRESULT Init(HINSTANCE hInstance, HWND hWnd);
-	void Uninit();
-	void Update();
+	HRESULT Init(HINSTANCE hInstance, HWND hWnd) override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+
 	bool GetPress(int nKey);
 	bool GetTrigger(int nKey);
 	bool GetRelease(int nKey);

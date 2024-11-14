@@ -35,6 +35,8 @@ CInputGamepad::CInputGamepad()
 		m_nCntVibration[nCntPlayer] = 0;						// 振動の時間
 		m_nMaxCntVibration[nCntPlayer] = 0;						// 振動の時間
 	}
+	memset(&m_fTapTimer, 0, sizeof(m_fTapTimer));	// タップ判定用のタイマー
+
 	m_bVibrationUse = false;				// バイブを使用するかどうか
 	m_nCntPadrepeat = 0;									// リピート用カウント
 	m_fVibrationMulti = 0.0f;
@@ -143,7 +145,7 @@ void CInputGamepad::Uninit()
 //==========================================================================
 // ゲームパッドの更新処理
 //==========================================================================
-void CInputGamepad::Update()
+void CInputGamepad::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	XINPUT_STATE  aGamepadState[mylib_const::MAX_PLAYER];
 
@@ -199,6 +201,30 @@ void CInputGamepad::Update()
 
 		// スティックのトリガー判定更新
 		UpdateStickTrigger(nCntPlayer);
+
+		// タップ判定タイマーの更新
+		UpdateTapTimer(fDeltaTime, fDeltaRate, fSlowRate, nCntPlayer);
+	}
+}
+
+//==========================================================================
+// タップ判定タイマーの更新
+//==========================================================================
+void CInputGamepad::UpdateTapTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer)
+{
+	// タップ判定用のタイマー加算
+	float time = fDeltaTime * fDeltaRate * fSlowRate;
+	for (int i = 0; i < static_cast<int>(BUTTON::BUTTON_MAX); i++)
+	{
+		if (GetPress(static_cast<BUTTON>(i), nCntPlayer))
+		{
+			// タップ判定用のタイマー加算
+			m_fTapTimer[i][nCntPlayer] += time;
+		}
+		else
+		{
+			m_fTapTimer[i][nCntPlayer] = 0.0f;
+		}
 	}
 }
 
@@ -380,7 +406,7 @@ bool CInputGamepad::GetTrigger(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 // ゲームパッドのリリース処理
 //==========================================================================
-bool CInputGamepad::GetRelease(int nKey, int nCntPlayer)
+bool CInputGamepad::GetRelease(BUTTON nKey, int nCntPlayer)
 {
 	return (m_aGamepadStateRelease[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
 }
@@ -391,6 +417,17 @@ bool CInputGamepad::GetRelease(int nKey, int nCntPlayer)
 bool CInputGamepad::GetRepeat(BUTTON nKey, int nCntPlayer)
 {
 	return (m_aGamepadStateRepeat[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
+}
+
+//==========================================================================
+// タップ取得
+//==========================================================================
+bool CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float tapTime)
+{
+	if (nKey >= BUTTON::BUTTON_MAX) return false;
+
+	// 離された && 指定の時間内
+	return GetRelease(nKey, nCntPlayer) && m_fTapTimer[nKey][nCntPlayer] <= tapTime;
 }
 
 //==========================================================================

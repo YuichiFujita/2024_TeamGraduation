@@ -87,7 +87,8 @@ CNumber* CNumber::Create(CMultiNumber::EObjType type, int nPriority)
 //==========================================================================
 HRESULT CNumber::Init()
 {
-	
+	// éÌóﬁê›íË
+	SetType(CObject::TYPE::TYPE_NUMBER);
 	return S_OK;
 }
 

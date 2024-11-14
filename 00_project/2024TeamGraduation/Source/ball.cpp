@@ -44,6 +44,8 @@ namespace
 		"[MOVE]     移動状態 (攻撃判定ON)",
 		"[S_STAG]   スペシャル演出状態 (開始前演出)",
 		"[S_THROW]  スペシャル投げ状態 (攻撃判定ON)",
+		"[HOM_PASS] ホーミングパス状態 (内野→外野)",
+		"[PASS]     パス状態 (外野→内野)",
 		"[REBOUND]  リバウンド状態 (ぶつかった時の落下)",
 		"[FREE]     フリー状態 (敵のみとれる)",
 		"[LAND]     着地状態 (地面落下)",
@@ -134,6 +136,8 @@ CBall::STATE_FUNC CBall::m_StateFuncList[] =
 	&CBall::UpdateMove,			// 移動状態の更新
 	&CBall::UpdateSpecialStag,	// スペシャル演出状態の更新
 	&CBall::UpdateSpecialThrow,	// スペシャル投げ状態の更新
+	&CBall::UpdateHomingPass,	// パスホーミング状態の更新
+	&CBall::UpdatePass,			// パス状態の更新
 	&CBall::UpdateReBound,		// リバウンド状態の更新
 	&CBall::UpdateFree,			// フリー状態の更新
 	&CBall::UpdateLand,			// 着地状態の更新
@@ -163,6 +167,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
 	m_bLanding		(false),		// 着地フラグ
+	m_posPassStart	(VEC3_ZERO),	// パス開始位置
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
@@ -387,7 +392,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	assert(m_state == STATE_CATCH);
 
 	// ホーミング対象の設定
-	m_pTarget = CollisionThrow();
+	m_pTarget = CollisionThrowTarget();
 	if (m_pTarget != nullptr)
 	{ // ターゲットがいる場合
 
@@ -437,7 +442,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	assert(m_state == STATE_CATCH);
 
 	// ホーミング対象の設定
-	m_pTarget = CollisionThrow();
+	m_pTarget = CollisionThrowTarget();
 	if (m_pTarget != nullptr)
 	{ // ターゲットがいる場合
 
@@ -484,7 +489,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 void CBall::Special(CPlayer* pPlayer)
 {
 	// ホーミング対象の設定
-	m_pTarget = CollisionThrow(true);
+	m_pTarget = CollisionThrowTarget(true);
 	assert(m_pTarget != nullptr);	// 見つからなきゃ敵がいないよ～
 
 	// スペシャル演出状態にする
@@ -498,6 +503,54 @@ void CBall::Special(CPlayer* pPlayer)
 
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
+}
+
+//==========================================================================
+// パス処理
+//==========================================================================
+void CBall::Pass(CPlayer* pPlayer)
+{
+	// キャッチしていないボールを投げようとした場合エラー
+	assert(m_state == STATE_CATCH);
+
+	// パス対象の設定
+	m_pTarget = CollisionPassTarget();
+	if (m_pTarget != nullptr)
+	{ // ターゲットがいる場合
+
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+
+		// 目標向き/向きをボール方向にする
+		m_pPlayer->SetRotDest(fAngleY);
+		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+	}
+
+	// ターゲットがいない場合エラー
+	assert(m_pTarget != nullptr);
+
+	// 投げ処理
+	Throw(pPlayer);
+
+	// 現在のボール位置をパス開始位置にする
+	m_posPassStart = GetPosition();
+
+	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
+	{ // 内野の場合
+
+		// ホーミングパス状態にする
+		SetState(STATE_HOM_PASS);
+	}
+	else
+	{ // 外野の場合
+
+		// パス状態にする
+		SetState(STATE_PASS);
+	}
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
 
 //==========================================================================
@@ -518,6 +571,9 @@ void CBall::Toss(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = toss::THROW_MOVE;
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
 
 //==========================================================================
@@ -536,6 +592,15 @@ bool CBall::IsAttack() const
 {
 	// 攻撃フラグを返す
 	return (m_state == STATE_HOM_NOR || m_state == STATE_HOM_JUMP || m_state == STATE_MOVE || m_state == STATE_SPECIAL_THROW);	// TODO：攻撃状態が増えたら追加
+}
+
+//==========================================================================
+// パスフラグの取得処理
+//==========================================================================
+bool CBall::IsPass() const
+{
+	// パスフラグを返す
+	return (m_state == STATE_HOM_PASS || m_state == STATE_PASS);	// TODO：パス状態が増えたら追加
 }
 
 //==========================================================================
@@ -836,6 +901,49 @@ void CBall::UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, c
 }
 
 //==========================================================================
+// パスホーミング状態の更新処理
+//==========================================================================
+void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
+
+	// 経過時間を加算
+	m_fStateTime += fDeltaTime * fSlowRate;
+
+	float fTimeRate = m_fStateTime / 2.0f;
+	fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);
+	pos = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_pTarget->GetCenterPosition(), 300.0f, fTimeRate);
+
+
+
+
+	// 地面の着地
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(vecMove);	// 移動量
+}
+
+//==========================================================================
+// パス状態の更新処理
+//==========================================================================
+void CBall::UpdatePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
 // リバウンド状態の更新処理
 //==========================================================================
 void CBall::UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -1110,9 +1218,9 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 }
 
 //==========================================================================
-// ホーミング対象との当たり判定
+// 投げる対象との当たり判定
 //==========================================================================
-CPlayer* CBall::CollisionThrow(const bool bAbsLock)
+CPlayer* CBall::CollisionThrowTarget(const bool bAbsLock)
 {
 	// 持っていたプレイヤーが初期化済みの場合エラー
 	assert(m_pPlayer != nullptr);
@@ -1141,6 +1249,58 @@ CPlayer* CBall::CollisionThrow(const bool bAbsLock)
 		// 視界内にいない場合次へ
 		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);
 		if (!bHit && !bAbsLock) { continue; }
+
+		// プレイヤー視野中心ベクトルからの距離測定
+		MyLib::Vector3 posFront = posThrow + MyLib::Vector3(sinf(rotThrow.y), 0.0f, cosf(rotThrow.y));
+		float fCurDis = fabsf(UtilFunc::Collision::LineOuterProduct(posThrow, posFront, posPlayer));
+		if (fCurDis < fMinDis)
+		{ // よりボールに近いプレイヤーがいた場合
+
+			// 距離を保存
+			fMinDis = fCurDis;
+
+			// ターゲットを更新
+			pTarget = pPlayer;
+		}
+	}
+
+	// 投擲ターゲットを返す
+	return pTarget;
+}
+
+//==========================================================================
+// パスする対象との当たり判定
+//==========================================================================
+CPlayer* CBall::CollisionPassTarget()
+{
+	// 持っていたプレイヤーが初期化済みの場合エラー
+	assert(m_pPlayer != nullptr);
+
+	// 持っていたプレイヤーのチームが初期化済みの場合エラー
+	assert(m_typeTeam != CGameManager::SIDE_NONE);
+
+	MyLib::Vector3 posBall = GetPosition();						// ボール位置
+	MyLib::Vector3 posThrow = m_pPlayer->GetCenterPosition();	// 投げたプレイヤーの位置
+	MyLib::Vector3 rotThrow = m_pPlayer->GetRotation();			// 投げたプレイヤーの向き
+	CPlayer::EFieldArea typeArea = m_pPlayer->GetAreaType();	// 投げたプレイヤーのポジション
+
+	CPlayer* pTarget = nullptr;	// 目標ターゲット
+	float fMinDis = MAX_DIS;	// ボールから近いプレイヤー
+
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+
+		// 自分と同じポジションの場合次へ
+		if (typeArea == pPlayer->GetAreaType()) { continue; }
+
+		// 視界内にいない場合次へ
+		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);
+		if (!bHit) { continue; }
 
 		// プレイヤー視野中心ベクトルからの距離測定
 		MyLib::Vector3 posFront = posThrow + MyLib::Vector3(sinf(rotThrow.y), 0.0f, cosf(rotThrow.y));
@@ -1273,6 +1433,9 @@ void CBall::UpdateTypeTeam()
 	// 攻撃判定がある場合は現在のチームを保持
 	if (IsAttack()) { return; }
 
+	// パスボールの場合も現在のチームを保持
+	if (IsPass()) { return; }
+
 	// フリーボールの場合も現在のチームを保持
 	if (m_state == STATE_FREE) { return; }
 
@@ -1281,6 +1444,9 @@ void CBall::UpdateTypeTeam()
 
 	// プレイヤーのチームを保存
 	m_typeTeam = m_pPlayer->GetStatus()->GetTeam();
+
+	// パス開始位置をリセット
+	m_posPassStart = VEC3_ZERO;
 }
 
 //==========================================================================
