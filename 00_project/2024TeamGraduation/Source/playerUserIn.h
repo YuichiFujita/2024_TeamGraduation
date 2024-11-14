@@ -25,8 +25,13 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerUserIn(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea);
+	CPlayerUserIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
 	virtual ~CPlayerUserIn() override;
+
+	//=============================
+	// オーバーライド関数
+	//=============================
+	virtual CPlayerUserIn* GetPlayerUserIn() override { return nullptr; }	// ユーザー内野プレイヤー取得
 };
 
 #endif

@@ -39,7 +39,7 @@ public:
 	virtual CPlayerUserControlMove* GetUser() override { return nullptr; }
 
 private:
-	
+
 	//=============================
 	// メンバ関数
 	//=============================
@@ -47,12 +47,6 @@ private:
 	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ダッシュ
 	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ウォーク
 	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) override;	// ダッシュ時のトリガー
-
-	//=============================
-	// メンバ変数
-	//=============================
-	MyLib::Vector3 m_posLeft;	// 移動可能左位置
-	MyLib::Vector3 m_posRight;	// 移動可能右位置
 };
 
 #endif

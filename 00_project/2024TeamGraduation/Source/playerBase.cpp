@@ -21,12 +21,13 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CPlayer::EFieldArea typeArea) :
+CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) :
 	m_pPlayer		 (pPlayer),	// プレイヤー情報
 	m_pControlMove	 (nullptr),	// 移動操作
 	m_pControlAction (nullptr)	// アクション操作
 {
-
+	// 位置補正の割当
+	pPlayer->ChangePosAdjuster(typeTeam, typeArea);
 }
 
 //==========================================================================
@@ -43,7 +44,7 @@ CPlayerBase::~CPlayerBase()
 //==========================================================================
 CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 {
-	CGameManager::TeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
+	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
 	CBall::EAttack atkBall	= pBall->GetTypeAtk();			// ボール攻撃種類
 	CBall::EState stateBall = pBall->GetState();			// ボール状態
 	MyLib::Vector3 posB = pBall->GetPosition();				// ボール位置
@@ -139,7 +140,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (pGameMgr == nullptr) return hitInfo;
 
 	// モテ加算(ボール投げた側)
-	pGameMgr->AddCharmValue(sideBall, CCharmManager::EType::TYPE_HIT);
+	pGameMgr->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
 
 	return hitInfo;
 }

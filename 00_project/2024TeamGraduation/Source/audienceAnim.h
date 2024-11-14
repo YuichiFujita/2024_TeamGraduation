@@ -50,7 +50,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CAudienceAnim(EObjType type, CGameManager::TeamSide team);
+	CAudienceAnim(EObjType type, CGameManager::ETeamSide team);
 	~CAudienceAnim();
 
 	//=============================

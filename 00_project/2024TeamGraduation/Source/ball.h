@@ -91,7 +91,7 @@ public:
 	void Special(CPlayer* pPlayer);		// スペシャル発動
 	void Toss(CPlayer* pPlayer);		// トス
 
-	CGameManager::TeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
+	CGameManager::ETeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
 	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }	// スペシャル種類取得
 	EAttack GetTypeAtk() const		{ return m_typeAtk; }		// 攻撃種類取得
 	EState GetState() const			{ return m_state; }			// 状態取得
@@ -184,7 +184,7 @@ private:
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
 	bool m_bLanding;		// 着地フラグ
-	CGameManager::TeamSide m_typeTeam;	// チームサイド
+	CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	ESpecial m_typeSpecial;	// スペシャル種類
 	EAttack m_typeAtk;		// 攻撃種類
 	EState m_state;			// 状態
