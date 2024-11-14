@@ -310,6 +310,9 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 現在のスペシャル種類を更新
 	UpdateTypeSpecial();
 
+	// 投げエフェクト
+	UpdateThrowLine();
+
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -1625,6 +1628,13 @@ void CBall::UpdateThrowLine()
 				break;
 
 			default:
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_FAST,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+
 				break;
 			}
 		}

@@ -70,7 +70,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 60.00 0.00
+		POS = 0.00 72.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -110,7 +110,7 @@ CHARACTERSET
 		PARENT = 3
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -15.50 0.00 1.75
+		POS = -20.50 0.00 1.75
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -120,7 +120,7 @@ CHARACTERSET
 		PARENT = 4
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -10.00 -0.50 0.25
+		POS = -12.00 -1.00 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -140,7 +140,7 @@ CHARACTERSET
 		PARENT = 6
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 16.00 0.00 1.75
+		POS = 23.00 0.00 1.75
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -150,7 +150,7 @@ CHARACTERSET
 		PARENT = 7
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 10.00 -0.50 0.25
+		POS = 11.50 -0.50 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -170,7 +170,7 @@ CHARACTERSET
 		PARENT = 9
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.50 -24.00 0.00
+		POS = 0.00 -31.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -180,7 +180,7 @@ CHARACTERSET
 		PARENT = 10
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 -18.50 1.00
+		POS = 0.50 -23.00 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -200,7 +200,7 @@ CHARACTERSET
 		PARENT = 12
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.50 -24.00 0.00
+		POS = 0.50 -31.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -210,7 +210,7 @@ CHARACTERSET
 		PARENT = 13
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -1.00 -19.00 1.00
+		POS = -0.50 -23.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
