@@ -10,6 +10,9 @@
 #include "playerBase.h"
 #include "playerUserOut.h"
 
+// TODO
+#include "3D_effect.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -49,8 +52,21 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();		// 移動可能な左位置
 	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();	// 移動可能な右位置
 
-	// Z座標を補正
-	pos.z = posLeft.z;
+	// TODO：位置を補正
+#if 1
+	MyLib::Vector3 posSize = (posLeft.Absolute() - posRight.Absolute()) * 0.5f;
+	posSize.z = posSize.y = 0.0f;
+
+	MyLib::Vector3 posOrigin;
+	D3DXVec3Lerp(&posOrigin, &posLeft, &posRight, 0.5f);
+
+	UtilFunc::Collision::InBoxPillar(pos, posOrigin, posSize, posSize, VEC3_ZERO, VEC3_ZERO);
+
+	CEffect3D::Create(pos,					VEC3_ZERO, MyLib::color::White(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+	CEffect3D::Create(posOrigin,			VEC3_ZERO, MyLib::color::Purple(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+	CEffect3D::Create(posOrigin + posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+	CEffect3D::Create(posOrigin - posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+#endif
 
 	if (pos.y <= CGameManager::FIELD_LIMIT)
 	{ // 地面より下の場合
