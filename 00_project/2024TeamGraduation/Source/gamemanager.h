@@ -107,6 +107,7 @@ private:
 	void UpdateLimitTimer();		// 制限時間更新
 	void UpdateAudience();			// 観客更新
 	void UpdateSpecialStag();		// スペシャル演出更新
+	void UpdateTeamStatus();		// チームステータス更新
 	void CreateTeamStatus();		// チームステータス生成
 
 	//=============================
