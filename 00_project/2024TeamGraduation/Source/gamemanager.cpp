@@ -225,6 +225,9 @@ void CGameManager::SceneMain()
 
 	// 制限時間更新
 	UpdateLimitTimer();
+
+	// チームステータス更新
+	UpdateTeamStatus();
 }
 
 //==========================================================================
@@ -342,6 +345,20 @@ void CGameManager::UpdateAudience()
 void CGameManager::UpdateSpecialStag()
 {
 
+}
+
+//==========================================================================
+// チームステータス更新
+//==========================================================================
+void CGameManager::UpdateTeamStatus()
+{
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] == nullptr) continue;
+		
+		// 全滅判定
+		m_pTeamStatus[i]->CheckAllDead();
+	}
 }
 
 //==========================================================================
