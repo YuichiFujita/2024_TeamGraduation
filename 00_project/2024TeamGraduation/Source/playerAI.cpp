@@ -11,6 +11,7 @@
 // 使用クラス
 #include "playercontrol_move.h"
 #include "playercontrol_action.h"
+#include "playerAIcontrol_move.h"
 
 //==========================================================================
 // 定数定義
@@ -219,35 +220,34 @@ void CPlayerAI::MotionCrab(int nStartKey)
 	}
 
 	//--------------------------------
-	// 入力方向
+	// 方向
 	//--------------------------------
-	CPlayer::EDashAngle* angle = GetPlayerControlMove()->GetInputAngle();
-	if (angle == nullptr) return;
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	switch (*angle)
-	{
-	case CPlayer::EDashAngle::ANGLE_UP:
+	// 進行方向の取得
+	float fDirection = pControlAIMove->GetClabDirection() + D3DX_PI;
+
+	if (!CollisionRangeAngle(fDirection, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+	{// 下向き
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;;
+	}
+	else if (CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+	{// 上向き
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
-		break;
-
-	case CPlayer::EDashAngle::ANGLE_DOWN:
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
-		break;
-
-	case CPlayer::EDashAngle::ANGLE_RIGHT:
-	case CPlayer::EDashAngle::ANGLE_RIGHTUP:
-	case CPlayer::EDashAngle::ANGLE_RIGHTDW:
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
-		break;
-
-	case CPlayer::EDashAngle::ANGLE_LEFT:
-	case CPlayer::EDashAngle::ANGLE_LEFTUP:
-	case CPlayer::EDashAngle::ANGLE_LEFTDW:
+	}
+	else if (CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+	{// 左向き
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
-		break;
-
-	default:
-		break;
+	}
+	else if (CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+	{// 右向き
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+	}
+	else
+	{// 抜けちゃった
+		MyAssert::CustomAssert(false, "カニ歩き：どこ向いてんねん");
 	}
 
 	if (playerDir == CPlayer::CRAB_DIRECTION::CRAB_NONE ||

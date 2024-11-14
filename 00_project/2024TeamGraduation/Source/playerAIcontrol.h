@@ -123,7 +123,6 @@ private:
 		SThrowInfo sThrowInfo;		// 投げ情報
 		SCatchInfo sCatchInfo;		// キャッチ情報
 		SMoveInfo sMoveInfo;		// 行動情報
-
 	};
 
 public:
@@ -179,10 +178,7 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void Reset();			// 変数リセット
 	void SetThrowTarget(CPlayer** ppTarget = nullptr);		// 投げるターゲット
-	void DistanceThrow();	// 投げる距離
-
 	void DistanceLeaveCatch();		// キャッチ距離(離れる)
 	void DistanceApproachCatch();	// キャッチ距離(近づく)
 
@@ -193,14 +189,15 @@ private:
 	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);	// 行動プラン
 
-	void LineDistance();	// 線との距離
-	void LineOverPlayer();	// 線超え
 	bool IsLineOverBall();	// 線超え判定(ボール)
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
 	void StrategyTiming(CPlayer* pTarget);	// タイミングの思考
 	void StrategyLine(CPlayer* pTarget);
 	void LineLeftTeam(CPlayer* pTarget);
 	void LineRightTeam(CPlayer* pTarget);
+
+	void Reset();			// 変数リセット
 
 	//=============================
 	// メンバ変数
