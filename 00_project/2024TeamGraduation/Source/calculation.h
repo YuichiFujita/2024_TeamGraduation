@@ -66,7 +66,6 @@ namespace UtilFunc
 	namespace Collision
 	{
 		bool CollisionTriangle(const MyLib::Vector3& posCenter, const MyLib::Vector3& posLeft, const MyLib::Vector3& posRight, const MyLib::Vector3& MainPos, const MyLib::Vector3& MainPosOld);	// 三角形の内側にいるか判定
-
 	}
 }
 
@@ -2201,6 +2200,25 @@ namespace UtilFunc	// 便利関数
 			}
 
 			return false;
+		}
+
+		/**
+		@brief	角柱の内側に位置を制限する関数
+		@param	rCenterPos		[in/out]	判定位置
+		@param	rOriginPos		[in]		判定原点位置
+		@param	rCenterSizeUp	[in]		判定サイズ(右/上/後)
+		@param	rCenterSizeDown	[in]		判定サイズ(左/下/前)
+		@param	rOriginSizeUp	[in]		判定原点サイズ(右/上/後)
+		@param	rOriginSizeDown	[in]		判定原点サイズ(左/下/前)
+		@return	void
+		*/
+		inline void InBoxPillar(MyLib::Vector3& rCenterPos, const MyLib::Vector3& rOriginPos, const MyLib::Vector3& rCenterSizeUp, const MyLib::Vector3& rCenterSizeDown, const MyLib::Vector3& rOriginSizeUp, const MyLib::Vector3& rOriginSizeDown)
+		{
+			// 左右の補正
+			UtilFunc::Transformation::ValueNormalize(rCenterPos.x, rOriginPos.x - rOriginSizeDown.x + rCenterSizeUp.x, rOriginPos.x + rOriginSizeUp.x - rCenterSizeDown.x);
+
+			// 前後の補正
+			UtilFunc::Transformation::ValueNormalize(rCenterPos.z, rOriginPos.z - rOriginSizeDown.z + rCenterSizeUp.z, rOriginPos.z + rOriginSizeUp.z - rCenterSizeDown.z);
 		}
 
 		/**

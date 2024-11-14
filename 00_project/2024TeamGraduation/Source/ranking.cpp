@@ -95,6 +95,17 @@ void CRanking::Update(const float fDeltaTime, const float fDeltaRate, const floa
 	{// フェード中は抜ける
 		return;
 	}
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		pKey->GetTrigger(DIK_RETURN))
+	{
+		// 遷移
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT);
+	}
 }
 
 //==========================================================================

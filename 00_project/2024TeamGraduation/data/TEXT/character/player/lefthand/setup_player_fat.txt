@@ -41,6 +41,9 @@ MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
+
+	SCALE = 1.177		# キャラスケール
+
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 29.61	# ブリンク移動量
@@ -71,8 +74,8 @@ CHARACTERSET
 	END_CENTERSET
 	
 	BALLSET
-		PARTS = 5		# 中心にするパーツ
-		OFFSET = -6.50 -4.00 0.00		# オフセット位置
+		PARTS = 8		# 中心にするパーツ
+		OFFSET = 6.50 -12.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
@@ -80,7 +83,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
-		POS = 0.00 73.50 0.00
+		POS = 0.00 58.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -180,7 +183,7 @@ CHARACTERSET
 		PARENT = 9
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
-		POS = 0.00 -33.00 0.00
+		POS = 0.00 -17.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -210,7 +213,7 @@ CHARACTERSET
 		PARENT = 12
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
-		POS = 0.00 -33.00 0.00
+		POS = 0.00 -17.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET

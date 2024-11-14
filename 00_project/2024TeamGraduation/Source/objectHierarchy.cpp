@@ -23,7 +23,6 @@ int CObjectHierarchy::m_nNumLoad = 0;	// 読み込んだ数
 CObjectHierarchy::CObjectHierarchy(int nPriority) : CObject(nPriority)
 {
 	// 値のクリア
-	//D3DXMatrixIdentity(&m_mtxWorld);			// ワールドマトリックス
 	m_posOrigin = 0.0f;					// 最初の位置
 	m_posInit = 0.0f;					// 初期の位置
 	m_posCenter = 0.0f;					// 中心位置
@@ -62,6 +61,9 @@ CObjectHierarchy* CObjectHierarchy::Create(const std::string& pTextFile)
 		if (FAILED(hr)){
 			return nullptr;
 		}
+
+		// 初期化処理
+		pObjChara->Init();
 	}
 
 	return pObjChara;
@@ -72,12 +74,6 @@ CObjectHierarchy* CObjectHierarchy::Create(const std::string& pTextFile)
 //==========================================================================
 HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 {
-	// 初期化処理
-	if (FAILED(CObjectHierarchy::Init()))
-	{// 失敗していたら
-		return E_FAIL;
-	}
-
 	// 構造体の中の文字列を探す
 	auto itr = std::find_if(m_aLoadData.begin(), m_aLoadData.end(), [&file](const CObjectHierarchy::Load& string) {return string.sTextFile == file;});
 	
@@ -97,7 +93,6 @@ HRESULT CObjectHierarchy::SetCharacter(const std::string& file)
 
 	// オブジェクト毎のデータ割り当て
 	BindObjectData(m_nNumLoad - 1);
-
 	return S_OK;
 }
 
@@ -176,7 +171,8 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 //==========================================================================
 HRESULT CObjectHierarchy::Init()
 {
-	
+	// スケールをもとに位置調整
+	AdjustPositionByScale();
 	return S_OK;
 }
 
@@ -214,9 +210,8 @@ void CObjectHierarchy::Kill()
 //==========================================================================
 void CObjectHierarchy::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 原点
-	m_posOrigin = m_posInit * (m_fScale / 1.0f);
-	m_apModel[0]->SetOriginScale(m_fScale);
+	// スケールをもとに位置調整
+	AdjustPositionByScale();
 
 	// 判定するパーツ取得
 	CModel* pModel = m_apModel[m_nCenterPartsIdx];
@@ -233,6 +228,16 @@ void CObjectHierarchy::Update(const float fDeltaTime, const float fDeltaRate, co
 	mtxTrans.Translation(m_CenterOffset);
 	mtxWepon.Multiply(mtxTrans, mtxWepon);
 	m_posCenter = mtxWepon.GetWorldPosition();
+}
+
+//==========================================================================
+// スケールをもとに位置調整
+//==========================================================================
+void CObjectHierarchy::AdjustPositionByScale()
+{
+	// 原点
+	m_posOrigin = m_posInit * (m_fScale / 1.0f);
+	m_apModel[0]->SetOriginScale(m_fScale);
 }
 
 //==========================================================================
@@ -538,6 +543,14 @@ void CObjectHierarchy::LoadObjectData(FILE *pFile, const std::string& file)
 		fscanf(pFile, "%s", &hoge[0]);	// =の分
 		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].parameter.fRadius);	// 半径
 		m_fRadius = m_aLoadData[m_nNumLoad].parameter.fRadius;
+	}
+
+	if (file.find("SCALE") != std::string::npos)
+	{// SCALEでスケール
+
+		fscanf(pFile, "%s", &hoge[0]);	// =の分
+		fscanf(pFile, "%f", &m_aLoadData[m_nNumLoad].scale);	// スケールs
+		m_fScale = m_aLoadData[m_nNumLoad].scale;
 	}
 
 	if (file.find("CENTERSET") != std::string::npos)

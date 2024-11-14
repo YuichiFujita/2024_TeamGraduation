@@ -26,8 +26,8 @@ CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide t
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
 	m_posRight	(VEC3_ZERO)		// 移動可能右位置
 #else
-	m_posLeft	(MyLib::Vector3(900.0f, 0.0f, 650.0f)),	// 移動可能左位置
-	m_posRight	(MyLib::Vector3(50.0f, 0.0f, 650.0f))	// 移動可能右位置
+	m_posLeft	(MyLib::Vector3(900.0f, 0.0f, 550.0f)),	// 移動可能左位置
+	m_posRight	(MyLib::Vector3(50.0f, 0.0f, 550.0f))	// 移動可能右位置
 #endif
 {
 	// 外野操作の割当	// TODO：外野操作に変更

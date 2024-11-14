@@ -651,7 +651,7 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	// ˆÚ“®—Ê”½‰f
 	player->SetMove(playerMove);
 
-	// 
+	// –Ú•WŒü‚«‚ğİ’è
 	player->SetRotDest(0.0f);
 
 	CEffect3D::Create(posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// ˆÚ“®‰Â”\¶ˆÊ’u
