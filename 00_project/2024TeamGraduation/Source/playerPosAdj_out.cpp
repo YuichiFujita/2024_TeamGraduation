@@ -53,8 +53,8 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();	// 移動可能な右位置
 
 	// TODO：位置を補正
-#if 1
-	MyLib::Vector3 posSize = (posLeft.Absolute() - posRight.Absolute()) * 0.5f;
+#if 0
+	MyLib::Vector3 posSize = (posRight.Absolute() - posLeft.Absolute()) * 0.5f;
 	posSize.z = posSize.y = 0.0f;
 
 	MyLib::Vector3 posOrigin;
@@ -66,6 +66,22 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 	CEffect3D::Create(posOrigin,			VEC3_ZERO, MyLib::color::Purple(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
 	CEffect3D::Create(posOrigin + posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
 	CEffect3D::Create(posOrigin - posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+#else
+	// 奥の補正
+	MyLib::Vector3 pposLeft = posLeft + MyLib::Vector3(1000.0f, 0.0f, 0.5f);
+	MyLib::Vector3 pposRight = posRight + MyLib::Vector3(1000.0f, 0.0f, 0.5f);
+	UtilFunc::Collision::CollisionLimitLine(pposLeft, pposRight, pos, pPlayer->GetOldPosition());
+
+	// 手前の補正
+	MyLib::Vector3 ppposLeft = posRight + MyLib::Vector3(-1000.0f, 0.0f, 0.0f);
+	MyLib::Vector3 ppposRight = posLeft + MyLib::Vector3(-1000.0f, 0.0f, 0.0f);
+	UtilFunc::Collision::CollisionLimitLine(ppposLeft, ppposRight, pos, pPlayer->GetOldPosition());
+
+	// 左の補正
+	UtilFunc::Collision::CollisionLimitLine(posLeft - MyLib::Vector3(0.0f, 0.0f, 1000.0f), posLeft + MyLib::Vector3(0.0f, 0.0f, 1000.0f), pos, pPlayer->GetOldPosition());
+
+	// 右の補正
+	UtilFunc::Collision::CollisionLimitLine(posRight + MyLib::Vector3(0.0f, 0.0f, 1000.0f), posRight - MyLib::Vector3(0.0f, 0.0f, 1000.0f), pos, pPlayer->GetOldPosition());
 #endif
 
 	if (pos.y <= CGameManager::FIELD_LIMIT)

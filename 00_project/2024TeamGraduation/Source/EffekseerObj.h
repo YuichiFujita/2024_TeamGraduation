@@ -48,12 +48,12 @@ public:
 	@param	bAutoDeath	[in]	自動削除
 	@return	CEffekseerObj ポインタ
 	*/
-	static CEffekseerObj* Create(const CMyEffekseer::EFKLABEL& label, const MyLib::Vector3& pos, const MyLib::Vector3& rot, const MyLib::Vector3 move, float scale, bool bAutoDeath = true);
+	static CEffekseerObj* Create(const CMyEffekseer::EEfkLabel& label, const MyLib::Vector3& pos, const MyLib::Vector3& rot, const MyLib::Vector3 move, float scale, bool bAutoDeath = true);
 	static CListManager<CEffekseerObj> GetListObj() { return m_List; }	// リスト取得
 
 private:
 
-	CMyEffekseer::EFKLABEL m_Label;	// エフェクトのラベル
+	CMyEffekseer::EEfkLabel m_Label;	// エフェクトのラベル
 	CMyEffekseer::MyEffekseerInfo m_EffekseerInfo;	// エフェクト情報
 	bool m_bDeath;			// 死亡フラグ
 	bool m_bDeleteLater;	// 後で死亡フラグ

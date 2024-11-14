@@ -30,6 +30,9 @@ CNumber2D::~CNumber2D()
 //==========================================================================
 HRESULT CNumber2D::Init()
 {
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
+
 	// ¶¬ˆ—
 	m_pObj2D = CObject2D_Anim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
 	

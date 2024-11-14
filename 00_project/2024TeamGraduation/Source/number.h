@@ -26,7 +26,7 @@ public:
 	// コンストラクタ/デストラクタ
 	//=============================
 	CNumber(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
-	~CNumber();
+	virtual ~CNumber();
 
 	//=============================
 	// オーバーライド関数
