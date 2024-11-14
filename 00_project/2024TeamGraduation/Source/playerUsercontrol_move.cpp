@@ -581,7 +581,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// Œü‚«
 
-	if (player->IsCrab())
+	if (player->GetBase()->IsCrab())
 	{//ƒJƒj•à‚«
 		move.x += sinf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
 		move.z += cosf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;

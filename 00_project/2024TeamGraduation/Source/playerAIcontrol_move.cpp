@@ -350,7 +350,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 
 	// TODO : 方向に応じてカニ歩き
 
-	if (player->IsCrab())
+	if (player->GetBase()->IsCrab())
 	{// カニ歩き
 		move.x += sinf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;
 		move.z += cosf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;

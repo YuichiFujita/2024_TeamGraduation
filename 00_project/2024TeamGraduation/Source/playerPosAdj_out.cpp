@@ -7,6 +7,8 @@
 #include "playerPosAdj_out.h"
 #include "player.h"
 #include "playerStatus.h"
+#include "playerBase.h"
+#include "playerUserOut.h"
 
 //==========================================================================
 // 定数定義
@@ -41,6 +43,14 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 	MyLib::Vector3 pos = pPlayer->GetPosition();	// 位置
 	CPlayer::EState state = pPlayer->GetState();	// 状態
 	bool bJump = pPlayer->IsJump();					// ジャンプフラグ
+
+	CPlayerBase* pBase = pPlayer->GetBase();				// プレイヤーベース情報
+	CPlayerUserOut* pPlayerOut = pBase->GetPlayerUserOut();	// プレイヤー外野情報
+	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();		// 移動可能な左位置
+	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();	// 移動可能な右位置
+
+	// Z座標を補正
+	pos.z = posLeft.z;
 
 	if (pos.y <= CGameManager::FIELD_LIMIT)
 	{ // 地面より下の場合
