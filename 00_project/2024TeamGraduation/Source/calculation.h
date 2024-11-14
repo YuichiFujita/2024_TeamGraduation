@@ -1608,7 +1608,7 @@ namespace UtilFunc	// 便利関数
 			if (fRatePlayer >= 0.0f && fRatePlayer <= 1.0f)
 			{// 面積の範囲内にいたら判定
 
-				if ((vecLinePlayer.z * vecToPosPlayer.x) - (vecLinePlayer.x * vecToPosPlayer.z) > 0)
+				if ((vecLinePlayer.z * vecToPosPlayer.x) - (vecLinePlayer.x * vecToPosPlayer.z) >= 0.0f)
 				{// 壁に当たったら
 
 					// 法線ベクトル(境界線ベクトルのXとZ反転)
@@ -1630,7 +1630,6 @@ namespace UtilFunc	// 便利関数
 
 					// ぶつかった点に補正
 					pPos += MoveWall + (vecNor * 0.1f);
-
 				}
 			}
 		}

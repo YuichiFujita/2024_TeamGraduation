@@ -66,6 +66,18 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 	CEffect3D::Create(posOrigin,			VEC3_ZERO, MyLib::color::Purple(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
 	CEffect3D::Create(posOrigin + posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
 	CEffect3D::Create(posOrigin - posSize,	VEC3_ZERO, MyLib::color::Green(),  10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 
+#else
+	// ‰œ‚Ì•â³
+	UtilFunc::Collision::CollisionLimitLine(posLeft + MyLib::Vector3(0.0f, 0.0f, 1.0f), posRight + MyLib::Vector3(1000.0f, 0.0f, 1.0f), pos, pPlayer->GetOldPosition());
+
+	// Žè‘O‚Ì•â³
+	//UtilFunc::Collision::CollisionLimitLine(posRight + MyLib::Vector3(0.0f, 0.0f, -1.0f), posLeft + MyLib::Vector3(1000.0f, 0.0f, -1.0f), pos, pPlayer->GetOldPosition());
+
+	// ¶‚Ì•â³
+	UtilFunc::Collision::CollisionLimitLine(posLeft - MyLib::Vector3(0.0f, 0.0f, 1000.0f), posLeft + MyLib::Vector3(0.0f, 0.0f, 1000.0f), pos, pPlayer->GetOldPosition());
+
+	// ‰E‚Ì•â³
+	UtilFunc::Collision::CollisionLimitLine(posRight + MyLib::Vector3(0.0f, 0.0f, 1000.0f), posRight - MyLib::Vector3(0.0f, 0.0f, 1000.0f), pos, pPlayer->GetOldPosition());
 #endif
 
 	if (pos.y <= CGameManager::FIELD_LIMIT)
