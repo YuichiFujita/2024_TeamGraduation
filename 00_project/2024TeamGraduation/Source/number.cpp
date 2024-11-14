@@ -6,6 +6,11 @@
 //==========================================================================
 #include "number.h"
 
+// îhê∂êÊ
+#include "number_2D.h"
+#include "number_3D.h"
+#include "number_Billboard.h"
+
 //==========================================================================
 // íËêîíËã`
 //==========================================================================
@@ -45,16 +50,16 @@ CNumber* CNumber::Create(CMultiNumber::EObjType type, int nPriority)
 
 	switch (type)
 	{
-	case CMultiNumber::OBJTYPE_NONE:
-		break;
-
 	case CMultiNumber::OBJTYPE_2D:
+		pNumber = DEBUG_NEW CNumber2D(nPriority);
 		break;
 
 	case CMultiNumber::OBJTYPE_3D:
+		pNumber = DEBUG_NEW CNumber3D(nPriority);
 		break;
 
 	case CMultiNumber::OBJTYPE_BILLBOARD:
+		pNumber = DEBUG_NEW CNumberBillboard(nPriority);
 		break;
 
 	default:
@@ -82,7 +87,8 @@ CNumber* CNumber::Create(CMultiNumber::EObjType type, int nPriority)
 //==========================================================================
 HRESULT CNumber::Init()
 {
-	
+	// éÌóﬁê›íË
+	SetType(CObject::TYPE::TYPE_NUMBER);
 	return S_OK;
 }
 

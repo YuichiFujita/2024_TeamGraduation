@@ -242,6 +242,15 @@ namespace MyLib
 		}
 
 		/*
+			@brief 絶対値ベクトル
+			@return	絶対値化されたベクトル
+		*/
+		inline Vector3 Absolute()
+		{
+			return Vector3(fabsf(x), fabsf(y), fabsf(z));
+		}
+
+		/*
 			@brief	外積
 			@return	2つのベクトルの外積
 		*/
@@ -571,6 +580,15 @@ namespace MyLib
 		inline Vector2 Invert()
 		{
 			return Vector2(-x, -y);
+		}
+
+		/*
+			@brief 絶対値ベクトル
+			@return	絶対値化されたベクトル
+		*/
+		inline Vector2 Absolute()
+		{
+			return Vector2(fabsf(x), fabsf(y));
 		}
 
 		/*

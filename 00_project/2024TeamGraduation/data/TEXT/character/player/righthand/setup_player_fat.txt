@@ -41,6 +41,9 @@ MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]ƒAƒNƒZƒTƒŠ[
 # ƒLƒƒƒ‰ƒNƒ^[î•ñ
 #------------------------------------------------------------------------------
 CHARACTERSET
+
+	SCALE = 1.177		# ƒLƒƒƒ‰ƒXƒP[ƒ‹
+
 	VELOCITY_NORMAL = 1.6	# ’ÊíˆÚ“®—Ê
 	VELOCITY_RUN = 2.67		# ƒ_ƒbƒVƒ…ˆÚ“®—Ê
 	VELOCITY_BLINK = 29.61	# ƒuƒŠƒ“ƒNˆÚ“®—Ê
@@ -80,7 +83,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 73.50 0.00
+		POS = 0.00 58.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -180,7 +183,7 @@ CHARACTERSET
 		PARENT = 9
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 -33.00 0.00
+		POS = 0.00 -17.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -210,7 +213,7 @@ CHARACTERSET
 		PARENT = 12
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 -33.00 0.00
+		POS = 0.00 -17.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -271,23 +274,24 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# ƒJƒ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# ƒJƒj•à‚«(¶)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt			# ƒJƒj•à‚«(‰E)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# ‘–‚è
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_run_ball.txt			# ‘–‚è(ƒ{[ƒ‹Š)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_run_ball.txt			# ‘–‚è(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_blink.txt				# ƒuƒŠƒ“ƒN
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dodge.txt				# ‰ñ”ğ¬Œ÷
 MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt					# ƒWƒƒƒ“ƒv
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_jump_ball.txt			# ƒWƒƒƒ“ƒv(ƒ{[ƒ‹Š)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_jump_ball.txt			# ƒWƒƒƒ“ƒv(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_land.txt					# ’…’n
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance.txt		# ƒLƒƒƒbƒ`\‚¦
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_catch_stance.txt		# ƒLƒƒƒbƒ`\‚¦
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_normal.txt			# ’ÊíƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_jump.txt			# ’ÊíƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_normal.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_jump.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dropcatch_walk.txt		# —‚¿‚Ä‚é‚ÌƒLƒƒƒbƒ`(•à‚«)
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw.txt				# “Š‚°
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_dash.txt			# “Š‚°(ƒ_ƒbƒVƒ…)
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_jump.txt			# “Š‚°(ƒWƒƒƒ“ƒv)
-MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_drop.txt			# “Š‚°(ƒhƒƒbƒvƒ{[ƒ‹)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw.txt				# “Š‚°
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_dash.txt		# “Š‚°(ƒ_ƒbƒVƒ…)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_drop.txt		# “Š‚°(ƒhƒƒbƒvƒ{[ƒ‹)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_pass.txt		# “Š‚°(ƒpƒX)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# ƒgƒX
 MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# ·‚èã‚°
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# ƒXƒyƒVƒƒƒ‹
@@ -295,7 +299,7 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt					# Ÿ—˜
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ƒ_ƒ[ƒW
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# €–S
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# €–SŒã
-MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# ’ÊíƒOƒŠƒbƒv
+MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# ‘OƒOƒŠƒbƒv
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# ‘OƒOƒŠƒbƒv
 
 

@@ -62,12 +62,24 @@ public:
 		VIBRATION_STATE_MAX
 	};
 
+
+	//=============================
+	// 構造体定義
+	//=============================
+	struct STapInfo	// タップ情報
+	{
+		float fTapTimer[BUTTON::BUTTON_MAX];	// タップ判定用のタイマー
+	};
+
 	CInputGamepad();
 	~CInputGamepad();
 
-	HRESULT Init(HINSTANCE hInstance, HWND hWnd);
-	void Uninit();
-	void Update();
+	//--------------------------
+	// パイプライン
+	//--------------------------
+	HRESULT Init(HINSTANCE hInstance, HWND hWnd) override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 
 	//--------------------------
 	// ボタン系
@@ -75,7 +87,8 @@ public:
 	bool GetPress(BUTTON nKey, int nCntPlayer);
 	bool GetTrigger(BUTTON nKey, int nCntPlayer);
 	bool GetRepeat(BUTTON nKey, int nCntPlayer);
-	bool GetRelease(int nKey, int nCntPlayer);
+	bool GetRelease(BUTTON nKey, int nCntPlayer);
+	bool GetTap(BUTTON nKey, int nCntPlayer, float tapTime);
 
 	//--------------------------
 	// トリガー系
@@ -132,6 +145,7 @@ private:
 	void UpdateStickTrigger(int nCntPlayer);		// スティックのトリガー判定
 	void UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate);	// トリガーの判定処理
 	void UpdateVibration(int nCntPlayer);	// 振動の更新処理
+	void UpdateTapTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer);	// タップ判定タイマーの更新
 
 	//=============================
 	// メンバ変数
@@ -149,6 +163,7 @@ private:
 	int m_nCntVibration[mylib_const::MAX_PLAYER];						// 振動の時間
 	int m_nMaxCntVibration[mylib_const::MAX_PLAYER];					// 振動の時間
 	int m_nCntPadrepeat;												// リピート用カウント
+	float m_fTapTimer[BUTTON::BUTTON_MAX][mylib_const::MAX_PLAYER];		// タップ判定用のタイマー
 
 	//--------------------------
 	// トリガー

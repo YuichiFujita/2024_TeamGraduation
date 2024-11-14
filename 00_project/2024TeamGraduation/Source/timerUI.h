@@ -41,7 +41,24 @@ public:
 	int GetSec(void) const override		{ return m_pTimer->GetSec(); }	// 秒取得
 	int GetMSec(void) const override	{ return m_pTimer->GetMSec(); }	// ミリ秒取得
 
+	//--------------------------
 	// 静的メンバ関数
+	//--------------------------
+	/*
+		@brief	生成処理
+		@param	fTime			[in]	開始時間
+		@param	fLimit			[in]	制限時間
+		@param	rPos			[in]	位置
+		@param	rSizeValue		[in]	数字の大きさ
+		@param	rSizePart		[in]	区切りの大きさ
+		@param	rSpaceValue		[in]	数字の空白
+		@param	rSpacePart		[in]	区切りの空白
+		@param	alignX			[in]	横配置
+		@param	alignY			[in]	縦配置
+		@param	rRot			[in]	向き
+		@param	rCol			[in]	色
+		@return	CTimerUI*
+	*/
 	static CTimerUI *Create	// 生成
 	( // 引数
 		const float fTime,				// 開始時間
@@ -60,11 +77,12 @@ public:
 	// メンバ関数
 	void Start(void)	{ m_pTimer->Start(); }	// 計測開始
 	void End(void)		{ m_pTimer->End(); }	// 計測終了
-	void EnableStop(const bool bStop)	{ m_pTimer->EnableStop(bStop);}		// 計測停止設定
-	void AddTime(const float fTime)		{ m_pTimer->AddTime(fTime); }		// 時間加算
-	void SetLimit(const float fLimit)	{ m_pTimer->SetLimit(fLimit); }		// 制限時間設定
-	float GetLimit(void) const			{ return m_pTimer->GetLimit(); }	// 制限時間取得
-	CTimer::EState GetState(void) const	{ return m_pTimer->GetState(); }	// 計測状態取得
+	void EnableStop(const bool bStop)	{ m_pTimer->EnableStop(bStop);}			// 計測停止設定
+	void AddTime(const float fTime)		{ m_pTimer->AddTime(fTime); }			// 時間加算
+	void SetLimit(const float fLimit)	{ m_pTimer->SetLimit(fLimit); }			// 制限時間設定
+	float GetLimit(void) const			{ return m_pTimer->GetLimit(); }		// 制限時間取得
+	CTimer::EState GetState(void) const	{ return m_pTimer->GetState(); }		// 計測状態取得
+	bool IsEnd() { return m_pTimer->GetState() == CTimer::EState::STATE_END; }	// 終了判定
 
 private:
 	// メンバ変数

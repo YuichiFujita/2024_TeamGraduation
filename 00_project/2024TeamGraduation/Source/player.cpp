@@ -165,48 +165,6 @@ namespace Crab	// カニ歩き
 	};
 }
 
-namespace Motion
-{
-	// デバッグ表示用
-	const std::string NAME_MAP[CPlayer::EMotion::MOTION_MAX] =
-	{
-		"MOTION_DEF",				// ニュートラルモーション
-		"MOTION_DEF_BALL",			// ニュートラルモーション(ボール所持)
-		"MOTION_WALK",				// 移動
-		"MOTION_WALK_BALL",			// 移動(ボール所持)
-		"MOTION_CRAB_FRONT",		// カニ歩き(前)
-		"MOTION_CRAB_BACK",			// カニ歩き(後)
-		"MOTION_CRAB_LEFT",			// カニ歩き(左)
-		"MOTION_CRAB_RIGHT",		// カニ歩き(右)
-		"MOTION_RUN",				// 走り
-		"MOTION_RUN_BALL",			// 走り(ボール所持)
-		"MOTION_BLINK",				// ブリンク
-		"MOTION_DODGE",				// 回避成功時
-		"MOTION_JUMP",				// ジャンプ
-		"MOTION_JUMP_BALL",			// ジャンプ(ボール所持)
-		"MOTION_LAND",				// 着地
-		"MOTION_CATCH_STANCE",		// キャッチの構え
-		"MOTION_CATCH_STANCE_JUMP",	// キャッチの構え(ジャンプ)
-		"MOTION_CATCH_NORMAL",		// キャッチ(通常)
-		"MOTION_CATCH_JUMP",		// キャッチ(ジャンプ)
-		"MOTION_JUSTCATCH_NORMAL",	// ジャストキャッチ(通常)
-		"MOTION_JUSTCATCH_JUMP",	// ジャストキャッチ(ジャンプ)
-		"MOTION_DROPCATCH_WALK",	// 落ちてるのキャッチ(歩き)
-		"MOTION_THROW",				// 投げ
-		"MOTION_THROW_RUN",			// 投げ(走り)
-		"MOTION_THROW_JUMP",		// 投げ(ジャンプ)
-		"MOTION_TOSS",				// トス
-		"MOTION_HYPE",				// 盛り上げ
-		"MOTION_SPECIAL",			// スペシャル
-		"MOTION_WIN",				// 勝利
-		"MOTION_DAMAGE",			// ダメージ
-		"MOTION_DEAD",				// 死亡
-		"MOTION_DEAD_AFTER",		// 死亡後
-		"MOTION_GRIP_DEF",			// デフォグリップ
-		"MOTION_GRIP_FRONT",		// 前グリップ
-	};
-}
-
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -407,6 +365,9 @@ void CPlayer::Uninit()
 	// 着せ替え
 	SAFE_UNINIT(m_pDressup_Hair);
 	SAFE_UNINIT(m_pDressup_Accessory);
+	
+	// ステータス
+	SAFE_DELETE(m_pPosAdj);
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -679,9 +640,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (!m_bDash && IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
+	if (!m_bDash && m_pBase->IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
 	{// カニ歩き
-		MotionCrab(nStartKey);
+		GetBase()->MotionCrab(nStartKey);
 	}
 	else if(bNowDrop || nType != EMotion::MOTION_DROPCATCH_WALK)
 	{
@@ -854,6 +815,14 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		}
 		break;
 
+	case EMotion::MOTION_THROW_PASS:
+		if (m_pBall != nullptr)
+		{// パス
+
+			m_pBall->Pass(this);
+		}
+		break;
+
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
@@ -958,6 +927,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		break;
 	}
 
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
+
 	// キャッチ状態
 	SetState(EState::STATE_CATCH_NORMAL);
 }
@@ -1004,133 +976,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	// モテ加算
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
-}
-
-//==========================================================================
-// カニ歩きモーション設定
-//==========================================================================
-void CPlayer::MotionCrab(int nStartKey)
-{
-	CRAB_DIRECTION playerDir = CRAB_DIRECTION::CRAB_NONE;
-	CRAB_DIRECTION inputDir = CRAB_DIRECTION::CRAB_NONE;
-
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 向き
-	MyLib::Vector3 rot = GetRotation();
-
-	// ラムダ(bool)
-	auto CollisionRangeAngle = [](float angle, float maxAngle, float minAngle)
-	{
-		// 正規化解除
-		UtilFunc::Transformation::RotUnNormalize(angle);
-		UtilFunc::Transformation::RotUnNormalize(maxAngle);
-		UtilFunc::Transformation::RotUnNormalize(minAngle);
-
-		// 度数法に変換
-		int nAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(angle));
-		int nMaxAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(maxAngle));
-		int nMinAngle =	static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(minAngle));
-
-		if (nMaxAngle <= nMinAngle)
-		{// 範囲が360°を跨ぐ場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle <= nAngle && nAngle <= nMinAngle);
-			return bRange;
-		}
-		else
-		{// 範囲が通常の順序で指定されている場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle >= nAngle && nAngle >= nMinAngle);
-			return bRange;
-		}
-
-		return false;
-	};
-
-	//--------------------------------
-	// プレイヤー方向
-	//--------------------------------
-	bool bRot = false;
-	D3DXCOLOR col = D3DXCOLOR();
-	float fRotY = D3DX_PI * 1.0f + rot.y;
-	UtilFunc::Transformation::RotNormalize(fRotY);
-
-	float fRangeZero = Crab::RANGE_MIN_MAX[0];
-	UtilFunc::Transformation::RotNormalize(fRangeZero);
-	if (!CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
-	{// 下向き
-		playerDir = CRAB_DIRECTION::CRAB_DOWN;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
-	{// 上向き
-		playerDir = CRAB_DIRECTION::CRAB_UP;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
-	{// 左向き
-		playerDir = CRAB_DIRECTION::CRAB_LEFT;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
-	{// 右向き
-		playerDir = CRAB_DIRECTION::CRAB_RIGHT;
-		bRot = true;
-		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else
-	{// 抜けちゃった
-		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
-	}
-
-	//--------------------------------
-	// 入力方向
-	//--------------------------------
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-	if (angle == nullptr) return;
-
-	switch (*angle)
-	{
-	case EDashAngle::ANGLE_UP:
-		inputDir = CRAB_DIRECTION::CRAB_UP;
-		break;
-
-	case EDashAngle::ANGLE_DOWN:
-		inputDir = CRAB_DIRECTION::CRAB_DOWN;
-		break;
-	
-	case EDashAngle::ANGLE_RIGHT:
-	case EDashAngle::ANGLE_RIGHTUP:
-	case EDashAngle::ANGLE_RIGHTDW:
-		inputDir = CRAB_DIRECTION::CRAB_RIGHT;
-		break;
-	
-	case EDashAngle::ANGLE_LEFT:
-	case EDashAngle::ANGLE_LEFTUP:
-	case EDashAngle::ANGLE_LEFTDW:
-		inputDir = CRAB_DIRECTION::CRAB_LEFT;
-		break;
-
-	default:
-		break;
-	}
-
-	if (playerDir == CRAB_DIRECTION::CRAB_NONE ||
-		inputDir == CRAB_DIRECTION::CRAB_NONE)
-	{// 判定に引っかかっていない
-		return;
-	}
-
-	// モーション設定
-	SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
 }
 
 //==========================================================================
@@ -1916,32 +1761,6 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 }
 
 //==========================================================================
-// カニ歩き判定
-//==========================================================================
-bool CPlayer::IsCrab()
-{
-	if (m_pBall != nullptr) return false;
-
-	CPlayer::EAction action = GetActionPattern()->GetAction();
-	int motionType = GetMotion()->GetType();
-	
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall == nullptr) return false;
-
-	// ボールの状態：敵側であるか
-	if (pBall->GetTypeTeam() == GetStatus()->GetTeam()) return false;
-	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE) return false;
-	//if (pBall->GetState() != CBall::EState::STATE_CATCH) return false;
-
-	// 自身の状態：ブリンク＆走りでない
-	if (action == CPlayer::EAction::ACTION_BLINK) return false;
-	if (action == CPlayer::EAction::ACTION_JUMP && m_bDash) return false;
-	if (m_bDash) return false;
-
-	return true;
-}
-
-//==========================================================================
 // デバッグ処理
 //==========================================================================
 void CPlayer::Debug()
@@ -2014,7 +1833,7 @@ void CPlayer::Debug()
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("Motion : [%s]", Motion::NAME_MAP[static_cast<CPlayer::EMotion>(motion->GetType())].c_str());
+		ImGui::Text("Motion : [%s]", motion->GetType());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 
 		//現在の入力方向を取る(向き)

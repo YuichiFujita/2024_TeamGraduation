@@ -66,6 +66,7 @@ public:
 		MOTION_THROW_RUN,			// 投げ(走り)
 		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
 		MOTION_THROW_DROP,			// 投げ(ドロップボール)
+		MOTION_THROW_PASS,			// 投げ(パス)
 		MOTION_TOSS,				// トス
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
@@ -291,12 +292,12 @@ public:
 	void SetState(EState state);		// 状態設定
 	void ChangeBase(EBaseType type);	// ベース変更
 	EBaseType GetBaseType() const;		// ベース取得
+	EFieldArea GetAreaType() const { return m_typeArea; }	// ポジション取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
-	bool IsCrab();											// カニ歩き判定
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
 	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
@@ -388,7 +389,6 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);	// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
-	void MotionCrab(int nStartKey);							// カニ歩き変化処理
 	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
 
 	//=============================

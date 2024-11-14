@@ -572,6 +572,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	{// ダッシュは変更
 		fMove = player->GetParameter().fVelocityDash;
 	}
+
 	fMove *= fDeltaRate;
 	fMove *= fSlowRate;
 
@@ -581,8 +582,13 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 
-	if (player->IsCrab())
+	if (player->GetBase()->IsCrab())
 	{//カニ歩き
+#if 0
+		float fCrabMoveEasingTime = GetCrabMoveEasingTime();	// 補正用時間
+		fMove *= UtilFunc::Correction::EaseInOutExpo(0.0f, 1.0f, 0.0f, 1.0f, fCrabMoveEasingTime);
+#endif
+
 		move.x += sinf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
 		move.z += cosf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
 	}

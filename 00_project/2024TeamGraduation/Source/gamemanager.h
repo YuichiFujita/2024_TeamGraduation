@@ -24,6 +24,7 @@ class CCollisionLine_Box;
 class CTeamStatus;
 class CGymWallManager;
 class CCharmManager;
+class CTimerUI;
 
 //==========================================================================
 // クラス定義
@@ -42,9 +43,8 @@ public:
 	{
 		SCENE_MAIN = 0,			// メイン
 		SCENE_START,			// 開始演出
-		SCENE_BEFOREBATTLE,		// 戦闘準備
-		SCENE_BATTLESTART,		// 戦闘開始
 		SCENE_SPECIAL_STAG,		// スペシャル演出
+		SCENE_END,				// 終了
 		SCENE_DEBUG,			// デバッグ
 		SCENE_MAX
 	};
@@ -65,7 +65,7 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetType(ESceneType type);						// シーンの種類設定
+	void SetSceneType(ESceneType type);						// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
 	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }	// 操作フラグを切り替えする
@@ -88,9 +88,23 @@ public:
 private:
 	
 	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CGameManager::*SCENE_FUNC)();
+	static SCENE_FUNC m_SceneFunc[];	// 状態関数
+
+	//=============================
 	// メンバ関数
 	//=============================
-	virtual void SceneStart();		// 開始演出
+	// シーン
+	void SceneMain();			// メイン
+	void SceneStart();			// 開始演出
+	void SceneSpecial_Stag();	// スペシャル演出
+	void SceneEnd();			// 終了演出
+	void SceneDebug();			// デバッグ
+
+	// その他
+	void UpdateLimitTimer();		// 制限時間更新
 	void UpdateAudience();			// 観客更新
 	void UpdateSpecialStag();		// スペシャル演出更新
 	void CreateTeamStatus();		// チームステータス生成
@@ -102,17 +116,20 @@ private:
 	ESceneType m_OldSceneType;	// シーンの種類
 	bool m_bControll;			// 操作できるか
 	float m_fSceneTimer;		// シーンタイマー
-
-	CGymWallManager* m_pGymWallManager;	// 体育館の壁
-	CCharmManager* m_pCharmManager;		// モテマネージャ
-
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
 	CTeamStatus* m_pTeamStatus[ETeamSide::SIDE_MAX];	// チームステータス
-	static CGameManager* m_pThisPtr;				// 自身のポインタ
+
+	//--------------------------
+	// 生成したオブジェクト
+	//--------------------------
+	CGymWallManager* m_pGymWallManager;	// 体育館の壁
+	CCharmManager* m_pCharmManager;		// モテマネージャ
+	CTimerUI* m_pTimerUI;				// タイマーUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
 #endif
+	static CGameManager* m_pThisPtr;				// 自身のポインタ
 };
 
 

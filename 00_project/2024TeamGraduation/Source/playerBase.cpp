@@ -8,6 +8,7 @@
 #include "playerStatus.h"
 #include "playercontrol_action.h"
 #include "playercontrol_move.h"
+#include "playerAction.h"
 #include "ball.h"
 
 //==========================================================================
@@ -45,11 +46,11 @@ CPlayerBase::~CPlayerBase()
 CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 {
 	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
-	CBall::EAttack atkBall	= pBall->GetTypeAtk();			// ボール攻撃種類
-	CBall::EState stateBall = pBall->GetState();			// ボール状態
-	MyLib::Vector3 posB = pBall->GetPosition();				// ボール位置
-	MyLib::HitResult_Character hitresult = {};				// 衝突情報
-	CPlayerStatus* pStatus = m_pPlayer->GetStatus();		// ステータス情報
+	CBall::EAttack atkBall	= pBall->GetTypeAtk();		// ボール攻撃種類
+	CBall::EState stateBall = pBall->GetState();		// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();			// ボール位置
+	MyLib::HitResult_Character hitresult = {};			// 衝突情報
+	CPlayerStatus* pStatus = m_pPlayer->GetStatus();	// ステータス情報
 
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
@@ -62,9 +63,9 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (stateBall == CBall::STATE_LAND
+	if (stateBall == CBall::STATE_LAND || pBall->IsPass()
 	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != pStatus->GetTeam())
-	{ // ボールが着地している、またはフリーボール且つ自分のチームボールではない場合
+	{ // ボールが着地している、またはパス状態、またはフリーボール且つ自分のチームボールではない場合
 
 		// ボールをキャッチ
 		pBall->CatchLand(m_pPlayer);
@@ -151,6 +152,30 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 void CPlayerBase::Debug()
 {
 
+}
+
+//==========================================================================
+// カニ歩き判定
+//==========================================================================
+bool CPlayerBase::IsCrab()
+{
+	// ボールを持っていないか
+	if (m_pPlayer->GetBall() != nullptr) { return false; }
+
+	// 世界にボールがあるか
+	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報
+	if (pBall == nullptr) { return false; }
+
+	// ボールの状態：敵側であるか
+	if (pBall->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())	{ return false; }
+	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE)	{ return false; }
+
+	// 自身の状態：ブリンク＆走りでない
+	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// アクションパターン
+	if (action == CPlayer::EAction::ACTION_BLINK) { return false; }
+	if (m_pPlayer->IsDash()) { return false; }
+
+	return true;
 }
 
 //==========================================================================

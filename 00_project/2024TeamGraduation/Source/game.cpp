@@ -248,7 +248,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(右)
-#if 0
+#if 1
 	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
 	if (pUserOut == nullptr)
 	{
@@ -513,12 +513,12 @@ void CGame::ChangeEdit()
 					if (i != 0)
 					{
 						// デバッグモード
-						m_pGameManager->SetType(CGameManager::ESceneType::SCENE_DEBUG);
+						m_pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_DEBUG);
 					}
 					else
 					{
 						// デバッグモード
-						m_pGameManager->SetType(m_pGameManager->GetOldType());
+						m_pGameManager->SetSceneType(m_pGameManager->GetOldType());
 					}
 
 					// エディット終了

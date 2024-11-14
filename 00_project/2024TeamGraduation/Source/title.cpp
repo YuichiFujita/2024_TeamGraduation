@@ -138,6 +138,18 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 
 	// 状態別更新処理
 	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
+
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		pKey->GetTrigger(DIK_RETURN))
+	{
+		// 遷移
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
+	}
 }
 
 //==========================================================================
