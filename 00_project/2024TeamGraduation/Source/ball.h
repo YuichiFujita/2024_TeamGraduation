@@ -204,6 +204,7 @@ private:
 	float m_fGravity;		// 重力
 	bool m_bLanding;		// 着地フラグ
 	MyLib::Vector3 m_posPassStart;	// パス開始位置
+	MyLib::Vector3 m_posPassEnd;	// パス終了位置
 
 	CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	ESpecial m_typeSpecial;	// スペシャル種類
