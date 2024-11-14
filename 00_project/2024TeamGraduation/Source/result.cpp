@@ -92,13 +92,16 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// シーンの更新処理
 	CScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// キーボード情報取得
-	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();
+	// インプット情報取得
+	CInputKeyboard * pKey = CInputKeyboard::GetInstance();
+	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	// ゲームパッド情報取得
-	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
-
-
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		pKey->GetTrigger(DIK_RETURN))
+	{
+		// 遷移
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_TITLE);
+	}
 }
 
 //==========================================================================

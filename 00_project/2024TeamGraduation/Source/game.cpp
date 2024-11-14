@@ -513,12 +513,12 @@ void CGame::ChangeEdit()
 					if (i != 0)
 					{
 						// デバッグモード
-						m_pGameManager->SetType(CGameManager::ESceneType::SCENE_DEBUG);
+						m_pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_DEBUG);
 					}
 					else
 					{
 						// デバッグモード
-						m_pGameManager->SetType(m_pGameManager->GetOldType());
+						m_pGameManager->SetSceneType(m_pGameManager->GetOldType());
 					}
 
 					// エディット終了

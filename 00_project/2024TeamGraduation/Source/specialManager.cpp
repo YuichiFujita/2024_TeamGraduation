@@ -162,7 +162,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// ゲームをスペシャル演出シーンに変更
-	CGameManager::GetInstance()->SetType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
+	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
 #endif
 
 	// 通常カメラの設定
@@ -486,7 +486,7 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 
 	// ゲームをメインシーンに変更
 	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー
-	pGameManager->SetType(CGameManager::ESceneType::SCENE_MAIN);
+	pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_MAIN);
 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
