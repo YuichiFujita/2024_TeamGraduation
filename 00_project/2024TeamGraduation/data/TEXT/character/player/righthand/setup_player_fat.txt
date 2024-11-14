@@ -240,7 +240,7 @@ CHARACTERSET
 
 	PARTSSET
 		INDEX = 16
-		PARENT = 5
+		PARENT = 2
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 0.00 0.00
