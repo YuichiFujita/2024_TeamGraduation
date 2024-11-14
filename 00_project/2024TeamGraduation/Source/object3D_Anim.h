@@ -76,7 +76,8 @@ public:
 		const MyLib::PosGrid2& rPtrn,		// テクスチャ分割数
 		const MyLib::Vector3& rPos,			// 位置
 		const float fNextTime = DEF_NEXT,	// パターン変更時間
-		const bool bAutoDeath = false		// 自動破棄フラグ
+		const bool bAutoDeath = false,		// 自動破棄フラグ
+		int nPriority = mylib_const::PRIORITY_DEF2D
 	);
 
 private:
@@ -85,13 +86,13 @@ private:
 	// メンバ関数
 	//=============================
 	HRESULT SetMaxPtrn(const int nMaxPtrn);	// パターン総数設定
-	bool NextPtrn(const float fDeltaTime, const float fSlowRate);	// パターン加算
-	bool BackPtrn(const float fDeltaTime, const float fSlowRate);	// パターン減算
+	bool NextPtrn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// パターン加算
+	bool BackPtrn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// パターン減算
 
 	//=============================
 	// メンバ変数
 	//=============================
-	std::function<bool(float, float)> m_funcPattern;	// パターン変更関数ポインタ
+	std::function<bool(float, float, float)> m_funcPattern;	// パターン変更関数ポインタ
 	MyLib::PosGrid2 m_ptrn;	// テクスチャ分割数
 	MyLib::Vector2 m_split;	// スプライト量
 	float* m_pNextTime;		// パターン変更時間

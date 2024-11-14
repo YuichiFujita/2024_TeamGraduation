@@ -80,7 +80,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 74.00 0.00
+		POS = 0.00 73.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -90,7 +90,7 @@ CHARACTERSET
 		PARENT = 0
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 7.00 -4.50
+		POS = 0.00 -4.00 -3.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -110,7 +110,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -16.50 35.50 6.00
+		POS = -15.50 38.00 5.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -120,7 +120,7 @@ CHARACTERSET
 		PARENT = 3
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -15.00 -0.50 0.25
+		POS = -10.00 0.00 0.75
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -130,7 +130,7 @@ CHARACTERSET
 		PARENT = 4
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -17.00 0.50 0.50
+		POS = -13.00 -1.50 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -140,7 +140,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 16.50 35.50 6.00
+		POS = 15.50 38.00 5.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -150,7 +150,7 @@ CHARACTERSET
 		PARENT = 6
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 15.00 -0.50 0.25
+		POS = 10.00 0.00 0.75
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -160,7 +160,7 @@ CHARACTERSET
 		PARENT = 7
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 17.00 -0.50 0.50
+		POS = 13.00 -1.50 0.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -170,7 +170,7 @@ CHARACTERSET
 		PARENT = 0
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -9.50 -9.50 1.00
+		POS = -9.50 -19.00 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -180,7 +180,7 @@ CHARACTERSET
 		PARENT = 9
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 -32.50 0.00
+		POS = 0.00 -33.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -190,7 +190,7 @@ CHARACTERSET
 		PARENT = 10
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 1.00 -23.50 1.00
+		POS = 1.00 -13.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -200,7 +200,7 @@ CHARACTERSET
 		PARENT = 0
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 9.50 -9.50 -1.00
+		POS = 9.50 -19.00 -1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -210,7 +210,7 @@ CHARACTERSET
 		PARENT = 12
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = 0.00 -32.50 0.00
+		POS = 0.00 -33.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -220,7 +220,7 @@ CHARACTERSET
 		PARENT = 13
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -1.00 -23.50 1.00
+		POS = -1.00 -13.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -240,7 +240,7 @@ CHARACTERSET
 		PARENT = 5
 		SIDE = 0					# ”½“][-1:¶ / 0 : ’†‰› / 1 : ‰E]
 		INVERSE = -1					# ”½“]æ
-		POS = -6.50 -12.00 0.00
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -271,22 +271,23 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_back.txt			# ƒJƒ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_left.txt			# ƒJƒj•à‚«(¶)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_right.txt			# ƒJƒj•à‚«(‰E)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_run.txt					# ‘–‚è
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_run_ball.txt			# ‘–‚è(ƒ{[ƒ‹Š)
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_run_ball.txt			# ‘–‚è(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_blink.txt				# ƒuƒŠƒ“ƒN
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dodge.txt				# ‰ñ”ğ¬Œ÷
 MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt					# ƒWƒƒƒ“ƒv
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_jump_ball.txt			# ƒWƒƒƒ“ƒv(ƒ{[ƒ‹Š)
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_jump_ball.txt			# ƒWƒƒƒ“ƒv(ƒ{[ƒ‹Š)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_land.txt					# ’…’n
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_catch_stance.txt		# ƒLƒƒƒbƒ`\‚¦
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance.txt		# ƒLƒƒƒbƒ`\‚¦
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance_jump.txt	# ƒLƒƒƒbƒ`\‚¦
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_normal.txt			# ’ÊíƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_jump.txt			# ’ÊíƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_normal.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(’Êí)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_justcatch_jump.txt		# ƒWƒƒƒXƒgƒLƒƒƒbƒ`(ƒWƒƒƒ“ƒv)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dropcatch_walk.txt		# —‚¿‚Ä‚é‚ÌƒLƒƒƒbƒ`(•à‚«)
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw.txt				# “Š‚°
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_dash.txt		# “Š‚°(ƒ_ƒbƒVƒ…)
-MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_jump.txt		# “Š‚°(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw.txt				# “Š‚°
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_dash.txt			# “Š‚°(ƒ_ƒbƒVƒ…)
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_jump.txt			# “Š‚°(ƒWƒƒƒ“ƒv)
+MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_throw_drop.txt			# “Š‚°(ƒhƒƒbƒvƒ{[ƒ‹)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# ƒgƒX
 MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# ·‚èã‚°
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# ƒXƒyƒVƒƒƒ‹
@@ -294,7 +295,7 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt					# Ÿ—˜
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ƒ_ƒ[ƒW
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# €–S
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# €–SŒã
-MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# ‘OƒOƒŠƒbƒv
+MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# ’ÊíƒOƒŠƒbƒv
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# ‘OƒOƒŠƒbƒv
 
 

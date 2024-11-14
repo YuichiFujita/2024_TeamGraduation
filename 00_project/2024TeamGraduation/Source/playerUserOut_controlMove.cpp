@@ -651,6 +651,9 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	// 移動量反映
 	player->SetMove(playerMove);
 
+	// 
+	player->SetRotDest(0.0f);
+
 	CEffect3D::Create(posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
 	CEffect3D::Create(posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
 #endif
