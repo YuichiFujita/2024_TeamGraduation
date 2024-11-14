@@ -54,7 +54,7 @@ void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 
 	// TODOÅFà íuÇï‚ê≥
 #if 1
-	MyLib::Vector3 posSize = (posLeft.Absolute() - posRight.Absolute()) * 0.5f;
+	MyLib::Vector3 posSize = (posRight.Absolute() - posLeft.Absolute()) * 0.5f;
 	posSize.z = posSize.y = 0.0f;
 
 	MyLib::Vector3 posOrigin;
