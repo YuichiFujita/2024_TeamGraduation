@@ -38,7 +38,7 @@ public:
 
 	virtual HRESULT Init(HINSTANCE hInstance, HWND hWnd);
 	virtual void Uninit();
-	virtual void Update();
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Release();
 
 	static CInput* Create(HINSTANCE hInstance, HWND hWnd);	// ê∂ê¨èàóù

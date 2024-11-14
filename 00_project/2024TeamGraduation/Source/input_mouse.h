@@ -32,9 +32,10 @@ public:
 	CInputMouse();
 	~CInputMouse();
 
-	HRESULT Init(HINSTANCE hInstance, HWND hWnd);
-	void Uninit();
-	void Update();
+	HRESULT Init(HINSTANCE hInstance, HWND hWnd) override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+
 	bool GetPress(BUTTON nKey);		// プレス情報取得
 	bool GetTrigger(BUTTON nKey);	// トリガー情報取得
 	bool GetRelease(BUTTON nKey);	// リリース情報取得

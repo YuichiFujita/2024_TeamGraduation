@@ -258,7 +258,7 @@ void CGameManager::SceneStart()
 	}
 #endif
 
-	//チームステータス
+	// チームステータス
 	CreateTeamStatus();
 
 	// タイマーUI

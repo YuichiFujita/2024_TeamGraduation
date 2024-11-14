@@ -101,7 +101,7 @@ void CInputKeyboard::Uninit()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CInputKeyboard::Update()
+void CInputKeyboard::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	BYTE aKeyState[mylib_const::NUM_KEY_MAX];	// キーボードの入力情報
 
