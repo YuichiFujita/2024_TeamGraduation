@@ -649,7 +649,7 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	}
 
 	// TODO
-#if 0
+#if 1
 	if (pKey->GetPress(DIK_W))
 	{
 		MyLib::Vector3 vec = vecMove.rotateAroundY();
