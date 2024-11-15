@@ -130,9 +130,8 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
-	// ボールの持っているプレイヤー取得
-	CPlayer* pHaveP = pBall->GetPlayer();
-	if (pHaveP == nullptr) return;
+	// カニ歩きじゃないときは抜ける
+	if (!player->GetBase()->IsCrab()) return;
 
 	// ボールの位置
 	MyLib::Vector3 posBall = pBall->GetPosition();

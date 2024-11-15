@@ -49,7 +49,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-
+	void BilnkKey(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キー入力のブリンク
+	void BilnkStick(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スティック入力のブリンク
 };
 
 #endif

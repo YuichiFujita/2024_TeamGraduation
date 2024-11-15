@@ -281,7 +281,10 @@ void CGameManager::SceneStart()
 		);
 
 		// ŠJn
+#if _NDEBUG
 		m_pTimerUI->Start();
+#endif
+
 	}
 
 	// ƒƒCƒ“‚Ö‘JˆÚ
