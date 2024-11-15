@@ -288,6 +288,9 @@ void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, c
 
 	// ƒ‚ƒe‰ÁŽZ
 	pGameMgr->AddCharmValue(teamPlayer, CCharmManager::ETypeAdd::ADD_DODGE);
+
+	// ƒXƒyƒVƒƒƒ‹‰ÁŽZ
+	pGameMgr->AddSpecialValue(teamPlayer, CSpecialValueManager::ETypeAdd::ADD_DODGE);
 }
 
 //==========================================================================

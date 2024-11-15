@@ -66,9 +66,10 @@ CGameManager::CGameManager()
 	m_fSceneTimer = 0.0f;		// シーンタイマー
 	m_courtSize = MyLib::Vector3();
 
-	m_pGymWallManager = nullptr;	// ジム壁マネジャー
-	m_pCharmManager = nullptr;		// モテマネージャ
-	m_pTimerUI = nullptr;			// タイマーUI
+	m_pGymWallManager = nullptr;		// ジム壁マネジャー
+	m_pCharmManager = nullptr;			// モテマネージャ
+	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
+	m_pTimerUI = nullptr;				// タイマーUI
 
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 
@@ -145,6 +146,9 @@ HRESULT CGameManager::Init()
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
 
+	// スぺ値マネージャ生成
+	m_pSpecialValueManager = CSpecialValueManager::Create();
+
 	return S_OK;
 }
 
@@ -156,11 +160,7 @@ void CGameManager::Uninit()
 	// チームステータス
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
-		if (m_pTeamStatus[i] != nullptr)
-		{
-			m_pTeamStatus[i]->Uninit();
-			m_pTeamStatus[i] = nullptr;
-		}
+		SAFE_UNINIT(m_pTeamStatus[i]);
 	}
 
 #if _DEBUG
@@ -172,11 +172,10 @@ void CGameManager::Uninit()
 #endif
 
 	// モテマネージャ
-	if (m_pCharmManager != nullptr)
-	{
-		m_pCharmManager->Uninit();
-		m_pCharmManager = nullptr;
-	}
+	SAFE_UNINIT(m_pCharmManager);
+
+	// スぺ値マネージャ
+	SAFE_UNINIT(m_pSpecialValueManager);
 
 	// 自身の開放
 	delete m_pThisPtr;
@@ -465,6 +464,16 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmTy
 	// チームステータス
 	float value = CCharmManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
+}
+
+//==========================================================================
+// スペシャル加算
+//==========================================================================
+void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd ValueType)
+{
+	// チームステータス
+	float value = CSpecialValueManager::GetInstance()->GetAddValue(ValueType);
+	m_pTeamStatus[side]->AddSpecialValue(value);
 }
 
 //==========================================================================

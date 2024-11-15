@@ -130,7 +130,6 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EFieldArea::FIELD_IN,	// ポジション
 			CPlayer::EBody::BODY_DEBU,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
@@ -152,7 +151,6 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EFieldArea::FIELD_IN,	// ポジション
 			CPlayer::EBody::BODY_GARI,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
@@ -174,7 +172,6 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_LEFT,		// チームサイド
 			CPlayer::EBaseType::TYPE_AI,	// ベースタイプ
-			CPlayer::EFieldArea::FIELD_IN,	// ポジション
 			CPlayer::EBody::BODY_NORMAL,	// 体系
 			CPlayer::EHandedness::HAND_L	// 利き手
 		);
@@ -247,15 +244,40 @@ HRESULT CGame::Init()
 	}
 #endif
 
-	// プレイヤー外野User生成(右)
+	// プレイヤー外野User生成(左)
 #if 1
-	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
-	if (pUserOut == nullptr)
+	CPlayer* pUserOutFar = CPlayer::Create
+	(
+		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置
+		MyLib::Vector3(-50.0f, 0.0f, 650.0f),	// 移動可能右位置
+		CGameManager::SIDE_RIGHT				// チームサイド
+	);
+	if (pUserOutFar == nullptr)
 	{
 		return E_FAIL;
 	}
-	pUserOut->SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
-	pUserOut->SetRotDest(0.0f);
+
+	CPlayer* pUserOutLeft = CPlayer::Create
+	(
+		MyLib::Vector3(-1040.0f, 0.0f, -510.0f),	// 移動可能左位置
+		MyLib::Vector3(-1040.0f, 0.0f, 510.0f),		// 移動可能右位置
+		CGameManager::SIDE_RIGHT					// チームサイド
+	);
+	if (pUserOutLeft == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	CPlayer* pUserOutNear = CPlayer::Create
+	(
+		MyLib::Vector3(-50.0f, 0.0f, -650.0f),	// 移動可能左位置
+		MyLib::Vector3(-900.0f, 0.0f, -650.0f),	// 移動可能右位置
+		CGameManager::SIDE_RIGHT				// チームサイド
+	);
+	if (pUserOutNear == nullptr)
+	{
+		return E_FAIL;
+	}
 #endif
 
 	// 追従カメラの設定

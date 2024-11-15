@@ -137,7 +137,7 @@ void CTeamStatus::CheckAllDead()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
 		// 同じチームが生きている場合 = 全滅していない
-		if (pPlayer->GetStatus()->GetTeam() == m_typeTeam ||
+		if (pPlayer->GetStatus()->GetTeam() == m_typeTeam &&
 			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
 		{
 			return;
@@ -214,17 +214,8 @@ void CTeamStatus::SetSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::AddSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue + fValue, 0.0f, m_sSpecialInfo.fValueMax);
-
-	if (m_sSpecialInfo.pGauge != nullptr)
-	{
-		MyLib::Vector2 size = Special::GAUGE_SIZE;
-		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
-		
-		size.x *= fRad;
-
-		m_sSpecialInfo.pGauge->SetSize(size);
-	}
+	m_sSpecialInfo.fValue += fValue;
+	SetSpecialValue(m_sSpecialInfo.fValue);
 }
 
 //==========================================================================
@@ -232,17 +223,8 @@ void CTeamStatus::AddSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::SubSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue - fValue, 0.0f, m_sSpecialInfo.fValueMax);
-
-	if (m_sSpecialInfo.pGauge != nullptr)
-	{
-		MyLib::Vector2 size = Special::GAUGE_SIZE;
-		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
-		
-		size.x *= fRad;
-
-		m_sSpecialInfo.pGauge->SetSize(size);
-	}
+	m_sSpecialInfo.fValue -= fValue;
+	SetSpecialValue(m_sSpecialInfo.fValue);
 }
 
 //==========================================================================
