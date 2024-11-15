@@ -38,6 +38,14 @@ CPlayerControlMove::CPlayerControlMove()
 }
 
 //==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerControlMove::~CPlayerControlMove()
+{
+	SAFE_DELETE(m_pInputAngle);
+}
+
+//==========================================================================
 // 通常移動
 //==========================================================================
 void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -86,20 +94,17 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 			//TODO: 投げの余白キャンセルとか用 ToggleFinishは必要(モーション出来たら)
 		}
 	}
-	
-	if (m_fCrabMoveEasingTime > 1.0f)
-	{// 1を超えたら範囲内にする
-		m_fCrabMoveEasingTime = static_cast<int>(m_fCrabMoveEasingTime * 1000) % static_cast<int>(1000);
-	}
-	
-	// 補正用時間加算
-	m_fCrabMoveEasingTime += 1.0f * fDeltaTime * fDeltaRate * fSlowRate;
 
 #if 1
 	// カニ歩き判定
 	if (player->GetBase()->IsCrab())
 	{
 		CrabSetting(player);
+	}
+	else
+	{
+		// 移動割合0に
+		m_fCrabMoveEasingTime = 0.0f;
 	}
 #endif
 }
@@ -143,4 +148,21 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 
 	// プレイヤーの目標の向き設定
 	player->SetRotDest(fAngle);
+}
+
+//==========================================================================
+// 現在のカニ歩き移動補正値更新
+//==========================================================================
+void CPlayerControlMove::UpdateCrabMoveEasingTime(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fCrabMoveEasingTime > 1.0f)
+	{// 1を超えたら範囲内にする
+
+		// 小数点3位までで補正
+		m_fCrabMoveEasingTime = static_cast<int>(m_fCrabMoveEasingTime * 1000) % static_cast<int>(1000);
+		m_fCrabMoveEasingTime /= 1000.0f;
+	}
+
+	// 補正用時間加算
+	m_fCrabMoveEasingTime += 1.0f * fDeltaTime * fDeltaRate * fSlowRate;
 }

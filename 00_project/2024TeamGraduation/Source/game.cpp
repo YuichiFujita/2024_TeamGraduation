@@ -245,7 +245,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(左)
-#if 1
+#if 0
 	CPlayer* pUserOutFar = CPlayer::Create
 	(
 		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置
