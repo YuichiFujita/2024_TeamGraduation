@@ -298,6 +298,7 @@
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
+    <ClCompile Include="Source\specialValueManager.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\teamStatus.cpp" />
@@ -452,6 +453,7 @@
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
     <ClInclude Include="Source\specialManager.h" />
+    <ClInclude Include="Source\specialValueManager.h" />
     <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\teamStatus.h" />

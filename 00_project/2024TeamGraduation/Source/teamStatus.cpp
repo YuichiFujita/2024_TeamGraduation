@@ -214,17 +214,8 @@ void CTeamStatus::SetSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::AddSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue + fValue, 0.0f, m_sSpecialInfo.fValueMax);
-
-	if (m_sSpecialInfo.pGauge != nullptr)
-	{
-		MyLib::Vector2 size = Special::GAUGE_SIZE;
-		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
-		
-		size.x *= fRad;
-
-		m_sSpecialInfo.pGauge->SetSize(size);
-	}
+	m_sSpecialInfo.fValue += fValue;
+	SetSpecialValue(m_sSpecialInfo.fValue);
 }
 
 //==========================================================================
@@ -232,17 +223,8 @@ void CTeamStatus::AddSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::SubSpecialValue(float fValue)
 {
-	m_sSpecialInfo.fValue = UtilFunc::Transformation::Clamp(m_sSpecialInfo.fValue - fValue, 0.0f, m_sSpecialInfo.fValueMax);
-
-	if (m_sSpecialInfo.pGauge != nullptr)
-	{
-		MyLib::Vector2 size = Special::GAUGE_SIZE;
-		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
-		
-		size.x *= fRad;
-
-		m_sSpecialInfo.pGauge->SetSize(size);
-	}
+	m_sSpecialInfo.fValue -= fValue;
+	SetSpecialValue(m_sSpecialInfo.fValue);
 }
 
 //==========================================================================

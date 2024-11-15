@@ -15,6 +15,7 @@
 #include "instantfade.h"
 #include "scene.h"
 #include "charmManager.h"
+#include "specialValueManager.h"
 
 //==========================================================================
 // 前方宣言
@@ -23,7 +24,6 @@ class CBall;
 class CCollisionLine_Box;
 class CTeamStatus;
 class CGymWallManager;
-class CCharmManager;
 class CTimerUI;
 
 //==========================================================================
@@ -79,8 +79,9 @@ public:
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
 	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
-	void AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType);	// モテ加算
-	void SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType);	// モテ減算
+	void AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType);			// モテ加算
+	void SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType);			// モテ減算
+	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);	// スペシャル加算
 
 	static CGameManager* Create(CScene::MODE mode);				// 生成処理
 	static CGameManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
@@ -123,9 +124,10 @@ private:
 	//--------------------------
 	// 生成したオブジェクト
 	//--------------------------
-	CGymWallManager* m_pGymWallManager;	// 体育館の壁
-	CCharmManager* m_pCharmManager;		// モテマネージャ
-	CTimerUI* m_pTimerUI;				// タイマーUI
+	CGymWallManager* m_pGymWallManager;					// 体育館の壁
+	CCharmManager* m_pCharmManager;						// モテマネージャ
+	CSpecialValueManager* m_pSpecialValueManager;		// スぺ値マネージャ
+	CTimerUI* m_pTimerUI;								// タイマーUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
