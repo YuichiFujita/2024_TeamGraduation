@@ -1177,7 +1177,7 @@ void CBall::UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, cons
 	*pPos += (*pMove * (m_fMoveSpeed + m_fInitialSpeed)) * fDeltaRate * fSlowRate;
 
 	// 場外の補正
-	CGameManager::GetInstance()->SetPosLimit(*pPos);
+	CGameManager::GetInstance()->SetPosLimit(*pPos, 60.0f);	// TODO：いつかボールは転がってどっかにいくよ
 }
 
 //==========================================================================
@@ -1315,6 +1315,9 @@ CPlayer* CBall::CollisionThrowTarget(const bool bAbsLock)
 
 		// 同じチームの場合次へ
 		if (m_typeTeam == pPlayer->GetStatus()->GetTeam()) { continue; }
+
+		// ポジションが外野の場合次へ
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { continue; }
 
 		// 視界内にいない場合次へ
 		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);

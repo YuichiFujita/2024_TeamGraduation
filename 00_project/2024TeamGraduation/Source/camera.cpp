@@ -556,6 +556,9 @@ CCamera::SSide CCamera::GetPlayerMaxSide()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
+		// 外野の場合次へ
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { continue; }	// TODO：外野がカメラに映らないのはどうにかしたい
+
 		// 左の更新
 		if (posPlayer.x < pos.l) { pos.l = posPlayer.x; }
 
