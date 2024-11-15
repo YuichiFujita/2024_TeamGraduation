@@ -201,13 +201,14 @@ private:
 
 	bool IsWhoPicksUpTheBall();
 
-	void Debug(CPlayer* pTarget);
+	void Debug();
 
 	//=============================
 	// メンバ変数
 	//=============================
 	SInfo m_sInfo;		// モード情報
 	CPlayer* m_pAI;			// 自分自身
+	float m_fDistance;			// ターゲットとの距離
 };
 
 #endif
