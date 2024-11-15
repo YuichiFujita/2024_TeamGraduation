@@ -422,12 +422,29 @@ bool CInputGamepad::GetRepeat(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 // タップ取得
 //==========================================================================
-bool CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float tapTime)
+CInputGamepad::STapInfo CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float tapTime)
 {
-	if (nKey >= BUTTON::BUTTON_MAX) return false;
+	// タップ情報
+	STapInfo returnInfo;
+
+	// タップの時間ないのは即
+	if (tapTime <= 0.0f)
+	{
+		returnInfo.bInput = true;
+		returnInfo.fRatio = 1.0f;
+		return returnInfo;
+	}
+
+	// ボタン範囲外
+	if (nKey >= BUTTON::BUTTON_MAX) return returnInfo;
 
 	// 離された && 指定の時間内
-	return GetRelease(nKey, nCntPlayer) && m_fTapTimer[nKey][nCntPlayer] <= tapTime;
+	returnInfo.bInput = GetRelease(nKey, nCntPlayer) && m_fTapTimer[nKey][nCntPlayer] <= tapTime;
+
+	// タップの割合
+	returnInfo.fRatio = UtilFunc::Transformation::Clamp(m_fTapTimer[nKey][nCntPlayer] / tapTime, 0.0f, 1.0f);
+
+	return returnInfo;
 }
 
 //==========================================================================

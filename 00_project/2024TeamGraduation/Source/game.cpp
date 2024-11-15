@@ -130,7 +130,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EBody::BODY_GARI,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -151,7 +151,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_GARI,		// 体系
+			CPlayer::EBody::BODY_DEBU,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)

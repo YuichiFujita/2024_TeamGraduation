@@ -20,6 +20,10 @@
 namespace
 {
 	const float TIME_THROWDROP = 10.0f / 60.0f;	// 投げ(ドロップボール)の猶予
+
+	const float TAPTIME = 0.15f;		// タップの入力時間
+	const float TAPRATE_MIN = 0.7f;	// タップの最小割合
+	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
 
 //==========================================================================
@@ -29,6 +33,7 @@ CPlayerControlAction::CPlayerControlAction()
 {
 	m_fThrowDropTime = 0.0f;	// 投げ(ドロップボール)の猶予
 	m_bThrowDrop = false;		// 投げ(ドロップボール)可能判定
+	m_bJumpTrigger = false;		// ジャンプトリガー
 }
 
 //==========================================================================
@@ -121,8 +126,32 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
+
 	if (bJump)
-	{
+	{// ジャンプ中は押してる間距離伸びていく
+
+		// インプット情報取得
+		CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+		//ジャンプ処理
+		CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
+
+		if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
+		{// タップ範囲 && 入力継続
+			
+			// 移動量取得
+			MyLib::Vector3 move = player->GetMove();
+
+			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
+			move.y = player->GetParameter().fVelocityJump * jumpRatio;
+
+			// 移動量設定
+			player->SetMove(move);
+			return;
+		}
+
+		// ジャンプトリガー
+		SetEnableJumpTrigger(false);
 		return;
 	}
 
@@ -132,9 +161,10 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 	// モーション情報取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
+	// ジャンプ設定
 	bJump = true;
 	motionFrag.bJump = true;
-	move.y += 12.0f;
+	move.y = player->GetParameter().fVelocityJump * TAPRATE_MIN;
 
 	player->SetMove(move);
 	player->SetMotionFrag(motionFrag);
