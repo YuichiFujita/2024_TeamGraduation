@@ -557,6 +557,9 @@
     <ClCompile Include="Source\playerPosAdj_out.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\specialValueManager.cpp">
+      <Filter>ingame\special</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1014,6 +1017,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj_out.h">
       <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\specialValueManager.h">
+      <Filter>ingame\special</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

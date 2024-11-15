@@ -143,7 +143,19 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// モテ加算(ボール投げた側)
 	pGameMgr->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
 
+	// スペシャル加算
+	pGameMgr->AddSpecialValue(sideBall, CSpecialValueManager::ETypeAdd::ADD_HIT);
+
 	return hitInfo;
+}
+
+//==========================================================================
+// 位置の初期化
+//==========================================================================
+void CPlayerBase::InitPosition(const MyLib::Vector3& rPos)
+{
+	// プレイヤー位置の設定
+	m_pPlayer->SetPosition(rPos);
 }
 
 //==========================================================================
@@ -168,7 +180,14 @@ bool CPlayerBase::IsCrab()
 
 	// ボールの状態：敵側であるか
 	if (pBall->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())	{ return false; }
+
+	// 敵チームで攻撃判定がある場合はカニ歩き
+	if (pBall->IsAttack()) { return true; }
+
 	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE)	{ return false; }
+
+	// フリーボールはカニ歩きしない
+	if (pBall->GetState() == CBall::EState::STATE_FREE) { return false; }
 
 	// 自身の状態：ブリンク＆走りでない
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// アクションパターン

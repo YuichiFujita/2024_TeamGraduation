@@ -649,7 +649,7 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	}
 
 	// TODO
-#if 1
+#if 0
 	if (pKey->GetPress(DIK_W))
 	{
 		MyLib::Vector3 vec = vecMove.rotateAroundY();
@@ -668,6 +668,7 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	// 目標向きを設定
 	player->SetRotDest(posLeft.AngleXZ(posRight) + D3DX_PI * 0.5f);
 
+	// TODO
 	CEffect3D::Create(posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
 	CEffect3D::Create(posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
 #endif

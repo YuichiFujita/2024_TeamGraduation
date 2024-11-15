@@ -20,7 +20,9 @@
 //==========================================================================
 namespace
 {
-
+	const float TAPTIME = 0.2f;		// タップの入力時間
+	const float TAPRATE_MIN = 0.6f;	// タップの最小割合
+	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
 
 //==========================================================================
@@ -73,8 +75,8 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 	CMotion* pMotion = player->GetMotion();
 
 	if (pKey->GetTrigger(DIK_K) ||
-		pPad->GetTap(CInputGamepad::BUTTON_X, player->GetMyPlayerIdx(), 1.0f))
-	{// TAKADA: のちにTap化
+		pPad->GetTap(CInputGamepad::BUTTON_X, player->GetMyPlayerIdx(), 1.0f).bInput)
+	{// タップ範囲はパス
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
 	}
 	if (pKey->GetTrigger(DIK_RETURN) ||
@@ -89,19 +91,34 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bJump = player->IsJump();
-
-	if (bJump) return;
-
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	//ジャンプ処理
-	if (pKey->GetTrigger(DIK_SPACE) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
-	{
+	
+	if (!player->IsJump() &&
+		(pKey->GetTrigger(DIK_SPACE) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx())))
+	{// ジャンプしてない && ジャンプボタン
+
+		// ジャンプトリガーON
+		SetEnableJumpTrigger(true);
+
+		// ジャンプ設定
 		JumpSetting(player);
+	}
+
+	if (pKey->GetPress(DIK_SPACE) ||
+		pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx()))
+	{// ジャンプボタンホールドで上昇
+		JumpFloat(player);
+	}
+
+	if ((!pKey->GetPress(DIK_SPACE) && !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx())))
+	{// ジャンプボタン離した
+
+		// ジャンプトリガーOFF
+		SetEnableJumpTrigger(false);
 	}
 }
 

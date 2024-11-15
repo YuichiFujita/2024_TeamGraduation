@@ -314,22 +314,43 @@ public:
 	// 静的関数
 	//=============================
 	/*
-		@brief	生成処理
-		@param	type	[in]	ユーザーの種類
-		@param	team	[in]	チームサイド
-		@param	rPos	[in]	初期位置
+		@brief	内野プレイヤーの生成処理
+		@param	rPos	 [in]	初期位置
+		@param	team	 [in]	チームサイド
+		@param	basetype [in]	User/AI
+		@param	bodytype [in]	体型
+		@param	handtype [in]	利き手
 	*/
 	static CPlayer* Create
 	(
 		const MyLib::Vector3& rPos,					// 位置
 		CGameManager::ETeamSide team,				// チームサイド
 		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
-		EFieldArea areatype = EFieldArea::FIELD_IN,	// ポジション
+		EBody bodytype = EBody::BODY_NORMAL,		// 体型
+		EHandedness handtype = EHandedness::HAND_R	// 利き手
+	);
+
+	/*
+		@brief	外野プレイヤーの生成処理
+		@param	rPos	 [in]	移動制限の左位置
+		@param	rPos	 [in]	移動制限の右位置
+		@param	team	 [in]	チームサイド
+		@param	basetype [in]	User/AI
+		@param	bodytype [in]	体型
+		@param	handtype [in]	利き手
+	*/
+	static CPlayer* Create
+	(
+		const MyLib::Vector3& rPosLeft,				// 移動左位置
+		const MyLib::Vector3& rPosRight,			// 移動右位置
+		CGameManager::ETeamSide team,				// チームサイド
+		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
 		EBody bodytype = EBody::BODY_NORMAL,		// 体型
 		EHandedness handtype = EHandedness::HAND_R	// 利き手
 	);
 
 protected:
+
 	//=============================
 	// メンバ関数
 	//=============================

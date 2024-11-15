@@ -22,13 +22,8 @@ namespace
 // コンストラクタ
 //==========================================================================
 CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerUser(pPlayer, typeTeam, typeArea),
-#if 0	// TODO
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
 	m_posRight	(VEC3_ZERO)		// 移動可能右位置
-#else
-	m_posLeft	(MyLib::Vector3(50.0f, 0.0f, 650.0f)),	// 移動可能左位置
-	m_posRight	(MyLib::Vector3(900.0f, 0.0f, 650.0f))	// 移動可能右位置
-#endif
 {
 	// 外野操作の割当	// TODO：外野操作に変更
 	ChangeMoveControl(DEBUG_NEW CPlayerUserOutControlMove());
@@ -41,4 +36,17 @@ CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide t
 CPlayerUserOut::~CPlayerUserOut()
 {
 
+}
+
+//==========================================================================
+// 位置の初期化
+//==========================================================================
+void CPlayerUserOut::InitPosition(const MyLib::Vector3& /*rPos*/)
+{
+	// 左右位置の中央座標を計算
+	MyLib::Vector3 posCenter;	// 中央座標
+	D3DXVec3Lerp(&posCenter, &m_posLeft, &m_posRight, 0.5f);
+
+	// プレイヤー位置の設定
+	GetPlayer()->SetPosition(posCenter);
 }
