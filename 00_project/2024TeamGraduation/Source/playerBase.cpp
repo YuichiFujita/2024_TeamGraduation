@@ -143,6 +143,9 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// モテ加算(ボール投げた側)
 	pGameMgr->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
 
+	// スペシャル加算
+	pGameMgr->AddSpecialValue(sideBall, CSpecialValueManager::ETypeAdd::ADD_HIT);
+
 	return hitInfo;
 }
 

@@ -972,9 +972,13 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_JUST);
 
-	// モテ加算
 	CGameManager* pGameMgr = CGameManager::GetInstance();
+	
+	// モテ加算
 	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
+	
+	// スペシャル加算
+	pGameMgr->AddSpecialValue(GetStatus()->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
 }
 
 //==========================================================================
@@ -1152,6 +1156,9 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 
 	// モテ加算
 	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_COVERCATCH);
+
+	// スペシャル加算
+	pGameMgr->AddSpecialValue(GetStatus()->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_COVERCATCH);
 }
 
 //==========================================================================
