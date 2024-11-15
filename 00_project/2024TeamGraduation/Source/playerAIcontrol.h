@@ -146,8 +146,14 @@ private:
 	typedef void(CPlayerAIControl::* MODE_FUNC)(const float, const float, const float);
 	static MODE_FUNC m_ModeFunc[];			// モード関数
 
-	typedef void(CPlayerAIControl::* THOWTYPE_FUNC)(const float, const float, const float);
-	static THOWTYPE_FUNC m_ThrowTimingFunc[];			// 投げタイプ関数
+	typedef void(CPlayerAIControl::* THOWTYPE_FUNC)(CPlayer*, const float, const float, const float);
+	static THOWTYPE_FUNC m_ThrowTypeFunc[];			// 投げるタイプ関数
+
+	typedef void(CPlayerAIControl::* THOWMOVE_FUNC)(CPlayer*, const float, const float, const float);
+	static THOWMOVE_FUNC m_ThrowMoveFunc[];			// 投げるまでの行動関数
+
+	typedef void(CPlayerAIControl::* THOWTIMING_FUNC)(CPlayer*, const float, const float, const float);
+	static THOWTIMING_FUNC m_ThrowTimingFunc[];			// 投げタイプ関数
 
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];		// キャッチ関数
@@ -164,9 +170,18 @@ private:
 	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
 
 	// 投げタイプ
-	void ThrowJumpTimingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ThrowJumpTimingQuick(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ThrowJumpTimingDelay(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTypeNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTypeJump(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTypeSpecial(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	// 投げるまでの行動
+	void ThrowMoveStop(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowMoveWalk(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowMoveDash(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	// 投げタイミング
+	void ThrowJumpTimingNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowJumpTimingQuick(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowJumpTimingDelay(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// キャッチ
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
@@ -201,6 +216,8 @@ private:
 
 	bool IsWhoPicksUpTheBall();
 
+	void RunUp(CPlayer* pTarget);
+
 	void Debug();
 
 	//=============================
@@ -208,7 +225,9 @@ private:
 	//=============================
 	SInfo m_sInfo;		// モード情報
 	CPlayer* m_pAI;			// 自分自身
+
 	float m_fDistance;			// ターゲットとの距離
+	bool m_bStart;
 };
 
 #endif
