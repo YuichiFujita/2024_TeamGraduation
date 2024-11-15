@@ -1293,15 +1293,6 @@ void CPlayer::StateDead()
 //==========================================================================
 void CPlayer::StateDeadAfter()
 {
-	//MyLib::Vector3 pos = GetPosition();
-
-	//float time = m_fStateTime / StateTime::DEAD;
-	//time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
-
-	//pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT, time);
-
-	//SetPosition(pos);
-
 	//死亡状態をキャンセル不能にする
 	SetEnableMove(false);
 	//m_sMotionFrag.bDead = true;

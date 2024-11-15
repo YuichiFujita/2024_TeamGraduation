@@ -523,6 +523,22 @@ void CGameManager::Debug()
 		ImGui::TreePop();
 	}
 
+	// タイマー
+
+	if (ImGui::TreeNode("Timer"))
+	{
+
+		if (m_pTimerUI != nullptr)
+		{
+			// 停止状況切り替え
+			bool bStop = m_pTimerUI->IsStop();
+			ImGui::Checkbox("bStop", &bStop);
+			m_pTimerUI->EnableStop(bStop);
+		}
+
+		ImGui::TreePop();
+	}
+
 	// チームステータス
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{

@@ -48,11 +48,11 @@ public:
 	~CTimer() override;
 
 	// オーバーライド関数
-	HRESULT Init(void) override;	// 初期化
-	void Uninit(void) override;		// 終了
-	void Kill() override;			// 動的削除
+	HRESULT Init() override;	// 初期化
+	void Uninit() override;		// 終了
+	void Kill() override;		// 動的削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	void Draw(void) override;		// 描画
+	void Draw() override;		// 描画
 
 	// 静的メンバ関数
 	static CTimer *Create	// 生成
@@ -60,28 +60,29 @@ public:
 		const float fTime,	// 開始時間
 		const float fLimit	// 制限時間
 	);
-	static void EnableStopAll(const bool bStop);	// 全タイマー計測状況設定
-	static CListManager<CTimer> GetList(void) { return m_list; }	// リスト取得
+	static void EnableStopAll(const bool bStop);				// 全タイマー計測状況設定
+	static CListManager<CTimer> GetList() { return m_list; }	// リスト取得
 
 	// メンバ関数
-	void Start(void);	// 計測開始
-	void End(void);		// 計測終了
-	void EnableStop(const bool bStop);	// 計測停止設定
-	void AddTime(const float fTime);	// 時間加算
-	void SetTime(const float fTime);	// 時間設定
-	void SetLimit(const float fLimit);	// 制限時間設定
-	float GetTime(void) const	{ return m_fTime; }		// 時間取得
-	float GetLimit(void) const	{ return m_fLimit; }	// 制限時間取得
-	EState GetState(void) const	{ return m_state; }		// 計測状態取得
-	int GetMin(void) const		{ return m_nMin; }		// 分取得
-	int GetSec(void) const		{ return m_nSec; }		// 秒取得
-	int GetMSec(void) const		{ return m_nMSec; }		// ミリ秒取得
+	void Start();	// 計測開始
+	void End();		// 計測終了
+	void EnableStop(const bool bStop);				// 計測停止設定
+	bool IsStop()			{ return m_bStop; }		// 計測停止取得
+	void AddTime(const float fTime);				// 時間加算
+	void SetTime(const float fTime);				// 時間設定
+	void SetLimit(const float fLimit);				// 制限時間設定
+	float GetTime() const	{ return m_fTime; }		// 時間取得
+	float GetLimit() const	{ return m_fLimit; }	// 制限時間取得
+	EState GetState() const	{ return m_state; }		// 計測状態取得
+	int GetMin() const		{ return m_nMin; }		// 分取得
+	int GetSec() const		{ return m_nSec; }		// 秒取得
+	int GetMSec() const		{ return m_nMSec; }		// ミリ秒取得
 
 private:
 	// メンバ関数
 	void CountUp(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カウントアップ
 	void CountDown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カウントダウン
-	void CalcTime(void);	// 時間計算
+	void CalcTime();	// 時間計算
 
 	// 静的メンバ変数
 	static CListManager<CTimer> m_list;	// オブジェクトリスト
