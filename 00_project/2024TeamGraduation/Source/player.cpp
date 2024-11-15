@@ -241,26 +241,25 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
-// 生成処理
+// 生成処理 (内野)
 //==========================================================================
 CPlayer* CPlayer::Create
 (
 	const MyLib::Vector3& rPos,		// 位置
 	CGameManager::ETeamSide team,	// チームサイド
 	EBaseType basetype,				// ベースタイプ
-	EFieldArea areatype,			// ポジション
 	EBody bodytype,					// 体系
 	EHandedness handtype			// 利き手
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(areatype);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(EFieldArea::FIELD_IN);
 	if (pPlayer != nullptr)
 	{
 		// 利き手を設定
 		pPlayer->m_Handress = handtype;
 
-		// 体型
+		// 体型を設定
 		pPlayer->m_BodyType = bodytype;
 
 		// クラスの初期化
@@ -272,14 +271,89 @@ CPlayer* CPlayer::Create
 			return nullptr;
 		}
 
-		// 位置を設定
-		pPlayer->SetPosition(rPos);
+		// チームサイドを設定
+		pPlayer->GetStatus()->SetTeam(team);
+
+		// ベースタイプを設定
+		pPlayer->ChangeBase(basetype);
+
+		// 初期位置を設定
+		pPlayer->GetBase()->InitPosition(rPos);
+	}
+
+	return pPlayer;
+}
+
+//==========================================================================
+// 生成処理 (外野)
+//==========================================================================
+CPlayer* CPlayer::Create
+(
+	const MyLib::Vector3& rPosLeft,		// 移動左位置
+	const MyLib::Vector3& rPosRight,	// 移動右位置
+	CGameManager::ETeamSide team,		// チームサイド
+	EBaseType basetype,					// ベースタイプ
+	EBody bodytype,						// 体系
+	EHandedness handtype				// 利き手
+)
+{
+	// メモリの確保
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(EFieldArea::FIELD_OUT);
+	if (pPlayer != nullptr)
+	{
+		// 利き手を設定
+		pPlayer->m_Handress = handtype;
+
+		// 体型を設定
+		pPlayer->m_BodyType = bodytype;
+
+		// クラスの初期化
+		if (FAILED(pPlayer->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pPlayer);
+			return nullptr;
+		}
 
 		// チームサイドを設定
 		pPlayer->GetStatus()->SetTeam(team);
 
 		// ベースタイプを設定
 		pPlayer->ChangeBase(basetype);
+
+		switch (basetype)
+		{ // ベースタイプごとの処理
+		case EBaseType::TYPE_USER:
+		{
+			// ユーザー外野プレイヤー情報の取得
+			CPlayerUserOut* pBase = pPlayer->GetBase()->GetPlayerUserOut();
+
+			// 左右位置の設定
+			pBase->SetPosLeft(rPosLeft);
+			pBase->SetPosRight(rPosRight);
+
+			// 初期位置を設定
+			pBase->InitPosition(VEC3_ZERO);
+			break;
+		}
+		case EBaseType::TYPE_AI:
+		{
+			// ユーザー外野プレイヤー情報の取得
+			CPlayerAIOut* pBase = pPlayer->GetBase()->GetPlayerAIOut();
+
+			// 左右位置の設定
+			pBase->SetPosLeft(rPosLeft);
+			pBase->SetPosRight(rPosRight);
+
+			// 初期位置を設定
+			pBase->InitPosition(VEC3_ZERO);
+			break;
+		}
+		default:
+			assert(false);
+			break;
+		}
 	}
 
 	return pPlayer;

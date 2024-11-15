@@ -38,12 +38,12 @@ public:
 
 	// 純粋仮想関数
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// 更新
+	virtual void MotionCrab(int nStartKey) = 0;		// カニ歩き変化
 
 	// 仮想関数
-	virtual CPlayer::SHitInfo Hit(CBall* pBall);	// ヒット
+	virtual CPlayer::SHitInfo Hit(CBall* pBall);			// ヒット
+	virtual void InitPosition(const MyLib::Vector3& rPos);	// 位置初期化
 	virtual bool IsCrab();	// カニ歩き判定
-	virtual void MotionCrab(int nStartKey) = 0;		// カニ歩き変化処理
-
 	virtual void Debug();	// デバッグ
 	virtual CPlayerUserIn* GetPlayerUserIn()	{ return nullptr; }	// ユーザー内野プレイヤー取得
 	virtual CPlayerUserOut* GetPlayerUserOut()	{ return nullptr; }	// ユーザー外野プレイヤー取得
