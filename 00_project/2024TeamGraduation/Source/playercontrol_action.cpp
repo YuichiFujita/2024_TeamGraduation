@@ -127,34 +127,6 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
 
-	if (bJump)
-	{// ジャンプ中は押してる間距離伸びていく
-
-		// インプット情報取得
-		CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-		//ジャンプ処理
-		CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
-
-		if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
-		{// タップ範囲 && 入力継続
-			
-			// 移動量取得
-			MyLib::Vector3 move = player->GetMove();
-
-			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
-			move.y = player->GetParameter().fVelocityJump * jumpRatio;
-
-			// 移動量設定
-			player->SetMove(move);
-			return;
-		}
-
-		// ジャンプトリガー
-		SetEnableJumpTrigger(false);
-		return;
-	}
-
 	// 移動量取得
 	MyLib::Vector3 move = player->GetMove();
 
@@ -185,6 +157,38 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 
 	// サウンド再生
 	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+}
+
+//==========================================================================
+// ジャンプ上昇
+//==========================================================================
+void CPlayerControlAction::JumpFloat(CPlayer* player)
+{
+	// ジャンプ判定取得
+	bool bJump = player->IsJump();
+
+	if (bJump && IsJumpTrigger())
+	{// ジャンプ中は押してる間距離伸びていく
+
+		// インプット情報取得
+		CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+		//ジャンプ処理
+		CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
+
+		if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
+		{// タップ範囲 && 入力継続
+
+			// 移動量取得
+			MyLib::Vector3 move = player->GetMove();
+
+			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
+			move.y = player->GetParameter().fVelocityJump * jumpRatio;
+
+			// 移動量設定
+			player->SetMove(move);
+		}
+	}
 }
 
 //==========================================================================

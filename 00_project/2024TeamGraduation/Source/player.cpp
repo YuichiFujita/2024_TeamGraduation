@@ -1273,7 +1273,7 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	// ダメージ受付時間更新
 	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
-	m_fStateTime += fDeltaTime * fDeltaRate * fSlowRate;
+	m_fStateTime += fDeltaTime * fSlowRate;
 
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
@@ -1288,7 +1288,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 	m_sDamageInfo.bReceived = false;
 
 	// ダメージ受け付け時間減算
-	m_sDamageInfo.fReceiveTime -= fDeltaTime;
+	m_sDamageInfo.fReceiveTime -= fDeltaTime * fSlowRate;
 	if (m_sDamageInfo.fReceiveTime <= 0.0f)
 	{
 		// ダメージ受け付け判定

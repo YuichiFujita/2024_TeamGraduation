@@ -20,8 +20,8 @@
 //==========================================================================
 namespace
 {
-	const float TAPTIME = 0.15f;		// タップの入力時間
-	const float TAPRATE_MIN = 0.8f;	// タップの最小割合
+	const float TAPTIME = 0.2f;		// タップの入力時間
+	const float TAPRATE_MIN = 0.6f;	// タップの最小割合
 	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
 
@@ -96,13 +96,29 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	
-	if (IsJumpTrigger() &&
-		pKey->GetTrigger(DIK_SPACE) || 
-		pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx()))
-	{// ジャンプトリガーがtrueの時
+	if (!player->IsJump() &&
+		(pKey->GetTrigger(DIK_SPACE) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx())))
+	{// ジャンプしてない && ジャンプボタン
+
+		// ジャンプトリガーON
+		SetEnableJumpTrigger(true);
 
 		// ジャンプ設定
 		JumpSetting(player);
+	}
+
+	if (pKey->GetPress(DIK_SPACE) ||
+		pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx()))
+	{// ジャンプボタンホールドで上昇
+		JumpFloat(player);
+	}
+
+	if ((!pKey->GetPress(DIK_SPACE) && !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx())))
+	{// ジャンプボタン離した
+
+		// ジャンプトリガーOFF
+		SetEnableJumpTrigger(false);
 	}
 }
 
