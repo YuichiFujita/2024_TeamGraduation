@@ -30,6 +30,9 @@ CNumber3D::~CNumber3D()
 //==========================================================================
 HRESULT CNumber3D::Init()
 {
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
+
 	// ¶¬ˆ—
 	m_pObj3D = CObject3DAnim::Create(MyLib::PosGrid2(10, 1), GetPosition(), 1.0f, false, GetPriority());
 	

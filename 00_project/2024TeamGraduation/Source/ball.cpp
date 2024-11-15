@@ -121,6 +121,15 @@ namespace
 		const float THROW_MOVE = 3.5f;	// トス移動速度
 		const float MOVE_UP = 2.5f;		// トス上移動量
 	}
+
+	namespace pass
+	{
+		const float MOVE_RATE = 0.015f;		// 移動速度の距離割合
+		const float TARGET_PULSY = 50.0f;	// ターゲット対象のY座標加算量
+		const float TIME_NORAML = 1.2f;		// 通常パスの経過時間
+		const float TIME_HOMING = 1.0f;		// ホーミングパスの経過時間
+		const float MAX_HEIGHT = 250.0f;	// ホーミングの最高到達点
+	}
 }
 
 //==========================================================================
@@ -168,10 +177,12 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_fGravity		(0.0f),			// 重力
 	m_bLanding		(false),		// 着地フラグ
 	m_posPassStart	(VEC3_ZERO),	// パス開始位置
+	m_posPassEnd	(VEC3_ZERO),	// パス終了位置
 	m_typeSpecial	(SPECIAL_NONE),	// スペシャル種類
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
-	m_fStateTime	(0.0f)			// 状態カウンター
+	m_fStateTime	(0.0f),			// 状態カウンター
+	m_pThrowLine	(nullptr)		// 投げのライン
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -298,6 +309,9 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 	// 現在のスペシャル種類を更新
 	UpdateTypeSpecial();
+
+	// 投げエフェクト
+	UpdateThrowLine();
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -547,6 +561,13 @@ void CBall::Pass(CPlayer* pPlayer)
 
 		// パス状態にする
 		SetState(STATE_PASS);
+
+		// パス終了位置を設定
+		m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
+		m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
+
+		// 移動量設定
+		m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * pass::MOVE_RATE;
 	}
 
 	// サウンド再生
@@ -906,18 +927,77 @@ void CBall::UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, c
 void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 情報を取得
-	MyLib::Vector3 pos = GetPosition();	// 位置
+	MyLib::Vector3 posBall = GetPosition();					// ボール位置
+	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
+	MyLib::Vector3 vecMove = GetMove();						// 移動量
+
+	// ターゲット位置のY座標を固定
+	posTarget.y = CGameManager::FIELD_LIMIT + pass::TARGET_PULSY;
+
+	// 経過時間を加算
+	m_fStateTime += fDeltaTime * fSlowRate;
+	if (m_fStateTime <= pass::TIME_HOMING)
+	{
+		// 経過時間の割合を計算
+		float fTimeRate = m_fStateTime / pass::TIME_HOMING;
+		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
+
+		// 放物線上に位置を補正
+		posBall = UtilFunc::Calculation::GetParabola3D(m_posPassStart, posTarget, pass::MAX_HEIGHT, fTimeRate);
+	}
+	else
+	{
+		// 重力の加速
+		UpdateGravity(fDeltaRate, fSlowRate);
+
+		// 位置に重力反映
+		UpdateGravityPosition(&posBall, &vecMove, fDeltaRate, fSlowRate);
+	}
+
+	// 地面の着地
+	if (UpdateLanding(&posBall, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&posBall);
+
+	// 情報を反映
+	SetPosition(posBall);	// 位置
+	SetMove(vecMove);		// 移動量
+}
+
+//==========================================================================
+// パス状態の更新処理
+//==========================================================================
+void CBall::UpdatePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// ボール位置
 	MyLib::Vector3 vecMove = GetMove();	// 移動量
 
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime * fSlowRate;
+	if (m_fStateTime <= pass::TIME_NORAML)
+	{
+		// 経過時間の割合を計算
+		float fTimeRate = m_fStateTime / pass::TIME_NORAML;
+		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
 
-	float fTimeRate = m_fStateTime / 2.0f;
-	fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);
-	pos = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_pTarget->GetCenterPosition(), 300.0f, fTimeRate);
+		// 放物線上に位置を補正
+		pos = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, pass::MAX_HEIGHT, fTimeRate);
+	}
+	else
+	{
+		// 重力の加速
+		UpdateGravity(fDeltaRate, fSlowRate);
 
-
-
+		// 位置に重力反映
+		UpdateGravityPosition(&pos, &vecMove, fDeltaRate, fSlowRate);
+	}
 
 	// 地面の着地
 	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
@@ -933,14 +1013,6 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(vecMove);	// 移動量
-}
-
-//==========================================================================
-// パス状態の更新処理
-//==========================================================================
-void CBall::UpdatePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-
 }
 
 //==========================================================================
@@ -1187,9 +1259,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
-		// 同じチームの場合次へ
-		if (pPlayer->GetStatus()->GetTeam() == m_typeTeam) { continue; }
-
+		// 円と円柱の当たり判定
 		bool bHit = UtilFunc::Collision::CollisionCircleCylinder
 		( // 引数
 			*pPos,
@@ -1295,12 +1365,17 @@ CPlayer* CBall::CollisionPassTarget()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
+		// 違うチームの場合次へ
+		if (m_typeTeam != pPlayer->GetStatus()->GetTeam()) { continue; }
+
 		// 自分と同じポジションの場合次へ
 		if (typeArea == pPlayer->GetAreaType()) { continue; }
 
-		// 視界内にいない場合次へ
+		// 視界内にいない場合次へ	// TODO
+#if 0
 		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);
 		if (!bHit) { continue; }
+#endif
 
 		// プレイヤー視野中心ベクトルからの距離測定
 		MyLib::Vector3 posFront = posThrow + MyLib::Vector3(sinf(rotThrow.y), 0.0f, cosf(rotThrow.y));
@@ -1445,8 +1520,9 @@ void CBall::UpdateTypeTeam()
 	// プレイヤーのチームを保存
 	m_typeTeam = m_pPlayer->GetStatus()->GetTeam();
 
-	// パス開始位置をリセット
-	m_posPassStart = VEC3_ZERO;
+	// パス開始/終了位置をリセット
+	m_posPassStart	= VEC3_ZERO;
+	m_posPassEnd	= VEC3_ZERO;
 }
 
 //==========================================================================
@@ -1507,4 +1583,73 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 {
 	// 初速を与える
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
+}
+
+//==========================================================================
+// 投げた線の更新
+//==========================================================================
+void CBall::UpdateThrowLine()
+{
+	if (IsAttack())
+	{// 攻撃中
+
+		// 情報を取得
+		MyLib::Vector3 pos = GetPosition();	// 位置
+		MyLib::Vector3 vecMove = GetMove();	// 移動量
+
+		// Y軸の向き
+		MyLib::Vector3 rot;
+		rot.y = vecMove.AngleXZ(0.0f) - D3DX_PI * 0.5f;
+
+		// Z軸の向き
+		rot.z = vecMove.y;
+
+		// 投げのライン
+		if (m_pThrowLine == nullptr)
+		{
+			switch (GetTypeAtk())
+			{
+			case ATK_NORMAL:	// 通常攻撃
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_NORMAL,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+				break;
+				
+			case ATK_JUMP:	// ジャンプ攻撃
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_FAST,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+				break;
+
+			default:
+
+				m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_FAST,
+					GetPosition(),
+					rot,
+					MyLib::Vector3(),
+					8.0f);
+
+				break;
+			}
+		}
+		m_pThrowLine->SetPosition(pos);
+		m_pThrowLine->SetRotation(rot);
+	}
+	else if(m_pThrowLine != nullptr)
+	{// 投げ終わり
+
+		// 停止
+		if (m_pThrowLine != nullptr)
+		{
+			m_pThrowLine->SetTrigger(0);
+			m_pThrowLine->SetTrigger(1);
+			m_pThrowLine = nullptr;
+		}
+	}
 }

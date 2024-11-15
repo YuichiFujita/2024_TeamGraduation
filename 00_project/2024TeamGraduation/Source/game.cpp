@@ -131,7 +131,7 @@ HRESULT CGame::Init()
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
 			CPlayer::EFieldArea::FIELD_IN,	// ポジション
-			CPlayer::EBody::BODY_DEBU,	// 体系
+			CPlayer::EBody::BODY_DEBU,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -153,7 +153,7 @@ HRESULT CGame::Init()
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
 			CPlayer::EFieldArea::FIELD_IN,	// ポジション
-			CPlayer::EBody::BODY_GARI,	// 体系
+			CPlayer::EBody::BODY_GARI,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -249,7 +249,7 @@ HRESULT CGame::Init()
 
 	// プレイヤー外野User生成(右)
 #if 1
-	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(900.0f, 0.0f, 650.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
+	CPlayer* pUserOut = CPlayer::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER, CPlayer::EFieldArea::FIELD_OUT);
 	if (pUserOut == nullptr)
 	{
 		return E_FAIL;

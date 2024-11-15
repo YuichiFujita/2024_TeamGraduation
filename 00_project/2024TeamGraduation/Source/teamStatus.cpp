@@ -5,6 +5,8 @@
 // 
 //=============================================================================
 #include "teamStatus.h"
+#include "player.h"
+#include "playerStatus.h"
 
 //==========================================================================
 // 定数定義
@@ -120,6 +122,30 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 
 	m_sSpecialInfo.pGauge->SetAnchorType(anchor);
 	m_sSpecialInfo.pGauge->SetPosition(pos);
+}
+
+//==========================================================================
+// 全滅で終了
+//==========================================================================
+void CTeamStatus::CheckAllDead()
+{
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		// 同じチームが生きている場合 = 全滅していない
+		if (pPlayer->GetStatus()->GetTeam() == m_typeTeam ||
+			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
+		{
+			return;
+		}
+	}
+
+	// 試合終了
+	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_END);
 }
 
 //==========================================================================

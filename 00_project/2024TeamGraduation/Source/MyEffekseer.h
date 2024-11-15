@@ -49,25 +49,11 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum EFKLABEL
+	enum EEfkLabel
 	{
-		EFKLABEL_SAMPLE_LASER = 0,	// サンプルのレーザー
-		EFKLABEL_BRESS,				// 息
-		EFKLABEL_RIVER_SAMPLE,		// 川サンプル
-		EFKLABEL_IMPACT,			// 衝撃
-		EFKLABEL_SPRAYWATER,		// 水しぶき
-		EFKLABEL_SPRAYWATER_MINI,	// 水しぶき
-		EFKLABEL_WATERJUMP,			// 魚入水
-		EFKLABEL_PLAYERMOVE_LINE,	// プレイヤーの移動線
-		EFKLABEL_PHOTON,			// 死亡
-		EFKLABEL_BAGGAGEGET,		// 荷物獲得
-		EFKLABEL_AIR,				// 空気
-		EFKLABEL_CROWD,				// 群衆
-		EFKLABEL_TP,				// テレポート
-		EFKLABEL_HIT,				// ヒット
-		EFKLABEL_WING,				// 羽ばたき
-		EFKLABEL_SMASH,				// 潰れる
-		EFKLABEL_AURA,				// オーラ
+		EFKLABEL_SAMPLE_LASER = 0,		// サンプルのレーザー
+		EFKLABEL_THROWLINE_NORMAL,		// 投げた時の線(通常)
+		EFKLABEL_THROWLINE_FAST,		// 投げた時の線(早い)
 		EFKLABEL_MAX
 	};
 
@@ -82,7 +68,7 @@ public:
 	void StopAll();	// 全て停止
 
 	Effekseer::EffectRef LoadEffect(std::string efkpath);	// エフェクト読み込み
-	Effekseer::EffectRef LoadEffect(EFKLABEL label);		// エフェクト読み込み
+	Effekseer::EffectRef LoadEffect(EEfkLabel label);		// エフェクト読み込み
 	Effekseer::ManagerRef GetEfkManager() { return m_efkManager; }	// エフェクトのマネージャー取得
 	::EffekseerRendererDX9::RendererRef GetEffekseerRenderer() { return efkRenderer; }	// エフェクシアのレンダラー取得
 
