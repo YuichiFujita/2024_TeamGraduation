@@ -78,6 +78,7 @@ public:
 	void Start(void)	{ m_pTimer->Start(); }	// 計測開始
 	void End(void)		{ m_pTimer->End(); }	// 計測終了
 	void EnableStop(const bool bStop)	{ m_pTimer->EnableStop(bStop);}			// 計測停止設定
+	bool IsStop()						{ return m_pTimer->IsStop(); }			// 計測停止設定
 	void AddTime(const float fTime)		{ m_pTimer->AddTime(fTime); }			// 時間加算
 	void SetLimit(const float fLimit)	{ m_pTimer->SetLimit(fLimit); }			// 制限時間設定
 	float GetLimit(void) const			{ return m_pTimer->GetLimit(); }		// 制限時間取得
