@@ -280,7 +280,10 @@ void CGameManager::SceneStart()
 		);
 
 		// 開始
+#if _NDEBUG
 		m_pTimerUI->Start();
+#endif
+
 	}
 
 	// メインへ遷移
@@ -417,29 +420,29 @@ MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& 
 //==========================================================================
 // コート移動制限
 //==========================================================================
-bool CGameManager::SetPosLimit(MyLib::Vector3& pos)
+bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
 {
 	bool bHit = false;
 
-	if (pos.x > m_courtSize.x)
+	if (pos.x > m_courtSize.x + fPlusRadius)
 	{
-		pos.x = m_courtSize.x;
+		pos.x = m_courtSize.x + fPlusRadius;
 		bHit = true;
 	}
-	else if (pos.x < -m_courtSize.x)
+	else if (pos.x < -m_courtSize.x - fPlusRadius)
 	{
-		pos.x = -m_courtSize.x;
+		pos.x = -m_courtSize.x - fPlusRadius;
 		bHit = true;
 	}
 
-	if (pos.z > m_courtSize.z)
+	if (pos.z > m_courtSize.z + fPlusRadius)
 	{
-		pos.z = m_courtSize.z;
+		pos.z = m_courtSize.z + fPlusRadius;
 		bHit = true;
 	}
-	else if (pos.z < -m_courtSize.z)
+	else if (pos.z < -m_courtSize.z - fPlusRadius)
 	{
-		pos.z = -m_courtSize.z;
+		pos.z = -m_courtSize.z - fPlusRadius;
 		bHit = true;
 	}
 

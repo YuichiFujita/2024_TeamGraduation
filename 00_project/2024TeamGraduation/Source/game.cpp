@@ -130,7 +130,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EBody::BODY_GARI,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -151,7 +151,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_GARI,		// 体系
+			CPlayer::EBody::BODY_DEBU,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -171,7 +171,7 @@ HRESULT CGame::Init()
 		(
 			pos + offset, 					// 位置
 			CGameManager::SIDE_LEFT,		// チームサイド
-			CPlayer::EBaseType::TYPE_AI,	// ベースタイプ
+			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
 			CPlayer::EBody::BODY_NORMAL,	// 体系
 			CPlayer::EHandedness::HAND_L	// 利き手
 		);
@@ -250,7 +250,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(-50.0f, 0.0f, 650.0f),	// 移動可能右位置
-		CGameManager::SIDE_RIGHT				// チームサイド
+		CGameManager::SIDE_RIGHT,				// チームサイド
+		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
 	if (pUserOutFar == nullptr)
 	{
@@ -261,7 +262,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-1040.0f, 0.0f, -510.0f),	// 移動可能左位置
 		MyLib::Vector3(-1040.0f, 0.0f, 510.0f),		// 移動可能右位置
-		CGameManager::SIDE_RIGHT					// チームサイド
+		CGameManager::SIDE_RIGHT,					// チームサイド
+		CPlayer::EBaseType::TYPE_USER				// ベースタイプ
 	);
 	if (pUserOutLeft == nullptr)
 	{
@@ -272,9 +274,49 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-50.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(-900.0f, 0.0f, -650.0f),	// 移動可能右位置
-		CGameManager::SIDE_RIGHT				// チームサイド
+		CGameManager::SIDE_RIGHT,				// チームサイド
+		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
 	if (pUserOutNear == nullptr)
+	{
+		return E_FAIL;
+	}
+#endif
+
+	// プレイヤー外野AI生成(右)
+#if 1
+	CPlayer* pAIOutFar = CPlayer::Create
+	(
+		MyLib::Vector3(50.0f, 0.0f, 650.0f),	// 移動可能左位置
+		MyLib::Vector3(900.0f, 0.0f, 650.0f),	// 移動可能右位置
+		CGameManager::SIDE_LEFT,				// チームサイド
+		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+	);
+	if (pAIOutFar == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	CPlayer* pAIOutLeft = CPlayer::Create
+	(
+		MyLib::Vector3(1040.0f, 0.0f, 510.0f),	// 移動可能左位置
+		MyLib::Vector3(1040.0f, 0.0f, -510.0f),	// 移動可能右位置
+		CGameManager::SIDE_LEFT,				// チームサイド
+		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+	);
+	if (pAIOutLeft == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	CPlayer* pAIOutNear = CPlayer::Create
+	(
+		MyLib::Vector3(900.0f, 0.0f, -650.0f),	// 移動可能左位置
+		MyLib::Vector3(50.0f, 0.0f, -650.0f),	// 移動可能右位置
+		CGameManager::SIDE_LEFT,				// チームサイド
+		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+	);
+	if (pAIOutNear == nullptr)
 	{
 		return E_FAIL;
 	}

@@ -65,15 +65,15 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetSceneType(ESceneType type);						// シーンの種類設定
+	void SetSceneType(ESceneType type);					// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
 	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
-	void SetEnableControll(bool bControll) { m_bControll = bControll; }	// 操作フラグを切り替えする
-	bool IsControll() { return m_bControll; }							// 操作のフラグ取得
+	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
+	bool IsControll() { return m_bControll; }								// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }					// コートサイズ取得
 	MyLib::Vector3 GetCourtSize(const ETeamSide team, MyLib::Vector3& pos);	// コートサイズ取得(チーム)
-	bool SetPosLimit(MyLib::Vector3& pos);									// コート移動制限
-	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }
+	bool SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius = 0.0f);	// コート移動制限
+	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得
 
 	void Debug();			// デバッグ
 	void StartSetting();	// スタート時の設定

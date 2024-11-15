@@ -50,13 +50,6 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		CGameManager::GetInstance()->SetPosLimit(pos);
 	}
 
-	if (!bJump && !flagMotion.bDead)
-	{ // 相手コートに侵入したときはコート内に補正
-
-		// チームコートに戻す
-		ReturnTeamCourt(pPlayer, pos);
-	}
-
 	if (pos.y <= CGameManager::FIELD_LIMIT)
 	{ // 地面より下の場合
 
@@ -77,6 +70,13 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 
 		// ジャンプしていない状態にする
 		pPlayer->SetEnableJump(false);
+	}
+
+	if (!pPlayer->IsJump() && !flagMotion.bDead)
+	{ // 相手コートに侵入したときはコート内に補正
+
+		// チームコートに戻す
+		ReturnTeamCourt(pPlayer, pos);
 	}
 
 	// 位置を反映
