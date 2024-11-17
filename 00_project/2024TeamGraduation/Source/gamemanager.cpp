@@ -357,7 +357,10 @@ void CGameManager::UpdateTeamStatus()
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] == nullptr) continue;
-		
+
+		// スペシャル加算
+		AddSpecialValue(m_pTeamStatus[i]->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_ALLWAYS);
+
 		// 全滅判定
 		m_pTeamStatus[i]->CheckAllDead();
 	}

@@ -28,6 +28,7 @@ public:
 
 	// コンストラクタ
 	CPlayerControlMove();
+	~CPlayerControlMove();
 
 	//=============================
 	// 純粋仮想関数
@@ -55,6 +56,7 @@ public:
 	float GetInputAngleCtr() { return m_fInputAngleCtr; }										// 現在の入力方向カウンター取得
 	void SetCrabMoveEasingTime(float fCrabMoveEasingTime) { m_fCrabMoveEasingTime = fCrabMoveEasingTime; }		// 現在のカニ歩き移動補正値設定
 	float GetCrabMoveEasingTime() { return m_fCrabMoveEasingTime; }												// 現在のカニ歩き移動補正値取得
+	void UpdateCrabMoveEasingTime(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 現在のカニ歩き移動補正値更新
 	
 	void CrabSetting(CPlayer* player);				// カニ歩き状態
 

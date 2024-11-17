@@ -1902,10 +1902,14 @@ void CPlayer::Debug()
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
+		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
+
+#if 0
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
 		ImGui::Text("Motion : [%s]", motion->GetType());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
+#endif
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;

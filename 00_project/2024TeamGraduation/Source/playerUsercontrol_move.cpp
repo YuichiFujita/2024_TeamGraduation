@@ -599,8 +599,6 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		player->InverseFootLR();
 	}
 
-
-
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetStickMoveL(playerIdx).y > 0 ||
 		pKey->GetPress(DIK_W))
@@ -725,9 +723,13 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	if (player->GetBase()->IsCrab())
 	{//カニ歩き
-#if 0
-		float fCrabMoveEasingTime = GetCrabMoveEasingTime();	// 補正用時間
-		fMove *= UtilFunc::Correction::EaseInOutExpo(0.0f, 1.0f, 0.0f, 1.0f, fCrabMoveEasingTime);
+#if 1
+		if (player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
+			player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT)
+		{// サイドステップ時のみ
+			float fCrabMoveEasingTime = GetCrabMoveEasingTime();	// 補正用時間
+			fMove *= UtilFunc::Correction::EaseInOutExpo(0.6f, 1.0f, 0.0f, 1.0f, fCrabMoveEasingTime);
+		}
 #endif
 
 		move.x += sinf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
@@ -761,6 +763,14 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	// 走るフラグ設定
 	SetBlink(bDash);
+
+	if (player->GetBase()->IsCrab() &&
+		(player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
+		player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT))
+		{// カニ歩き時 サイドステップ時のみ
+		// 移動割合更新
+		UpdateCrabMoveEasingTime(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
 
 //==========================================================================
