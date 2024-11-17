@@ -50,10 +50,12 @@ public:
 		MyLib::Vector3 Offset;	// 判定のオフセット
 		int nMinCnt;			// 判定の最低カウント
 		int nMaxCnt;			// 判定の最大カウント
+		float fCntRatio;		// 判定カウントの割合
 		int nDamage;			// ダメージ
 		int nInpactCnt;			// 衝撃のカウント
 		bool bInpactAct;		// 衝撃カウントの行動をしたか
 		bool bInpactActSet;		// 衝撃カウントの行動設定したか
+		bool bAtkking;			// 攻撃フラグ
 		bool bEndAtk;			// 攻撃の終了フラグ
 		AlignInfo AlignInfo;	// 揃え情報
 	};

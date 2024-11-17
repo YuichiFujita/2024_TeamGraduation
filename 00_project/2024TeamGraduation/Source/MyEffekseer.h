@@ -8,6 +8,9 @@
 #ifndef _MYEFFEKSEER_H_
 #define _MYEFFEKSEER_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include <EffekseerRendererDX9.h>
 #include <XAudio2.h>
 #include <d3d9.h>
@@ -16,12 +19,32 @@
 #include "listmanager.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CEffekseerObj;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // エフェクシアクラス定義
 class CMyEffekseer
 {
 public:
+
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum EEfkLabel
+	{
+		EFKLABEL_SAMPLE_LASER = 0,		// サンプルのレーザー
+		EFKLABEL_THROWLINE_NORMAL,		// 投げた時の線(通常)
+		EFKLABEL_THROWLINE_FAST,		// 投げた時の線(早い)
+		EFKLABEL_CAMEHAME_ENERGY,		// かめはめ波エネルギー部分
+		EFKLABEL_CAMEHAME_CHARGE,		// かめはめ波(チャージ)
+		EFKLABEL_CAMEHAME_CHARGE_WIND,	// かめはめ波(チャージ)(風)
+		EFKLABEL_CAMEHAME_ATMOSPHERE,	// かめはめ波(空間オーラ)
+		EFKLABEL_MAX
+	};
 	
 	//=============================
 	// 構造体定義
@@ -46,15 +69,15 @@ public:
 			pos(_pos), rot(_rot), move(_move), scale(_scale), efcRef(_efcRef), handle(_handle), bAutoDeath(_bAutoDeath) {}
 	};
 
-	//=============================
-	// 列挙型定義
-	//=============================
-	enum EEfkLabel
+	struct SDebugInfo	// デバッグ情報
 	{
-		EFKLABEL_SAMPLE_LASER = 0,		// サンプルのレーザー
-		EFKLABEL_THROWLINE_NORMAL,		// 投げた時の線(通常)
-		EFKLABEL_THROWLINE_FAST,		// 投げた時の線(早い)
-		EFKLABEL_MAX
+		EEfkLabel label;		// エフェクトラベル
+		MyLib::Vector3 pos;		// 位置
+		MyLib::Vector3 rot;		// 向き
+		float scale;			// スケール
+		CEffekseerObj* pEfkObj;	// エフェクシアオブジェクト
+
+		SDebugInfo() : label(EEfkLabel::EFKLABEL_SAMPLE_LASER), scale(10.0f), pEfkObj(nullptr) {}
 	};
 
 	template <typename T>
@@ -85,8 +108,9 @@ private:
 	void Draw();
 	void UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);	// モジュールのセットアップ
+	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);		// モジュールのセットアップ
 	Effekseer::EffectRef LoadProcess(const std::u16string& efkpath);	// 読み込み処理
+	void Debug();	// デバッグ
 
 	//=============================
 	// メンバ変数
@@ -102,6 +126,7 @@ private:
 	std::function<void()> onResetDevice;
 
 	// 自作変数
+	SDebugInfo m_debugInfo;							// デバッグ情報
 	static std::string m_EffectName[EFKLABEL_MAX];	// エフェクトのファイル名
 	static CMyEffekseer* m_pMyEffekseer;			// 自身のポインタ
 };
