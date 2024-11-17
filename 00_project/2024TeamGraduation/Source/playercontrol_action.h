@@ -40,12 +40,17 @@ public:
 	void SetThrowDrop();	// 投げ(ドロップボール)設定
 	inline bool IsThrowDrop() { return m_bThrowDrop; }	// 投げ(ドロップボール)可能判定取得
 
+	// ジャンプトリガー
+	void SetEnableJumpTrigger(bool bTrigger)	{ m_bJumpTrigger = bTrigger; }	// ジャンプトリガー
+	bool IsJumpTrigger()						{ return m_bJumpTrigger; }		// ジャンプトリガー
+
 protected:
 	//=============================
 	// メンバ関数
 	//=============================
 	void ThrowSetting(CPlayer* player);
 	void JumpSetting(CPlayer* player);
+	void JumpFloat(CPlayer* player);	// ジャンプ上昇
 	void SpecialSetting(CPlayer* player, CBall* pBall, CTeamStatus* pTeamStatus);		// スペシャル発動
 
 private:
@@ -70,6 +75,7 @@ private:
 	//=============================
 	float m_fThrowDropTime;	// 投げ(ドロップボール)の猶予
 	bool m_bThrowDrop;		// 投げ(ドロップボール)可能判定
+	bool m_bJumpTrigger;	// ジャンプトリガー
 };
 
 

@@ -195,7 +195,10 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// 攻撃情報
 		//--------------------------
 		// まだ衝撃カウントの行動をしてない状態にする
-		attackInfo.bInpactAct = false;
+		if (attackInfo.nInpactCnt != 0 || m_fAllFrame > 0.0f)
+		{
+			attackInfo.bInpactAct = false;
+		}
 
 		if (attackInfo.nInpactCnt >= 0 &&
 			!attackInfo.bInpactActSet &&
@@ -403,18 +406,32 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 	m_fAllFrame += 1.0f * fDeltaRate * fSlowRate;
 
 	// 攻撃判定中フラグ設定
+	float fMinCnt, fMaxCnt;
 	for (auto& attackInfo : nowInfo.AttackInfo)
 	{
+		// 攻撃中リセット
+		attackInfo.bAtkking = false;
+
 		if (attackInfo.nMaxCnt == 0)
 		{// 最大値が0のはなにもしない
 			continue;
 		}
 
+		// 最小値と最大値
+		fMinCnt = static_cast<float>(attackInfo.nMinCnt);
+		fMaxCnt = static_cast<float>(attackInfo.nMaxCnt);
+
+		// 判定の割合
+		attackInfo.fCntRatio = UtilFunc::Transformation::Clamp(
+			(m_fAllFrame - fMinCnt) / (fMaxCnt - fMinCnt),
+			0.0f, 1.0f);
+
 		// 攻撃判定
-		if (m_fAllFrame >= static_cast<float>(attackInfo.nMinCnt) && 
-			m_fAllFrame <= static_cast<float>(attackInfo.nMaxCnt))
+		if (m_fAllFrame >= fMinCnt &&
+			m_fAllFrame <= fMaxCnt)
 		{// 最小値と最大値の中
 			m_bAttaking = true;
+			attackInfo.bAtkking = true;	// 攻撃中
 		}
 	}
 
@@ -551,6 +568,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 		// 初期フレームより前の物は設定済み
 		if (m_fAllFrame >= static_cast<float>(attackInfo.nInpactCnt))
 		{
+			attackInfo.bInpactAct = true;
 			attackInfo.bInpactActSet = true;
 		}
 	}

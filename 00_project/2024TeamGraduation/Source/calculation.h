@@ -3617,6 +3617,88 @@ namespace UtilFunc	// 便利関数
 				pPath->erase(posCur, std::string::npos);
 			}
 		}
+
+		/**
+		@brief	UTF-8 文字列を UTF-16 に変換する
+		@param	utf8	[in]	変換するパス
+		@return	UTF-16string文字
+		*/
+		inline std::u16string ConvertUtf8ToUtf16(const std::string& utf8) 
+		{
+			std::u16string result;	// 返す用
+			size_t i = 0; // UTF-8 文字列のインデックス
+
+			while (i < utf8.size()) 
+			{
+				char16_t ch = 0; // UTF-16 文字 (1文字分)
+
+				// 1バイトの文字 (ASCII 範囲: 0x00 - 0x7F)
+				if ((utf8[i] & 0x80) == 0) 
+				{
+					ch = utf8[i];
+					i += 1;
+
+					// 2バイトの文字
+				}
+				else if ((utf8[i] & 0xE0) == 0xC0) 
+				{
+					if (i + 1 >= utf8.size()) 
+					{
+						throw std::runtime_error("Invalid UTF-8 sequence (2-byte character truncated)");
+					}
+					ch = ((utf8[i] & 0x1F) << 6) | (utf8[i + 1] & 0x3F);
+					i += 2;
+
+					// 3バイトの文字
+				}
+				else if ((utf8[i] & 0xF0) == 0xE0) 
+				{
+					if (i + 2 >= utf8.size()) 
+					{
+						throw std::runtime_error("Invalid UTF-8 sequence (3-byte character truncated)");
+					}
+					ch = ((utf8[i] & 0x0F) << 12) | ((utf8[i + 1] & 0x3F) << 6) | (utf8[i + 2] & 0x3F);
+					i += 3;
+
+					// 4バイトの文字 (サロゲートペアが必要)
+				}
+				else if ((utf8[i] & 0xF8) == 0xF0) 
+				{
+					if (i + 3 >= utf8.size()) 
+					{
+						throw std::runtime_error("Invalid UTF-8 sequence (4-byte character truncated)");
+					}
+
+					// サロゲートペアに分解して処理
+					uint32_t codepoint = ((utf8[i] & 0x07) << 18) |
+						((utf8[i + 1] & 0x3F) << 12) |
+						((utf8[i + 2] & 0x3F) << 6) |
+						(utf8[i + 3] & 0x3F);
+					codepoint -= 0x10000;
+
+					char16_t highSurrogate = static_cast<char16_t>((codepoint >> 10) + 0xD800);
+					char16_t lowSurrogate = static_cast<char16_t>((codepoint & 0x3FF) + 0xDC00);
+
+					result.push_back(highSurrogate);
+					result.push_back(lowSurrogate);
+
+					i += 4;
+					continue;
+
+					// 不正なバイトシーケンス
+				}
+				else 
+				{
+					throw std::runtime_error("Invalid UTF-8 sequence (unrecognized leading byte)");
+				}
+
+				// 正常に UTF-16 文字を追加
+				result.push_back(ch);
+			}
+
+			return result;
+		}
+
 	}
 }
 

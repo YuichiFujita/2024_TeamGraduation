@@ -130,7 +130,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EBody::BODY_GARI,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -151,7 +151,7 @@ HRESULT CGame::Init()
 			pos + offset, 					// 位置
 			CGameManager::SIDE_RIGHT,		// チームサイド
 			CPlayer::EBaseType::TYPE_USER,	// ベースタイプ
-			CPlayer::EBody::BODY_GARI,		// 体系
+			CPlayer::EBody::BODY_DEBU,		// 体系
 			CPlayer::EHandedness::HAND_R	// 利き手
 		);
 		if (pUser == nullptr)
@@ -245,7 +245,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(左)
-#if 1
+#if 0
 	CPlayer* pUserOutFar = CPlayer::Create
 	(
 		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置

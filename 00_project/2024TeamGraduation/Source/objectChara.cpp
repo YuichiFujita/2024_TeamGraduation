@@ -224,18 +224,11 @@ void CObjectChara::MotionInProgressAction()
 	// 情報取得
 	std::vector<CMotion::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
 
+	// 攻撃時処理
 	int i = 0;
 	for (const auto& attack : attackInfo)
 	{
-		if (attack.bInpactAct)
-		{// 衝撃のカウントと同じとき
-
-			// 攻撃時処理
-			AttackAction(attack, i);
-		}
-
-		// モーションカウンター取得
-		if (m_pMotion->IsAttacking())
+		if (attack.bAtkking)
 		{// 攻撃判定中
 
 			// 攻撃判定フラグ
@@ -243,6 +236,13 @@ void CObjectChara::MotionInProgressAction()
 
 			// 攻撃判定中処理
 			AttackInDicision(attack, i);
+		}
+
+		if (attack.bInpactAct)
+		{// 衝撃のカウントと同じとき
+
+			// 攻撃時処理
+			AttackAction(attack, i);
 		}
 
 		i++;

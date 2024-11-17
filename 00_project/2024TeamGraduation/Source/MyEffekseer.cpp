@@ -21,6 +21,10 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/Laser01.efkefc",			// サンプルのレーザー
 	"data/Effekseer/throwLine_normal.efkefc",	// 投げた時の線(通常)
 	"data/Effekseer/throwLine_fast.efkefc",		// 投げた時の線(早い)
+	"data/Effekseer/kamehame_chargeStart.efkefc",		// かめはめ波(開始)
+	"data/Effekseer/kamehame_aura.efkefc",		// かめはめ波(チャージ)
+	"data/Effekseer/kamehame_chargeWind.efkefc",		// かめはめ波(チャージ)(風)
+	"data/Effekseer/kamehame_atmosphere.efkefc",		// かめはめ波(空間オーラ)
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
@@ -106,8 +110,7 @@ HRESULT CMyEffekseer::Init()
 Effekseer::EffectRef CMyEffekseer::LoadEffect(std::string efkpath)
 {
 	// char16_tに変換
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-	std::u16string string16t = converter.from_bytes(efkpath);
+	std::u16string string16t = UtilFunc::Transformation::ConvertUtf8ToUtf16(efkpath);
 
 	return LoadProcess(string16t);
 }
@@ -118,8 +121,7 @@ Effekseer::EffectRef CMyEffekseer::LoadEffect(std::string efkpath)
 Effekseer::EffectRef CMyEffekseer::LoadEffect(EEfkLabel label)
 {
 	// char16_tに変換
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-	std::u16string string16t = converter.from_bytes(m_EffectName[label]);
+	std::u16string string16t = UtilFunc::Transformation::ConvertUtf8ToUtf16(m_EffectName[label]);
 
 	return LoadProcess(string16t);
 }
@@ -224,6 +226,11 @@ void CMyEffekseer::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 		fTime += fDeltaTime * fSlowRate;
 	}
+
+#if _DEBUG
+	// デバッグ
+	Debug();
+#endif
 }
 
 //==========================================================================
@@ -315,4 +322,119 @@ void CMyEffekseer::SetupEffekseerModules(::Effekseer::ManagerRef m_efkManager)
 	m_efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	m_efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	m_efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CMyEffekseer::Debug()
+{
+
+	if (ImGui::TreeNode("Effekseer"))
+	{
+		//--------------------------
+		// ラベル切り替え
+		//--------------------------
+		int label = m_debugInfo.label;
+		ImGui::SliderInt("Label", &label, 0, static_cast<int>(EEfkLabel::EFKLABEL_MAX) - 1, "%d");
+		ImGui::Text("%s", magic_enum::enum_name(m_debugInfo.label));
+		m_debugInfo.label = static_cast<EEfkLabel>(label);
+
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+		//--------------------------
+		// 生成
+		//--------------------------
+		if (ImGui::Button("Create"))
+		{
+			if (m_debugInfo.pEfkObj != nullptr)
+			{
+				m_debugInfo.pEfkObj->Uninit();
+				m_debugInfo.pEfkObj = nullptr;
+			}
+
+			m_debugInfo.pEfkObj = CEffekseerObj::Create(m_debugInfo.label,
+				m_debugInfo.pos,
+				m_debugInfo.rot,
+				MyLib::Vector3(),
+				m_debugInfo.scale, false);
+		}
+
+		//--------------------------
+		// トリガー送信
+		//--------------------------
+		if (ImGui::Button("Trigger00") &&
+			m_debugInfo.pEfkObj != nullptr)
+		{
+			m_debugInfo.pEfkObj->SetTrigger(0);
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Trigger01") &&
+			m_debugInfo.pEfkObj != nullptr)
+		{
+			m_debugInfo.pEfkObj->SetTrigger(1);
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Trigger02") &&
+			m_debugInfo.pEfkObj != nullptr)
+		{
+			m_debugInfo.pEfkObj->SetTrigger(2);
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Trigger03") &&
+			m_debugInfo.pEfkObj != nullptr)
+		{
+			m_debugInfo.pEfkObj->SetTrigger(3);
+		}
+
+		//--------------------------
+		// 位置
+		//--------------------------
+		if (ImGui::Button("pos Reset"))
+		{// リセット
+			m_debugInfo.pos = MyLib::Vector3();
+		}
+		ImGui::SameLine();
+
+		ImGui::DragFloat3("pos", (float*)&m_debugInfo.pos, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		//--------------------------
+		// 向き
+		//--------------------------
+		if (ImGui::Button("rot Reset"))
+		{// リセット
+			m_debugInfo.rot = MyLib::Vector3();
+		}
+		ImGui::SameLine();
+
+		ImGui::DragFloat3("rot", (float*)&m_debugInfo.rot, D3DX_PI * 0.01f, 0.0f, 0.0f, "%.2f");
+		UtilFunc::Transformation::RotNormalize(m_debugInfo.rot);
+
+
+		//--------------------------
+		// スケール
+		//--------------------------
+		if (ImGui::Button("scale Reset"))
+		{// リセット
+			m_debugInfo.scale = 10.0f;
+		}
+		ImGui::SameLine();
+
+		ImGui::DragFloat("scale", (float*)&m_debugInfo.scale, 0.1f, 0.0f, 100.0f, "%.2f");
+
+
+		ImGui::TreePop();
+	}
+
+
+	// 情報反映
+	if (m_debugInfo.pEfkObj == nullptr) return;
+
+	m_debugInfo.pEfkObj->SetPosition(m_debugInfo.pos);
+	m_debugInfo.pEfkObj->SetRotation(m_debugInfo.rot);
+	m_debugInfo.pEfkObj->SetScale(m_debugInfo.scale);
+
 }

@@ -26,6 +26,7 @@
 #include "edit_map.h"
 #include "charmManager.h"
 #include "teamStatus.h"
+#include "specialEffect.h"
 
 // 派生先
 #include "playerAI.h"
@@ -223,6 +224,9 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 	m_pDressup_Hair = nullptr;		// 髪着せ替え
 	m_pDressup_Accessory = nullptr;	// アクセ更新
 
+	// スぺシャルエフェクト
+	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
+
 	// その他
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
@@ -411,6 +415,13 @@ HRESULT CPlayer::Init()
 	if (m_pDressup_Accessory == nullptr)
 	{
 		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+	}
+
+
+	// スぺシャルエフェクト
+	if (m_pSpecialEffect == nullptr)
+	{
+		m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
 	}
 
 	return S_OK;
@@ -914,6 +925,10 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_GRIP01);
 		break;
 
+	case EMotion::MOTION_SPECIAL:
+		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
+		break;
+
 	default:
 		break;
 	}
@@ -948,7 +963,10 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
+		break;
 
+	case EMotion::MOTION_SPECIAL:
+		m_pSpecialEffect->ProgressMoment(ATKInfo, nCntATK);
 		break;
 
 	default:
@@ -1273,7 +1291,7 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	// ダメージ受付時間更新
 	UpdateDamageReciveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
-	m_fStateTime += fDeltaTime * fDeltaRate * fSlowRate;
+	m_fStateTime += fDeltaTime * fSlowRate;
 
 	// 状態更新
 	(this->*(m_StateFunc[m_state]))();
@@ -1288,7 +1306,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 	m_sDamageInfo.bReceived = false;
 
 	// ダメージ受け付け時間減算
-	m_sDamageInfo.fReceiveTime -= fDeltaTime;
+	m_sDamageInfo.fReceiveTime -= fDeltaTime * fSlowRate;
 	if (m_sDamageInfo.fReceiveTime <= 0.0f)
 	{
 		// ダメージ受け付け判定
@@ -1902,10 +1920,14 @@ void CPlayer::Debug()
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
+		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
+
+#if 0
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
 		ImGui::Text("Motion : [%s]", motion->GetType());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
+#endif
 
 		//現在の入力方向を取る(向き)
 		bool bInput = false;
@@ -1932,6 +1954,11 @@ void CPlayer::Debug()
 		SetLife(nLife);
 
 		ImGui::TreePop();
+	}
+
+	if (ImGui::Button("Special"))
+	{// スペシャル
+		SetMotion(EMotion::MOTION_SPECIAL);
 	}
 
 	// 髪更新

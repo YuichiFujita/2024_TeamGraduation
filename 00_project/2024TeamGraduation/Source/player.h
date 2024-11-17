@@ -26,6 +26,7 @@ class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
 class CDressup;			// 着せ替え
+class CSpecialEffect;	// スペシャル演出エフェクト
 
 //==========================================================================
 // クラス定義
@@ -452,6 +453,11 @@ private:
 	//-----------------------------
 	CDressup* m_pDressup_Hair;		// 髪着せ替え
 	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
+
+	//-----------------------------
+	// スペシャル用
+	//-----------------------------
+	CSpecialEffect* m_pSpecialEffect;	// スぺシャルエフェクト
 
 	//-----------------------------
 	// その他変数

@@ -68,7 +68,11 @@ public:
 	//=============================
 	struct STapInfo	// タップ情報
 	{
-		float fTapTimer[BUTTON::BUTTON_MAX];	// タップ判定用のタイマー
+		bool bInput;	// 入力フラグ
+		float fRatio;	// 割合
+
+		// コンストラクタ
+		STapInfo() : bInput(false), fRatio(0.0f) {}
 	};
 
 	CInputGamepad();
@@ -88,7 +92,7 @@ public:
 	bool GetTrigger(BUTTON nKey, int nCntPlayer);
 	bool GetRepeat(BUTTON nKey, int nCntPlayer);
 	bool GetRelease(BUTTON nKey, int nCntPlayer);
-	bool GetTap(BUTTON nKey, int nCntPlayer, float tapTime);
+	STapInfo GetTap(BUTTON nKey, int nCntPlayer, float tapTime);
 
 	//--------------------------
 	// トリガー系

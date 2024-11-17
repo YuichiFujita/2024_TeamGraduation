@@ -111,6 +111,9 @@
     <Filter Include="player\playerPosAdj">
       <UniqueIdentifier>{a682c9d2-6154-41c3-9869-71e82bd4c3c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\special\effect">
+      <UniqueIdentifier>{94e9b15e-3c0c-4857-a428-be477f6cd51b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -559,6 +562,12 @@
     </ClCompile>
     <ClCompile Include="Source\specialValueManager.cpp">
       <Filter>ingame\special</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\specialEffect.cpp">
+      <Filter>ingame\special\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\specialEffect_kamehameha.cpp">
+      <Filter>ingame\special\effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1020,6 +1029,12 @@
     </ClInclude>
     <ClInclude Include="Source\specialValueManager.h">
       <Filter>ingame\special</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\specialEffect.h">
+      <Filter>ingame\special\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\specialEffect_kamehameha.h">
+      <Filter>ingame\special\effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

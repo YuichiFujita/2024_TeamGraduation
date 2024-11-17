@@ -53,10 +53,10 @@ CHARACTERSET
 	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
 	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
-	JUMP = 0.00		# ジャンプ量
-	RADIUS = 60.00	# 半径
-	HEIGHT = 100.00	# 高さ
-	LIFE = 50		# 体力
+	JUMP = 12.00		# ジャンプ量
+	RADIUS = 60.00		# 半径
+	HEIGHT = 100.00		# 高さ
+	LIFE = 50			# 体力
 	
 	BALLSTATUSSET
 		THROW_NORMAL = 22.50	#投げ速度(通常)

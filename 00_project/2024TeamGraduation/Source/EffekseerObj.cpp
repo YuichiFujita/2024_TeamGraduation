@@ -106,7 +106,13 @@ void CEffekseerObj::Uninit()
 //==========================================================================
 void CEffekseerObj::Stop()
 {
+	// マネージャ取得
+	CMyEffekseer* pMyEffekseer = CMyEffekseer::GetInstance();
+	if (pMyEffekseer == nullptr) return;
+	Effekseer::ManagerRef efkManager = pMyEffekseer->GetEfkManager();
 
+	// エフェクトを停止する
+	efkManager->StopEffect(m_EffekseerInfo.handle);
 }
 
 //==========================================================================
