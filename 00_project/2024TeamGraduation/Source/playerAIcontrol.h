@@ -50,7 +50,8 @@ private:
 
 	enum ETiming	// タイミング
 	{
-		TIMING_NORMAL = 0,	// 通常
+		TIMING_NONE = 0,
+		TIMING_NORMAL,		// 通常
 		TIMING_QUICK,		// 速
 		TIMING_DELAY,		// 遅
 		TIMING_MAX
@@ -58,7 +59,8 @@ private:
 
 	enum  EThrowType	// 投げタイプ
 	{
-		THROWTYPE_NORMAL = 0,
+		THROWTYPE_NONE = 0,
+		THROWTYPE_NORMAL,
 		THROWTYPE_JUMP,
 		THROWTYPE_SPECIAL,
 		THROWTYPE_MAX
@@ -125,6 +127,11 @@ private:
 		SMoveInfo sMoveInfo;		// 行動情報
 	};
 
+	struct SLearn	// 学習
+	{
+		float fDistance;	// 距離感
+	};
+
 public:
 
 	// コンストラクタ
@@ -146,17 +153,17 @@ private:
 	typedef void(CPlayerAIControl::* MODE_FUNC)(const float, const float, const float);
 	static MODE_FUNC m_ModeFunc[];			// モード関数
 
-	typedef void(CPlayerAIControl::* THOWTYPE_FUNC)(CPlayer*, const float, const float, const float);
-	static THOWTYPE_FUNC m_ThrowTypeFunc[];			// 投げるタイプ関数
+	typedef void(CPlayerAIControl::* THROWTYPE_FUNC)(CPlayer*, const float, const float, const float);
+	static THROWTYPE_FUNC m_ThrowTypeFunc[];			// 投げるタイプ関数
 
-	typedef void(CPlayerAIControl::* THOWMOVE_FUNC)(CPlayer*, const float, const float, const float);
-	static THOWMOVE_FUNC m_ThrowMoveFunc[];			// 投げるまでの行動関数
+	typedef void(CPlayerAIControl::* THROWMOVE_FUNC)(CPlayer*, const float, const float, const float);
+	static THROWMOVE_FUNC m_ThrowMoveFunc[];			// 投げるまでの行動関数
 
-	typedef void(CPlayerAIControl::* THOWTIMING_FUNC)(CPlayer*, const float, const float, const float);
-	static THOWTIMING_FUNC m_ThrowTimingFunc[];			// 投げタイプ関数
+	typedef void(CPlayerAIControl::* THROWTIMING_FUNC)(CPlayer*, const float, const float, const float);
+	static THROWTIMING_FUNC m_ThrowTimingFunc[];			// 投げタイミング関数
 
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
-	static CATCH_FUNC m_CatchFunc[];		// キャッチ関数
+	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
 
 	//=============================
 	// メンバ関数
@@ -170,15 +177,18 @@ private:
 	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
 
 	// 投げタイプ
+	void ThrowTypeNone(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
 	void ThrowTypeNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowTypeJump(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowTypeSpecial(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
 	// 投げるまでの行動
-	void ThrowMoveStop(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowMoveNone(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowMoveWalk(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowMoveDash(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// 投げタイミング
+	void ThrowJumpTimingNone(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
 	void ThrowJumpTimingNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowJumpTimingQuick(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ThrowJumpTimingDelay(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
@@ -196,6 +206,8 @@ private:
 	void SetThrowTarget(CPlayer** ppTarget = nullptr);		// 投げるターゲット
 	void DistanceLeaveCatch();		// キャッチ距離(離れる)
 	void DistanceApproachCatch();	// キャッチ距離(近づく)
+
+	void Throw();
 
 	void PlanThrowFlow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げる流れ
 	void PlanHeart();		// 心のプラン
@@ -216,7 +228,8 @@ private:
 
 	bool IsWhoPicksUpTheBall();
 
-	void RunUp(CPlayer* pTarget);
+	void RunStartPos(CPlayer* pTarget);
+	void RunEndPos(CPlayer* pTarget);
 
 	void Debug();
 
@@ -228,6 +241,7 @@ private:
 
 	float m_fDistance;			// ターゲットとの距離
 	bool m_bStart;
+	bool m_bEnd;
 };
 
 #endif
