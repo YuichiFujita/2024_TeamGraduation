@@ -24,6 +24,8 @@ public:
 	CSpecialEffect_Kamehame();
 	~CSpecialEffect_Kamehame();
 	
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+
 	// トリガーの瞬間
 	virtual void TriggerMoment(CMotion::AttackInfo ATKInfo, int idx) override
 	{
@@ -63,13 +65,23 @@ private:
 	void Progress_ChargeStart(CMotion::AttackInfo ATKInfo);	// チャージ開始
 	void Progress_Chargeing(CMotion::AttackInfo ATKInfo);	// チャージ中
 	void Progress_Condense(CMotion::AttackInfo ATKInfo);	// 凝縮
+	void Progress_TransBrust(CMotion::AttackInfo ATKInfo);	// 発射へ遷移
 
+	// その他
+	void UpdateWind(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 風更新
 
+	//=============================
+	// メンバ変数
+	//=============================
 	CEffekseerObj* m_pEnergyStart = nullptr;	// かめはめ波の中心(開始時)
 	CEffekseerObj* m_pEnergy = nullptr;			// かめはめ波の中心
 	CEffekseerObj* m_pAtmosphere = nullptr;		// 漂う空間オーラ
+	CEffekseerObj* m_pChargeThunder = nullptr;		// チャージ時の雷
 
-
+	// 風用
+	bool m_bWindCreate;			// 風生成フラグ
+	float m_fIntervalWind;		// 風生成インターバル
+	float m_fCreateWindTime;	// 風生成タイマー
 };
 
 #endif

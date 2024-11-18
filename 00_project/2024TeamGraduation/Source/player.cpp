@@ -526,6 +526,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// モーション別更新処理
+	UpdateByMotion(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// アクション更新
 	if (m_pActionPattern != nullptr)
 	{
@@ -859,6 +862,28 @@ void CPlayer::ResetFrag()
 }
 
 //==========================================================================
+// モーション別更新処理
+//==========================================================================
+void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	int nType = pMotion->GetType();
+
+	switch (nType)
+	{
+	case EMotion::MOTION_SPECIAL:	// スペシャル
+
+		// 更新処理
+		m_pSpecialEffect->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		break;
+
+	default:
+		break;
+	}
+}
+
+//==========================================================================
 // 攻撃時処理
 //==========================================================================
 void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
@@ -926,6 +951,8 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_SPECIAL:
+
+		// トリガー処理
 		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
 		break;
 
@@ -966,6 +993,8 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_SPECIAL:
+
+		// 進行中処理
 		m_pSpecialEffect->ProgressMoment(ATKInfo, nCntATK);
 		break;
 
