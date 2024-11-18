@@ -269,6 +269,7 @@
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
     <ClCompile Include="Source\playerAIIn.cpp" />
     <ClCompile Include="Source\playerAIOut.cpp" />
+    <ClCompile Include="Source\playerAIOut_controlMove.cpp" />
     <ClCompile Include="Source\playerBase.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
@@ -434,6 +435,7 @@
     <ClInclude Include="Source\playerAIcontrol_move.h" />
     <ClInclude Include="Source\playerAIIn.h" />
     <ClInclude Include="Source\playerAIOut.h" />
+    <ClInclude Include="Source\playerAIOut_controlMove.h" />
     <ClInclude Include="Source\playerBase.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />

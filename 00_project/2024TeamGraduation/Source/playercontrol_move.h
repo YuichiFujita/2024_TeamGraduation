@@ -14,6 +14,7 @@
 // ‘O•ûéŒ¾
 //==========================================================================
 class CPlayerAIControlMove;
+class CPlayerAIOutControlMove;
 class CPlayerUserControlMove;
 class CPlayerUserOutControlMove;
 
@@ -37,7 +38,7 @@ public:
 	// ƒˆ‰¼‘zŠÖ”
 	//=============================
 	virtual CPlayerAIControlMove* GetAI()			{ return nullptr; }
-	//virtual CPlayerAIOutControlMove* GetAIOut()		{ return nullptr; }	// TODOF–¾“ú‚Ü‚Å‚Éì¬
+	virtual CPlayerAIOutControlMove* GetAIOut()		{ return nullptr; }
 	virtual CPlayerUserControlMove* GetUser()		{ return nullptr; }
 	virtual CPlayerUserOutControlMove* GetUserOut()	{ return nullptr; }
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ˆÚ“®

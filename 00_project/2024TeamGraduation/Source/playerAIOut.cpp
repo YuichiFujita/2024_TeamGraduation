@@ -8,7 +8,7 @@
 #include "playerAIOut.h"
 
 // 使用クラス
-#include "playerAIcontrol_move.h"
+#include "playerAIOut_controlMove.h"
 #include "playerAIcontrol_action.h"
 
 //==========================================================================
@@ -24,8 +24,8 @@ namespace
 //==========================================================================
 CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea)
 {
-	// 外野操作の割当	// TODO：外野操作に変更
-	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+	// 外野操作の割当
+	ChangeMoveControl(DEBUG_NEW CPlayerAIOutControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 }
 
