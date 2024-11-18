@@ -25,7 +25,7 @@ CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide t
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
 	m_posRight	(VEC3_ZERO)		// 移動可能右位置
 {
-	// 外野操作の割当	// TODO：外野操作に変更
+	// 外野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerUserOutControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
 }

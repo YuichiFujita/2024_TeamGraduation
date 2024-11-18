@@ -18,6 +18,7 @@
 //==========================================================================
 class CPlayerUserOutControlMove;
 class CPlayerAIControlMove;
+class CBindKey;
 
 //==========================================================================
 // 外野プレイヤーコントロールクラス定義
@@ -35,20 +36,35 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() override { return nullptr; }
-	virtual CPlayerUserControlMove* GetUser() override { return nullptr; }
-
-private:
+	virtual CPlayerUserOutControlMove* GetUserOut() override { return this; }
 
 	//=============================
 	// メンバ関数
 	//=============================
+	void BindLeftKey(CBindKey* pKey)	{ m_pLeftKey = pKey; }	// 左移動キー割当
+	void BindRightKey(CBindKey* pKey)	{ m_pRightKey = pKey; }	// 右移動キー割当
+
+private:
+
+	//=============================
+	// オーバーライド関数
+	//=============================
 	void Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ブリンク
-	void BilnkKey(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// キー入力のブリンク
-	void BilnkStick(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スティック入力のブリンク
 	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ダッシュ
 	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ウォーク
 	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) override;	// ダッシュ時のトリガー
+
+	//=============================
+	// メンバ関数
+	//=============================
+	void BilnkKey(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キー入力のブリンク
+	void BilnkStick(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スティック入力のブリンク
+
+	//=============================
+	// メンバ変数
+	//=============================
+	CBindKey* m_pLeftKey;	// 左移動キー情報
+	CBindKey* m_pRightKey;	// 右移動キー情報
 };
 
 #endif
