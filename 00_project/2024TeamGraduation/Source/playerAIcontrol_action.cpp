@@ -18,9 +18,14 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
+//==========================================================================
+// 定数定義
+//==========================================================================
 namespace
 {
-
+	const float TAPTIME = 0.15f;	// タップの入力時間
+	const float TAPRATE_MIN = 0.7f;	// タップの最小割合
+	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
 
 //==========================================================================
@@ -97,6 +102,38 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 		m_sFlag.bJump = false;
 
 		JumpSetting(player);
+	}
+}
+
+//==========================================================================
+// ジャンプ上昇
+//==========================================================================
+void CPlayerAIControlAction::JumpFloat(CPlayer* player)
+{
+	// ジャンプ判定取得
+	bool bJump = player->IsJump();
+
+	if (bJump && IsJumpTrigger())
+	{// ジャンプ中は押してる間距離伸びていく
+
+		// インプット情報取得
+		CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+		//ジャンプ処理
+		CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
+
+		if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
+		{// タップ範囲 && 入力継続
+
+			// 移動量取得
+			MyLib::Vector3 move = player->GetMove();
+
+			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
+			move.y = player->GetParameter().fVelocityJump * jumpRatio;
+
+			// 移動量設定
+			player->SetMove(move);
+		}
 	}
 }
 

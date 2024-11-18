@@ -35,10 +35,10 @@ namespace timing
 namespace
 {
 	// ジャンプ投げの最大位置(ジャンプ力MAX：150)
-	const float JUMP_END_POS = 140.0f;
+	const float JUMP_END_POS = 60.0f;
 
 	// 距離間(デフォルト)
-	const float LENGTH_MAX = 500.0f;
+	const float LENGTH_MAX = 300.0f;
 }
 
 //==========================================================================
@@ -144,21 +144,11 @@ void CPlayerAIControl::Uninit()
 //==========================================================================
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!m_bStart)
-	{
-		RunStartPos(nullptr);
-	}
-	else if (m_bStart)
-	{
-		RunEndPos(nullptr);
-	}
+	// モード管理
+	ModeManager();
 
-
-	//// モード管理
-	//ModeManager();
-
-	//// 状態更新
-	//(this->*(m_ModeFunc[m_sInfo.sMode.eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
+	// 状態更新
+	(this->*(m_ModeFunc[m_sInfo.sMode.eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 
 #ifdef _DEBUG
 	Debug();
@@ -343,10 +333,10 @@ void CPlayerAIControl::ThrowMoveWalk(CPlayer* pTarget, const float fDeltaTime, c
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	// 歩け！
-	//pControlAIMove->SetIsWalk(true);
+	pControlAIMove->SetIsWalk(false);
 
 	// 走り投げ
-	RunStartPos(pTarget);
+	//RunStartPos(pTarget);
 
 	return;
 
@@ -495,6 +485,14 @@ bool CPlayerAIControl::IsLineOverBall()
 //==========================================================================
 // ジャンプ投げタイミング
 //==========================================================================
+void CPlayerAIControl::PlanDistance(CPlayer* pTarget)
+{
+
+}
+
+//==========================================================================
+// ジャンプ投げタイミング
+//==========================================================================
 void CPlayerAIControl::JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 線に対しての思考
@@ -569,9 +567,6 @@ void CPlayerAIControl::ThrowJumpTimingNormal(CPlayer* pTarget, const float fDelt
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	// どれくらいの距離移動するか処理を追加
-
-
 	pControlAIMove->SetIsWalk(false);	// 歩きリセット
 	pControlAIAction->SetIsJump(true);	// ジャンプオン
 
@@ -581,7 +576,7 @@ void CPlayerAIControl::ThrowJumpTimingNormal(CPlayer* pTarget, const float fDelt
 		pControlAIAction->SetIsThrow(true);
 
 		// 変数リセット
-		//Reset();
+		Reset();
 	}
 }
 
@@ -742,13 +737,13 @@ void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDel
 	if (pBall == nullptr) return;
 
 	if (pBall->GetPlayer() != nullptr)
-	{// キャッチ状態
+	{// 誰もボールを持っていない場合
 		m_sInfo.sCatchInfo.eCatchType = ECatchType::CATCH_TYPE_NORMAL;
 	}
 	else if (pBall->GetPlayer() == nullptr)
 	{// 
 
-		if (!IsWhoPicksUpTheBall()) return;	// 自分より近くにいた場合
+		/*if (!IsWhoPicksUpTheBall())*/ return;	// 自分より近くにいた場合
 
 		// ボールを取りに行く
 		m_sInfo.sCatchInfo.eCatchType = ECatchType::CATCH_TYPE_FIND;
@@ -801,6 +796,7 @@ void CPlayerAIControl::DistanceLeaveCatch()
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	CPlayer* pTarget = nullptr;	// 目標ターゲット
+	float fMinDis = LENGTH_MAX;	// 近いプレイヤー
 
 	MyLib::Vector3 pos = m_pAI->GetPosition();	// 位置情報の取得
 	CGameManager::ETeamSide myTeam = m_pAI->GetStatus()->GetTeam();
@@ -831,11 +827,10 @@ void CPlayerAIControl::DistanceLeaveCatch()
 		// 相手との距離を求める
 		float fLength = posPlayer.DistanceXZ(pos);
 
-		if (fLength < m_fDistance)
+		if (fLength < fMinDis)
 		{ // 数値より近い相手プレイヤーがいた場合
 
 			// 離れる行動状態へ
-
 			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 
 			// ターゲット設定
@@ -1104,7 +1099,6 @@ void CPlayerAIControl::RunEndPos(CPlayer* pTarget)
 	{
 		m_bEnd = true;	// 終了位置へ着いた
 		pControlAIMove->SetIsWalk(false);	// 止まる
-		pControlAIAction->SetIsJump(true);
 		return;
 	}
 
@@ -1186,19 +1180,19 @@ void CPlayerAIControl::Reset()
 // デバッグ
 void CPlayerAIControl::Debug()
 {
-	if (ImGui::TreeNode("AI Info"))
-	{
-		if (ImGui::Button("Reset"))
-		{// リセット
-			ZeroMemory(&m_sInfo, sizeof(m_sInfo));
-		}
+	//if (ImGui::TreeNode("AI Info"))
+	//{
+	//	if (ImGui::Button("Reset"))
+	//	{// リセット
+	//		ZeroMemory(&m_sInfo, sizeof(m_sInfo));
+	//	}
 
-		//ImGui::DragFloat("Distance", &m_fDistance, 1.0f, 0.0f, 1000.0f, "%.2f");
+	//	//ImGui::DragFloat("Distance", &m_fDistance, 1.0f, 0.0f, 1000.0f, "%.2f");
 
-		ImGui::Text("mode : %d", m_sInfo.sMode.eMode);
-		ImGui::Text("Distance : %0.2f", m_fDistance);
-		ImGui::DragFloat("Distance", &m_fDistance, 1.0f, 0.0f, 1000.0f, "%.2f");
+	//	ImGui::Text("mode : %d", m_sInfo.sMode.eMode);
+	//	ImGui::Text("Distance : %0.2f", m_fDistance);
+	//	ImGui::DragFloat("Distance", &m_fDistance, 1.0f, 0.0f, 1000.0f, "%.2f");
 
-		ImGui::TreePop();
-	}
+	//	ImGui::TreePop();
+	//}
 }
