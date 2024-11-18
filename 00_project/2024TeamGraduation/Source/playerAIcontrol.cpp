@@ -198,8 +198,6 @@ void CPlayerAIControl::PlanThrowFlow(const float fDeltaTime, const float fDeltaR
 	CPlayer* pTarget = nullptr;
 	pTarget = GetThrowTarget();
 
-	
-
 	// 2:何を投げるか考える関数	// 常
 	PlanThrow(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -326,8 +324,22 @@ void CPlayerAIControl::ThrowMoveNone(CPlayer* pTarget, const float fDeltaTime, c
 {
 	// タイミングはどうする？
 
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = m_pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	pControlAIMove->SetIsWalk(false);	// 歩きリセット
+
+	// 投げる
+	pControlAIAction->SetIsThrow(true);
+
+	// 変数リセット
+	Reset();
+	
 	// 投げるまでのタイミングの更新
-	(this->*(m_ThrowTimingFunc[m_sInfo.sThrowInfo.eTiming]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
+	//(this->*(m_ThrowTimingFunc[m_sInfo.sThrowInfo.eTiming]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -753,13 +765,16 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	CPlayer* pTarget = GetCatchTarget();
 
 	// 線との距離
-	CatchLineLeftDistance();
+	if (!CatchLineLeftDistance())
+	{
 
-	// 距離(ボールを持っている奴との)
-	CatchDistance(pTarget);
+		// 距離(ボールを持っている奴との)
+		CatchDistance(pTarget);
 
-	// 外野との距離
-	CatchOutDistance();
+		// 外野との距離
+		CatchOutDistance();
+
+	}
 
 
 	if (m_sInfo.sMoveInfo.eType == EMoveType::MOVETYPE_NONE)
@@ -924,7 +939,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 		pControlAIMove->SetClabDirection(direction);
 
 		// 歩け！
-		pControlAIMove->SetIsWalk(true);
+		//pControlAIMove->SetIsWalk(true);
 
 		return;
 	}
@@ -939,7 +954,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 		pControlAIMove->SetClabDirection(direction);
 
 		// 歩け！
-		pControlAIMove->SetIsWalk(true);
+		//pControlAIMove->SetIsWalk(true);
 
 		return;
 	}
@@ -1001,7 +1016,7 @@ void CPlayerAIControl::CatchOutDistance()
 			pControlAIMove->SetClabDirection(direction);
 
 			// 歩きオン
-			pControlAIMove->SetIsWalk(true);
+			//pControlAIMove->SetIsWalk(true);
 		}
 	}
 }
@@ -1009,7 +1024,7 @@ void CPlayerAIControl::CatchOutDistance()
 //==========================================================================
 // 線に対しての距離(キャッチ)
 //==========================================================================
-void CPlayerAIControl::CatchLineLeftDistance()
+bool CPlayerAIControl::CatchLineLeftDistance()
 {
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
@@ -1022,7 +1037,7 @@ void CPlayerAIControl::CatchLineLeftDistance()
 	// 自分からターゲットとの距離
 	float fDistance = myPos.DistanceXZ(targetPos);
 
-	if (fDistance > m_sLearn.fDistanceLine + LENGTH_SPACE) return;
+	//if (fDistance > m_sLearn.fDistanceLine + LENGTH_SPACE) return false;
 
 	if (fDistance < m_sLearn.fDistanceLine)
 	{// 距離が指定値以内の場合
@@ -1038,12 +1053,18 @@ void CPlayerAIControl::CatchLineLeftDistance()
 
 		// 歩け！
 		//pControlAIMove->SetIsWalk(true);
+
+		return true;
 	}
-	//else
-	//{
-	//	// 移動状態を離れろ！
-	//	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-	//}
+	else 
+	{
+		// 移動状態を離れろ！
+		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+
+		return false;
+	}
+
+	return false;
 }
 
 

@@ -214,9 +214,10 @@ private:
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
 	void PlanThrowDistance(CPlayer* pTarget);	// 投げる距離プラン
+
 	void CatchDistance(CPlayer* pTarget);	//
 	void CatchOutDistance();
-	void CatchLineLeftDistance();
+	bool CatchLineLeftDistance();
 
 	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);	// 行動プラン

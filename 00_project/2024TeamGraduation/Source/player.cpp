@@ -77,8 +77,7 @@ namespace Knockback
 {
 	const float HEIGHT = 50.0f;					// 最大高度
 	const float HEIGHT_OUTCOURT = 50.0f;		// 最大高度(コート越え)
-	const float DAMAGE = 50.0f;		// ダメージ
-	const float DEAD = 100.0f;		// 死亡
+	const float DEAD = 1.5f;					// 死亡(通常への倍率)
 }
 
 // TODO：ボールステータスに移行
@@ -99,7 +98,7 @@ namespace StateTime
 {
 	const float DAMAGE = 0.5f;		// ダメージ
 	const float DEAD = 2.0f;		// 死亡
-	const float INVINCIBLE = 0.8f;	// 無敵
+	const float INVINCIBLE = 10.0f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
 	const float INVADE_TOSS = 0.3f;		// 侵入後トス
@@ -1117,10 +1116,11 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+	float knockback = pBall->GetKnockback();
 	MyLib::Vector3 posS = GetPosition();
 	MyLib::Vector3 posE = posS;
-	posE.x += vecBall.x * Knockback::DEAD * pBall->GetDamage();
-	posE.z += vecBall.z * Knockback::DEAD * pBall->GetDamage();
+	posE.x += vecBall.x * knockback * Knockback::DEAD;
+	posE.z += vecBall.z * knockback * Knockback::DEAD;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
@@ -1139,16 +1139,16 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+	float knockback = pBall->GetKnockback();
 	MyLib::Vector3 posS = GetPosition();	//始点
 	MyLib::Vector3 posE = posS;				//終点
-	posE.x += vecBall.x * Knockback::DAMAGE * pBall->GetDamage();
-	posE.z += vecBall.z * Knockback::DAMAGE * pBall->GetDamage();
+	posE.x += vecBall.x * knockback;
+	posE.z += vecBall.z * knockback;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
-
 
 	// ボール攻撃種類
 	CBall::EAttack atkBall = pBall->GetTypeAtk();
@@ -1171,7 +1171,6 @@ void CPlayer::DamageSetting(CBall* pBall)
 	default:
 		break;
 	}
-
 }
 
 //==========================================================================
@@ -1325,7 +1324,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 void CPlayer::StateNone()
 {
 	// 色設定
-	m_mMatcol = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_mMatcol = MyLib::Color(MyLib::color::White());
 }
 
 //==========================================================================
@@ -1333,8 +1332,20 @@ void CPlayer::StateNone()
 //==========================================================================
 void CPlayer::StateInvincible()
 {
+	// 点滅設定
+	float fMat = m_fStateTime;
+	if (fMat > 1.0f)
+	{// 1を超えたら範囲内にする
+		fMat = static_cast<int>(fMat * 1000) % static_cast<int>(1000);
+		fMat /= 1000.0f;
+	}
+	m_mMatcol.a = fMat;
+
+	// 無敵
+	m_sDamageInfo.bReceived = false;
+
 	if (m_fStateTime >= StateTime::INVINCIBLE)
-	{
+	{// 通常に戻す
 		m_sDamageInfo.fReceiveTime = 0.0f;
 		m_sDamageInfo.bReceived = true;
 
@@ -1757,10 +1768,10 @@ void CPlayer::Draw()
 	pDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);		// Zテストのみ失敗
 
 	// ステンシル描画
-	CObjectChara::Draw();
+	//CObjectChara::Draw();
 
 	// ステンシルバッファ無効
-	pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	//pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 
 	// 普通の描画
 	if (m_state == STATE_DMG)
@@ -1887,6 +1898,7 @@ void CPlayer::Debug()
 		// 取得
 		CCharacterStatus* pStatus = GetCharStatus();
 		CCharacterStatus::CharParameter parameter = pStatus->GetParameter();
+		CBallStatus::SBallParameter ballParam = GetBallParameter();
 
 		ImGui::DragFloat("fVelocityNormal", (float*)&parameter.fVelocityNormal, 0.01f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fVelocityDash", (float*)&parameter.fVelocityDash, 0.01f, 0.0f, 100.0f, "%.2f");
@@ -1894,12 +1906,18 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fVelocityJump", (float*)&parameter.fVelocityJump, 0.01f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fRadius", (float*)&parameter.fRadius, 0.5f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fJumpStartMove", &parameter.fJumpStartMove, 0.001f, 0.0f, 100.0f, "%.3f");
-		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");
+		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");		
 		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
+
+		ImGui::DragFloat("fKnockbackNormal", &ballParam.fKnockbackNormal, 0.1f, 0.0f, 10000.0f, "%.3f");
+		ImGui::DragFloat("fKnockbackJump", &ballParam.fKnockbackJump, 0.1f, 0.0f, 10000.0f, "%.3f");
+		ImGui::DragFloat("fKnockbackSpecial", &ballParam.fKnockbackSpecial, 0.1f, 0.0f, 10000.0f, "%.3f");
+
 		SetRadius(parameter.fRadius);	// 半径反映
 
 		// パラメーター反映
 		pStatus->SetParameter(parameter);
+		SetBallParameter(ballParam);
 
 		// 拡大率の調整
 		float scale = GetScale();
@@ -1926,13 +1944,14 @@ void CPlayer::Debug()
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
-		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
+		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
+		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
 
 #if 0
 		ImGui::Text("State : [%d]", m_state);
 		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
-		ImGui::Text("Motion : [%s]", motion->GetType());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
+		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
 #endif
 
 		//現在の入力方向を取る(向き)

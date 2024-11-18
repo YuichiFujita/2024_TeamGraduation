@@ -479,6 +479,28 @@ void CObjectChara::LoadBallData(FILE* pFile, const std::string& file)
 			fscanf(pFile, "%s", &hoge[0]);	// =の分
 			fscanf(pFile, "%d", &param.nDamageSpecial);		// ダメージ(スペシャル)
 		}
+	
+		//ノックバック
+		if (strcmp(hoge, "KNOCKBACK_NORMAL") == 0)
+		{// (通常)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fKnockbackNormal);		// ノックバック(通常)
+		}
+
+		if (strcmp(hoge, "KNOCKBACK_JUMP") == 0)
+		{// (ジャンプ)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fKnockbackJump);			// ノックバック(ジャンプ)
+		}
+
+		if (strcmp(hoge, "KNOCKBACK_SPECIAL") == 0)
+		{// (スペシャル)
+
+			fscanf(pFile, "%s", &hoge[0]);	// =の分
+			fscanf(pFile, "%f", &param.fKnockbackSpecial);		// ノックバック(スペシャル)
+		}
 	}
 	
 	m_aLoadData[m_nNumLoad].parameterBall = param;
