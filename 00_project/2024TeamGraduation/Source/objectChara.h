@@ -101,6 +101,10 @@ public:
 	CBallStatus* GetBallStatus() { return m_pStatusBall; }										// ボールステータス取得
 	CBallStatus::SBallParameter GetBallParameter() { return m_pStatusBall->GetParameter(); }	// ボールパラメーター取得
 
+#if _DEBUG
+	void SetBallParameter(const CBallStatus::SBallParameter& parameter) { m_pStatusBall->SetParameter(parameter); }	// ボールパラメーター設定
+#endif
+
 	//--------------------------
 	// コライダー関連
 	//--------------------------
