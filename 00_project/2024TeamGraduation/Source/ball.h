@@ -159,6 +159,11 @@ private:
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
 	//--------------------------
+	// エフェクト
+	//--------------------------
+	void UpdateThrowLine();	// 投げた線の更新
+
+	//--------------------------
 	// 汎用関数
 	//--------------------------
 	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
@@ -167,12 +172,6 @@ private:
 	void UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に移動量反映
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
-
-	//--------------------------
-	// エフェクト
-	//--------------------------
-	void UpdateThrowLine();	// 投げた線の更新
-
 	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);				// プレイヤーとの当たり判定
 	CPlayer* CollisionThrowTarget(const bool bAbsLock = false);	// 投げる対象との当たり判定
 	CPlayer* CollisionPassTarget();		// パスする対象との当たり判定

@@ -260,8 +260,8 @@ HRESULT CGame::Init()
 
 	CPlayer* pUserOutLeft = CPlayer::Create
 	(
-		MyLib::Vector3(-1040.0f, 0.0f, -510.0f),	// 移動可能左位置
-		MyLib::Vector3(-1040.0f, 0.0f, 510.0f),		// 移動可能右位置
+		MyLib::Vector3(-1040.0f, 0.0f, -650.0f),	// 移動可能左位置
+		MyLib::Vector3(-1040.0f, 0.0f, 650.0f),		// 移動可能右位置
 		CGameManager::SIDE_RIGHT,					// チームサイド
 		CPlayer::EBaseType::TYPE_USER				// ベースタイプ
 	);
@@ -299,8 +299,8 @@ HRESULT CGame::Init()
 
 	CPlayer* pAIOutLeft = CPlayer::Create
 	(
-		MyLib::Vector3(1040.0f, 0.0f, 510.0f),	// 移動可能左位置
-		MyLib::Vector3(1040.0f, 0.0f, -510.0f),	// 移動可能右位置
+		MyLib::Vector3(1040.0f, 0.0f, 650.0f),	// 移動可能左位置
+		MyLib::Vector3(1040.0f, 0.0f, -650.0f),	// 移動可能右位置
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);

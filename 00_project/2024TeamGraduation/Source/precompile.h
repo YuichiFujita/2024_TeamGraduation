@@ -65,6 +65,9 @@
 #include <json.hpp>
 using json = nlohmann::json;
 
+// magic_enum
+#include "magic_enum.hpp"
+
 // Imgui
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
