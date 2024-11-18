@@ -18,13 +18,16 @@
 //==========================================================================
 std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェクトのファイル名
 {
-	"data/Effekseer/Laser01.efkefc",			// サンプルのレーザー
-	"data/Effekseer/throwLine_normal.efkefc",	// 投げた時の線(通常)
-	"data/Effekseer/throwLine_fast.efkefc",		// 投げた時の線(早い)
+	"data/Effekseer/Laser01.efkefc",					// サンプルのレーザー
+	"data/Effekseer/throwLine_normal.efkefc",			// 投げた時の線(通常)
+	"data/Effekseer/throwLine_fast.efkefc",				// 投げた時の線(早い)
 	"data/Effekseer/kamehame_chargeStart.efkefc",		// かめはめ波(開始)
-	"data/Effekseer/kamehame_aura.efkefc",		// かめはめ波(チャージ)
+	"data/Effekseer/kamehame_aura.efkefc",				// かめはめ波(チャージ)
 	"data/Effekseer/kamehame_chargeWind.efkefc",		// かめはめ波(チャージ)(風)
+	"data/Effekseer/kamehame_chargeThunder.efkefc",		// かめはめ波(チャージ)(雷)
 	"data/Effekseer/kamehame_atmosphere.efkefc",		// かめはめ波(空間オーラ)
+	"data/Effekseer/kamehame_brust.efkefc",				// かめはめ波(発射)
+	"data/Effekseer/kamehame_Flash.efkefc",				// かめはめ波(フラッシュ)
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
