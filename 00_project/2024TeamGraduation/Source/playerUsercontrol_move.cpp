@@ -33,6 +33,14 @@ CPlayerUserControlMove::CPlayerUserControlMove()
 }
 
 //==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerUserControlMove::~CPlayerUserControlMove()
+{
+
+}
+
+//==========================================================================
 // ブリンク
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)

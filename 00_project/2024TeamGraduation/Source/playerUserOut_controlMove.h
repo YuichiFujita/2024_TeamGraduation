@@ -12,13 +12,13 @@
 // インクルードファイル
 //==========================================================================
 #include "playercontrol_move.h"
+#include "bindKey.h"
 
 //==========================================================================
 // 前方宣言
 //==========================================================================
 class CPlayerUserOutControlMove;
 class CPlayerAIControlMove;
-class CBindKey;
 
 //==========================================================================
 // 外野プレイヤーコントロールクラス定義
@@ -30,8 +30,11 @@ class CPlayerUserOutControlMove : public CPlayerControlMove
 {
 public:
 
-	// コンストラクタ
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CPlayerUserOutControlMove();
+	virtual ~CPlayerUserOutControlMove() override;
 
 	//=============================
 	// オーバーライド関数
@@ -41,8 +44,8 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void BindLeftKey(CBindKey* pKey)	{ m_pLeftKey = pKey; }	// 左移動キー割当
-	void BindRightKey(CBindKey* pKey)	{ m_pRightKey = pKey; }	// 右移動キー割当
+	void BindLeftKey(CBindKey* pKey)	{ SAFE_DELETE(m_pLeftKey);	m_pLeftKey = pKey; }	// 左移動キー割当
+	void BindRightKey(CBindKey* pKey)	{ SAFE_DELETE(m_pRightKey);	m_pRightKey = pKey; }	// 右移動キー割当
 
 private:
 

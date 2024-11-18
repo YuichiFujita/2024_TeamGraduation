@@ -13,10 +13,6 @@
 #include "playerAction.h"
 #include "playerBase.h"
 #include "playerUserOut.h"
-#include "bindKey.h"
-
-// TODO:いらない
-#include "3D_effect.h"
 
 //==========================================================================
 // 定数定義
@@ -38,6 +34,16 @@ CPlayerUserOutControlMove::CPlayerUserOutControlMove() :
 	m_pRightKey	(nullptr)	// 右移動キー情報
 {
 
+}
+
+//==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerUserOutControlMove::~CPlayerUserOutControlMove()
+{
+	// 左右移動キーの破棄
+	SAFE_DELETE(m_pLeftKey);
+	SAFE_DELETE(m_pRightKey);
 }
 
 //==========================================================================
@@ -68,7 +74,6 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 	if (fInputInterval <= 0.0f)
 	{ // 猶予受け付けが終了中の場合
 
-		// TODO：プレイヤーから見た左右に変更
 		bool bInput = false;
 		if (m_pLeftKey->IsTrigger())
 		{ // 左移動キーが押された場合
@@ -92,22 +97,6 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 			fInputInterval = INTERVAL_INPUT;
 		}
 	}
-
-#if 0
-	//----------------------------------------------------------------------
-	//	第二入力の受付
-	//----------------------------------------------------------------------
-	//CPlayer::SDashInfo infoDash;	// ダッシュ情報
-	if (fInputInterval > 0.0f && fInputInterval != INTERVAL_INPUT)
-	{ // 受け付け猶予中の場合
-
-		// ブリンクかの判定
-		infoDash = Trigger(player, holdDashAngle);
-			
-		// 受け付け猶予の終了
-		fInputInterval = 0.0f;
-	}
-#endif
 
 	// ダッシュ方向の反映
 	SetHoldDashAngle(holdDashAngle);

@@ -34,6 +34,14 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 }
 
 //==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerAIControlMove::~CPlayerAIControlMove()
+{
+
+}
+
+//==========================================================================
 // ダッシュ
 //==========================================================================
 void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
