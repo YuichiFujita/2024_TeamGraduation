@@ -72,7 +72,8 @@ namespace
 	};
 
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
-	const float JUST_VIEW = 90.0f;	//ジャストキャッチ時の方向ゆとり(左右1/8π)
+	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
+	const float HAVE_LONG = 10.0f;				// 持ち続けている
 }
 
 namespace Knockback
@@ -227,6 +228,7 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
 
 	// その他
+	m_fHaveTime = 0.0f;				// ボール所持タイマー
 	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
 	m_pShadow = nullptr;			// 影の情報
 	m_pBall = nullptr;				// ボールの情報
@@ -551,6 +553,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	{
 		m_pShadow->SetPosition(MyLib::Vector3(pos.x, m_pShadow->GetPosition().y, pos.z));
 	}
+
+	// 非モテまとめ
+	UnCharm(fDeltaTime, fDeltaRate, fSlowRate);
 
 #if _DEBUG	// デバッグ処理
 
@@ -1743,6 +1748,43 @@ void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, cons
 		m_pDressup_Accessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+}
+
+//==========================================================================
+// 非モテまとめ
+//==========================================================================
+void CPlayer::UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 端に逃げまくる
+
+	// 持ち続け
+	LongHold(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 持ち続けている判定
+//==========================================================================
+void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_pBall == nullptr)
+	{// リセット
+		m_fHaveTime = 0.0f;
+		return;
+	}
+
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	// 加算
+	m_fHaveTime += fDeltaTime * fDeltaRate * fSlowRate;
+	int nTime = static_cast<int>(m_fHaveTime * 1000);
+	int nLong = static_cast<int>(HAVE_LONG * 1000);
+
+	if (nTime % nLong == 0)
+	{// モテダウン
+
+		// モテ減算
+		pGameMgr->SubCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeSub::SUB_LONG_HOLD);
+	}
 }
 
 //==========================================================================
