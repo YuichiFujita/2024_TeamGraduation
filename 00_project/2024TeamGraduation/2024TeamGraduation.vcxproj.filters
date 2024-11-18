@@ -117,6 +117,9 @@
     <Filter Include="player\playerUser\KeyBind">
       <UniqueIdentifier>{92a68277-d5e9-45d5-baef-86966dc6b975}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{caca10ce-3011-4bf4-8616-198608012864}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -589,6 +592,12 @@
     </ClCompile>
     <ClCompile Include="Source\playerAIOut_controlMove.cpp">
       <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\shader.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\shaderMono.cpp">
+      <Filter>shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1075,5 +1084,16 @@
     <ClInclude Include="Source\playerAIOut_controlMove.h">
       <Filter>player\playerAI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\shader.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\shaderMono.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="data\SHADER\shaderMono.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

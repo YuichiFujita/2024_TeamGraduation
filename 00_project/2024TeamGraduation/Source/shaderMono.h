@@ -1,49 +1,51 @@
 //============================================================
 //
-//	スクリーンヘッダー [screen.h]
+//	単色描画シェーダーヘッダー [shaderMono.h]
 //	Author：藤田勇一
 //
 //============================================================
 //************************************************************
 //	二重インクルード防止
 //************************************************************
-#ifndef _SCREEN_H_
-#define _SCREEN_H_
+#ifndef _SHADER_STENCIL_H_
+#define _SHADER_STENCIL_H_
 
 //************************************************************
 //	インクルードファイル
 //************************************************************
-#include "object2D.h"
+#include "shader.h"
 
 //************************************************************
 //	クラス定義
 //************************************************************
-// スクリーンクラス
-class CScreen : public CObject2D
+// 単色描画シェーダークラス
+class CMonoShader : public CShader
 {
 public:
 	// コンストラクタ
-	CScreen();
+	CMonoShader();
 
 	// デストラクタ
-	~CScreen();
+	~CMonoShader() override;
 
 	// オーバーライド関数
 	HRESULT Init() override;	// 初期化
 	void Uninit() override;		// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	void Draw() override;		// 描画
-
-	// 静的メンバ関数
-	static CScreen* Create(const int nScreenTexIdx);	// 生成
 
 	// メンバ関数
-	void SetEnableShader(const bool bShader)	{ m_bShader = bShader; }	// シェーダー設定
-	bool IsShader() const						{ return m_bShader; }		// シェーダー取得
+	void SetColor(const D3DXCOLOR& rCol);	// ピクセル描画色の設定
+
+	// 静的メンバ関数
+	static CMonoShader* Create();		// 生成
+	static CMonoShader* GetInstance();	// 取得
+	static void Release();				// 破棄
 
 private:
+	// 静的メンバ変数
+	static CMonoShader* m_pShader;	// シェーダー情報
+
 	// メンバ変数
-	bool m_bShader;	// シェーダーフラグ
+	D3DXHANDLE m_pColDraw;	// ピクセル描画色
 };
 
-#endif	// _SCREEN_H_
+#endif	// _SHADER_STENCIL_H_

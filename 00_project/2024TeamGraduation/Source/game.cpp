@@ -442,6 +442,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			else	 { pHeadPlayer->ChangeBase(CPlayer::TYPE_AI); }
 		}
 
+		if (ImGui::Button("Shader : Change"))
+		{
+			// シェーダーフラグの反転
+			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader());
+		}
+
 		if (ImGui::Button("Camera : Swing"))
 		{
 			// カメラを適当に揺らす

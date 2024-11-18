@@ -301,6 +301,8 @@
     <ClCompile Include="Source\sample_objX.cpp" />
     <ClCompile Include="Source\scene.cpp" />
     <ClCompile Include="Source\screen.cpp" />
+    <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
     <ClCompile Include="Source\specialEffect.cpp" />
@@ -464,6 +466,8 @@
     <ClInclude Include="Source\sample_objX.h" />
     <ClInclude Include="Source\scene.h" />
     <ClInclude Include="Source\screen.h" />
+    <ClInclude Include="Source\shader.h" />
+    <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
     <ClInclude Include="Source\specialEffect.h" />
@@ -482,6 +486,12 @@
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
     <ClInclude Include="Source\Xload.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="data\SHADER\shaderMono.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
