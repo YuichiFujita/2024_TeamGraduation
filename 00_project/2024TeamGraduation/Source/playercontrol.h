@@ -25,20 +25,16 @@ class CPlayerControl
 {
 public:
 
-	// コンストラクタ
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CPlayerControl();
+	virtual ~CPlayerControl() = 0;
 
-	void SetPattern(CPlayer* player, CPlayer::EMotion typeM, CPlayer::EAction typeA);
-
-private:
-	
 	//=============================
 	// メンバ関数
 	//=============================
-
-	//=============================
-	// メンバ変数
-	//=============================
+	void SetPattern(CPlayer* player, CPlayer::EMotion typeM, CPlayer::EAction typeA);	// アクション＆モーションの一括設定
 };
 
 #endif

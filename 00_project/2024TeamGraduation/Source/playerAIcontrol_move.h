@@ -30,8 +30,11 @@ class CPlayerAIControlMove : public CPlayerControlMove
 {
 public:
 
-	// コンストラクタ
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CPlayerAIControlMove();
+	~CPlayerAIControlMove();
 
 	void SetIsBlink(bool bBlink) { m_bBlink = bBlink; }
 	void SetIsDash(bool bDash) { m_bDash = bDash; }
