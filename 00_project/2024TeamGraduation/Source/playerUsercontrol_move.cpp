@@ -240,7 +240,7 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 
 	// 受け付け猶予減算
 	float oldTime = fInputInterval;
-	fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	fInputInterval -= fDeltaTime * fSlowRate;
 	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
 
 	// 入力の受け付け猶予設定
@@ -297,7 +297,7 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 	float fTriggerInterval = GetTriggerInterval();
 
 	// トリガーの猶予減らしていく
-	fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	fTriggerInterval -= fDeltaTime * fSlowRate;
 	if (fTriggerInterval <= 0.0f)
 	{
 		// トリガーのカウントリセット
@@ -553,20 +553,14 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	// 現在の入力方向カウンター
 	float fInputAngleCtr = GetInputAngleCtr();
-	fInputAngleCtr -= fDeltaTime, fDeltaRate, fSlowRate;
+	fInputAngleCtr -= fDeltaTime * fSlowRate;
 	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
 	SetInputAngleCtr(fInputAngleCtr);
 
 	// 現在の入力方向
 	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
-	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
-	{
-		delete pInputAngle;
-		pInputAngle = nullptr;
-	}
-	SetInputAngle(pInputAngle);
 
-	CPlayer::EDashAngle eAngle;
+	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;
 
 	// プレイヤー番号取得
@@ -576,15 +570,15 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// 左右
 	//--------------------------
 	// スティック
-	bool bStick = 
+	bool bStick =
 		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y) ||
 		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
-	
+
 	// 方向キー
 	bool bAngleKey =
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx);
 
 	// WASD
@@ -692,6 +686,18 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		}
 	}
 
+	// 現在の入力方向
+	if (pInputAngle != nullptr)
+	{
+		if (*pInputAngle != eAngle || !bInput)
+		{
+			// 移動割合0に
+			float fCrabMoveEasingTime = GetCrabMoveEasingTime();
+			fCrabMoveEasingTime = 0.0f;
+			SetCrabMoveEasingTime(fCrabMoveEasingTime);
+		}
+	}
+
 	if (!bInput)
 	{
 		// 移動しない
@@ -751,6 +757,11 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	player->SetMotionFrag(motionFrag);
 
 	// 現在の入力方向設定
+	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
+	{
+		delete pInputAngle;
+		pInputAngle = nullptr;
+	}
 	if (pInputAngle == nullptr)
 	{
 		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
@@ -767,7 +778,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	if (player->GetBase()->IsCrab() &&
 		(player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
 		player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT))
-		{// カニ歩き時 サイドステップ時のみ
+	{// カニ歩き時 サイドステップ時のみ
 		// 移動割合更新
 		UpdateCrabMoveEasingTime(fDeltaTime, fDeltaRate, fSlowRate);
 	}
