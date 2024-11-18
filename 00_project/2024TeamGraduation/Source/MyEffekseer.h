@@ -42,7 +42,10 @@ public:
 		EFKLABEL_CAMEHAME_ENERGY,		// かめはめ波エネルギー部分
 		EFKLABEL_CAMEHAME_CHARGE,		// かめはめ波(チャージ)
 		EFKLABEL_CAMEHAME_CHARGE_WIND,	// かめはめ波(チャージ)(風)
+		EFKLABEL_CAMEHAME_CHARGE_THUNDER,	// かめはめ波(チャージ)(雷)
 		EFKLABEL_CAMEHAME_ATMOSPHERE,	// かめはめ波(空間オーラ)
+		EFKLABEL_CAMEHAME_BRUST,		// かめはめ波(発射)
+		EFKLABEL_CAMEHAME_FLASH,		// かめはめ波(フラッシュ)
 		EFKLABEL_MAX
 	};
 	

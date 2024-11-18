@@ -122,30 +122,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// ダメージを受ける場合はフラグをONにする
 	hitInfo.bHit = true;
 
-	// ダメージを与える
-	pStatus->LifeDamage(pBall->GetDamage());
-
-	if (m_pPlayer->GetLife() <= 0)
-	{
-		// 終活
-		m_pPlayer->DeadSetting(&hitresult, pBall);
-	}
-	else
-	{
-		// ダメージ状態にする
-		m_pPlayer->DamageSetting(pBall);
-	}
-
-	// ゲームマネージャ取得
-	CGameManager* pGameMgr = CGameManager::GetInstance();
-	if (pGameMgr == nullptr) return hitInfo;
-
-	// モテ加算(ボール投げた側)
-	pGameMgr->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
-
-	// スペシャル加算
-	pGameMgr->AddSpecialValue(sideBall, CSpecialValueManager::ETypeAdd::ADD_HIT);
-
 	return hitInfo;
 }
 

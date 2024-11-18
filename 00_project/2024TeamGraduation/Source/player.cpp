@@ -29,10 +29,8 @@
 #include "specialEffect.h"
 
 // 派生先
-#include "playerAI.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
-#include "playerUser.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
 
@@ -350,12 +348,16 @@ CPlayer* CPlayer::Create
 		}
 		case EBaseType::TYPE_AI:
 		{
-			// ユーザー外野プレイヤー情報の取得
-			CPlayerAIOut* pBase = pPlayer->GetBase()->GetPlayerAIOut();
+			// 外野プレイヤー情報の取得
+			CPlayerOut* pBase = pPlayer->GetBase()->GetPlayerOut();
 
 			// 左右位置の設定
 			pBase->SetPosLeft(rPosLeft);
 			pBase->SetPosRight(rPosRight);
+
+			// 左右操作の破棄
+			SAFE_DELETE(pKeyLeft);
+			SAFE_DELETE(pKeyRight);
 
 			// 初期位置を設定
 			pBase->InitPosition(VEC3_ZERO);
@@ -532,6 +534,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	{
 		MotionSet(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// モーション別更新処理
+	UpdateByMotion(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// アクション更新
 	if (m_pActionPattern != nullptr)
@@ -869,6 +874,28 @@ void CPlayer::ResetFrag()
 }
 
 //==========================================================================
+// モーション別更新処理
+//==========================================================================
+void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	int nType = pMotion->GetType();
+
+	switch (nType)
+	{
+	case EMotion::MOTION_SPECIAL:	// スペシャル
+
+		// 更新処理
+		m_pSpecialEffect->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		break;
+
+	default:
+		break;
+	}
+}
+
+//==========================================================================
 // 攻撃時処理
 //==========================================================================
 void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
@@ -936,6 +963,8 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_SPECIAL:
+
+		// トリガー処理
 		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
 		break;
 
@@ -976,6 +1005,8 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_SPECIAL:
+
+		// 進行中処理
 		m_pSpecialEffect->ProgressMoment(ATKInfo, nCntATK);
 		break;
 
@@ -1900,8 +1931,8 @@ void CPlayer::ChangeBase(EBaseType type)
 CPlayer::EBaseType CPlayer::GetBaseType() const
 {
 	// クラス型からベースを判定
-	if		(typeid(*m_pBase) == typeid(CPlayerUser))	{ return TYPE_USER; }
-	else if	(typeid(*m_pBase) == typeid(CPlayerAI))		{ return TYPE_AI; }
+	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
+	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
 
 	// ベース指定なし
 	assert(false);

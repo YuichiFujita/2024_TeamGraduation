@@ -382,7 +382,7 @@ void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, co
 void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CPlayerBase* pBase = player->GetBase();						// プレイヤーベース情報
-	CPlayerUserOut* pPlayerOut = pBase->GetPlayerUserOut();		// プレイヤー外野情報
+	CPlayerOut* pPlayerOut = pBase->GetPlayerOut();				// プレイヤー外野情報
 	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();			// 移動可能な左位置
 	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();		// 移動可能な右位置
 	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
