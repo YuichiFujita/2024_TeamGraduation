@@ -559,14 +559,8 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	// 現在の入力方向
 	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
-	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
-	{
-		delete pInputAngle;
-		pInputAngle = nullptr;
-	}
-	SetInputAngle(pInputAngle);
 
-	CPlayer::EDashAngle eAngle;
+	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;
 
 	// プレイヤー番号取得
@@ -576,15 +570,15 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// 左右
 	//--------------------------
 	// スティック
-	bool bStick = 
+	bool bStick =
 		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y) ||
 		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
-	
+
 	// 方向キー
 	bool bAngleKey =
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) || 
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx);
 
 	// WASD
@@ -692,6 +686,18 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		}
 	}
 
+	// 現在の入力方向
+	if (pInputAngle != nullptr)
+	{
+		if (*pInputAngle != eAngle || !bInput)
+		{
+			// 移動割合0に
+			float fCrabMoveEasingTime = GetCrabMoveEasingTime();
+			fCrabMoveEasingTime = 0.0f;
+			SetCrabMoveEasingTime(fCrabMoveEasingTime);
+		}
+	}
+
 	if (!bInput)
 	{
 		// 移動しない
@@ -751,6 +757,11 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	player->SetMotionFrag(motionFrag);
 
 	// 現在の入力方向設定
+	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
+	{
+		delete pInputAngle;
+		pInputAngle = nullptr;
+	}
 	if (pInputAngle == nullptr)
 	{
 		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;

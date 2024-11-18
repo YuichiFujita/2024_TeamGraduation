@@ -101,11 +101,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	{
 		CrabSetting(player);
 	}
-	else
-	{
-		// ˆÚ“®Š„‡0‚É
-		m_fCrabMoveEasingTime = 0.0f;
-	}
+
 #endif
 }
 

@@ -1914,12 +1914,14 @@ void CPlayer::Debug()
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
+		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
+		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
 		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
 
 #if 0
