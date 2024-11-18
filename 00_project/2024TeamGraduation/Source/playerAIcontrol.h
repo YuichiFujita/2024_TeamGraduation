@@ -129,7 +129,9 @@ private:
 
 	struct SLearn	// 学習
 	{
-		float fDistance;	// 距離感
+		float fDistanceIN;		// 内野にいる相手との距離
+		float fDistanceOUT;		// 外野にいる相手との距離
+		float fDistanceLine;	// 中央線との距離
 	};
 
 public:
@@ -203,9 +205,8 @@ private:
 	//-----------------------------
 	// その他関数
 	//-----------------------------
-	void SetThrowTarget(CPlayer** ppTarget = nullptr);		// 投げるターゲット
-	void DistanceLeaveCatch();		// キャッチ距離(離れる)
-	void DistanceApproachCatch();	// キャッチ距離(近づく)
+	CPlayer* GetThrowTarget();		// 投げるターゲット
+	CPlayer* GetCatchTarget();		// 投げるターゲット
 
 	void Throw();
 
@@ -213,7 +214,10 @@ private:
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
 	void PlanThrowDistance(CPlayer* pTarget);	// 投げる距離プラン
-	void PlanDistance(CPlayer* pTarget);	//
+	void CatchDistance(CPlayer* pTarget);	//
+	void CatchOutDistance();
+	void CatchLineLeftDistance();
+
 	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);	// 行動プラン
 
@@ -237,10 +241,12 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	SInfo m_sInfo;		// モード情報
 	CPlayer* m_pAI;			// 自分自身
 
-	float m_fDistance;			// ターゲットとの距離
+	SInfo m_sInfo;		// モード情報
+	SLearn m_sLearn;
+
+
 	bool m_bStart;
 	bool m_bEnd;
 };
