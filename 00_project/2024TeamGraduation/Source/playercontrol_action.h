@@ -50,7 +50,7 @@ protected:
 	//=============================
 	void ThrowSetting(CPlayer* player);
 	void JumpSetting(CPlayer* player);
-	void JumpFloat(CPlayer* player);	// ジャンプ上昇
+	virtual void JumpFloat(CPlayer* player);	// ジャンプ上昇
 	void SpecialSetting(CPlayer* player, CBall* pBall, CTeamStatus* pTeamStatus);		// スペシャル発動
 
 private:
