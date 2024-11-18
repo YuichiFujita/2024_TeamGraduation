@@ -294,6 +294,8 @@ CPlayer* CPlayer::Create
 (
 	const MyLib::Vector3& rPosLeft,		// 移動左位置
 	const MyLib::Vector3& rPosRight,	// 移動右位置
+	CBindKey* pKeyLeft,					// 左移動キー
+	CBindKey* pKeyRight,				// 右移動キー
 	CGameManager::ETeamSide team,		// チームサイド
 	EBaseType basetype,					// ベースタイプ
 	EBody bodytype,						// 体系
@@ -335,6 +337,10 @@ CPlayer* CPlayer::Create
 			// 左右位置の設定
 			pBase->SetPosLeft(rPosLeft);
 			pBase->SetPosRight(rPosRight);
+
+			// 左右操作の割当
+			pBase->BindLeftKey(pKeyLeft);
+			pBase->BindRightKey(pKeyRight);
 
 			// 初期位置を設定
 			pBase->InitPosition(VEC3_ZERO);

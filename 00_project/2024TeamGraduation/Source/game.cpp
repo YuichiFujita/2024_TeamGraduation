@@ -36,6 +36,13 @@
 // TODO：デバッグ、後で消しますいらないので
 #include "specialManager.h"
 #include "gymWallManager.h"
+
+// TODO：外野操作割り当て用、生成場所を変更したら消す
+#include "bindKeyFront.h"
+#include "bindKeyBack.h"
+#include "bindKeyLeft.h"
+#include "bindKeyRight.h"
+
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
@@ -245,11 +252,13 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(左)
-#if 0
+#if 1
 	CPlayer* pUserOutFar = CPlayer::Create
 	(
 		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(-50.0f, 0.0f, 650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyLeft,					// 左移動キー
+		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -262,6 +271,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-1040.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(-1040.0f, 0.0f, 650.0f),		// 移動可能右位置
+		DEBUG_NEW CBindKeyBack,						// 左移動キー
+		DEBUG_NEW CBindKeyFront,					// 右移動キー
 		CGameManager::SIDE_RIGHT,					// チームサイド
 		CPlayer::EBaseType::TYPE_USER				// ベースタイプ
 	);
@@ -274,6 +285,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-50.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(-900.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyRight,				// 左移動キー
+		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -289,6 +302,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(50.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(900.0f, 0.0f, 650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyLeft,					// 左移動キー
+		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -301,6 +316,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(1040.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(1040.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyFront,				// 左移動キー
+		DEBUG_NEW CBindKeyBack,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -313,6 +330,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(900.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(50.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyRight,				// 左移動キー
+		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);

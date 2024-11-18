@@ -31,7 +31,7 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
+	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
 	virtual bool IsCrab() override { return false; }					// カニ歩き判定
 	virtual void InitPosition(const MyLib::Vector3& rPos) override;		// 位置初期化
 

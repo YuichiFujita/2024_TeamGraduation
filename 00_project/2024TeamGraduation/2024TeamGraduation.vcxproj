@@ -176,6 +176,11 @@
     <ClCompile Include="Source\audienceLowPoly.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\ballStatus.cpp" />
+    <ClCompile Include="Source\bindKey.cpp" />
+    <ClCompile Include="Source\bindKeyBack.cpp" />
+    <ClCompile Include="Source\bindKeyFront.cpp" />
+    <ClCompile Include="Source\bindKeyLeft.cpp" />
+    <ClCompile Include="Source\bindKeyRight.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
@@ -333,6 +338,11 @@
     <ClInclude Include="Source\audienceLowPoly.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\ballStatus.h" />
+    <ClInclude Include="Source\bindKey.h" />
+    <ClInclude Include="Source\bindKeyBack.h" />
+    <ClInclude Include="Source\bindKeyFront.h" />
+    <ClInclude Include="Source\bindKeyLeft.h" />
+    <ClInclude Include="Source\bindKeyRight.h" />
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />

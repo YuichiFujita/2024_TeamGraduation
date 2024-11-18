@@ -28,8 +28,11 @@ class CPlayerUserControlMove : public CPlayerControlMove
 {
 public:
 
-	// コンストラクタ
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CPlayerUserControlMove();
+	~CPlayerUserControlMove();
 
 	//=============================
 	// 仮想関数
