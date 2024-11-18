@@ -13,8 +13,9 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CPlayerUserControlMove;
 class CPlayerAIControlMove;
+class CPlayerUserControlMove;
+class CPlayerUserOutControlMove;
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -33,8 +34,10 @@ public:
 	//=============================
 	// 純粋仮想関数
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
-	virtual CPlayerUserControlMove* GetUser() { return nullptr; }
+	virtual CPlayerAIControlMove* GetAI()			{ return nullptr; }
+	//virtual CPlayerAIOutControlMove* GetAIOut()		{ return nullptr; }
+	virtual CPlayerUserControlMove* GetUser()		{ return nullptr; }
+	virtual CPlayerUserOutControlMove* GetUserOut()	{ return nullptr; }
 
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
 

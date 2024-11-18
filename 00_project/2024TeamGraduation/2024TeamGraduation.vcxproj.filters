@@ -114,6 +114,9 @@
     <Filter Include="ingame\special\effect">
       <UniqueIdentifier>{94e9b15e-3c0c-4857-a428-be477f6cd51b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerUser\KeyBind">
+      <UniqueIdentifier>{92a68277-d5e9-45d5-baef-86966dc6b975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -568,6 +571,21 @@
     </ClCompile>
     <ClCompile Include="Source\specialEffect_kamehameha.cpp">
       <Filter>ingame\special\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKey.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyFront.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyBack.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyLeft.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyRight.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1035,6 +1053,21 @@
     </ClInclude>
     <ClInclude Include="Source\specialEffect_kamehameha.h">
       <Filter>ingame\special\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKey.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyFront.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyBack.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyLeft.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyRight.h">
+      <Filter>player\playerUser\KeyBind</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

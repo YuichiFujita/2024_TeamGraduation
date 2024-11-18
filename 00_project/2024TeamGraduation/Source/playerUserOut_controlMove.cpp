@@ -13,6 +13,7 @@
 #include "playerAction.h"
 #include "playerBase.h"
 #include "playerUserOut.h"
+#include "bindKey.h"
 
 // TODO:いらない
 #include "3D_effect.h"
@@ -32,7 +33,9 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserOutControlMove::CPlayerUserOutControlMove()
+CPlayerUserOutControlMove::CPlayerUserOutControlMove() :
+	m_pLeftKey	(nullptr),	// 左移動キー情報
+	m_pRightKey	(nullptr)	// 右移動キー情報
 {
 
 }
@@ -54,10 +57,6 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 //==========================================================================
 void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// インプット情報の取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
-	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
-
 	// コントロール系の取得
 	CPlayer::EDashAngle holdDashAngle = GetHoldDashAngle();	// ダッシュ方向
 	float fInputInterval = GetInputInterval();	// 入力の受け付け猶予
@@ -71,14 +70,18 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 
 		// TODO：プレイヤーから見た左右に変更
 		bool bInput = false;
-		if (pKey->GetTrigger(DIK_A))
-		{
-			holdDashAngle = CPlayer::EDashAngle::ANGLE_LEFT;
+		if (m_pLeftKey->IsTrigger())
+		{ // 左移動キーが押された場合
+
+			// 割り当てられたキーの方向を取得
+			holdDashAngle = m_pLeftKey->GetAngle();
 			bInput = true;
 		}
-		else if (pKey->GetTrigger(DIK_D))
-		{
-			holdDashAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
+		else if (m_pRightKey->IsTrigger())
+		{ // 右移動キーが押された場合
+
+			// 割り当てられたキーの方向を取得
+			holdDashAngle = m_pRightKey->GetAngle();
 			bInput = true;
 		}
 
@@ -90,10 +93,11 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 		}
 	}
 
+#if 0
 	//----------------------------------------------------------------------
 	//	第二入力の受付
 	//----------------------------------------------------------------------
-	CPlayer::SDashInfo infoDash;	// ダッシュ情報
+	//CPlayer::SDashInfo infoDash;	// ダッシュ情報
 	if (fInputInterval > 0.0f && fInputInterval != INTERVAL_INPUT)
 	{ // 受け付け猶予中の場合
 
@@ -103,6 +107,7 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 		// 受け付け猶予の終了
 		fInputInterval = 0.0f;
 	}
+#endif
 
 	// ダッシュ方向の反映
 	SetHoldDashAngle(holdDashAngle);
@@ -110,6 +115,7 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 	//----------------------------------------------------------------------
 	//	受付猶予時間の経過
 	//----------------------------------------------------------------------
+	CPlayer::SDashInfo infoDash;		// ダッシュ情報
 	float fOldTime = fInputInterval;	// 過去の受付猶予時間 
 
 	// 受け付け猶予の減算
@@ -359,11 +365,7 @@ void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, co
 	bool bDash = IsBlink();	// ダッシュフラグ
 	if (!bDash) { return; }	// ダッシュしていない場合抜ける
 
-	// インプット情報の取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
-	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
-
-	bool bKeyInput = (pKey->GetPress(DIK_A) || pKey->GetPress(DIK_D));	// キー入力検知
+	bool bKeyInput = (m_pLeftKey->IsPress() || m_pRightKey->IsPress());	// キー入力検知
 	if (!bKeyInput)
 	{ // 移動入力が検知されなかった場合
 
@@ -397,27 +399,7 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
 	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
 
-	// 現在の入力方向カウンター
-	float fInputAngleCtr = GetInputAngleCtr();
-	fInputAngleCtr -= fDeltaTime * fSlowRate;
-	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
-	SetInputAngleCtr(fInputAngleCtr);
-
-	// 現在の入力方向
-	CPlayer::EDashAngle eAngle;
-	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
-	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
-	{
-		delete pInputAngle;
-		pInputAngle = nullptr;
-	}
-	SetInputAngle(pInputAngle);
-
-	// インプット情報の取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
-	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
-
-	bool bKeyInput = (pKey->GetTrigger(DIK_A) || pKey->GetTrigger(DIK_D));	// キー入力検知
+	bool bKeyInput = (m_pLeftKey->IsTrigger() || m_pRightKey->IsTrigger());	// キー入力検知
 	if (!flagMotion.bMove && bKeyInput)
 	{ // 移動してない且つ、入力を検知した場合
 
@@ -435,18 +417,14 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	fMoveValue *= fDeltaRate * fSlowRate;	// 経過時間乗算
 
 	// 移動操作
-	if (pKey->GetPress(DIK_A))
+	if (m_pLeftKey->IsPress())
 	{ // 左移動が検知された場合
-
-		eAngle = CPlayer::EDashAngle::ANGLE_LEFT;
 
 		// ベクトル逆方向に移動量を与える
 		playerMove += -vecMove * fMoveValue;
 	}
-	else if (pKey->GetPress(DIK_D))
+	else if (m_pRightKey->IsPress())
 	{ // 右移動が検知された場合
-
-		eAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
 
 		// ベクトル方向に移動量を与える
 		playerMove += vecMove * fMoveValue;
@@ -464,14 +442,6 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 
 	// 移動中にする
 	flagMotion.bMove = true;
-
-	// 現在の入力方向設定
-	if (pInputAngle == nullptr)
-	{
-		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
-	}
-	*pInputAngle = eAngle;
-	SetInputAngle(pInputAngle);
 
 	// モーションフラグ反映
 	player->SetMotionFrag(flagMotion);

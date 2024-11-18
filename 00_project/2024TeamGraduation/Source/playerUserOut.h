@@ -12,6 +12,12 @@
 // インクルードファイル
 //==========================================================================
 #include "playerUser.h"
+#include "playerUserOut_controlMove.h"
+
+//==========================================================================
+// 前方宣言
+//==========================================================================
+class CBindKey;
 
 //==========================================================================
 // クラス定義
@@ -37,6 +43,8 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
+	void BindLeftKey(CBindKey* pKey) { GetPlayerControlMove()->GetUserOut()->BindLeftKey(pKey); }	// 左移動キー割当
+	void BindRightKey(CBindKey* pKey) { GetPlayerControlMove()->GetUserOut()->BindRightKey(pKey); }	// 右移動キー割当
 	void SetPosLeft(const MyLib::Vector3& rPosLeft)		{ m_posLeft = rPosLeft; }	// 移動可能な左位置の設定
 	void SetPosRight(const MyLib::Vector3& rPosRight)	{ m_posRight = rPosRight; }	// 移動可能な右位置の設定
 	MyLib::Vector3 GetPosLeft()	 { return m_posLeft; }	// 移動可能な左位置の取得
