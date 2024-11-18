@@ -1121,8 +1121,8 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 	MyLib::Vector3 posS = GetPosition();
 	MyLib::Vector3 posE = posS;
-	posE.x += vecBall.x * Knockback::DEAD;
-	posE.z += vecBall.z * Knockback::DEAD;
+	posE.x += vecBall.x * Knockback::DEAD * pBall->GetDamage();
+	posE.z += vecBall.z * Knockback::DEAD * pBall->GetDamage();
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
@@ -1143,8 +1143,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 	MyLib::Vector3 posS = GetPosition();	//始点
 	MyLib::Vector3 posE = posS;				//終点
-	posE.x += vecBall.x * Knockback::DAMAGE;
-	posE.z += vecBall.z * Knockback::DAMAGE;
+	posE.x += vecBall.x * Knockback::DAMAGE * pBall->GetDamage();
+	posE.z += vecBall.z * Knockback::DAMAGE * pBall->GetDamage();
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
@@ -1920,12 +1920,14 @@ void CPlayer::Debug()
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
+		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
+		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
 		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
 
 #if 0
