@@ -353,6 +353,10 @@ CPlayer* CPlayer::Create
 			pBase->SetPosLeft(rPosLeft);
 			pBase->SetPosRight(rPosRight);
 
+			// 左右操作の破棄
+			SAFE_DELETE(pKeyLeft);
+			SAFE_DELETE(pKeyRight);
+
 			// 初期位置を設定
 			pBase->InitPosition(VEC3_ZERO);
 			break;

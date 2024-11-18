@@ -31,6 +31,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;		// ヒット
 	virtual CPlayerIn* GetPlayerIn() override { return this; }	// 外野プレイヤー取得
 
 	//=============================

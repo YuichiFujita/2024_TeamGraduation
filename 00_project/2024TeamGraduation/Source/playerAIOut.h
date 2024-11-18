@@ -31,6 +31,8 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
+	virtual void Debug() override;							// デバッグ
 	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
 };
 

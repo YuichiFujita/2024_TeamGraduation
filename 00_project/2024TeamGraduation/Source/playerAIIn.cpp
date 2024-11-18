@@ -105,26 +105,6 @@ void CPlayerAIIn::Update(const float fDeltaTime, const float fDeltaRate, const f
 }
 
 //==========================================================================
-// ヒット
-//==========================================================================
-CPlayer::SHitInfo CPlayerAIIn::Hit(CBall* pBall)
-{
-	// 基底クラスのヒット
-	CPlayer::SHitInfo hitInfo = CPlayerIn::Hit(pBall);	// ヒット情報
-
-	if (hitInfo.eHit == CPlayer::EHit::HIT_NONE) { // 通常状態
-		return hitInfo;
-	}
-
-	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
-		// 投げモード
-		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
-	}
-
-	return hitInfo;
-}
-
-//==========================================================================
 // カニ歩きモーション設定
 //==========================================================================
 void CPlayerAIIn::MotionCrab(int nStartKey)
@@ -248,6 +228,26 @@ void CPlayerAIIn::MotionCrab(int nStartKey)
 
 	// モーション設定
 	GetPlayer()->SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
+}
+
+//==========================================================================
+// ヒット
+//==========================================================================
+CPlayer::SHitInfo CPlayerAIIn::Hit(CBall* pBall)
+{
+	// 基底クラスのヒット
+	CPlayer::SHitInfo hitInfo = CPlayerIn::Hit(pBall);	// ヒット情報
+
+	if (hitInfo.eHit == CPlayer::EHit::HIT_NONE) { // 通常状態
+		return hitInfo;
+	}
+
+	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
+		// 投げモード
+		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
+	}
+
+	return hitInfo;
 }
 
 //==========================================================================

@@ -5,6 +5,7 @@
 // 
 //==========================================================================
 #include "playerIn.h"
+#include "playerStatus.h"
 
 // 使用クラス
 #include "playercontrol_move.h"
@@ -45,6 +46,46 @@ void CPlayerIn::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	// 操作クラスの反映
 	SetPlayerControlMove(pControlMove);
 	SetPlayerControlAction(pControlAction);
+}
+
+//==========================================================================
+// ヒット
+//==========================================================================
+CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
+{
+	// 基底クラスのヒット
+	CPlayer::SHitInfo hitInfo = CPlayerBase::Hit(pBall);	// ヒット情報
+
+	// ダメージを受けていない場合は抜ける
+	if (!hitInfo.bHit) { return hitInfo; }
+
+	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
+	CPlayer* pPlayer = GetPlayer();								// プレイヤー情報
+	CPlayerStatus* pStatus = pPlayer->GetStatus();				// ステータス情報
+	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー情報
+	MyLib::HitResult_Character hitresult = {};					// 衝突情報
+
+	// ダメージを与える
+	pStatus->LifeDamage(pBall->GetDamage());
+
+	if (pPlayer->GetLife() <= 0)
+	{
+		// 終活
+		pPlayer->DeadSetting(&hitresult, pBall);
+	}
+	else
+	{
+		// ダメージ状態にする
+		pPlayer->DamageSetting(pBall);
+	}
+
+	// モテ加算(ボール投げた側)
+	pGameManager->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
+
+	// スペシャル加算
+	pGameManager->AddSpecialValue(sideBall, CSpecialValueManager::ETypeAdd::ADD_HIT);
+
+	return hitInfo;
 }
 
 //==========================================================================
