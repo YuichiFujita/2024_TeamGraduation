@@ -182,7 +182,9 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeAtk		(ATK_NONE),		// 攻撃種類
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f),			// 状態カウンター
-	m_pThrowLine	(nullptr)		// 投げのライン
+	m_pThrowLine	(nullptr),		// 投げのライン
+	m_nDamage		(0),			// ダメージ
+	m_fKnockback	(0.0f)			// ノックバック
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -437,6 +439,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// ダメージ設定
 	m_nDamage = pPlayer->GetBallParameter().nDamageNormal;
 
+	// ノックバック設定
+	m_fKnockback = pPlayer->GetBallParameter().fKnockbackNormal;
+	
 	// 移動量設定
 	m_fMoveSpeed = pPlayer->GetBallParameter().fThrowMoveNormal;
 
@@ -486,7 +491,10 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// ダメージ設定
 	m_nDamage = pPlayer->GetBallParameter().nDamageJump;
-	
+
+	// ノックバック設定
+	m_fKnockback = pPlayer->GetBallParameter().fKnockbackJump;
+
 	// 移動量設定
 	m_fMoveSpeed = pPlayer->GetBallParameter().fThrowMoveJump;
 
@@ -515,6 +523,9 @@ void CBall::Special(CPlayer* pPlayer)
 	// ダメージ設定
 	m_nDamage = pPlayer->GetBallParameter().nDamageSpecial;
 
+	// ノックバック設定
+	m_fKnockback = pPlayer->GetBallParameter().fKnockbackSpecial;
+	
 	// スペシャル演出マネージャーの生成
 	CSpecialManager::Create(m_pPlayer, m_pTarget);
 }
@@ -1541,6 +1552,9 @@ void CBall::UpdateTypeAtk()
 
 	// ダメージ量をリセット
 	m_nDamage = 0;
+
+	// ノックバックをリセット
+	m_fKnockback = 0;
 }
 
 //==========================================================================

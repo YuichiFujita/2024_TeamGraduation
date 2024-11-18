@@ -14,9 +14,6 @@
 #include "playerBase.h"
 #include "playerUserOut.h"
 
-// TODO:いらない
-#include "3D_effect.h"
-
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -32,9 +29,21 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserOutControlMove::CPlayerUserOutControlMove()
+CPlayerUserOutControlMove::CPlayerUserOutControlMove() :
+	m_pLeftKey	(nullptr),	// 左移動キー情報
+	m_pRightKey	(nullptr)	// 右移動キー情報
 {
 
+}
+
+//==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerUserOutControlMove::~CPlayerUserOutControlMove()
+{
+	// 左右移動キーの破棄
+	SAFE_DELETE(m_pLeftKey);
+	SAFE_DELETE(m_pRightKey);
 }
 
 //==========================================================================
@@ -42,6 +51,148 @@ CPlayerUserOutControlMove::CPlayerUserOutControlMove()
 //==========================================================================
 void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// キー入力のブリンク
+	BilnkKey(player, fDeltaTime, fDeltaRate, fSlowRate);
+
+	// スティック入力のブリンク
+	BilnkStick(player, fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// キー入力のブリンク
+//==========================================================================
+void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// コントロール系の取得
+	CPlayer::EDashAngle holdDashAngle = GetHoldDashAngle();	// ダッシュ方向
+	float fInputInterval = GetInputInterval();	// 入力の受け付け猶予
+	int* pCntTrigger = GetCntTrigger();			// トリガーカウント
+
+	//----------------------------------------------------------------------
+	//	第一入力の受付
+	//----------------------------------------------------------------------
+	if (fInputInterval <= 0.0f)
+	{ // 猶予受け付けが終了中の場合
+
+		bool bInput = false;
+		if (m_pLeftKey->IsTrigger())
+		{ // 左移動キーが押された場合
+
+			// 割り当てられたキーの方向を取得
+			holdDashAngle = m_pLeftKey->GetAngle();
+			bInput = true;
+		}
+		else if (m_pRightKey->IsTrigger())
+		{ // 右移動キーが押された場合
+
+			// 割り当てられたキーの方向を取得
+			holdDashAngle = m_pRightKey->GetAngle();
+			bInput = true;
+		}
+
+		if (bInput)
+		{ // 移動入力が検知された場合
+
+			// 入力のインターバルを設定
+			fInputInterval = INTERVAL_INPUT;
+		}
+	}
+
+	// ダッシュ方向の反映
+	SetHoldDashAngle(holdDashAngle);
+
+	//----------------------------------------------------------------------
+	//	受付猶予時間の経過
+	//----------------------------------------------------------------------
+	CPlayer::SDashInfo infoDash;		// ダッシュ情報
+	float fOldTime = fInputInterval;	// 過去の受付猶予時間 
+
+	// 受け付け猶予の減算
+	fInputInterval -= fDeltaTime * fSlowRate;
+	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
+
+	// 入力受け付け猶予の反映
+	SetInputInterval(fInputInterval);
+
+	if (fOldTime > 0.0f && fInputInterval <= 0.0f)
+	{ // 前回がまだ猶予中且つ、現在は経過終了している場合
+
+		// ブリンクかの判定
+		infoDash = Trigger(player, holdDashAngle);	// ダッシュ情報の取得
+	}
+
+	//----------------------------------------------------------------------
+	//	ブリンクの発動
+	//----------------------------------------------------------------------
+	if (infoDash.bDash && !IsBlink())
+	{ // ブリンクを開始できる場合
+
+		const float fDivision = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		if (player->GetBall() == nullptr)
+		{ // ボール所持では使用不可
+
+			MyLib::Vector3 move = player->GetMove();	// 移動量
+			const float fVeloBlink = player->GetParameter().fVelocityBlink;	// ブリンク速度
+
+			// 移動量の更新
+			move.x += sinf(fDivision * infoDash.eAngle) * fVeloBlink;
+			move.z += cosf(fDivision * infoDash.eAngle) * fVeloBlink;
+
+			if (player->IsJump())
+			{ // ジャンプ中の場合
+
+				// 移動量を補正
+				move.x *= BLINK_JUMP_COR;
+				move.z *= BLINK_JUMP_COR;
+			}
+
+			// 移動量の反映
+			player->SetMove(move);
+
+			// ブリンクモーションを再生
+			player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
+		}
+
+		// 目標向きの設定
+		player->SetRotDest(infoDash.eAngle * fDivision + D3DX_PI);
+
+		// トリガーカウントのリセット
+		memset(pCntTrigger, 0, sizeof(pCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
+
+		// トリガーカウントの設定
+		SetCntTrigger(pCntTrigger);
+
+		// ダッシュしている状態にする
+		SetBlink(true);
+	}
+
+	//----------------------------------------------------------------------
+	//	トリガーインターバルの経過
+	//----------------------------------------------------------------------
+	float fTriggerInterval = GetTriggerInterval();	// トリガーインターバル
+
+	// トリガーインターバルの減算
+	fTriggerInterval -= fDeltaTime * fSlowRate;
+	if (fTriggerInterval <= 0.0f)
+	{ // トリガーインターバルが終了した場合
+
+		// トリガーカウントのリセット
+		memset(pCntTrigger, 0, sizeof(pCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
+
+		// トリガーカウントの設定
+		SetCntTrigger(pCntTrigger);
+	}
+
+	// トリガーインターバルの反映
+	SetTriggerInterval(fTriggerInterval);
+}
+
+//==========================================================================
+// スティック入力のブリンク
+//==========================================================================
+void CPlayerUserOutControlMove::BilnkStick(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+#if 0
 	// 入力フラグ
 	bool bInput = false;
 
@@ -49,10 +200,8 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 	CPlayer::SDashInfo info;
 
 	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-#if 0
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -60,8 +209,7 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 	// コントロール系取得
 	int* nCntTrigger = GetCntTrigger();						// トリガーのカウント取得
 	CPlayer::EDashAngle HoldDashAngle = GetHoldDashAngle();	// ダッシュ方向取得
-	float fInputInterval = GetInputInterval();				// 入力の受け付け猶予取得
-	bool bDash = IsBlink();									// 走るフラグ取得
+	bool bBlink = IsBlink();								// ブリンクフラグ取得
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
@@ -69,221 +217,99 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 	// Lスティックの割合
 	MyLib::Vector3 stickRatio = pPad->GetStickPositionRatioL(playerIdx);
 
-	ImGui::Text("stickRatio.x: %.2f", stickRatio.x);
-	ImGui::Text("stickRatio.y: %.2f", stickRatio.y);
+	//--------------------------
+	// スティック
+	//--------------------------
+	bool bTipStick = false;
+	if (pPad->GetStickMoveL(playerIdx).y > 0)
+	{// 上
+		bTipStick = true;
 
-	if (fInputInterval <= 0.0f)
-	{// 猶予受け付け終了中
-
-
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y >= RATIO_STICKBLINK) ||
-			pKey->GetTrigger(DIK_W))
+		if (pPad->GetStickMoveL(playerIdx).x < 0)
+		{// 左上
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
+		}
+		else if (pPad->GetStickMoveL(playerIdx).x > 0)
+		{// 右上
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
+		}
+		else
 		{// 上
-			bInput = true;
-
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-				stickRatio.x <= -RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_A))
-			{// 左上
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-				stickRatio.x >= RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_D))
-			{// 右上
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
-			}
-			else
-			{// 上
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_UP;
-			}
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_UP;
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y <= -RATIO_STICKBLINK) ||
-			pKey->GetTrigger(DIK_S))
+	}
+	else if (pPad->GetStickMoveL(playerIdx).y < 0)
+	{// 下
+		bTipStick = true;
+
+		if (pPad->GetStickMoveL(playerIdx).x < 0)
+		{// 左下
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
+		}
+		else if (pPad->GetStickMoveL(playerIdx).x > 0)
+		{// 右下
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
+		}
+		else
 		{// 下
-			bInput = true;
-
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-				stickRatio.x <= -RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_A))
-			{// 左下
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-				stickRatio.x >= RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_D))
-			{// 右下
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
-			}
-			else
-			{// 下
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_DOWN;
-			}
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_DOWN;
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x >= RATIO_STICKBLINK) ||
-			pKey->GetTrigger(DIK_D))
+	}
+	else if (pPad->GetStickMoveL(playerIdx).x > 0)
+	{// 右
+		bTipStick = true;
+
+		if (pPad->GetStickMoveL(playerIdx).y < 0)
+		{// 右上
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
+		}
+		else if (pPad->GetStickMoveL(playerIdx).y > 0)
+		{// 右下
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
+		}
+		else
 		{// 右
-			bInput = true;
-
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-				stickRatio.y >= RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_W))
-			{// 右上
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
-				stickRatio.y <= -RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_S))
-			{// 右下
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
-			}
-			else
-			{// 右
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
-			}
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-			(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x <= -RATIO_STICKBLINK) ||
-			pKey->GetTrigger(DIK_A))
+	}
+	else if (pPad->GetStickMoveL(playerIdx).x < 0)
+	{// 左
+		bTipStick = true;
+
+		if (pPad->GetStickMoveL(playerIdx).y < 0)
+		{// 左上
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
+		}
+		else if (pPad->GetStickMoveL(playerIdx).y > 0)
+		{// 左下
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
+		}
+		else
 		{// 左
-			bInput = true;
-
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-				stickRatio.y >= RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_W))
-			{// 左上
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-				stickRatio.y <= -RATIO_STICKBLINK ||
-				pKey->GetPress(DIK_S))
-			{// 左下
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
-			}
-			else
-			{// 左
-				HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFT;
-			}
+			HoldDashAngle = CPlayer::EDashAngle::ANGLE_LEFT;
 		}
 	}
 
-	if (bInput)
-	{// 入力された
-
-		// 入力のインターバル
-		fInputInterval = INTERVAL_INPUT;
-	}
-
-	if (fInputInterval > 0.0f && fInputInterval != INTERVAL_INPUT)
-	{// 受け付け猶予中
-
-		// 次の入力判定
-		bool bNextInput = false;
-		switch (HoldDashAngle)
-		{
-		case CPlayer::EDashAngle::ANGLE_LEFT:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y >= RATIO_STICKBLINK))
-			{// 上
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTUP);
-				bNextInput = true;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y <= -RATIO_STICKBLINK))
-			{// 下
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTDW);
-				bNextInput = true;
-			}
-			break;
-
-		case CPlayer::EDashAngle::ANGLE_RIGHT:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y >= RATIO_STICKBLINK))
-			{// 上
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTUP);
-				bNextInput = true;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_Y) && stickRatio.y <= -RATIO_STICKBLINK))
-			{// 下
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTDW);
-				bNextInput = true;
-			}
-			break;
-
-		case CPlayer::EDashAngle::ANGLE_UP:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x <= -RATIO_STICKBLINK))
-			{// 左
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTUP);
-				bNextInput = true;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x >= RATIO_STICKBLINK))
-			{// 右
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTUP);
-				bNextInput = true;
-			}
-			break;
-
-		case CPlayer::EDashAngle::ANGLE_DOWN:
-			if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x <= -RATIO_STICKBLINK))
-			{// 左
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_LEFTDW);
-				bNextInput = true;
-			}
-			else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-				(pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_X) && stickRatio.x >= RATIO_STICKBLINK))
-			{// 右
-				info = Trigger(player, CPlayer::EDashAngle::ANGLE_RIGHTDW);
-				bNextInput = true;
-			}
-			break;
-
-		default:
-			info = Trigger(player, HoldDashAngle);
-			bNextInput = true;
-			break;
-		}
-
-		// 受け付けされてるよ
-		if (bNextInput)
-		{
-			// 受け付け猶予終了
-			fInputInterval = 0.0f;
-		}
+	if (bTipStick && pPad->GetTrigger(CInputGamepad::BUTTON_LSTICKPUSH, playerIdx))
+	{// スティック倒し && 押し込み
+		bInput = true;
+		info = Trigger(player, HoldDashAngle);
+		info = Trigger(player, HoldDashAngle);
 	}
 	SetHoldDashAngle(HoldDashAngle);	// ダッシュ方向設定
 
-	// 受け付け猶予減算
-	float oldTime = fInputInterval;
-	fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
-	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
-
-	// 入力の受け付け猶予設定
-	SetInputInterval(fInputInterval);
-
-	if (oldTime > 0.0f &&
-		fInputInterval <= 0.0f)
-	{// 前回まだ猶予中 && 今は終了
-		info = Trigger(player, HoldDashAngle);
-	}
-
 	// ダッシュする
-	if (info.bDash && !bDash)
+	if (info.bDash && !bBlink)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
 		if (player->GetBall() == nullptr)
 		{//ボール所持では使用不可
 
+			// 移動量取得
 			MyLib::Vector3 move = player->GetMove();
 			float velocityBlink = player->GetParameter().fVelocityBlink;
-			
+
 			// 移動量更新
 			move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
 			move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
@@ -311,30 +337,11 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 		SetCntTrigger(nCntTrigger);
 
 		// ダッシュフラグ
-		bDash = true;
+		bBlink = true;
 	}
-
-	// トリガーのインターバル取得
-	float fTriggerInterval = GetTriggerInterval();
-
-	// トリガーの猶予減らしていく
-	fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
-	if (fTriggerInterval <= 0.0f)
-	{
-		// トリガーのカウントリセット
-		memset(nCntTrigger, 0, sizeof(nCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
-
-		// トリガーのカウント設定
-		SetCntTrigger(nCntTrigger);
-	}
-
-	// トリガーのインターバル設定
-	SetTriggerInterval(fTriggerInterval);
 
 	// コントロール系
-	SetBlink(bDash);	// 走るフラグ設定
-#else
-
+	SetBlink(bBlink);	// 走るフラグ設定
 #endif
 }
 
@@ -343,66 +350,30 @@ void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, c
 //==========================================================================
 void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bDash = IsBlink();	// 走るフラグ取得
-	if (!bDash)
-	{
-		return;
-	}
+	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
+	bool bDash = IsBlink();	// ダッシュフラグ
+	if (!bDash) { return; }	// ダッシュしていない場合抜ける
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	bool bKeyInput = (m_pLeftKey->IsPress() || m_pRightKey->IsPress());	// キー入力検知
+	if (!bKeyInput)
+	{ // 移動入力が検知されなかった場合
 
-#if 0
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// モーションフラグ取得
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	// プレイヤー番号取得
-	int playerIdx = player->GetMyPlayerIdx();
-	
-	// 全ての方向入力チェック
-	bool bUP = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, player->GetMyPlayerIdx()) &&
-		!pKey->GetPress(DIK_W);
-
-	bool bDown = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, player->GetMyPlayerIdx()) &&
-		!pKey->GetPress(DIK_S);
-
-	bool bRight = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, player->GetMyPlayerIdx()) &&
-		!pKey->GetPress(DIK_D);
-
-	bool bLeft = !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, player->GetMyPlayerIdx()) &&
-		!pKey->GetPress(DIK_A);
-
-	// 左スティック判定
-	bool bStick = pPad->IsTipStickL(playerIdx, CInputGamepad::STICK_AXIS::STICK_X) || pPad->IsTipStickL(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
-
-	if (bUP && bDown && bRight && bLeft && !bStick)
-	{// ダッシュ解除
+		// ダッシュを解除する
 		bDash = false;
-
-		if (player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_RUN)
-		{// ダッシュからは派生
-			player->SetMotion(CPlayer::EMotion::MOTION_GRIP_FRONT);
-		}
 	}
 	else
-	{
-		// ダッシュ継続
-		motionFrag.bMove = true;
+	{ // 移動入力が検知された場合
+
+		// ダッシュを継続する
+		flagMotion.bMove = true;
 		player->SetEnableDash(true);
 	}
 
-	// モーションフラグ設定
-	player->SetMotionFrag(motionFrag);
+	// モーションフラグ反映
+	player->SetMotionFrag(flagMotion);
 	
-	SetBlink(bDash);	//走るフラグ設定
-#else
-
-#endif
+	// ダッシュフラグ反映
+	SetBlink(bDash);
 }
 
 //==========================================================================
@@ -410,268 +381,65 @@ void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	CPlayerBase* pBase = player->GetBase();						// プレイヤーベース情報
+	CPlayerOut* pPlayerOut = pBase->GetPlayerOut();				// プレイヤー外野情報
+	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();			// 移動可能な左位置
+	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();		// 移動可能な右位置
+	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
+	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
 
-#if 0
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// モーションフラグ取得
-	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
-
-	bool bDash = IsBlink();	//走るフラグ
-
-	// 現在の入力方向カウンター
-	float fInputAngleCtr = GetInputAngleCtr();
-	fInputAngleCtr -= fDeltaTime, fDeltaRate, fSlowRate;
-	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
-	SetInputAngleCtr(fInputAngleCtr);
-
-	// 現在の入力方向
-	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
-	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
-	{
-		delete pInputAngle;
-		pInputAngle = nullptr;
-	}
-	SetInputAngle(pInputAngle);
-
-	CPlayer::EDashAngle eAngle;
-	bool bInput = false;
-
-	// プレイヤー番号取得
-	int playerIdx = player->GetMyPlayerIdx();
-
-	//--------------------------
-	// 左右
-	//--------------------------
-	// スティック
-	bool bStick = 
-		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y) ||
-		pPad->GetLStickTrigger(playerIdx, CInputGamepad::STICK_AXIS::STICK_Y);
-	
-	// 方向キー
-	bool bAngleKey =
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) || 
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx);
-
-	// WASD
-	bool bWASD =
-		pKey->GetTrigger(DIK_W) || pKey->GetTrigger(DIK_A) || pKey->GetTrigger(DIK_S) || pKey->GetTrigger(DIK_D);
-
-	if (!motionFrag.bMove &&
-		(bStick || bAngleKey || bWASD))
-	{// 移動してない && どっか押された
+	bool bKeyInput = (m_pLeftKey->IsTrigger() || m_pRightKey->IsTrigger());	// キー入力検知
+	if (!flagMotion.bMove && bKeyInput)
+	{ // 移動してない且つ、入力を検知した場合
 
 		// 左右フラグ反転
 		player->InverseFootLR();
 	}
 
+	// 移動方向ベクトルの作成
+	MyLib::Vector3 vecMove = posRight - posLeft;	// ベクトルの作成
+	vecMove = vecMove.Normal();						// ベクトルの正規化
 
+	// 移動量の作成
+	CCharacterStatus::CharParameter param = player->GetParameter();					// プレイヤーパラメータ
+	float fMoveValue = (IsBlink()) ? param.fVelocityDash : param.fVelocityNormal;	// 移動量
+	fMoveValue *= fDeltaRate * fSlowRate;	// 経過時間乗算
 
-	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-		pPad->GetStickMoveL(playerIdx).y > 0 ||
-		pKey->GetPress(DIK_W))
-	{// 上
-		bInput = true;
+	// 移動操作
+	if (m_pLeftKey->IsPress())
+	{ // 左移動が検知された場合
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).x < 0 ||
-			pKey->GetPress(DIK_A))
-		{// 左上
-			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
-		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).x > 0 ||
-			pKey->GetPress(DIK_D))
-		{// 右上
-			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
-		}
-		else
-		{// 上
-			eAngle = CPlayer::EDashAngle::ANGLE_UP;
-		}
+		// ベクトル逆方向に移動量を与える
+		playerMove += -vecMove * fMoveValue;
 	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-		pPad->GetStickMoveL(playerIdx).y < 0 ||
-		pKey->GetPress(DIK_S))
-	{// 下
-		bInput = true;
+	else if (m_pRightKey->IsPress())
+	{ // 右移動が検知された場合
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).x < 0 ||
-			pKey->GetPress(DIK_A))
-		{// 左下
-			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
-		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).x > 0 ||
-			pKey->GetPress(DIK_D))
-		{// 右下
-			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
-		}
-		else
-		{// 下
-			eAngle = CPlayer::EDashAngle::ANGLE_DOWN;
-		}
+		// ベクトル方向に移動量を与える
+		playerMove += vecMove * fMoveValue;
 	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
-		pPad->GetStickMoveL(playerIdx).x > 0 ||
-		pKey->GetPress(DIK_D))
-	{// 右
-		bInput = true;
+	else
+	{ // 操作が検知された場合
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).y < 0 ||
-			pKey->GetPress(DIK_W))
-		{// 右上
-			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
-		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).y > 0 ||
-			pKey->GetPress(DIK_S))
-		{// 右下
-			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
-		}
-		else
-		{// 右
-			eAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
-		}
-	}
-	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
-		pPad->GetStickMoveL(playerIdx).x < 0 ||
-		pKey->GetPress(DIK_A))
-	{// 左
-		bInput = true;
+		// 移動しない状態にする
+		flagMotion.bMove = false;
 
-		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).y < 0 ||
-			pKey->GetPress(DIK_W))
-		{// 左上
-			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
-		}
-		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
-			pPad->GetStickMoveL(playerIdx).y > 0 ||
-			pKey->GetPress(DIK_S))
-		{// 左下
-			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
-		}
-		else
-		{// 左
-			eAngle = CPlayer::EDashAngle::ANGLE_LEFT;
-		}
-	}
-
-	if (!bInput)
-	{
-		// 移動しない
-		motionFrag.bMove = false;
-
-		// モーションフラグ設定
-		player->SetMotionFrag(motionFrag);
+		// モーションフラグ反映
+		player->SetMotionFrag(flagMotion);
 		return;
 	}
 
 	// 移動中にする
-	motionFrag.bMove = true;
+	flagMotion.bMove = true;
 
-	// 移動量取得
-	float fMove = player->GetParameter().fVelocityNormal;
-	if (bDash)
-	{// ダッシュは変更
-		fMove = player->GetParameter().fVelocityDash;
-	}
-	fMove *= fDeltaRate;
-	fMove *= fSlowRate;
-
-	// 移動量更新
-	MyLib::Vector3 move = player->GetMove();
-	MyLib::Vector3 rot = player->GetRotation();
-
-	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-
-	if (player->IsCrab())
-	{//カニ歩き
-		move.x += sinf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
-		move.z += cosf(eAngle * division + (D3DX_PI * 0.0f)) * fMove;
-	}
-	else
-	{
-		move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
-		move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
-	}
-
-	// 移動量設定
-	player->SetMove(move);
-
-	// 向き設定
-	player->SetRotDest(eAngle * division + D3DX_PI + Camerarot.y);
-
-	// モーションフラグ設定
-	player->SetMotionFrag(motionFrag);
-
-	// 現在の入力方向設定
-	if (pInputAngle == nullptr)
-	{
-		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
-	}
-	*pInputAngle = eAngle;
-	SetInputAngle(pInputAngle);
-
-	// 入力方向カウンター設定
-	SetInputAngleCtr(INPUT_COUNTER);
-
-	SetBlink(bDash);	//走るフラグ設定
-#else
-	CPlayerBase* pBase = player->GetBase();					// プレイヤーベース情報
-	CPlayerUserOut* pPlayerOut = pBase->GetPlayerUserOut();	// プレイヤー外野情報
-	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();		// 移動可能な左位置
-	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();	// 移動可能な右位置
-	MyLib::Vector3 playerMove = player->GetMove();			// プレイヤー移動量
-	float fMoveValue = player->GetParameter().fVelocityNormal * fDeltaRate * fSlowRate;	// 移動数値
-
-	// 移動ベクトルの作成
-	MyLib::Vector3 vecMove = posLeft - posRight;	// ベクトルの作成
-	vecMove = vecMove.Normal();						// ベクトルの正規化
-
-	if (pKey->GetPress(DIK_A))
-	{
-		playerMove += vecMove * fMoveValue;
-	}
-	if (pKey->GetPress(DIK_D))
-	{
-		playerMove += -vecMove * fMoveValue;
-	}
-
-	// TODO
-#if 0
-	if (pKey->GetPress(DIK_W))
-	{
-		MyLib::Vector3 vec = vecMove.rotateAroundY();
-		playerMove += vec * fMoveValue;
-	}
-	if (pKey->GetPress(DIK_S))
-	{
-		MyLib::Vector3 vec = vecMove.rotateAroundY();
-		playerMove += -vec * fMoveValue;
-	}
-#endif
+	// モーションフラグ反映
+	player->SetMotionFrag(flagMotion);
 
 	// 移動量反映
 	player->SetMove(playerMove);
 
-	// 目標向きを設定
+	// 目標向き設定
 	player->SetRotDest(posLeft.AngleXZ(posRight) + D3DX_PI * 0.5f);
-
-	// TODO
-	CEffect3D::Create(posLeft  + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Cyan(),   10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能左位置
-	CEffect3D::Create(posRight + MyLib::Vector3(0.0f, 50.0f, 0.0f), VEC3_ZERO, MyLib::color::Yellow(), 10.0f, 0.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);	// 移動可能右位置
-#endif
 }
 
 //==========================================================================

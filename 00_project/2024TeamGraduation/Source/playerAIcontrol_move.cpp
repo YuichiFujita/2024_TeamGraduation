@@ -34,6 +34,14 @@ CPlayerAIControlMove::CPlayerAIControlMove()
 }
 
 //==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerAIControlMove::~CPlayerAIControlMove()
+{
+
+}
+
+//==========================================================================
 // ダッシュ
 //==========================================================================
 void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -317,7 +325,7 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	if (!m_bWalk) {
+	if (!m_bWalk) {// 歩くがオフの時モーションもオフ
 		motionFrag.bMove = false;
 		return; 
 	}

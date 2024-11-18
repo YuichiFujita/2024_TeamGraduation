@@ -12,13 +12,13 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerAI.h"
+#include "playerOut.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
 // AI外野プレイヤークラス
-class CPlayerAIOut : public CPlayerAI
+class CPlayerAIOut : public CPlayerOut
 {
 public:
 
@@ -31,25 +31,9 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual CPlayerAIOut* GetPlayerAIOut() override { return nullptr; }	// AI外野プレイヤー取得
-	virtual bool IsCrab() override { return false; }					// カニ歩き判定
-	virtual void InitPosition(const MyLib::Vector3& rPos) override;		// 位置初期化
-
-	//=============================
-	// メンバ関数
-	//=============================
-	void SetPosLeft(const MyLib::Vector3& rPosLeft)		{ m_posLeft = rPosLeft; }	// 移動可能な左位置の設定
-	void SetPosRight(const MyLib::Vector3& rPosRight)	{ m_posRight = rPosRight; }	// 移動可能な右位置の設定
-	MyLib::Vector3 GetPosLeft() { return m_posLeft; }	// 移動可能な左位置の取得
-	MyLib::Vector3 GetPosRight() { return m_posRight; }	// 移動可能な右位置の取得
-
-private:
-
-	//=============================
-	// メンバ変数
-	//=============================
-	MyLib::Vector3 m_posLeft;	// 移動可能左位置
-	MyLib::Vector3 m_posRight;	// 移動可能右位置
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
+	virtual void Debug() override;							// デバッグ
+	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
 };
 
 #endif

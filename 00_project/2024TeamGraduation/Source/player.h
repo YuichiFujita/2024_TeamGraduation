@@ -27,6 +27,7 @@ class CPlayerStatus;	// ステータス
 class CBall;			// ボール
 class CDressup;			// 着せ替え
 class CSpecialEffect;	// スペシャル演出エフェクト
+class CBindKey;			// 割当キー基底クラス
 
 //==========================================================================
 // クラス定義
@@ -333,17 +334,21 @@ public:
 
 	/*
 		@brief	外野プレイヤーの生成処理
-		@param	rPos	 [in]	移動制限の左位置
-		@param	rPos	 [in]	移動制限の右位置
-		@param	team	 [in]	チームサイド
-		@param	basetype [in]	User/AI
-		@param	bodytype [in]	体型
-		@param	handtype [in]	利き手
+		@param	rPosLeft	[in]	移動制限の左位置
+		@param	rPosRight	[in]	移動制限の右位置
+		@param	pKeyLeft	[in]	左移動時に使用するキー
+		@param	pKeyRight	[in]	右移動時に使用するキー
+		@param	team		[in]	チームサイド
+		@param	basetype	[in]	User/AI
+		@param	bodytype	[in]	体型
+		@param	handtype	[in]	利き手
 	*/
 	static CPlayer* Create
 	(
 		const MyLib::Vector3& rPosLeft,				// 移動左位置
 		const MyLib::Vector3& rPosRight,			// 移動右位置
+		CBindKey* pKeyLeft,							// 左移動キー
+		CBindKey* pKeyRight,						// 右移動キー
 		CGameManager::ETeamSide team,				// チームサイド
 		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
 		EBody bodytype = EBody::BODY_NORMAL,		// 体型

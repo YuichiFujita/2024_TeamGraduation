@@ -8,7 +8,7 @@
 #include "playerAIOut.h"
 
 // 使用クラス
-#include "playerAIcontrol_move.h"
+#include "playerAIOut_controlMove.h"
 #include "playerAIcontrol_action.h"
 
 //==========================================================================
@@ -22,12 +22,10 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerAI(pPlayer, typeTeam, typeArea),
-	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
-	m_posRight	(VEC3_ZERO)		// 移動可能右位置
+CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea)
 {
-	// 外野操作の割当	// TODO：外野操作に変更
-	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
+	// 外野操作の割当
+	ChangeMoveControl(DEBUG_NEW CPlayerAIOutControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 }
 
@@ -40,14 +38,44 @@ CPlayerAIOut::~CPlayerAIOut()
 }
 
 //==========================================================================
-// 位置の初期化
+// ヒット
 //==========================================================================
-void CPlayerAIOut::InitPosition(const MyLib::Vector3& /*rPos*/)
+CPlayer::SHitInfo CPlayerAIOut::Hit(CBall* pBall)
 {
-	// 左右位置の中央座標を計算
-	MyLib::Vector3 posCenter;	// 中央座標
-	D3DXVec3Lerp(&posCenter, &m_posLeft, &m_posRight, 0.5f);
+	// 基底クラスのヒット
+	CPlayer::SHitInfo hitInfo = CPlayerOut::Hit(pBall);	// ヒット情報
 
-	// プレイヤー位置の設定
-	GetPlayer()->SetPosition(posCenter);
+#if 0
+	if (hitInfo.eHit == CPlayer::EHit::HIT_NONE) { // 通常状態
+		return hitInfo;
+	}
+
+	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
+		// 投げモード
+		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
+	}
+#endif
+
+	return hitInfo;
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CPlayerAIOut::Debug()
+{
+#if _DEBUG
+	// 基底クラスのデバッグ表示
+	CPlayerOut::Debug();
+
+	CPlayerAIControlAction* pControlAction = dynamic_cast<CPlayerAIControlAction*>(GetPlayerControlAction());
+	if (pControlAction == nullptr) return;
+
+	// 自動投げフラグ設定
+	bool autoThrow = pControlAction->IsAutoThrow();
+	if (ImGui::Checkbox("Change Auto Throw", &autoThrow))
+	{
+		pControlAction->SetEnableAutoThrow(autoThrow);
+	}
+#endif
 }

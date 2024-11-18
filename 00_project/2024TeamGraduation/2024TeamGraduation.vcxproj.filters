@@ -114,6 +114,9 @@
     <Filter Include="ingame\special\effect">
       <UniqueIdentifier>{94e9b15e-3c0c-4857-a428-be477f6cd51b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerUser\KeyBind">
+      <UniqueIdentifier>{92a68277-d5e9-45d5-baef-86966dc6b975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -503,12 +506,6 @@
     <ClCompile Include="Source\playercontrol_move.cpp">
       <Filter>player\playerControl</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerUser.cpp">
-      <Filter>player\playerUser</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playerAI.cpp">
-      <Filter>player\playerAI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\playerBase.cpp">
       <Filter>player</Filter>
     </ClCompile>
@@ -568,6 +565,30 @@
     </ClCompile>
     <ClCompile Include="Source\specialEffect_kamehameha.cpp">
       <Filter>ingame\special\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKey.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyFront.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyBack.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyLeft.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bindKeyRight.cpp">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerIn.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerOut.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIOut_controlMove.cpp">
+      <Filter>player\playerAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -970,12 +991,6 @@
     <ClInclude Include="Source\playercontrol_move.h">
       <Filter>player\playerControl</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerUser.h">
-      <Filter>player\playerUser</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playerAI.h">
-      <Filter>player\playerAI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\playerBase.h">
       <Filter>player</Filter>
     </ClInclude>
@@ -1035,6 +1050,30 @@
     </ClInclude>
     <ClInclude Include="Source\specialEffect_kamehameha.h">
       <Filter>ingame\special\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKey.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyFront.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyBack.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyLeft.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\bindKeyRight.h">
+      <Filter>player\playerUser\KeyBind</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerIn.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerOut.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIOut_controlMove.h">
+      <Filter>player\playerAI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

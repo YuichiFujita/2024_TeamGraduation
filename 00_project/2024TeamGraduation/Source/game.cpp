@@ -26,9 +26,6 @@
 
 #include "2D_Effect.h"
 #include "controlkeydisp.h"
-
-#include "playerUser.h"
-#include "playerAI.h"
 #include "ball.h"
 #include "audience.h"
 #include "teamStatus.h"
@@ -36,6 +33,13 @@
 // TODO：デバッグ、後で消しますいらないので
 #include "specialManager.h"
 #include "gymWallManager.h"
+
+// TODO：外野操作割り当て用、生成場所を変更したら消す
+#include "bindKeyFront.h"
+#include "bindKeyBack.h"
+#include "bindKeyLeft.h"
+#include "bindKeyRight.h"
+
 namespace
 {
 	const float RATIO_SETGOAL = 0.825f;	// ゴール設置の割合
@@ -119,7 +123,7 @@ HRESULT CGame::Init()
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
 	// プレイヤーUser四人生成(左右)
-#if 1
+#if 0
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 1; i++)
 	{
@@ -185,7 +189,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 0
+#if 1
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -207,7 +211,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 0
+#if 1
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -219,13 +223,13 @@ HRESULT CGame::Init()
 
 	// プレイヤーAI一人生成(左)
 #if 0
-	CPlayer* pAI2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_AI);
+	CPlayer* pAI2 = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 200.0f), CGameManager::SIDE_LEFT, CPlayer::EBaseType::TYPE_AI);
 	if (pAI2 == nullptr)
 	{
 		return E_FAIL;
 	}
-	pAI2->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-	pAI2->SetRotDest(HALF_PI);
+	pAI2->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+	pAI2->SetRotDest(-HALF_PI);
 #endif
 
 	// プレイヤーAI四人生成(右)
@@ -245,13 +249,15 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤー外野User生成(左)
-#if 0
+#if 1
 	CPlayer* pUserOutFar = CPlayer::Create
 	(
 		MyLib::Vector3(-900.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(-50.0f, 0.0f, 650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyLeft,					// 左移動キー
+		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI				// ベースタイプ
 	);
 	if (pUserOutFar == nullptr)
 	{
@@ -260,10 +266,12 @@ HRESULT CGame::Init()
 
 	CPlayer* pUserOutLeft = CPlayer::Create
 	(
-		MyLib::Vector3(-1040.0f, 0.0f, -510.0f),	// 移動可能左位置
-		MyLib::Vector3(-1040.0f, 0.0f, 510.0f),		// 移動可能右位置
+		MyLib::Vector3(-1040.0f, 0.0f, -650.0f),	// 移動可能左位置
+		MyLib::Vector3(-1040.0f, 0.0f, 650.0f),		// 移動可能右位置
+		DEBUG_NEW CBindKeyBack,						// 左移動キー
+		DEBUG_NEW CBindKeyFront,					// 右移動キー
 		CGameManager::SIDE_RIGHT,					// チームサイド
-		CPlayer::EBaseType::TYPE_USER				// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI					// ベースタイプ
 	);
 	if (pUserOutLeft == nullptr)
 	{
@@ -274,8 +282,10 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(-50.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(-900.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyRight,				// 左移動キー
+		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI				// ベースタイプ
 	);
 	if (pUserOutNear == nullptr)
 	{
@@ -289,6 +299,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(50.0f, 0.0f, 650.0f),	// 移動可能左位置
 		MyLib::Vector3(900.0f, 0.0f, 650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyLeft,					// 左移動キー
+		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -299,8 +311,10 @@ HRESULT CGame::Init()
 
 	CPlayer* pAIOutLeft = CPlayer::Create
 	(
-		MyLib::Vector3(1040.0f, 0.0f, 510.0f),	// 移動可能左位置
-		MyLib::Vector3(1040.0f, 0.0f, -510.0f),	// 移動可能右位置
+		MyLib::Vector3(1040.0f, 0.0f, 650.0f),	// 移動可能左位置
+		MyLib::Vector3(1040.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyFront,				// 左移動キー
+		DEBUG_NEW CBindKeyBack,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);
@@ -313,6 +327,8 @@ HRESULT CGame::Init()
 	(
 		MyLib::Vector3(900.0f, 0.0f, -650.0f),	// 移動可能左位置
 		MyLib::Vector3(50.0f, 0.0f, -650.0f),	// 移動可能右位置
+		DEBUG_NEW CBindKeyRight,				// 左移動キー
+		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
 		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
 	);

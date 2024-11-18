@@ -13,8 +13,10 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CPlayerUserControlMove;
 class CPlayerAIControlMove;
+class CPlayerAIOutControlMove;
+class CPlayerUserControlMove;
+class CPlayerUserOutControlMove;
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -26,16 +28,19 @@ class CPlayerControlMove : public CPlayerControl
 {
 public:
 
-	// コンストラクタ
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CPlayerControlMove();
-	~CPlayerControlMove();
+	virtual ~CPlayerControlMove() override;
 
 	//=============================
 	// 純粋仮想関数
 	//=============================
-	virtual CPlayerAIControlMove* GetAI() { return nullptr; }
-	virtual CPlayerUserControlMove* GetUser() { return nullptr; }
-
+	virtual CPlayerAIControlMove* GetAI()			{ return nullptr; }
+	virtual CPlayerAIOutControlMove* GetAIOut()		{ return nullptr; }
+	virtual CPlayerUserControlMove* GetUser()		{ return nullptr; }
+	virtual CPlayerUserOutControlMove* GetUserOut()	{ return nullptr; }
 	virtual void Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 移動
 
 	void SetCntTrigger(int nIdx, int nCnt) { m_nCntTrigger[nIdx] = nCnt; }						// トリガーのカウント設定

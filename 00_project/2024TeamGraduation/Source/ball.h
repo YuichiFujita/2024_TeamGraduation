@@ -96,13 +96,14 @@ public:
 	void Toss(CPlayer* pPlayer);		// トス
 
 	CGameManager::ETeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
-	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }	// スペシャル種類取得
-	EAttack GetTypeAtk() const		{ return m_typeAtk; }		// 攻撃種類取得
-	EState GetState() const			{ return m_state; }			// 状態取得
-	CPlayer* GetPlayer() const		{ return m_pPlayer; }		// 所持プレイヤー取得
-	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
-	int GetDamage() const			{ return m_nDamage; }		// ダメージ取得
-	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
+	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }			// スペシャル種類取得
+	EAttack GetTypeAtk() const		{ return m_typeAtk; }				// 攻撃種類取得
+	EState GetState() const			{ return m_state; }					// 状態取得
+	CPlayer* GetPlayer() const		{ return m_pPlayer; }				// 所持プレイヤー取得
+	CPlayer* GetCover() const		{ return m_pCover; }				// カバー対象プレイヤー取得
+	int GetDamage() const			{ return m_nDamage; }				// ダメージ取得
+	float GetKnockback() const		{ return m_fKnockback; }			// ノックバック取得
+	bool IsLanding() const			{ return m_bLanding; }				// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
 	bool IsPass() const;			// パスフラグ取得
@@ -159,6 +160,11 @@ private:
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
 	//--------------------------
+	// エフェクト
+	//--------------------------
+	void UpdateThrowLine();	// 投げた線の更新
+
+	//--------------------------
 	// 汎用関数
 	//--------------------------
 	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
@@ -167,12 +173,6 @@ private:
 	void UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に移動量反映
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
 	bool UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 地面着地
-
-	//--------------------------
-	// エフェクト
-	//--------------------------
-	void UpdateThrowLine();	// 投げた線の更新
-
 	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);				// プレイヤーとの当たり判定
 	CPlayer* CollisionThrowTarget(const bool bAbsLock = false);	// 投げる対象との当たり判定
 	CPlayer* CollisionPassTarget();		// パスする対象との当たり判定
@@ -212,6 +212,7 @@ private:
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態カウンター
 	int m_nDamage;			// ダメージ
+	float m_fKnockback;		// ノックバック
 
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
 };
