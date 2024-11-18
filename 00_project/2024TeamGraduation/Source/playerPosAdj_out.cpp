@@ -43,7 +43,7 @@ CPlayerPosAdjOut::~CPlayerPosAdjOut()
 void CPlayerPosAdjOut::UpdateAdjuster(CPlayer* pPlayer)
 {
 	CPlayerBase* pBase = pPlayer->GetBase();				// プレイヤーベース情報
-	CPlayerUserOut* pPlayerOut = pBase->GetPlayerUserOut();	// プレイヤー外野情報
+	CPlayerOut* pPlayerOut = pBase->GetPlayerOut();			// プレイヤー外野情報
 	MyLib::Vector3 pos = pPlayer->GetPosition();			// プレイヤー位置
 	MyLib::Vector3 posOld = pPlayer->GetOldPosition();		// プレイヤー過去位置
 	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();		// 移動可能な左位置

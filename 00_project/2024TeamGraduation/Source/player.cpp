@@ -29,10 +29,8 @@
 #include "specialEffect.h"
 
 // 派生先
-#include "playerAI.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
-#include "playerUser.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
 
@@ -349,8 +347,8 @@ CPlayer* CPlayer::Create
 		}
 		case EBaseType::TYPE_AI:
 		{
-			// ユーザー外野プレイヤー情報の取得
-			CPlayerAIOut* pBase = pPlayer->GetBase()->GetPlayerAIOut();
+			// 外野プレイヤー情報の取得
+			CPlayerOut* pBase = pPlayer->GetBase()->GetPlayerOut();
 
 			// 左右位置の設定
 			pBase->SetPosLeft(rPosLeft);
@@ -1847,8 +1845,8 @@ void CPlayer::ChangeBase(EBaseType type)
 CPlayer::EBaseType CPlayer::GetBaseType() const
 {
 	// クラス型からベースを判定
-	if		(typeid(*m_pBase) == typeid(CPlayerUser))	{ return TYPE_USER; }
-	else if	(typeid(*m_pBase) == typeid(CPlayerAI))		{ return TYPE_AI; }
+	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
+	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
 
 	// ベース指定なし
 	assert(false);

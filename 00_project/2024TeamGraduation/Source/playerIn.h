@@ -1,12 +1,12 @@
 //==========================================================================
 // 
-//  AIプレイヤーヘッダー [playerAI.h]
+//  内野プレイヤーヘッダー [playerIn.h]
 //  Author : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _PLAYER_AI_
-#define _PLAYER_AI_	// 二重インクルード防止
+#ifndef _PLAYER_IN_
+#define _PLAYER_IN_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -14,30 +14,24 @@
 #include "playerBase.h"
 
 //==========================================================================
-// 前方宣言
-//==========================================================================
-class CPlayerAIControlMove;		// 移動(AI)
-class CPlayerAIControlAction;	// アクション(AI)
-
-//==========================================================================
 // クラス定義
 //==========================================================================
-// AIプレイヤークラス
-class CPlayerAI : public CPlayerBase
+// 内野プレイヤークラス
+class CPlayerIn : public CPlayerBase
 {
 public:
 	
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerAI(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
-	virtual ~CPlayerAI() = 0;
+	CPlayerIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
+	virtual ~CPlayerIn() override = 0;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	virtual void MotionCrab(int nStartKey) override;
+	virtual CPlayerIn* GetPlayerIn() override { return this; }	// 外野プレイヤー取得
 
 	//=============================
 	// パターン

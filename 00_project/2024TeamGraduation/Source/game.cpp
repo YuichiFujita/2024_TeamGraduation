@@ -26,9 +26,6 @@
 
 #include "2D_Effect.h"
 #include "controlkeydisp.h"
-
-#include "playerUser.h"
-#include "playerAI.h"
 #include "ball.h"
 #include "audience.h"
 #include "teamStatus.h"
