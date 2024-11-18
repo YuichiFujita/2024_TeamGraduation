@@ -240,7 +240,7 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 
 	// 受け付け猶予減算
 	float oldTime = fInputInterval;
-	fInputInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	fInputInterval -= fDeltaTime * fSlowRate;
 	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
 
 	// 入力の受け付け猶予設定
@@ -297,7 +297,7 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 	float fTriggerInterval = GetTriggerInterval();
 
 	// トリガーの猶予減らしていく
-	fTriggerInterval -= fDeltaTime * fDeltaRate * fSlowRate;
+	fTriggerInterval -= fDeltaTime * fSlowRate;
 	if (fTriggerInterval <= 0.0f)
 	{
 		// トリガーのカウントリセット
@@ -553,7 +553,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	// 現在の入力方向カウンター
 	float fInputAngleCtr = GetInputAngleCtr();
-	fInputAngleCtr -= fDeltaTime, fDeltaRate, fSlowRate;
+	fInputAngleCtr -= fDeltaTime * fSlowRate;
 	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
 	SetInputAngleCtr(fInputAngleCtr);
 
@@ -767,7 +767,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	if (player->GetBase()->IsCrab() &&
 		(player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
 		player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT))
-		{// カニ歩き時 サイドステップ時のみ
+	{// カニ歩き時 サイドステップ時のみ
 		// 移動割合更新
 		UpdateCrabMoveEasingTime(fDeltaTime, fDeltaRate, fSlowRate);
 	}
