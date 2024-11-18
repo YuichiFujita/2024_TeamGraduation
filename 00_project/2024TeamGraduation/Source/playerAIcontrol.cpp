@@ -752,14 +752,14 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	// ボールを持つ相手を取得
 	CPlayer* pTarget = GetCatchTarget();
 
+	// 線との距離
+	CatchLineLeftDistance();
+
 	// 距離(ボールを持っている奴との)
 	CatchDistance(pTarget);
 
 	// 外野との距離
 	CatchOutDistance();
-
-	// 線との距離
-	CatchLineLeftDistance();
 
 
 	if (m_sInfo.sMoveInfo.eType == EMoveType::MOVETYPE_NONE)
@@ -771,15 +771,15 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 		// 歩きオフ
 		pControlAIMove->SetIsWalk(false);
 	}
-	//else
-	//{
-	//	// AIコントロール情報の取得
-	//	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	//	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+	else
+	{
+		// AIコントロール情報の取得
+		CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	//	// 歩きオフ
-	//	pControlAIMove->SetIsWalk(true);
-	//}
+		// 歩きオフ
+		pControlAIMove->SetIsWalk(true);
+	}
 }
 
 //==========================================================================
@@ -1016,10 +1016,15 @@ void CPlayerAIControl::CatchLineLeftDistance()
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	// ターゲット距離(中央)
-	MyLib::Vector3 targetPos = {};	// ターゲット位置
 	MyLib::Vector3 myPos = m_pAI->GetPosition();	// 自身位置
+	MyLib::Vector3 targetPos = { 0.0f, 0.0f, myPos.x };	// ターゲット位置
 
-	if (myPos.x < m_sLearn.fDistanceLine)
+	// 自分からターゲットとの距離
+	float fDistance = myPos.DistanceXZ(targetPos);
+
+	if (fDistance > m_sLearn.fDistanceLine + LENGTH_SPACE) return;
+
+	if (fDistance < m_sLearn.fDistanceLine)
 	{// 距離が指定値以内の場合
 
 		// 移動状態を離れろ！
@@ -1032,8 +1037,13 @@ void CPlayerAIControl::CatchLineLeftDistance()
 		pControlAIMove->SetClabDirection(direction);
 
 		// 歩け！
-		pControlAIMove->SetIsWalk(true);
+		//pControlAIMove->SetIsWalk(true);
 	}
+	//else
+	//{
+	//	// 移動状態を離れろ！
+	//	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+	//}
 }
 
 
