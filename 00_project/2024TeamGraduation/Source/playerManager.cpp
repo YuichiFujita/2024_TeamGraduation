@@ -6,7 +6,7 @@
 //==========================================================================
 #include "playerManager.h"
 #include "player.h"
-#include "playerStatus.h"
+#include "playerUserOut.h"
 #include "bindKeyFront.h"
 #include "bindKeyBack.h"
 #include "bindKeyLeft.h"
@@ -44,7 +44,8 @@ CPlayerManager* CPlayerManager::m_pInstance = nullptr;	// 自身のインスタンス
 //==========================================================================
 CPlayerManager::CPlayerManager()
 {
-
+	// メンバ変数をクリア
+	memset(&m_apOut[0], 0, sizeof(m_apOut));	// 外野プレイヤー
 }
 
 //==========================================================================
@@ -109,6 +110,8 @@ void CPlayerManager::Update(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 int CPlayerManager::RegistPlayer(CPlayer* pPlayer)
 {
+	// TODO：元のインデックス持っておいて、追加する要素番号と一致しているかを見たほうが安全そう
+
 	switch (pPlayer->GetAreaType())
 	{ // ポジションごとの処理
 	case CPlayer::EFieldArea::FIELD_IN:
@@ -180,8 +183,33 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer)
 		if (m_apOut[i] == nullptr)
 		{ // 外野が未設定の場合
 
-			// 外野を登録し抜ける
+			// 外野を登録
 			m_apOut[i] = pPlayer;
+
+			// 現在インデックスの外野情報を取得
+			SOutInfo info = GetOutInfo((EOutPos)i);
+
+			// 左右位置を設定
+			CPlayerOut* pBase = pPlayer->GetBase()->GetPlayerOut();	// 外野プレイヤー情報
+			pBase->SetPosLeft(info.posLeft);
+			pBase->SetPosRight(info.posRight);
+
+			if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
+			{ // ベースがユーザーの場合
+
+				// 左右操作の割当
+				CPlayerUserOut* pBaseUser = pPlayer->GetBase()->GetPlayerUserOut();	// ユーザー外野プレイヤー情報
+				pBaseUser->BindLeftKey(info.pKeyLeft);
+				pBaseUser->BindRightKey(info.pKeyRight);
+			}
+			else
+			{ // ベースがユーザーではない場合
+
+				// 左右操作の破棄
+				SAFE_DELETE(info.pKeyLeft);
+				SAFE_DELETE(info.pKeyRight);
+			}
+
 			return i;
 		}
 	}
@@ -218,8 +246,8 @@ void CPlayerManager::DeleteOutPlayer(CPlayer* pPlayer)
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftFar()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-900.0f, 0.0f, 650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-50.0f, 0.0f, 650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(50.0f, 0.0f, 650.0f);		// 移動可能左位置
+	info.posRight	= MyLib::Vector3(900.0f, 0.0f, 650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyLeft;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyRight;	// 右移動キー
 	return info;
@@ -231,10 +259,10 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftFar()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeft()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-1040.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-1040.0f, 0.0f, 650.0f);	// 移動可能右位置
-	info.pKeyLeft	= DEBUG_NEW CBindKeyBack;	// 左移動キー
-	info.pKeyRight	= DEBUG_NEW CBindKeyFront;	// 右移動キー
+	info.posLeft	= MyLib::Vector3(1040.0f, 0.0f, 650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(1040.0f, 0.0f, -650.0f);	// 移動可能右位置
+	info.pKeyLeft	= DEBUG_NEW CBindKeyFront;	// 左移動キー
+	info.pKeyRight	= DEBUG_NEW CBindKeyBack;	// 右移動キー
 	return info;
 }
 
@@ -244,8 +272,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeft()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftNear()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-50.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-900.0f, 0.0f, -650.0f);	// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(900.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(50.0f, 0.0f, -650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyRight;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyLeft;	// 右移動キー
 	return info;
@@ -257,8 +285,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftNear()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRightFar()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(50.0f, 0.0f, 650.0f);		// 移動可能左位置
-	info.posRight	= MyLib::Vector3(900.0f, 0.0f, 650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(-900.0f, 0.0f, 650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-50.0f, 0.0f, 650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyLeft;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyRight;	// 右移動キー
 	return info;
@@ -270,10 +298,10 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRightFar()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRight()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(1040.0f, 0.0f, 650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(1040.0f, 0.0f, -650.0f);	// 移動可能右位置
-	info.pKeyLeft	= DEBUG_NEW CBindKeyFront;	// 左移動キー
-	info.pKeyRight	= DEBUG_NEW CBindKeyBack;	// 右移動キー
+	info.posLeft	= MyLib::Vector3(-1040.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-1040.0f, 0.0f, 650.0f);	// 移動可能右位置
+	info.pKeyLeft	= DEBUG_NEW CBindKeyBack;	// 左移動キー
+	info.pKeyRight	= DEBUG_NEW CBindKeyFront;	// 右移動キー
 	return info;
 }
 
@@ -283,8 +311,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRight()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRightNear()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(900.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(50.0f, 0.0f, -650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(-50.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-900.0f, 0.0f, -650.0f);	// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyRight;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyLeft;	// 右移動キー
 	return info;

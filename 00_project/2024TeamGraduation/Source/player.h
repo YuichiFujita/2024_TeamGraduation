@@ -240,7 +240,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CPlayer();
 
 	//=============================
@@ -401,6 +401,7 @@ private:
 	//-----------------------------
 	void UpdateDamageReciveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ダメージ受付時間更新
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
+	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 
 	//-----------------------------
