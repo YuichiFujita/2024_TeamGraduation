@@ -14,12 +14,6 @@
 #include "playercontrol_move.h"
 
 //==========================================================================
-// 前方宣言
-//==========================================================================
-class CPlayerAIOutControlMove;
-class CPlayerAIControlMove;
-
-//==========================================================================
 // 外野プレイヤーコントロールクラス定義
 //==========================================================================
 //=============================
@@ -40,6 +34,14 @@ public:
 	//=============================
 	virtual CPlayerAIOutControlMove* GetAIOut() override { return this; }
 
+	//=============================
+	// メンバ関数
+	//=============================
+	void SetIsBlink(bool bBlink) { m_bBlink = bBlink; }
+	void SetIsDash(bool bDash) { m_bDash = bDash; }
+	void SetIsWalk(bool bWalk) { m_bWalk = bWalk; }
+
+
 private:
 
 	//=============================
@@ -49,6 +51,14 @@ private:
 	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ダッシュ
 	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ウォーク
 	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) override;	// ダッシュ時のトリガー
+
+	//=============================
+	// メンバ変数
+	//=============================
+	bool m_bBlink;
+	bool m_bDash;
+	bool m_bWalk;
+
 };
 
 #endif

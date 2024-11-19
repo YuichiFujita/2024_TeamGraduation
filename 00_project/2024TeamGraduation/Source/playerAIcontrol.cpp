@@ -39,7 +39,7 @@ namespace
 
 	// 距離間(デフォルト)
 	const float LENGTH_IN = 500.0f;
-	const float LENGTH_SPACE = 50.0f;
+	const float LENGTH_SPACE = 10.0f;
 	const float LENGTH_OUT = 200.0f;
 	const float LENGTH_LINE = 100.0f;
 }
@@ -290,6 +290,8 @@ void CPlayerAIControl::ThrowTypeNormal(CPlayer* pTarget, const float fDeltaTime,
 {
 	// その場なのか歩くのか走るのか
 
+	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+
 	// 投げるまでの行動の更新
 	(this->*(m_ThrowMoveFunc[m_sInfo.sMoveInfo.eType]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -335,8 +337,8 @@ void CPlayerAIControl::ThrowMoveNone(CPlayer* pTarget, const float fDeltaTime, c
 	// 投げる
 	pControlAIAction->SetIsThrow(true);
 
-	// 変数リセット
-	Reset();
+	m_sInfo.sThrowInfo.eType = EThrowType::THROWTYPE_NONE;
+
 	
 	// 投げるまでのタイミングの更新
 	//(this->*(m_ThrowTimingFunc[m_sInfo.sThrowInfo.eTiming]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
@@ -463,7 +465,7 @@ void CPlayerAIControl::PlanMove(CPlayer* pTarget)
 	if (pTarget == nullptr) return;
 
 	// 線に対する思考
-	StrategyLine(pTarget);
+	Line(pTarget);
 }
 
 //==========================================================================
@@ -505,10 +507,10 @@ bool CPlayerAIControl::IsLineOverBall()
 void CPlayerAIControl::JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 線に対しての思考
-	StrategyLine(pTarget);
+	Line(pTarget);
 
 	// タイミング思考
-	StrategyTiming(pTarget);
+	Timing(pTarget);
 
 	// 状態更新
 	(this->*(m_ThrowTimingFunc[m_sInfo.sThrowInfo.eTiming]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
@@ -517,7 +519,7 @@ void CPlayerAIControl::JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime,
 //==========================================================================
 // タイミングの思考 今はRAND
 //==========================================================================
-void CPlayerAIControl::StrategyTiming(CPlayer* pTarget)
+void CPlayerAIControl::Timing(CPlayer* pTarget)
 {
 	if (m_sInfo.sThrowInfo.bTiming) { return; }
 
@@ -656,7 +658,7 @@ void CPlayerAIControl::ThrowJumpTimingDelay(CPlayer* pTarget, const float fDelta
 //==========================================================================
 // 線に対しての思考
 //==========================================================================
-void CPlayerAIControl::StrategyLine(CPlayer* pTarget)
+void CPlayerAIControl::Line(CPlayer* pTarget)
 {
 	// チームタイプの取得
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
@@ -767,7 +769,6 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	// 線との距離
 	if (!CatchLineLeftDistance())
 	{
-
 		// 距離(ボールを持っている奴との)
 		CatchDistance(pTarget);
 
@@ -776,25 +777,7 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 
 	}
 
-
-	if (m_sInfo.sMoveInfo.eType == EMoveType::MOVETYPE_NONE)
-	{
-		// AIコントロール情報の取得
-		CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-		// 歩きオフ
-		pControlAIMove->SetIsWalk(false);
-	}
-	else
-	{
-		// AIコントロール情報の取得
-		CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-		// 歩きオフ
-		pControlAIMove->SetIsWalk(true);
-	}
+	CatchMoveFlag();
 }
 
 //==========================================================================
@@ -929,32 +912,24 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 	float fDistance = MyPos.DistanceXZ(TargetPos);
 
 	if (fDistance < m_sLearn.fDistanceIN - LENGTH_SPACE)
-	{// 離れろ！
+	{// 相手との距離が近かった場合
+		// 行動状態：離れる
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 
-		// 相手から見た自分
+		// カニ進行方向の設定
 		float direction = TargetPos.AngleXZ(MyPos);
-
-		// カニ方向の設定
 		pControlAIMove->SetClabDirection(direction);
-
-		// 歩け！
-		//pControlAIMove->SetIsWalk(true);
 
 		return;
 	}
 	else if (fDistance > m_sLearn.fDistanceIN + LENGTH_SPACE)
-	{// 近づけ！
+	{// 相手との距離が遠かった場合
+		// 行動状態：近づく
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
 
-		//float direction = TargetPos.AngleXZ(MyPos);
+		// カニ進行方向の設定
 		float direction = MyPos.AngleXZ(TargetPos.AngleXZ(MyPos));
-
-		// カニ方向の設定
 		pControlAIMove->SetClabDirection(direction);
-
-		// 歩け！
-		//pControlAIMove->SetIsWalk(true);
 
 		return;
 	}
@@ -1014,9 +989,6 @@ void CPlayerAIControl::CatchOutDistance()
 			// カニ進行方向の設定
 			float direction = pTarget->GetPosition().AngleXZ(myPos);
 			pControlAIMove->SetClabDirection(direction);
-
-			// 歩きオン
-			//pControlAIMove->SetIsWalk(true);
 		}
 	}
 }
@@ -1051,9 +1023,6 @@ bool CPlayerAIControl::CatchLineLeftDistance()
 		// カニ方向の設定
 		pControlAIMove->SetClabDirection(direction);
 
-		// 歩け！
-		//pControlAIMove->SetIsWalk(true);
-
 		return true;
 	}
 	else 
@@ -1067,6 +1036,26 @@ bool CPlayerAIControl::CatchLineLeftDistance()
 	return false;
 }
 
+//==========================================================================
+// ターゲット設定(キャッチ時)
+//==========================================================================
+void CPlayerAIControl::CatchMoveFlag()
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	if (m_sInfo.sMoveInfo.eType == EMoveType::MOVETYPE_NONE)
+	{
+		// 歩きオフ
+		pControlAIMove->SetIsWalk(false);
+	}
+	else
+	{
+		// 歩きオン
+		pControlAIMove->SetIsWalk(true);
+	}
+}
 
 
 
@@ -1219,9 +1208,6 @@ CPlayer* CPlayerAIControl::GetCatchTarget()
 
 	return pTarget;
 }
-
-
-
 
 //==========================================================================
 // 変数のリセット

@@ -31,7 +31,9 @@ namespace
 //==========================================================================
 CPlayerAIOutControlMove::CPlayerAIOutControlMove()
 {
-
+	m_bBlink = false;
+	m_bDash = false;
+	m_bWalk = false;
 }
 
 //==========================================================================
@@ -207,6 +209,8 @@ void CPlayerAIOutControlMove::Dash(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerAIOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (!m_bWalk) return;
+
 	CPlayerBase* pBase = player->GetBase();						// プレイヤーベース情報
 	CPlayerOut* pPlayerOut = pBase->GetPlayerOut();				// プレイヤー外野情報
 	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();			// 移動可能な左位置

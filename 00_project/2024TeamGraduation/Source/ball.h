@@ -100,6 +100,7 @@ public:
 	EAttack GetTypeAtk() const		{ return m_typeAtk; }				// 攻撃種類取得
 	EState GetState() const			{ return m_state; }					// 状態取得
 	CPlayer* GetPlayer() const		{ return m_pPlayer; }				// 所持プレイヤー取得
+	CPlayer* GetTarget() const		{ return m_pTarget; }				// ターゲット取得
 	CPlayer* GetCover() const		{ return m_pCover; }				// カバー対象プレイヤー取得
 	int GetDamage() const			{ return m_nDamage; }				// ダメージ取得
 	float GetKnockback() const		{ return m_fKnockback; }			// ノックバック取得
