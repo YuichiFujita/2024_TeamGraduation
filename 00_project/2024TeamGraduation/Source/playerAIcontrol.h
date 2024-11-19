@@ -208,8 +208,6 @@ private:
 	CPlayer* GetThrowTarget();		// 投げるターゲット
 	CPlayer* GetCatchTarget();		// 投げるターゲット
 
-	void Throw();
-
 	void PlanThrowFlow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げる流れ
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
@@ -219,14 +217,16 @@ private:
 	void CatchOutDistance();
 	bool CatchLineLeftDistance();
 
+	void CatchMoveFlag();
+
 	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);	// 行動プラン
 
 	bool IsLineOverBall();	// 線超え判定(ボール)
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void StrategyTiming(CPlayer* pTarget);	// タイミングの思考
-	void StrategyLine(CPlayer* pTarget);
+	void Timing(CPlayer* pTarget);	// タイミングの思考
+	void Line(CPlayer* pTarget);
 	void LineLeftTeam(CPlayer* pTarget);
 	void LineRightTeam(CPlayer* pTarget);
 

@@ -302,7 +302,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyLeft,					// 左移動キー
 		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI			// ベースタイプ
 	);
 	if (pAIOutFar == nullptr)
 	{
@@ -316,7 +316,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyFront,				// 左移動キー
 		DEBUG_NEW CBindKeyBack,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI			// ベースタイプ
 	);
 	if (pAIOutLeft == nullptr)
 	{
@@ -330,7 +330,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyRight,				// 左移動キー
 		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_LEFT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI			// ベースタイプ
 	);
 	if (pAIOutNear == nullptr)
 	{

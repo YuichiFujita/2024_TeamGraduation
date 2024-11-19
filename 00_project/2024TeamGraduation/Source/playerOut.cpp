@@ -13,7 +13,7 @@
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerOut::CPlayerOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea),
+CPlayerOut::CPlayerOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) : CPlayerBase(pPlayer, typeTeam, typeArea, typeBase),
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
 	m_posRight	(VEC3_ZERO)		// 移動可能右位置
 {

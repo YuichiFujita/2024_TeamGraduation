@@ -240,7 +240,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayer(const EFieldArea typeArea, int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CPlayer();
 
 	//=============================
@@ -294,10 +294,12 @@ public:
 	void SetState(EState state);		// 状態設定
 	void ChangeBase(EBaseType type);	// ベース変更
 	EBaseType GetBaseType() const;		// ベース取得
-	EFieldArea GetAreaType() const { return m_typeArea; }	// ポジション取得
+	EFieldArea GetAreaType() const { return m_typeArea; }			// ポジション取得
+	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
+	int GetPositionIdx() { return m_nPosIdx; }				// 自分のポジション別インデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
@@ -476,13 +478,15 @@ private:
 	//-----------------------------
 	float m_fHaveTime;			// ボール所持タイマー
 	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
+	int m_nPosIdx;				// ポジション別インデックス
 	CShadow* m_pShadow;			// 影の情報
 	CBall* m_pBall;				// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	EHandedness m_Handress;		// 利き手
 	EBody m_BodyType;			// 体型
-	const EFieldArea m_typeArea;			// ポジション
-	static CListManager<CPlayer> m_List;	// リスト
+	const EFieldArea m_typeArea;				// ポジション
+	const CGameManager::ETeamSide m_typeTeam;	// チームサイド
+	static CListManager<CPlayer> m_List;		// リスト
 };
 
 #endif
