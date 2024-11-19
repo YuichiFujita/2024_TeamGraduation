@@ -361,6 +361,12 @@ void CGameManager::UpdateTeamStatus()
 		// スペシャル加算
 		AddSpecialValue(m_pTeamStatus[i]->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_ALLWAYS);
 
+#if _DEBUG
+#if 1
+		return;
+#endif	// デバッグ用
+#endif
+
 		// 全滅判定
 		m_pTeamStatus[i]->CheckAllDead();
 	}

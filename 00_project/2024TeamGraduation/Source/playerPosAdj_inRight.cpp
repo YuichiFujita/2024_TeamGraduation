@@ -42,3 +42,19 @@ bool CPlayerPosAdjInRight::IsLineOut(CPlayer* pPlayer)
 	// ラインを越えていない場合フラグOFFを返す
 	return false;
 }
+
+//==========================================================================
+// ライン越えフラグ取得
+//==========================================================================
+bool CPlayerPosAdjInRight::IsUnstable(CPlayer* pPlayer)
+{
+	// ラインを越えている場合フラグONを返す
+	if (pPlayer->GetPosition().x < UNSTABLE_LINE &&
+		pPlayer->GetPosition().x > 0.0f)
+	{
+		return true;
+	}
+
+	// ラインを越えていない場合フラグOFFを返す
+	return false;
+}

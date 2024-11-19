@@ -78,6 +78,7 @@ public:
 		MOTION_DEAD_AFTER,			// 死亡後
 		MOTION_GRIP_DEF,			// デフォグリップ
 		MOTION_GRIP_FRONT,			// 前グリップ
+		MOTION_UNSTABLE,			// おっとっと
 		MOTION_MAX
 	};
 
