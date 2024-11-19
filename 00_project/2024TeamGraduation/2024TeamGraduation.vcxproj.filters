@@ -599,6 +599,12 @@
     <ClCompile Include="Source\shaderMono.cpp">
       <Filter>shader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerAIOut_control.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIOut_controlAction.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1089,6 +1095,12 @@
     </ClInclude>
     <ClInclude Include="Source\shaderMono.h">
       <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIOut_control.h">
+      <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIOut_controlAction.h">
+      <Filter>player\playerAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

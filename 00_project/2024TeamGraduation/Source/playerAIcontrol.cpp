@@ -290,6 +290,8 @@ void CPlayerAIControl::ThrowTypeNormal(CPlayer* pTarget, const float fDeltaTime,
 {
 	// ‚»‚Ìê‚È‚Ì‚©•à‚­‚Ì‚©‘–‚é‚Ì‚©
 
+	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+
 	// “Š‚°‚é‚Ü‚Å‚Ìs“®‚ÌXV
 	(this->*(m_ThrowMoveFunc[m_sInfo.sMoveInfo.eType]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 }
