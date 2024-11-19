@@ -36,6 +36,14 @@ public:
 
 	// 静的メンバ関数
 	static CScreen* Create(const int nScreenTexIdx);	// 生成
+
+	// メンバ関数
+	void SetEnableShader(const bool bShader)	{ m_bShader = bShader; }	// シェーダー設定
+	bool IsShader() const						{ return m_bShader; }		// シェーダー取得
+
+private:
+	// メンバ変数
+	bool m_bShader;	// シェーダーフラグ
 };
 
 #endif	// _SCREEN_H_

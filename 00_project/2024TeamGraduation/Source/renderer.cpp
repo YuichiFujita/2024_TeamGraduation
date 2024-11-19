@@ -356,3 +356,21 @@ void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface)
 	// 塗りつぶしモードを元に戻す
 	m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);	// ポリゴンを塗りつぶす
 }
+
+//============================================================
+//	スクリーンシェーダーフラグの設定処理
+//============================================================
+void CRenderer::SetEnableShader(const bool bShader)
+{
+	// シェーダーフラグの設定
+	m_pDrawScreen->SetEnableShader(bShader);
+}
+
+//============================================================
+//	スクリーンシェーダーフラグの取得処理
+//============================================================
+bool CRenderer::IsShader() const
+{
+	// シェーダーフラグの取得
+	return m_pDrawScreen->IsShader();
+}

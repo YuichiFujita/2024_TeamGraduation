@@ -264,16 +264,18 @@
     <ClCompile Include="Source\pause_tutorial.cpp" />
     <ClCompile Include="Source\player.cpp" />
     <ClCompile Include="Source\playerAction.cpp" />
-    <ClCompile Include="Source\playerAI.cpp" />
     <ClCompile Include="Source\playerAIcontrol.cpp" />
     <ClCompile Include="Source\playerAIcontrol_action.cpp" />
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
     <ClCompile Include="Source\playerAIIn.cpp" />
     <ClCompile Include="Source\playerAIOut.cpp" />
+    <ClCompile Include="Source\playerAIOut_controlMove.cpp" />
     <ClCompile Include="Source\playerBase.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerIn.cpp" />
+    <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
     <ClCompile Include="Source\playerPosAdj_in.cpp" />
     <ClCompile Include="Source\playerPosAdj_inLeft.cpp" />
@@ -282,7 +284,6 @@
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
     <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
-    <ClCompile Include="Source\playerUser.cpp" />
     <ClCompile Include="Source\playerUserIn.cpp" />
     <ClCompile Include="Source\playerUserOut.cpp" />
     <ClCompile Include="Source\playerUserOut_controlMove.cpp" />
@@ -300,6 +301,8 @@
     <ClCompile Include="Source\sample_objX.cpp" />
     <ClCompile Include="Source\scene.cpp" />
     <ClCompile Include="Source\screen.cpp" />
+    <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
     <ClCompile Include="Source\specialEffect.cpp" />
@@ -429,16 +432,18 @@
     <ClInclude Include="Source\pause_tutorial.h" />
     <ClInclude Include="Source\player.h" />
     <ClInclude Include="Source\playerAction.h" />
-    <ClInclude Include="Source\playerAI.h" />
     <ClInclude Include="Source\playerAIcontrol.h" />
     <ClInclude Include="Source\playerAIcontrol_action.h" />
     <ClInclude Include="Source\playerAIcontrol_move.h" />
     <ClInclude Include="Source\playerAIIn.h" />
     <ClInclude Include="Source\playerAIOut.h" />
+    <ClInclude Include="Source\playerAIOut_controlMove.h" />
     <ClInclude Include="Source\playerBase.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerIn.h" />
+    <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
     <ClInclude Include="Source\playerPosAdj_in.h" />
     <ClInclude Include="Source\playerPosAdj_inLeft.h" />
@@ -447,7 +452,6 @@
     <ClInclude Include="Source\playerUsercontrol_move.h" />
     <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />
-    <ClInclude Include="Source\playerUser.h" />
     <ClInclude Include="Source\playerUserIn.h" />
     <ClInclude Include="Source\playerUserOut.h" />
     <ClInclude Include="Source\playerUserOut_controlMove.h" />
@@ -462,6 +466,8 @@
     <ClInclude Include="Source\sample_objX.h" />
     <ClInclude Include="Source\scene.h" />
     <ClInclude Include="Source\screen.h" />
+    <ClInclude Include="Source\shader.h" />
+    <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
     <ClInclude Include="Source\specialEffect.h" />
@@ -480,6 +486,12 @@
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
     <ClInclude Include="Source\Xload.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="data\SHADER\shaderMono.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

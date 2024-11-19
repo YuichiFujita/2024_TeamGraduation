@@ -26,9 +26,6 @@
 
 #include "2D_Effect.h"
 #include "controlkeydisp.h"
-
-#include "playerUser.h"
-#include "playerAI.h"
 #include "ball.h"
 #include "audience.h"
 #include "teamStatus.h"
@@ -260,7 +257,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyLeft,					// 左移動キー
 		DEBUG_NEW CBindKeyRight,				// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI				// ベースタイプ
 	);
 	if (pUserOutFar == nullptr)
 	{
@@ -274,7 +271,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyBack,						// 左移動キー
 		DEBUG_NEW CBindKeyFront,					// 右移動キー
 		CGameManager::SIDE_RIGHT,					// チームサイド
-		CPlayer::EBaseType::TYPE_USER				// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI					// ベースタイプ
 	);
 	if (pUserOutLeft == nullptr)
 	{
@@ -288,7 +285,7 @@ HRESULT CGame::Init()
 		DEBUG_NEW CBindKeyRight,				// 左移動キー
 		DEBUG_NEW CBindKeyLeft,					// 右移動キー
 		CGameManager::SIDE_RIGHT,				// チームサイド
-		CPlayer::EBaseType::TYPE_USER			// ベースタイプ
+		CPlayer::EBaseType::TYPE_AI				// ベースタイプ
 	);
 	if (pUserOutNear == nullptr)
 	{
@@ -443,6 +440,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			bool bAI = (type == CPlayer::TYPE_AI) ? true : false;
 			if (bAI) { pHeadPlayer->ChangeBase(CPlayer::TYPE_USER); }
 			else	 { pHeadPlayer->ChangeBase(CPlayer::TYPE_AI); }
+		}
+
+		if (ImGui::Button("Shader : Change"))
+		{
+			// シェーダーフラグの反転
+			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader());
 		}
 
 		if (ImGui::Button("Camera : Swing"))

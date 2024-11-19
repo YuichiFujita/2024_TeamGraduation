@@ -407,7 +407,14 @@ void CCamera::SetState(const STATE state, const bool bReset)
 void CCamera::UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// Œü‚«‚Ì³‹K‰»
+#if _DEBUG
+	if (!m_pCameraMotion->IsEdit())
+	{
+		UtilFunc::Transformation::RotNormalize(m_rot);
+	}
+#else
 	UtilFunc::Transformation::RotNormalize(m_rot);
+#endif
 
 	// –Ú•W‹——£‚Ì•â³
 	if (m_fDestDistance < MIN_DIS)	 { m_fDestDistance = MIN_DIS; }

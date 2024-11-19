@@ -1,10 +1,10 @@
-//=============================================================================
+//==========================================================================
 // 
 //  レンダラーヘッダー [renderer.h]
 //  Author : 相馬靜雅
 //  Adder  : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 
 #ifndef _RENDERER_H_
 #define _RENDERER_H_	// 二重インクルード防止
@@ -15,7 +15,7 @@
 #include "renderTexture.h"
 
 //==========================================================================
-//	前方宣言
+// 前方宣言
 //==========================================================================
 class CScreen;
 
@@ -33,9 +33,10 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
-	HRESULT CreateRenderTexture();	// レンダーテクスチャー生成
+	HRESULT CreateRenderTexture();							// レンダーテクスチャー生成
 	void DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface);	// レンダーテクスチャ描画
-
+	void SetEnableShader(const bool bShader);				// スクリーンシェーダーフラグ設定
+	bool IsShader() const;									// スクリーンシェーダーフラグ取得
 	inline LPDIRECT3DDEVICE9 GetDevice() const	{ return m_pD3DDevice; }
 	inline LPDIRECT3D9 GetD3D() const			{ return m_pD3D; }
 	inline int GetRenderTextureIndex() const	{ return m_pRenderScene->GetTextureIndex(); }	// レンダーテクスチャインデックス取得

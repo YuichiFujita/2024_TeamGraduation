@@ -402,10 +402,17 @@ private:
 	void ResetFrag();	// フラグリセット
 
 	//-----------------------------
+	// 非モテ関数
+	//-----------------------------
+	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
+	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
+
+	//-----------------------------
 	// モーション系関数
 	//-----------------------------
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
 	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
+	void UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モーション別更新処理
 	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
@@ -467,9 +474,10 @@ private:
 	//-----------------------------
 	// その他変数
 	//-----------------------------
-	int m_nMyPlayerIdx;	// プレイヤーインデックス番号
-	CShadow* m_pShadow;	// 影の情報
-	CBall* m_pBall;		// ボールの情報
+	float m_fHaveTime;			// ボール所持タイマー
+	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
+	CShadow* m_pShadow;			// 影の情報
+	CBall* m_pBall;				// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	EHandedness m_Handress;		// 利き手
 	EBody m_BodyType;			// 体型

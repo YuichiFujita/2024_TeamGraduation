@@ -40,6 +40,9 @@ public:
 		int nDamageNormal;			// ダメージ(通常)
 		int nDamageJump;			// ダメージ(ジャンプ)
 		int nDamageSpecial;			// ダメージ(スペシャル)
+		float fKnockbackNormal;		// ノックバック(通常)
+		float fKnockbackJump;		// ノックバック(ジャンプ)
+		float fKnockbackSpecial;	// ノックバック(スペシャル)
 
 		// コンストラクタ
 		SBallParameter() :
@@ -49,7 +52,10 @@ public:
 			fCatchRange(0.0f),			// キャッチ範囲
 			nDamageNormal(0),			// ダメージ(通常)
 			nDamageJump(0),				// ダメージ(ジャンプ)
-			nDamageSpecial(0)			// ダメージ(スペシャル)
+			nDamageSpecial(0),			// ダメージ(スペシャル)
+			fKnockbackNormal(0),		// ノックバック(通常)
+			fKnockbackJump(0),			// ノックバック(ジャンプ)
+			fKnockbackSpecial(0)		// ノックバック(スペシャル)
 		{}
 
 		// パラメーター付きコンストラクタ
@@ -61,7 +67,10 @@ public:
 			float _fCatchRange,			// キャッチ範囲
 			int _nDamageNormal,			// ダメージ(通常)
 			int _nDamageJump,			// ダメージ(ジャンプ)
-			int _nDamageSpecial			// ダメージ(スペシャル)
+			int _nDamageSpecial,		// ダメージ(スペシャル)
+			float _fKnockbackNormal,	// ノックバック(通常)
+			float _fKnockbackJump,		// ノックバック(ジャンプ)
+			float _fKnockbackSpecial	// ノックバック(スペシャル)
 		) :
 			fThrowMoveNormal(_fThrowMoveNormal),	// 投げ速度(通常)
 			fThrowMoveJump(_fThrowMoveJump),		// 投げ速度(ジャンプ)
@@ -69,7 +78,10 @@ public:
 			fCatchRange(_fCatchRange),				// キャッチ範囲
 			nDamageNormal(_nDamageNormal),			// ダメージ(通常)
 			nDamageJump(_nDamageJump),				// ダメージ(ジャンプ)
-			nDamageSpecial(_nDamageSpecial)			// ダメージ(スペシャル)
+			nDamageSpecial(_nDamageSpecial),		// ダメージ(スペシャル)
+			fKnockbackNormal(_fKnockbackNormal),	// ノックバック(通常)
+			fKnockbackJump(_fKnockbackJump),		// ノックバック(ジャンプ)
+			fKnockbackSpecial(_fKnockbackSpecial)	// ノックバック(スペシャル)
 		{}
 	};
 
