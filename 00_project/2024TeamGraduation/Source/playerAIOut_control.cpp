@@ -142,7 +142,7 @@ void CPlayerAIOutControl::ModeManager()
 	if (pBall == nullptr) return;
 
 	if (pBall->GetPlayer() == nullptr ||
-		pBall->GetTypeTeam() != m_pAIOut->GetStatus()->GetTeam())
+		pBall->GetTypeTeam() != m_pAIOut->GetTeam())
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		m_eMode = EMode::MODE_CATCH;
 	}
@@ -307,7 +307,7 @@ CPlayer* CPlayerAIOutControl::GetThrowTarget()
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
 		// 味方チーム||外野の場合
-		if ((typeTeam == pPlayer->GetStatus()->GetTeam()) ||
+		if ((typeTeam == pPlayer->GetTeam()) ||
 			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
 		{
 			continue;

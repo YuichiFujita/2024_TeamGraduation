@@ -52,7 +52,7 @@ void CPlayerAIOutControlAction::Catch(CPlayer* player, const float fDeltaTime, c
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetStatus()->GetTeam()) return;
+	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetTeam()) return;
 
 	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
 	{
@@ -144,7 +144,7 @@ void CPlayerAIOutControlAction::Special(CPlayer* player, const float fDeltaTime,
 {
 	CBall* pBall = player->GetBall();
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetStatus()->GetTeam());
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetTeam());
 
 	//スペシャルゲージMAX＋ボール所持か
 	if (pBall == nullptr || !pTeamStatus->IsMaxSpecial()) return;
