@@ -214,9 +214,6 @@ void CCameraMotion::SaveMotion(const std::string& filename, const MotionInfo& in
 		return;
 	}
 
-	// コンテナ以外のセーブ
-	//File.write(reinterpret_cast<const char*>(&info.playTime), sizeof(info.playTime));
-
 	// データの個数を計算
 	size_t vecSize = info.Key.size();
 
@@ -227,13 +224,9 @@ void CCameraMotion::SaveMotion(const std::string& filename, const MotionInfo& in
 	File.write(reinterpret_cast<const char*>(info.Key.data()), vecSize * sizeof(MotionKey));
 
 
-
-
 #if 1
 	// トリガーのセーブ
 	{
-		//MotionInfo_Save info_Save;
-
 		// データの個数を計算
 		size_t vecSize = info.trigger.size();
 
@@ -244,10 +237,6 @@ void CCameraMotion::SaveMotion(const std::string& filename, const MotionInfo& in
 		File.write(reinterpret_cast<const char*>(info.trigger.data()), vecSize * sizeof(float));
 	}
 #endif
-
-
-
-
 
 	// ファイルを閉じる
 	File.close();
@@ -270,9 +259,6 @@ void CCameraMotion::LoadMotion(const std::string& filename)
 
 	MotionInfo loadData;	// 読み込みデータ
 
-	// コンテナ以外のロード
-	//File.read(reinterpret_cast<char*>(&loadData.playTime), sizeof(loadData.playTime));
-
 	// キーのサイズをロード
 	size_t size;
 	File.read(reinterpret_cast<char*>(&size), sizeof(size));
@@ -282,7 +268,6 @@ void CCameraMotion::LoadMotion(const std::string& filename)
 
 	// キーデータロード
 	File.read(reinterpret_cast<char*>(loadData.Key.data()), size * sizeof(MotionKey));
-
 
 	// トリガーのロード
 	{
@@ -296,10 +281,8 @@ void CCameraMotion::LoadMotion(const std::string& filename)
 		File.read(reinterpret_cast<char*>(loadData.trigger.data()), size * sizeof(float));
 	}
 
-
 	// ファイルを閉じる
 	File.close();
-
 
 	// モーション情報追加
 	m_vecMotionInfo.push_back(loadData);
@@ -600,13 +583,7 @@ float CCameraMotion::GetWholeMaxTimer()
 //==========================================================================
 void CCameraMotion::TriggerMoment()
 {
-	// 状態更新
-	//(this->*(m_MotionFunc[m_nNowMotionIdx]))();
-
-	if (m_pCameraMotion_Trigger[m_nNowMotionIdx] == nullptr)
-	{
-		return;
-	}
+	if (m_pCameraMotion_Trigger[m_nNowMotionIdx] == nullptr) return;
 
 	// トリガーの瞬間
 	m_pCameraMotion_Trigger[m_nNowMotionIdx]->TriggerMoment(m_nNowTriggerIdx);
@@ -655,6 +632,7 @@ void CCameraMotion::UpdateEdit()
 		}
 		ImGui::SameLine();
 
+		// リセット
 		ImGui::SetNextItemWidth(150.0f);
 		if (ImGui::Button("Reset"))
 		{
@@ -663,11 +641,11 @@ void CCameraMotion::UpdateEdit()
 			m_bFinish = true;	// 終了判定
 		}
 
-
+		// セーブ
 		ImGui::Dummy(ImVec2(0.0f, 5.0f));
 		if (ImGui::Button("Save", ImVec2(80, 50)))
 		{
-			SaveMotion(m_MotionFileName[m_EditInfo.motionIdx], m_EditInfo.motionInfo);
+			SaveMotion(m_MotionFileName[m_EditInfo.motionIdx], m_vecMotionInfo[m_EditInfo.motionIdx]);
 		}
 		ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
@@ -873,9 +851,10 @@ void CCameraMotion::EditMotion()
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 
-	// キー情報
+	// モーション情報
 	MotionInfo* pInfo = &m_EditInfo.motionInfo;
 
+	// モーション情報割り当て
 	if (ImGui::Button("Regist Motion"))
 	{
 		m_vecMotionInfo[m_EditInfo.motionIdx] = m_EditInfo.motionInfo;
@@ -913,6 +892,7 @@ void CCameraMotion::EditKey()
 		pKey->posRDest = posR - m_EditInfo.offset;
 	}
 
+	// キー情報割り当て
 	if (ImGui::Button("Regist Key"))
 	{
 		if (static_cast<int>(m_vecMotionInfo[m_EditInfo.motionIdx].Key.size()) <= m_EditInfo.keyIdx)

@@ -26,6 +26,7 @@
 #include "fog.h"
 #include "font.h"
 #include "characterAnim.h"
+#include "shader.h"
 
 //==========================================================================
 // 定数定義
@@ -315,6 +316,14 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
+	// シェーダーの生成
+	if (FAILED(CShader::Create()))
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
 	//**********************************
 	// フェード
 	//**********************************
@@ -551,6 +560,9 @@ void CManager::Uninit()
 		delete m_pRenderer;
 		m_pRenderer = nullptr;
 	}
+
+	// シェーダーの破棄
+	CShader::Release();
 
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
