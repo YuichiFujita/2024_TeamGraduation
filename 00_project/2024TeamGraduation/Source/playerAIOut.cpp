@@ -7,9 +7,11 @@
 //==========================================================================
 #include "playerAIOut.h"
 
+
 // 使用クラス
 #include "playerAIOut_controlMove.h"
-#include "playerAIcontrol_action.h"
+#include "playerAIOut_controlAction.h"
+#include "playerAIOut_control.h"
 
 //==========================================================================
 // 定数定義
@@ -22,11 +24,14 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea)
+CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea, CPlayer::EBaseType::TYPE_AI)
 {
 	// 外野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerAIOutControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
+	ChangeActionControl(DEBUG_NEW CPlayerAIOutControlAction());
+
+	// AIコントロール(外野)の生成
+	m_pAIOutControl = CPlayerAIOutControl::Create(pPlayer);
 }
 
 //==========================================================================
@@ -38,6 +43,20 @@ CPlayerAIOut::~CPlayerAIOut()
 }
 
 //==========================================================================
+// 更新処理
+//==========================================================================
+void CPlayerAIOut::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 基底クラスの更新
+	CPlayerOut::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (m_pAIOutControl)
+	{// AIコントロール(外野)の更新
+		m_pAIOutControl->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
 // ヒット
 //==========================================================================
 CPlayer::SHitInfo CPlayerAIOut::Hit(CBall* pBall)
@@ -45,14 +64,14 @@ CPlayer::SHitInfo CPlayerAIOut::Hit(CBall* pBall)
 	// 基底クラスのヒット
 	CPlayer::SHitInfo hitInfo = CPlayerOut::Hit(pBall);	// ヒット情報
 
-#if 0
+#if 1
 	if (hitInfo.eHit == CPlayer::EHit::HIT_NONE) { // 通常状態
 		return hitInfo;
 	}
 
 	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
 		// 投げモード
-		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_THROW);
+		m_pAIOutControl->SetMode(CPlayerAIOutControl::EMode::MODE_THROW);
 	}
 #endif
 
@@ -68,7 +87,7 @@ void CPlayerAIOut::Debug()
 	// 基底クラスのデバッグ表示
 	CPlayerOut::Debug();
 
-	CPlayerAIControlAction* pControlAction = dynamic_cast<CPlayerAIControlAction*>(GetPlayerControlAction());
+	CPlayerAIOutControlAction* pControlAction = dynamic_cast<CPlayerAIOutControlAction*>(GetPlayerControlAction());
 	if (pControlAction == nullptr) return;
 
 	// 自動投げフラグ設定

@@ -5,6 +5,7 @@
 // 
 //=============================================================================
 #include "player.h"
+#include "playerManager.h"
 #include "game.h"
 #include "camera.h"
 #include "manager.h"
@@ -192,7 +193,7 @@ CListManager<CPlayer> CPlayer::m_List = {};	// リスト
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPriority), m_typeArea(typeArea)
+CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, int nPriority) : CObjectChara(nPriority), m_typeArea(typeArea), m_typeTeam(typeTeam)
 {
 	// 値のクリア
 	m_state = STATE_NONE;			// 状態
@@ -226,13 +227,14 @@ CPlayer::CPlayer(const EFieldArea typeArea, int nPriority) : CObjectChara(nPrior
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
 
 	// その他
-	m_fHaveTime = 0.0f;				// ボール所持タイマー
-	m_nMyPlayerIdx = 0;				// プレイヤーインデックス番号
-	m_pShadow = nullptr;			// 影の情報
-	m_pBall = nullptr;				// ボールの情報
-	m_sDamageInfo = SDamageInfo();	// ダメージ情報
-	m_Handress = EHandedness::HAND_R;		// 利き手
-	m_BodyType = EBody::BODY_NORMAL;		// 体型
+	m_fHaveTime = 0.0f;		// ボール所持タイマー
+	m_nMyPlayerIdx = 0;		// プレイヤーインデックス番号
+	m_nPosIdx = -1;			// ポジション別インデックス
+	m_pShadow = nullptr;	// 影の情報
+	m_pBall = nullptr;		// ボールの情報
+	m_sDamageInfo = SDamageInfo();		// ダメージ情報
+	m_Handress = EHandedness::HAND_R;	// 利き手
+	m_BodyType = EBody::BODY_NORMAL;	// 体型
 }
 
 //==========================================================================
@@ -256,7 +258,7 @@ CPlayer* CPlayer::Create
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(EFieldArea::FIELD_IN);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_IN);
 	if (pPlayer != nullptr)
 	{
 		// 利き手を設定
@@ -273,9 +275,6 @@ CPlayer* CPlayer::Create
 			SAFE_UNINIT(pPlayer);
 			return nullptr;
 		}
-
-		// チームサイドを設定
-		pPlayer->GetStatus()->SetTeam(team);
 
 		// ベースタイプを設定
 		pPlayer->ChangeBase(basetype);
@@ -303,7 +302,7 @@ CPlayer* CPlayer::Create
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(EFieldArea::FIELD_OUT);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_OUT);
 	if (pPlayer != nullptr)
 	{
 		// 利き手を設定
@@ -320,9 +319,6 @@ CPlayer* CPlayer::Create
 			SAFE_UNINIT(pPlayer);
 			return nullptr;
 		}
-
-		// チームサイドを設定
-		pPlayer->GetStatus()->SetTeam(team);
 
 		// ベースタイプを設定
 		pPlayer->ChangeBase(basetype);
@@ -396,12 +392,6 @@ HRESULT CPlayer::Init()
 		return E_FAIL;
 	}
 
-	// プレイヤーインデックス番号を設定
-	m_nMyPlayerIdx = m_List.GetNumAll();
-
-	// 割り当て
-	m_List.Regist(this);
-
 	// アクションパターン
 	if (m_pActionPattern == nullptr)
 	{
@@ -426,12 +416,21 @@ HRESULT CPlayer::Init()
 		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
 	}
 
-
 	// スぺシャルエフェクト
 	if (m_pSpecialEffect == nullptr)
 	{
 		m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
 	}
+
+	// プレイヤーインデックス番号を設定
+	m_nMyPlayerIdx = m_List.GetNumAll();
+
+	// プレイヤーマネージャーに割当
+	CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
+	if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+
+	// プレイヤーリストに割当
+	m_List.Regist(this);
 
 	return S_OK;
 }
@@ -466,7 +465,11 @@ void CPlayer::Uninit()
 	// 終了処理
 	CObjectChara::Uninit();
 
-	// 削除
+	// プレイヤーマネージャーから削除
+	CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
+	if (pManager != nullptr) { pManager->DeletePlayer(this); }	// マネージャーがある場合削除
+
+	// プレイヤーリストから削除
 	m_List.Delete(this);
 }
 
@@ -570,6 +573,19 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		Debug();
 		ImGui::TreePop();
 	}
+
+	// TODO：誰がユーザーなのか見えるようにするやつ
+	if (GetBaseType() == EBaseType::TYPE_USER)
+	{ // ベースがユーザーの場合
+
+		// 演出
+		CEffect3D::Create(
+			GetPosition(),
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+	}
+
 #endif
 
 }
@@ -590,6 +606,9 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// ベースの更新
 		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+		// ベース変更の更新
+		m_pBase->UpdateChangeBase();
 	}
 
 	// 情報取得
@@ -1108,10 +1127,10 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	
 	// モテ加算
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_JUSTCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_JUSTCATCH);
 	
 	// スペシャル加算
-	pGameMgr->AddSpecialValue(GetStatus()->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
+	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
 }
 
 //==========================================================================
@@ -1128,7 +1147,7 @@ CPlayer::SHitInfo CPlayer::Hit(CBall* pBall)
 //==========================================================================
 void CPlayer::SetSpecialAttack()
 {
-	bool bInverse = (m_pStatus->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	bool bInverse = (m_typeTeam == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 
@@ -1268,7 +1287,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 
 	// 死んでいない味方回復
 	if (!pCoverPlayer->GetMotionFrag().bDead &&
-		m_pStatus->GetTeam() == pCoverPlayer->GetStatus()->GetTeam())
+		m_typeTeam == pCoverPlayer->m_typeTeam)
 	{
 		pCoverPlayer->GetStatus()->LifeHeal(10);
 	}
@@ -1288,10 +1307,10 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeAdd::ADD_COVERCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_COVERCATCH);
 
 	// スペシャル加算
-	pGameMgr->AddSpecialValue(GetStatus()->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_COVERCATCH);
+	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_COVERCATCH);
 }
 
 //==========================================================================
@@ -1626,7 +1645,7 @@ void CPlayer::StateInvade_Toss()
 
 	// チーム別向き設定
 	float fRotDest = 0.0f;
-	switch (GetStatus()->GetTeam())
+	switch (m_typeTeam)
 	{
 	case CGameManager::SIDE_LEFT:	// 左チーム
 		fRotDest = HALF_PI;
@@ -1659,14 +1678,13 @@ void CPlayer::StateInvade_Toss()
 void CPlayer::StateInvade_Return()
 {
 	// 自陣サイズ取得
-	CGameManager::ETeamSide team = GetStatus()->GetTeam();
 	MyLib::Vector3 posCourt = MyLib::Vector3();
-	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(team, posCourt);
+	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(m_typeTeam, posCourt);
 	MyLib::Vector3 pos = GetPosition();
 
 	// チーム別でラインの位置まで戻す
 	MyLib::Vector3 posDest = m_sKnockback.posStart;
-	switch (team)
+	switch (m_typeTeam)
 	{
 	case CGameManager::SIDE_LEFT:	// 左チーム
 
@@ -1814,7 +1832,7 @@ void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const flo
 	{// モテダウン
 
 		// モテ減算
-		pGameMgr->SubCharmValue(GetStatus()->GetTeam(), CCharmManager::ETypeSub::SUB_LONG_HOLD);
+		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
 	}
 }
 
@@ -1877,8 +1895,6 @@ void CPlayer::SetState(EState state)
 //==========================================================================
 void CPlayer::ChangeBase(EBaseType type)
 {
-	CGameManager::ETeamSide team = GetStatus()->GetTeam();	// チームサイド
-
 	// ベースクラスの破棄
 	SAFE_DELETE(m_pBase);
 
@@ -1889,11 +1905,27 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerUserIn(this, team, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerUserIn(this, m_typeTeam, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerUserOut(this, team, m_typeArea);
+
+			// ユーザー外野プレイヤーに変更
+			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
+
+			// TODO
+#if 0
+			// ユーザー外野プレイヤー情報の取得
+			CPlayerUserOut* pBase = m_pBase->GetPlayerUserOut();
+
+			// 左右位置の設定
+			pBase->SetPosLeft(rPosLeft);
+			pBase->SetPosRight(rPosRight);
+
+			// 左右操作の割当
+			pBase->BindLeftKey(pKeyLeft);
+			pBase->BindRightKey(pKeyRight);
+#endif
 			break;
 
 		default:
@@ -1906,11 +1938,23 @@ void CPlayer::ChangeBase(EBaseType type)
 		switch (m_typeArea)
 		{ // ポジションごとの処理
 		case FIELD_IN:
-			m_pBase = DEBUG_NEW CPlayerAIIn(this, team, m_typeArea);
+			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeTeam, m_typeArea);
 			break;
 
 		case FIELD_OUT:
-			m_pBase = DEBUG_NEW CPlayerAIOut(this, team, m_typeArea);
+
+			// AI外野プレイヤーに変更
+			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeTeam, m_typeArea);
+
+			// TODO
+#if 0
+			// 外野プレイヤー情報の取得
+			CPlayerOut* pBase = m_pBase->GetPlayerOut();
+
+			// 左右位置の設定
+			pBase->SetPosLeft(rPosLeft);
+			pBase->SetPosRight(rPosRight);
+#endif
 			break;
 
 		default:
@@ -2056,9 +2100,24 @@ void CPlayer::Debug()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::Button("Special(Motion)"))
+	{// スペシャル
+
+		SetMotion(EMotion::MOTION_SPECIAL);
+	}
+
 	if (ImGui::Button("Special"))
 	{// スペシャル
+
 		SetMotion(EMotion::MOTION_SPECIAL);
+
+		CCamera* pCamera = CManager::GetInstance()->GetCamera();
+
+		// カメラ位置を攻撃プレイヤーの位置にする
+		pCamera->GetCameraMotion()->SetPosition(GetPosition());
+
+		// スペシャル盛り上げモーションを設定
+		pCamera->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_KAMEHAMEHA, false, true, true, true);
 	}
 
 	// 髪更新

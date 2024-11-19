@@ -24,7 +24,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
+	CPlayerIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase);
 	virtual ~CPlayerIn() override = 0;
 
 	//=============================

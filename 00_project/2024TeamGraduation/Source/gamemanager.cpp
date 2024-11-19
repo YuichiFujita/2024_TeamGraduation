@@ -23,6 +23,7 @@
 #include "teamStatus.h"
 #include "audience.h"
 #include "gymWallManager.h"
+#include "playerManager.h"
 #include "timerUI.h"
 
 //==========================================================================
@@ -129,6 +130,13 @@ HRESULT CGameManager::Init()
 	// ジム壁マネージャ生成
 	m_pGymWallManager = CGymWallManager::Create();
 
+	// プレイヤーマネージャー生成
+	if (CPlayerManager::Create() == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 #if _DEBUG
 
 	// コートサイズのボックス
@@ -171,6 +179,10 @@ void CGameManager::Uninit()
 	}
 #endif
 
+	// プレイヤーマネージャー
+	CPlayerManager* pManager = CPlayerManager::GetInstance();
+	SAFE_UNINIT(pManager);
+
 	// モテマネージャ
 	SAFE_UNINIT(m_pCharmManager);
 
@@ -192,6 +204,13 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	
 	// シーン別更新
 	(this->*(m_SceneFunc[m_SceneType]))();
+
+	CPlayerManager* pManager = CPlayerManager::GetInstance();
+	if (pManager != nullptr)
+	{
+		// プレイヤーマネージャー更新
+		pManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 #if _DEBUG	// デバッグ処理
 

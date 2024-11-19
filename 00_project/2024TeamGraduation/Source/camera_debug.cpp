@@ -259,7 +259,7 @@ void CCamera_Debug::UpdateGUI()
 		ImGui::PopID();
 		ImGui::SameLine();
 
-		ImGui::DragFloat3("rot", (float*)&rot, 1.0f, 0.0f, 0.0f, "%.2f");
+		ImGui::DragFloat3("rot", (float*)&rot, D3DX_PI * 0.001f, 0.0f, 0.0f, "%.2f");
 
 		// Œü‚«Ý’è
 		m_pCamera->SetRotation(rot);

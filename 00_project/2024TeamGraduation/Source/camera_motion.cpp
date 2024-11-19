@@ -40,6 +40,9 @@ CCameraMotion::VEC3_EASING_FUNC CCameraMotion::m_Vec3EasingFunc[] =
 	&UtilFunc::Correction::EasingQuintIn,
 	&UtilFunc::Correction::EasingQuintOut,
 	&UtilFunc::Correction::EasingEaseInOutQuart,
+	&UtilFunc::Correction::EaseInExpo,
+	&UtilFunc::Correction::EaseOutExpo,
+	&UtilFunc::Correction::EaseInOutExpo,
 };
 
 // float線形補正リスト
@@ -49,6 +52,9 @@ CCameraMotion::FLOAT_EASING_FUNC CCameraMotion::m_FloatEasingFunc[] =
 	&UtilFunc::Correction::EasingQuintIn,
 	&UtilFunc::Correction::EasingQuintOut,
 	&UtilFunc::Correction::EasingEaseInOutQuart,
+	&UtilFunc::Correction::EaseInExpo,
+	&UtilFunc::Correction::EaseOutExpo,
+	&UtilFunc::Correction::EaseInOutExpo,
 };
 
 //==========================================================================
@@ -413,7 +419,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 
 		// 注視点の線形補正
 		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
-		posR = (m_Vec3EasingFunc[m_EasingType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		posR = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
 	}
 
@@ -422,7 +428,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 
 		// 向きの線形補正
 		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
-		rot = (m_Vec3EasingFunc[m_EasingType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		rot = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetRotation(rot);	// 向き反映
 	}
 
@@ -431,7 +437,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 
 		// 距離の線形補正
 		float fDistance = pCamera->GetDistance();	// 距離
-		fDistance = (m_FloatEasingFunc[m_EasingType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
+		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetDistance(fDistance);	// 距離反映
 	}
 
@@ -465,12 +471,10 @@ void CCameraMotion::SetMotion
 	bool bInverse,	// 反転フラグ
 	bool bPos,		// 位置動作フラグ
 	bool bRot,		// 向き動作フラグ
-	bool bDis,		// 距離動作フラグ
-	EASING easing	// イージング種類
+	bool bDis		// 距離動作フラグ
 )
 {
 	// 引数情報の設定
-	m_EasingType	 = easing;
 	m_nNowMotionIdx	 = nMotion;
 	m_bInverse	= bInverse;
 	m_bMovePos	= bPos;
@@ -497,7 +501,7 @@ void CCameraMotion::SetMotion
 
 		// 注視点の線形補正
 		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
-		posR = (m_Vec3EasingFunc[m_EasingType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		posR = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.posRDest, nextKey.posRDest, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
 	}
 
@@ -506,7 +510,7 @@ void CCameraMotion::SetMotion
 
 		// 向きの線形補正
 		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
-		rot = (m_Vec3EasingFunc[m_EasingType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
+		rot = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.rotDest, nextKey.rotDest, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetRotation(rot);	// 向き反映
 	}
 
@@ -515,7 +519,7 @@ void CCameraMotion::SetMotion
 
 		// 距離の線形補正
 		float fDistance = pCamera->GetDistance();	// 距離
-		fDistance = (m_FloatEasingFunc[m_EasingType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
+		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetDistance(fDistance);	// 距離反映
 	}
 
@@ -655,13 +659,19 @@ void CCameraMotion::UpdateEdit()
 		// オフセット
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 		ImGui::SetNextItemWidth(150.0f);
+
+		if (ImGui::Button("Bind Offset"))
+		{
+			m_EditInfo.offset = m_pos;
+		}
+		ImGui::SameLine();
+
 		if (ImGui::Button("Offset"))
 		{
 			m_EditInfo.offset = CManager::GetInstance()->GetCamera()->GetPositionR();
 			m_pos = m_EditInfo.offset;
 		}
-		ImGui::SameLine();
-		ImGui::Text("x:%.2f y:%.2f z:%.2f", m_EditInfo.offset.x, m_EditInfo.offset.y, m_EditInfo.offset.z);
+		ImGui::DragFloat3("Offset", (float*)&m_EditInfo.offset, 1.0f, 0.0f, 0.0f, "%.2f");
 
 		// モーション切り替え
 		ChangeMotion();
@@ -884,7 +894,7 @@ void CCameraMotion::EditKey()
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
-		ImGui::DragFloat3("rot", (float*)&rot, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::DragFloat3("rot", (float*)&rot, D3DX_PI * 0.001f, 0.0f, 0.0f, "%.2f");
 		pCamera->SetPositionR(posR);
 		pCamera->SetRotation(rot);
 
@@ -905,9 +915,18 @@ void CCameraMotion::EditKey()
 		}
 	}
 
+	// イージングの種類
+	ImGui::Text("[%s]", magic_enum::enum_name(pKey->easeType));
+
+	int type = pKey->easeType;
+	ImGui::SliderInt("EaseType", &type, 0, static_cast<int>(EEasing::MAX) - 1, "%d");
+	pKey->easeType = static_cast<EEasing>(type);
+
 	// 距離
 	pKey->distance = pCamera->GetDistance();
-	ImGui::Text("distance : %f", pKey->distance);
+	ImGui::DragFloat("distance", &pKey->distance, 1.0f, 0.0f, 0.0f, "%.2f");
+	pCamera->SetDistance(pKey->distance);
+	pCamera->SetDistanceDest(pKey->distance);
 
 	// 再生時間
 	ImGui::DragFloat("playTime", &pKey->playTime, 0.01f, 0.0f, 0.0f, "%.2f");

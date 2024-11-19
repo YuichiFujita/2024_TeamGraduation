@@ -19,8 +19,7 @@ namespace
 // コンストラクタ
 //==========================================================================
 CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
-	m_pPlayer	(pPlayer),					// プレイヤーのポインタ
-	m_typeTeam	(CGameManager::SIDE_NONE)	// チームサイド
+	m_pPlayer	(pPlayer)	// プレイヤーのポインタ
 {
 
 }

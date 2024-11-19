@@ -288,7 +288,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 
 		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-		bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+		bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 
 		// 世界の時はうごきだす
 		GET_MANAGER->SerEnableWorldPaused(false);
@@ -297,7 +297,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		SAFE_UNINIT(m_pCutIn);
 
 		// 攻撃側プレイヤーチームの観客を盛り上げる
-		CAudience::SetSpecialAll(m_pAttackPlayer->GetStatus()->GetTeam());
+		CAudience::SetSpecialAll(m_pAttackPlayer->GetTeam());
 
 		// プレイヤー盛り上げ位置の設定
 		SetPlayerHypePosition(bInverse);
@@ -319,8 +319,8 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 {
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-	CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(CCameraMotion::MOTION::MOTION_SPECIAL_HYPE, 0);		// 先頭キー情報
-	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	CCameraMotion::MotionKey key = pCameraMotion->GetKeyData(CCameraMotion::MOTION::MOTION_SPECIAL_HYPE, 0);	// 先頭キー情報
+	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;			// カメラモーションの反転フラグ
 	if (bInverse)
 	{ // 反転する場合
 
@@ -367,7 +367,7 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 		pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
 
 		// スペシャル盛り上げモーションを設定
-		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, true, true, true, CCameraMotion::EASING::EaseInOut);
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, true, true, true);
 
 		// 盛り上がり状態にする
 		m_state = STATE_HYPE;
@@ -421,7 +421,7 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 	CCamera::SCameraData key = pCamera->FollowPoint();			// 追従目標情報
 	CCameraMotion::MotionKey keyEnd = pCameraMotion->GetKeyData((CCameraMotion::MOTION)pCameraMotion->GetNowMotionIdx(), pCameraMotion->GetNowKeyMax() - 1);	// 終端キー情報
 
-	bool bInverse = (m_pAttackPlayer->GetStatus()->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	if (bInverse)
 	{ // 反転する場合
 
@@ -482,7 +482,7 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	GET_MANAGER->GetLight()->SetEnableBright(true);
 
 	// 攻撃側プレイヤーチームの観客を通常状態にする
-	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetStatus()->GetTeam());
+	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetTeam());
 
 	// ゲームをメインシーンに変更
 	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー

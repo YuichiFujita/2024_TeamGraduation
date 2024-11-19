@@ -15,6 +15,7 @@
 //==========================================================================
 class CPlayerUserControlAction;
 class CPlayerAIControlAction;
+class CPlayerAIOutControlAction;
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -32,10 +33,11 @@ public:
 	void Action(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 統括
 
 	//=============================
-	// 純粋仮想関数
+	// 仮想関数
 	//=============================
-	virtual CPlayerAIControlAction* GetAI() { return nullptr; }
-	virtual CPlayerUserControlAction* GetUser() { return nullptr; }
+	virtual CPlayerAIControlAction* GetAI()			{ return nullptr; }
+	virtual CPlayerAIOutControlAction* GetAIOut()	{ return nullptr; }
+	virtual CPlayerUserControlAction* GetUser()		{ return nullptr; }
 
 	void SetThrowDrop();	// 投げ(ドロップボール)設定
 	inline bool IsThrowDrop() { return m_bThrowDrop; }	// 投げ(ドロップボール)可能判定取得

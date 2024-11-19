@@ -31,12 +31,15 @@ public:
 	};
 
 	// 補正種類
-	enum EASING
+	enum EEasing
 	{
 		Linear = 0,
 		EaseIn,
 		EaseOut,
 		EaseInOut,
+		EaseInExpo,
+		EaseOutExpo,
+		EaseInOutExpo,
 		MAX
 	};
 
@@ -50,8 +53,9 @@ public:
 		MyLib::Vector3 rotDest;		// 目標の向き
 		float distance;				// 距離
 		float playTime;				// 再生フレーム
+		EEasing easeType;	// イージングの種類
 
-		MotionKey() : posRDest(0.0f), rotDest(0.0f), distance(0.0f), playTime(1.0f) {}
+		MotionKey() : posRDest(0.0f), rotDest(0.0f), distance(0.0f), playTime(1.0f), easeType(EEasing::Linear) {}
 	};
 
 	// モーション情報
@@ -107,14 +111,12 @@ public:
 		bool bInverse = false,	// 反転フラグ
 		bool bPos = true,		// 位置動作フラグ
 		bool bRot = true,		// 向き動作フラグ
-		bool bDis = true,		// 距離動作フラグ
-		EASING easing = Linear	// イージング種類
+		bool bDis = true		// 距離動作フラグ
 	);
 
 	// 情報操作
 	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
 	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
-	inline void SetEasing(EASING easing)	{ m_EasingType = easing; }
 	inline int GetNowMotionIdx()			{ return m_nNowMotionIdx; }
 	inline void SetFinish(bool bFinish)		{ m_bFinish = bFinish; }
 	inline bool IsFinish()	{ return m_bFinish; }
@@ -182,7 +184,6 @@ private:
 	std::vector<MotionInfo> m_vecMotionInfo;	// モーション情報
 	std::vector<std::string> m_MotionFileName;	// モーションファイル名
 	std::string m_PathName;	// パス名
-	EASING m_EasingType;	// 補正の種類
 	MyLib::Vector3 m_pos;	// 位置
 	int m_nNowMotionIdx;	// 現在のモーションインデックス
 	int m_nNowKeyIdx;		// 現在のキーインデックス
