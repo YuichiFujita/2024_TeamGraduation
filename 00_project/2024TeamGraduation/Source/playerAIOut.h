@@ -15,6 +15,11 @@
 #include "playerOut.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerAIOutControl;	// コントロール(AI外野)
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // AI外野プレイヤークラス
@@ -31,9 +36,16 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
-	virtual void Debug() override;							// デバッグ
+	virtual void Debug() override;	// デバッグ
 	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
+
+private:
+	//=============================
+	// メンバ変数
+	//=============================
+	CPlayerAIOutControl* m_pAIOutControl;	// AIコントロール(外野)
 };
 
 #endif

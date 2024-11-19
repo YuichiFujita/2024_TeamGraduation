@@ -70,13 +70,13 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIIn::CPlayerAIIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerIn(pPlayer, typeTeam, typeArea)
+CPlayerAIIn::CPlayerAIIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerIn(pPlayer, typeTeam, typeArea, CPlayer::EBaseType::TYPE_AI)
 {
 	// 内野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerAIControlMove());
 	ChangeActionControl(DEBUG_NEW CPlayerAIControlAction());
 
-	// プレイヤーAIコントロールの生成
+	// AIコントロール(内野)の生成
 	m_pAIControl = CPlayerAIControl::Create(pPlayer);
 }
 
@@ -97,7 +97,7 @@ void CPlayerAIIn::Update(const float fDeltaTime, const float fDeltaRate, const f
 	// 基底クラスの更新
 	CPlayerIn::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// コントロール更新
+	// AIコントロール(内野)の更新
 	if (m_pAIControl)
 	{
 		m_pAIControl->Update(fDeltaTime, fDeltaRate, fSlowRate);

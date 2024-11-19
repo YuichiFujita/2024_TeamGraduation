@@ -22,10 +22,12 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) :
-	m_pPlayer		 (pPlayer),	// プレイヤー情報
-	m_pControlMove	 (nullptr),	// 移動操作
-	m_pControlAction (nullptr)	// アクション操作
+CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) :
+	m_curTypeBase	 (typeBase),	// 現在のベースタイプ
+	m_newTypeBase	 (typeBase),	// 新しいベースタイプ
+	m_pPlayer		 (pPlayer),		// プレイヤー情報
+	m_pControlMove	 (nullptr),		// 移動操作
+	m_pControlAction (nullptr)		// アクション操作
 {
 	// 位置補正の割当
 	pPlayer->ChangePosAdjuster(typeTeam, typeArea);
@@ -64,7 +66,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	if (stateBall == CBall::STATE_LAND || pBall->IsPass()
-	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != pStatus->GetTeam())
+	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam())
 	{ // ボールが着地している、またはパス状態、またはフリーボール且つ自分のチームボールではない場合
 
 		// ボールをキャッチ
@@ -85,9 +87,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived) { return hitInfo; }
-
 	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
@@ -104,7 +103,14 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
 	
 	// 味方のボールならすり抜ける
-	if (pStatus->GetTeam() == sideBall) { return hitInfo; }
+	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
+
+	// ダメージを受け付けないならすり抜ける
+	if (!m_pPlayer->GetDamageInfo().bReceived)	// FUJITA: リバウンドボール即座に取得はちゃうやん
+	{
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
 
 	if (m_pPlayer->GetMotionFrag().bCatch
 	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, 160))	// TODO：160はボールステータスに変更
@@ -155,7 +161,7 @@ bool CPlayerBase::IsCrab()
 	if (pBall == nullptr) { return false; }
 
 	// ボールの状態：敵側であるか
-	if (pBall->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())	{ return false; }
+	if (pBall->GetTypeTeam() == m_pPlayer->GetTeam())	{ return false; }
 
 	// 敵チームで攻撃判定がある場合はカニ歩き
 	if (pBall->IsAttack()) { return true; }
@@ -171,6 +177,19 @@ bool CPlayerBase::IsCrab()
 	if (m_pPlayer->IsDash()) { return false; }
 
 	return true;
+}
+
+//==========================================================================
+//	ベース変更の更新
+//==========================================================================
+void CPlayerBase::UpdateChangeBase()
+{
+	if (m_curTypeBase != m_newTypeBase)
+	{ // 現在のベースタイプから変更があった場合
+
+		// ベースの変更
+		m_pPlayer->ChangeBase(m_newTypeBase);
+	}
 }
 
 //==========================================================================

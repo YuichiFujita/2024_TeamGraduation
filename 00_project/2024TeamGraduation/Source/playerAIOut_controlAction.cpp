@@ -4,7 +4,7 @@
 //  Author : 藤田勇一
 // 
 //=============================================================================
-#include "playerAIcontrol_action.h"
+#include "playerAIOut_controlAction.h"
 #include "manager.h"
 #include "calculation.h"
 #include "input.h"
@@ -31,12 +31,12 @@ namespace
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-bool CPlayerAIControlAction::m_bAutoThrow = true;
+bool CPlayerAIOutControlAction::m_bAutoThrow = true;
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIControlAction::CPlayerAIControlAction()
+CPlayerAIOutControlAction::CPlayerAIOutControlAction()
 {
 	ZeroMemory(&m_sFlag, sizeof(m_sFlag));
 }
@@ -44,7 +44,7 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 //==========================================================================
 // キャッチ
 //==========================================================================
-void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (player->GetBall() != nullptr) return;
 
@@ -64,7 +64,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 // 投げ
 //==========================================================================
-void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if _DEBUG
 	if (!m_bAutoThrow) { return; }
@@ -89,7 +89,7 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 // ジャンプ
 //==========================================================================
-void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bJump = player->IsJump();
 
@@ -108,7 +108,7 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 // ジャンプ上昇
 //==========================================================================
-void CPlayerAIControlAction::JumpFloat(CPlayer* player)
+void CPlayerAIOutControlAction::JumpFloat(CPlayer* player)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
@@ -140,7 +140,7 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player)
 //==========================================================================
 // スペシャル
 //==========================================================================
-void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CBall* pBall = player->GetBall();
 	CGameManager* pGameManager = CGameManager::GetInstance();
@@ -163,7 +163,7 @@ void CPlayerAIControlAction::Special(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 // モテボタン
 //==========================================================================
-void CPlayerAIControlAction::Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControlAction::Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	player->GetActionPattern()->SetEnableCharm(false);
 

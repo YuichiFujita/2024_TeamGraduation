@@ -14,7 +14,7 @@
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerIn::CPlayerIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerBase(pPlayer, typeTeam, typeArea)
+CPlayerIn::CPlayerIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) : CPlayerBase(pPlayer, typeTeam, typeArea, typeBase)
 {
 
 }
@@ -64,6 +64,9 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 	CPlayerStatus* pStatus = pPlayer->GetStatus();				// ステータス情報
 	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー情報
 	MyLib::HitResult_Character hitresult = {};					// 衝突情報
+
+	// 無敵状態なら抜ける
+	if (!pPlayer->GetDamageInfo().bReceived) { return hitInfo; }
 
 	// ダメージを与える
 	pStatus->LifeDamage(pBall->GetDamage());

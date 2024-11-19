@@ -741,8 +741,22 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		if (player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
 			player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT)
 		{// サイドステップ時のみ
+			float fFrame = player->GetMotion()->GetAllCount();
+			float fFrameMax = player->GetMotion()->GetMaxAllCount();
+
+			const float MAX = 1.2f;	// 最大値
+			const float MIN = 0.8f;	// 最小値
+
+			if (fFrame >= fFrameMax * 0.5f)
+			{// 半分を超えたら
+				fMove *= UtilFunc::Correction::EaseInExpo(MAX, MIN, fFrameMax * 0.5f, fFrameMax, fFrame);
+			}
+			else
+			{
+				fMove *= UtilFunc::Correction::EaseOutExpo(MIN, MAX, 0.0f, fFrameMax * 0.5f, fFrame);
+			}
+
 			float fCrabMoveEasingTime = GetCrabMoveEasingTime();	// 補正用時間
-			fMove *= UtilFunc::Correction::EaseInOutExpo(0.6f, 1.0f, 0.0f, 1.0f, fCrabMoveEasingTime);
 		}
 #endif
 

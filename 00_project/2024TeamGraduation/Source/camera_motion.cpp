@@ -466,7 +466,7 @@ void CCameraMotion::SetMotion
 	bool bPos,		// 位置動作フラグ
 	bool bRot,		// 向き動作フラグ
 	bool bDis,		// 距離動作フラグ
-	EASING easing	// イージング種類
+	EEasing easing	// イージング種類
 )
 {
 	// 引数情報の設定
@@ -655,13 +655,19 @@ void CCameraMotion::UpdateEdit()
 		// オフセット
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 		ImGui::SetNextItemWidth(150.0f);
+
+		if (ImGui::Button("Bind Offset"))
+		{
+			m_EditInfo.offset = m_pos;
+		}
+		ImGui::SameLine();
+
 		if (ImGui::Button("Offset"))
 		{
 			m_EditInfo.offset = CManager::GetInstance()->GetCamera()->GetPositionR();
 			m_pos = m_EditInfo.offset;
 		}
-		ImGui::SameLine();
-		ImGui::Text("x:%.2f y:%.2f z:%.2f", m_EditInfo.offset.x, m_EditInfo.offset.y, m_EditInfo.offset.z);
+		ImGui::DragFloat3("Offset", (float*)&m_EditInfo.offset, 1.0f, 0.0f, 0.0f, "%.2f");
 
 		// モーション切り替え
 		ChangeMotion();
@@ -884,7 +890,7 @@ void CCameraMotion::EditKey()
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		ImGui::DragFloat3("posR", (float*)&posR, 1.0f, 0.0f, 0.0f, "%.2f");
-		ImGui::DragFloat3("rot", (float*)&rot, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::DragFloat3("rot", (float*)&rot, D3DX_PI * 0.001f, 0.0f, 0.0f, "%.2f");
 		pCamera->SetPositionR(posR);
 		pCamera->SetRotation(rot);
 
