@@ -193,7 +193,9 @@ CListManager<CPlayer> CPlayer::m_List = {};	// リスト
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, int nPriority) : CObjectChara(nPriority), m_typeArea(typeArea), m_typeTeam(typeTeam)
+CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) : CObjectChara(nPriority),
+	m_typeTeam	(typeTeam),	// チームサイド
+	m_typeArea	(typeArea)	// ポジション
 {
 	// 値のクリア
 	m_state = STATE_NONE;			// 状態
@@ -235,6 +237,9 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
 	m_Handress = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
+
+	// ベースタイプを初期化
+	InitBase(typeBase);
 }
 
 //==========================================================================
@@ -258,7 +263,7 @@ CPlayer* CPlayer::Create
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_IN);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_IN, basetype);
 	if (pPlayer != nullptr)
 	{
 		// 利き手を設定
@@ -275,9 +280,6 @@ CPlayer* CPlayer::Create
 			SAFE_UNINIT(pPlayer);
 			return nullptr;
 		}
-
-		// ベースタイプを設定
-		pPlayer->ChangeBase(basetype);
 
 		// 初期位置を設定
 		pPlayer->GetBase()->InitPosition(rPos);
@@ -302,7 +304,7 @@ CPlayer* CPlayer::Create
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_OUT);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_OUT, basetype);
 	if (pPlayer != nullptr)
 	{
 		// 利き手を設定
@@ -320,49 +322,8 @@ CPlayer* CPlayer::Create
 			return nullptr;
 		}
 
-		// ベースタイプを設定
-		pPlayer->ChangeBase(basetype);
-
-		switch (basetype)
-		{ // ベースタイプごとの処理
-		case EBaseType::TYPE_USER:
-		{
-			// ユーザー外野プレイヤー情報の取得
-			CPlayerUserOut* pBase = pPlayer->GetBase()->GetPlayerUserOut();
-
-			// 左右位置の設定
-			pBase->SetPosLeft(rPosLeft);
-			pBase->SetPosRight(rPosRight);
-
-			// 左右操作の割当
-			pBase->BindLeftKey(pKeyLeft);
-			pBase->BindRightKey(pKeyRight);
-
-			// 初期位置を設定
-			pBase->InitPosition(VEC3_ZERO);
-			break;
-		}
-		case EBaseType::TYPE_AI:
-		{
-			// 外野プレイヤー情報の取得
-			CPlayerOut* pBase = pPlayer->GetBase()->GetPlayerOut();
-
-			// 左右位置の設定
-			pBase->SetPosLeft(rPosLeft);
-			pBase->SetPosRight(rPosRight);
-
-			// 左右操作の破棄
-			SAFE_DELETE(pKeyLeft);
-			SAFE_DELETE(pKeyRight);
-
-			// 初期位置を設定
-			pBase->InitPosition(VEC3_ZERO);
-			break;
-		}
-		default:
-			assert(false);
-			break;
-		}
+		// 初期位置を設定
+		pPlayer->GetBase()->InitPosition(VEC3_ZERO);
 	}
 
 	return pPlayer;
@@ -1891,14 +1852,14 @@ void CPlayer::SetState(EState state)
 }
 
 //==========================================================================
-// ベースの変更処理
+// ベースの初期化処理
 //==========================================================================
-void CPlayer::ChangeBase(EBaseType type)
+void CPlayer::InitBase(EBaseType type)
 {
-	// ベースクラスの破棄
-	SAFE_DELETE(m_pBase);
+	// 既にベースが設定済みの場合エラー
+	if (m_pBase != nullptr) { assert(false); return; }
 
-	// ベースクラスの変更
+	// ベースクラスの初期化
 	switch (type)
 	{ // ユーザー種類ごとの処理
 	case TYPE_USER:
@@ -1909,23 +1870,7 @@ void CPlayer::ChangeBase(EBaseType type)
 			break;
 
 		case FIELD_OUT:
-
-			// ユーザー外野プレイヤーに変更
 			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
-
-			// TODO
-#if 0
-			// ユーザー外野プレイヤー情報の取得
-			CPlayerUserOut* pBase = m_pBase->GetPlayerUserOut();
-
-			// 左右位置の設定
-			pBase->SetPosLeft(rPosLeft);
-			pBase->SetPosRight(rPosRight);
-
-			// 左右操作の割当
-			pBase->BindLeftKey(pKeyLeft);
-			pBase->BindRightKey(pKeyRight);
-#endif
 			break;
 
 		default:
@@ -1942,19 +1887,7 @@ void CPlayer::ChangeBase(EBaseType type)
 			break;
 
 		case FIELD_OUT:
-
-			// AI外野プレイヤーに変更
 			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeTeam, m_typeArea);
-
-			// TODO
-#if 0
-			// 外野プレイヤー情報の取得
-			CPlayerOut* pBase = m_pBase->GetPlayerOut();
-
-			// 左右位置の設定
-			pBase->SetPosLeft(rPosLeft);
-			pBase->SetPosRight(rPosRight);
-#endif
 			break;
 
 		default:
@@ -1967,6 +1900,28 @@ void CPlayer::ChangeBase(EBaseType type)
 		assert(false);
 		break;
 	}
+
+}
+
+//==========================================================================
+// ベースの変更処理
+//==========================================================================
+void CPlayer::ChangeBase(EBaseType type)
+{
+	CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
+	assert(pManager != nullptr);
+
+	// ベースクラスの破棄
+	SAFE_DELETE(m_pBase);
+
+	// プレイヤーマネージャーから自身を削除
+	pManager->DeletePlayer(this);
+
+	// ベースの初期化
+	InitBase(type);
+
+	// プレイヤーマネージャーに自身を再登録
+	m_nPosIdx = pManager->RegistPlayer(this);
 }
 
 //==========================================================================
