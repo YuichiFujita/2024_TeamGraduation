@@ -37,7 +37,7 @@ CPlayerPosAdjInLeft::~CPlayerPosAdjInLeft()
 bool CPlayerPosAdjInLeft::IsLineOut(CPlayer* pPlayer)
 {
 	// ラインを越えている場合フラグONを返す
-	if (pPlayer->GetPosition().x > 100.0f) { return true; }
+	if (pPlayer->GetPosition().x > 0.0f) { return true; }
 
 	// ラインを越えていない場合フラグOFFを返す
 	return false;
