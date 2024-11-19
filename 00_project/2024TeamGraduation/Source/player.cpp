@@ -2056,9 +2056,24 @@ void CPlayer::Debug()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::Button("Special(Motion)"))
+	{// スペシャル
+
+		SetMotion(EMotion::MOTION_SPECIAL);
+	}
+
 	if (ImGui::Button("Special"))
 	{// スペシャル
+
 		SetMotion(EMotion::MOTION_SPECIAL);
+
+		CCamera* pCamera = CManager::GetInstance()->GetCamera();
+
+		// カメラ位置を攻撃プレイヤーの位置にする
+		pCamera->GetCameraMotion()->SetPosition(GetPosition());
+
+		// スペシャル盛り上げモーションを設定
+		pCamera->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_KAMEHAMEHA, false, true, true, true, CCameraMotion::EEasing::Linear);
 	}
 
 	// 髪更新

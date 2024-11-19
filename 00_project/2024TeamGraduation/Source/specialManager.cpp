@@ -367,7 +367,7 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 		pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
 
 		// スペシャル盛り上げモーションを設定
-		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, true, true, true, CCameraMotion::EASING::EaseInOut);
+		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, true, true, true, CCameraMotion::EEasing::EaseInOut);
 
 		// 盛り上がり状態にする
 		m_state = STATE_HYPE;
