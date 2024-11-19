@@ -66,7 +66,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	if (stateBall == CBall::STATE_LAND || pBall->IsPass()
-	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != pStatus->GetTeam())
+	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam())
 	{ // ボールが着地している、またはパス状態、またはフリーボール且つ自分のチームボールではない場合
 
 		// ボールをキャッチ
@@ -106,7 +106,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
 	
 	// 味方のボールならすり抜ける
-	if (pStatus->GetTeam() == sideBall) { return hitInfo; }
+	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
 	if (m_pPlayer->GetMotionFrag().bCatch
 	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, 160))	// TODO：160はボールステータスに変更
@@ -157,7 +157,7 @@ bool CPlayerBase::IsCrab()
 	if (pBall == nullptr) { return false; }
 
 	// ボールの状態：敵側であるか
-	if (pBall->GetTypeTeam() == m_pPlayer->GetStatus()->GetTeam())	{ return false; }
+	if (pBall->GetTypeTeam() == m_pPlayer->GetTeam())	{ return false; }
 
 	// 敵チームで攻撃判定がある場合はカニ歩き
 	if (pBall->IsAttack()) { return true; }

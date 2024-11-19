@@ -6,6 +6,7 @@
 //==========================================================================
 #include "ball.h"
 #include "player.h"
+#include "playerBase.h"
 #include "playerStatus.h"
 #include "manager.h"
 #include "game.h"
@@ -1325,7 +1326,7 @@ CPlayer* CBall::CollisionThrowTarget(const bool bAbsLock)
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
 		// 同じチームの場合次へ
-		if (m_typeTeam == pPlayer->GetStatus()->GetTeam()) { continue; }
+		if (m_typeTeam == pPlayer->GetTeam()) { continue; }
 
 		// ポジションが外野の場合次へ
 		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { continue; }
@@ -1380,7 +1381,7 @@ CPlayer* CBall::CollisionPassTarget()
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
 		// 違うチームの場合次へ
-		if (m_typeTeam != pPlayer->GetStatus()->GetTeam()) { continue; }
+		if (m_typeTeam != pPlayer->GetTeam()) { continue; }
 
 		// 自分と同じポジションの場合次へ
 		if (typeArea == pPlayer->GetAreaType()) { continue; }
@@ -1436,13 +1437,18 @@ void CBall::Catch(CPlayer* pPlayer)
 	SetState(STATE_CATCH);
 
 	// プレイヤーのチームを保存
-	m_typeTeam = pPlayer->GetStatus()->GetTeam();
+	m_typeTeam = pPlayer->GetTeam();
 
 	// ホーミング対象の初期化
 	m_pTarget = nullptr;
 
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
+
+	// TODO：ここでAIとUserの切り替え
+#if 0
+	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
+#endif
 
 	// プレイヤーにボールを保存
 	pPlayer->SetBall(this);
@@ -1455,6 +1461,11 @@ void CBall::Throw(CPlayer* pPlayer)
 {
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
+
+	// TODO：ここでAIとUserの切り替え
+#if 0
+	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+#endif
 
 	// キャッチしていたプレイヤーを破棄
 	m_pPlayer = nullptr;
@@ -1532,7 +1543,7 @@ void CBall::UpdateTypeTeam()
 	if (m_pPlayer == nullptr) { m_typeTeam = CGameManager::SIDE_NONE; return; }
 
 	// プレイヤーのチームを保存
-	m_typeTeam = m_pPlayer->GetStatus()->GetTeam();
+	m_typeTeam = m_pPlayer->GetTeam();
 
 	// パス開始/終了位置をリセット
 	m_posPassStart	= VEC3_ZERO;

@@ -171,7 +171,7 @@ void CPlayerAIControl::ModeManager()
 	if (pBall == nullptr) return;
 
 	if (pBall->GetPlayer() == nullptr ||
-		pBall->GetTypeTeam() != m_pAI->GetStatus()->GetTeam())
+		pBall->GetTypeTeam() != m_pAI->GetTeam())
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		m_sInfo.sMode.eMode = EMode::MODE_CATCH;
 	}
@@ -243,7 +243,7 @@ void CPlayerAIControl::PlanThrow(CPlayer* pTarget, const float fDeltaTime, const
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetStatus()->GetTeam());
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetTeam());
 
 	if (m_sInfo.sThrowInfo.eType == EThrowType::THROWTYPE_NONE)
 	{
@@ -477,7 +477,7 @@ bool CPlayerAIControl::IsLineOverBall()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall) { return bOver; }
 
-	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
 	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
 	{
@@ -659,7 +659,7 @@ void CPlayerAIControl::ThrowJumpTimingDelay(CPlayer* pTarget, const float fDelta
 void CPlayerAIControl::StrategyLine(CPlayer* pTarget)
 {
 	// チームタイプの取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
 	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
 	{// 左側チーム
@@ -870,7 +870,7 @@ bool CPlayerAIControl::IsWhoPicksUpTheBall()
 	float fTeamMemberDis = 1000000.0f;	// チームメンバーのボールとの距離
 
 	// 自分の情報取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetStatus()->GetTeam();	// チームタイプ
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();	// チームタイプ
 	MyLib::Vector3 Mypos = m_pAI->GetPosition();	// 位置情報
 
 	// ボールの取得
@@ -889,7 +889,7 @@ bool CPlayerAIControl::IsWhoPicksUpTheBall()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
 		// 違うチーム||外野の場合
-		if ((typeTeam != pPlayer->GetStatus()->GetTeam()) ||
+		if ((typeTeam != pPlayer->GetTeam()) ||
 			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
 		{
 			continue;
@@ -980,8 +980,8 @@ void CPlayerAIControl::CatchOutDistance()
 	CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 	// 自分情報の取得
-	MyLib::Vector3 myPos = m_pAI->GetPosition();	// 位置情報の取得
-	CGameManager::ETeamSide myTeam = m_pAI->GetStatus()->GetTeam();	// 自分チームの取得
+	MyLib::Vector3 myPos = m_pAI->GetPosition();		// 位置情報の取得
+	CGameManager::ETeamSide myTeam = m_pAI->GetTeam();	// 自分チームの取得
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -993,7 +993,7 @@ void CPlayerAIControl::CatchOutDistance()
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置		
 
 		// 味方||外野以外の場合
-		if ((pPlayer->GetStatus()->GetTeam() == myTeam) ||
+		if ((pPlayer->GetTeam() == myTeam) ||
 			(pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_OUT))
 		{
 			continue;
@@ -1175,7 +1175,7 @@ CPlayer* CPlayerAIControl::GetThrowTarget()
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
 
 		// 同じチーム||外野の場合
-		if ((typeTeam == pPlayer->GetStatus()->GetTeam()) || 
+		if ((typeTeam == pPlayer->GetTeam()) || 
 			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
 		{ continue; }
 
@@ -1212,7 +1212,7 @@ CPlayer* CPlayerAIControl::GetCatchTarget()
 	CGameManager::ETeamSide typeTeam = pBall->GetTypeTeam();	// チームタイプの取得
 
 	// ボールを持っている奴と自分が同じチームの場合
-	if (typeTeam == m_pAI->GetStatus()->GetTeam()) return pTarget;
+	if (typeTeam == m_pAI->GetTeam()) return pTarget;
 
 	// ターゲットの設定
 	pTarget = pBall->GetPlayer();

@@ -129,7 +129,7 @@ void CPlayerUserControlAction::Special(CPlayer* player, const float fDeltaTime, 
 {
 	CBall* pBall = player->GetBall();
 	CGameManager* pGameManager = CGameManager::GetInstance();
-	CGameManager::ETeamSide playerTeam = player->GetStatus()->GetTeam();
+	CGameManager::ETeamSide playerTeam = player->GetTeam();
 	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(playerTeam);
 	
 	// スペシャルゲージMAX＋ボール所持か

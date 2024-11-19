@@ -137,7 +137,7 @@ void CTeamStatus::CheckAllDead()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
 		// 同じチームが生きている場合 = 全滅していない
-		if (pPlayer->GetStatus()->GetTeam() == m_typeTeam &&
+		if (pPlayer->GetTeam() == m_typeTeam &&
 			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
 		{
 			return;

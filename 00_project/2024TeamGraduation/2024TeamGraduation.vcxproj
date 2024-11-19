@@ -275,6 +275,7 @@
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
+    <ClCompile Include="Source\playerManager.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
     <ClCompile Include="Source\playerPosAdj_in.cpp" />
@@ -443,6 +444,7 @@
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
     <ClInclude Include="Source\playerIn.h" />
+    <ClInclude Include="Source\playerManager.h" />
     <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
     <ClInclude Include="Source\playerPosAdj_in.h" />
