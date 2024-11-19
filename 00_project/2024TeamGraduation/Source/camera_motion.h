@@ -37,6 +37,9 @@ public:
 		EaseIn,
 		EaseOut,
 		EaseInOut,
+		EaseInExpo,
+		EaseOutExpo,
+		EaseInOutExpo,
 		MAX
 	};
 
@@ -108,14 +111,12 @@ public:
 		bool bInverse = false,	// 反転フラグ
 		bool bPos = true,		// 位置動作フラグ
 		bool bRot = true,		// 向き動作フラグ
-		bool bDis = true,		// 距離動作フラグ
-		EEasing easing = Linear	// イージング種類
+		bool bDis = true		// 距離動作フラグ
 	);
 
 	// 情報操作
 	inline void SetPosition(const MyLib::Vector3& pos)	{ m_pos = pos; }	// 位置設定
 	inline MyLib::Vector3 GetPosition()					{ return m_pos; }	// 位置取得
-	inline void SetEasing(EEasing easing)	{ m_EasingType = easing; }
 	inline int GetNowMotionIdx()			{ return m_nNowMotionIdx; }
 	inline void SetFinish(bool bFinish)		{ m_bFinish = bFinish; }
 	inline bool IsFinish()	{ return m_bFinish; }
@@ -183,7 +184,6 @@ private:
 	std::vector<MotionInfo> m_vecMotionInfo;	// モーション情報
 	std::vector<std::string> m_MotionFileName;	// モーションファイル名
 	std::string m_PathName;	// パス名
-	EEasing m_EasingType;	// 補正の種類
 	MyLib::Vector3 m_pos;	// 位置
 	int m_nNowMotionIdx;	// 現在のモーションインデックス
 	int m_nNowKeyIdx;		// 現在のキーインデックス

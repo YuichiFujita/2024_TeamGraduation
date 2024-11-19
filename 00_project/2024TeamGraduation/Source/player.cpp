@@ -2117,7 +2117,7 @@ void CPlayer::Debug()
 		pCamera->GetCameraMotion()->SetPosition(GetPosition());
 
 		// スペシャル盛り上げモーションを設定
-		pCamera->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_KAMEHAMEHA, false, true, true, true, CCameraMotion::EEasing::Linear);
+		pCamera->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_KAMEHAMEHA, false, true, true, true);
 	}
 
 	// 髪更新
