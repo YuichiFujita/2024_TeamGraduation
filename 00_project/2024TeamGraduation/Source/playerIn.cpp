@@ -65,6 +65,9 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー情報
 	MyLib::HitResult_Character hitresult = {};					// 衝突情報
 
+	// 無敵状態なら抜ける
+	if (!pPlayer->GetDamageInfo().bReceived) { return hitInfo; }
+
 	// ダメージを与える
 	pStatus->LifeDamage(pBall->GetDamage());
 

@@ -25,7 +25,7 @@ MOTIONSET
 		ATTACKRANGE = 0.00
 		OFFSET = -2.00 -5.50 0.00
 		ATTACKCOUNT = 0 0
-		INPACTCOUNT = 342
+		INPACTCOUNT = 418
 		DAMAGE = 0
 	END_ATTACKINFO
 
@@ -33,7 +33,7 @@ MOTIONSET
 		COLLISIONPARTS = 5
 		ATTACKRANGE = 0.00
 		OFFSET = -6.50 -4.50 0.00
-		ATTACKCOUNT = 116 192
+		ATTACKCOUNT = 138 261
 		INPACTCOUNT = 0
 		DAMAGE = 0
 	END_ATTACKINFO
@@ -42,8 +42,8 @@ MOTIONSET
 		COLLISIONPARTS = 1
 		ATTACKRANGE = 0.00
 		OFFSET = -15.00 36.50 -26.00
-		ATTACKCOUNT = 194 303
-		INPACTCOUNT = 115
+		ATTACKCOUNT = 261 373
+		INPACTCOUNT = 136
 		DAMAGE = 0
 	END_ATTACKINFO
 
@@ -51,16 +51,16 @@ MOTIONSET
 		COLLISIONPARTS = 1
 		ATTACKRANGE = 0.00
 		OFFSET = -12.00 32.00 -19.50
-		ATTACKCOUNT = 303 308
-		INPACTCOUNT = 193
+		ATTACKCOUNT = 373 378
+		INPACTCOUNT = 261
 		DAMAGE = 0
 	END_ATTACKINFO
-	
+
 	ATTACKINFO
 		COLLISIONPARTS = 5
 		ATTACKRANGE = 0.00
 		OFFSET = -6.50 -5.50 0.00
-		ATTACKCOUNT = 308 329
+		ATTACKCOUNT = 378 418
 		INPACTCOUNT = 0
 		DAMAGE = 0
 	END_ATTACKINFO
@@ -163,10 +163,16 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 1 / 13 >> ---
-		FRAME = 27
+		FRAME = 47
 		PARTS	# ----- [ 0 ] -----
 			ROT = 0.37 0.00 0.00
 			POS = 0.00 -9.50 0.00
@@ -263,10 +269,16 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 2 / 13 >> ---
-		FRAME = 16
+		FRAME = 6
 		PARTS	# ----- [ 0 ] -----
 			ROT = 0.37 0.00 0.00
 			POS = 0.00 -9.50 0.00
@@ -358,6 +370,12 @@ MOTIONSET
 		END_PARTS
 
 		PARTS	# ----- [ 15 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
+		PARTS	# ----- [ 16 ] -----
 			ROT = 0.00 0.00 0.00
 			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
@@ -463,6 +481,12 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 4 / 13 >> ---
@@ -558,6 +582,12 @@ MOTIONSET
 		END_PARTS
 
 		PARTS	# ----- [ 15 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
+		PARTS	# ----- [ 16 ] -----
 			ROT = 0.00 0.00 0.00
 			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
@@ -663,10 +693,16 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 6 / 13 >> ---
-		FRAME = 81
+		FRAME = 141
 		PARTS	# ----- [ 0 ] -----
 			ROT = 0.59 0.89 0.00
 			POS = 0.00 -10.00 15.00
@@ -763,10 +799,16 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 7 / 13 >> ---
-		FRAME = 101
+		FRAME = 111
 		PARTS	# ----- [ 0 ] -----
 			ROT = 0.59 0.89 0.00
 			POS = 0.00 -10.00 15.00
@@ -858,6 +900,12 @@ MOTIONSET
 		END_PARTS
 
 		PARTS	# ----- [ 15 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
+		PARTS	# ----- [ 16 ] -----
 			ROT = 0.00 0.00 0.00
 			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
@@ -963,6 +1011,12 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 9 / 13 >> ---
@@ -1058,6 +1112,12 @@ MOTIONSET
 		END_PARTS
 
 		PARTS	# ----- [ 15 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
+		PARTS	# ----- [ 16 ] -----
 			ROT = 0.00 0.00 0.00
 			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
@@ -1163,6 +1223,12 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 11 / 13 >> ---
@@ -1263,6 +1329,12 @@ MOTIONSET
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
+		PARTS	# ----- [ 16 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 12 / 13 >> ---
@@ -1358,6 +1430,12 @@ MOTIONSET
 		END_PARTS
 
 		PARTS	# ----- [ 15 ] -----
+			ROT = 0.00 0.00 0.00
+			POS = 0.00 0.00 0.00
+			SCALE = 1.00 1.00 1.00
+		END_PARTS
+
+		PARTS	# ----- [ 16 ] -----
 			ROT = 0.00 0.00 0.00
 			POS = 0.00 0.00 0.00
 			SCALE = 1.00 1.00 1.00
