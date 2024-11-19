@@ -85,9 +85,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived) { return hitInfo; }
-
 	// リバウンドボールの場合キャッチする
 	if (stateBall == CBall::STATE_REBOUND)
 	{
@@ -105,6 +102,13 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	
 	// 味方のボールならすり抜ける
 	if (pStatus->GetTeam() == sideBall) { return hitInfo; }
+
+	// ダメージを受け付けないならすり抜ける
+	if (!m_pPlayer->GetDamageInfo().bReceived)
+	{
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
 
 	if (m_pPlayer->GetMotionFrag().bCatch
 	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, 160))	// TODO：160はボールステータスに変更

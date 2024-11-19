@@ -99,7 +99,7 @@ namespace StateTime
 {
 	const float DAMAGE = 0.5f;		// ダメージ
 	const float DEAD = 2.0f;		// 死亡
-	const float INVINCIBLE = 10.0f;	// 無敵
+	const float INVINCIBLE = 3.0f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
 	const float INVADE_TOSS = 0.3f;		// 侵入後トス
