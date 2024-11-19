@@ -22,10 +22,12 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) :
-	m_pPlayer		 (pPlayer),	// プレイヤー情報
-	m_pControlMove	 (nullptr),	// 移動操作
-	m_pControlAction (nullptr)	// アクション操作
+CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) :
+	m_curTypeBase	 (typeBase),	// 現在のベースタイプ
+	m_newTypeBase	 (typeBase),	// 新しいベースタイプ
+	m_pPlayer		 (pPlayer),		// プレイヤー情報
+	m_pControlMove	 (nullptr),		// 移動操作
+	m_pControlAction (nullptr)		// アクション操作
 {
 	// 位置補正の割当
 	pPlayer->ChangePosAdjuster(typeTeam, typeArea);
@@ -171,6 +173,19 @@ bool CPlayerBase::IsCrab()
 	if (m_pPlayer->IsDash()) { return false; }
 
 	return true;
+}
+
+//==========================================================================
+//	ベース変更の更新
+//==========================================================================
+void CPlayerBase::UpdateChangeBase()
+{
+	if (m_curTypeBase != m_newTypeBase)
+	{ // 現在のベースタイプから変更があった場合
+
+		// ベースの変更
+		m_pPlayer->ChangeBase(m_newTypeBase);
+	}
 }
 
 //==========================================================================

@@ -22,7 +22,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea)
+CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea) : CPlayerOut(pPlayer, typeTeam, typeArea, CPlayer::EBaseType::TYPE_AI)
 {
 	// 外野操作の割当
 	ChangeMoveControl(DEBUG_NEW CPlayerAIOutControlMove());

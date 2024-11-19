@@ -33,7 +33,7 @@ class CPlayerBase
 {
 public:
 	// コンストラクタ
-	CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
+	CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase);
 
 	// デストラクタ
 	virtual ~CPlayerBase() = 0;
@@ -55,11 +55,13 @@ public:
 	virtual CPlayerAIOut* GetPlayerAIOut()		{ return nullptr; }	// AI外野プレイヤー取得
 
 	// メンバ関数
-	void DeleteControl();	// 操作破棄
+	void UpdateChangeBase();	// ベース変更更新
+	void DeleteControl();		// 操作破棄
 	void SetPlayerControlMove(CPlayerControlMove* pControlMove);		// 操作設定 (移動)
 	void SetPlayerControlAction(CPlayerControlAction* pControlAction);	// 操作設定 (アクション)
-	CPlayerControlMove* GetPlayerControlMove()		{ return m_pControlMove; }		// 操作取得 (移動)
-	CPlayerControlAction* GetPlayerControlAction()	{ return m_pControlAction; }	// 操作取得 (アクション)
+	void SetNewBase(const CPlayer::EBaseType typeBase)	{ m_newTypeBase = typeBase; }	// 新ベース設定
+	CPlayerControlMove* GetPlayerControlMove()			{ return m_pControlMove; }		// 操作取得 (移動)
+	CPlayerControlAction* GetPlayerControlAction()		{ return m_pControlAction; }	// 操作取得 (アクション)
 
 protected:
 	// メンバ関数
@@ -67,7 +69,9 @@ protected:
 
 private:
 	// メンバ変数
-	CPlayer* m_pPlayer;	// プレイヤー情報
+	const CPlayer::EBaseType m_curTypeBase;	// 現在のベースタイプ
+	CPlayer::EBaseType m_newTypeBase;		// 新しいベースタイプ
+	CPlayer* m_pPlayer;						// プレイヤー情報
 	CPlayerControlMove* m_pControlMove;		// 移動操作
 	CPlayerControlAction* m_pControlAction;	// アクション操作
 };
