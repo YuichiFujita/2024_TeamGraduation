@@ -24,6 +24,7 @@ public:
 	// 定数
 	//=============================
 	static constexpr float COMEBACK_LINE = 100.0f;	// 相手コートから戻ってくるライン
+	static constexpr float UNSTABLE_LINE = 100.0f;	// おっとっとライン
 
 	//=============================
 	// コンストラクタ/デストラクタ
@@ -41,12 +42,14 @@ protected:
 	// 純粋仮想関数
 	//=============================
 	virtual bool IsLineOut(CPlayer* pPlayer) = 0;	// ライン越えフラグ取得
+	virtual bool IsUnstable(CPlayer* pPlayer) = 0;	// おっとっとフラグ取得
 
 private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void ReturnTeamCourt(CPlayer* pPlayer, const MyLib::Vector3& rPos);	// チームコート復帰
+	void CheckReturn(CPlayer* pPlayer);		// チームコート復帰
+	void CheckUnstable(CPlayer* pPlayer);	// おっとっとする
 };
 
 #endif
