@@ -104,7 +104,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (pStatus->GetTeam() == sideBall) { return hitInfo; }
 
 	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived)
+	if (!m_pPlayer->GetDamageInfo().bReceived)	// FUJITA: リバウンドボール即座に取得はちゃうやん
 	{
 		hitInfo.bHit = true;
 		return hitInfo;
