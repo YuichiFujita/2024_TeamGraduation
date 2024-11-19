@@ -919,8 +919,25 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
+		// Cubic
+		inline float EasingCubicIn(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InCubic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
 
+		inline float EasingCubicOut(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutCubic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
 
+		inline float EasingCubicInOut(const float start, float end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutCubic(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
 
 
 		/**
