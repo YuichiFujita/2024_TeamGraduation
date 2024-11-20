@@ -285,4 +285,10 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
 			SetInputAngleCtr(INPUT_COUNTER);
 		}
 	}
+
+	//// 現在の入力方向カウンター
+//float fInputAngleCtr = GetInputAngleCtr();
+//fInputAngleCtr -= fDeltaTime * fSlowRate;
+//UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
+//SetInputAngleCtr(fInputAngleCtr);
 }

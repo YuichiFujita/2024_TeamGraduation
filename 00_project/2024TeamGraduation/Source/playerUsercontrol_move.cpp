@@ -558,15 +558,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	bool bDash = IsBlink();	//走るフラグ
 
-	//// 現在の入力方向カウンター
-	//float fInputAngleCtr = GetInputAngleCtr();
-	//fInputAngleCtr -= fDeltaTime * fSlowRate;
-	//UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
-	//SetInputAngleCtr(fInputAngleCtr);
-
 	// 現在の入力方向
-	CPlayer::EDashAngle* pInputAngle = IsInputAngle();
-
 	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;
 

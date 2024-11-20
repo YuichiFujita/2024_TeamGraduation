@@ -2070,6 +2070,7 @@ void CPlayer::Debug()
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
 		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
 		ImGui::Text("bBrake: [%d]", m_bBrake);
+		ImGui::Text("InputAngleCtr: [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
 
 		if (angle != nullptr)
 		{
