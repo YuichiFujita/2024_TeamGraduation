@@ -105,6 +105,7 @@ public:
 	enum EAction
 	{
 		ACTION_NONE = 0,	// 通常
+		ACTION_UNSTABLE,	// おっとっと
 		ACTION_BLINK,		// ブリンク
 		ACTION_DODGE,		// 回避
 		ACTION_RUN,			// 走り
@@ -272,8 +273,8 @@ public:
 	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }	// ダメージ情報取得
 	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }	// ノックバック情報設定
 	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }	// ノックバック情報取得
-	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// 足左右判定取得
-	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// 足左右判定反転
+	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// オートモーション情報取得
+	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// オートモーション情報設定
 
 	//=============================
 	// パターン

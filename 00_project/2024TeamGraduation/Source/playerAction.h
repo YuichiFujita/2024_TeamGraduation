@@ -45,6 +45,7 @@ private:
 	//=============================
 	// ó‘ÔŒn
 	void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ‚È‚µ
+	void ActionUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ‚¨‚Á‚Æ‚Á‚Æ
 	void ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ƒuƒŠƒ“ƒN
 	void ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ‰ñ”ğ
 	void ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ‘–‚è

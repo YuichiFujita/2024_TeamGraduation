@@ -83,6 +83,8 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		// ƒWƒƒƒ“ƒvó‹µŽæ“¾
 		bool bJump = player->IsJump();
 
+		motionFrag = player->GetMotionFrag();
+	
 		if (motionFrag.bMove &&
 			pMotion->IsGetCancelable() && 
 			!bJump)
