@@ -89,7 +89,7 @@ HRESULT CPlayerManager::Init()
 	// プレイヤー内野生成
 	//----------------------------------------------------------------------
 	// プレイヤーUser四人生成(左右)
-#if 1
+#if 0
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
@@ -136,7 +136,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 0
+#if 1
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -158,7 +158,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 0
+#if 1
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -354,7 +354,7 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 {
 #if 1
-	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -392,7 +392,7 @@ void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 void CPlayerManager::NearUserChange(CPlayer* pPlayer)
 {
 #if 1
-	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -441,7 +441,7 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
 	if (m_apOut[nPosIdx] != nullptr) { assert(false); return -1; }
 
 	// 指定のポジションが別チームだった場合エラー
-	if ((int)team != (nPosIdx / nHalfMax)) { assert(false); return -1; }
+	if ((int)team != ((nPosIdx / nHalfMax) - 1) * -1) { assert(false); return -1; }
 
 	// 外野を登録
 	m_apOut[nPosIdx] = pPlayer;

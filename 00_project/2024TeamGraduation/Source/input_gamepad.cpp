@@ -35,7 +35,8 @@ CInputGamepad::CInputGamepad()
 		m_nCntVibration[nCntPlayer] = 0;						// 振動の時間
 		m_nMaxCntVibration[nCntPlayer] = 0;						// 振動の時間
 	}
-	memset(&m_fTapTimer, 0, sizeof(m_fTapTimer));	// タップ判定用のタイマー
+	memset(&m_fTapTimer, 0, sizeof(m_fTapTimer));		// タップ判定用のタイマー
+	memset(&m_fOldTapTimer, 0, sizeof(m_fOldTapTimer));	// 前回のタップ判定用のタイマー
 
 	m_bVibrationUse = false;				// バイブを使用するかどうか
 	m_nCntPadrepeat = 0;									// リピート用カウント
@@ -219,6 +220,9 @@ void CInputGamepad::UpdateTapTimer(const float fDeltaTime, const float fDeltaRat
 	float time = fDeltaTime * fDeltaRate * fSlowRate;
 	for (int i = 0; i < static_cast<int>(BUTTON::BUTTON_MAX); i++)
 	{
+		// 前回のタップ判定用のタイマー
+		m_fOldTapTimer[i][nCntPlayer] = m_fTapTimer[i][nCntPlayer];
+
 		if (GetPress(static_cast<BUTTON>(i), nCntPlayer))
 		{
 			// タップ判定用のタイマー加算
@@ -460,6 +464,7 @@ CInputGamepad::STapInfo CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float
 	if (tapTime <= 0.0f)
 	{
 		returnInfo.bInput = true;
+		returnInfo.bComplete = true;
 		returnInfo.fRatio = 1.0f;
 		return returnInfo;
 	}
@@ -472,6 +477,14 @@ CInputGamepad::STapInfo CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float
 
 	// タップの割合
 	returnInfo.fRatio = UtilFunc::Transformation::Clamp(m_fTapTimer[nKey][nCntPlayer] / tapTime, 0.0f, 1.0f);
+
+	if (returnInfo.fRatio >= 1.0f)
+	{// 時間経過
+
+		// 過去は経過していなかったとき
+		float oldRatio = UtilFunc::Transformation::Clamp(m_fOldTapTimer[nKey][nCntPlayer] / tapTime, 0.0f, 1.0f);
+		returnInfo.bComplete = oldRatio < 1.0f;
+	}
 
 	return returnInfo;
 }

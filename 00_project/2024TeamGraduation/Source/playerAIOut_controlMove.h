@@ -40,7 +40,7 @@ public:
 	void SetIsBlink(bool bBlink) { m_bBlink = bBlink; }
 	void SetIsDash(bool bDash) { m_bDash = bDash; }
 	void SetIsWalk(bool bWalk) { m_bWalk = bWalk; }
-
+	void SetVecRot(float rot) { m_fRot = rot; }
 
 private:
 
@@ -59,6 +59,7 @@ private:
 	bool m_bDash;
 	bool m_bWalk;
 
+	float m_fRot;	// 向き設定用変数（+の時は左、－の時は右）
 };
 
 #endif

@@ -69,10 +69,11 @@ public:
 	struct STapInfo	// タップ情報
 	{
 		bool bInput;	// 入力フラグ
+		bool bComplete;	// 完了の瞬間フラグ
 		float fRatio;	// 割合
 
 		// コンストラクタ
-		STapInfo() : bInput(false), fRatio(0.0f) {}
+		STapInfo() : bInput(false), bComplete(false), fRatio(0.0f) {}
 	};
 
 	CInputGamepad();
@@ -168,6 +169,7 @@ private:
 	int m_nMaxCntVibration[mylib_const::MAX_PLAYER];					// 振動の時間
 	int m_nCntPadrepeat;												// リピート用カウント
 	float m_fTapTimer[BUTTON::BUTTON_MAX][mylib_const::MAX_PLAYER];		// タップ判定用のタイマー
+	float m_fOldTapTimer[BUTTON::BUTTON_MAX][mylib_const::MAX_PLAYER];	// 前回のタップ判定用のタイマー
 
 	//--------------------------
 	// トリガー

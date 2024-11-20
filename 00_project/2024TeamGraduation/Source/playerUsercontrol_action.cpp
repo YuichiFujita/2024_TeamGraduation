@@ -20,7 +20,7 @@
 //==========================================================================
 namespace
 {
-	const float TAPTIME = 0.2f;		// タップの入力時間
+	const float TAPTIME = 0.125f;		// タップの入力時間
 	const float TAPRATE_MIN = 0.6f;	// タップの最小割合
 	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
@@ -74,14 +74,18 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 
 	CMotion* pMotion = player->GetMotion();
 
+	// タップ取得
+	CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx(), TAPTIME);
+
 	if (pKey->GetTrigger(DIK_K) ||
-		pPad->GetTap(CInputGamepad::BUTTON_X, player->GetMyPlayerIdx(), 1.0f).bInput)
+		tapInfo.bInput)
 	{// タップ範囲はパス
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
 	}
+
 	if (pKey->GetTrigger(DIK_RETURN) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
-	{
+		tapInfo.bComplete)
+	{// タップ範囲を超えていた場合は投げ
 		ThrowSetting(player);
 	}
 }

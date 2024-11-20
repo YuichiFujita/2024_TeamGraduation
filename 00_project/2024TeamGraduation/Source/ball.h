@@ -177,6 +177,7 @@ private:
 	CPlayer* CollisionPlayer(MyLib::Vector3* pPos);				// プレイヤーとの当たり判定
 	CPlayer* CollisionThrowTarget(const bool bAbsLock = false);	// 投げる対象との当たり判定
 	CPlayer* CollisionPassTarget();		// パスする対象との当たり判定
+	float GetCollRadius();				// 判定半径取得
 	void SetState(const EState state);	// 状態設定
 	void Catch(CPlayer* pPlayer);		// キャッチ
 	void Throw(CPlayer* pPlayer);		// 投げ
