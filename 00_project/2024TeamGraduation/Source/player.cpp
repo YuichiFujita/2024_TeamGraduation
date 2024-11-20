@@ -510,11 +510,11 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	{ // ベースがユーザーの場合
 
 		// 演出
-		CEffect3D::Create(
+		/*CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
-			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);*/
 	}
 
 #endif
@@ -919,7 +919,24 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
+	{
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 20.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 20.0f;
+
+		// 歩きのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_WALK,
+			setpos,
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
+	}
 		break;
 
 	case EMotion::MOTION_RUN:
@@ -928,6 +945,21 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		// 設定するラベル
 		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
 		PLAY_SOUND(label);
+
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 40.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 40.0f;
+
+		// 歩きのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_RUN,
+			setpos,
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			10.0f, true);
 	}
 		break;
 
