@@ -70,19 +70,23 @@ void CPlayerAIOutControlAction::Throw(CPlayer* player, const float fDeltaTime, c
 	if (!m_bAutoThrow) { return; }
 #endif
 
-	CBall* pBall = player->GetBall();
+	if (!player->GetBall()) return;
 
 	if (m_sFlag.bThrow)
 	{
-		if (pBall == nullptr)
-		{
-			m_sFlag.bThrow = false;
-
-			return;
-		}
+		// フラグオフ
+		m_sFlag.bThrow = false;
 
 		// 投げる
 		ThrowSetting(player);
+	}
+	if (m_sFlag.bPass)
+	{
+		// フラグオフ
+		m_sFlag.bPass = false;
+
+		// パス
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
 	}
 }
 

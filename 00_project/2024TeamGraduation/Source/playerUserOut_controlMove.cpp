@@ -67,6 +67,7 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 	CPlayer::EDashAngle holdDashAngle = GetHoldDashAngle();	// ダッシュ方向
 	float fInputInterval = GetInputInterval();	// 入力の受け付け猶予
 	int* pCntTrigger = GetCntTrigger();			// トリガーカウント
+	int nPadIdx = player->GetMyPlayerIdx();		// 操作権インデックス
 
 	//----------------------------------------------------------------------
 	//	第一入力の受付
@@ -75,14 +76,14 @@ void CPlayerUserOutControlMove::BilnkKey(CPlayer* player, const float fDeltaTime
 	{ // 猶予受け付けが終了中の場合
 
 		bool bInput = false;
-		if (m_pLeftKey->IsTrigger())
+		if (m_pLeftKey->IsTrigger(nPadIdx))
 		{ // 左移動キーが押された場合
 
 			// 割り当てられたキーの方向を取得
 			holdDashAngle = m_pLeftKey->GetAngle();
 			bInput = true;
 		}
-		else if (m_pRightKey->IsTrigger())
+		else if (m_pRightKey->IsTrigger(nPadIdx))
 		{ // 右移動キーが押された場合
 
 			// 割り当てられたキーの方向を取得
@@ -354,7 +355,8 @@ void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, co
 	bool bDash = IsBlink();	// ダッシュフラグ
 	if (!bDash) { return; }	// ダッシュしていない場合抜ける
 
-	bool bKeyInput = (m_pLeftKey->IsPress() || m_pRightKey->IsPress());	// キー入力検知
+	int nPadIdx = player->GetMyPlayerIdx();	// 操作権インデックス
+	bool bKeyInput = (m_pLeftKey->IsPress(nPadIdx) || m_pRightKey->IsPress(nPadIdx));	// キー入力検知
 	if (!bKeyInput)
 	{ // 移動入力が検知されなかった場合
 
@@ -388,7 +390,8 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
 	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
 
-	bool bKeyInput = (m_pLeftKey->IsTrigger() || m_pRightKey->IsTrigger());	// キー入力検知
+	int nPadIdx = player->GetMyPlayerIdx();	// 操作権インデックス
+	bool bKeyInput = (m_pLeftKey->IsTrigger(nPadIdx) || m_pRightKey->IsTrigger(nPadIdx));	// キー入力検知
 	if (!flagMotion.bMove && bKeyInput)
 	{ // 移動してない且つ、入力を検知した場合
 
@@ -406,13 +409,13 @@ void CPlayerUserOutControlMove::Walk(CPlayer* player, const float fDeltaTime, co
 	fMoveValue *= fDeltaRate * fSlowRate;	// 経過時間乗算
 
 	// 移動操作
-	if (m_pLeftKey->IsPress())
+	if (m_pLeftKey->IsPress(nPadIdx))
 	{ // 左移動が検知された場合
 
 		// ベクトル逆方向に移動量を与える
 		playerMove += -vecMove * fMoveValue;
 	}
-	else if (m_pRightKey->IsPress())
+	else if (m_pRightKey->IsPress(nPadIdx))
 	{ // 右移動が検知された場合
 
 		// ベクトル方向に移動量を与える

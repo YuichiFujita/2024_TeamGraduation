@@ -21,7 +21,7 @@
 #include "3D_Effect.h"
 
 // TODO：AI/User切り替え
-#if 1
+#if 0
 #define CHANGE
 #endif
 
@@ -1480,8 +1480,8 @@ void CBall::Catch(CPlayer* pPlayer)
 	m_pPlayer = pPlayer;
 
 #ifdef CHANGE
-	// キャッチしたAIに操作を映す
-	CPlayerManager::GetInstance()->CatchUserChange(pPlayer);
+	// キャッチしたAIに操作権を移す
+	CPlayerManager::GetInstance()->ChangeUser(pPlayer);
 #endif
 
 	// プレイヤーにボールを保存
@@ -1500,9 +1500,8 @@ void CBall::Throw(CPlayer* pPlayer)
 	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
 	{ // 外野が投げた場合
 
-		// 近くのAIに操作を移す
-		assert(m_pTarget != nullptr);
-		CPlayerManager::GetInstance()->NearUserChange(m_pTarget);
+		// 近くのAIに操作権を移し、自身をAIにする
+		CPlayerManager::GetInstance()->ChangeAI(pPlayer);
 	}
 #endif
 
