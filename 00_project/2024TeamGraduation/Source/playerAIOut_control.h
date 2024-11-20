@@ -82,7 +82,7 @@ private:
 
 	// ÉLÉÉÉbÉ`
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
-	void FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 
 	//=============================
@@ -94,6 +94,9 @@ private:
 	bool IsPass();
 	void Throw();
 
+	void LookBall();
+
+	void AreaCheck();
 
 	//-----------------------------
 	// ÇªÇÃëºä÷êî

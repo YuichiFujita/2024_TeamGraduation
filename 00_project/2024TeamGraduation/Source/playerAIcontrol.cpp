@@ -42,6 +42,9 @@ namespace
 	const float LENGTH_SPACE = 10.0f;
 	const float LENGTH_OUT = 200.0f;
 	const float LENGTH_LINE = 100.0f;
+
+	// 線越え判定(中心(x)からの距離)
+	const float LINE_DISTANCE_OVER = 100.0f;
 }
 
 //==========================================================================
@@ -133,6 +136,7 @@ HRESULT CPlayerAIControl::Init()
 	m_sLearn.fDistanceIN = LENGTH_IN;
 	m_sLearn.fDistanceOUT = LENGTH_OUT;
 	m_sLearn.fDistanceLine = LENGTH_LINE;
+	m_eLine = ELine::LINE_IN;
 
 	return S_OK;
 }
@@ -763,20 +767,22 @@ void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDel
 //==========================================================================
 void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// パスターゲットが自分の場合
+	if (IsPassTarget()) return;
+
 	// ボールを持つ相手を取得
 	CPlayer* pTarget = GetCatchTarget();
 
+	// 距離(ボールを持っている奴との)
+	CatchDistance(pTarget);
+
+	// 外野との距離
+	CatchOutDistance();
+
 	// 線との距離
-	if (!CatchLineLeftDistance())
-	{
-		// 距離(ボールを持っている奴との)
-		CatchDistance(pTarget);
+	//CatchLineLeftDistance();
 
-		// 外野との距離
-		CatchOutDistance();
-
-	}
-
+	// フラグ管理
 	CatchMoveFlag();
 }
 
@@ -913,6 +919,12 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 
 	if (fDistance < m_sLearn.fDistanceIN - LENGTH_SPACE)
 	{// 相手との距離が近かった場合
+
+		//// 動くんじゃない！
+		//m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+
+		//if (m_eLine == ELine::LINE_OVER) return;
+
 		// 行動状態：離れる
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 
@@ -924,6 +936,12 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 	}
 	else if (fDistance > m_sLearn.fDistanceIN + LENGTH_SPACE)
 	{// 相手との距離が遠かった場合
+
+		//// 動くんじゃない！
+		//m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+
+		//if (m_eLine == ELine::LINE_OVER) return;
+
 		// 行動状態：近づく
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
 
@@ -996,41 +1014,79 @@ void CPlayerAIControl::CatchOutDistance()
 //==========================================================================
 // 線に対しての距離(キャッチ)
 //==========================================================================
-bool CPlayerAIControl::CatchLineLeftDistance()
+void CPlayerAIControl::CatchLineLeftDistance()
 {
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	// ターゲット距離(中央)
-	MyLib::Vector3 myPos = m_pAI->GetPosition();	// 自身位置
-	MyLib::Vector3 targetPos = { 0.0f, 0.0f, myPos.x };	// ターゲット位置
+	// 自身の位置
+	MyLib::Vector3 myPos = m_pAI->GetPosition();
 
-	// 自分からターゲットとの距離
-	float fDistance = myPos.DistanceXZ(targetPos);
+	// チームタイプの取得
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
-	//if (fDistance > m_sLearn.fDistanceLine + LENGTH_SPACE) return false;
-
-	if (fDistance < m_sLearn.fDistanceLine)
-	{// 距離が指定値以内の場合
-
-		// 移動状態を離れろ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
-
-		// 相手から見た自分
-		float direction = targetPos.AngleXZ(myPos);
-
-		// カニ方向の設定
-		pControlAIMove->SetClabDirection(direction);
-
-		return true;
-	}
-	else 
+	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
 	{
-		// 移動状態を離れろ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+		if (myPos.x > LINE_DISTANCE_OVER)
+		{// 距離が指定値以内の場合
 
+			// 移動状態を離れろ！
+			m_eLine = ELine::LINE_OVER;
+
+			// 動くんじゃない！
+			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+		}
+		else if (myPos.x < LINE_DISTANCE_OVER)
+		{// 距離が指定値以外の場合
+			// 移動状態を離れろ！
+			m_eLine = ELine::LINE_IN;
+		}
+	}
+	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
+	{
+		if (myPos.x < LINE_DISTANCE_OVER)
+		{// 距離が指定値以内の場合
+
+			// 移動状態を離れろ！
+			m_eLine = ELine::LINE_OVER;
+
+			// 動くんじゃない！
+			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+		}
+		else if (myPos.x > LINE_DISTANCE_OVER)
+		{// 距離が指定値以外の場合
+			// 移動状態を近づけ！
+			m_eLine = ELine::LINE_IN;
+		}
+	}
+}
+
+//==========================================================================
+// パスの相手は自分ですか？
+//==========================================================================
+bool CPlayerAIControl::IsPassTarget()
+{
+	// ボール情報の取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return false;
+
+	bool b = pBall->IsPass();
+
+	if (b)
+	{
 		return false;
+	}
+
+	if (pBall->GetTarget() == m_pAI)
+	{
+		return false;
+	}
+
+	// ボールパス&&ターゲットが自分
+	if (pBall->IsPass() && pBall->GetTarget() == m_pAI)
+	{
+		return true;
 	}
 
 	return false;

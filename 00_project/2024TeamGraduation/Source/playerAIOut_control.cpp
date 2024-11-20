@@ -24,6 +24,8 @@
 
 #include "playerAIOut.h"
 
+#include "playerManager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -60,7 +62,7 @@ CPlayerAIOutControl::MODE_FUNC CPlayerAIOutControl::m_ModeFunc[] =	// モード関数
 CPlayerAIOutControl::CATCH_FUNC CPlayerAIOutControl::m_CatchFunc[] =	// キャッチ関数
 {
 	&CPlayerAIOutControl::CatchNone,		// なし
-	&CPlayerAIOutControl::FindBall,			// 見つける
+	&CPlayerAIOutControl::RetrieveBall,		// 取りに良く
 };
 
 
@@ -238,6 +240,102 @@ void CPlayerAIOutControl::Throw()
 	pControlAIOutAction->SetIsThrow(true);
 }
 
+//==========================================================================
+// ボールを見る
+//==========================================================================
+void CPlayerAIOutControl::LookBall()
+{
+	
+}
+
+//==========================================================================
+// ボールのエリア判定
+//==========================================================================
+void CPlayerAIOutControl::AreaCheck()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	MyLib::Vector3 ballPos = pBall->GetPosition();
+
+	if (ballPos.x < 0)
+	{
+
+	}
+	else if (ballPos.x > 0)
+	{
+
+	}
+}
+
+//==========================================================================
+// ボールの回収
+//==========================================================================
+void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// AIコントロール情報(外野)の取得
+	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
+	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
+	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
+	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
+
+	// ボールの取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+
+	if (pBall == nullptr/* || pBall->GetPlayer() != nullptr*/)
+	{// ボールがnullptr&&プレイヤーがボールを取っている場合
+
+		// 歩きオフ！
+		pControlAIOutMove->SetIsWalk(false);
+		return;
+	}
+
+	// 角度を求める(playerからみたボール)
+	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
+
+	// 自分の外野ポジションの取得
+	CPlayerManager::EOutPos eOutPos = CPlayerManager::GetInstance()->GetOutPosition(m_pAIOut);
+
+	float fDest = fAngle;
+
+	if ((eOutPos == CPlayerManager::EOutPos::OUT_LEFT_FAR) ||
+		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_FAR))
+	{// ポジションが奥
+
+		
+	}
+	else if (
+		(eOutPos == CPlayerManager::EOutPos::OUT_LEFT_NEAR) || 
+		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_NEAR))
+	{// ポジションが手前
+
+		fDest *= -1.0f;
+		
+	}
+	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
+	{// 左
+		if (fAngle > -D3DX_PI * 0.5f)
+		{
+			fDest *= -1.0f;
+		}
+	}
+	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
+	{// 右
+		if (fAngle < D3DX_PI * 0.5f)
+		{
+			fDest *= -1.0f;
+		}
+	}
+
+	// 向きの設定
+	pControlAIOutMove->SetVecRot(fDest);
+
+	// 歩きオン!
+	pControlAIOutMove->SetIsWalk(true);
+
+	// 方向設定
+	m_pAIOut->SetRotDest(fAngle);
+}
 
 //==========================================================================
 // パス行動処理
@@ -251,36 +349,6 @@ bool CPlayerAIOutControl::IsPass()
 	if (pBall->IsPass() && pBall->GetTarget() == m_pAIOut) return false;
 
 	return true;
-}
-
-//==========================================================================
-// ボールを見つける
-//==========================================================================
-void CPlayerAIOutControl::FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// AIコントロール情報(外野)の取得
-	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
-	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
-	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
-	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
-
-	// ボールの取得
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-
-	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
-	{// ボールがnullptr&&プレイヤーがボールを取っている場合
-		
-		return;
-	}
-
-	// 角度を求める(playerからみたボール)
-	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
-
-	// 歩きオン!
-	pControlAIOutMove->SetIsWalk(true);
-
-	// 方向設定
-	m_pAIOut->SetRotDest(fAngle);
 }
 
 //==========================================================================
