@@ -30,6 +30,7 @@ namespace ActionTime
 CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 {
 	&CPlayerAction::ActionNone,			// なし
+	&CPlayerAction::ActionUnstable,		// おっとっと
 	&CPlayerAction::ActionBlink,		// ブリンク
 	&CPlayerAction::ActionDodge,		// 回避
 	&CPlayerAction::ActionRun,			// 走り
@@ -43,6 +44,7 @@ CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 CPlayerAction::START_FUNC CPlayerAction::m_StartFunc[] =	// 行動関数
 {
 	nullptr,								// なし
+	nullptr,								// おっとっと
 	nullptr,								// ブリンク
 	&CPlayerAction::StartDodge,				// 回避
 	nullptr,								// 走り
@@ -86,6 +88,14 @@ void CPlayerAction::Update(const float fDeltaTime, const float fDeltaRate, const
 // なし
 //==========================================================================
 void CPlayerAction::ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// おっとっと
+//==========================================================================
+void CPlayerAction::ActionUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }

@@ -811,7 +811,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 //==========================================================================
 CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDashAngle eAngle)
 {
-	CPlayer::SDashInfo info;
+	CPlayer::SDashInfo info = CPlayer::SDashInfo();
 	info.bDash = false;
 	
 	float fTriggerInterval = GetTriggerInterval();	//トリガーのインターバル

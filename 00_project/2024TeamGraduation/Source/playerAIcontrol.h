@@ -86,6 +86,12 @@ private:
 		MOVETYPE_MAX
 	};
 
+	enum ELine
+	{
+		LINE_IN = 0,	// 線内
+		LINE_OVER,		// 線外
+	};
+
 	//=============================
 	// 構造体定義
 	//=============================
@@ -215,7 +221,8 @@ private:
 
 	void CatchDistance(CPlayer* pTarget);	//
 	void CatchOutDistance();
-	bool CatchLineLeftDistance();
+	void CatchLineLeftDistance();
+	bool IsPassTarget();
 
 	void CatchMoveFlag();
 
@@ -246,7 +253,7 @@ private:
 
 	SInfo m_sInfo;		// モード情報
 	SLearn m_sLearn;
-
+	ELine m_eLine;
 
 	bool m_bStart;
 	bool m_bEnd;

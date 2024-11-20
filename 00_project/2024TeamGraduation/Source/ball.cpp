@@ -15,9 +15,15 @@
 #include "model.h"
 #include "shadow.h"
 #include "specialManager.h"
+#include "playerManager.h"
 
 #include "debugproc.h"
 #include "3D_Effect.h"
+
+// TODO：AI/User切り替え
+#if 1
+#define CHANGE
+#endif
 
 //==========================================================================
 // 定数定義
@@ -25,7 +31,9 @@
 namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
-	const float	RADIUS = 14.0f;			// 半径
+	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
+	const float	RADIUS = 14.0f;					// 半径
+	const float PLUS_RADIUS = RADIUS * 1.8f;	// 判定用半径
 	const float	RADIUS_SHADOW = 24.0f;	// 影の半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	REV_INIMOVE = 0.29f;	// 初速の補正係数
@@ -33,7 +41,6 @@ namespace
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
 	const float REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
-	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
 	const float MAX_BOUND_MOVE = 0.8f;	// バウンド時の上移動量最大値
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
@@ -354,6 +361,14 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		ImGui::Text("m_fGravity : [%.2f]", m_fGravity);
 		ImGui::Text("m_nDamage : [%d]", m_nDamage);
 
+		if (ImGui::Button("Reset"))
+		{// リセット
+			pos = MyLib::Vector3();
+			m_state = EState::STATE_LAND;
+
+			SetPosition(pos);
+		}
+
 		ImGui::TreePop();
 	}
 
@@ -578,7 +593,7 @@ void CBall::Pass(CPlayer* pPlayer)
 		m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
 		m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
 
-		// 移動量設定
+		// 移動量を設定
 		m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * pass::MOVE_RATE;
 	}
 
@@ -1266,6 +1281,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 {
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	const float fCollRadius = GetCollRadius();			// 判定ボール半径
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
@@ -1276,7 +1292,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		( // 引数
 			*pPos,
 			pPlayer->GetPosition(),
-			RADIUS,
+			fCollRadius,
 			pPlayer->GetRadius(),
 			pPlayer->GetParameter().fHeight
 		);
@@ -1411,6 +1427,24 @@ CPlayer* CBall::CollisionPassTarget()
 }
 
 //==========================================================================
+// 判定半径取得
+//==========================================================================
+float CBall::GetCollRadius()
+{
+	if (m_state == EState::STATE_HOM_PASS
+	||  m_state == EState::STATE_PASS
+	||  m_state == EState::STATE_REBOUND
+	||  m_state == EState::STATE_FREE
+	||  m_state == EState::STATE_LAND)
+	{ // 判定がでかい方がよさげな状態の場合
+
+		return PLUS_RADIUS;
+	}
+
+	return RADIUS;
+}
+
+//==========================================================================
 // 状態設定
 //==========================================================================
 void CBall::SetState(const EState state)
@@ -1445,9 +1479,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// TODO：ここでAIとUserの切り替え
-#if 0
-	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
+#ifdef CHANGE
+	// キャッチしたAIに操作を映す
+	CPlayerManager::GetInstance()->CatchUserChange(pPlayer);
 #endif
 
 	// プレイヤーにボールを保存
@@ -1462,9 +1496,14 @@ void CBall::Throw(CPlayer* pPlayer)
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
 
-	// TODO：ここでAIとUserの切り替え
-#if 0
-	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+#ifdef CHANGE
+	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+	{ // 外野が投げた場合
+
+		// 近くのAIに操作を移す
+		assert(m_pTarget != nullptr);
+		CPlayerManager::GetInstance()->NearUserChange(m_pTarget);
+	}
 #endif
 
 	// キャッチしていたプレイヤーを破棄
@@ -1479,6 +1518,12 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// 移動ベクトルを正規化して設定
 	SetMove(vecMove.Normal());
+
+	// 初速を初期化
+	m_fInitialSpeed = 0.0f;
+
+	// 重力を初期化
+	m_fGravity = 0.0f;
 }
 
 //==========================================================================

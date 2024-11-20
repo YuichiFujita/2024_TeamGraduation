@@ -76,8 +76,8 @@ public:
 	SOutInfo GetOutInfo(const EOutPos out);			// 外野情報取得
 	CPlayer* GetOutPlayer(const EOutPos out);		// 外野プレイヤー取得
 	EOutPos GetOutPosition(const CPlayer* pPlayer);	// 外野ポジション取得
-
-	void PlayerCatchUser(const CGameManager::ETeamSide typeTeam, const CPlayer* pPlayer);
+	void CatchUserChange(CPlayer* pPlayer);			// キャッチしたプレイヤーのユーザーチェンジ
+	void NearUserChange(CPlayer* pPlayer);			// 近いプレイヤーのユーザーチェンジ
 
 	//=============================
 	// 静的メンバ関数

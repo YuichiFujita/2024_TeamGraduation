@@ -230,7 +230,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 
 	// その他
 	m_fHaveTime = 0.0f;		// ボール所持タイマー
-	m_nMyPlayerIdx = 0;		// プレイヤーインデックス番号
+	m_nMyPlayerIdx = -1;	// プレイヤーインデックス番号
 	m_nPosIdx = -1;			// ポジション別インデックス
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
@@ -343,8 +343,18 @@ HRESULT CPlayer::Init()
 		m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
 	}
 
-	// プレイヤーインデックス番号を設定
-	m_nMyPlayerIdx = m_List.GetNumAll();
+	if (GetBaseType() == EBaseType::TYPE_USER)
+	{ // ユーザーベースの場合
+
+		// プレイヤーインデックス番号を設定
+		m_nMyPlayerIdx = GetNumUser();
+	}
+	else
+	{ // AIベースの場合
+
+		// プレイヤーインデックス番号を初期化
+		m_nMyPlayerIdx = -1;
+	}
 
 	// プレイヤーマネージャーに割当
 	CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
@@ -615,13 +625,14 @@ void CPlayer::MotionSet(const float fDeltaTime, const float fDeltaRate, const fl
 	// 死亡時通さない
 	if (m_sMotionFrag.bDead) return;
 
+	// おっとっと中
+	if (GetActionPattern()->GetAction() == EAction::ACTION_UNSTABLE) return;
+
 	// 再生中
 	if (!pMotion->IsFinish()) return;
 
 	if (m_sMotionFrag.bMove)
 	{// 移動していたら
-
-		m_sMotionFrag.bMove = false;	// 移動判定OFF
 
 		// 移動モーション設定
 		SetMoveMotion(false);
@@ -688,9 +699,6 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	{
 		SetMotion(motionType, nStartKey);
 	}
-
-	// ダッシュリセット
-	m_bDash = false;
 }
 
 //==========================================================================
@@ -802,6 +810,12 @@ void CPlayer::ResetFrag()
 	CMotion* pMotion = GetMotion();
 	int nType = pMotion->GetType();
 
+	// 移動判定OFF
+	m_sMotionFrag.bMove = false;
+
+	// ダッシュリセット
+	m_bDash = false;
+
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
@@ -809,8 +823,27 @@ void CPlayer::ResetFrag()
 
 	// オートモーション設定
 	m_bAutoMotionSet = true;
+}
 
-	
+//==========================================================================
+// ユーザーベースのプレイヤー総数取得処理
+//==========================================================================
+int CPlayer::GetNumUser()
+{
+	std::list<CPlayer*>::iterator itr = m_List.GetEnd();	// 最後尾イテレーター
+	int nNumBase = 0;	// ベースがユーザーのプレイヤー数
+
+	while (m_List.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+
+		// ユーザーベースの場合プレイヤー数加算
+		if (pItrPlayer->GetBaseType() == EBaseType::TYPE_USER) { nNumBase++; }
+	}
+
+	// ベースがユーザーのプレイヤー総数を返す
+	return nNumBase;
 }
 
 //==========================================================================
@@ -1990,6 +2023,7 @@ void CPlayer::Debug()
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
 		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
+		CPlayer::EAction action = m_pActionPattern->GetAction();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -1997,12 +2031,14 @@ void CPlayer::Debug()
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("Life : [%d]", GetLife());
 		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
+		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
 		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
+		ImGui::Text("bMove: [%d]", m_sMotionFrag.bMove);
+		ImGui::Text("bJump: [%d]", m_sMotionFrag.bJump);
+		ImGui::Text("bDash: [%d]", m_bDash);
 
 #if 0
-		ImGui::Text("State : [%d]", m_state);
-		ImGui::Text("Action : [%d]", m_pActionPattern->GetAction());
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
 #endif
