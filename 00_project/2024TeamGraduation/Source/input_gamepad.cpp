@@ -212,6 +212,9 @@ void CInputGamepad::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CInputGamepad::UpdateTapTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+
 	// タップ判定用のタイマー加算
 	float time = fDeltaTime * fDeltaRate * fSlowRate;
 	for (int i = 0; i < static_cast<int>(BUTTON::BUTTON_MAX); i++)
@@ -233,7 +236,9 @@ void CInputGamepad::UpdateTapTimer(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CInputGamepad::UpdateStickTrigger(int nCntPlayer)
 {
-	
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+
 	//=============================
 	// フラグリセット
 	//=============================
@@ -294,6 +299,9 @@ void CInputGamepad::UpdateStickTrigger(int nCntPlayer)
 //==========================================================================
 void CInputGamepad::UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+
 	// 判定リセット
 	m_StateLT[nCntPlayer] = sTrigger();	// LTの判定
 	m_StateRT[nCntPlayer] = sTrigger();	// RTの判定
@@ -331,6 +339,9 @@ void CInputGamepad::UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate)
 //==========================================================================
 void CInputGamepad::UpdateVibration(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+
 	switch (m_VibrationState[nCntPlayer])
 	{
 	case VIBRATION_STATE_NONE:
@@ -367,6 +378,9 @@ void CInputGamepad::UpdateVibration(int nCntPlayer)
 //==========================================================================
 void CInputGamepad::SetVibration(VIBRATION_STATE VibState, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+
 	if (!m_bVibrationUse) return;
 
 	// 状態を代入
@@ -392,6 +406,9 @@ void CInputGamepad::SetVibration(VIBRATION_STATE VibState, int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetPress(BUTTON nKey, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return (m_aGamepadState[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
 }
 
@@ -400,6 +417,9 @@ bool CInputGamepad::GetPress(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetTrigger(BUTTON nKey, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return (m_aGamepadStateTrigger[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
 }
 
@@ -408,6 +428,9 @@ bool CInputGamepad::GetTrigger(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetRelease(BUTTON nKey, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return (m_aGamepadStateRelease[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
 }
 
@@ -416,6 +439,9 @@ bool CInputGamepad::GetRelease(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetRepeat(BUTTON nKey, int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return (m_aGamepadStateRepeat[nCntPlayer].Gamepad.wButtons & (0x01 << nKey)) ? true : false;
 }
 
@@ -424,6 +450,9 @@ bool CInputGamepad::GetRepeat(BUTTON nKey, int nCntPlayer)
 //==========================================================================
 CInputGamepad::STapInfo CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float tapTime)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return {};
+
 	// タップ情報
 	STapInfo returnInfo;
 
@@ -452,6 +481,9 @@ CInputGamepad::STapInfo CInputGamepad::GetTap(BUTTON nKey, int nCntPlayer, float
 //==========================================================================
 bool CInputGamepad::GetPressLT(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_StateLT[nCntPlayer].bPress;
 }
 
@@ -460,6 +492,9 @@ bool CInputGamepad::GetPressLT(int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetPressRT(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_StateRT[nCntPlayer].bPress;
 }
 
@@ -468,6 +503,9 @@ bool CInputGamepad::GetPressRT(int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetTriggerLT(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_StateLT[nCntPlayer].bTrigger;
 }
 
@@ -476,6 +514,9 @@ bool CInputGamepad::GetTriggerLT(int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetTriggerRT(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_StateRT[nCntPlayer].bTrigger;
 }
 
@@ -484,6 +525,9 @@ bool CInputGamepad::GetTriggerRT(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickMoveL(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return VEC3_ZERO;
+
 	// Lスティックの移動量
 	return MyLib::Vector3(
 		static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbLX),
@@ -496,6 +540,9 @@ MyLib::Vector3 CInputGamepad::GetStickMoveL(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickMoveR(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return VEC3_ZERO;
+
 	// Rスティックの移動量
 	return MyLib::Vector3(
 		static_cast<float>(m_aGamepadState[nCntPlayer].Gamepad.sThumbRX),
@@ -509,6 +556,9 @@ MyLib::Vector3 CInputGamepad::GetStickMoveR(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickPositionRatioL(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return VEC3_ZERO;
+
 	// デッドゾーン反映後の割合
 	const float shortMax = static_cast<float>(SHRT_MAX);
 	float deadZoneRate = (shortMax * m_fDeadZone);
@@ -559,6 +609,9 @@ MyLib::Vector3 CInputGamepad::GetStickPositionRatioL(int nCntPlayer)
 //==========================================================================
 MyLib::Vector3 CInputGamepad::GetStickPositionRatioR(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return VEC3_ZERO;
+
 	// デッドゾーン反映後の割合
 	const float shortMax = static_cast<float>(SHRT_MAX);
 	float deadZoneRate = (shortMax * m_fDeadZone);
@@ -609,6 +662,9 @@ MyLib::Vector3 CInputGamepad::GetStickPositionRatioR(int nCntPlayer)
 //==========================================================================
 float CInputGamepad::GetStickRotL(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return 0.0f;
+
 	// 角度を求める
 	float fRot = atan2f(
 		((float)m_aGamepadState[nCntPlayer].Gamepad.sThumbLX - 0.0f),
@@ -622,6 +678,9 @@ float CInputGamepad::GetStickRotL(int nCntPlayer)
 //==========================================================================
 float CInputGamepad::GetStickRotR(int nCntPlayer)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return 0.0f;
+
 	// 角度を求める
 	float fRot = atan2f(
 		((float)m_aGamepadState[nCntPlayer].Gamepad.sThumbRX - 0.0f),
@@ -635,6 +694,9 @@ float CInputGamepad::GetStickRotR(int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_AXIS XY)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_bLStickTrigger[nCntPlayer][XY];
 }
 
@@ -643,6 +705,9 @@ bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_AXIS XY)
 //==========================================================================
 bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_AXIS XY)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
 	return m_bRStickTrigger[nCntPlayer][XY];
 }
 

@@ -7,6 +7,7 @@
 #include "playerPosAdj_in.h"
 #include "player.h"
 #include "playerStatus.h"
+#include "playerAction.h"
 
 //==========================================================================
 // 定数定義
@@ -132,20 +133,57 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 {
+	// 侵入から戻る状態
+	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN) return;
+
 	CMotion* motion = pPlayer->GetMotion();
+	CPlayerAction* pAction = pPlayer->GetActionPattern();
+	CPlayer::SMotionFrag motionFrag = pPlayer->GetMotionFrag();
+
+	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;
+
+	if (motionFrag.bMove ||
+		pPlayer->IsJump())
+	{// 移動中なら
+
+		pAction->SetAction(action);
+		return;
+	}
 
 	if (IsUnstable(pPlayer))
 	{ // おっとっとラインを超えていた場合
 
-		pPlayer->SetAutoMotionSet(true);
+		// 上書き防止
+		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE)	return;
 
-		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE ||
-			pPlayer->GetMotionFrag().bMove)
-		{// 移動中やすでにおっとっとだったら
-			return;
-		}
-		
 		// おっとっとモーションの再生
 		pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+
+		// アクション設定
+		action = CPlayer::EAction::ACTION_UNSTABLE;
 	}
+
+	pAction->SetAction(action);
+
+	bool bBrake = false;
+	MyLib::Vector3 move = pPlayer->GetMove();
+
+	// ブレーキフラグ
+	if (!bBrake)
+	{
+		bBrake = true;
+
+		move.x = 0.0f;
+		move.z = 0.0f;
+		pPlayer->SetMove(move);
+	}
+
+	//==================
+	// ブレーキ
+	// フラグかけてmoveを0に
+	// 
+	// ブレーキフラグ立てるif
+	// 
+	// ブレーキが立った状態で8方向ライン側に入れたらアウト
+	//==================
 }

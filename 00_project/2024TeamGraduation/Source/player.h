@@ -105,6 +105,7 @@ public:
 	enum EAction
 	{
 		ACTION_NONE = 0,	// 通常
+		ACTION_UNSTABLE,	// おっとっと
 		ACTION_BLINK,		// ブリンク
 		ACTION_DODGE,		// 回避
 		ACTION_RUN,			// 走り
@@ -272,8 +273,8 @@ public:
 	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }	// ダメージ情報取得
 	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }	// ノックバック情報設定
 	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }	// ノックバック情報取得
-	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// 足左右判定取得
-	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// 足左右判定反転
+	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// オートモーション情報取得
+	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// オートモーション情報設定
 
 	//=============================
 	// パターン
@@ -356,7 +357,7 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
-	typedef void(CPlayer::* STATE_FUNC)();
+	typedef void(CPlayer::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 	
 	typedef void(CPlayer::*ACTION_FUNC)();
@@ -368,20 +369,20 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone();				// なし
-	void StateInvincible();			// 無敵
-	void StateDamage();				// ダメージ
-	void StateDead();				// 死亡
-	void StateDeadAfter();			// 死亡後
-	void StateDodge();				// 回避
-	void StateCatch_Normal();		// 通常キャッチ
-	void StateCatch_Just();			// ジャストキャッチ
-	void StateSpecial();			// スペシャル
-	void StateOutCourt();			// コート越え
-	void StateOutCourt_Return();	// コート越えから戻る
-	void StateInvade_Toss();		// 相手コートに侵入トス
-	void StateInvade_Return();		// 相手コート侵入から戻る
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
+	void StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 無敵
+	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
+	void StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 死亡
+	void StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡後
+	void StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 回避
+	void StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常キャッチ
+	void StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャストキャッチ
+	void StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル
+	void StateOutCourt(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// コート越え
+	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
+	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
+	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
 
 	//-----------------------------
 	// その他関数
@@ -390,6 +391,7 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
+	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
 
 	//-----------------------------
 	// 非モテ関数
