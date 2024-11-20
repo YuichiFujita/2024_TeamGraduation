@@ -767,6 +767,9 @@ void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDel
 //==========================================================================
 void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// パスターゲットが自分の場合
+	if (IsPassTarget()) return;
+
 	// ボールを持つ相手を取得
 	CPlayer* pTarget = GetCatchTarget();
 
@@ -774,10 +777,10 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	CatchDistance(pTarget);
 
 	// 外野との距離
-	//CatchOutDistance();
+	CatchOutDistance();
 
 	// 線との距離
-	CatchLineLeftDistance();
+	//CatchLineLeftDistance();
 
 	// フラグ管理
 	CatchMoveFlag();
@@ -1057,6 +1060,36 @@ void CPlayerAIControl::CatchLineLeftDistance()
 			m_eLine = ELine::LINE_IN;
 		}
 	}
+}
+
+//==========================================================================
+// パスの相手は自分ですか？
+//==========================================================================
+bool CPlayerAIControl::IsPassTarget()
+{
+	// ボール情報の取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return false;
+
+	bool b = pBall->IsPass();
+
+	if (b)
+	{
+		return false;
+	}
+
+	if (pBall->GetTarget() == m_pAI)
+	{
+		return false;
+	}
+
+	// ボールパス&&ターゲットが自分
+	if (pBall->IsPass() && pBall->GetTarget() == m_pAI)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 //==========================================================================

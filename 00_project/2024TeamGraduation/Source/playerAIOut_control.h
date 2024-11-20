@@ -94,7 +94,9 @@ private:
 	bool IsPass();
 	void Throw();
 
+	void LookBall();
 
+	void AreaCheck();
 
 	//-----------------------------
 	// ÇªÇÃëºä÷êî

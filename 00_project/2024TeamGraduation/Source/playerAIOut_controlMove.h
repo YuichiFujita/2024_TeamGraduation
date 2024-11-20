@@ -58,7 +58,8 @@ private:
 	bool m_bBlink;
 	bool m_bDash;
 	bool m_bWalk;
-	float m_fRot;
+
+	float m_fRot;	// 向き設定用変数（+の時は左、－の時は右）
 };
 
 #endif

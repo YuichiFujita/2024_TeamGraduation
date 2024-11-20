@@ -222,6 +222,7 @@ private:
 	void CatchDistance(CPlayer* pTarget);	//
 	void CatchOutDistance();
 	void CatchLineLeftDistance();
+	bool IsPassTarget();
 
 	void CatchMoveFlag();
 

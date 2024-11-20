@@ -241,6 +241,34 @@ void CPlayerAIOutControl::Throw()
 }
 
 //==========================================================================
+// ボールを見る
+//==========================================================================
+void CPlayerAIOutControl::LookBall()
+{
+	
+}
+
+//==========================================================================
+// ボールのエリア判定
+//==========================================================================
+void CPlayerAIOutControl::AreaCheck()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	MyLib::Vector3 ballPos = pBall->GetPosition();
+
+	if (ballPos.x < 0)
+	{
+
+	}
+	else if (ballPos.x > 0)
+	{
+
+	}
+}
+
+//==========================================================================
 // ボールの回収
 //==========================================================================
 void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -254,26 +282,62 @@ void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDelt
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
-	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
+	if (pBall == nullptr/* || pBall->GetPlayer() != nullptr*/)
 	{// ボールがnullptr&&プレイヤーがボールを取っている場合
-		
+
 		// 歩きオフ！
 		pControlAIOutMove->SetIsWalk(false);
 		return;
 	}
 
-	pControlAIOutMove->SetVecRot(m_pAIOut->GetRotDest());
-
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
+
+	// 自分の外野ポジションの取得
+	CPlayerManager::EOutPos eOutPos = CPlayerManager::GetInstance()->GetOutPosition(m_pAIOut);
+
+	float fDest = fAngle;
+
+	if ((eOutPos == CPlayerManager::EOutPos::OUT_LEFT_FAR) ||
+		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_FAR))
+	{// ポジションが奥
+
+		
+	}
+	else if (
+		(eOutPos == CPlayerManager::EOutPos::OUT_LEFT_NEAR) || 
+		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_NEAR))
+	{// ポジションが手前
+
+		fDest *= -1.0f;
+		
+	}
+	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
+	{// 左
+
+		if (fAngle < D3DX_PI * 0.5f)
+		{
+			fDest *= -1.0f;
+		}
+		
+	}
+	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
+	{// 右
+		
+		if (fAngle > -D3DX_PI * 0.5f)
+		{
+			fDest *= -1.0f;
+		}
+	}
+
+	// 向きの設定
+	pControlAIOutMove->SetVecRot(fDest);
 
 	// 歩きオン!
 	pControlAIOutMove->SetIsWalk(true);
 
 	// 方向設定
 	m_pAIOut->SetRotDest(fAngle);
-
-	CPlayerManager::SOutInfo info = CPlayerManager::GetInstance()->GetOutInfo(CPlayerManager::EOutPos::OUT_RIGHT);
 }
 
 //==========================================================================
