@@ -30,6 +30,8 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/kamehame_Flash.efkefc",				// かめはめ波(フラッシュ)
 	"data/Effekseer/kamehame_ballast.efkefc",			// かめはめ波(空間がれき)
 	"data/Effekseer/hit.efkefc",						// ヒット
+	"data/Effekseer/sweat.efkefc",						// 汗
+	"data/Effekseer/blink.efkefc",						// ブリンク
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 

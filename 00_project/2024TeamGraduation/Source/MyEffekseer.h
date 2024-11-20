@@ -48,6 +48,8 @@ public:
 		EFKLABEL_CAMEHAME_FLASH,		// かめはめ波(フラッシュ)
 		EFKLABEL_CAMEHAME_BALLAST,		// かめはめ波(空間がれき)
 		EFKLABEL_HIT,					// ヒット
+		EFKLABEL_SWEAT,					// 汗
+		EFKLABEL_BLINK,					// ブリンク
 		EFKLABEL_MAX
 	};
 	

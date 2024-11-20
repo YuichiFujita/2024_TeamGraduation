@@ -898,6 +898,25 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	}
 		break;
 
+	case EMotion::MOTION_BLINK:	// ブリンク
+	{
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 120.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 120.0f;
+
+		// ブリンクのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_BLINK,
+			setpos,
+			MyLib::Vector3(0.0f, 0.0f, -GetRotDest()),	// 向き
+			MyLib::Vector3(),
+			20.0f, true);
+	}
+		break;
+
 	case EMotion::MOTION_GRIP_FRONT:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_GRIP01);
 		break;

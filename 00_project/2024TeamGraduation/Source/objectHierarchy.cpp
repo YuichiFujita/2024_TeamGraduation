@@ -120,6 +120,9 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 	// 半径
 	m_fRadius = loadData.parameter.fRadius;
 
+	// キャラスケール
+	m_fScale = loadData.scale;
+
 	// ファイルのインデックス番号
 	m_nIdxFile = nCntData;
 
