@@ -272,6 +272,8 @@ public:
 	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }	// ダメージ情報取得
 	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }	// ノックバック情報設定
 	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }	// ノックバック情報取得
+	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// 足左右判定取得
+	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// 足左右判定反転
 
 	//=============================
 	// パターン
