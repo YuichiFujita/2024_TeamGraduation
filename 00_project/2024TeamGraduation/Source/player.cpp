@@ -510,11 +510,11 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	{ // ベースがユーザーの場合
 
 		// 演出
-		CEffect3D::Create(
+		/*CEffect3D::Create(
 			GetPosition(),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
-			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);*/
 	}
 
 #endif
@@ -919,7 +919,24 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
+	{
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 20.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 20.0f;
+
+		// 歩きのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_WALK,
+			setpos,
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
+	}
 		break;
 
 	case EMotion::MOTION_RUN:
@@ -928,6 +945,21 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		// 設定するラベル
 		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
 		PLAY_SOUND(label);
+
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 40.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 40.0f;
+
+		// 歩きのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_RUN,
+			setpos,
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			10.0f, true);
 	}
 		break;
 
@@ -1221,7 +1253,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 入力判定
 	bool bInput = false;
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+	EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 	if (angle != nullptr)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
@@ -2024,6 +2056,7 @@ void CPlayer::Debug()
 		CMotion* motion = GetMotion();
 		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 		CPlayer::EAction action = m_pActionPattern->GetAction();
+		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -2034,24 +2067,23 @@ void CPlayer::Debug()
 		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
 		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
-		ImGui::Text("bMove: [%d]", m_sMotionFrag.bMove);
-		ImGui::Text("bJump: [%d]", m_sMotionFrag.bJump);
-		ImGui::Text("bDash: [%d]", m_bDash);
+		ImGui::Text("bBrake: [%d]", m_bBrake);
+
+		if (angle != nullptr)
+		{
+			ImGui::Text("InputAngle : [%s]", magic_enum::enum_name(*angle));
+		}
+		else
+		{
+			ImGui::Text("InputAngle: [error]");
+		}
 
 #if 0
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
+		ImGui::Text("bMove: [%d]", m_sMotionFrag.bMove);
+		ImGui::Text("bDash: [%d]", m_bDash);
 #endif
-
-		//現在の入力方向を取る(向き)
-		bool bInput = false;
-		EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-		if (angle != nullptr)
-		{
-			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-			float fRot = division * *angle;
-			ImGui::Text("fRot : [%.2f]", fRot);
-		}
 
 		ImGui::TreePop();
 	}

@@ -257,24 +257,26 @@ public:
 	//=============================
 	// モーション
 	//=============================
-	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;		// モーションの設定
-	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }	// 移動可能フラグ設定
-	bool IsPossibleMove()						{ return m_bPossibleMove; }	// 移動可能フラグ取得
-	void SetEnableDash(bool bDash)				{ m_bDash = bDash; }		// ダッシュ状況設定
-	bool IsDash()								{ return m_bDash; }			// ダッシュ判定
-	void SetEnableJump(bool bJump)				{ m_bJump = bJump; }		// ジャンプ状況設定
-	bool IsJump()								{ return m_bJump; }			// ジャンプ判定
-	void SetFootLR(bool bFootLR)				{ m_bFootLR = bFootLR; }	// 足左右判定設定
-	bool IsFootLR()								{ return m_bFootLR; }		// 足左右判定取得
-	void InverseFootLR()						{ m_bFootLR = !m_bFootLR; }	// 足左右判定反転
-	void SetMotionFrag(SMotionFrag& frag)		{ m_sMotionFrag = frag; }	// モーションのフラグ設定
-	SMotionFrag GetMotionFrag()					{ return m_sMotionFrag; }	// モーションのフラグ取得
-	void SetDamageInfo(SDamageInfo& info)		{ m_sDamageInfo = info; }	// ダメージ情報設定
-	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }	// ダメージ情報取得
-	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }	// ノックバック情報設定
-	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }	// ノックバック情報取得
+	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;			// モーションの設定
+	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }		// 移動可能フラグ設定
+	bool IsPossibleMove()						{ return m_bPossibleMove; }				// 移動可能フラグ取得
+	void SetEnableDash(bool bDash)				{ m_bDash = bDash; }					// ダッシュ状況設定
+	bool IsDash()								{ return m_bDash; }						// ダッシュ判定
+	void SetEnableJump(bool bJump)				{ m_bJump = bJump; }					// ジャンプ状況設定
+	bool IsJump()								{ return m_bJump; }						// ジャンプ判定
+	void SetFootLR(bool bFootLR)				{ m_bFootLR = bFootLR; }				// 足左右判定設定
+	bool IsFootLR()								{ return m_bFootLR; }					// 足左右判定取得
+	void InverseFootLR()						{ m_bFootLR = !m_bFootLR; }				// 足左右判定反転
+	void SetMotionFrag(SMotionFrag& frag)		{ m_sMotionFrag = frag; }				// モーションのフラグ設定
+	SMotionFrag GetMotionFrag()					{ return m_sMotionFrag; }				// モーションのフラグ取得
+	void SetDamageInfo(SDamageInfo& info)		{ m_sDamageInfo = info; }				// ダメージ情報設定
+	SDamageInfo GetDamageInfo()					{ return m_sDamageInfo; }				// ダメージ情報取得
+	void SetKnockBackInfo(SKnockbackInfo& info)	{ m_sKnockback = info; }				// ノックバック情報設定
+	SKnockbackInfo GetKnockBackInfo()			{ return m_sKnockback; }				// ノックバック情報取得
 	bool IsAutoMotionSet()						{ return m_bAutoMotionSet; }			// オートモーション情報取得
 	void SetAutoMotionSet(bool bAutoMotionSet)	{ m_bAutoMotionSet = bAutoMotionSet; }	// オートモーション情報設定
+	bool IsBrake()								{ return m_bBrake; }					// ブレーキ取得
+	void SetEnableBrake(bool bBrake)			{ m_bBrake = bBrake; }					// ブレーキ設定
 
 	//=============================
 	// パターン
@@ -442,6 +444,7 @@ private:
 	bool m_bDash;				// ダッシュ判定
 	bool m_bFootLR;				// 足左右判定 (t: 右 / f: 左)
 	bool m_bAlign;				// 揃え
+	bool m_bBrake;				// ブレーキ
 	SMotionFrag m_sMotionFrag;	// モーションのフラグ
 
 	//-----------------------------

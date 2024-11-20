@@ -6,6 +6,8 @@
 //==========================================================================
 #include "playerPosAdj_inRight.h"
 #include "player.h"
+#include "playerBase.h"
+#include "playercontrol_move.h"
 
 //==========================================================================
 // 定数定義
@@ -44,7 +46,7 @@ bool CPlayerPosAdjInRight::IsLineOut(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// ライン越えフラグ取得
+// おっとっとフラグ取得
 //==========================================================================
 bool CPlayerPosAdjInRight::IsUnstable(CPlayer* pPlayer)
 {
@@ -56,5 +58,22 @@ bool CPlayerPosAdjInRight::IsUnstable(CPlayer* pPlayer)
 	}
 
 	// ラインを越えていない場合フラグOFFを返す
+	return false;
+}
+
+//==========================================================================
+// おっとっと時入力フラグ取得
+//==========================================================================
+bool CPlayerPosAdjInRight::IsInputLine(CPlayer* pPlayer)
+{
+	CPlayer::EDashAngle* angle = pPlayer->GetBase()->GetPlayerControlMove()->IsInputAngle();
+	if (angle == nullptr) return false;
+
+	// 右を入力していたらtrue
+	if (*angle == CPlayer::EDashAngle::ANGLE_LEFT)
+	{
+		return true;
+	}
+
 	return false;
 }
