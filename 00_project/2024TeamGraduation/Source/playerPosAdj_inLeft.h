@@ -31,6 +31,7 @@ private:
 	// オーバーライド関数
 	//=============================
 	virtual bool IsLineOut(CPlayer* pPlayer) override;	// ライン越えフラグ取得
+	virtual bool IsUnstable(CPlayer* pPlayer) override;	// おっとっとフラグ取得
 };
 
 #endif

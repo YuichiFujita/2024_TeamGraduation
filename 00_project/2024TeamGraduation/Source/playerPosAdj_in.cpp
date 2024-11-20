@@ -76,7 +76,10 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 	{ // 相手コートに侵入したときはコート内に補正
 
 		// チームコートに戻す
-		ReturnTeamCourt(pPlayer, pos);
+		CheckReturn(pPlayer);
+
+		// おっとっとする
+		CheckUnstable(pPlayer);
 	}
 
 	// 位置を反映
@@ -86,7 +89,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 //==========================================================================
 // チームコート復帰
 //==========================================================================
-void CPlayerPosAdjIn::ReturnTeamCourt(CPlayer* pPlayer, const MyLib::Vector3& rPos)
+void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 {
 	MyLib::Vector3 pos = pPlayer->GetPosition();	// 位置
 	CPlayer::EState state = pPlayer->GetState();	// 状態
@@ -119,5 +122,26 @@ void CPlayerPosAdjIn::ReturnTeamCourt(CPlayer* pPlayer, const MyLib::Vector3& rP
 			// トス状態にする
 			pPlayer->SetState(CPlayer::EState::STATE_INVADE_TOSS);
 		}
+	}
+}
+
+//==========================================================================
+// おっとっとする
+//==========================================================================
+void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
+{
+	CMotion* motion = pPlayer->GetMotion();
+
+	if (IsUnstable(pPlayer))
+	{ // おっとっとラインを超えていた場合
+
+		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE ||
+			pPlayer->GetMotionFrag().bMove)
+		{// 移動中やすでにおっとっとだったら
+			return;
+		}
+		
+		// おっとっとモーションの再生
+		pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
 	}
 }
