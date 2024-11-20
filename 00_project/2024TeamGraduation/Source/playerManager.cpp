@@ -354,7 +354,7 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 {
 #if 1
-	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -392,7 +392,7 @@ void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 void CPlayerManager::NearUserChange(CPlayer* pPlayer)
 {
 #if 1
-	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -441,7 +441,7 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
 	if (m_apOut[nPosIdx] != nullptr) { assert(false); return -1; }
 
 	// 指定のポジションが別チームだった場合エラー
-	if ((int)team != (nPosIdx / nHalfMax)) { assert(false); return -1; }
+	if ((int)team != ((nPosIdx / nHalfMax) - 1) * -1) { assert(false); return -1; }
 
 	// 外野を登録
 	m_apOut[nPosIdx] = pPlayer;
