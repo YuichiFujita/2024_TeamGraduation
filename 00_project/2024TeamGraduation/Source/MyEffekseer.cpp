@@ -28,6 +28,8 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/kamehame_atmosphere.efkefc",		// かめはめ波(空間オーラ)
 	"data/Effekseer/kamehame_brust.efkefc",				// かめはめ波(発射)
 	"data/Effekseer/kamehame_Flash.efkefc",				// かめはめ波(フラッシュ)
+	"data/Effekseer/kamehame_ballast.efkefc",			// かめはめ波(空間がれき)
+	"data/Effekseer/hit.efkefc",						// ヒット
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 

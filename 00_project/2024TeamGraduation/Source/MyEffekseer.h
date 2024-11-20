@@ -46,6 +46,8 @@ public:
 		EFKLABEL_CAMEHAME_ATMOSPHERE,	// かめはめ波(空間オーラ)
 		EFKLABEL_CAMEHAME_BRUST,		// かめはめ波(発射)
 		EFKLABEL_CAMEHAME_FLASH,		// かめはめ波(フラッシュ)
+		EFKLABEL_CAMEHAME_BALLAST,		// かめはめ波(空間がれき)
+		EFKLABEL_HIT,					// ヒット
 		EFKLABEL_MAX
 	};
 	

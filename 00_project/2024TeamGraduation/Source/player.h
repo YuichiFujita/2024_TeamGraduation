@@ -288,6 +288,11 @@ public:
 	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
 
 	//=============================
+	// スペシャル用
+	//=============================
+	CSpecialEffect* GetSpecialEffect() { return m_pSpecialEffect; }	// スぺシャルエフェクト取得
+
+	//=============================
 	// その他
 	//=============================
 	SHitInfo Hit(CBall* pBall);			// ヒット処理

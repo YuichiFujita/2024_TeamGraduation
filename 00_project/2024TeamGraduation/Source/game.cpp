@@ -200,7 +200,7 @@ HRESULT CGame::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 0
+#if 1
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
