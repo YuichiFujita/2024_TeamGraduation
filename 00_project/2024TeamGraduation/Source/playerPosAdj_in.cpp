@@ -7,6 +7,7 @@
 #include "playerPosAdj_in.h"
 #include "player.h"
 #include "playerStatus.h"
+#include "playerAction.h"
 
 //==========================================================================
 // 定数定義
@@ -78,7 +79,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		// チームコートに戻す
 		CheckReturn(pPlayer);
 
-#if 0
+#if 1
 		// おっとっとする
 		CheckUnstable(pPlayer);
 #endif
@@ -132,20 +133,33 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 {
+	// 侵入から戻る状態
+	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN) return;
+
 	CMotion* motion = pPlayer->GetMotion();
+	CPlayerAction* pAction = pPlayer->GetActionPattern();
+
+	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;
 
 	if (IsUnstable(pPlayer))
 	{ // おっとっとラインを超えていた場合
 
-		pPlayer->SetAutoMotionSet(true);
+		if (pPlayer->GetMotionFrag().bMove)
+		{// 移動中なら
 
-		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE ||
-			pPlayer->GetMotionFrag().bMove)
-		{// 移動中やすでにおっとっとだったら
+			pAction->SetAction(action);
 			return;
 		}
-		
+
+		// 上書き防止
+		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE)	return;
+
 		// おっとっとモーションの再生
 		pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+
+		// アクション設定
+		action = CPlayer::EAction::ACTION_UNSTABLE;
 	}
+
+		pAction->SetAction(action);
 }

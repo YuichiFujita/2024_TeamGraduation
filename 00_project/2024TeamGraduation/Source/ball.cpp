@@ -355,6 +355,14 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		ImGui::Text("m_fGravity : [%.2f]", m_fGravity);
 		ImGui::Text("m_nDamage : [%d]", m_nDamage);
 
+		if (ImGui::Button("Reset"))
+		{// ƒŠƒZƒbƒg
+			pos = MyLib::Vector3();
+			m_state = EState::STATE_LAND;
+
+			SetPosition(pos);
+		}
+
 		ImGui::TreePop();
 	}
 

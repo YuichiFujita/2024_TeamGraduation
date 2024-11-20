@@ -72,12 +72,36 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 	// ダメージを与える
 	pStatus->LifeDamage(pBall->GetDamage());
 
-	// 風生成
-	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
-		pBall->GetPosition(),
-		MyLib::Vector3(),
-		MyLib::Vector3(),
-		20.0f + UtilFunc::Transformation::Random(-5, 5) * 0.1f, true);
+	// ヒットエフェクト生成
+	switch (pBall->GetTypeAtk())
+	{
+	case CBall::ATK_NORMAL:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			12.0f, true);
+		break;
+
+	case CBall::ATK_JUMP:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			20.0f, true);
+		break;
+
+	case CBall::ATK_SPECIAL:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			20.0f, true);
+		break;
+
+	default:
+		break;
+	}
 
 	if (pPlayer->GetLife() <= 0)
 	{
