@@ -349,13 +349,14 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 }
 
 //==========================================================================
-// TODO
+// キャッチしたプレイヤーのユーザーチェンジ
 //==========================================================================
-void CPlayerManager::PlayerCatchUser(const CGameManager::ETeamSide typeTeam, const CPlayer* pPlayer)
+void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 {
-	CListManager<CPlayer> list = (typeTeam == CGameManager::ETeamSide::SIDE_LEFT) ? m_listInLeft : m_listInRight;	// プレイヤーリスト
+#if 0
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
-	const int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
+	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
 
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
@@ -365,16 +366,58 @@ void CPlayerManager::PlayerCatchUser(const CGameManager::ETeamSide typeTeam, con
 		// TODO：これだとプレイヤー二人になった途端終了するよ
 		//		(近いやつを見つけてそういつのインデックスに置き換えよう)
 
+		// キャッチしたプレイヤーと別チームのプレイヤーの場合次へ
+		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
+
 		if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
 		{ // 同じチームにユーザーがいた場合
 
 			// 同チームのプレイヤーをAIベースに変更
 			pItrPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+			nCatchPlayerIdx = pItrPlayer->GetMyPlayerIdx();
 		}
 	}
 
 	// キャッチしたプレイヤーをユーザーベースに変更
 	pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
+	pPlayer->SetMyPlayerIdx(nCatchPlayerIdx);
+#endif
+}
+
+//==========================================================================
+// 近いプレイヤーのユーザーチェンジ
+//==========================================================================
+void CPlayerManager::NearUserChange(CPlayer* pPlayer)
+{
+#if 0
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
+
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+		
+		// TODO：これだとプレイヤー二人になった途端終了するよ
+		//		(近いやつを見つけてそういつのインデックスに置き換えよう)
+
+		// キャッチしたプレイヤーと別チームのプレイヤーの場合次へ
+		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
+
+		if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
+		{ // 同じチームにユーザーがいた場合
+
+			// 同チームのプレイヤーをAIベースに変更
+			pItrPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+			nCatchPlayerIdx = pItrPlayer->GetMyPlayerIdx();
+		}
+	}
+
+	// キャッチしたプレイヤーをユーザーベースに変更
+	pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
+	pPlayer->SetMyPlayerIdx(nCatchPlayerIdx);
+#endif
 }
 
 //==========================================================================
