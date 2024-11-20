@@ -14,6 +14,8 @@
 #include "playerBase.h"
 #include "playerAIOut.h"
 
+#include "playerManager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -34,6 +36,7 @@ CPlayerAIOutControlMove::CPlayerAIOutControlMove()
 	m_bBlink = false;
 	m_bDash = false;
 	m_bWalk = false;
+	m_fRot = 0.0f;
 }
 
 //==========================================================================
@@ -218,8 +221,7 @@ void CPlayerAIOutControlMove::Walk(CPlayer* player, const float fDeltaTime, cons
 	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
 	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
 
-	bool bKeyInput = false;	// キー入力検知
-	if (!flagMotion.bMove && bKeyInput)
+	if (!flagMotion.bMove)
 	{ // 移動してない且つ、入力を検知した場合
 
 		// 左右フラグ反転
@@ -236,13 +238,13 @@ void CPlayerAIOutControlMove::Walk(CPlayer* player, const float fDeltaTime, cons
 	fMoveValue *= fDeltaRate * fSlowRate;	// 経過時間乗算
 
 	// 移動操作
-	if (false)
+	if (m_fRot > 0)
 	{ // 左移動が検知された場合
 
 		// ベクトル逆方向に移動量を与える
 		playerMove += -vecMove * fMoveValue;
 	}
-	else if (false)
+	else if (m_fRot < 0)
 	{ // 右移動が検知された場合
 
 		// ベクトル方向に移動量を与える

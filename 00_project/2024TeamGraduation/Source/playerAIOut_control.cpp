@@ -24,6 +24,8 @@
 
 #include "playerAIOut.h"
 
+#include "playerManager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -255,8 +257,12 @@ void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDelt
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
 	{// ボールがnullptr&&プレイヤーがボールを取っている場合
 		
+		// 歩きオフ！
+		pControlAIOutMove->SetIsWalk(false);
 		return;
 	}
+
+	pControlAIOutMove->SetVecRot(m_pAIOut->GetRotDest());
 
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
@@ -266,6 +272,8 @@ void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDelt
 
 	// 方向設定
 	m_pAIOut->SetRotDest(fAngle);
+
+	CPlayerManager::SOutInfo info = CPlayerManager::GetInstance()->GetOutInfo(CPlayerManager::EOutPos::OUT_RIGHT);
 }
 
 //==========================================================================
