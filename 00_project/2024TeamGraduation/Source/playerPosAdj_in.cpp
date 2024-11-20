@@ -79,7 +79,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		// チームコートに戻す
 		CheckReturn(pPlayer);
 
-#if 0
+#if 1
 		// おっとっとする
 		CheckUnstable(pPlayer);
 #endif
@@ -138,20 +138,44 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 	CMotion* motion = pPlayer->GetMotion();
 	CPlayerAction* pAction = pPlayer->GetActionPattern();
-	CPlayer::SMotionFrag motionFrag = pPlayer->GetMotionFrag();
+	CPlayer::SMotionFrag motionFrag = pPlayer->GetMotionFrag();	// モーションフラグ
 
-	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;
+	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;	// アクション種類
 
-	if (motionFrag.bMove ||
-		pPlayer->IsJump())
-	{// 移動中なら
-
-		pAction->SetAction(action);
-		return;
-	}
+	bool bBrake = pPlayer->IsBrake();						// ブレーキフラグ
+	MyLib::Vector3 move = pPlayer->GetMove();	// 移動量
 
 	if (IsUnstable(pPlayer))
 	{ // おっとっとラインを超えていた場合
+
+		// ブレーキフラグ
+		if (!bBrake)
+		{
+			bBrake = true;
+		}
+		else
+		{
+			move.x = 0.0f;
+			move.z = 0.0f;
+			pPlayer->SetEnableMove(false);
+		}
+
+		if (motionFrag.bMove)
+		{// 移動中なら
+
+			// 設定
+			pPlayer->SetMove(move);
+			pPlayer->SetEnableBrake(bBrake);
+			pAction->SetAction(action);
+			return;
+		}
+
+		// 敵側に入力された
+		if (IsInputLine(pPlayer))
+		{
+			// チームコートに戻す
+			CheckReturn(pPlayer);
+		}
 
 		// 上書き防止
 		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE)	return;
@@ -161,29 +185,14 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 		// アクション設定
 		action = CPlayer::EAction::ACTION_UNSTABLE;
+		pAction->SetAction(action);
 	}
-
-	pAction->SetAction(action);
-
-	bool bBrake = false;
-	MyLib::Vector3 move = pPlayer->GetMove();
-
-	// ブレーキフラグ
-	if (!bBrake)
+	else
 	{
-		bBrake = true;
-
-		move.x = 0.0f;
-		move.z = 0.0f;
-		pPlayer->SetMove(move);
+		bBrake = false;
 	}
 
-	//==================
-	// ブレーキ
-	// フラグかけてmoveを0に
-	// 
-	// ブレーキフラグ立てるif
-	// 
-	// ブレーキが立った状態で8方向ライン側に入れたらアウト
-	//==================
+	// 設定
+	pPlayer->SetMove(move);
+	pPlayer->SetEnableBrake(bBrake);
 }

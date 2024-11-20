@@ -31,7 +31,9 @@
 namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
-	const float	RADIUS = 14.0f;			// 半径
+	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
+	const float	RADIUS = 14.0f;					// 半径
+	const float PLUS_RADIUS = RADIUS * 1.8f;	// 判定用半径
 	const float	RADIUS_SHADOW = 24.0f;	// 影の半径
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
 	const float	REV_INIMOVE = 0.29f;	// 初速の補正係数
@@ -39,7 +41,6 @@ namespace
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
 	const float REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
-	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
 	const float MAX_BOUND_MOVE = 0.8f;	// バウンド時の上移動量最大値
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
@@ -1280,6 +1281,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 {
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	const float fCollRadius = GetCollRadius();			// 判定ボール半径
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
@@ -1290,7 +1292,7 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 		( // 引数
 			*pPos,
 			pPlayer->GetPosition(),
-			RADIUS,
+			fCollRadius,
 			pPlayer->GetRadius(),
 			pPlayer->GetParameter().fHeight
 		);
@@ -1422,6 +1424,24 @@ CPlayer* CBall::CollisionPassTarget()
 
 	// 投擲ターゲットを返す
 	return pTarget;
+}
+
+//==========================================================================
+// 判定半径取得
+//==========================================================================
+float CBall::GetCollRadius()
+{
+	if (m_state == EState::STATE_HOM_PASS
+	||  m_state == EState::STATE_PASS
+	||  m_state == EState::STATE_REBOUND
+	||  m_state == EState::STATE_FREE
+	||  m_state == EState::STATE_LAND)
+	{ // 判定がでかい方がよさげな状態の場合
+
+		return PLUS_RADIUS;
+	}
+
+	return RADIUS;
 }
 
 //==========================================================================

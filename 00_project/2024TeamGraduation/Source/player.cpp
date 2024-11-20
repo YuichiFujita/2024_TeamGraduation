@@ -931,6 +931,25 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	}
 		break;
 
+	case EMotion::MOTION_BLINK:	// ブリンク
+	{
+		// 設定位置計算
+		MyLib::Vector3 setpos = weponpos;	// セットする位置
+		float rotDest = GetRotDest();		// 目標の向き
+
+		// 少し前に出す
+		setpos.x += sinf(D3DX_PI + rotDest) * 120.0f;
+		setpos.z += cosf(D3DX_PI + rotDest) * 120.0f;
+
+		// ブリンクのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_BLINK,
+			setpos,
+			MyLib::Vector3(0.0f, 0.0f, -GetRotDest()),	// 向き
+			MyLib::Vector3(),
+			20.0f, true);
+	}
+		break;
+
 	case EMotion::MOTION_GRIP_FRONT:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_GRIP01);
 		break;
@@ -1202,7 +1221,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 入力判定
 	bool bInput = false;
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+	EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 	if (angle != nullptr)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
@@ -2005,6 +2024,7 @@ void CPlayer::Debug()
 		CMotion* motion = GetMotion();
 		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 		CPlayer::EAction action = m_pActionPattern->GetAction();
+		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -2015,24 +2035,23 @@ void CPlayer::Debug()
 		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
 		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
-		ImGui::Text("bMove: [%d]", m_sMotionFrag.bMove);
-		ImGui::Text("bJump: [%d]", m_sMotionFrag.bJump);
-		ImGui::Text("bDash: [%d]", m_bDash);
+		ImGui::Text("bBrake: [%d]", m_bBrake);
+
+		if (angle != nullptr)
+		{
+			ImGui::Text("InputAngle : [%s]", magic_enum::enum_name(*angle));
+		}
+		else
+		{
+			ImGui::Text("InputAngle: [error]");
+		}
 
 #if 0
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
 		ImGui::Text("CrabMoveEasing : [%.3f]", m_pBase->GetPlayerControlMove()->GetCrabMoveEasingTime());
+		ImGui::Text("bMove: [%d]", m_sMotionFrag.bMove);
+		ImGui::Text("bDash: [%d]", m_bDash);
 #endif
-
-		//現在の入力方向を取る(向き)
-		bool bInput = false;
-		EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-		if (angle != nullptr)
-		{
-			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-			float fRot = division * *angle;
-			ImGui::Text("fRot : [%.2f]", fRot);
-		}
 
 		ImGui::TreePop();
 	}

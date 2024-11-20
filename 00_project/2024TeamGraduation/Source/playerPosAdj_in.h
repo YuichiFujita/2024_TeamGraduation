@@ -43,6 +43,7 @@ protected:
 	//=============================
 	virtual bool IsLineOut(CPlayer* pPlayer) = 0;	// ライン越えフラグ取得
 	virtual bool IsUnstable(CPlayer* pPlayer) = 0;	// おっとっとフラグ取得
+	virtual bool IsInputLine(CPlayer* pPlayer) = 0;	// おっとっと時入力フラグ取得
 
 private:
 	//=============================

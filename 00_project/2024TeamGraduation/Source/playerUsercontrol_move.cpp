@@ -566,7 +566,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	SetInputAngleCtr(fInputAngleCtr);
 
 	// 現在の入力方向
-	CPlayer::EDashAngle* pInputAngle = GetInputAngle();
+	CPlayer::EDashAngle* pInputAngle = IsInputAngle();
 
 	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;
@@ -789,7 +789,7 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
 	}
 	*pInputAngle = eAngle;
-	SetInputAngle(pInputAngle);
+	SetEnableInputAngle(pInputAngle);
 
 	// 入力方向カウンター設定
 	SetInputAngleCtr(INPUT_COUNTER);

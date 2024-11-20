@@ -103,6 +103,13 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 		break;
 	}
 
+	// Š¾
+	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_SWEAT,
+		pPlayer->GetPosition() + MyLib::Vector3(0.0f, 100.0f, 0.0f),
+		MyLib::Vector3(0.0f, -pBall->GetMove().AngleXZ(0.0f), 0.0f),
+		MyLib::Vector3(),
+		12.0f, true);
+
 	if (pPlayer->GetLife() <= 0)
 	{
 		// IŠˆ
