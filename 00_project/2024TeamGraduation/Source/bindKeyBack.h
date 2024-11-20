@@ -30,10 +30,10 @@ public:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual bool IsPress(const int nPadIdx = 0) const override;		// 割当キープレス取得
-	virtual bool IsTrigger(const int nPadIdx = 0) const override;	// 割当キートリガー取得
-	virtual float GetRotation() const override;						// 割当キー向き取得
-	virtual CPlayer::EDashAngle GetAngle() const override;			// 割当キー方向列挙取得
+	virtual bool IsPress(const int nPadIdx) const override;		// 割当キープレス取得
+	virtual bool IsTrigger(const int nPadIdx) const override;	// 割当キートリガー取得
+	virtual float GetRotation() const override;					// 割当キー向き取得
+	virtual CPlayer::EDashAngle GetAngle() const override;		// 割当キー方向列挙取得
 };
 
 #endif

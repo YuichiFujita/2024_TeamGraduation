@@ -89,7 +89,7 @@ HRESULT CPlayerManager::Init()
 	// プレイヤー内野生成
 	//----------------------------------------------------------------------
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
@@ -136,7 +136,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 1
+#if 0
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -158,7 +158,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -349,79 +349,113 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 }
 
 //==========================================================================
-// キャッチしたプレイヤーのユーザーチェンジ
+// AIベースのユーザー変更
 //==========================================================================
-void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
+void CPlayerManager::ChangeUser(CPlayer* pPlayer)
 {
-#if 1
-	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	// 自身がユーザーの場合は抜ける
+	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
-	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
+	CPlayer* pChange = nullptr;	// 変更するユーザープレイヤー
+	float fMinDis = 0.0f;		// ユーザーとの最小距離
 
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
 		
-		// TODO：これだとプレイヤー二人になった途端終了するよ
-		//		(近いやつを見つけてそういつのインデックスに置き換えよう)
-
-		// キャッチしたプレイヤーと別チームのプレイヤーの場合次へ
+		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
 
-		if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
-		{ // 同じチームにユーザーがいた場合
+		// ユーザーではない場合次へ
+		if (pItrPlayer->GetBaseType() != CPlayer::EBaseType::TYPE_USER) { continue; }
 
-			// 同チームのプレイヤーをAIベースに変更
-			pItrPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
-			nCatchPlayerIdx = pItrPlayer->GetMyPlayerIdx();
+		// ユーザーとの距離を計算
+		float fCurDis = pItrPlayer->GetPosition().DistanceXZ(pPlayer->GetPosition());
+		if (pChange == nullptr || fCurDis < fMinDis)
+		{ // まだユーザーが設定されていない、またはユーザー間の距離がより短かった場合
+
+			// 変更ユーザーを保存
+			pChange = pItrPlayer;
+
+			// より短いユーザー間の距離を保存
+			fMinDis = fCurDis;
 		}
 	}
 
-	// キャッチしたプレイヤーをユーザーベースに変更
-	pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
-	pPlayer->SetMyPlayerIdx(nCatchPlayerIdx);
-#endif
+	if (pChange != nullptr)
+	{ // 変更可能なユーザーがいた場合
+
+		// 元のユーザーと自身のベースを交換
+		assert(pChange->GetBaseType() == CPlayer::EBaseType::TYPE_USER);
+		pChange->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);	// 元のユーザーをAIに変更
+		pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);	// 自身をユーザーベースに変更
+
+		// 元のユーザーの操作権インデックスを保存
+		int nOldUserIdx = pChange->GetMyPlayerIdx();
+		assert(nOldUserIdx != -1);
+
+		// 元のユーザーと自身の操作権を交換
+		pChange->SetMyPlayerIdx(pPlayer->GetMyPlayerIdx());	// 元のユーザーの操作権を自身の操作権に変更
+		pPlayer->SetMyPlayerIdx(nOldUserIdx);				// 自身の操作権を元のユーザーの操作権に変更
+	}
 }
 
 //==========================================================================
-// 近いプレイヤーのユーザーチェンジ
+// ユーザーベースのAI変更
 //==========================================================================
-void CPlayerManager::NearUserChange(CPlayer* pPlayer)
+void CPlayerManager::ChangeAI(CPlayer* pPlayer)
 {
-#if 1
-	//if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+	// 自身がAIの場合は抜ける
+	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
-	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
+	CPlayer* pChange = nullptr;	// 変更するAIプレイヤー
+	float fMinDis = 0.0f;		// AIとの最小距離
 
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
 		
-		// TODO：これだとプレイヤー二人になった途端終了するよ
-		//		(近いやつを見つけてそういつのインデックスに置き換えよう)
-
-		// キャッチしたプレイヤーと別チームのプレイヤーの場合次へ
+		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
 
-		if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
-		{ // 同じチームにユーザーがいた場合
+		// AIではない場合次へ
+		if (pItrPlayer->GetBaseType() != CPlayer::EBaseType::TYPE_AI) { continue; }
 
-			// 同チームのプレイヤーをAIベースに変更
-			pItrPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
-			nCatchPlayerIdx = pItrPlayer->GetMyPlayerIdx();
+		// AIとの距離を計算
+		float fCurDis = pItrPlayer->GetPosition().DistanceXZ(pPlayer->GetPosition());
+		if (pChange == nullptr || fCurDis < fMinDis)
+		{ // まだAIが設定されていない、またはAI間の距離がより短かった場合
+
+			// 変更AIを保存
+			pChange = pItrPlayer;
+
+			// より短いAI間の距離を保存
+			fMinDis = fCurDis;
 		}
 	}
 
-	// キャッチしたプレイヤーをユーザーベースに変更
-	pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
-	pPlayer->SetMyPlayerIdx(nCatchPlayerIdx);
-#endif
+	if (pChange != nullptr)
+	{ // 変更可能なAIがいた場合
+
+		// 元のAIと自身のベースを交換
+		assert(pChange->GetBaseType() == CPlayer::EBaseType::TYPE_AI);
+		pChange->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);	// 元のAIをユーザーに変更
+		pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);	// 自身をAIベースに変更
+
+		// 元のAIの操作権インデックスを保存
+		int nOldUserIdx = pChange->GetMyPlayerIdx();
+		assert(nOldUserIdx == -1);
+
+		// 元のAIと自身の操作権を交換
+		pChange->SetMyPlayerIdx(pPlayer->GetMyPlayerIdx());	// 元のAIの操作権を自身の操作権に変更
+		pPlayer->SetMyPlayerIdx(nOldUserIdx);				// 自身の操作権を元のAIの操作権に変更
+	}
 }
 
 //==========================================================================
