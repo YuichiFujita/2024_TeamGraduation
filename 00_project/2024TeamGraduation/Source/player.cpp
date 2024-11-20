@@ -1275,7 +1275,7 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	m_fStateTime += fDeltaTime * fSlowRate;
 
 	// 状態更新
-	(this->*(m_StateFunc[m_state]))();
+	(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -1299,7 +1299,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 //==========================================================================
 // なし
 //==========================================================================
-void CPlayer::StateNone()
+void CPlayer::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 色設定
 	m_mMatcol = MyLib::Color(MyLib::color::White());
@@ -1308,7 +1308,7 @@ void CPlayer::StateNone()
 //==========================================================================
 // 無敵状態
 //==========================================================================
-void CPlayer::StateInvincible()
+void CPlayer::StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 点滅設定
 	float fMat = m_fStateTime;
@@ -1334,7 +1334,7 @@ void CPlayer::StateInvincible()
 //==========================================================================
 // ダメージ状態
 //==========================================================================
-void CPlayer::StateDamage()
+void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 	CMotion* pMotion = GetMotion();
@@ -1358,7 +1358,7 @@ void CPlayer::StateDamage()
 //==========================================================================
 // 死亡状態
 //==========================================================================
-void CPlayer::StateDead()
+void CPlayer::StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1383,7 +1383,7 @@ void CPlayer::StateDead()
 //==========================================================================
 // 死亡状態
 //==========================================================================
-void CPlayer::StateDeadAfter()
+void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//死亡状態をキャンセル不能にする
 	SetEnableMove(false);
@@ -1393,7 +1393,7 @@ void CPlayer::StateDeadAfter()
 //==========================================================================
 // 回避
 //==========================================================================
-void CPlayer::StateDodge()
+void CPlayer::StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -1401,7 +1401,7 @@ void CPlayer::StateDodge()
 //==========================================================================
 // 通常キャッチ
 //==========================================================================
-void CPlayer::StateCatch_Normal()
+void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
@@ -1424,8 +1424,8 @@ void CPlayer::StateCatch_Normal()
 	MyLib::Vector3 move = GetMove();
 
 	// 移動量更新
-	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
-	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
+	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
+	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
 
 	// 位置更新
 	pos.x += move.x;
@@ -1452,7 +1452,7 @@ void CPlayer::StateCatch_Normal()
 //==========================================================================
 // ジャストキャッチ
 //==========================================================================
-void CPlayer::StateCatch_Just()
+void CPlayer::StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
@@ -1467,7 +1467,7 @@ void CPlayer::StateCatch_Just()
 //==========================================================================
 // スペシャル
 //==========================================================================
-void CPlayer::StateSpecial()
+void CPlayer::StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CMotion* pMotion = GetMotion();	// プレイヤーモーション情報
 
@@ -1482,7 +1482,7 @@ void CPlayer::StateSpecial()
 //==========================================================================
 // コート越え
 //==========================================================================
-void CPlayer::StateOutCourt()
+void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1507,7 +1507,7 @@ void CPlayer::StateOutCourt()
 //==========================================================================
 // コート越えから戻る
 //==========================================================================
-void CPlayer::StateOutCourt_Return()
+void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 posStart = CGameManager::GetInstance()->GetCourtSize();
@@ -1532,7 +1532,7 @@ void CPlayer::StateOutCourt_Return()
 //==========================================================================
 // 相手コートに侵入トス
 //==========================================================================
-void CPlayer::StateInvade_Toss()
+void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// オートモーション設定解除
 	m_bAutoMotionSet = false;
@@ -1596,7 +1596,7 @@ void CPlayer::StateInvade_Toss()
 //==========================================================================
 // 相手コート侵入から戻る
 //==========================================================================
-void CPlayer::StateInvade_Return()
+void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 自陣サイズ取得
 	MyLib::Vector3 posCourt = MyLib::Vector3();
