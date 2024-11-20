@@ -79,7 +79,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		// チームコートに戻す
 		CheckReturn(pPlayer);
 
-#if 1
+#if 0
 		// おっとっとする
 		CheckUnstable(pPlayer);
 #endif

@@ -21,7 +21,6 @@ namespace
 	const float RATIO_STICKBLINK = 0.75f;	// スティックブリンク時の割合
 	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
 	const float BLINK_JUMP_COR = 0.5f;	// 空中時ブリンク補正値
-	const float INPUT_COUNTER = (4.0f / 60.0f);	// 入力カウンター
 }
 
 //==========================================================================
@@ -559,11 +558,11 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 
 	bool bDash = IsBlink();	//走るフラグ
 
-	// 現在の入力方向カウンター
-	float fInputAngleCtr = GetInputAngleCtr();
-	fInputAngleCtr -= fDeltaTime * fSlowRate;
-	UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
-	SetInputAngleCtr(fInputAngleCtr);
+	//// 現在の入力方向カウンター
+	//float fInputAngleCtr = GetInputAngleCtr();
+	//fInputAngleCtr -= fDeltaTime * fSlowRate;
+	//UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
+	//SetInputAngleCtr(fInputAngleCtr);
 
 	// 現在の入力方向
 	CPlayer::EDashAngle* pInputAngle = IsInputAngle();
@@ -694,18 +693,6 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 		}
 	}
 
-	// 現在の入力方向
-	if (pInputAngle != nullptr)
-	{
-		if (*pInputAngle != eAngle || !bInput)
-		{
-			// 移動割合0に
-			float fCrabMoveEasingTime = GetCrabMoveEasingTime();
-			fCrabMoveEasingTime = 0.0f;
-			SetCrabMoveEasingTime(fCrabMoveEasingTime);
-		}
-	}
-
 	if (!bInput)
 	{
 		// 移動しない
@@ -755,8 +742,6 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 			{
 				fMove *= UtilFunc::Correction::EaseOutExpo(MIN, MAX, 0.0f, fFrameMax * 0.5f, fFrame);
 			}
-
-			float fCrabMoveEasingTime = GetCrabMoveEasingTime();	// 補正用時間
 		}
 #endif
 
@@ -778,32 +763,8 @@ void CPlayerUserControlMove::Walk(CPlayer* player, const float fDeltaTime, const
 	// モーションフラグ設定
 	player->SetMotionFrag(motionFrag);
 
-	// 現在の入力方向設定
-	if (pInputAngle != nullptr && fInputAngleCtr <= 0.0f)
-	{
-		delete pInputAngle;
-		pInputAngle = nullptr;
-	}
-	if (pInputAngle == nullptr)
-	{
-		pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
-	}
-	*pInputAngle = eAngle;
-	SetEnableInputAngle(pInputAngle);
-
-	// 入力方向カウンター設定
-	SetInputAngleCtr(INPUT_COUNTER);
-
 	// 走るフラグ設定
 	SetBlink(bDash);
-
-	if (player->GetBase()->IsCrab() &&
-		(player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_LEFT ||
-		player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_CRAB_RIGHT))
-	{// カニ歩き時 サイドステップ時のみ
-		// 移動割合更新
-		UpdateCrabMoveEasingTime(fDeltaTime, fDeltaRate, fSlowRate);
-	}
 }
 
 //==========================================================================

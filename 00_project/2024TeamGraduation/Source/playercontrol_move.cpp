@@ -18,8 +18,7 @@
 //==========================================================================
 namespace
 {
-	const float INTERVAL_INPUT = (2.0f / 60.0f);	// 入力
-	const float TIME_INTERVAL = 0.3f;	// ダッシュ猶予
+	const float INPUT_COUNTER = (4.0f / 60.0f);	// 入力カウンター
 }
 
 //==========================================================================
@@ -97,6 +96,9 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 		}
 	}
 
+	// 入力方向
+	UpdateInputAngle(player);
+
 #if 1
 	// カニ歩き判定
 	if (player->GetBase()->IsCrab())
@@ -148,18 +150,139 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 }
 
 //==========================================================================
-// 現在のカニ歩き移動補正値更新
+// 現在の入力方向更新
 //==========================================================================
-void CPlayerControlMove::UpdateCrabMoveEasingTime(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
 {
-	if (m_fCrabMoveEasingTime > 1.0f)
-	{// 1を超えたら範囲内にする
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-		// 小数点3位までで補正
-		m_fCrabMoveEasingTime = static_cast<int>(m_fCrabMoveEasingTime * 1000) % static_cast<int>(1000);
-		m_fCrabMoveEasingTime /= 1000.0f;
+	// プレイヤー番号取得
+	int playerIdx = player->GetMyPlayerIdx();
+
+	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
+	bool bInput = false;
+
+
+	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
+		pPad->GetStickMoveL(playerIdx).y > 0 ||
+		pKey->GetPress(DIK_W))
+	{// 上
+		bInput = true;
+
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).x < 0 ||
+			pKey->GetPress(DIK_A))
+		{// 左上
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
+		}
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).x > 0 ||
+			pKey->GetPress(DIK_D))
+		{// 右上
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
+		}
+		else
+		{// 上
+			eAngle = CPlayer::EDashAngle::ANGLE_UP;
+		}
+	}
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
+		pPad->GetStickMoveL(playerIdx).y < 0 ||
+		pKey->GetPress(DIK_S))
+	{// 下
+		bInput = true;
+
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).x < 0 ||
+			pKey->GetPress(DIK_A))
+		{// 左下
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
+		}
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).x > 0 ||
+			pKey->GetPress(DIK_D))
+		{// 右下
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
+		}
+		else
+		{// 下
+			eAngle = CPlayer::EDashAngle::ANGLE_DOWN;
+		}
+	}
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
+		pPad->GetStickMoveL(playerIdx).x > 0 ||
+		pKey->GetPress(DIK_D))
+	{// 右
+		bInput = true;
+
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).y < 0 ||
+			pKey->GetPress(DIK_W))
+		{// 右上
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTUP;
+		}
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).y > 0 ||
+			pKey->GetPress(DIK_S))
+		{// 右下
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHTDW;
+		}
+		else
+		{// 右
+			eAngle = CPlayer::EDashAngle::ANGLE_RIGHT;
+		}
+	}
+	else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
+		pPad->GetStickMoveL(playerIdx).x < 0 ||
+		pKey->GetPress(DIK_A))
+	{// 左
+		bInput = true;
+
+		if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).y < 0 ||
+			pKey->GetPress(DIK_W))
+		{// 左上
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTUP;
+		}
+		else if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_DOWN, playerIdx) ||
+			pPad->GetStickMoveL(playerIdx).y > 0 ||
+			pKey->GetPress(DIK_S))
+		{// 左下
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFTDW;
+		}
+		else
+		{// 左
+			eAngle = CPlayer::EDashAngle::ANGLE_LEFT;
+		}
 	}
 
-	// 補正用時間加算
-	m_fCrabMoveEasingTime += 1.0f * fDeltaTime * fDeltaRate * fSlowRate;
+	CPlayer::EDashAngle eInputOld = CPlayer::EDashAngle::ANGLE_UP;
+
+	// 現在の入力方向設定
+	if (m_pInputAngle != nullptr)
+	{
+		eInputOld = *m_pInputAngle;
+		
+		delete m_pInputAngle;
+		m_pInputAngle = nullptr;
+	}
+
+	if (bInput)
+	{
+		// 現在の入力方向設定
+		if (m_pInputAngle == nullptr)
+		{
+			m_pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
+			MyAssert::CustomAssert(m_pInputAngle != nullptr, "なんでnew出来てねぇんだよ");
+		}
+		*m_pInputAngle = eAngle;
+
+		if (eInputOld != eAngle)
+		{
+			// 入力方向カウンター設定
+			SetInputAngleCtr(INPUT_COUNTER);
+		}
+	}
 }
