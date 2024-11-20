@@ -255,22 +255,23 @@ CPlayer::~CPlayer()
 //==========================================================================
 CPlayer* CPlayer::Create
 (
-	const MyLib::Vector3& rPos,		// 位置
-	CGameManager::ETeamSide team,	// チームサイド
-	EBaseType basetype,				// ベースタイプ
-	EBody bodytype,					// 体系
-	EHandedness handtype			// 利き手
+	const MyLib::Vector3&	rPos,		// 位置
+	CGameManager::ETeamSide	typeTeam,	// チームサイド
+	EFieldArea	typeArea,				// ポジション
+	EBaseType	typeBase,				// ベースタイプ
+	EBody		typeBody,				// 体型
+	EHandedness	typeHand				// 利き手
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_IN, basetype);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
 	if (pPlayer != nullptr)
 	{
-		// 利き手を設定
-		pPlayer->m_Handress = handtype;
-
 		// 体型を設定
-		pPlayer->m_BodyType = bodytype;
+		pPlayer->m_BodyType = typeBody;
+
+		// 利き手を設定
+		pPlayer->m_Handress = typeHand;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -283,47 +284,6 @@ CPlayer* CPlayer::Create
 
 		// 初期位置を設定
 		pPlayer->GetBase()->InitPosition(rPos);
-	}
-
-	return pPlayer;
-}
-
-//==========================================================================
-// 生成処理 (外野)
-//==========================================================================
-CPlayer* CPlayer::Create
-(
-	const MyLib::Vector3& rPosLeft,		// 移動左位置
-	const MyLib::Vector3& rPosRight,	// 移動右位置
-	CBindKey* pKeyLeft,					// 左移動キー
-	CBindKey* pKeyRight,				// 右移動キー
-	CGameManager::ETeamSide team,		// チームサイド
-	EBaseType basetype,					// ベースタイプ
-	EBody bodytype,						// 体系
-	EHandedness handtype				// 利き手
-)
-{
-	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_OUT, basetype);
-	if (pPlayer != nullptr)
-	{
-		// 利き手を設定
-		pPlayer->m_Handress = handtype;
-
-		// 体型を設定
-		pPlayer->m_BodyType = bodytype;
-
-		// クラスの初期化
-		if (FAILED(pPlayer->Init()))
-		{ // 初期化に失敗した場合
-
-			// クラスの終了
-			SAFE_UNINIT(pPlayer);
-			return nullptr;
-		}
-
-		// 初期位置を設定
-		pPlayer->GetBase()->InitPosition(VEC3_ZERO);
 	}
 
 	return pPlayer;
@@ -565,11 +525,11 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
 	{ // 行動できるとき
 
-		// ベースの更新
-		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
 		// ベース変更の更新
 		m_pBase->UpdateChangeBase();
+
+		// ベースの更新
+		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -1921,7 +1881,7 @@ void CPlayer::ChangeBase(EBaseType type)
 	InitBase(type);
 
 	// プレイヤーマネージャーに自身を再登録
-	m_nPosIdx = pManager->RegistPlayer(this);
+	m_nPosIdx = pManager->RegistPlayer(this, m_nPosIdx);
 }
 
 //==========================================================================

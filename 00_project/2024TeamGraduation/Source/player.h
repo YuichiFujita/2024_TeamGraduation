@@ -321,43 +321,22 @@ public:
 	// 静的関数
 	//=============================
 	/*
-		@brief	内野プレイヤーの生成処理
-		@param	rPos	 [in]	初期位置
-		@param	team	 [in]	チームサイド
-		@param	basetype [in]	User/AI
-		@param	bodytype [in]	体型
-		@param	handtype [in]	利き手
+		@brief	プレイヤーの生成処理
+		@param	rPos	 [in]	初期位置 (内野のみ)
+		@param	typeTeam [in]	左/右
+		@param	typeArea [in]	内野/外野
+		@param	typeBase [in]	User/AI
+		@param	typeBody [in]	標準/デブ/ガリ
+		@param	typeHand [in]	右利き/左利き
 	*/
 	static CPlayer* Create
 	(
-		const MyLib::Vector3& rPos,					// 位置
-		CGameManager::ETeamSide team,				// チームサイド
-		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
-		EBody bodytype = EBody::BODY_NORMAL,		// 体型
-		EHandedness handtype = EHandedness::HAND_R	// 利き手
-	);
-
-	/*
-		@brief	外野プレイヤーの生成処理
-		@param	rPosLeft	[in]	移動制限の左位置
-		@param	rPosRight	[in]	移動制限の右位置
-		@param	pKeyLeft	[in]	左移動時に使用するキー
-		@param	pKeyRight	[in]	右移動時に使用するキー
-		@param	team		[in]	チームサイド
-		@param	basetype	[in]	User/AI
-		@param	bodytype	[in]	体型
-		@param	handtype	[in]	利き手
-	*/
-	static CPlayer* Create
-	(
-		const MyLib::Vector3& rPosLeft,				// 移動左位置
-		const MyLib::Vector3& rPosRight,			// 移動右位置
-		CBindKey* pKeyLeft,							// 左移動キー
-		CBindKey* pKeyRight,						// 右移動キー
-		CGameManager::ETeamSide team,				// チームサイド
-		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
-		EBody bodytype = EBody::BODY_NORMAL,		// 体型
-		EHandedness handtype = EHandedness::HAND_R	// 利き手
+		const MyLib::Vector3&	rPos,					// 位置
+		CGameManager::ETeamSide	typeTeam,				// チームサイド
+		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
+		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
+		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
+		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
 	);
 
 protected:
