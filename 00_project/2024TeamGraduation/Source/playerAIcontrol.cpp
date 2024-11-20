@@ -133,6 +133,7 @@ HRESULT CPlayerAIControl::Init()
 	m_sLearn.fDistanceIN = LENGTH_IN;
 	m_sLearn.fDistanceOUT = LENGTH_OUT;
 	m_sLearn.fDistanceLine = LENGTH_LINE;
+	m_eLine = ELine::LINE_IN;
 
 	return S_OK;
 }
@@ -767,15 +768,14 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	CPlayer* pTarget = GetCatchTarget();
 
 	// 線との距離
-	if (!CatchLineLeftDistance())
-	{
-		// 距離(ボールを持っている奴との)
-		CatchDistance(pTarget);
+	CatchLineLeftDistance();
 
-		// 外野との距離
-		CatchOutDistance();
+	// 距離(ボールを持っている奴との)
+	CatchDistance(pTarget);
 
-	}
+	// 外野との距離
+	CatchOutDistance();
+
 
 	CatchMoveFlag();
 }
@@ -924,6 +924,9 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 	}
 	else if (fDistance > m_sLearn.fDistanceIN + LENGTH_SPACE)
 	{// 相手との距離が遠かった場合
+
+		if (m_eLine == ELine::LINE_OVER) return;
+
 		// 行動状態：近づく
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
 
@@ -996,7 +999,7 @@ void CPlayerAIControl::CatchOutDistance()
 //==========================================================================
 // 線に対しての距離(キャッチ)
 //==========================================================================
-bool CPlayerAIControl::CatchLineLeftDistance()
+void CPlayerAIControl::CatchLineLeftDistance()
 {
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
@@ -1009,31 +1012,16 @@ bool CPlayerAIControl::CatchLineLeftDistance()
 	// 自分からターゲットとの距離
 	float fDistance = myPos.DistanceXZ(targetPos);
 
-	//if (fDistance > m_sLearn.fDistanceLine + LENGTH_SPACE) return false;
-
 	if (fDistance < m_sLearn.fDistanceLine)
 	{// 距離が指定値以内の場合
 
 		// 移動状態を離れろ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
-
-		// 相手から見た自分
-		float direction = targetPos.AngleXZ(myPos);
-
-		// カニ方向の設定
-		pControlAIMove->SetClabDirection(direction);
-
-		return true;
+		m_eLine = ELine::LINE_OVER;
 	}
-	else 
+	else if (fDistance > m_sLearn.fDistanceLine + 20.0f)
 	{
-		// 移動状態を離れろ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-
-		return false;
+		m_eLine = ELine::LINE_IN;
 	}
-
-	return false;
 }
 
 //==========================================================================
