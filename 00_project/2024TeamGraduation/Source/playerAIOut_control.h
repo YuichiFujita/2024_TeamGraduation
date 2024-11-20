@@ -82,7 +82,7 @@ private:
 
 	// ƒLƒƒƒbƒ`
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
-	void FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 
 	//=============================
@@ -93,6 +93,7 @@ private:
 	void Pass();
 	bool IsPass();
 	void Throw();
+
 
 
 	//-----------------------------

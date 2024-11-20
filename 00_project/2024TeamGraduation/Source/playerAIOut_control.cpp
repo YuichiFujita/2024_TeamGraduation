@@ -60,7 +60,7 @@ CPlayerAIOutControl::MODE_FUNC CPlayerAIOutControl::m_ModeFunc[] =	// モード関数
 CPlayerAIOutControl::CATCH_FUNC CPlayerAIOutControl::m_CatchFunc[] =	// キャッチ関数
 {
 	&CPlayerAIOutControl::CatchNone,		// なし
-	&CPlayerAIOutControl::FindBall,			// 見つける
+	&CPlayerAIOutControl::RetrieveBall,		// 取りに良く
 };
 
 
@@ -238,25 +238,10 @@ void CPlayerAIOutControl::Throw()
 	pControlAIOutAction->SetIsThrow(true);
 }
 
-
 //==========================================================================
-// パス行動処理
+// ボールの回収
 //==========================================================================
-bool CPlayerAIOutControl::IsPass()
-{
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) return false;
-
-	// パス状態&&ターゲットが自分の場合
-	if (pBall->IsPass() && pBall->GetTarget() == m_pAIOut) return false;
-
-	return true;
-}
-
-//==========================================================================
-// ボールを見つける
-//==========================================================================
-void CPlayerAIOutControl::FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// AIコントロール情報(外野)の取得
 	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
@@ -281,6 +266,20 @@ void CPlayerAIOutControl::FindBall(const float fDeltaTime, const float fDeltaRat
 
 	// 方向設定
 	m_pAIOut->SetRotDest(fAngle);
+}
+
+//==========================================================================
+// パス行動処理
+//==========================================================================
+bool CPlayerAIOutControl::IsPass()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return false;
+
+	// パス状態&&ターゲットが自分の場合
+	if (pBall->IsPass() && pBall->GetTarget() == m_pAIOut) return false;
+
+	return true;
 }
 
 //==========================================================================
