@@ -390,6 +390,7 @@ private:
 	void Controll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
+	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
 
 	//-----------------------------
 	// 非モテ関数

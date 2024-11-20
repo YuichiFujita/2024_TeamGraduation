@@ -230,7 +230,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 
 	// その他
 	m_fHaveTime = 0.0f;		// ボール所持タイマー
-	m_nMyPlayerIdx = 0;		// プレイヤーインデックス番号
+	m_nMyPlayerIdx = -1;	// プレイヤーインデックス番号
 	m_nPosIdx = -1;			// ポジション別インデックス
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
@@ -343,8 +343,18 @@ HRESULT CPlayer::Init()
 		m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
 	}
 
-	// プレイヤーインデックス番号を設定
-	m_nMyPlayerIdx = m_List.GetNumAll();
+	if (GetBaseType() == EBaseType::TYPE_USER)
+	{ // ユーザーベースの場合
+
+		// プレイヤーインデックス番号を設定
+		m_nMyPlayerIdx = GetNumUser();
+	}
+	else
+	{ // AIベースの場合
+
+		// プレイヤーインデックス番号を初期化
+		m_nMyPlayerIdx = -1;
+	}
 
 	// プレイヤーマネージャーに割当
 	CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
@@ -809,8 +819,27 @@ void CPlayer::ResetFrag()
 
 	// オートモーション設定
 	m_bAutoMotionSet = true;
+}
 
-	
+//==========================================================================
+// ユーザーベースのプレイヤー総数取得処理
+//==========================================================================
+int CPlayer::GetNumUser()
+{
+	std::list<CPlayer*>::iterator itr = m_List.GetEnd();	// 最後尾イテレーター
+	int nNumBase = 0;	// ベースがユーザーのプレイヤー数
+
+	while (m_List.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+
+		// ユーザーベースの場合プレイヤー数加算
+		if (pItrPlayer->GetBaseType() == EBaseType::TYPE_USER) { nNumBase++; }
+	}
+
+	// ベースがユーザーのプレイヤー総数を返す
+	return nNumBase;
 }
 
 //==========================================================================
