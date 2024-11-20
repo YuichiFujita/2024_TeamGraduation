@@ -353,7 +353,7 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 //==========================================================================
 void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 {
-#if 0
+#if 1
 	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
@@ -391,7 +391,7 @@ void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerManager::NearUserChange(CPlayer* pPlayer)
 {
-#if 0
+#if 1
 	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト

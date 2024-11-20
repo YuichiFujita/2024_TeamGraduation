@@ -20,6 +20,11 @@
 #include "debugproc.h"
 #include "3D_Effect.h"
 
+// TODO：AI/User切り替え
+#if 1
+#define CHANGE
+#endif
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -1454,7 +1459,7 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-#if 0
+#ifdef CHANGE
 	// キャッチしたAIに操作を映す
 	CPlayerManager::GetInstance()->CatchUserChange(pPlayer);
 #endif
@@ -1471,7 +1476,7 @@ void CBall::Throw(CPlayer* pPlayer)
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
 
-#if 0
+#ifdef CHANGE
 	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
 	{ // 外野が投げた場合
 
