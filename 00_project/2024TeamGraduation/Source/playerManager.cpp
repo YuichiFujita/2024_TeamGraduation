@@ -85,6 +85,165 @@ CPlayerManager* CPlayerManager::Create()
 //==========================================================================
 HRESULT CPlayerManager::Init()
 {
+	//----------------------------------------------------------------------
+	// プレイヤー内野生成
+	//----------------------------------------------------------------------
+	// プレイヤーUser四人生成(左右)
+#if 1
+	// プレイヤーUser二人生成(右)
+	for (int i = 0; i < 2; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
+		CPlayer* pUser = CPlayer::Create
+		(
+			pos + offset, 					// 位置
+			CGameManager::SIDE_RIGHT,		// チームサイド
+			CPlayer::EFieldArea::FIELD_IN,	// ポジション
+			(CPlayer::EBaseType)i,			// ベースタイプ
+			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EHandedness::HAND_R	// 利き手
+		);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pUser->SetRotDest(HALF_PI);
+	}
+
+	// プレイヤーUser二人生成(左)
+	for (int i = 0; i < 2; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
+		CPlayer* pUser = CPlayer::Create
+		(
+			pos + offset, 					// 位置
+			CGameManager::SIDE_LEFT,		// チームサイド
+			CPlayer::EFieldArea::FIELD_IN,	// ポジション
+			(CPlayer::EBaseType)i,			// ベースタイプ
+			CPlayer::EBody::BODY_GARI,		// 体系
+			CPlayer::EHandedness::HAND_L	// 利き手
+		);
+		if (pUser == nullptr)
+		{
+			return E_FAIL;
+		}
+		pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+		pUser->SetRotDest(-HALF_PI);
+	}
+#endif
+
+	// プレイヤーUser生成(左)
+#if 0
+	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
+	if (pUser == nullptr)
+	{
+		return E_FAIL;
+	}
+	pUser->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+	pUser->SetRotDest(-HALF_PI);
+#endif
+
+	// プレイヤーUser二世生成(右)
+#if 0
+	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
+	if (pUser2 == nullptr)
+	{
+		return E_FAIL;
+	}
+	pUser2->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pUser2->SetRotDest(HALF_PI);
+#endif
+
+	// プレイヤーAI一人生成(右)
+#if 0
+	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+	if (pAI == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI->SetRotDest(HALF_PI);
+#endif
+
+	// プレイヤーAI一人生成(左)
+#if 0
+	CPlayer* pAI2 = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 200.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+	if (pAI2 == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI2->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+	pAI2->SetRotDest(-HALF_PI);
+#endif
+
+	// プレイヤーAI四人生成(右)
+#if 0
+	for (int i = 0; i < 4; i++)
+	{
+		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
+		CPlayer* pAI = CPlayer::Create(pos + offset, CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+		if (pAI == nullptr)
+		{
+			return E_FAIL;
+		}
+		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pAI->SetRotDest(HALF_PI);
+	}
+#endif
+
+	//----------------------------------------------------------------------
+	// プレイヤー外野生成
+	//----------------------------------------------------------------------
+	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
+
+	// プレイヤー外野生成 (右サイド)
+#if 1
+	for (int i = 0; i < nHalfMax; i++)
+	{ // チームごとの外野人数分繰り返す
+
+		// 左チームの外野プレイヤー生成
+		CPlayer* pOutLeft = CPlayer::Create
+		(
+			VEC3_ZERO,						// 位置
+			CGameManager::SIDE_RIGHT,		// チームサイド
+			CPlayer::EFieldArea::FIELD_OUT,	// ポジション
+			CPlayer::EBaseType::TYPE_AI		// ベースタイプ
+		);
+		if (pOutLeft == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+	}
+#endif
+
+	// プレイヤー外野生成 (左サイド)
+#if 1
+	for (int i = 0; i < nHalfMax; i++)
+	{ // チームごとの外野人数分繰り返す
+
+		// 左チームの外野プレイヤー生成
+		CPlayer* pOutLeft = CPlayer::Create
+		(
+			VEC3_ZERO,						// 位置
+			CGameManager::SIDE_LEFT,		// チームサイド
+			CPlayer::EFieldArea::FIELD_OUT,	// ポジション
+			CPlayer::EBaseType::TYPE_AI		// ベースタイプ
+		);
+		if (pOutLeft == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+	}
+#endif
+
 	return S_OK;
 }
 
@@ -108,10 +267,8 @@ void CPlayerManager::Update(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 // プレイヤー登録処理
 //==========================================================================
-int CPlayerManager::RegistPlayer(CPlayer* pPlayer)
+int CPlayerManager::RegistPlayer(CPlayer* pPlayer, const int nPosIdx)
 {
-	// TODO：元のインデックス持っておいて、追加する要素番号と一致しているかを見たほうが安全そう
-
 	switch (pPlayer->GetAreaType())
 	{ // ポジションごとの処理
 	case CPlayer::EFieldArea::FIELD_IN:
@@ -123,7 +280,8 @@ int CPlayerManager::RegistPlayer(CPlayer* pPlayer)
 	case CPlayer::EFieldArea::FIELD_OUT:
 
 		// 配列に登録
-		return RegistOutPlayer(pPlayer);
+		if (nPosIdx <= -1)	{ return RegistOutPlayer(pPlayer); }			// ポジション指定がない場合空き配列に登録
+		else				{ return RegistOutPlayer(pPlayer, nPosIdx); }	// ポジション指定がある場合指定配列に登録
 
 	default:
 		assert(false);
@@ -168,12 +326,70 @@ CPlayerManager::SOutInfo CPlayerManager::GetOutInfo(const EOutPos out)
 }
 
 //==========================================================================
+// 外野プレイヤーの取得処理
+//==========================================================================
+CPlayer* CPlayerManager::GetOutPlayer(const EOutPos out)
+{
+	// 外野プレイヤー情報を返す
+	return m_apOut[out];
+}
+
+//==========================================================================
+// 外野プレイヤー登録処理 (ポジション指定)
+//==========================================================================
+int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
+{
+	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
+	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
+	int nStart = nHalfMax * (int)team;					// 配列先頭
+	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
+
+	// ポジション指定インデックスが範囲外の場合エラー
+	if (nPosIdx <= -1 || nPosIdx >= EOutPos::OUT_MAX) { assert(false); return -1; }
+
+	// 指定のポジションに外野が登録済みの場合エラー
+	if (m_apOut[nPosIdx] != nullptr) { assert(false); return -1; }
+
+	// 指定のポジションが別チームだった場合エラー
+	if ((int)team != (nPosIdx / nHalfMax)) { assert(false); return -1; }
+
+	// 外野を登録
+	m_apOut[nPosIdx] = pPlayer;
+
+	// 現在インデックスの外野情報を取得
+	SOutInfo info = GetOutInfo((EOutPos)nPosIdx);
+
+	// 左右位置を設定
+	CPlayerOut* pBase = pPlayer->GetBase()->GetPlayerOut();	// 外野プレイヤー情報
+	pBase->SetPosLeft(info.posLeft);
+	pBase->SetPosRight(info.posRight);
+
+	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
+	{ // ベースがユーザーの場合
+
+		// 左右操作の割当
+		CPlayerUserOut* pBaseUser = pPlayer->GetBase()->GetPlayerUserOut();	// ユーザー外野プレイヤー情報
+		pBaseUser->BindLeftKey(info.pKeyLeft);
+		pBaseUser->BindRightKey(info.pKeyRight);
+	}
+	else
+	{ // ベースがユーザーではない場合
+
+		// 左右操作の破棄
+		SAFE_DELETE(info.pKeyLeft);
+		SAFE_DELETE(info.pKeyRight);
+	}
+
+	return nPosIdx;
+}
+
+//==========================================================================
 // 外野プレイヤー登録処理
 //==========================================================================
 int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer)
 {
 	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
-	int nHalfMax = (int)(EOutPos::OUT_MAX * 0.5f);		// チームごとの外野総数
+	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
 	int nStart = nHalfMax * (int)team;					// 配列先頭
 	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
 
@@ -223,7 +439,7 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer)
 void CPlayerManager::DeleteOutPlayer(CPlayer* pPlayer)
 {
 	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
-	int nHalfMax = (int)(EOutPos::OUT_MAX * 0.5f);		// チームごとの外野総数
+	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
 	int nStart = nHalfMax * (int)team;					// 配列先頭
 	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
 

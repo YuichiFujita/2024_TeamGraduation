@@ -70,9 +70,10 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	int RegistPlayer(CPlayer* pPlayer);		// プレイヤー登録
-	void DeletePlayer(CPlayer* pPlayer);	// プレイヤー削除
-	SOutInfo GetOutInfo(const EOutPos out);	// 外野情報取得
+	int RegistPlayer(CPlayer* pPlayer, const int nPosIdx = -1);	// プレイヤー登録
+	void DeletePlayer(CPlayer* pPlayer);		// プレイヤー削除
+	SOutInfo GetOutInfo(const EOutPos out);		// 外野情報取得
+	CPlayer* GetOutPlayer(const EOutPos out);	// 外野プレイヤー取得
 
 	//=============================
 	// 静的メンバ関数
@@ -92,6 +93,7 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	int RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx);	// 外野プレイヤー登録 (ポジション指定)
 	int RegistOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー登録
 	void DeleteOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー削除
 	SOutInfo GetInfoLeftFar();		// 左奥の外野情報取得

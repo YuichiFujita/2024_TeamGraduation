@@ -78,8 +78,10 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		// チームコートに戻す
 		CheckReturn(pPlayer);
 
+#if 0
 		// おっとっとする
 		CheckUnstable(pPlayer);
+#endif
 	}
 
 	// 位置を反映
@@ -134,6 +136,8 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 	if (IsUnstable(pPlayer))
 	{ // おっとっとラインを超えていた場合
+
+		pPlayer->SetAutoMotionSet(true);
 
 		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE ||
 			pPlayer->GetMotionFrag().bMove)
