@@ -42,6 +42,7 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;			// 更新
 	virtual void TriggerMoment(CMotion::AttackInfo ATKInfo, int idx) = 0;	// トリガーの瞬間
 	virtual void ProgressMoment(CMotion::AttackInfo ATKInfo, int idx) = 0;	// 進行中
+	virtual void FinishSetting() = 0;	// 終了時の設定
 
 	CPlayer* GetPlayer() { return m_pPlayer; }	// プレイヤー取得
 

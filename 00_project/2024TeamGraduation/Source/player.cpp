@@ -255,22 +255,23 @@ CPlayer::~CPlayer()
 //==========================================================================
 CPlayer* CPlayer::Create
 (
-	const MyLib::Vector3& rPos,		// 位置
-	CGameManager::ETeamSide team,	// チームサイド
-	EBaseType basetype,				// ベースタイプ
-	EBody bodytype,					// 体系
-	EHandedness handtype			// 利き手
+	const MyLib::Vector3&	rPos,		// 位置
+	CGameManager::ETeamSide	typeTeam,	// チームサイド
+	EFieldArea	typeArea,				// ポジション
+	EBaseType	typeBase,				// ベースタイプ
+	EBody		typeBody,				// 体型
+	EHandedness	typeHand				// 利き手
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_IN, basetype);
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
 	if (pPlayer != nullptr)
 	{
-		// 利き手を設定
-		pPlayer->m_Handress = handtype;
-
 		// 体型を設定
-		pPlayer->m_BodyType = bodytype;
+		pPlayer->m_BodyType = typeBody;
+
+		// 利き手を設定
+		pPlayer->m_Handress = typeHand;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -283,47 +284,6 @@ CPlayer* CPlayer::Create
 
 		// 初期位置を設定
 		pPlayer->GetBase()->InitPosition(rPos);
-	}
-
-	return pPlayer;
-}
-
-//==========================================================================
-// 生成処理 (外野)
-//==========================================================================
-CPlayer* CPlayer::Create
-(
-	const MyLib::Vector3& rPosLeft,		// 移動左位置
-	const MyLib::Vector3& rPosRight,	// 移動右位置
-	CBindKey* pKeyLeft,					// 左移動キー
-	CBindKey* pKeyRight,				// 右移動キー
-	CGameManager::ETeamSide team,		// チームサイド
-	EBaseType basetype,					// ベースタイプ
-	EBody bodytype,						// 体系
-	EHandedness handtype				// 利き手
-)
-{
-	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(team, EFieldArea::FIELD_OUT, basetype);
-	if (pPlayer != nullptr)
-	{
-		// 利き手を設定
-		pPlayer->m_Handress = handtype;
-
-		// 体型を設定
-		pPlayer->m_BodyType = bodytype;
-
-		// クラスの初期化
-		if (FAILED(pPlayer->Init()))
-		{ // 初期化に失敗した場合
-
-			// クラスの終了
-			SAFE_UNINIT(pPlayer);
-			return nullptr;
-		}
-
-		// 初期位置を設定
-		pPlayer->GetBase()->InitPosition(VEC3_ZERO);
 	}
 
 	return pPlayer;
@@ -565,11 +525,11 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
 	{ // 行動できるとき
 
-		// ベースの更新
-		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
 		// ベース変更の更新
 		m_pBase->UpdateChangeBase();
+
+		// ベースの更新
+		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 情報取得
@@ -1317,7 +1277,7 @@ void CPlayer::UpdateState(const float fDeltaTime, const float fDeltaRate, const 
 	m_fStateTime += fDeltaTime * fSlowRate;
 
 	// 状態更新
-	(this->*(m_StateFunc[m_state]))();
+	(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -1341,7 +1301,7 @@ void CPlayer::UpdateDamageReciveTimer(const float fDeltaTime, const float fDelta
 //==========================================================================
 // なし
 //==========================================================================
-void CPlayer::StateNone()
+void CPlayer::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 色設定
 	m_mMatcol = MyLib::Color(MyLib::color::White());
@@ -1350,7 +1310,7 @@ void CPlayer::StateNone()
 //==========================================================================
 // 無敵状態
 //==========================================================================
-void CPlayer::StateInvincible()
+void CPlayer::StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 点滅設定
 	float fMat = m_fStateTime;
@@ -1376,7 +1336,7 @@ void CPlayer::StateInvincible()
 //==========================================================================
 // ダメージ状態
 //==========================================================================
-void CPlayer::StateDamage()
+void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 	CMotion* pMotion = GetMotion();
@@ -1400,7 +1360,7 @@ void CPlayer::StateDamage()
 //==========================================================================
 // 死亡状態
 //==========================================================================
-void CPlayer::StateDead()
+void CPlayer::StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1425,7 +1385,7 @@ void CPlayer::StateDead()
 //==========================================================================
 // 死亡状態
 //==========================================================================
-void CPlayer::StateDeadAfter()
+void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//死亡状態をキャンセル不能にする
 	SetEnableMove(false);
@@ -1435,7 +1395,7 @@ void CPlayer::StateDeadAfter()
 //==========================================================================
 // 回避
 //==========================================================================
-void CPlayer::StateDodge()
+void CPlayer::StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -1443,7 +1403,7 @@ void CPlayer::StateDodge()
 //==========================================================================
 // 通常キャッチ
 //==========================================================================
-void CPlayer::StateCatch_Normal()
+void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
@@ -1466,8 +1426,8 @@ void CPlayer::StateCatch_Normal()
 	MyLib::Vector3 move = GetMove();
 
 	// 移動量更新
-	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
-	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
+	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
+	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
 
 	// 位置更新
 	pos.x += move.x;
@@ -1494,7 +1454,7 @@ void CPlayer::StateCatch_Normal()
 //==========================================================================
 // ジャストキャッチ
 //==========================================================================
-void CPlayer::StateCatch_Just()
+void CPlayer::StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
@@ -1509,7 +1469,7 @@ void CPlayer::StateCatch_Just()
 //==========================================================================
 // スペシャル
 //==========================================================================
-void CPlayer::StateSpecial()
+void CPlayer::StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CMotion* pMotion = GetMotion();	// プレイヤーモーション情報
 
@@ -1524,7 +1484,7 @@ void CPlayer::StateSpecial()
 //==========================================================================
 // コート越え
 //==========================================================================
-void CPlayer::StateOutCourt()
+void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1549,7 +1509,7 @@ void CPlayer::StateOutCourt()
 //==========================================================================
 // コート越えから戻る
 //==========================================================================
-void CPlayer::StateOutCourt_Return()
+void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
 	MyLib::Vector3 posStart = CGameManager::GetInstance()->GetCourtSize();
@@ -1574,7 +1534,7 @@ void CPlayer::StateOutCourt_Return()
 //==========================================================================
 // 相手コートに侵入トス
 //==========================================================================
-void CPlayer::StateInvade_Toss()
+void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// オートモーション設定解除
 	m_bAutoMotionSet = false;
@@ -1638,7 +1598,7 @@ void CPlayer::StateInvade_Toss()
 //==========================================================================
 // 相手コート侵入から戻る
 //==========================================================================
-void CPlayer::StateInvade_Return()
+void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 自陣サイズ取得
 	MyLib::Vector3 posCourt = MyLib::Vector3();
@@ -1923,7 +1883,7 @@ void CPlayer::ChangeBase(EBaseType type)
 	InitBase(type);
 
 	// プレイヤーマネージャーに自身を再登録
-	m_nPosIdx = pManager->RegistPlayer(this);
+	m_nPosIdx = pManager->RegistPlayer(this, m_nPosIdx);
 }
 
 //==========================================================================

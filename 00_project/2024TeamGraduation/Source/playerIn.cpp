@@ -6,6 +6,7 @@
 //==========================================================================
 #include "playerIn.h"
 #include "playerStatus.h"
+#include "EffekseerObj.h"
 
 // 使用クラス
 #include "playercontrol_move.h"
@@ -70,6 +71,37 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 
 	// ダメージを与える
 	pStatus->LifeDamage(pBall->GetDamage());
+
+	// ヒットエフェクト生成
+	switch (pBall->GetTypeAtk())
+	{
+	case CBall::ATK_NORMAL:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			12.0f, true);
+		break;
+
+	case CBall::ATK_JUMP:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			20.0f, true);
+		break;
+
+	case CBall::ATK_SPECIAL:
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
+			MyLib::Vector3(),
+			20.0f, true);
+		break;
+
+	default:
+		break;
+	}
 
 	if (pPlayer->GetLife() <= 0)
 	{

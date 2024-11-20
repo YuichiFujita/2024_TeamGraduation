@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "listmanager.h"
+#include "gamemanager.h"
 
 //==========================================================================
 // 前方宣言
@@ -70,9 +71,13 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	int RegistPlayer(CPlayer* pPlayer);		// プレイヤー登録
-	void DeletePlayer(CPlayer* pPlayer);	// プレイヤー削除
-	SOutInfo GetOutInfo(const EOutPos out);	// 外野情報取得
+	int RegistPlayer(CPlayer* pPlayer, const int nPosIdx = -1);	// プレイヤー登録
+	void DeletePlayer(CPlayer* pPlayer);			// プレイヤー削除
+	SOutInfo GetOutInfo(const EOutPos out);			// 外野情報取得
+	CPlayer* GetOutPlayer(const EOutPos out);		// 外野プレイヤー取得
+	EOutPos GetOutPosition(const CPlayer* pPlayer);	// 外野ポジション取得
+
+	void PlayerCatchUser(const CGameManager::ETeamSide typeTeam, const CPlayer* pPlayer);
 
 	//=============================
 	// 静的メンバ関数
@@ -92,8 +97,11 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	int RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx);	// 外野プレイヤー登録 (ポジション指定)
 	int RegistOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー登録
 	void DeleteOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー削除
+	int RegistInPlayer(CPlayer* pPlayer);	// 内野プレイヤー登録
+	void DeleteInPlayer(CPlayer* pPlayer);	// 内野プレイヤー削除
 	SOutInfo GetInfoLeftFar();		// 左奥の外野情報取得
 	SOutInfo GetInfoLeft();			// 左の外野情報取得
 	SOutInfo GetInfoLeftNear();		// 左手前の外野情報取得
@@ -104,8 +112,9 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CListManager<CPlayer> m_listIn;	// 内野プレイヤー
-	CPlayer* m_apOut[OUT_MAX];		// 外野プレイヤー
+	CListManager<CPlayer> m_listInLeft;		// 内野左プレイヤー
+	CListManager<CPlayer> m_listInRight;	// 内野右プレイヤー
+	CPlayer* m_apOut[OUT_MAX];				// 外野プレイヤー
 
 	//=============================
 	// 静的メンバ変数

@@ -291,6 +291,11 @@ public:
 	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
 
 	//=============================
+	// スペシャル用
+	//=============================
+	CSpecialEffect* GetSpecialEffect() { return m_pSpecialEffect; }	// スぺシャルエフェクト取得
+
+	//=============================
 	// その他
 	//=============================
 	SHitInfo Hit(CBall* pBall);			// ヒット処理
@@ -302,8 +307,8 @@ public:
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
-	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
-	int GetPositionIdx() { return m_nPosIdx; }				// 自分のポジション別インデックス取得
+	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }	// 自分のインデックス取得
+	int GetPositionIdx() const { return m_nPosIdx; }		// 自分のポジション別インデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
@@ -322,43 +327,22 @@ public:
 	// 静的関数
 	//=============================
 	/*
-		@brief	内野プレイヤーの生成処理
-		@param	rPos	 [in]	初期位置
-		@param	team	 [in]	チームサイド
-		@param	basetype [in]	User/AI
-		@param	bodytype [in]	体型
-		@param	handtype [in]	利き手
+		@brief	プレイヤーの生成処理
+		@param	rPos	 [in]	初期位置 (内野のみ)
+		@param	typeTeam [in]	左/右
+		@param	typeArea [in]	内野/外野
+		@param	typeBase [in]	User/AI
+		@param	typeBody [in]	標準/デブ/ガリ
+		@param	typeHand [in]	右利き/左利き
 	*/
 	static CPlayer* Create
 	(
-		const MyLib::Vector3& rPos,					// 位置
-		CGameManager::ETeamSide team,				// チームサイド
-		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
-		EBody bodytype = EBody::BODY_NORMAL,		// 体型
-		EHandedness handtype = EHandedness::HAND_R	// 利き手
-	);
-
-	/*
-		@brief	外野プレイヤーの生成処理
-		@param	rPosLeft	[in]	移動制限の左位置
-		@param	rPosRight	[in]	移動制限の右位置
-		@param	pKeyLeft	[in]	左移動時に使用するキー
-		@param	pKeyRight	[in]	右移動時に使用するキー
-		@param	team		[in]	チームサイド
-		@param	basetype	[in]	User/AI
-		@param	bodytype	[in]	体型
-		@param	handtype	[in]	利き手
-	*/
-	static CPlayer* Create
-	(
-		const MyLib::Vector3& rPosLeft,				// 移動左位置
-		const MyLib::Vector3& rPosRight,			// 移動右位置
-		CBindKey* pKeyLeft,							// 左移動キー
-		CBindKey* pKeyRight,						// 右移動キー
-		CGameManager::ETeamSide team,				// チームサイド
-		EBaseType basetype = EBaseType::TYPE_USER,	// ベースタイプ
-		EBody bodytype = EBody::BODY_NORMAL,		// 体型
-		EHandedness handtype = EHandedness::HAND_R	// 利き手
+		const MyLib::Vector3&	rPos,					// 位置
+		CGameManager::ETeamSide	typeTeam,				// チームサイド
+		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
+		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
+		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
+		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
 	);
 
 protected:
@@ -373,7 +357,7 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
-	typedef void(CPlayer::* STATE_FUNC)();
+	typedef void(CPlayer::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 	
 	typedef void(CPlayer::*ACTION_FUNC)();
@@ -385,20 +369,20 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone();				// なし
-	void StateInvincible();			// 無敵
-	void StateDamage();				// ダメージ
-	void StateDead();				// 死亡
-	void StateDeadAfter();			// 死亡後
-	void StateDodge();				// 回避
-	void StateCatch_Normal();		// 通常キャッチ
-	void StateCatch_Just();			// ジャストキャッチ
-	void StateSpecial();			// スペシャル
-	void StateOutCourt();			// コート越え
-	void StateOutCourt_Return();	// コート越えから戻る
-	void StateInvade_Toss();		// 相手コートに侵入トス
-	void StateInvade_Return();		// 相手コート侵入から戻る
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
+	void StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 無敵
+	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
+	void StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 死亡
+	void StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡後
+	void StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 回避
+	void StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常キャッチ
+	void StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャストキャッチ
+	void StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル
+	void StateOutCourt(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// コート越え
+	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
+	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
+	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
 
 	//-----------------------------
 	// その他関数
