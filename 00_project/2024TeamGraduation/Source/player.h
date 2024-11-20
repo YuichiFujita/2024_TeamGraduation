@@ -306,8 +306,8 @@ public:
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
 	EState GetState() { return m_state; }					// 状態取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
-	int GetMyPlayerIdx() { return m_nMyPlayerIdx; }			// 自分のインデックス取得
-	int GetPositionIdx() { return m_nPosIdx; }				// 自分のポジション別インデックス取得
+	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }	// 自分のインデックス取得
+	int GetPositionIdx() const { return m_nPosIdx; }		// 自分のポジション別インデックス取得
 	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
 	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
 	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
