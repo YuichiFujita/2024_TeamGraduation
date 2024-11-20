@@ -326,6 +326,15 @@ CPlayerManager::SOutInfo CPlayerManager::GetOutInfo(const EOutPos out)
 }
 
 //==========================================================================
+// 外野プレイヤーの取得処理
+//==========================================================================
+CPlayer* CPlayerManager::GetOutPlayer(const EOutPos out)
+{
+	// 外野プレイヤー情報を返す
+	return m_apOut[out];
+}
+
+//==========================================================================
 // 外野プレイヤー登録処理 (ポジション指定)
 //==========================================================================
 int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
