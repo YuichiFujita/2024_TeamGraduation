@@ -63,12 +63,13 @@ CSpecialEffect_Kamehame::CSpecialEffect_Kamehame() : CSpecialEffect(),
 CSpecialEffect_Kamehame::~CSpecialEffect_Kamehame()
 {
 	// 漂う空間オーラ
-	m_pAtmosphere->SetTrigger(0);
 	SAFE_UNINIT(m_pAtmosphere);
 
 	// チャージ時の雷
-	m_pChargeThunder->SetTrigger(0);
 	SAFE_UNINIT(m_pChargeThunder);
+
+	// がれき
+	SAFE_UNINIT(m_pBallast);
 }
 
 //==========================================================================
@@ -78,6 +79,24 @@ void CSpecialEffect_Kamehame::Update(const float fDeltaTime, const float fDeltaR
 {
 	// 風更新
 	UpdateWind(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 終了時の設定
+//==========================================================================
+void CSpecialEffect_Kamehame::FinishSetting()
+{
+	// 漂う空間オーラ
+	m_pAtmosphere->SetTrigger(0);
+	m_pAtmosphere->DeleteLater(1.0f);
+
+	// チャージ時の雷
+	m_pChargeThunder->SetTrigger(0);
+	m_pChargeThunder->DeleteLater(1.0f);
+
+	// がれき
+	m_pBallast->SetTrigger(0);
+	m_pBallast->DeleteLater(1.0f);
 }
 
 //==========================================================================
@@ -155,7 +174,7 @@ void CSpecialEffect_Kamehame::Trigger_Stance(CMotion::AttackInfo ATKInfo)
 }
 
 //==========================================================================
-// かめはめ波の中心生成時
+// かめはめ波の中心(開始)生成時
 //==========================================================================
 void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotion::AttackInfo ATKInfo)
 {
@@ -165,6 +184,7 @@ void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotion::AttackInfo ATKInfo)
 
 	// 攻撃情報の位置へ設定
 	MyLib::Vector3 posAtkInfo = pMotion->GetAttackPosition(pPlayer->GetModel(), ATKInfo);
+	MyLib::Vector3 playerPos = pPlayer->GetPosition();
 
 	// かめはめ波の中心(開始時)生成
 	m_pEnergyStart = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_ENERGY,
@@ -172,6 +192,23 @@ void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotion::AttackInfo ATKInfo)
 		MyLib::Vector3(),
 		MyLib::Vector3(),
 		SCALE_CHARGESTART, false);
+
+	// チャージの雷生成
+	m_pChargeThunder = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_CHARGE_THUNDER,
+		playerPos,
+		MyLib::Vector3(),
+		MyLib::Vector3(),
+		40.0f, false);
+
+	// がれき生成
+	m_pBallast = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_BALLAST,
+		playerPos,
+		MyLib::Vector3(),
+		MyLib::Vector3(),
+		20.0f, false);
+
+	// 風生成をON
+	m_bWindCreate = true;
 }
 
 //==========================================================================
@@ -204,23 +241,12 @@ void CSpecialEffect_Kamehame::Trigger_ChargeStart(CMotion::AttackInfo ATKInfo)
 		MyLib::Vector3(),
 		20.0f, true);
 
-	// チャージの雷生成
-	m_pChargeThunder = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_CHARGE_THUNDER,
-		posAtkInfo,
-		MyLib::Vector3(),
-		MyLib::Vector3(),
-		30.0f, false);
-
 	// フラッシュ生成
 	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_FLASH,
 		posAtkInfo,
 		MyLib::Vector3(),
 		MyLib::Vector3(),
 		40.0f, true);
-
-	// 風生成をON
-	m_bWindCreate = true;
-
 }
 
 

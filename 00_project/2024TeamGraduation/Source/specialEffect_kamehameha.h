@@ -38,6 +38,8 @@ public:
 		(this->*(m_ProgressFunc[idx]))(ATKInfo);
 	}
 
+	virtual void FinishSetting() override;	// 終了時の設定
+
 private:
 
 	//=============================
@@ -76,7 +78,8 @@ private:
 	CEffekseerObj* m_pEnergyStart = nullptr;	// かめはめ波の中心(開始時)
 	CEffekseerObj* m_pEnergy = nullptr;			// かめはめ波の中心
 	CEffekseerObj* m_pAtmosphere = nullptr;		// 漂う空間オーラ
-	CEffekseerObj* m_pChargeThunder = nullptr;		// チャージ時の雷
+	CEffekseerObj* m_pChargeThunder = nullptr;	// チャージ時の雷
+	CEffekseerObj* m_pBallast = nullptr;		// がれき
 
 	// 風用
 	bool m_bWindCreate;			// 風生成フラグ

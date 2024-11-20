@@ -8,6 +8,7 @@
 //	インクルードファイル
 //************************************************************
 #include "specialManager.h"
+#include "specialEffect.h"
 #include "manager.h"
 #include "camera.h"
 #include "fade.h"
@@ -491,6 +492,13 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_FOLLOW);
+
+	// スペシャル演出の終了時設定
+	CSpecialEffect* pSPEffect = m_pAttackPlayer->GetSpecialEffect();
+	if (pSPEffect != nullptr)
+	{
+		pSPEffect->FinishSetting();
+	}
 
 	// 自身の終了
 	Uninit();
