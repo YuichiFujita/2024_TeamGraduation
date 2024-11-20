@@ -916,11 +916,12 @@ void CCameraMotion::EditKey()
 	}
 
 	// イージングの種類
-	ImGui::Text("[%s]", magic_enum::enum_name(pKey->easeType));
-
+	ImGui::SetNextItemWidth(140.0f);	// 幅指定
 	int type = pKey->easeType;
 	ImGui::SliderInt("EaseType", &type, 0, static_cast<int>(EEasing::MAX) - 1, "%d");
 	pKey->easeType = static_cast<EEasing>(type);
+	ImGui::SameLine();
+	ImGui::Text("[%s]", magic_enum::enum_name(pKey->easeType));
 
 	// 距離
 	pKey->distance = pCamera->GetDistance();
