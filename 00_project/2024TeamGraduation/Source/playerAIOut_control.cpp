@@ -55,8 +55,15 @@ namespace
 CPlayerAIOutControl::MODE_FUNC CPlayerAIOutControl::m_ModeFunc[] =	// モード関数
 {
 	&CPlayerAIOutControl::ModeNone,				// なし
-	& CPlayerAIOutControl::ModeThrowManager,		// 投げ
-	& CPlayerAIOutControl::ModeCatchManager,		// キャッチ
+	&CPlayerAIOutControl::ModeThrowManager,		// 投げ
+	&CPlayerAIOutControl::ModeCatchManager,		// キャッチ
+};
+
+CPlayerAIOutControl::THROW_FUNC CPlayerAIOutControl::m_ThrowFunc[] =	// モード関数
+{
+	&CPlayerAIOutControl::ThrowNone,
+	&CPlayerAIOutControl::ThrowNormal,
+	&CPlayerAIOutControl::ThrowPass,
 };
 
 CPlayerAIOutControl::CATCH_FUNC CPlayerAIOutControl::m_CatchFunc[] =	// キャッチ関数
@@ -73,6 +80,7 @@ CPlayerAIOutControl::CPlayerAIOutControl()
 {
 	// 値の初期化
 	m_eMode = EMode::MODE_NONE;
+	m_eThrow = EThrow::THROW_NONE;
 	m_eCatch = ECatch::CATCH_NONE;
 	m_pAIOut = nullptr;
 	m_bStart = false;
@@ -127,6 +135,9 @@ void CPlayerAIOutControl::Uninit()
 //==========================================================================
 void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボールを見る
+	LookBall();
+
 	// モード管理
 	ModeManager();
 
@@ -159,21 +170,140 @@ void CPlayerAIOutControl::ModeManager()
 //==========================================================================
 void CPlayerAIOutControl::ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// AIコントロール情報(外野)の取得
+	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
+	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
+	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
+	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
+
+	pControlAIOutMove->SetIsWalk(false);
+
 	if (m_eMode == EMode::MODE_THROW)
 	{// 投げ状態の場合(ボールを持っている)
 
-		int n = rand() % 2;
-		//int n = 0;
+		if (m_eThrow == EThrow::THROW_NONE)
+		{
+			int n = rand() % 2;
+			//int n = 1;
 
-		if (n == 0)
-		{
-			// パスする
-			Pass();
+			if (n == 0)
+			{
+				m_eThrow = EThrow::THROW_NORMAL;
+			}
+			else if (n == 1)
+			{
+				m_eThrow = EThrow::THROW_PASS;
+			}
 		}
-		else
+	}
+
+	// 投げる種類更新
+	(this->*(m_ThrowFunc[m_eThrow]))(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 通常
+//==========================================================================
+void CPlayerAIOutControl::ThrowNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	Throw();
+
+	m_eThrow = EThrow::THROW_NONE;
+}
+
+//==========================================================================
+// パス
+//==========================================================================
+void CPlayerAIOutControl::ThrowPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	Pass();
+
+	m_eThrow = EThrow::THROW_NONE;
+}
+
+//==========================================================================
+// パス処理
+//==========================================================================
+void CPlayerAIOutControl::Pass()
+{
+	// AIコントロール情報(外野)の取得
+	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
+	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
+	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
+	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
+
+	CBall* pBall = m_pAIOut->GetBall();
+	if (!pBall) return;
+
+	// 投げる
+	pControlAIOutAction->SetIsPass(true);
+}
+
+//==========================================================================
+// ボールを投げる
+//==========================================================================
+void CPlayerAIOutControl::Throw()
+{
+	// AIコントロール情報(外野)の取得
+	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
+	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
+	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
+	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
+
+	// ターゲット設定
+	m_pAIOut->SetRotDest(m_pAIOut->GetPosition().AngleXZ(GetThrowTarget()->GetPosition()));
+
+	CBall* pBall = m_pAIOut->GetBall();
+	if (!pBall) return;
+
+	// 投げる
+	pControlAIOutAction->SetIsThrow(true);
+}
+
+//==========================================================================
+// ボールを見る
+//==========================================================================
+void CPlayerAIOutControl::LookBall()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	if (m_pAIOut->GetBall()) return;
+
+	// 自分からボールの位置を見る
+	float rot = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
+
+	// 設定
+	m_pAIOut->SetRotDest(rot);
+}
+
+//==========================================================================
+// ボールのエリア判定
+//==========================================================================
+void CPlayerAIOutControl::AreaCheck()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	MyLib::Vector3 ballPos = pBall->GetPosition();
+
+	// 自分のチームを取得
+	CGameManager::ETeamSide team = m_pAIOut->GetTeam();
+	
+	if (team == CGameManager::ETeamSide::SIDE_LEFT)
+	{// 左チーム
+		if (ballPos.x < 0)
 		{
-			// 投げる
-			Throw();
+			m_eCatch = ECatch::CATCH_NONE;
+			return;
+		}
+	}
+	else if (team == CGameManager::ETeamSide::SIDE_RIGHT)
+	{// 右チーム
+		if (ballPos.x > 0)
+		{
+			m_eCatch = ECatch::CATCH_NONE;
+			return;
 		}
 	}
 }
@@ -189,83 +319,34 @@ void CPlayerAIOutControl::ModeCatchManager(const float fDeltaTime, const float f
 
 	if (pBall->GetPlayer() != nullptr)
 	{// 誰かがボールを持っている場合
-		
+		m_eCatch = ECatch::CATCH_NONE;
 	}
 	else if (pBall->GetPlayer() == nullptr)
 	{// 誰もボールを持っていない場合
 
 		// ボールを取りに行く
 		m_eCatch = ECatch::CATCH_FIND;
+
+		// エリア
+		AreaCheck();
 	}
 
 	// 投げる種類更新
 	(this->*(m_CatchFunc[m_eCatch]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
-
 //==========================================================================
-// パス処理
+// なし
 //==========================================================================
-void CPlayerAIOutControl::Pass()
+void CPlayerAIOutControl::CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// AIコントロール情報(外野)の取得
-	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
-	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
 	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
 	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
 
-	// ボール情報の取得
-	CBall* pBall = m_pAIOut->GetBall();
-	if (!pBall) return;
+	pControlAIOutMove->SetIsWalk(false);
 
-	// ボールをパス
-	pControlAIOutAction->SetPattern(m_pAIOut, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
-}
-
-//==========================================================================
-// ボールを投げる
-//==========================================================================
-void CPlayerAIOutControl::Throw()
-{
-	// AIコントロール情報(外野)の取得
-	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
-	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
-	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
-	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
-
-	// ターゲット設定
-	GetThrowTarget();
-
-	// 投げる
-	pControlAIOutAction->SetIsThrow(true);
-}
-
-//==========================================================================
-// ボールを見る
-//==========================================================================
-void CPlayerAIOutControl::LookBall()
-{
-	
-}
-
-//==========================================================================
-// ボールのエリア判定
-//==========================================================================
-void CPlayerAIOutControl::AreaCheck()
-{
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) return;
-
-	MyLib::Vector3 ballPos = pBall->GetPosition();
-
-	if (ballPos.x < 0)
-	{
-
-	}
-	else if (ballPos.x > 0)
-	{
-
-	}
+	m_eCatch = ECatch::CATCH_NONE;
 }
 
 //==========================================================================
@@ -282,11 +363,12 @@ void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDelt
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
-	if (pBall == nullptr/* || pBall->GetPlayer() != nullptr*/)
-	{// ボールがnullptr&&プレイヤーがボールを取っている場合
+	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
+	{// ボールがnullptr||プレイヤーがボールを取っている||エリア外の場合
 
 		// 歩きオフ！
 		pControlAIOutMove->SetIsWalk(false);
+
 		return;
 	}
 
