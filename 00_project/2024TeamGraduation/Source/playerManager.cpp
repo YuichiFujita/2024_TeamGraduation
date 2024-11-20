@@ -428,8 +428,8 @@ void CPlayerManager::ChangeAI(CPlayer* pPlayer)
 		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
 
-		// 自身と同じポジションの場合次へ
-		if (pItrPlayer->GetAreaType() == pPlayer->GetAreaType()) { continue; }
+		// 内野ではない場合次へ
+		if (pItrPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN) { continue; }
 
 		// AIではない場合次へ
 		if (pItrPlayer->GetBaseType() != CPlayer::EBaseType::TYPE_AI) { continue; }
