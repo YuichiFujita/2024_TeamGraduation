@@ -354,6 +354,8 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 {
 #if 0
+	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
 	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
@@ -390,6 +392,8 @@ void CPlayerManager::CatchUserChange(CPlayer* pPlayer)
 void CPlayerManager::NearUserChange(CPlayer* pPlayer)
 {
 #if 0
+	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
+
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
 	int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
@@ -425,10 +429,10 @@ void CPlayerManager::NearUserChange(CPlayer* pPlayer)
 //==========================================================================
 int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
 {
-	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
-	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
-	int nStart = nHalfMax * (int)team;					// 配列先頭
-	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	int nHalfMax = EOutPos::OUT_MAX / 2;					// チームごとの外野総数
+	int nStart = nHalfMax * std::abs(team - 1);				// 配列先頭
+	int nEnd = nHalfMax + (nHalfMax * std::abs(team - 1));	// 配列最後尾
 
 	// ポジション指定インデックスが範囲外の場合エラー
 	if (nPosIdx <= -1 || nPosIdx >= EOutPos::OUT_MAX) { assert(false); return -1; }
@@ -474,10 +478,10 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx)
 //==========================================================================
 int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer)
 {
-	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
-	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
-	int nStart = nHalfMax * (int)team;					// 配列先頭
-	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	int nHalfMax = EOutPos::OUT_MAX / 2;					// チームごとの外野総数
+	int nStart = nHalfMax * std::abs(team - 1);				// 配列先頭
+	int nEnd = nHalfMax + (nHalfMax * std::abs(team - 1));	// 配列最後尾
 
 	for (int i = nStart; i < nEnd; i++)
 	{ // 同チームの外野ポジションの総数分繰り返す
@@ -524,10 +528,10 @@ int CPlayerManager::RegistOutPlayer(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerManager::DeleteOutPlayer(CPlayer* pPlayer)
 {
-	CGameManager::ETeamSide team = pPlayer->GetTeam();	// チーム
-	int nHalfMax = EOutPos::OUT_MAX / 2;				// チームごとの外野総数
-	int nStart = nHalfMax * (int)team;					// 配列先頭
-	int nEnd = nHalfMax + (nHalfMax * (int)team);		// 配列最後尾
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	int nHalfMax = EOutPos::OUT_MAX / 2;					// チームごとの外野総数
+	int nStart = nHalfMax * std::abs(team - 1);				// 配列先頭
+	int nEnd = nHalfMax + (nHalfMax * std::abs(team - 1));	// 配列最後尾
 
 	for (int i = nStart; i < nEnd; i++)
 	{ // 同チームの外野ポジションの総数分繰り返す
@@ -600,8 +604,8 @@ void CPlayerManager::DeleteInPlayer(CPlayer* pPlayer)
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftFar()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(50.0f, 0.0f, 650.0f);		// 移動可能左位置
-	info.posRight	= MyLib::Vector3(900.0f, 0.0f, 650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(-900.0f, 0.0f, 650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-50.0f, 0.0f, 650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyLeft;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyRight;	// 右移動キー
 	return info;
@@ -613,10 +617,10 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftFar()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeft()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(1040.0f, 0.0f, 650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(1040.0f, 0.0f, -650.0f);	// 移動可能右位置
-	info.pKeyLeft	= DEBUG_NEW CBindKeyFront;	// 左移動キー
-	info.pKeyRight	= DEBUG_NEW CBindKeyBack;	// 右移動キー
+	info.posLeft	= MyLib::Vector3(-1040.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-1040.0f, 0.0f, 650.0f);	// 移動可能右位置
+	info.pKeyLeft	= DEBUG_NEW CBindKeyBack;	// 左移動キー
+	info.pKeyRight	= DEBUG_NEW CBindKeyFront;	// 右移動キー
 	return info;
 }
 
@@ -626,8 +630,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeft()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftNear()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(900.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(50.0f, 0.0f, -650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(-50.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(-900.0f, 0.0f, -650.0f);	// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyRight;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyLeft;	// 右移動キー
 	return info;
@@ -639,8 +643,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoLeftNear()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRightFar()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-900.0f, 0.0f, 650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-50.0f, 0.0f, 650.0f);		// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(50.0f, 0.0f, 650.0f);		// 移動可能左位置
+	info.posRight	= MyLib::Vector3(900.0f, 0.0f, 650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyLeft;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyRight;	// 右移動キー
 	return info;
@@ -652,10 +656,10 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRightFar()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRight()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-1040.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-1040.0f, 0.0f, 650.0f);	// 移動可能右位置
-	info.pKeyLeft	= DEBUG_NEW CBindKeyBack;	// 左移動キー
-	info.pKeyRight	= DEBUG_NEW CBindKeyFront;	// 右移動キー
+	info.posLeft	= MyLib::Vector3(1040.0f, 0.0f, 650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(1040.0f, 0.0f, -650.0f);	// 移動可能右位置
+	info.pKeyLeft	= DEBUG_NEW CBindKeyFront;	// 左移動キー
+	info.pKeyRight	= DEBUG_NEW CBindKeyBack;	// 右移動キー
 	return info;
 }
 
@@ -665,8 +669,8 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRight()
 CPlayerManager::SOutInfo CPlayerManager::GetInfoRightNear()
 {
 	SOutInfo info;	// 外野情報
-	info.posLeft	= MyLib::Vector3(-50.0f, 0.0f, -650.0f);	// 移動可能左位置
-	info.posRight	= MyLib::Vector3(-900.0f, 0.0f, -650.0f);	// 移動可能右位置
+	info.posLeft	= MyLib::Vector3(900.0f, 0.0f, -650.0f);	// 移動可能左位置
+	info.posRight	= MyLib::Vector3(50.0f, 0.0f, -650.0f);		// 移動可能右位置
 	info.pKeyLeft	= DEBUG_NEW CBindKeyRight;	// 左移動キー
 	info.pKeyRight	= DEBUG_NEW CBindKeyLeft;	// 右移動キー
 	return info;
