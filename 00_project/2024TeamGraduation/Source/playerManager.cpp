@@ -274,8 +274,7 @@ int CPlayerManager::RegistPlayer(CPlayer* pPlayer, const int nPosIdx)
 	case CPlayer::EFieldArea::FIELD_IN:
 
 		// リストマネージャーに登録
-		m_listIn.Regist(pPlayer);
-		return m_listIn.GetNumAll() - 1;
+		return RegistInPlayer(pPlayer);
 
 	case CPlayer::EFieldArea::FIELD_OUT:
 
@@ -301,7 +300,7 @@ void CPlayerManager::DeletePlayer(CPlayer* pPlayer)
 	case CPlayer::EFieldArea::FIELD_IN:
 
 		// リストマネージャーから削除
-		m_listIn.Delete(pPlayer);
+		DeleteInPlayer(pPlayer);
 		break;
 
 	case CPlayer::EFieldArea::FIELD_OUT:
@@ -332,6 +331,50 @@ CPlayer* CPlayerManager::GetOutPlayer(const EOutPos out)
 {
 	// 外野プレイヤー情報を返す
 	return m_apOut[out];
+}
+
+//==========================================================================
+// 外野ポジションの取得処理
+//==========================================================================
+CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
+{
+	for (int i = 0; i < EOutPos::OUT_MAX; i++)
+	{ // 外野の総数分繰り返す
+
+		// 引数プレイヤーと同じアドレスの場合そのポジションを返す
+		if (m_apOut[i] == pPlayer) { return (EOutPos)i; }
+	}
+
+	return (EOutPos)-1;
+}
+
+//==========================================================================
+// TODO
+//==========================================================================
+void CPlayerManager::PlayerCatchUser(const CGameManager::ETeamSide typeTeam, const CPlayer* pPlayer)
+{
+	CListManager<CPlayer> list = (typeTeam == CGameManager::ETeamSide::SIDE_LEFT) ? m_listInLeft : m_listInRight;	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	const int nCatchPlayerIdx = -1;	// キャッチしたプレイヤーの操作インデックス
+
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+		
+		// TODO：これだとプレイヤー二人になった途端終了するよ
+		//		(近いやつを見つけてそういつのインデックスに置き換えよう)
+
+		if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER)
+		{ // 同じチームにユーザーがいた場合
+
+			// 同チームのプレイヤーをAIベースに変更
+			pItrPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+		}
+	}
+
+	// キャッチしたプレイヤーをユーザーベースに変更
+	pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
 }
 
 //==========================================================================
@@ -453,6 +496,58 @@ void CPlayerManager::DeleteOutPlayer(CPlayer* pPlayer)
 			m_apOut[i] = nullptr;
 			return;
 		}
+	}
+}
+
+//==========================================================================
+// 内野プレイヤー登録処理
+//==========================================================================
+int CPlayerManager::RegistInPlayer(CPlayer* pPlayer)
+{
+	switch (pPlayer->GetTeam())
+	{ // チームサイドごとの処理
+	case CGameManager::ETeamSide::SIDE_LEFT:
+
+		// 内野左プレイヤーリストに登録
+		m_listInLeft.Regist(pPlayer);
+		return m_listInLeft.GetNumAll() - 1;
+
+	case CGameManager::ETeamSide::SIDE_RIGHT:
+
+		// 内野右プレイヤーリストに登録
+		m_listInRight.Regist(pPlayer);
+		return m_listInRight.GetNumAll() - 1;
+
+	default:
+		assert(false);
+		break;
+	}
+
+	return -1;
+}
+
+//==========================================================================
+// 内野プレイヤー削除処理
+//==========================================================================
+void CPlayerManager::DeleteInPlayer(CPlayer* pPlayer)
+{
+	switch (pPlayer->GetTeam())
+	{ // チームサイドごとの処理
+	case CGameManager::ETeamSide::SIDE_LEFT:
+
+		// 内野左プレイヤーリストから削除
+		m_listInLeft.Delete(pPlayer);
+		break;
+
+	case CGameManager::ETeamSide::SIDE_RIGHT:
+
+		// 内野右プレイヤーリストから削除
+		m_listInRight.Delete(pPlayer);
+		break;
+
+	default:
+		assert(false);
+		break;
 	}
 }
 
