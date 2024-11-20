@@ -65,7 +65,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (stateBall == CBall::STATE_LAND || pBall->IsPass()
+	if (stateBall == CBall::STATE_LAND /*|| !pBall->IsPass()*/
 	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam())
 	{ // ボールが着地している、またはパス状態、またはフリーボール且つ自分のチームボールではない場合
 

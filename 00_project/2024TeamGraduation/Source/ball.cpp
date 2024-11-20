@@ -15,9 +15,15 @@
 #include "model.h"
 #include "shadow.h"
 #include "specialManager.h"
+#include "playerManager.h"
 
 #include "debugproc.h"
 #include "3D_Effect.h"
+
+// TODO：AI/User切り替え
+#if 1
+#define CHANGE
+#endif
 
 //==========================================================================
 // 定数定義
@@ -586,7 +592,7 @@ void CBall::Pass(CPlayer* pPlayer)
 		m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
 		m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
 
-		// 移動量設定
+		// 移動量を設定
 		m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * pass::MOVE_RATE;
 	}
 
@@ -1453,9 +1459,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// TODO：ここでAIとUserの切り替え
-#if 0
-	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
+#ifdef CHANGE
+	// キャッチしたAIに操作を映す
+	CPlayerManager::GetInstance()->CatchUserChange(pPlayer);
 #endif
 
 	// プレイヤーにボールを保存
@@ -1470,9 +1476,14 @@ void CBall::Throw(CPlayer* pPlayer)
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
 
-	// TODO：ここでAIとUserの切り替え
-#if 0
-	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
+#ifdef CHANGE
+	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+	{ // 外野が投げた場合
+
+		// 近くのAIに操作を移す
+		assert(m_pTarget != nullptr);
+		CPlayerManager::GetInstance()->NearUserChange(m_pTarget);
+	}
 #endif
 
 	// キャッチしていたプレイヤーを破棄
@@ -1487,6 +1498,12 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// 移動ベクトルを正規化して設定
 	SetMove(vecMove.Normal());
+
+	// 初速を初期化
+	m_fInitialSpeed = 0.0f;
+
+	// 重力を初期化
+	m_fGravity = 0.0f;
 }
 
 //==========================================================================
