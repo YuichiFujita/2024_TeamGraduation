@@ -1446,7 +1446,7 @@ void CBall::Catch(CPlayer* pPlayer)
 	m_pPlayer = pPlayer;
 
 	// TODOF‚±‚±‚ÅAI‚ÆUser‚ÌØ‚è‘Ö‚¦
-#if 1
+#if 0
 	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_USER);
 #endif
 
@@ -1463,7 +1463,7 @@ void CBall::Throw(CPlayer* pPlayer)
 	assert(m_pPlayer == pPlayer);
 
 	// TODOF‚±‚±‚ÅAI‚ÆUser‚ÌØ‚è‘Ö‚¦
-#if 1
+#if 0
 	m_pPlayer->GetBase()->SetNewBase(CPlayer::EBaseType::TYPE_AI);
 #endif
 
