@@ -21,7 +21,7 @@
 #include "3D_Effect.h"
 
 // TODOFAI/UserØ‚è‘Ö‚¦
-#if 0
+#if 1
 #define CHANGE
 #endif
 

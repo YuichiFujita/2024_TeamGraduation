@@ -350,6 +350,8 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 
 //==========================================================================
 // AIベースのユーザー変更
+//--------------------------------------------------------------------------
+// ※ 自分と同じポジションにも変更可能
 //==========================================================================
 void CPlayerManager::ChangeUser(CPlayer* pPlayer)
 {
@@ -405,6 +407,8 @@ void CPlayerManager::ChangeUser(CPlayer* pPlayer)
 
 //==========================================================================
 // ユーザーベースのAI変更
+//--------------------------------------------------------------------------
+// ※ 自分と同じポジションには変更不可
 //==========================================================================
 void CPlayerManager::ChangeAI(CPlayer* pPlayer)
 {
@@ -423,6 +427,9 @@ void CPlayerManager::ChangeAI(CPlayer* pPlayer)
 		
 		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
+
+		// 自身と同じポジションの場合次へ
+		if (pItrPlayer->GetAreaType() == pPlayer->GetAreaType()) { continue; }
 
 		// AIではない場合次へ
 		if (pItrPlayer->GetBaseType() != CPlayer::EBaseType::TYPE_AI) { continue; }
