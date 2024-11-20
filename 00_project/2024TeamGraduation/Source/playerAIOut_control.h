@@ -40,6 +40,14 @@ private:
 	//=============================
 	// 列挙型定義
 	//=============================
+	enum EThrow
+	{
+		THROW_NONE = 0,
+		THROW_NORMAL,
+		THROW_PASS,
+		THROW_MAX
+	};
+
 	enum ECatch
 	{
 		CATCH_NONE = 0,
@@ -68,6 +76,8 @@ private:
 	typedef void(CPlayerAIOutControl::* MODE_FUNC)(const float, const float, const float);
 	static MODE_FUNC m_ModeFunc[];			// モード関数
 
+	typedef void(CPlayerAIOutControl::* THROW_FUNC)(const float, const float, const float);
+	static THROW_FUNC m_ThrowFunc[];			// モード関数
 
 	typedef void(CPlayerAIOutControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
@@ -80,8 +90,13 @@ private:
 	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
 	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
 
+	// 投げ
+	void ThrowNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
+	void ThrowNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
 	// キャッチ
-	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
+	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 
@@ -108,6 +123,7 @@ private:
 	CPlayer* m_pAIOut;			// 自分自身
 
 	EMode m_eMode;
+	EThrow m_eThrow;
 	ECatch m_eCatch;
 
 	bool m_bStart;

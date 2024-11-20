@@ -30,8 +30,9 @@ private:
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual bool IsLineOut(CPlayer* pPlayer) override;	// ライン越えフラグ取得
-	virtual bool IsUnstable(CPlayer* pPlayer) override;	// おっとっとフラグ取得
+	virtual bool IsLineOut(CPlayer* pPlayer) override;		// ライン越えフラグ取得
+	virtual bool IsUnstable(CPlayer* pPlayer) override;		// おっとっとフラグ取得
+	virtual bool IsInputLine(CPlayer* pPlayer) override;	// おっとっと時入力フラグ取得
 };
 
 #endif
