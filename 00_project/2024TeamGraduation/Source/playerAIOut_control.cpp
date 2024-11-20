@@ -314,17 +314,14 @@ void CPlayerAIOutControl::RetrieveBall(const float fDeltaTime, const float fDelt
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
 	{// ç∂
-
-		if (fAngle < D3DX_PI * 0.5f)
+		if (fAngle > -D3DX_PI * 0.5f)
 		{
 			fDest *= -1.0f;
 		}
-		
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
 	{// âE
-		
-		if (fAngle > -D3DX_PI * 0.5f)
+		if (fAngle < D3DX_PI * 0.5f)
 		{
 			fDest *= -1.0f;
 		}
