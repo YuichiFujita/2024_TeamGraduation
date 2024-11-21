@@ -449,6 +449,15 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// 投げ処理
 	Throw(pPlayer);
 
+#ifdef CHANGE
+	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+	{ // 外野が投げた場合
+
+		// 近くのAIに操作権を移し、自身をAIにする
+		CPlayerManager::GetInstance()->ChangeUserToAI(pPlayer);
+	}
+#endif
+
 	// 通常攻撃を設定
 	m_typeAtk = ATK_NORMAL;
 
@@ -501,6 +510,15 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 投げ処理
 	Throw(pPlayer);
+
+#ifdef CHANGE
+	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+	{ // 外野が投げた場合
+
+		// 近くのAIに操作権を移し、自身をAIにする
+		CPlayerManager::GetInstance()->ChangeUserToAI(pPlayer);
+	}
+#endif
 
 	// ジャンプ攻撃を設定
 	m_typeAtk = ATK_JUMP;
@@ -580,11 +598,30 @@ void CBall::Pass(CPlayer* pPlayer)
 	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
 	{ // 内野の場合
 
+		// ベースの入れ替え
+		CPlayerManager::GetInstance()->SwapBase(pPlayer, m_pTarget);
+
 		// ホーミングパス状態にする
 		SetState(STATE_HOM_PASS);
+
+		// パス終了Y座標を設定
+		m_posPassEnd.y = CGameManager::FIELD_LIMIT + pass::TARGET_PULSY;
 	}
 	else
 	{ // 外野の場合
+
+		if (m_pTarget->GetBaseType() == CPlayer::EBaseType::TYPE_AI)
+		{ // パスターゲットがAIの場合
+
+			// ベースの入れ替え
+			CPlayerManager::GetInstance()->SwapBase(pPlayer, m_pTarget);
+		}
+		else
+		{ // パスターゲットがユーザーの場合
+
+			// 近くのAIに操作権を移し、自身をAIにする
+			CPlayerManager::GetInstance()->ChangeUserToAI(pPlayer);
+		}
 
 		// パス状態にする
 		SetState(STATE_PASS);
@@ -958,8 +995,17 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
 	MyLib::Vector3 vecMove = GetMove();						// 移動量
 
-	// ターゲット位置のY座標を固定
-	posTarget.y = CGameManager::FIELD_LIMIT + pass::TARGET_PULSY;
+	// XZ平面の位置をターゲット位置と同一にする
+	m_posPassEnd.x = posTarget.x;
+	m_posPassEnd.z = posTarget.z;
+
+	// パス終了Y座標を更新
+	if (posTarget.y + pass::TARGET_PULSY > m_posPassEnd.y)
+	{ // ターゲット位置が現在のパス終了Y座標より高い場合
+
+		// 現在のターゲット位置に再設定
+		m_posPassEnd.y = posTarget.y + pass::TARGET_PULSY;
+	}
 
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime * fSlowRate;
@@ -970,7 +1016,7 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
 
 		// 放物線上に位置を補正
-		posBall = UtilFunc::Calculation::GetParabola3D(m_posPassStart, posTarget, pass::MAX_HEIGHT, fTimeRate);
+		posBall = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, pass::MAX_HEIGHT, fTimeRate);
 	}
 	else
 	{
@@ -1481,7 +1527,7 @@ void CBall::Catch(CPlayer* pPlayer)
 
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す
-	CPlayerManager::GetInstance()->ChangeUser(pPlayer);
+	CPlayerManager::GetInstance()->ChangeAIToUser(pPlayer);
 #endif
 
 	// プレイヤーにボールを保存
@@ -1495,15 +1541,6 @@ void CBall::Throw(CPlayer* pPlayer)
 {
 	// 持っていたプレイヤーと違う場合エラー
 	assert(m_pPlayer == pPlayer);
-
-#ifdef CHANGE
-	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
-	{ // 外野が投げた場合
-
-		// 近くのAIに操作権を移し、自身をAIにする
-		CPlayerManager::GetInstance()->ChangeAI(pPlayer);
-	}
-#endif
 
 	// キャッチしていたプレイヤーを破棄
 	m_pPlayer = nullptr;
