@@ -522,7 +522,10 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	{// ダッシュ解除
 		bDash = false;
 
-		if (player->GetMotion()->GetType() == CPlayer::EMotion::MOTION_RUN)
+		// 前グリップ
+		int motionType = player->GetMotion()->GetType();
+		if (motionType == CPlayer::EMotion::MOTION_RUN ||
+			motionType == CPlayer::EMotion::MOTION_RUN_BALL)
 		{// ダッシュからは派生
 			player->SetMotion(CPlayer::EMotion::MOTION_GRIP_FRONT);
 		}

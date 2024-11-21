@@ -120,6 +120,9 @@
     <Filter Include="shader">
       <UniqueIdentifier>{caca10ce-3011-4bf4-8616-198608012864}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mode\entry">
+      <UniqueIdentifier>{7d3b7316-2bdc-4a39-a27a-8e690014fb7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -610,6 +613,15 @@
     </ClCompile>
     <ClCompile Include="Source\ballHolderMarker.cpp">
       <Filter>ingame\ball</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\entry.cpp">
+      <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\entry_setupTeam.cpp">
+      <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\entryscene.cpp">
+      <Filter>mode\entry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1113,6 +1125,15 @@
     </ClInclude>
     <ClInclude Include="Source\ballHolderMarker.h">
       <Filter>ingame\ball</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entry.h">
+      <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entry_setupTeam.h">
+      <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entryscene.h">
+      <Filter>mode\entry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
