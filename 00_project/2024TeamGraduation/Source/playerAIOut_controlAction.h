@@ -55,7 +55,7 @@ public:
 	void SetIsPass(bool bPass) { m_sFlag.bPass = bPass; }				// パスするか
 	void SetIsJump(bool bJump) { m_sFlag.bJump = bJump; }				// ジャンプするか設定
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }	// スペシャル撃つか設定
-
+	SFlag GetIsFlag() { return m_sFlag; }
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
