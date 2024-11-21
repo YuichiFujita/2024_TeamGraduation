@@ -72,17 +72,32 @@ void CPlayerAIOutControlAction::Throw(CPlayer* player, const float fDeltaTime, c
 
 	if (!player->GetBall()) return;
 
+
+	CBall* pBall = player->GetBall();
+
 	if (m_sFlag.bThrow)
 	{
-		// フラグオフ
+		/*if (pBall == nullptr)
+		{
+			m_sFlag.bThrow = false;
+
+			return;
+		}*/
+
 		m_sFlag.bThrow = false;
 
 		// 投げる
 		ThrowSetting(player);
 	}
-	if (m_sFlag.bPass)
+	else if (m_sFlag.bPass)
 	{
-		// フラグオフ
+		/*if (pBall == nullptr)
+		{
+			m_sFlag.bPass = false;
+
+			return;
+		}*/
+
 		m_sFlag.bPass = false;
 
 		// パス
