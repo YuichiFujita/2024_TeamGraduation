@@ -24,7 +24,18 @@ public:
 	// 定数
 	//=============================
 	static constexpr float COMEBACK_LINE = 100.0f;	// 相手コートから戻ってくるライン
-	static constexpr float UNSTABLE_LINE = 100.0f;	// おっとっとライン
+	static constexpr float UNSTABLE_LINE = 10.0f;	// おっとっとライン
+
+	//=============================
+	// 列挙型
+	//=============================
+	enum EInputUnstable
+	{
+		INPUT_NONE = 0,		// 入力なし
+		INPUT_FRIEND,		// 味方側
+		INPUT_ENEMY,		// 敵側
+		INPUT_MAX,
+	};
 
 	//=============================
 	// コンストラクタ/デストラクタ
@@ -43,7 +54,7 @@ protected:
 	//=============================
 	virtual bool IsLineOut(CPlayer* pPlayer) = 0;	// ライン越えフラグ取得
 	virtual bool IsUnstable(CPlayer* pPlayer) = 0;	// おっとっとフラグ取得
-	virtual bool IsInputLine(CPlayer* pPlayer) = 0;	// おっとっと時入力フラグ取得
+	virtual EInputUnstable IsInputLine(CPlayer* pPlayer) = 0;	// おっとっと時入力フラグ取得
 
 private:
 	//=============================
@@ -51,6 +62,7 @@ private:
 	//=============================
 	void CheckReturn(CPlayer* pPlayer);		// チームコート復帰
 	void CheckUnstable(CPlayer* pPlayer);	// おっとっとする
+	void ReturnSetting(CPlayer* pPlayer);	// 復帰設定
 };
 
 #endif

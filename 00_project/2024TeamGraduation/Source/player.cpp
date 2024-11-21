@@ -207,7 +207,8 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sKnockback = SKnockbackInfo();	// ノックバック情報
 
 	// 行動フラグ
-	m_bPossibleMove = false;		// 移動可能フラグ
+	m_bPossibleMove = false;		// 行動可能フラグ
+	m_bPossibleAction = false;		// 移動可能フラグ
 	m_bAutoMotionSet = false;		// オートモーション設定
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
@@ -534,7 +535,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
+	if (CGameManager::GetInstance()->IsControll())
 	{ // 行動できるとき
 
 		// ベース変更の更新
@@ -1713,6 +1714,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 
 	// 移動不可
 	m_bPossibleMove = false;
+	m_bPossibleAction = false;
 
 	// 走って戻す
 	SetMotion(CPlayer::EMotion::MOTION_WALK);
@@ -1745,6 +1747,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	if (ratio >= 1.0f)
 	{// 完了
 		m_bPossibleMove = true;
+		m_bPossibleAction = true;
 		SetState(EState::STATE_NONE);
 	}
 }

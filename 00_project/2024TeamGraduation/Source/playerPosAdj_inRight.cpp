@@ -8,6 +8,10 @@
 #include "player.h"
 #include "playerBase.h"
 #include "playercontrol_move.h"
+#include "input_gamepad.h"
+#include "input_keyboard.h"
+#include "manager.h"
+#include "camera.h"
 
 //==========================================================================
 // 定数定義
@@ -64,16 +68,44 @@ bool CPlayerPosAdjInRight::IsUnstable(CPlayer* pPlayer)
 //==========================================================================
 // おっとっと時入力フラグ取得
 //==========================================================================
-bool CPlayerPosAdjInRight::IsInputLine(CPlayer* pPlayer)
+CPlayerPosAdjIn::EInputUnstable CPlayerPosAdjInRight::IsInputLine(CPlayer* pPlayer)
 {
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	// プレイヤー番号取得
+	int playerIdx = pPlayer->GetMyPlayerIdx();
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	// 入力方向を取得
 	CPlayer::EDashAngle* angle = pPlayer->GetBase()->GetPlayerControlMove()->IsInputAngle();
-	if (angle == nullptr) return false;
 
 	// 右を入力していたらtrue
-	if (*angle == CPlayer::EDashAngle::ANGLE_LEFT)
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, playerIdx) ||
+		pPad->GetStickMoveL(playerIdx).x < 0 ||
+		pKey->GetTrigger(DIK_A))
 	{
-		return true;
+		return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
+	}
+	else if (angle != nullptr)
+	{
+		if (*angle != CPlayer::EDashAngle::ANGLE_LEFT &&
+			*angle != CPlayer::EDashAngle::ANGLE_LEFTUP &&
+			*angle != CPlayer::EDashAngle::ANGLE_LEFTDW) 
+		{
+			MyLib::Vector3 rot = pPlayer->GetRotation();
+			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+			rot.y = division * (*angle) + D3DX_PI + Camerarot.y;
+			UtilFunc::Transformation::RotNormalize(rot.y);
+			pPlayer->SetRotation(rot);
+
+			return CPlayerPosAdjIn::EInputUnstable::INPUT_FRIEND;
+		}
 	}
 
-	return false;
+	return CPlayerPosAdjIn::EInputUnstable::INPUT_NONE;
 }

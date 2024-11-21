@@ -18,7 +18,7 @@
 //==========================================================================
 namespace
 {
-	const float INPUT_COUNTER = (4.0f / 60.0f);	// 入力カウンター
+	const float INPUT_COUNTER = (60.0f / 60.0f);	// 入力カウンター
 }
 
 //==========================================================================
@@ -97,7 +97,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	}
 
 	// 入力方向
-	UpdateInputAngle(player);
+	UpdateInputAngle(player, fDeltaTime, fDeltaRate, fSlowRate);
 
 #if 1
 	// カニ歩き判定
@@ -152,7 +152,7 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 //==========================================================================
 // 現在の入力方向更新
 //==========================================================================
-void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
+void CPlayerControlMove::UpdateInputAngle(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -163,7 +163,6 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
 
 	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;
-
 
 	if (pPad->GetPress(CInputGamepad::BUTTON::BUTTON_UP, playerIdx) ||
 		pPad->GetStickMoveL(playerIdx).y > 0 ||
@@ -259,12 +258,14 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
 	}
 
 	CPlayer::EDashAngle eInputOld = CPlayer::EDashAngle::ANGLE_UP;
+	bool bOld = false;
 
 	// 現在の入力方向設定
 	if (m_pInputAngle != nullptr)
 	{
 		eInputOld = *m_pInputAngle;
-		
+		bOld = true;
+
 		delete m_pInputAngle;
 		m_pInputAngle = nullptr;
 	}
@@ -279,16 +280,18 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player)
 		}
 		*m_pInputAngle = eAngle;
 
-		if (eInputOld != eAngle)
-		{
+		if (eInputOld != eAngle || !bOld)
+		{// 前回無入力 or 違う入力
+
 			// 入力方向カウンター設定
 			SetInputAngleCtr(INPUT_COUNTER);
 		}
 	}
 
-	//// 現在の入力方向カウンター
-//float fInputAngleCtr = GetInputAngleCtr();
-//fInputAngleCtr -= fDeltaTime * fSlowRate;
-//UtilFunc::Transformation::Clamp(fInputAngleCtr, 0.0f, INPUT_COUNTER);
-//SetInputAngleCtr(fInputAngleCtr);
+	// 現在の入力方向カウンター
+	if (m_fInputAngleCtr >= 0.0f)
+	{
+		m_fInputAngleCtr -= fDeltaTime * fSlowRate;
+		m_fInputAngleCtr = UtilFunc::Transformation::Clamp(m_fInputAngleCtr, 0.0f, INPUT_COUNTER);
+	}
 }
