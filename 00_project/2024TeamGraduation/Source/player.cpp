@@ -207,7 +207,8 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sKnockback = SKnockbackInfo();	// ノックバック情報
 
 	// 行動フラグ
-	m_bPossibleMove = false;		// 移動可能フラグ
+	m_bPossibleMove = false;		// 行動可能フラグ
+	m_bPossibleAction = false;		// 移動可能フラグ
 	m_bAutoMotionSet = false;		// オートモーション設定
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
@@ -505,20 +506,28 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		ImGui::TreePop();
 	}
 
+#endif
+
 	// TODO：誰がユーザーなのか見えるようにするやつ
-#if 0
+#if 1
 	if (GetBaseType() == EBaseType::TYPE_USER)
 	{ // ベースがユーザーの場合
 
+		const D3DXCOLOR COL[] =
+		{
+			MyLib::color::Red(),
+			MyLib::color::Blue(),
+			MyLib::color::Yellow(),
+			MyLib::color::Green()
+		};
+
 		// 演出
 		CEffect3D::Create(
-			GetPosition(),
+			GetPosition() + MyLib::Vector3(0.0f, 180.0f, 0.0f),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
-			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+			COL[m_nMyPlayerIdx],
 			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 	}
-#endif
-
 #endif
 
 }
@@ -534,7 +543,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
+	if (CGameManager::GetInstance()->IsControll())
 	{ // 行動できるとき
 
 		// ベース変更の更新
@@ -1713,6 +1722,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 
 	// 移動不可
 	m_bPossibleMove = false;
+	m_bPossibleAction = false;
 
 	// 走って戻す
 	SetMotion(CPlayer::EMotion::MOTION_WALK);
@@ -1745,6 +1755,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	if (ratio >= 1.0f)
 	{// 完了
 		m_bPossibleMove = true;
+		m_bPossibleAction = true;
 		SetState(EState::STATE_NONE);
 	}
 }

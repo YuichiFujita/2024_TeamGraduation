@@ -40,11 +40,12 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 	virtual void Kill();	// 削除
+	virtual void SetEnableDisp(bool bDisp);	// 描画状況設定
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void BindPlyer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割り当て
+	void BindPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割り当て
 
 	//=============================
 	// 静的メンバ関数
@@ -57,7 +58,7 @@ private:
 	// メンバ変数
 	//=============================
 	HRESULT CreateCircle();	// 円生成
-	HRESULT CreateArrow();		// 矢印生成
+	HRESULT CreateArrow();	// 矢印生成
 
 	//=============================
 	// メンバ変数

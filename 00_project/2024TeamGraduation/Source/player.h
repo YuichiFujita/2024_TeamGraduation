@@ -258,8 +258,10 @@ public:
 	// モーション
 	//=============================
 	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;			// モーションの設定
-	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }		// 移動可能フラグ設定
-	bool IsPossibleMove()						{ return m_bPossibleMove; }				// 移動可能フラグ取得
+	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }		// 行動可能フラグ設定
+	bool IsPossibleMove()						{ return m_bPossibleMove; }				// 行動可能フラグ取得
+	void SetEnableAction(bool bPossible)		{ m_bPossibleAction = bPossible; }		// 移動可能フラグ設定
+	bool IsPossibleAction()						{ return m_bPossibleAction; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)				{ m_bDash = bDash; }					// ダッシュ状況設定
 	bool IsDash()								{ return m_bDash; }						// ダッシュ判定
 	void SetEnableJump(bool bJump)				{ m_bJump = bJump; }					// ジャンプ状況設定
@@ -438,7 +440,8 @@ private:
 	//-----------------------------
 	// 行動フラグ
 	//-----------------------------
-	bool m_bPossibleMove;		// 移動可能フラグ
+	bool m_bPossibleMove;		// 行動可能フラグ
+	bool m_bPossibleAction;		// アクション可能フラグ
 	bool m_bAutoMotionSet;		// オートモーション設定
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定

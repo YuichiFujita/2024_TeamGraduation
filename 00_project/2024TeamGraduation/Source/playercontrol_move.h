@@ -62,7 +62,7 @@ public:
 	void SetCrabMoveEasingTime(float fCrabMoveEasingTime) { m_fCrabMoveEasingTime = fCrabMoveEasingTime; }		// 現在のカニ歩き移動補正値設定
 	float GetCrabMoveEasingTime() { return m_fCrabMoveEasingTime; }												// 現在のカニ歩き移動補正値取得
 
-	void UpdateInputAngle(CPlayer* player);			// 現在の入力方向更新
+	void UpdateInputAngle(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 現在の入力方向更新
 	void CrabSetting(CPlayer* player);				// カニ歩き状態
 
 private:

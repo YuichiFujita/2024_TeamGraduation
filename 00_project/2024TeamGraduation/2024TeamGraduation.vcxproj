@@ -120,7 +120,7 @@
       <ForcedIncludeFiles>precompile.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>.\Libraries\Effekseer\Include\Effekseer;.\Libraries\Effekseer\Include\EffekseerRendererCommon;.\Libraries\Effekseer\Include\EffekseerRendererDX9;.\Libraries\json\nlohmann;.\Libraries\Imgui;.\Libraries\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
