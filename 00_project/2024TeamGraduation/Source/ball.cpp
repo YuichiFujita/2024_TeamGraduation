@@ -13,6 +13,7 @@
 #include "gamemanager.h"
 #include "calculation.h"
 #include "model.h"
+#include "ballHolderMarker.h"
 #include "shadow.h"
 #include "specialManager.h"
 #include "playerManager.h"
@@ -177,6 +178,7 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
+	m_pMarker		(nullptr),		// ボール所持マーカー情報
 	m_pShadow		(nullptr),		// 影情報
 	m_pPlayer		(nullptr),		// プレイヤー情報
 	m_pTarget		(nullptr),		// ホーミングターゲット情報
@@ -251,10 +253,16 @@ HRESULT CBall::Init()
 	HRESULT hr = CObjectX::Init(MODEL);
 	if (FAILED(hr)) { return E_FAIL; }
 
+	// マーカーの生成
+	m_pMarker = CBallHolderMarker::Create(nullptr);
+	if (m_pMarker == nullptr) { return E_FAIL; }
+
 	// 影の生成
 	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
 	if (m_pShadow == nullptr) { return E_FAIL; }
-	m_pShadow->SetAlpha(0.8f);	// 色
+
+	// 透明度の設定
+	m_pShadow->SetAlpha(0.8f);
 
 	return S_OK;
 }
@@ -1525,6 +1533,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
+	// キャッチしたプレイヤーをマーカーに割当
+	m_pMarker->BindPlayer(pPlayer);
+
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す
 	CPlayerManager::GetInstance()->ChangeAIToUser(pPlayer);
@@ -1547,6 +1558,9 @@ void CBall::Throw(CPlayer* pPlayer)
 
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
+
+	// マーカーからプレイヤーを破棄
+	m_pMarker->BindPlayer(nullptr);
 
 	// ボールの移動ベクトルを作成
 	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き

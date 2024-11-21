@@ -9,6 +9,11 @@
 #include "player.h"
 #include "object3D.h"
 
+// TODO：ボールマーカー表示
+#if 0
+#define DISP
+#endif
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -104,8 +109,8 @@ HRESULT CBallHolderMarker::CreateCircle()
 	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
 
 	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 240.0f);
-	m_pCircle->SetSize(MyLib::Vector3(size.x, size.y, 0.0f));
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 135.0f);
+	m_pCircle->SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
 	m_pCircle->SetSizeOrigin(m_pCircle->GetSize());
 
 	return S_OK;
@@ -132,8 +137,8 @@ HRESULT CBallHolderMarker::CreateArrow()
 	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
 
 	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 240.0f);
-	m_pArrow->SetSize(MyLib::Vector3(size.x, size.y, 0.0f));
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 60.0f);
+	m_pArrow->SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
 	m_pArrow->SetSizeOrigin(m_pArrow->GetSize());
 
 	return S_OK;
@@ -162,6 +167,7 @@ void CBallHolderMarker::Kill()
 //==========================================================================
 void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+#ifdef DISP
 	// プレイヤーいないと描画切る
 	bool bDisp = (m_pPlayer == nullptr) ? false : true;
 	SetEnableDisp(bDisp);
@@ -177,6 +183,9 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 	// 円と矢印の位置設定
 	m_pCircle->SetPosition(pos);
 	m_pArrow->SetPosition(pos);
+#else
+	SetEnableDisp(false);
+#endif
 }
 
 //==========================================================================
@@ -185,4 +194,17 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 void CBallHolderMarker::Draw()
 {
 
+}
+
+//==========================================================================
+// 描画状況の設定処理
+//==========================================================================
+void CBallHolderMarker::SetEnableDisp(bool bDisp)
+{
+	// 基底クラスの描画状況設定
+	CObject::SetEnableDisp(bDisp);
+
+	// 円と矢印の描画状況設定
+	m_pCircle->SetEnableDisp(bDisp);
+	m_pArrow->SetEnableDisp(bDisp);
 }
