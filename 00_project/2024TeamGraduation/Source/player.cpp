@@ -506,20 +506,28 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		ImGui::TreePop();
 	}
 
+#endif
+
 	// TODO：誰がユーザーなのか見えるようにするやつ
-#if 0
+#if 1
 	if (GetBaseType() == EBaseType::TYPE_USER)
 	{ // ベースがユーザーの場合
 
+		const D3DXCOLOR COL[] =
+		{
+			MyLib::color::Red(),
+			MyLib::color::Blue(),
+			MyLib::color::Yellow(),
+			MyLib::color::Green()
+		};
+
 		// 演出
 		CEffect3D::Create(
-			GetPosition(),
+			GetPosition() + MyLib::Vector3(0.0f, 180.0f, 0.0f),
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),
-			D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+			COL[m_nMyPlayerIdx],
 			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 	}
-#endif
-
 #endif
 
 }

@@ -608,6 +608,9 @@
     <ClCompile Include="Source\playerAIOut_controlAction.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ballHolderMarker.cpp">
+      <Filter>ingame\ball</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1107,6 +1110,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIOut_controlAction.h">
       <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ballHolderMarker.h">
+      <Filter>ingame\ball</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
