@@ -182,7 +182,10 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE)	return;
 
 		// おっとっとモーションの再生
-		pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+		if (motion->GetType() != CPlayer::EMotion::MOTION_TOSS)
+		{
+			pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+		}
 
 		// アクション設定
 		action = CPlayer::EAction::ACTION_UNSTABLE;
