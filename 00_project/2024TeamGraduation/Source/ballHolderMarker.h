@@ -44,7 +44,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	
+	void BindPlyer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割り当て
 
 	//=============================
 	// 静的メンバ関数
@@ -56,7 +56,16 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fArrowTime;	// 矢印のタイマー
+	HRESULT CreateCircle();	// 円生成
+	HRESULT CreateArrow();		// 矢印生成
+
+	//=============================
+	// メンバ変数
+	//=============================
+	CObject3D* m_pCircle;	// 円
+	CObject3D* m_pArrow;	// 矢印
+	CPlayer* m_pPlayer;		// ボールを所持してるプレイヤーのポインタ
+	float m_fArrowTime;		// 矢印のタイマー
 };
 
 #endif
