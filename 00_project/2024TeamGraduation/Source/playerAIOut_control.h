@@ -31,7 +31,7 @@ public:
 	{
 		MODE_NONE = 0,	// なし
 		MODE_THROW,		// 投げ
-		MODE_CATCH,		// キャッチ
+		MODE_MOVE,		// 行動
 		MODE_MAX
 	};
 
@@ -41,18 +41,19 @@ private:
 	// 列挙型定義
 	//=============================
 	enum EThrow
-	{
+	{// 投げ
 		THROW_NONE = 0,
 		THROW_NORMAL,
 		THROW_PASS,
 		THROW_MAX
 	};
 
-	enum ECatch
-	{
-		CATCH_NONE = 0,
-		CATCH_FIND,
-		CATCH_MAX
+	enum EMove
+	{// 行動
+		MOVE_NONE = 0,
+		MOVE_FIND,
+		MOVE_MEETING,
+		MOVE_MAX
 	};
 
 public:
@@ -79,39 +80,37 @@ private:
 	typedef void(CPlayerAIOutControl::* THROW_FUNC)(const float, const float, const float);
 	static THROW_FUNC m_ThrowFunc[];			// モード関数
 
-	typedef void(CPlayerAIOutControl::* CATCH_FUNC)(const float, const float, const float);
-	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
-
+	typedef void(CPlayerAIOutControl::* MOVE_FUNC)(const float, const float, const float);
+	static MOVE_FUNC m_MoveFunc[];			// 行動関数
 
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
 	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
 	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
-	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
+	void ModeMoveManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
 
 	// 投げ
-	void ThrowNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
-	void ThrowNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ThrowPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
+	void ThrowNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常
+	void ThrowPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// パス
 
-	// キャッチ
-	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void RetrieveBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	// 行動
+	void MoveNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ない
+	void MoveRetrieve(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回収
+	void MoveMeeting(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 対面
 
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void ModeManager();
+	void ModeManager();				// モード管理
 	CPlayer* GetThrowTarget();		// 投げるターゲット
-	void Pass();
-	bool IsPass();
-	void Throw();
-
-	void LookBall();
-
-	void AreaCheck();
+	void Pass();					// パス
+	bool IsPass();					// パス判定
+	void Throw();					// 投げる
+	void LookBall();				// ボールを見る
+	void AreaCheck();				// ボールのエリア
 
 	//-----------------------------
 	// その他関数
@@ -124,7 +123,7 @@ private:
 
 	EMode m_eMode;
 	EThrow m_eThrow;
-	ECatch m_eCatch;
+	EMove m_eMove;
 
 	bool m_bStart;
 	bool m_bEnd;

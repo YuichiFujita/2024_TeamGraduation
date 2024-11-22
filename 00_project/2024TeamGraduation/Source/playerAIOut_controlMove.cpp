@@ -10,6 +10,8 @@
 #include "input.h"
 #include "camera.h"
 #include "game.h"
+
+#include "motion.h"
 #include "playerAction.h"
 #include "playerBase.h"
 #include "playerAIOut.h"
@@ -260,6 +262,14 @@ void CPlayerAIOutControlMove::Walk(CPlayer* player, const float fDeltaTime, cons
 		player->SetMotionFrag(flagMotion);
 		return;
 	}
+
+	//if (player->GetBase()->IsCrab())
+	//{// ƒJƒj•à‚«
+	//	m_fClabDirection = playerMove.y;
+
+	//	playerMove.x += sinf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMoveValue;
+	//	playerMove.z += cosf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMoveValue;
+	//}
 
 	// ˆÚ“®’†‚É‚·‚é
 	flagMotion.bMove = true;

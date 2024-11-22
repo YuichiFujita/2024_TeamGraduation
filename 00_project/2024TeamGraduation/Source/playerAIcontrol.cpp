@@ -101,6 +101,7 @@ CPlayerAIControl::CPlayerAIControl()
 	m_pAI = nullptr;
 	m_bStart = false;
 	m_bEnd = false;
+	m_eHeart = EHeart::HEART_NONE;
 }
 
 //==========================================================================
@@ -137,6 +138,7 @@ HRESULT CPlayerAIControl::Init()
 	m_sLearn.fDistanceOUT = LENGTH_OUT;
 	m_sLearn.fDistanceLine = LENGTH_LINE;
 	m_eLine = ELine::LINE_IN;
+	m_eHeart = EHeart::HEART_NORMAL;
 
 	return S_OK;
 }
@@ -206,6 +208,11 @@ void CPlayerAIControl::PlanThrowFlow(const float fDeltaTime, const float fDeltaR
 	PlanThrow(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 
 #ifdef _DEBUG
+	if (!pTarget)
+	{
+		return;
+	}
+
 	CEffect3D::Create
 	(// デバッグ用エフェクト(ターゲット)
 		pTarget->GetPosition(),
@@ -380,59 +387,6 @@ void CPlayerAIControl::ThrowMoveDash(CPlayer* pTarget, const float fDeltaTime, c
 
 	// 投げるまでのタイミングの更新
 	(this->*(m_ThrowTimingFunc[m_sInfo.sThrowInfo.eTiming]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
-}
-
-//==========================================================================
-// 距離プラン
-//==========================================================================
-void CPlayerAIControl::PlanThrowDistance(CPlayer* pTarget)
-{
-	if (pTarget == nullptr) return;
-
-	// AIコントロール情報の取得
-	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-	// 距離を見る
-	MyLib::Vector3 posTarget = pTarget->GetPosition();
-	MyLib::Vector3 MyPos = m_pAI->GetPosition();
-
-	// 自分から相手の距離
-	float fDistance = MyPos.DistanceXZ(posTarget);
-
-	if (fDistance < m_sLearn.fDistanceIN - 50.0f)
-	{// 離れろ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
-		
-		// 相手から自分の方向
-		m_pAI->SetRotDest(posTarget.AngleXZ(MyPos));
-
-		// 歩け！
-		pControlAIMove->SetIsWalk(true);
-
-		return;
-	}
-	else if(fDistance > m_sLearn.fDistanceIN + 50.0f)
-	{// 近づけ！
-		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
-
-		// 相手から自分の方向
-		m_pAI->SetRotDest(MyPos.AngleXZ(posTarget));
-
-		// 歩け！
-		pControlAIMove->SetIsWalk(true);
-
-		return;
-	}
-
-	// 動くんじゃない！
-	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-
-	// 歩くな！
-	pControlAIMove->SetIsWalk(false);
-
-	// 投げてよし！
-	m_sInfo.sThrowInfo.bThrow = true;
 }
 
 //==========================================================================
@@ -660,7 +614,7 @@ void CPlayerAIControl::ThrowJumpTimingDelay(CPlayer* pTarget, const float fDelta
 }
 
 //==========================================================================
-// 線に対しての思考
+// 線に対して
 //==========================================================================
 void CPlayerAIControl::Line(CPlayer* pTarget)
 {
@@ -730,6 +684,13 @@ void CPlayerAIControl::LineRightTeam(CPlayer* pTarget)
 		pControlAIMove->SetIsWalk(true);
 	}
 }
+
+
+
+
+
+
+
 
 
 
@@ -919,12 +880,6 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 
 	if (fDistance < m_sLearn.fDistanceIN - LENGTH_SPACE)
 	{// 相手との距離が近かった場合
-
-		//// 動くんじゃない！
-		//m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-
-		//if (m_eLine == ELine::LINE_OVER) return;
-
 		// 行動状態：離れる
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_LEAVE;
 
@@ -936,12 +891,6 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 	}
 	else if (fDistance > m_sLearn.fDistanceIN + LENGTH_SPACE)
 	{// 相手との距離が遠かった場合
-
-		//// 動くんじゃない！
-		//m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-
-		//if (m_eLine == ELine::LINE_OVER) return;
-
 		// 行動状態：近づく
 		m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_APPROATCH;
 
@@ -1026,39 +975,27 @@ void CPlayerAIControl::CatchLineLeftDistance()
 	// チームタイプの取得
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
-	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
-	{
-		if (myPos.x > LINE_DISTANCE_OVER)
-		{// 距離が指定値以内の場合
+	if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
+	{// 右チームの場合
 
-			// 移動状態を離れろ！
-			m_eLine = ELine::LINE_OVER;
+		// 目標位置
+		MyLib::Vector3 Destpos = { 500.0f, myPos.y, myPos.z };
 
-			// 動くんじゃない！
-			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-		}
-		else if (myPos.x < LINE_DISTANCE_OVER)
-		{// 距離が指定値以外の場合
-			// 移動状態を離れろ！
-			m_eLine = ELine::LINE_IN;
-		}
-	}
-	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{
-		if (myPos.x < LINE_DISTANCE_OVER)
-		{// 距離が指定値以内の場合
+		// 自分から見た位置
+		myPos.AngleXZ(Destpos);
 
-			// 移動状態を離れろ！
-			m_eLine = ELine::LINE_OVER;
-
-			// 動くんじゃない！
-			m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
-		}
-		else if (myPos.x > LINE_DISTANCE_OVER)
-		{// 距離が指定値以外の場合
-			// 移動状態を近づけ！
-			m_eLine = ELine::LINE_IN;
-		}
+		//if (myPos.x < LINE_DISTANCE_OVER)
+		//{// 距離が指定値以内の場合
+		//	// 移動状態を離れろ！
+		//	m_eLine = ELine::LINE_OVER;
+		//	// 動くんじゃない！
+		//	m_sInfo.sMoveInfo.eType = EMoveType::MOVETYPE_NONE;
+		//}
+		//else if (myPos.x > LINE_DISTANCE_OVER)
+		//{// 距離が指定値以外の場合
+		//	// 移動状態を近づけ！
+		//	m_eLine = ELine::LINE_IN;
+		//}
 	}
 }
 

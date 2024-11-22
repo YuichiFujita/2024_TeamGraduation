@@ -9,13 +9,16 @@
 // 使用クラス
 #include "playercontrol_move.h"
 #include "playercontrol_action.h"
+#include "playerAction.h"
+
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CPlayerOut::CPlayerOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) : CPlayerBase(pPlayer, typeTeam, typeArea, typeBase),
 	m_posLeft	(VEC3_ZERO),	// 移動可能左位置
-	m_posRight	(VEC3_ZERO)		// 移動可能右位置
+	m_posRight	(VEC3_ZERO),	// 移動可能右位置
+	m_bClab(false)
 {
 
 }
@@ -60,6 +63,32 @@ void CPlayerOut::InitPosition(const MyLib::Vector3& /*rPos*/)
 
 	// プレイヤー位置の設定
 	GetPlayer()->SetPosition(posCenter);
+}
+
+//==========================================================================
+// カニ歩き判定
+//==========================================================================
+bool CPlayerOut::IsCrab()
+{
+	// プレイヤー情報の取得
+	CPlayer* pPlayer = GetPlayer();
+
+	if (!pPlayer || !m_bClab) return false;
+
+	// ボールを持っていないか
+	if (pPlayer->GetBall() != nullptr) { return false; }
+
+	// 世界にボールがあるか
+	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報
+	if (pBall == nullptr) { return false; }
+
+	// 自身の状態：ブリンク＆走りでない
+	CPlayer::EAction action = pPlayer->GetActionPattern()->GetAction();	// アクションパターン
+	if (action == CPlayer::EAction::ACTION_BLINK) { return false; }
+	if (pPlayer->IsDash()) { return false; }
+
+	return true;
+
 }
 
 //==========================================================================

@@ -127,7 +127,6 @@ private:
 	struct SInfo
 	{
 		SMode sMode;				// モード
-		EHeart eHeart;				// 心
 		SThrowInfo sThrowInfo;		// 投げ情報
 		SCatchInfo sCatchInfo;		// キャッチ情報
 		SMoveInfo sMoveInfo;		// 行動情報
@@ -217,7 +216,6 @@ private:
 	void PlanThrowFlow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げる流れ
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
-	void PlanThrowDistance(CPlayer* pTarget);	// 投げる距離プラン
 
 	void CatchDistance(CPlayer* pTarget);	//
 	void CatchOutDistance();
@@ -237,13 +235,12 @@ private:
 	void LineLeftTeam(CPlayer* pTarget);
 	void LineRightTeam(CPlayer* pTarget);
 
-	void Reset();			// 変数リセット
-
 	bool IsWhoPicksUpTheBall();
 
 	void RunStartPos(CPlayer* pTarget);
 	void RunEndPos(CPlayer* pTarget);
 
+	void Reset();			// 変数リセット
 	void Debug();
 
 	//=============================
@@ -254,6 +251,7 @@ private:
 	SInfo m_sInfo;		// モード情報
 	SLearn m_sLearn;
 	ELine m_eLine;
+	EHeart m_eHeart;	// 心
 
 	bool m_bStart;
 	bool m_bEnd;

@@ -103,6 +103,17 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 
 		JumpSetting(player);
 	}
+
+	if (m_sFlag.bJumpFloat)
+	{// ジャンプボタンホールドで上昇
+		JumpFloat(player);
+	}
+	if (!m_sFlag.bJumpFloat)
+	{// ジャンプボタン離した
+
+		// ジャンプトリガーOFF
+		SetEnableJumpTrigger(false);
+	}
 }
 
 //==========================================================================
