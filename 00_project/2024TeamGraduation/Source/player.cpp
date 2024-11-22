@@ -1832,10 +1832,11 @@ void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 void CPlayer::UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 端に逃げまくる
-
 	// 持ち続け
 	LongHold(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 端に逃げまくる
+	EdgeEscape(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -1871,8 +1872,7 @@ void CPlayer::EdgeEscape(const float fDeltaTime, const float fDeltaRate, const f
 {
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 
-	//GetPosAdjuster();
-	//CheckEdgeEscape();
+	//m_pPosAdj->CheckEdgeEscape();
 	if (true)
 	{// 端だったら
 
