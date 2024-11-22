@@ -20,6 +20,7 @@
 //==========================================================================
 class CShadow;
 class CPlayer;
+class CBallHolderMarker;
 class CEffekseerObj;
 
 //==========================================================================
@@ -197,6 +198,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	CBallHolderMarker* m_pMarker;	// ボール所持マーカー情報
 	CShadow* m_pShadow;		// 影情報
 	CPlayer* m_pPlayer;		// プレイヤー情報
 	CPlayer* m_pTarget;		// ホーミングターゲット情報
@@ -215,7 +217,6 @@ private:
 	float m_fStateTime;		// 状態カウンター
 	int m_nDamage;			// ダメージ
 	float m_fKnockback;		// ノックバック
-
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
 };
 

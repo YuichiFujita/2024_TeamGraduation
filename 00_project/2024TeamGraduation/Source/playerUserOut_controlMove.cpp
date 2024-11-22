@@ -51,9 +51,6 @@ CPlayerUserOutControlMove::~CPlayerUserOutControlMove()
 //==========================================================================
 void CPlayerUserOutControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 外野ユーザーなのにボール持ってなかったらエラー
-	assert(player->GetBall() != nullptr);
-
 	// キー入力のブリンク
 	BilnkKey(player, fDeltaTime, fDeltaRate, fSlowRate);
 

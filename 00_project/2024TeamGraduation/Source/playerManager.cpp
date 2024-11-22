@@ -201,7 +201,7 @@ HRESULT CPlayerManager::Init()
 	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
 
 	// プレイヤー外野生成 (右サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -223,7 +223,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤー外野生成 (左サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -349,11 +349,11 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 }
 
 //==========================================================================
-// AIベースのユーザー変更
+// ユーザーベースのAI変更
 //--------------------------------------------------------------------------
-// ※ 自分と同じポジションにも変更可能
+// ※ どのポジションも変更可能
 //==========================================================================
-void CPlayerManager::ChangeUser(CPlayer* pPlayer)
+void CPlayerManager::ChangeAIToUser(CPlayer* pPlayer)
 {
 	// 自身がユーザーの場合は抜ける
 	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) { return; }
@@ -406,11 +406,11 @@ void CPlayerManager::ChangeUser(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// ユーザーベースのAI変更
+// AIベースのユーザー変更
 //--------------------------------------------------------------------------
-// ※ 自分と同じポジションには変更不可
+// ※ 外野はユーザーに変更不可
 //==========================================================================
-void CPlayerManager::ChangeAI(CPlayer* pPlayer)
+void CPlayerManager::ChangeUserToAI(CPlayer* pPlayer)
 {
 	// 自身がAIの場合は抜ける
 	if (pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_AI) { return; }
@@ -463,6 +463,29 @@ void CPlayerManager::ChangeAI(CPlayer* pPlayer)
 		pChange->SetMyPlayerIdx(pPlayer->GetMyPlayerIdx());	// 元のAIの操作権を自身の操作権に変更
 		pPlayer->SetMyPlayerIdx(nOldUserIdx);				// 自身の操作権を元のAIの操作権に変更
 	}
+}
+
+//==========================================================================
+// ベース入替処理
+//==========================================================================
+void CPlayerManager::SwapBase(CPlayer* pPlayer, CPlayer* pTarget)
+{
+	// 二人のプレイヤーのベースが同じ場合は抜ける
+	if (pPlayer->GetBaseType() == pTarget->GetBaseType()) { return; }
+
+	// ターゲットのベースを保存
+	CPlayer::EBaseType oldBase = pTarget->GetBaseType();
+
+	// ターゲットと自身のベースを交換
+	pTarget->GetBase()->SetNewBase(pPlayer->GetBaseType());
+	pPlayer->GetBase()->SetNewBase(oldBase);
+
+	// ターゲットの操作権インデックスを保存
+	int nOldUserIdx = pTarget->GetMyPlayerIdx();
+
+	// ターゲットと自身の操作権を交換
+	pTarget->SetMyPlayerIdx(pPlayer->GetMyPlayerIdx());
+	pPlayer->SetMyPlayerIdx(nOldUserIdx);
 }
 
 //==========================================================================

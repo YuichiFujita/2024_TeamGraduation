@@ -72,12 +72,13 @@ public:
 	// メンバ関数
 	//=============================
 	int RegistPlayer(CPlayer* pPlayer, const int nPosIdx = -1);	// プレイヤー登録
-	void DeletePlayer(CPlayer* pPlayer);			// プレイヤー削除
-	SOutInfo GetOutInfo(const EOutPos out);			// 外野情報取得
-	CPlayer* GetOutPlayer(const EOutPos out);		// 外野プレイヤー取得
-	EOutPos GetOutPosition(const CPlayer* pPlayer);	// 外野ポジション取得
-	void ChangeUser(CPlayer* pPlayer);				// AIベースのユーザー変更
-	void ChangeAI(CPlayer* pPlayer);				// ユーザーベースのAI変更
+	void DeletePlayer(CPlayer* pPlayer);				// プレイヤー削除
+	SOutInfo GetOutInfo(const EOutPos out);				// 外野情報取得
+	CPlayer* GetOutPlayer(const EOutPos out);			// 外野プレイヤー取得
+	EOutPos GetOutPosition(const CPlayer* pPlayer);		// 外野ポジション取得
+	void ChangeAIToUser(CPlayer* pPlayer);				// ユーザーベースのAI変更
+	void ChangeUserToAI(CPlayer* pPlayer);				// AIベースのユーザー変更
+	void SwapBase(CPlayer* pPlayer, CPlayer* pTarget);	// ベース入替
 
 	//=============================
 	// 静的メンバ関数
