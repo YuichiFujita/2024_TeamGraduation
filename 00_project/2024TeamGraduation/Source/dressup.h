@@ -27,6 +27,7 @@ public:
 	{
 		TYPE_HAIR = 0,	// 髪
 		TYPE_ACCESSORY,	// アクセサリー
+		TYPE_FACE,		// 顔
 		TYPE_MAX
 	};
 

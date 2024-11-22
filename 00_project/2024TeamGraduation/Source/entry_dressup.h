@@ -27,13 +27,40 @@ class CEntry_Dressup : public CEntryScene
 public:
 
 	//=============================
+	// 列挙型定義
+	//=============================
+	// エディットする種類
+	enum EEditType
+	{
+		EDIT_PROCESS = 0,	// 実際の変更
+		EDIT_CHANGETYPE,	// 変更する種類
+		EDIT_MAX
+	};
+
+	// 変更する種類
+	enum EChangeType
+	{
+		TYPE_HAIR = 0,		// 髪
+		TYPE_ACCESSORY,		// アクセサリー
+		TYPE_FACE,			// 顔
+		TYPE_BODY,			// 体型
+		TYPE_HANDEDNESS,	// 利き手
+		TYPE_MAX
+	};
+
+	//=============================
 	// 構造体定義
 	//=============================
-	struct SEntryDressup
+	struct SEntryDressup	// 着せ替え情報
 	{
 		CPlayer* pPlayer;		// プレイヤー
 		CDressup* pHair;		// 髪着せ替え
 		CDressup* pAccessory;	// アクセ着せ替え
+		EEditType editType;		// エディットする種類
+		EChangeType changeType;	// 変更する種類
+
+		// コンストラクタ
+		SEntryDressup() : pPlayer(nullptr), pHair(nullptr), pAccessory(nullptr), editType(EEditType::EDIT_PROCESS), changeType(EChangeType::TYPE_HAIR) {}
 	};
 
 	CEntry_Dressup();
@@ -58,6 +85,9 @@ private:
 	//=============================
 	void Save();					// セーブ
 	void Load();					// ロード
+	void ChangeEditType(int i);		// エディットする種類変更
+	void ChangeChangeType(int i);	// 変更する箇所の種類変更
+
 	void ChangeBodyType(int i);		// 体型変更
 	void ChangeHandedness(int i);	// 利き手変更
 	void ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body);		// プレイヤー再生成

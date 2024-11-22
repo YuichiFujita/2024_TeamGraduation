@@ -71,7 +71,7 @@ void CDressup_Accessory::Update(const float fDeltaTime, const float fDeltaRate, 
 
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx))
 	{// ループ
-		m_nNowIdx = (m_nNowIdx + 1) % (modelSize - 1);
+		m_nNowIdx = (m_nNowIdx + 1) % modelSize;
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
 	{// 逆ループ

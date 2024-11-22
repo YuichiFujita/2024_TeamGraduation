@@ -195,14 +195,24 @@ void CEntry::Draw()
 void CEntry::ChangeEntryScene(ESceneType type)
 {
 	// 終了処理
-	if (m_pEntryScene != nullptr)
+	if (m_pEntryScene != nullptr &&
+		m_SceneType != ESceneType::SCENETYPE_SETUPTEAM)
 	{
 		m_pEntryScene->Uninit();
 		m_pEntryScene = nullptr;
 	}
+	else if (m_SceneType == ESceneType::SCENETYPE_SETUPTEAM)
+	{// チーム設定保存
+
+		// チーム等の設定取得
+		m_pSetupTeam = m_pEntryScene->GetSetupTeam();
+	}
 
 	// 生成
 	m_pEntryScene = CEntryScene::Create(type);
+
+	// シーン設定
+	m_SceneType = type;
 }
 
 //==========================================================================

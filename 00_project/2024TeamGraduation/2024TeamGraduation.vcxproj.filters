@@ -635,6 +635,9 @@
     <ClCompile Include="Source\playerPosAdj_entry.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerDressup.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1158,6 +1161,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj_entry.h">
       <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerDressup.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
