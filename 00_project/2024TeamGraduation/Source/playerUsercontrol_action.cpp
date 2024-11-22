@@ -14,6 +14,8 @@
 #include "playerAction.h"
 #include "teamStatus.h"
 #include "playerStatus.h"
+#include "playerManager.h"
+#include "debugproc.h"
 
 //==========================================================================
 // 定数定義
@@ -167,5 +169,101 @@ void CPlayerUserControlAction::Charm(CPlayer* player, const float fDeltaTime, co
 	{
 		//モテアクション発動準備状態
 		player->GetActionPattern()->SetEnableCharm(true);
+	}
+}
+
+//==========================================================================
+// ユーザー変更
+//==========================================================================
+void CPlayerUserControlAction::UserChange(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 最良目標情報
+	struct SBestDest
+	{
+		CPlayer* pPlayer;	// 現在の目標プレイヤー
+		float fMinValue;	// 現在の最良値
+	};
+
+	CPlayerManager* pPlayerManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
+	CInputGamepad* pPad = CInputGamepad::GetInstance();				// パッド情報
+	const int nPadIdx = player->GetMyPlayerIdx();					// プレイヤー操作権インデックス
+
+	// 右スティックのトリガー入力検知フラグ
+	const bool bInput = pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_X)
+					 || pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_Y);
+
+	if (bInput && !pPlayerManager->IsUserChange())
+	{ // 右スティックが入力されている且つ、まだ誰も同フレームでこの操作をしていない場合
+
+		CListManager<CPlayer> list = pPlayerManager->GetInList(player->GetTeam());	// 内野プレイヤーリスト
+		std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+		MyLib::Vector3 posThis = player->GetPosition();		// 操作プレイヤー位置
+		float fRotStick = pPad->GetStickRotR(nPadIdx);		// スティック向き
+
+		// 向き基準の最良目標情報
+		SBestDest bestRot;
+		bestRot.pPlayer = nullptr;
+		bestRot.fMinValue = D3DX_PI * 2.0f;
+
+		// TODO：距離基準も必要かな？
+#if 0
+		// 距離基準の最良目標情報
+		SBestDest bestDis;
+		bestDis.pPlayer = nullptr;
+		bestDis.fMinValue = CGameManager::GetInstance()->GetHalfCourtDiagonal();
+#endif
+
+		while (list.ListLoop(itr))
+		{ // リスト内の要素数分繰り返す
+
+			CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+
+			// 既にユーザーの場合次へ
+			if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) { continue; }
+
+			// 操作プレイヤーから見たAIの向きを計算
+			float fRotSpace = posThis.AngleXZ(pItrPlayer->GetPosition());
+
+			// 向きの差分を計算
+			float fRotDiff = fRotStick - fRotSpace;				// 差分の計算
+			UtilFunc::Transformation::RotNormalize(fRotDiff);	// 正規化 (3.14～-3.14)
+			fRotDiff = fabsf(fRotDiff);							// 絶対値化 (0.0f～3.14)
+
+			// 向き基準の最良目標を更新
+			if (bestRot.pPlayer == nullptr || bestRot.fMinValue < fRotDiff)
+			{ // より最良値が小さい場合
+
+				// 今回の最良値を保存
+				bestRot.fMinValue = fRotDiff;
+
+				// 目標プレイヤーを保存
+				bestRot.pPlayer = pItrPlayer;
+			}
+
+			// TODO：距離基準も必要かな？
+#if 0
+			// 距離基準の最良目標を更新
+			if (bestDis.pPlayer == nullptr || bestDis.fMinValue < )
+			{ // より最良値が小さい場合
+
+				// 今回の最良値を保存
+				bestDis.fMinValue = ;
+
+				// 目標プレイヤーを保存
+				bestDis.pPlayer = pItrPlayer;
+			}
+#endif
+		}
+
+		// 最良の目標プレイヤーに操作権を渡す
+		if (bestRot.pPlayer != nullptr)
+		{ // 変更対象が存在する場合
+
+			// ベースの入れ替え
+			pPlayerManager->SwapBase(player, bestRot.pPlayer);
+
+			// ユーザー変更操作済みにする
+			pPlayerManager->SetEnableUserChange(true);
+		}
 	}
 }

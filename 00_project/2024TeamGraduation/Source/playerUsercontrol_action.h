@@ -44,6 +44,7 @@ private:
 	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;			// ジャンプ
 	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// スペシャル
 	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// モテ
+	void UserChange(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ユーザー変更
 
 	//=============================
 	// メンバ変数

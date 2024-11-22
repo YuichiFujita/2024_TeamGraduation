@@ -42,7 +42,7 @@ CPlayerManager* CPlayerManager::m_pInstance = nullptr;	// 自身のインスタンス
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerManager::CPlayerManager()
+CPlayerManager::CPlayerManager() : m_bUserChange(false)	// ユーザー変更操作フラグ
 {
 	// メンバ変数をクリア
 	memset(&m_apOut[0], 0, sizeof(m_apOut));	// 外野プレイヤー
@@ -261,7 +261,8 @@ void CPlayerManager::Uninit()
 //==========================================================================
 void CPlayerManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	// ユーザー変更操作を初期化
+	m_bUserChange = false;
 }
 
 //==========================================================================
@@ -316,12 +317,25 @@ void CPlayerManager::DeletePlayer(CPlayer* pPlayer)
 }
 
 //==========================================================================
-// 外野情報の取得処理
+// 内野プレイヤーリストの取得処理
 //==========================================================================
-CPlayerManager::SOutInfo CPlayerManager::GetOutInfo(const EOutPos out)
+CListManager<CPlayer> CPlayerManager::GetInList(const CGameManager::ETeamSide team)
 {
-	// 外野情報の取得
-	return (this->*(m_InfoFuncList[out]))();
+	switch (team)
+	{ // チームサイドごとの処理
+	case CGameManager::ETeamSide::SIDE_LEFT:
+		return m_listInLeft;
+
+	case CGameManager::ETeamSide::SIDE_RIGHT:
+		return m_listInRight;
+
+	default:
+		assert(false);
+		break;
+	}
+
+	assert(false);
+	return {};
 }
 
 //==========================================================================
@@ -346,6 +360,15 @@ CPlayerManager::EOutPos CPlayerManager::GetOutPosition(const CPlayer* pPlayer)
 	}
 
 	return (EOutPos)-1;
+}
+
+//==========================================================================
+// 外野情報の取得処理
+//==========================================================================
+CPlayerManager::SOutInfo CPlayerManager::GetOutInfo(const EOutPos out)
+{
+	// 外野情報の取得
+	return (this->*(m_InfoFuncList[out]))();
 }
 
 //==========================================================================
