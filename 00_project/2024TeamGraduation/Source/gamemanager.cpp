@@ -31,10 +31,11 @@
 //==========================================================================
 namespace
 {
-	//ドッジボールコート情報
+	// ドッジボールコート情報
 	namespace Court
 	{
 		const MyLib::Vector3 SIZE = MyLib::Vector3(950.0f, 100.0f, 560.0f);	// サイズ
+		const float HALF_DIAGONAL = sqrtf(SIZE.x * SIZE.x + (SIZE.z * 2.0f) * (SIZE.z * 2.0f));	// チーム内コートの対角線
 	}
 }
 
@@ -440,6 +441,15 @@ MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& 
 	}
 
 	return size;
+}
+
+//==========================================================================
+// チームコートの対角線取得
+//==========================================================================
+float CGameManager::GetHalfCourtDiagonal()
+{
+	// チームコートの対角線を返す
+	return Court::HALF_DIAGONAL;
 }
 
 //==========================================================================

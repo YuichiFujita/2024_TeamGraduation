@@ -15,7 +15,7 @@ namespace
 {
 	const int SHOT_FPS = 15;	// 弾の間隔
 	const int DMG_TIME = 30;	// バイブの時間
-	const float DEADZONE = 0.2f;	// デッドゾーン
+	const float DEADZONE = 0.99f;	// デッドゾーン
 }
 CInputGamepad* CInputGamepad::m_pThisPtr = nullptr;	// 自身のポインタ
 
