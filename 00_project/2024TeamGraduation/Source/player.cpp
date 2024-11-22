@@ -73,7 +73,6 @@ namespace
 
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
-	const float HAVE_LONG = 10.0f;				// 持ち続けている
 }
 
 namespace Knockback
@@ -116,6 +115,12 @@ namespace Align	// 足揃え
 namespace Court	// 移動制限
 {
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
+}
+
+namespace UnCharm	// 非モテ
+{
+	const float HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
+	const float EDGE_ESCAPE = 10.0f;			// 端に逃げ続けている(秒数)
 }
 
 namespace Crab	// カニ歩き
@@ -1847,15 +1852,41 @@ void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const flo
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 
 	// 加算
-	m_fHaveTime += fDeltaTime * fDeltaRate * fSlowRate;
-	int nTime = static_cast<int>(m_fHaveTime * 1000);
-	int nLong = static_cast<int>(HAVE_LONG * 1000);
+	m_fHaveTime += fDeltaTime * fSlowRate;
 
-	if (nTime % nLong == 0)
+	if (m_fHaveTime > UnCharm::HAVE_LONG)
 	{// モテダウン
 
 		// モテ減算
 		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
+	
+		m_fHaveTime = 0.0;
+	}
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+void CPlayer::EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	//GetPosAdjuster();
+	//CheckEdgeEscape();
+	if (true)
+	{// 端だったら
+
+		// 加算
+		m_fEscapeTime += fDeltaTime * fSlowRate;
+	}
+
+	if (m_fHaveTime > UnCharm::EDGE_ESCAPE)
+	{// モテダウン
+
+		// モテ減算
+		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
+
+		m_fHaveTime = 0.0;
 	}
 }
 
