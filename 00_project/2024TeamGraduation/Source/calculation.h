@@ -1652,6 +1652,51 @@ namespace UtilFunc	// 便利関数
 		}
 
 		/**
+		@brief	線分とベクトルの当たり判定
+		@param	pos0			[in]	線分左端の位置
+		@param	pos1			[in]	線分右端の位置
+		@param	vecOrigin		[in]	ベクトルの始点
+		@param	vecDir			[in]	ベクトルの方向
+		@param	pIntersection	[inout]	交点
+		@return	bool
+		*/
+		inline bool IsVecToLine(const MyLib::Vector3& pos0, const MyLib::Vector3& pos1, MyLib::Vector3& vecOrigin, const MyLib::Vector3& vecDir, MyLib::Vector3* pIntersection = nullptr)
+		{
+			// 境界線のベクトル
+			MyLib::Vector3 vecLine = pos1 - pos0;
+
+			// 2Dベクトルの外積
+			float det = vecLine.x * vecLine.z - vecLine.z * vecLine.x;
+
+			// 平行の場合、交差しない
+			if (fabs(det) < 1e-6f) return false;
+
+			// 線分とベクトルの始点差分
+			float deltaX = vecOrigin.x - pos0.x;
+			float deltaZ = vecOrigin.z - pos0.z;
+
+			// パラメータを計算
+			float lineRate = (deltaX * vecDir.z - deltaZ * vecDir.x) / det;		// 線分に対する割合
+			float vecRate = (deltaX * vecLine.z - deltaZ * vecLine.z) / det;	// 線分に対するベクトルの割合
+
+			// 交差判定
+			if (lineRate >= 0.0f && lineRate <= 1.0f &&
+				vecRate >= 0.0f)
+			{// 線分の範囲内 && ベクトルの右側にある場合
+
+				if (pIntersection != nullptr)
+				{// 交点が欲しい場合
+
+					// 交点の計算
+					*pIntersection = pos0 + vecLine * lineRate;
+				}
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		@brief	線分の右にいるかどうか(2D)
 		@details 線分に対して右にいるかの判定なので、左に居て欲しい場合はpos0とpos1を入れ替えて使用
 		@param	pos0		[in]	線分左端の位置

@@ -83,6 +83,16 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 
 	// プレイヤー最大数変更
 	ChangeMaxPlayer();
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	// 一旦シーン切り替え
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
+	{
+
+	}
 }
 
 //==========================================================================

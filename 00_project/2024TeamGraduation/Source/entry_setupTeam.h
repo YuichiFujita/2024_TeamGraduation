@@ -36,8 +36,16 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 
 	//--------------------------
+	// チーム情報
+	//--------------------------
+	int GetPlayerNum(CGameManager::ETeamSide side) { return m_nPlayerNum[side]; }	// プレイヤーの数取得
+	int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得
+	int GetEntryIdx(int i) { return m_nEntryIdx[i]; }	// エントリーのインデックス
+
+	//--------------------------
 	// その他
 	//--------------------------
+	virtual CEntry_SetUpTeam* GetSetupTeam() { return this; }	// チーム等の設定取得
 	virtual void Debug() override;
 
 private:
