@@ -190,6 +190,22 @@ void CEntry::Draw()
 }
 
 //==========================================================================
+// エントリーシーン切り替え
+//==========================================================================
+void CEntry::ChangeEntryScene(ESceneType type)
+{
+	// 終了処理
+	if (m_pEntryScene != nullptr)
+	{
+		m_pEntryScene->Uninit();
+		m_pEntryScene = nullptr;
+	}
+
+	// 生成
+	m_pEntryScene = CEntryScene::Create(type);
+}
+
+//==========================================================================
 // シーン設定
 //==========================================================================
 void CEntry::SetSceneType(ESceneType type)

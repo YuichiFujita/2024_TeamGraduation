@@ -78,6 +78,7 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 		Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Jump(player, fDeltaTime, fDeltaRate, fSlowRate);
+		UserChange(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 

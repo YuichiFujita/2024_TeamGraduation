@@ -552,11 +552,11 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	if (CGameManager::GetInstance()->IsControll())
 	{ // 行動できるとき
 
-		// ベース変更の更新
-		m_pBase->UpdateChangeBase();
-
 		// ベースの更新
 		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+		// ベース変更の更新
+		m_pBase->UpdateChangeBase();
 	}
 
 	// 情報取得
@@ -1205,6 +1205,9 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 
 	// 死んだ
 	result->isdeath = true;
+
+	// 近くのAIに操作権を移し、自身をAIにする
+	CPlayerManager::GetInstance()->ChangeUserToAI(this);
 }
 
 //==========================================================================

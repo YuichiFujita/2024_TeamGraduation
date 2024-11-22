@@ -59,7 +59,7 @@ public:
 	void SetSceneType(ESceneType type);					// シーン設定
 	ESceneType GetSceneType() { return m_SceneType; }	// シーン取得
 
-	void SetEntryScene(ESceneType type);
+	void ChangeEntryScene(ESceneType type);					// エントリーシーン切り替え
 	CEntryScene* GetEntryScene() { return m_pEntryScene; }	// エントリーシーン取得
 
 

@@ -133,11 +133,12 @@ namespace
 
 	namespace pass
 	{
-		const float MOVE_RATE = 0.015f;		// 移動速度の距離割合
-		const float TARGET_PULSY = 50.0f;	// ターゲット対象のY座標加算量
-		const float TIME_NORAML = 1.2f;		// 通常パスの経過時間
-		const float TIME_HOMING = 1.0f;		// ホーミングパスの経過時間
-		const float MAX_HEIGHT = 250.0f;	// ホーミングの最高到達点
+		const float MOVE_RATE = 0.015f;			// 移動速度の距離割合
+		const float HOMING_TIMERATE = 0.65f;	// Y座標のホーミングを行う時間割合
+		const float TARGET_PULSY = 50.0f;		// ターゲット対象のY座標加算量
+		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
+		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
+		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
 	}
 }
 
@@ -1003,18 +1004,6 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
 	MyLib::Vector3 vecMove = GetMove();						// 移動量
 
-	// XZ平面の位置をターゲット位置と同一にする
-	m_posPassEnd.x = posTarget.x;
-	m_posPassEnd.z = posTarget.z;
-
-	// パス終了Y座標を更新
-	if (posTarget.y + pass::TARGET_PULSY > m_posPassEnd.y)
-	{ // ターゲット位置が現在のパス終了Y座標より高い場合
-
-		// 現在のターゲット位置に再設定
-		m_posPassEnd.y = posTarget.y + pass::TARGET_PULSY;
-	}
-
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime * fSlowRate;
 	if (m_fStateTime <= pass::TIME_HOMING)
@@ -1022,6 +1011,18 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 		// 経過時間の割合を計算
 		float fTimeRate = m_fStateTime / pass::TIME_HOMING;
 		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
+
+		// XZ平面の位置をターゲット位置と同一にする
+		m_posPassEnd.x = posTarget.x;
+		m_posPassEnd.z = posTarget.z;
+
+		// パス終了Y座標を更新
+		if (m_posPassEnd.y < posTarget.y + pass::TARGET_PULSY && fTimeRate < pass::HOMING_TIMERATE)
+		{ // 現在のパス終了Y座標がターゲット位置より低い且つ、経過時間の割合が前半の場合
+
+			// 現在のターゲット位置に再設定
+			m_posPassEnd.y = posTarget.y + pass::TARGET_PULSY;
+		}
 
 		// 放物線上に位置を補正
 		posBall = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, pass::MAX_HEIGHT, fTimeRate);
