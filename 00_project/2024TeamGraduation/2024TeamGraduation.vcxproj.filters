@@ -623,6 +623,9 @@
     <ClCompile Include="Source\entryscene.cpp">
       <Filter>mode\entry</Filter>
     </ClCompile>
+    <ClCompile Include="Source\titleLogo.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1134,6 +1137,9 @@
     </ClInclude>
     <ClInclude Include="Source\entryscene.h">
       <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\titleLogo.h">
+      <Filter>mode\title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

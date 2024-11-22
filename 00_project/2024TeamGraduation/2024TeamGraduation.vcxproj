@@ -325,6 +325,7 @@
     <ClCompile Include="Source\timerUI.cpp" />
     <ClCompile Include="Source\timeUI.cpp" />
     <ClCompile Include="Source\title.cpp" />
+    <ClCompile Include="Source\titleLogo.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
@@ -497,6 +498,7 @@
     <ClInclude Include="Source\timerUI.h" />
     <ClInclude Include="Source\timeUI.h" />
     <ClInclude Include="Source\title.h" />
+    <ClInclude Include="Source\titleLogo.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
     <ClInclude Include="Source\Xload.h" />
