@@ -13,6 +13,8 @@
 #include "sound.h"
 #include "particle.h"
 #include "MyEffekseer.h"
+#include "titleLogo.h"
+
 #include "camera.h"
 
 //==========================================================================
@@ -110,6 +112,9 @@ HRESULT CTitle::Init()
 
 	// ƒV[ƒ“‚Ìí—Ş
 	m_SceneType = SCENETYPE::SCENETYPE_NONE;
+
+	// ƒƒS‚Ì¶¬
+	CTitleLogo::Create();
 
 	// ¬Œ÷
 	return S_OK;
