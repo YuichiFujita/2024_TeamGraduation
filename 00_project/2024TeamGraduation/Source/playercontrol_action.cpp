@@ -46,7 +46,7 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 	int nMotionType = pMotion->GetType();
 
 	if ((pMotion->IsGetMove(nMotionType) == 1 || pMotion->IsGetCancelable()) &&
-		player->IsPossibleMove())
+		(player->IsPossibleMove() || player->IsPossibleAction()))
 	{// ˆÚ“®‰Â”\ƒ‚[ƒVƒ‡ƒ“‚ÌŽž
 
 		//--------------------------
@@ -215,6 +215,4 @@ void CPlayerControlAction::UpdateThrowDrop(const float fDeltaTime, const float f
 
 	// “Š‚°‚Ì”»’è
 	m_bThrowDrop = m_fThrowDropTime > 0.0f;
-
-	ImGui::Text("m_bThrowDrop: [%s]", m_bThrowDrop ? "true" : "false");
 }

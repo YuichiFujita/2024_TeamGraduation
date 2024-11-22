@@ -20,6 +20,7 @@
 // 遷移先
 #include "game.h"
 #include "title.h"
+#include "entry.h"
 #include "result.h"
 #include "tutorial.h"
 #include "ranking.h"
@@ -73,50 +74,48 @@ CScene::~CScene()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CScene *CScene::Create(CScene::MODE mode)
+CScene* CScene::Create(CScene::MODE mode)
 {
 	// 生成用のオブジェクト
-	CScene *pScene = nullptr;
+	CScene* pScene = nullptr;
 
-	if (pScene == nullptr)
-	{// nullptrだったら
+	// 生成処理
+	switch (mode)
+	{
+	case CScene::MODE_TITLE:
+		pScene = CTitle::Create();
+		break;
 
-		// 生成処理
-		switch (mode)
-		{
-		case CScene::MODE_TITLE:
-			pScene = CTitle::Create();
-			break;
+	case CScene::MODE::MODE_ENTRY:
+		pScene = CEntry::Create();
+		break;
 
-		case CScene::MODE_GAME:
-		case CScene::MODE::MODE_GAMETUTORIAL:
-			pScene = CGame::Create(mode);
-			break;
+	case CScene::MODE_GAME:
+	case CScene::MODE::MODE_GAMETUTORIAL:
+		pScene = CGame::Create(mode);
+		break;
 
-		case MODE_TUTORIAL:
-			pScene = CTutorial::Create();
-			break;
+	case MODE_TUTORIAL:
+		pScene = CTutorial::Create();
+		break;
 
-		case CScene::MODE_RESULT:
-			pScene = DEBUG_NEW CResult;
-			break;
+	case CScene::MODE_RESULT:
+		pScene = DEBUG_NEW CResult;
+		break;
 
-		case CScene::MODE_RANKING:
-			pScene = DEBUG_NEW CRanking;
-			break;
-		}
-
-		if (pScene != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// モードの設定
-			pScene->m_mode = mode;
-		}
-
-		return pScene;
+	case CScene::MODE_RANKING:
+		pScene = DEBUG_NEW CRanking;
+		break;
 	}
 
-	return nullptr;
+	if (pScene != nullptr)
+	{// メモリの確保が出来ていたら
+
+		// モードの設定
+		pScene->m_mode = mode;
+	}
+
+	return pScene;
 }
 
 //==========================================================================
@@ -207,7 +206,6 @@ void CScene::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	float fRate = GET_MANAGER->GetSlowRate();
 	ImGui::DragFloat("SlowRate", &fRate, 0.01f, 0.0f, 1.0f, "%.2f");
 	GET_MANAGER->SetSlowRate(fRate);
-
 #endif
 }
 
@@ -219,10 +217,3 @@ void CScene::Draw()
 	
 }
 
-//==========================================================================
-// 現在のモード取得
-//==========================================================================
-CScene::MODE CScene::GetMode()
-{
-	return m_mode;
-}

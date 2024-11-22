@@ -41,8 +41,14 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
 	//--------------------------
+	// キャラクター
+	//--------------------------
+	CObjectChara* BindObjectCharacter(CObjectChara* pObjChara) { m_pObjChara = pObjChara; }	// キャラクターのポインタ
+
+	//--------------------------
 	// その他
 	//--------------------------
+	void SetControllIdx(int idx) { m_nControllIdx = idx; }	// 操作するインデックス設定
 	virtual void Debug();
 
 	// 静的関数
@@ -57,6 +63,7 @@ protected:
 	//=============================
 	int m_nSwitchIdx;			// 切り替えるインデックス
 	int m_nNowIdx;				// 現在のインデックス
+	int m_nControllIdx;			// 操作するインデックス
 	CObjectChara* m_pObjChara;	// キャラクターのポインタ
 	std::vector<std::string> m_vecModelName;	// モデル名
 

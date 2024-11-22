@@ -43,6 +43,7 @@
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
+#include "playerPosAdj_entry.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -72,7 +73,6 @@ namespace
 
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
-	const float HAVE_LONG = 10.0f;				// 持ち続けている
 }
 
 namespace Knockback
@@ -115,6 +115,12 @@ namespace Align	// 足揃え
 namespace Court	// 移動制限
 {
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
+}
+
+namespace UnCharm	// 非モテ
+{
+	const float HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
+	const float EDGE_ESCAPE = 10.0f;			// 端に逃げ続けている(秒数)
 }
 
 namespace Crab	// カニ歩き
@@ -207,7 +213,8 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sKnockback = SKnockbackInfo();	// ノックバック情報
 
 	// 行動フラグ
-	m_bPossibleMove = false;		// 移動可能フラグ
+	m_bPossibleMove = false;		// 行動可能フラグ
+	m_bPossibleAction = false;		// 移動可能フラグ
 	m_bAutoMotionSet = false;		// オートモーション設定
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
@@ -235,7 +242,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
-	m_Handress = EHandedness::HAND_R;	// 利き手
+	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
 
 	// ベースタイプを初期化
@@ -271,7 +278,7 @@ CPlayer* CPlayer::Create
 		pPlayer->m_BodyType = typeBody;
 
 		// 利き手を設定
-		pPlayer->m_Handress = typeHand;
+		pPlayer->m_Handedness = typeHand;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -307,7 +314,7 @@ HRESULT CPlayer::Init()
 	m_bPossibleMove = true;
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handress]);
+	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;
@@ -328,13 +335,13 @@ HRESULT CPlayer::Init()
 	// 着せ替え
 	if (m_pDressup_Hair == nullptr)
 	{
-		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, 15);	// 髪着せ替え
+		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, CPlayer::ID_HAIR);
 	}
 
 	// アクセ
 	if (m_pDressup_Accessory == nullptr)
 	{
-		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
 	}
 
 	// スぺシャルエフェクト
@@ -542,7 +549,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
+	if (CGameManager::GetInstance()->IsControll())
 	{ // 行動できるとき
 
 		// ベースの更新
@@ -1724,6 +1731,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 
 	// 移動不可
 	m_bPossibleMove = false;
+	m_bPossibleAction = false;
 
 	// 走って戻す
 	SetMotion(CPlayer::EMotion::MOTION_WALK);
@@ -1756,6 +1764,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	if (ratio >= 1.0f)
 	{// 完了
 		m_bPossibleMove = true;
+		m_bPossibleAction = true;
 		SetState(EState::STATE_NONE);
 	}
 }
@@ -1790,6 +1799,10 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 
 	case EFieldArea::FIELD_OUT:
 		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
+		break;
+
+	case EFieldArea::FIELD_ENTRY:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjEntry;
 		break;
 
 	default:
@@ -1842,15 +1855,41 @@ void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const flo
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 
 	// 加算
-	m_fHaveTime += fDeltaTime * fDeltaRate * fSlowRate;
-	int nTime = static_cast<int>(m_fHaveTime * 1000);
-	int nLong = static_cast<int>(HAVE_LONG * 1000);
+	m_fHaveTime += fDeltaTime * fSlowRate;
 
-	if (nTime % nLong == 0)
+	if (m_fHaveTime > UnCharm::HAVE_LONG)
 	{// モテダウン
 
 		// モテ減算
 		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
+	
+		m_fHaveTime = 0.0;
+	}
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+void CPlayer::EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	//GetPosAdjuster();
+	//CheckEdgeEscape();
+	if (true)
+	{// 端だったら
+
+		// 加算
+		m_fEscapeTime += fDeltaTime * fSlowRate;
+	}
+
+	if (m_fHaveTime > UnCharm::EDGE_ESCAPE)
+	{// モテダウン
+
+		// モテ減算
+		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
+
+		m_fHaveTime = 0.0;
 	}
 }
 

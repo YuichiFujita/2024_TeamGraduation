@@ -79,7 +79,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		// チームコートに戻す
 		CheckReturn(pPlayer);
 
-#if 0
+#if 1
 		// おっとっとする
 		CheckUnstable(pPlayer);
 #endif
@@ -94,9 +94,7 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 {
-	MyLib::Vector3 pos = pPlayer->GetPosition();	// 位置
 	CPlayer::EState state = pPlayer->GetState();	// 状態
-	CBall* pBall = pPlayer->GetBall();				// ボール情報
 
 	// もう戻ってる場合は抜ける
 	if (state == CPlayer::EState::STATE_INVADE_RETURN
@@ -105,26 +103,8 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 	if (IsLineOut(pPlayer))
 	{ // ラインを超えていた場合
 
-		// ノックバックの開始位置を設定
-		CPlayer::SKnockbackInfo infoKnock = pPlayer->GetKnockBackInfo();	// 取得
-		infoKnock.posStart = pos;				// 位置設定
-		pPlayer->SetKnockBackInfo(infoKnock);	// 反映
-
-		if (pBall == nullptr)
-		{ // ボールを持っていない場合
-
-			// 侵入から戻る状態にする
-			pPlayer->SetState(CPlayer::EState::STATE_INVADE_RETURN);
-		}
-		else
-		{ // ボールを持ってる場合
-
-			// トスモーションの再生
-			pPlayer->SetMotion(CPlayer::EMotion::MOTION_TOSS);
-
-			// トス状態にする
-			pPlayer->SetState(CPlayer::EState::STATE_INVADE_TOSS);
-		}
+		// 復帰設定
+		ReturnSetting(pPlayer);
 	}
 }
 
@@ -134,7 +114,9 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 {
 	// 侵入から戻る状態
-	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN) return;
+	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN ||
+		pPlayer->GetState() == CPlayer::EState::STATE_INVADE_TOSS)
+		return;
 
 	CMotion* motion = pPlayer->GetMotion();
 	CPlayerAction* pAction = pPlayer->GetActionPattern();
@@ -142,8 +124,16 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;	// アクション種類
 
-	bool bBrake = pPlayer->IsBrake();						// ブレーキフラグ
-	MyLib::Vector3 move = pPlayer->GetMove();	// 移動量
+	bool bBrake = pPlayer->IsBrake();							// ブレーキフラグ
+	MyLib::Vector3 move = pPlayer->GetMove();					// 移動量
+
+	// 別アクション中
+	if (pAction->GetAction() != CPlayer::EAction::ACTION_NONE &&
+		pAction->GetAction() != CPlayer::EAction::ACTION_UNSTABLE)
+	{
+		pPlayer->SetEnableAction(true);
+		return;
+	}
 
 	if (IsUnstable(pPlayer))
 	{ // おっとっとラインを超えていた場合
@@ -151,12 +141,13 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 		// ブレーキフラグ
 		if (!bBrake)
 		{
+			move.x = 0.0f;
 			bBrake = true;
 		}
 		else
 		{
 			move.x = 0.0f;
-			move.z = 0.0f;
+			pPlayer->SetEnableAction(true);
 			pPlayer->SetEnableMove(false);
 		}
 
@@ -170,22 +161,34 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 			return;
 		}
 
-		// 敵側に入力された
-		if (IsInputLine(pPlayer))
-		{
-			// チームコートに戻す
-			CheckReturn(pPlayer);
+		// 入力状況
+		EInputUnstable inputUnstable = IsInputLine(pPlayer);
+		if (inputUnstable == EInputUnstable::INPUT_ENEMY)
+		{// 敵側に入力された
+
+			// 復帰設定
+			ReturnSetting(pPlayer);
+		}
+		else if (inputUnstable == EInputUnstable::INPUT_FRIEND)
+		{// 味方側に入力された
+
+			bBrake = false;
+			pPlayer->SetEnableAction(true);
+			pPlayer->SetEnableMove(true);
+			return;
 		}
 
 		// 上書き防止
 		if (motion->GetType() == CPlayer::EMotion::MOTION_UNSTABLE)	return;
 
 		// おっとっとモーションの再生
-		pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+		if (motion->GetType() != CPlayer::EMotion::MOTION_TOSS)
+		{
+			pPlayer->SetMotion(CPlayer::EMotion::MOTION_UNSTABLE);
+		}
 
 		// アクション設定
 		action = CPlayer::EAction::ACTION_UNSTABLE;
-		pAction->SetAction(action);
 	}
 	else
 	{
@@ -195,4 +198,82 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 	// 設定
 	pPlayer->SetMove(move);
 	pPlayer->SetEnableBrake(bBrake);
+	pAction->SetAction(action);
+}
+
+//==========================================================================
+// 復帰設定
+//==========================================================================
+void CPlayerPosAdjIn::ReturnSetting(CPlayer* pPlayer)
+{
+	MyLib::Vector3 pos = pPlayer->GetPosition();	// 位置
+	CBall* pBall = pPlayer->GetBall();				// ボール情報
+
+	// ノックバックの開始位置を設定
+	CPlayer::SKnockbackInfo infoKnock = pPlayer->GetKnockBackInfo();	// 取得
+	infoKnock.posStart = pos;				// 位置設定
+	pPlayer->SetKnockBackInfo(infoKnock);	// 反映
+
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	if (pBall == nullptr)
+	{ // ボールを持っていない場合
+
+		// 侵入から戻る状態にする
+		pPlayer->SetState(CPlayer::EState::STATE_INVADE_RETURN);
+	}
+	else
+	{ // ボールを持ってる場合
+
+		// トスモーションの再生
+		pPlayer->SetMotion(CPlayer::EMotion::MOTION_TOSS);
+
+		// トス状態にする
+		pPlayer->SetState(CPlayer::EState::STATE_INVADE_TOSS);
+
+		// モテ減少
+		pGameMgr->SubCharmValue(team, CCharmManager::ETypeSub::SUB_INVADE_RUN);
+	}
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+bool CPlayerPosAdjIn::CheckEdgeEscape(CPlayer* pPlayer)
+{
+	MyLib::Vector3 pos = pPlayer->GetPosition();
+	CGameManager* pGmMgr = CGameManager::GetInstance();
+	MyLib::Vector3 posCourt = MyLib::Vector3();											// 自陣中央
+	MyLib::Vector3 sizeCourt = pGmMgr->GetCourtSize(pPlayer->GetTeam(), posCourt);		// 自陣サイズ
+
+	// ボール情報
+	CBall* pBall = pGmMgr->GetBall();
+	CPlayer* pBallPlayer = pBall->GetPlayer();
+	MyLib::Vector3 posBP = pBallPlayer->GetPosition();
+
+	// ボール所持プレイヤーと自陣中央のベクトル
+	D3DXVECTOR3 vecDiff = (posBP - pos).Normal();
+
+	// 端エリアをベクトルから交差判定
+	// 自陣(上下左右)
+
+	// 判定
+	//UtilFunc::Collision::CollisionLine3D(line0, line1, vecDiff);
+	if (true)
+	{// ライン交差
+
+	}
+
+
+	bool bCol = false;
+
+	if (true)
+	{// 端エリア内にいるか
+		
+		bCol = true;
+	}
+
+	return bCol;
 }

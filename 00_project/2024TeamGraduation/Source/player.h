@@ -36,6 +36,13 @@ class CBindKey;			// 割当キー基底クラス
 class CPlayer : public CObjectChara
 {
 public:
+
+	//=============================
+	// 定数
+	//=============================
+	static constexpr int ID_HAIR = 15;			// 髪のインデックス番号
+	static constexpr int ID_ACCESSORY = 16;	// アクセのインデックス番号
+
 	//=============================
 	// 列挙型定義
 	//=============================
@@ -181,6 +188,7 @@ public:
 	{
 		FIELD_IN = 0,	// 内野
 		FIELD_OUT,		// 外野
+		FIELD_ENTRY,	// エントリー用
 		FIELD_MAX		// この列挙型の総数
 	};
 
@@ -237,6 +245,8 @@ public:
 	{
 		bool bHit;	// 当たったか
 		EHit eHit;	// 動作状態
+
+		SHitInfo() : bHit(false), eHit(EHit::HIT_NONE) {}
 	};
 
 	//=============================
@@ -258,8 +268,10 @@ public:
 	// モーション
 	//=============================
 	void SetMotion(int motionIdx, int startKey = 0, bool bBlend = true) const;			// モーションの設定
-	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }		// 移動可能フラグ設定
-	bool IsPossibleMove()						{ return m_bPossibleMove; }				// 移動可能フラグ取得
+	void SetEnableMove(bool bPossible)			{ m_bPossibleMove = bPossible; }		// 行動可能フラグ設定
+	bool IsPossibleMove()						{ return m_bPossibleMove; }				// 行動可能フラグ取得
+	void SetEnableAction(bool bPossible)		{ m_bPossibleAction = bPossible; }		// 移動可能フラグ設定
+	bool IsPossibleAction()						{ return m_bPossibleAction; }			// 移動可能フラグ取得
 	void SetEnableDash(bool bDash)				{ m_bDash = bDash; }					// ダッシュ状況設定
 	bool IsDash()								{ return m_bDash; }						// ダッシュ判定
 	void SetEnableJump(bool bJump)				{ m_bJump = bJump; }					// ジャンプ状況設定
@@ -308,6 +320,8 @@ public:
 	EFieldArea GetAreaType() const { return m_typeArea; }			// ポジション取得
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
 	EState GetState() { return m_state; }					// 状態取得
+	EBody GetBodyType() { return m_BodyType; }				// 体型取得
+	EHandedness GetHandedness() { return m_Handedness; }	// 利き手取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }	// 自分のインデックス取得
 	int GetPositionIdx() const { return m_nPosIdx; }		// 自分のポジション別インデックス取得
@@ -400,6 +414,7 @@ private:
 	//-----------------------------
 	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
 	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
+	void EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 端に逃げ続ける
 
 	//-----------------------------
 	// モーション系関数
@@ -438,7 +453,8 @@ private:
 	//-----------------------------
 	// 行動フラグ
 	//-----------------------------
-	bool m_bPossibleMove;		// 移動可能フラグ
+	bool m_bPossibleMove;		// 行動可能フラグ
+	bool m_bPossibleAction;		// アクション可能フラグ
 	bool m_bAutoMotionSet;		// オートモーション設定
 	bool m_bJump;				// ジャンプ中かどうか
 	bool m_bDash;				// ダッシュ判定
@@ -470,12 +486,13 @@ private:
 	// その他変数
 	//-----------------------------
 	float m_fHaveTime;			// ボール所持タイマー
+	float m_fEscapeTime;		// 端逃げタイマー
 	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
 	int m_nPosIdx;				// ポジション別インデックス
 	CShadow* m_pShadow;			// 影の情報
 	CBall* m_pBall;				// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
-	EHandedness m_Handress;		// 利き手
+	EHandedness m_Handedness;	// 利き手
 	EBody m_BodyType;			// 体型
 	const EFieldArea m_typeArea;				// ポジション
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド

@@ -8,7 +8,6 @@
 #ifndef _SCENE_H_
 #define _SCENE_H_	// 二重インクルード防止
 
-
 //==========================================================================
 // 前方宣言
 //==========================================================================
@@ -18,15 +17,19 @@ class CEdit_Map;
 //==========================================================================
 // クラス定義
 //==========================================================================
-// シーンクラス定義
+// シーンクラス
 class CScene
 {
 public:
-	// モードの列挙型定義
-	enum MODE
+
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum MODE	// モード
 	{
 		MODE_NONE = 0,		// なし
 		MODE_TITLE,			// タイトル
+		MODE_ENTRY,			// エントリー
 		MODE_TUTORIAL,		// チュートリアル
 		MODE_GAME,			// ゲーム
 		MODE_GAMETUTORIAL,	// ゲーム
@@ -43,13 +46,11 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	virtual void Draw();
-
 	virtual void Kill();
 
-	static CScene *Create(MODE mode);
-	MODE GetMode();						// 現在のモード取得
+	MODE GetMode() { return m_mode; }	// 現在のモード取得
 
-protected:
+	static CScene* Create(MODE mode);	// 生成
 
 private:
 
