@@ -214,6 +214,10 @@ void CPlayerPosAdjIn::ReturnSetting(CPlayer* pPlayer)
 	infoKnock.posStart = pos;				// 位置設定
 	pPlayer->SetKnockBackInfo(infoKnock);	// 反映
 
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
 	if (pBall == nullptr)
 	{ // ボールを持っていない場合
 
@@ -228,5 +232,48 @@ void CPlayerPosAdjIn::ReturnSetting(CPlayer* pPlayer)
 
 		// トス状態にする
 		pPlayer->SetState(CPlayer::EState::STATE_INVADE_TOSS);
+
+		// モテ減少
+		pGameMgr->SubCharmValue(team, CCharmManager::ETypeSub::SUB_INVADE_RUN);
 	}
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+bool CPlayerPosAdjIn::CheckEdgeEscape(CPlayer* pPlayer)
+{
+	MyLib::Vector3 pos = pPlayer->GetPosition();
+	CGameManager* pGmMgr = CGameManager::GetInstance();
+	MyLib::Vector3 posCourt = MyLib::Vector3();											// 自陣中央
+	MyLib::Vector3 sizeCourt = pGmMgr->GetCourtSize(pPlayer->GetTeam(), posCourt);		// 自陣サイズ
+
+	// ボール情報
+	CBall* pBall = pGmMgr->GetBall();
+	CPlayer* pBallPlayer = pBall->GetPlayer();
+	MyLib::Vector3 posBP = pBallPlayer->GetPosition();
+
+	// ボール所持プレイヤーと自陣中央のベクトル
+	D3DXVECTOR3 vecDiff = (posBP - pos).Normal();
+
+	// 端エリアをベクトルから交差判定
+	// 自陣(上下左右)
+
+	// 判定
+	//UtilFunc::Collision::CollisionLine3D(line0, line1, vecDiff);
+	if (true)
+	{// ライン交差
+
+	}
+
+
+	bool bCol = false;
+
+	if (true)
+	{// 端エリア内にいるか
+		
+		bCol = true;
+	}
+
+	return bCol;
 }

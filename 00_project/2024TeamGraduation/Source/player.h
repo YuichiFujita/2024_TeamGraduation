@@ -402,6 +402,7 @@ private:
 	//-----------------------------
 	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
 	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
+	void EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 端に逃げ続ける
 
 	//-----------------------------
 	// モーション系関数
@@ -473,6 +474,7 @@ private:
 	// その他変数
 	//-----------------------------
 	float m_fHaveTime;			// ボール所持タイマー
+	float m_fEscapeTime;		// 端逃げタイマー
 	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
 	int m_nPosIdx;				// ポジション別インデックス
 	CShadow* m_pShadow;			// 影の情報
