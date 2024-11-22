@@ -70,6 +70,7 @@ HRESULT CEntry_Dressup::Init()
 			CPlayer::EHandedness::HAND_R,		// 利き手
 			CScene::MODE::MODE_ENTRY
 		);
+		m_vecDressupInfo[i].pPlayer->SetOriginPosition(pos + offset);
 
 		// エントリーした番号
 		int entryIdx = pSetupTeam->GetEntryIdx(i);
@@ -82,7 +83,7 @@ HRESULT CEntry_Dressup::Init()
 		
 		// アクセ切り替え生成
 		m_vecDressupInfo[i].pAccessory = CDressup::Create(
-			CDressup::EType::TYPE_HAIR,		// 着せ替えの種類
+			CDressup::EType::TYPE_ACCESSORY,		// 着せ替えの種類
 			m_vecDressupInfo[i].pPlayer,	// 変更するプレイヤー
 			CPlayer::ID_ACCESSORY);			// 変更箇所のインデックス
 
@@ -300,7 +301,7 @@ void CEntry_Dressup::ChangeHandedness(int i)
 void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body)
 {
 	// 情報保存
-	MyLib::Vector3 pos = m_vecDressupInfo[i].pPlayer->GetPosition();
+	MyLib::Vector3 pos = m_vecDressupInfo[i].pPlayer->GetOriginPosition();
 
 	// 削除
 	m_vecDressupInfo[i].pPlayer->Kill();
@@ -397,7 +398,20 @@ void CEntry_Dressup::Debug()
 			Save();
 		}
 
-		
+		// 今回のサイズ
+		int size = static_cast<int>(m_vecDressupInfo.size());
+		for (int i = 0; i < size; i++)
+		{
+			std::string treename = "Info : " + std::to_string(i);	// ツリー名
+			if (ImGui::TreeNode(treename.c_str()))
+			{
+				const auto& info = m_vecDressupInfo[i];
+
+				ImGui::Text("editType[%s]", magic_enum::enum_name(info.editType));
+				ImGui::Text("changeType[%s]", magic_enum::enum_name(info.changeType));
+				ImGui::TreePop();
+			}
+		}
 
 		ImGui::TreePop();
 	}

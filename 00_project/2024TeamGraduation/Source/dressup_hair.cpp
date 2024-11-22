@@ -68,13 +68,23 @@ void CDressup_Hair::Update(const float fDeltaTime, const float fDeltaRate, const
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	int modelSize = static_cast<int>(m_vecModelName.size());
+	bool bChange = false;	// 変更フラグ
+
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx))
 	{// ループ
 		m_nNowIdx = (m_nNowIdx + 1) % modelSize;
+		bChange = true;
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
 	{// 逆ループ
 		m_nNowIdx = (m_nNowIdx + (modelSize - 1)) % modelSize;
+		bChange = true;
+	}
+
+	// モデル切り替え
+	if (bChange)
+	{
+		m_pObjChara->ChangeObject(m_nSwitchIdx, m_vecModelName[m_nNowIdx]);
 	}
 }
 
