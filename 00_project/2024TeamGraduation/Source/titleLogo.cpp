@@ -199,13 +199,10 @@ void CTitleLogo::UpdateSub()
 {
 	// ˆÊ’u—h‚ê
 	MyLib::Vector3 pos = m_pSub->GetPosition();
-	MyLib::Vector3 posStart = MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.5f, 0.0f);
-	MyLib::Vector3 posEnd = MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.5f, 0.0f);
+	//MyLib::Vector3 pos = m_pSub->GetOriginPosition();
+	MyLib::Vector3 posDef = MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);
 
-	float time = m_fTime;
-	time = static_cast<int>(time * 1000) / 1000;
-	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
-	pos = UtilFunc::Calculation::GetParabola3D(posStart, posEnd, 200.0f, time);
+	pos = posDef * m_fTime;
 
 	// ˆÊ’uÝ’è
 	m_pSub->SetPosition(pos);
