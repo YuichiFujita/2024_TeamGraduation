@@ -332,6 +332,11 @@ public:
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
 	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
 	void OutCourtSetting();												// コート越え処理
+	void SetHaveTime(float time) { m_fHaveTime = time; }				// ボール所持タイマー
+	float GetHaveTime() { return m_fHaveTime; }							// ボール所持タイマー
+	void SetEscapeTime(float time) { m_fEscapeTime = time; }			// 端逃げタイマー
+	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
+
 	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
 
 	//=============================
@@ -408,13 +413,6 @@ private:
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
-
-	//-----------------------------
-	// 非モテ関数
-	//-----------------------------
-	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
-	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
-	void EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 端に逃げ続ける
 
 	//-----------------------------
 	// モーション系関数

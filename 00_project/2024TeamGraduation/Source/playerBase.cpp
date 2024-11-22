@@ -134,7 +134,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 			
 		// ƒ‚ƒeŒ¸­
 		CGameManager* pGameMgr = CGameManager::GetInstance();
-		pGameMgr->SubCharmValue(m_pPlayer->GetTeam(), CCharmManager::ETypeSub::SUB_INVADE_RUN);
+		pGameMgr->SubCharmValue(m_pPlayer->GetTeam(), CCharmValueManager::ETypeSub::SUB_INVADE_RUN);
 	}
 
 	return hitInfo;

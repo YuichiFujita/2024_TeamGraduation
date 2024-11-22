@@ -1,33 +1,21 @@
 //=============================================================================
-// 
+//
 // モテマネージャ処理 [charmManager.cpp]
-// Author : 相馬靜雅
-// 
+// Author : Kai Takada
+//
 //=============================================================================
 #include "charmManager.h"
 #include "manager.h"
+#include "gameManager.h"
+#include "player.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const float ADDVALUE[CCharmManager::ETypeAdd::ADD_MAX] =	// 加算量
-	{
-		1.0f,	// ヒット
-		2.0f,	// ジャストキャッチ
-		3.0f,	// カバーキャッチ
-		4.0f,	// 回避
-		10.0f,	// スペシャル
-	};
-
-	const float SUBVALUE[CCharmManager::ETypeSub::SUB_MAX] =	// 減算量
-	{
-		1.0f,	// ライン越えて戻ってる最中にあたる
-		2.0f,	// 端に逃げまくる
-		3.0f,	// 走っていってライン越え(ボール所持)
-		4.0f,	// ずっとボール持って投げない
-	};
+	const float TIME_HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
+	const float TIME_EDGE_ESCAPE = 1.0f;			// 端に逃げ続けている(秒数)
 }
 
 //==========================================================================
@@ -78,15 +66,6 @@ CCharmManager* CCharmManager::Create()
 //==========================================================================
 HRESULT CCharmManager::Init()
 {
-	for (int i = 0; i < CCharmManager::ETypeAdd::ADD_MAX; i++)
-	{
-		m_fAddValue[i] = ADDVALUE[i];
-	}
-	
-	for (int i = 0; i < CCharmManager::ETypeSub::SUB_MAX; i++)
-	{
-		m_fSubValue[i] = SUBVALUE[i];
-	}
 
 	return S_OK;
 }
@@ -101,23 +80,145 @@ void CCharmManager::Uninit()
 }
 
 //==========================================================================
-// 加算量取得
+// 非モテまとめ
 //==========================================================================
-float CCharmManager::GetAddValue(ETypeAdd type)
+void CCharmManager::UnCharm(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 範囲外
-	if (ETypeAdd::ADD_MAX <= type) return 0.0f;
+	// 持ち続け
+	LongHold(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
 
-	return m_fAddValue[type];
+	// 端に逃げまくる
+	EdgeEscape(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
-// 加算量取得
+// 持ち続けている判定
 //==========================================================================
-float CCharmManager::GetSubValue(ETypeSub type)
+void CCharmManager::LongHold(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 範囲外
-	if (ETypeSub::SUB_MAX <= type) return 0.0f;
+	float fHaveTime = pPlayer->GetHaveTime();
 
-	return m_fSubValue[type];
+	if (pPlayer->GetBall() == nullptr)
+	{// リセット
+		pPlayer->SetHaveTime(0.0f);
+		return;
+	}
+
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	// 加算
+	fHaveTime += fDeltaTime * fSlowRate;
+
+	if (fHaveTime > TIME_HAVE_LONG)
+	{// モテダウン
+
+		// モテ減算
+		pGameMgr->SubCharmValue(pPlayer->GetTeam(), CCharmValueManager::ETypeSub::SUB_LONG_HOLD);
+
+		fHaveTime = 0.0;
+	}
+	
+	pPlayer->SetHaveTime(fHaveTime);
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+void CCharmManager::EdgeEscape(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN) return;
+
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	float fEscapeTime = pPlayer->GetEscapeTime();
+
+	if (CheckEdgeEscape(pPlayer))
+	{// 端だったら
+
+		// 加算
+		fEscapeTime += fDeltaTime * fSlowRate;
+	}
+
+	if (fEscapeTime >= TIME_EDGE_ESCAPE)
+	{// モテダウン
+
+		// モテ減算
+		pGameMgr->SubCharmValue(pPlayer->GetTeam(), CCharmValueManager::ETypeSub::SUB_EDGE_ESCAPE);
+
+		fEscapeTime = 0.0;
+	}
+
+	pPlayer->SetEscapeTime(fEscapeTime);
+}
+
+//==========================================================================
+// 端に逃げ続ける
+//==========================================================================
+bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
+{
+	MyLib::Vector3 pos = pPlayer->GetPosition();
+	CGameManager* pGmMgr = CGameManager::GetInstance();
+	MyLib::Vector3 posCourt = MyLib::Vector3();											// 自陣中央
+	MyLib::Vector3 sizeCourt = pGmMgr->GetCourtSize(pPlayer->GetTeam(), posCourt);		// 自陣サイズ
+
+	// ボール情報
+	CBall* pBall = pGmMgr->GetBall();
+	CPlayer* pBallPlayer = pBall->GetPlayer();
+	if (pBallPlayer == nullptr) return false;
+	if (pBallPlayer->GetTeam() == pPlayer->GetTeam()) return false;
+
+	MyLib::Vector3 posBP = pBallPlayer->GetPosition();
+
+	// ボール所持プレイヤーと自陣中央のベクトル
+	MyLib::Vector3 vecDiff = (posBP - posCourt).Normal() + D3DX_PI;
+	UtilFunc::Transformation::RotNormalize(vecDiff);
+
+	// 端エリアをベクトルから交差判定
+	// 自陣4点(上下左右)
+	MyLib::Vector3 posEdge[4] =
+	{
+		MyLib::Vector3(posCourt.x + sizeCourt.x, 0.0f, posCourt.z + sizeCourt.x),	// 右奥
+		MyLib::Vector3(posCourt.x + sizeCourt.x, 0.0f, posCourt.z - sizeCourt.x),	// 右手前
+		MyLib::Vector3(posCourt.x - sizeCourt.x, 0.0f, posCourt.z - sizeCourt.x),	// 左手前
+		MyLib::Vector3(posCourt.x - sizeCourt.x, 0.0f, posCourt.z + sizeCourt.x),	// 左奥
+	};
+
+	MyLib::Vector3 lineMid = MyLib::Vector3();	// 交点
+	MyLib::Vector2 areaSize = MyLib::Vector2(sizeCourt.x, sizeCourt.z);		// エリアサイズ
+	areaSize.x *= 0.2f;							//z長x短
+
+	// 判定
+	for (int i = 0; i < 4; i++)
+	{
+		MyLib::Vector3 pos1 = posEdge[0];
+		if (i < 3)
+		{
+			pos1 = posEdge[i + 1];
+		}
+
+		if (UtilFunc::Collision::IsVecToLine(posEdge[i], pos1, posCourt, vecDiff))
+		{// ライン交差
+
+			lineMid = UtilFunc::Calculation::GetCenterPosition3D(posEdge[i], pos1);
+
+			areaSize += lineMid;
+			// エリアサイズ設定
+			if (lineMid.z == posCourt.z)
+			{
+				float f = areaSize.x;
+				areaSize.x = areaSize.y;
+				areaSize.y = f;
+			}
+
+			break;
+		}
+
+	}
+
+	if (UtilFunc::Collision::CollisionSquare(lineMid, areaSize, 0.0f, pos))
+	{// 端エリア内にいるか
+
+		return true;
+	}
+
+	return false;
 }

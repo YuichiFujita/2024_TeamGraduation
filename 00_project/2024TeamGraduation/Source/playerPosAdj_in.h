@@ -47,7 +47,6 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// 調整
-	bool CheckEdgeEscape(CPlayer* pPlayer);		// 端に逃げ続ける
 
 protected:
 	//=============================
