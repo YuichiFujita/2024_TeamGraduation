@@ -89,9 +89,9 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	// 一旦シーン切り替え
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0))
 	{
-
+		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
 	}
 }
 
@@ -166,7 +166,13 @@ void CEntry_SetUpTeam::SelectTeam()
 		{// チーム決定 && 左右どちらかに合わせてるとき
 
 			int side = m_TeamSide[nowIdx];
-			m_vecAddIdx[side].push_back(nowIdx);
+			
+			// 既にある場合は追加しない
+			const auto& itr = std::find(m_vecAddIdx[side].begin(), m_vecAddIdx[side].end(), nowIdx);
+			if (itr == m_vecAddIdx[side].end())
+			{// 存在しない
+				m_vecAddIdx[side].push_back(nowIdx);
+			}
 		}
 	}
 }
@@ -189,18 +195,15 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 		//--------------------------
 		// 最大数変更
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, changeIdx) &&
-			m_vecAddIdx[side].size() > 1)
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, changeIdx))
 		{// 減らす
-
-			m_vecAddIdx[side].pop_back();
+			m_nPlayerNum[side]--;	// プレイヤーの数
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, changeIdx) &&
-			m_vecAddIdx[side].size() < CGameManager::MAX_SIDEPLAYER)
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, changeIdx))
 		{// 増やす
-
-			m_vecAddIdx[side].push_back(-1);
+			m_nPlayerNum[side]++;	// プレイヤーの数
 		}
+		m_nPlayerNum[side] = UtilFunc::Transformation::Clamp(m_nPlayerNum[side], 1, CGameManager::MAX_SIDEPLAYER);
 
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, changeIdx))
 		{// 下移動(最大数変更解除)
