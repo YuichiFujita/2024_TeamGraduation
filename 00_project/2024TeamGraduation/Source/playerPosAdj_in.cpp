@@ -254,26 +254,55 @@ bool CPlayerPosAdjIn::CheckEdgeEscape(CPlayer* pPlayer)
 	MyLib::Vector3 posBP = pBallPlayer->GetPosition();
 
 	// ボール所持プレイヤーと自陣中央のベクトル
-	D3DXVECTOR3 vecDiff = (posBP - pos).Normal();
+	MyLib::Vector3 vecDiff = (posBP - posCourt).Normal();
 
 	// 端エリアをベクトルから交差判定
-	// 自陣(上下左右)
+	// 自陣4点(上下左右)
+	MyLib::Vector3 posEdge[4] =
+	{
+		MyLib::Vector3(posCourt.x + sizeCourt.x, 0.0f, posCourt.z + sizeCourt.x),	// 右奥
+		MyLib::Vector3(posCourt.x + sizeCourt.x, 0.0f, posCourt.z - sizeCourt.x),	// 右手前
+		MyLib::Vector3(posCourt.x - sizeCourt.x, 0.0f, posCourt.z - sizeCourt.x),	// 左手前
+		MyLib::Vector3(posCourt.x - sizeCourt.x, 0.0f, posCourt.z + sizeCourt.x),	// 左奥
+	};
+
+	MyLib::Vector3 lineMid = MyLib::Vector3();	// 交点
+	MyLib::Vector2 areaSize = MyLib::Vector2(sizeCourt.x, sizeCourt.z);		// エリアサイズ
+	areaSize.x *= 0.2f;							//z長x短
 
 	// 判定
-	//UtilFunc::Collision::CollisionLine3D(line0, line1, vecDiff);
-	if (true)
-	{// ライン交差
+	for (int i = 0; i < 4; i++)
+	{
+		MyLib::Vector3 pos1 = posEdge[0];
+		if (i < 3)
+		{
+			pos1 = posEdge[i + 1];
+		}
 
-	}
+		if (UtilFunc::Collision::IsVecToLine(posEdge[i], pos1, posCourt, vecDiff))
+		{// ライン交差
 
+			lineMid = UtilFunc::Calculation::GetCenterPosition3D(posEdge[i], pos1);
 
-	bool bCol = false;
-
-	if (true)
-	{// 端エリア内にいるか
+			areaSize += lineMid;
+			// エリアサイズ設定
+			if (lineMid.z == posCourt.z)
+			{
+				float f = areaSize.x;
+				areaSize.x = areaSize.y;
+				areaSize.y = f;
+			}
 		
-		bCol = true;
+			break;
+		}
+		
 	}
 
-	return bCol;
+	if (UtilFunc::Collision::CollisionSquare(lineMid, areaSize, 0.0f, pos))
+	{// 端エリア内にいるか
+
+		return true;
+	}
+
+	return false;
 }
