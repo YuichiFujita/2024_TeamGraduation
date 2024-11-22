@@ -43,6 +43,7 @@
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
+#include "playerPosAdj_entry.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -241,7 +242,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
-	m_Handress = EHandedness::HAND_R;	// 利き手
+	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
 
 	// ベースタイプを初期化
@@ -277,7 +278,7 @@ CPlayer* CPlayer::Create
 		pPlayer->m_BodyType = typeBody;
 
 		// 利き手を設定
-		pPlayer->m_Handress = typeHand;
+		pPlayer->m_Handedness = typeHand;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -313,7 +314,7 @@ HRESULT CPlayer::Init()
 	m_bPossibleMove = true;
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handress]);
+	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;
@@ -334,13 +335,13 @@ HRESULT CPlayer::Init()
 	// 着せ替え
 	if (m_pDressup_Hair == nullptr)
 	{
-		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, 15);	// 髪着せ替え
+		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, CPlayer::ID_HAIR);
 	}
 
 	// アクセ
 	if (m_pDressup_Accessory == nullptr)
 	{
-		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
 	}
 
 	// スぺシャルエフェクト
@@ -1795,6 +1796,10 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 
 	case EFieldArea::FIELD_OUT:
 		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
+		break;
+
+	case EFieldArea::FIELD_ENTRY:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjEntry;
 		break;
 
 	default:

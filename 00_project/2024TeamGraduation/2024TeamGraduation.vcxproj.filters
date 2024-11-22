@@ -626,6 +626,15 @@
     <ClCompile Include="Source\titleLogo.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
+    <ClCompile Include="Source\entry_dressup.cpp">
+      <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerEntry.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_entry.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1140,6 +1149,15 @@
     </ClInclude>
     <ClInclude Include="Source\titleLogo.h">
       <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entry_dressup.h">
+      <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerEntry.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_entry.h">
+      <Filter>player\playerPosAdj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

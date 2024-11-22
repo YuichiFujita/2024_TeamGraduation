@@ -21,6 +21,7 @@ CDressup::CDressup()
 {
 	m_nSwitchIdx = 0;		// 切り替えるインデックス
 	m_nNowIdx = 0;			// 現在のインデックス
+	m_nControllIdx = 0;		// 操作するインデックス
 	m_pObjChara = nullptr;	// キャラクターのポインタ
 	m_vecModelName.clear();	// モデル名
 }

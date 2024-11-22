@@ -17,6 +17,7 @@
 // 前方宣言
 //==========================================================================
 class CEntryScene;
+class CEntry_SetUpTeam;
 
 //==========================================================================
 // クラス定義
@@ -58,6 +59,10 @@ public:
 	void SetSceneType(ESceneType type);					// シーン設定
 	ESceneType GetSceneType() { return m_SceneType; }	// シーン取得
 
+	void SetEntryScene(ESceneType type);
+	CEntryScene* GetEntryScene() { return m_pEntryScene; }	// エントリーシーン取得
+
+
 	//=============================
 	// 静的関数
 	//=============================
@@ -82,10 +87,10 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fSceneTime;			// シーンカウンター
-	ESceneType m_SceneType;		// シーンの種類
-	CEntryScene* m_pEntryScene;	// エントリーシーン
-	static CEntry* m_pThisPtr;	// 自身のポインタ
+	float m_fSceneTime;				// シーンカウンター
+	ESceneType m_SceneType;			// シーンの種類
+	CEntryScene* m_pEntryScene;		// エントリーシーン
+	static CEntry* m_pThisPtr;		// 自身のポインタ
 };
 
 

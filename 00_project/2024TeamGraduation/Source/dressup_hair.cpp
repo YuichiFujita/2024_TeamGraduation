@@ -62,6 +62,20 @@ void CDressup_Hair::Update(const float fDeltaTime, const float fDeltaRate, const
 {
 	// 親の更新
 	CDressup::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	int modelSize = static_cast<int>(m_vecModelName.size());
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx))
+	{// ループ
+		m_nNowIdx = (m_nNowIdx + 1) % (modelSize - 1);
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
+	{// 逆ループ
+		m_nNowIdx = (m_nNowIdx + (modelSize - 1)) % modelSize;
+	}
 }
 
 //==========================================================================

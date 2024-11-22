@@ -204,6 +204,7 @@
     <ClCompile Include="Source\EffekseerObj.cpp" />
     <ClCompile Include="Source\entry.cpp" />
     <ClCompile Include="Source\entryscene.cpp" />
+    <ClCompile Include="Source\entry_dressup.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
@@ -280,10 +281,12 @@
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerEntry.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
+    <ClCompile Include="Source\playerPosAdj_entry.cpp" />
     <ClCompile Include="Source\playerPosAdj_in.cpp" />
     <ClCompile Include="Source\playerPosAdj_inLeft.cpp" />
     <ClCompile Include="Source\playerPosAdj_inRight.cpp" />
@@ -380,6 +383,7 @@
     <ClInclude Include="Source\EffekseerObj.h" />
     <ClInclude Include="Source\entry.h" />
     <ClInclude Include="Source\entryscene.h" />
+    <ClInclude Include="Source\entry_dressup.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
@@ -456,10 +460,12 @@
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerEntry.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
     <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
+    <ClInclude Include="Source\playerPosAdj_entry.h" />
     <ClInclude Include="Source\playerPosAdj_in.h" />
     <ClInclude Include="Source\playerPosAdj_inLeft.h" />
     <ClInclude Include="Source\playerPosAdj_inRight.h" />

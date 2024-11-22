@@ -15,7 +15,6 @@
 
 // シーン
 #include "entryscene.h"
-#include "entry_setupTeam.h"
 
 
 //==========================================================================
@@ -102,7 +101,7 @@ HRESULT CEntry::Init()
 	SetSceneType(ESceneType::SCENETYPE_SETUPTEAM);
 
 	// エントリーシーン生成
-	m_pEntryScene = DEBUG_NEW CEntry_SetUpTeam;
+	m_pEntryScene = CEntryScene::Create(ESceneType::SCENETYPE_SETUPTEAM);
 
 	// 成功
 	return S_OK;
@@ -129,22 +128,23 @@ void CEntry::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		return;
 	}
 
+	// シーン毎の更新
 	m_pEntryScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 状態別更新処理
 	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
 
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	//// インプット情報取得
+	//CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	//CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
-		pKey->GetTrigger(DIK_RETURN))
-	{
-		// 遷移
-		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
-	}
+	//if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+	//	pKey->GetTrigger(DIK_RETURN))
+	//{
+	//	// 遷移
+	//	GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
+	//}
 }
 
 //==========================================================================
