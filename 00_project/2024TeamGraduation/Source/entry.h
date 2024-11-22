@@ -61,6 +61,7 @@ public:
 
 	void ChangeEntryScene(ESceneType type);					// エントリーシーン切り替え
 	CEntryScene* GetEntryScene() { return m_pEntryScene; }	// エントリーシーン取得
+	virtual CEntry_SetUpTeam* GetSetupTeam() { return m_pSetupTeam; }	// チーム等の設定取得
 
 
 	//=============================
@@ -90,6 +91,7 @@ private:
 	float m_fSceneTime;				// シーンカウンター
 	ESceneType m_SceneType;			// シーンの種類
 	CEntryScene* m_pEntryScene;		// エントリーシーン
+	CEntry_SetUpTeam* m_pSetupTeam;	// チーム等の設定取得
 	static CEntry* m_pThisPtr;		// 自身のポインタ
 };
 

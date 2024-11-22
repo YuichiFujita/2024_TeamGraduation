@@ -25,13 +25,14 @@ public:
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerEntry(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase);
-	virtual ~CPlayerEntry() override = 0;
+	virtual ~CPlayerEntry() override;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;		// ヒット
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
+	virtual void MotionCrab(int nStartKey) override {}		// カニ歩き変化
 
 	//=============================
 	// パターン

@@ -46,7 +46,7 @@ HRESULT CEntry_Dressup::Init()
 	Load();
 
 	// チーム等設定
-	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetEntryScene()->GetSetupTeam();
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) return E_FAIL;
 
 	int nPlyerNum = pSetupTeam->GetAllPlayerNum();
@@ -58,7 +58,7 @@ HRESULT CEntry_Dressup::Init()
 	for (int i = 0; i < nPlyerNum; i++)
 	{
 		// プレイヤー生成
-		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f);
+		MyLib::Vector3 pos = MyLib::Vector3(-400.0f, 0.0f, 0.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(200.0f * i, 0.0f, 0.0f);
 		m_vecDressupInfo[i].pPlayer = CPlayer::Create
 		(
@@ -67,8 +67,10 @@ HRESULT CEntry_Dressup::Init()
 			CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
 			CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
 			CPlayer::EBody::BODY_NORMAL,		// 体系
-			CPlayer::EHandedness::HAND_R		// 利き手
+			CPlayer::EHandedness::HAND_R,		// 利き手
+			CScene::MODE::MODE_ENTRY
 		);
+		m_vecDressupInfo[i].pPlayer->SetOriginPosition(pos + offset);
 
 		// エントリーした番号
 		int entryIdx = pSetupTeam->GetEntryIdx(i);
@@ -81,7 +83,7 @@ HRESULT CEntry_Dressup::Init()
 		
 		// アクセ切り替え生成
 		m_vecDressupInfo[i].pAccessory = CDressup::Create(
-			CDressup::EType::TYPE_HAIR,		// 着せ替えの種類
+			CDressup::EType::TYPE_ACCESSORY,		// 着せ替えの種類
 			m_vecDressupInfo[i].pPlayer,	// 変更するプレイヤー
 			CPlayer::ID_ACCESSORY);			// 変更箇所のインデックス
 
@@ -108,22 +110,116 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 	// 親の更新
 	CEntryScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// チーム等設定
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
+	if (pSetupTeam == nullptr) return;
+
 	// 今回のサイズ
 	int size = static_cast<int>(m_vecDressupInfo.size());
-
 	for (int i = 0; i < size; i++)
 	{
-		// 着せ替えの更新
-		m_vecDressupInfo[i].pHair->Update(fDeltaTime, fDeltaRate, fSlowRate);
-		m_vecDressupInfo[i].pAccessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		// エントリーした番号
+		int entryIdx = pSetupTeam->GetEntryIdx(i);
+		if (entryIdx < 0) continue;
 
-		// 体型変更
-		ChangeBodyType(i);
+		// エディットする種類変更
+		ChangeEditType(entryIdx);
 
-		// 利き手変更
-		ChangeHandedness(i);
+		switch (m_vecDressupInfo[entryIdx].editType)
+		{
+		case EEditType::EDIT_PROCESS:
+
+			switch (m_vecDressupInfo[entryIdx].changeType)
+			{
+			case EChangeType::TYPE_HAIR:
+
+				// 髪更新
+				m_vecDressupInfo[i].pHair->Update(fDeltaTime, fDeltaRate, fSlowRate);
+				break;
+
+			case EChangeType::TYPE_ACCESSORY:
+
+				// アクセ更新
+				m_vecDressupInfo[i].pAccessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
+				break;
+
+			case EChangeType::TYPE_FACE:
+				break;
+
+			case EChangeType::TYPE_BODY:
+
+				// 体型変更
+				ChangeBodyType(entryIdx);
+				break;
+
+			case EChangeType::TYPE_HANDEDNESS:
+
+				// 利き手変更
+				ChangeHandedness(entryIdx);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case EEditType::EDIT_CHANGETYPE:
+			// 変更する箇所の種類変更
+			ChangeChangeType(entryIdx);
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
 	}
 
+}
+
+//==========================================================================
+// エディットする種類変更
+//==========================================================================
+void CEntry_Dressup::ChangeEditType(int i)
+{
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, i))
+	{// 変更する箇所の種類変更へ変更
+
+		m_vecDressupInfo[i].editType = EEditType::EDIT_PROCESS;
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, i))
+	{// 実際の変更画面へ
+
+		m_vecDressupInfo[i].editType = EEditType::EDIT_CHANGETYPE;
+	}
+}
+
+//==========================================================================
+// 変更する箇所の種類変更
+//==========================================================================
+void CEntry_Dressup::ChangeChangeType(int i)
+{
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, i))
+	{// ループ
+
+		// 次へ変更
+		int changeType = (m_vecDressupInfo[i].changeType + 1) % EChangeType::TYPE_MAX;
+		m_vecDressupInfo[i].changeType = static_cast<EChangeType>(changeType);
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, i))
+	{// 逆ループ
+
+		// 前へ変更
+		int changeType = (m_vecDressupInfo[i].changeType + (EChangeType::TYPE_MAX - 1)) % EChangeType::TYPE_MAX;
+		m_vecDressupInfo[i].changeType = static_cast<EChangeType>(changeType);
+	}
 }
 
 //==========================================================================
@@ -143,7 +239,7 @@ void CEntry_Dressup::ChangeBodyType(int i)
 	{// ループ
 
 		// 次へ変更
-		int afterBody = (body + 1) % (CPlayer::EBody::BODY_MAX - 1);
+		int afterBody = (body + 1) % CPlayer::EBody::BODY_MAX;
 		body = static_cast<CPlayer::EBody>(afterBody);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, i))
@@ -176,14 +272,14 @@ void CEntry_Dressup::ChangeHandedness(int i)
 	CPlayer::EHandedness handedness = m_vecDressupInfo[i].pPlayer->GetHandedness();
 	CPlayer::EHandedness oldHandedness = handedness;
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, i))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, i))
 	{// ループ
 
 		// 次へ変更
-		int afterHandedness = (handedness + 1) % (CPlayer::EHandedness::HAND_MAX - 1);
+		int afterHandedness = (handedness + 1) % CPlayer::EHandedness::HAND_MAX;
 		handedness = static_cast<CPlayer::EHandedness>(afterHandedness);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, i))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, i))
 	{// 逆ループ
 
 		// 前へ変更
@@ -205,7 +301,7 @@ void CEntry_Dressup::ChangeHandedness(int i)
 void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body)
 {
 	// 情報保存
-	MyLib::Vector3 pos = m_vecDressupInfo[i].pPlayer->GetPosition();
+	MyLib::Vector3 pos = m_vecDressupInfo[i].pPlayer->GetOriginPosition();
 
 	// 削除
 	m_vecDressupInfo[i].pPlayer->Kill();
@@ -218,7 +314,8 @@ void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPla
 		CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
 		CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
 		body,								// 体系
-		handedness							// 利き手
+		handedness,							// 利き手
+		CScene::MODE::MODE_ENTRY
 	);
 }
 
@@ -301,7 +398,20 @@ void CEntry_Dressup::Debug()
 			Save();
 		}
 
-		
+		// 今回のサイズ
+		int size = static_cast<int>(m_vecDressupInfo.size());
+		for (int i = 0; i < size; i++)
+		{
+			std::string treename = "Info : " + std::to_string(i);	// ツリー名
+			if (ImGui::TreeNode(treename.c_str()))
+			{
+				const auto& info = m_vecDressupInfo[i];
+
+				ImGui::Text("editType[%s]", magic_enum::enum_name(info.editType));
+				ImGui::Text("changeType[%s]", magic_enum::enum_name(info.changeType));
+				ImGui::TreePop();
+			}
+		}
 
 		ImGui::TreePop();
 	}

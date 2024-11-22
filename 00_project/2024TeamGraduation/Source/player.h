@@ -363,7 +363,8 @@ public:
 		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
 		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
 		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
+		EHandedness	typeHand = EHandedness::HAND_R,		// 利き手
+		CScene::MODE mode = CScene::MODE::MODE_GAME		// モード
 	);
 
 protected:

@@ -31,10 +31,12 @@
 #include "charmManager.h"
 
 // 派生先
+#include "playerDressup.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
+#include "playerEntry.h"
 
 // デバッグ
 #include "ObjectLine.h"
@@ -263,11 +265,26 @@ CPlayer* CPlayer::Create
 	EFieldArea	typeArea,				// ポジション
 	EBaseType	typeBase,				// ベースタイプ
 	EBody		typeBody,				// 体型
-	EHandedness	typeHand				// 利き手
+	EHandedness	typeHand,				// 利き手
+	CScene::MODE mode					// モード
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	CPlayer* pPlayer = nullptr;
+	switch (mode)
+	{
+	case CScene::MODE_ENTRY:
+		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, typeArea, typeBase);
+		break;
+
+	case CScene::MODE_GAME:
+		pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+		break;
+
+	default:
+		break;
+	}
+
 	if (pPlayer != nullptr)
 	{
 		// 体型を設定
@@ -442,12 +459,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// ドレスアップの更新
 	UpdateDressUP(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// エディット中は抜ける
-	if (CGame::GetInstance()->GetEditType() != CGame::GetInstance()->EDITTYPE_OFF)
-	{
-		return;
-	}
 
 	// 過去の位置保存
 	SetOldPosition(GetPosition());
@@ -1902,6 +1913,10 @@ void CPlayer::InitBase(EBaseType type)
 			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
 			break;
 
+		case EFieldArea::FIELD_ENTRY:
+			m_pBase = DEBUG_NEW CPlayerEntry(this, m_typeTeam, m_typeArea, TYPE_USER);
+			break;
+
 		default:
 			assert(false);
 			break;
@@ -1961,6 +1976,7 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// クラス型からベースを判定
 	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
 	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
+	else if (typeid(*m_pBase) == typeid(CPlayerEntry)) { return TYPE_USER; }
 
 	// ベース指定なし
 	assert(false);
