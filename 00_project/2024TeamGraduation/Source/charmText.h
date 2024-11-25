@@ -55,6 +55,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
+	void SetState(EState state);	// 状態設定
 
 	//=============================
 	// 静的メンバ関数
@@ -64,8 +65,21 @@ public:
 private:
 
 	//=============================
-	// メンバ変数
+	// 関数リスト
 	//=============================
+	typedef void(CCharmText::*STATE_FUNC)();
+	static STATE_FUNC m_StateFunc[];	// 状態関数
+
+	//=============================
+	// メンバ関数
+	//=============================
+	// 状態関数
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新
+	void StateFadeIn();		// フェードイン
+	void StateWait();		// 待機
+	void StateFadeOut();	// フェードアウト
+	
+	// 生成
 	HRESULT CreateFace();	// 顔アイコン生成
 	HRESULT CreateText();	// 文字生成
 
@@ -74,6 +88,7 @@ private:
 	//=============================
 	CObject2D* m_pFace;		// 顔アイコン
 	CObject2D* m_pText;		// 文字
+	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 };
 
