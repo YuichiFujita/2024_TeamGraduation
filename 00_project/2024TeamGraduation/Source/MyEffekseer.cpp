@@ -34,6 +34,11 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/walk.efkefc",						// 歩き
 	"data/Effekseer/run.efkefc",						// 走り
 	"data/Effekseer/blink.efkefc",						// ブリンク
+	"data/Effekseer/jump.efkefc",						// ジャンプ
+	"data/Effekseer/land.efkefc",						// 着地
+	"data/Effekseer/cantch_stance.efkefc",				// キャッチ(構え)
+	"data/Effekseer/cantch_normal.efkefc",				// キャッチ(通常)
+	"data/Effekseer/cantch_just.efkefc",				// キャッチ(ジャスト)
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 

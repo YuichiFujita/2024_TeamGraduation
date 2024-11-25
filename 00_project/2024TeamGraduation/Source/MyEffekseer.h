@@ -52,6 +52,11 @@ public:
 		EFKLABEL_WALK,					// 歩き
 		EFKLABEL_RUN,					// 走り
 		EFKLABEL_BLINK,					// ブリンク
+		EFKLABEL_JUMP,					// ジャンプ
+		EFKLABEL_LAND,					// 着地
+		EFKLABEL_CATCH_STANCE,			// キャッチ(構え)
+		EFKLABEL_CATCH_NORMAL,			// キャッチ(通常)
+		EFKLABEL_CATCH_JUST,			// キャッチ(ジャスト)
 		EFKLABEL_MAX
 	};
 	

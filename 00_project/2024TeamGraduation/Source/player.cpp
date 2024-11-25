@@ -116,6 +116,12 @@ namespace Align	// 足揃え
 	const float MULTIPLY_MOTION = 1.5f;	// モーション倍率
 }
 
+namespace EffectOffset
+{
+	const MyLib::Vector3 CATCH_STANCE = MyLib::Vector3(80.0f, 0.0f, 80.0f);	// キャッチ(構え)
+	const MyLib::Vector3 CATCH_NORMAL = MyLib::Vector3(50.0f, 0.0f, 50.0f);	// キャッチ(通常)
+}
+
 namespace Court	// 移動制限
 {
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
@@ -226,13 +232,13 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pStatus = nullptr;		// ステータス
 	m_pBase = nullptr;			// ベース
 
-	// 着せ替え
-	m_pDressup_Hair = nullptr;		// 髪着せ替え
-	m_pDressup_Accessory = nullptr;	// アクセ着せ替え
-	m_pDressup_Face = nullptr;		// 顔着せ替え
-
 	// スぺシャルエフェクト
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
+
+	// エフェクト用
+	m_pEfkCatchStance = nullptr;	// キャッチの構え用
+	m_pEfkCatchNormal = nullptr;	// 通常キャッチ
+	m_pEfkCatchJust = nullptr;		// ジャストキャッチ
 
 	// その他
 	m_fEscapeTime = 0.0f;	// ボール所持タイマー
@@ -356,24 +362,6 @@ HRESULT CPlayer::Init()
 		m_pStatus = DEBUG_NEW CPlayerStatus(this);
 	}
 
-	// 着せ替え
-	if (m_pDressup_Hair == nullptr)
-	{
-		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, CPlayer::ID_HAIR);
-	}
-
-	// アクセ
-	if (m_pDressup_Accessory == nullptr)
-	{
-		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
-	}
-
-	// 顔着せ替え
-	if (m_pDressup_Face == nullptr)
-	{
-		m_pDressup_Face = CDressup::Create(CDressup::EType::TYPE_FACE, this, CPlayer::ID_FACE);
-	}
-
 	// スぺシャルエフェクト
 	if (m_pSpecialEffect == nullptr)
 	{
@@ -422,10 +410,6 @@ void CPlayer::Uninit()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
-
-	// 着せ替え
-	SAFE_UNINIT(m_pDressup_Hair);
-	SAFE_UNINIT(m_pDressup_Accessory);
 	
 	// ステータス
 	SAFE_DELETE(m_pPosAdj);
@@ -473,9 +457,6 @@ void CPlayer::Kill()
 void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (IsDeath()) return;
-
-	// ドレスアップの更新
-	UpdateDressUP(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 過去の位置保存
 	SetOldPosition(GetPosition());
@@ -935,6 +916,93 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		}
 		break;
 
+	case EMotion::MOTION_CATCH_STANCE:
+	case EMotion::MOTION_CATCH_STANCE_JUMP:
+	{
+		// エフェクト破棄
+		if (m_pEfkCatchStance != nullptr)
+		{
+			m_pEfkCatchStance->SetTrigger(0);
+			m_pEfkCatchStance = nullptr;
+		}
+
+		// エフェクトの位置
+		MyLib::Vector3 setpos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		rot.x = 0.0f, rot.z = 0.0f;
+
+		setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_STANCE.x;
+		setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_STANCE.z;
+		setpos.y = GetCenterPosition().y;
+
+		// エフェクト生成
+		m_pEfkCatchStance = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CATCH_STANCE,
+			setpos,
+			rot,	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
+
+		if (m_pEfkCatchStance != nullptr)
+		{// 位置・向き更新
+			m_pEfkCatchStance->SetRotation(rot);
+			m_pEfkCatchStance->SetPosition(setpos);
+		}
+	}
+		break;
+
+	case EMotion::MOTION_CATCH_NORMAL:
+	{
+		// エフェクトの位置
+		MyLib::Vector3 setpos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		rot.x = 0.0f, rot.z = 0.0f;
+
+		setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.x;
+		setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.z;
+		setpos.y = GetCenterPosition().y;
+
+		// エフェクト生成
+		m_pEfkCatchNormal = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CATCH_NORMAL,
+			setpos,
+			rot,	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
+
+		if (m_pEfkCatchNormal != nullptr)
+		{// 位置・向き更新
+			m_pEfkCatchNormal->SetRotation(rot);
+			m_pEfkCatchNormal->SetPosition(setpos);
+		}
+	}
+	break;
+
+	case EMotion::MOTION_JUSTCATCH_NORMAL:
+	case EMotion::MOTION_JUSTCATCH_JUMP:
+	{
+		// エフェクトの位置
+		MyLib::Vector3 setpos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		rot.x = 0.0f, rot.z = 0.0f;
+
+		setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.x;
+		setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.z;
+		setpos.y = GetCenterPosition().y;
+
+		// エフェクト生成
+		m_pEfkCatchJust = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CATCH_JUST,
+			setpos,
+			rot,	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
+
+		if (m_pEfkCatchJust != nullptr)
+		{// 位置・向き更新
+			m_pEfkCatchJust->SetRotation(rot);
+			m_pEfkCatchJust->SetPosition(setpos);
+		}
+	}
+	break;
+
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
 	{
@@ -1028,6 +1096,7 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 	switch (nType)
 	{
 	case EMotion::MOTION_CATCH_STANCE:
+	case EMotion::MOTION_CATCH_STANCE_JUMP:
 
 		// キャッチフラグON
 		m_sMotionFrag.bCatch = true;
@@ -1044,7 +1113,63 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
+
+		{
+			// エフェクトの位置
+			MyLib::Vector3 setpos = GetPosition();
+			MyLib::Vector3 rot = GetRotation();
+			rot.x = 0.0f, rot.z = 0.0f;
+
+			setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_STANCE.x;
+			setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_STANCE.z;
+			setpos.y = GetCenterPosition().y;
+
+			if (m_pEfkCatchStance != nullptr)
+			{// 位置・向き更新
+				m_pEfkCatchStance->SetRotation(rot);
+				m_pEfkCatchStance->SetPosition(setpos);
+			}
+		}
 		break;
+
+	case EMotion::MOTION_CATCH_NORMAL:
+	{
+		// エフェクトの位置
+		MyLib::Vector3 setpos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		rot.x = 0.0f, rot.z = 0.0f;
+
+		setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.x;
+		setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.z;
+		setpos.y = GetCenterPosition().y;
+
+		if (m_pEfkCatchNormal != nullptr)
+		{// 位置・向き更新
+			m_pEfkCatchNormal->SetRotation(rot);
+			m_pEfkCatchNormal->SetPosition(setpos);
+		}
+	}
+		break;
+
+	case EMotion::MOTION_JUSTCATCH_NORMAL:
+	case EMotion::MOTION_JUSTCATCH_JUMP:
+	{
+		// エフェクトの位置
+		MyLib::Vector3 setpos = GetPosition();
+		MyLib::Vector3 rot = GetRotation();
+		rot.x = 0.0f, rot.z = 0.0f;
+
+		setpos.x += sinf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.x;
+		setpos.z += cosf(D3DX_PI + rot.y) * EffectOffset::CATCH_NORMAL.z;
+		setpos.y = GetCenterPosition().y;
+
+		if (m_pEfkCatchJust != nullptr)
+		{// 位置・向き更新
+			m_pEfkCatchJust->SetRotation(rot);
+			m_pEfkCatchJust->SetPosition(setpos);
+		}
+	}
+	break;
 
 	case EMotion::MOTION_SPECIAL:
 
@@ -1101,6 +1226,13 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		break;
 	}
 
+	// エフェクト破棄
+	if (m_pEfkCatchStance != nullptr)
+	{
+		m_pEfkCatchStance->SetTrigger(0);
+		m_pEfkCatchStance = nullptr;
+	}
+
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
 
@@ -1122,6 +1254,13 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+
+	// エフェクト破棄
+	if (m_pEfkCatchStance != nullptr)
+	{
+		m_pEfkCatchStance->SetTrigger(0);
+		m_pEfkCatchStance = nullptr;
+	}
 
 	switch (atkBall)
 	{
@@ -1813,25 +1952,6 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 }
 
 //==========================================================================
-// ドレスアップの更新
-//==========================================================================
-void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 髪更新
-	if (m_pDressup_Hair != nullptr)
-	{
-		m_pDressup_Hair->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	// アクセ更新
-	if (m_pDressup_Accessory != nullptr)
-	{
-		m_pDressup_Accessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-}
-
-//==========================================================================
 // 描画処理
 //==========================================================================
 void CPlayer::Draw()
@@ -2117,24 +2237,6 @@ void CPlayer::Debug()
 
 		// スペシャル盛り上げモーションを設定
 		pCamera->GetCameraMotion()->SetMotion(CCameraMotion::MOTION::MOTION_KAMEHAMEHA, false, true, true, true);
-	}
-
-	// 髪更新
-	if (m_pDressup_Hair != nullptr)
-	{
-		m_pDressup_Hair->Debug();
-	}
-
-	// アクセ更新
-	if (m_pDressup_Accessory != nullptr)
-	{
-		m_pDressup_Accessory->Debug();
-	}
-
-	// 顔着せ替え
-	if (m_pDressup_Face != nullptr)
-	{
-		m_pDressup_Face->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

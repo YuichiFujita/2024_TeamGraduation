@@ -26,9 +26,9 @@ class CPlayerBase;		// ベースプレイヤー
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
-class CDressup;			// 着せ替え
 class CSpecialEffect;	// スペシャル演出エフェクト
 class CBindKey;			// 割当キー基底クラス
+class CEffekseerObj;	// エフェクシアオブジェクト
 
 //==========================================================================
 // クラス定義
@@ -302,11 +302,6 @@ public:
 	CPlayerBase* GetBase() const			{ return m_pBase; }				// ベース取得
 
 	//=============================
-	// 着せ替え
-	//=============================
-	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
-
-	//=============================
 	// スペシャル用
 	//=============================
 	CSpecialEffect* GetSpecialEffect() { return m_pSpecialEffect; }	// スぺシャルエフェクト取得
@@ -473,16 +468,17 @@ private:
 	CPlayerBase*   m_pBase;				// ベース
 
 	//-----------------------------
-	// 着せ替え
-	//-----------------------------
-	CDressup* m_pDressup_Hair;		// 髪着せ替え
-	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
-	CDressup* m_pDressup_Face;		// 顔着せ替え
-
-	//-----------------------------
 	// スペシャル用
 	//-----------------------------
 	CSpecialEffect* m_pSpecialEffect;	// スぺシャルエフェクト
+
+	//-----------------------------
+	// エフェクト用
+	//-----------------------------
+	CEffekseerObj* m_pEfkCatchStance;	// キャッチの構え
+	CEffekseerObj* m_pEfkCatchNormal;	// 通常キャッチ
+	CEffekseerObj* m_pEfkCatchJust;		// ジャストキャッチ
+
 
 	//-----------------------------
 	// その他変数
