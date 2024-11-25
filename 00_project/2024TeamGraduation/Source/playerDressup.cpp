@@ -19,21 +19,7 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE[CPlayerDressUP::EBody::BODY_MAX][CPlayerDressUP::EHandedness::HAND_MAX] =		// キャラクターファイル
-	{ 
-		{
-			"data\\TEXT\\character\\player\\righthand\\setup_player.txt",
-			"data\\TEXT\\character\\player\\lefthand\\setup_player.txt",
-		},
-		{
-			"data\\TEXT\\character\\player\\righthand\\setup_player_fat.txt",
-			"data\\TEXT\\character\\player\\lefthand\\setup_player_fat.txt",
-		},
-		{
-			"data\\TEXT\\character\\player\\righthand\\setup_player_gari.txt",
-			"data\\TEXT\\character\\player\\lefthand\\setup_player_gari.txt",
-		}
-	};
+	
 }
 
 //==========================================================================
@@ -101,7 +87,6 @@ void CPlayerDressUP::Update(const float fDeltaTime, const float fDeltaRate, cons
 
 	// 親の更新処理
 	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
-
 }
 
 //==========================================================================

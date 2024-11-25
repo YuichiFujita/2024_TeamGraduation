@@ -41,7 +41,8 @@ public:
 	// 定数
 	//=============================
 	static constexpr int ID_HAIR = 15;			// 髪のインデックス番号
-	static constexpr int ID_ACCESSORY = 16;	// アクセのインデックス番号
+	static constexpr int ID_ACCESSORY = 16;		// アクセのインデックス番号
+	static constexpr int ID_FACE = 2;			// 顔のインデックス番号
 
 	//=============================
 	// 列挙型定義
@@ -477,6 +478,7 @@ private:
 	//-----------------------------
 	CDressup* m_pDressup_Hair;		// 髪着せ替え
 	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
+	CDressup* m_pDressup_Face;		// 顔着せ替え
 
 	//-----------------------------
 	// スペシャル用

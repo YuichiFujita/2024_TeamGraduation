@@ -641,6 +641,9 @@
     <ClCompile Include="Source\ballHolderMarker.cpp">
       <Filter>ingame\marker</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressup_face.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1167,6 +1170,9 @@
     </ClInclude>
     <ClInclude Include="Source\ballHolderMarker.h">
       <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_face.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
