@@ -198,6 +198,7 @@
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\dressup.cpp" />
     <ClCompile Include="Source\dressup_accessory.cpp" />
+    <ClCompile Include="Source\dressup_face.cpp" />
     <ClCompile Include="Source\dressup_hair.cpp" />
     <ClCompile Include="Source\edit.cpp" />
     <ClCompile Include="Source\edithandle.cpp" />
@@ -380,6 +381,7 @@
     <ClInclude Include="Source\debugproc.h" />
     <ClInclude Include="Source\dressup.h" />
     <ClInclude Include="Source\dressup_accessory.h" />
+    <ClInclude Include="Source\dressup_face.h" />
     <ClInclude Include="Source\dressup_hair.h" />
     <ClInclude Include="Source\edit.h" />
     <ClInclude Include="Source\edithandle.h" />

@@ -647,6 +647,9 @@
     <ClCompile Include="Source\resultmanager.cpp">
       <Filter>mode\result</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressup_face.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1179,6 +1182,9 @@
     </ClInclude>
     <ClInclude Include="Source\resultmanager.h">
       <Filter>mode\result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_face.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

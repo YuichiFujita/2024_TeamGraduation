@@ -227,7 +227,8 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 
 	// 着せ替え
 	m_pDressup_Hair = nullptr;		// 髪着せ替え
-	m_pDressup_Accessory = nullptr;	// アクセ更新
+	m_pDressup_Accessory = nullptr;	// アクセ着せ替え
+	m_pDressup_Face = nullptr;		// 顔着せ替え
 
 	// スぺシャルエフェクト
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
@@ -355,6 +356,12 @@ HRESULT CPlayer::Init()
 	if (m_pDressup_Accessory == nullptr)
 	{
 		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face == nullptr)
+	{
+		m_pDressup_Face = CDressup::Create(CDressup::EType::TYPE_FACE, this, CPlayer::ID_FACE);
 	}
 
 	// スぺシャルエフェクト
@@ -2051,7 +2058,7 @@ void CPlayer::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Transform Info"))
 	{
-		MyLib::Vector3 pos = GetPosition();
+		MyLib::Vector3 pos = GetPosition(), posOrigin = GetOriginPosition();
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
@@ -2060,6 +2067,7 @@ void CPlayer::Debug()
 		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
+		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
@@ -2134,6 +2142,12 @@ void CPlayer::Debug()
 	if (m_pDressup_Accessory != nullptr)
 	{
 		m_pDressup_Accessory->Debug();
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face != nullptr)
+	{
+		m_pDressup_Face->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

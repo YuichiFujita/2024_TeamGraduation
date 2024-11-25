@@ -977,7 +977,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\player\\face_uv.jpg";
+    "data\\TEXTURE\\player\\face\\face_uv.jpg";
    }
   }
  }

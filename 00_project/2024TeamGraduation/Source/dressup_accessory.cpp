@@ -40,7 +40,7 @@ CDressup_Accessory::~CDressup_Accessory()
 HRESULT CDressup_Accessory::Init()
 {
 	// ëSÇƒì«Ç›çûÇ›
-	LoadAll(FOLDERNAME);
+	LoadAllModel(FOLDERNAME);
 
 	return S_OK;
 }

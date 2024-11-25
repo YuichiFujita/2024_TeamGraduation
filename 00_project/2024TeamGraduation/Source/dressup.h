@@ -57,7 +57,8 @@ public:
 
 protected:
 
-	void LoadAll(const std::wstring& folder);	// 全読み込み
+	void LoadAllModel(const std::wstring& folder);		// 全読み込み
+	void LoadAllTexture(const std::wstring& folder);	// 全読み込み
 
 	//=============================
 	// メンバ変数
