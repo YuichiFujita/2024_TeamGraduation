@@ -13,6 +13,7 @@
 #include "player.h"
 #include "sound.h"
 #include "game.h"
+#include "resultmanager.h"
 
 #include "blackframe.h"
 #include "camera.h"
@@ -34,12 +35,11 @@ namespace
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-CResultScore *CResult::m_pResultScore = nullptr;	// リザルトスクリーンのオブジェクト
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CResult::CResult() : m_clear(false)
+CResult::CResult() : m_pResultManager(nullptr)
 {
 	// 値のクリア
 }
@@ -66,6 +66,10 @@ HRESULT CResult::Init()
 		return E_FAIL;
 	}
 
+	// リザルトマネージャ生成
+	SAFE_UNINIT(m_pResultManager);
+	m_pResultManager = CResultManager::Create();
+
 	// BGM再生
 	CSound::GetInstance()->PlaySound(CSound::LABEL_BGM_RESULT);
 
@@ -78,7 +82,7 @@ HRESULT CResult::Init()
 //==========================================================================
 void CResult::Uninit()
 {
-	m_pResultScore = nullptr;
+	SAFE_UNINIT(m_pResultManager);
 
 	// 終了処理
 	CScene::Uninit();
@@ -91,6 +95,11 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 {
 	// シーンの更新処理
 	CScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (m_pResultManager != nullptr)
+	{
+		m_pResultManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// インプット情報取得
 	CInputKeyboard * pKey = CInputKeyboard::GetInstance();
@@ -110,13 +119,5 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 void CResult::Draw()
 {
 
-}
-
-//==========================================================================
-// リザルトスクリーンの情報取得
-//==========================================================================
-CResultScore *CResult::GetResultScore()
-{
-	return m_pResultScore;
 }
 

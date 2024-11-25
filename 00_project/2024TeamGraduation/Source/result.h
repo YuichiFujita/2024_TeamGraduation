@@ -14,8 +14,7 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CResultScore;
-class CPeopleManager;
+class CResultManager;
 
 //==========================================================================
 // クラス定義
@@ -29,21 +28,15 @@ public:
 	~CResult();
 
 	// オーバーライドされた関数
-	HRESULT Init();
-	void Uninit();
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void Draw();
-
-	static CResultScore *GetResultScore();
+	HRESULT Init() override;
+	void Uninit() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	void Draw() override;
 
 private:
 
 	// メンバ変数
-	bool m_clear; // クリア判定
-	CPeopleManager* m_pPeopleManager;			// 人マネージャ
-	static CResultScore *m_pResultScore;
+	CResultManager* m_pResultManager;			// リザルトマネージャのオブジェクト
 };
-
-
 
 #endif

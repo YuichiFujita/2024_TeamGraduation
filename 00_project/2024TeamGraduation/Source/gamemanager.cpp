@@ -27,11 +27,16 @@
 #include "charmManager.h"
 #include "timerUI.h"
 
+#include "resultManager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
+	const std::string TOP_LINE = "#==============================================================================";	// テキストのライン
+	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// テキストのライン
+
 	// ドッジボールコート情報
 	namespace Court
 	{
@@ -63,11 +68,12 @@ CGameManager* CGameManager::m_pThisPtr = nullptr;	// 自身のポインタ
 CGameManager::CGameManager()
 {
 	// 値のクリア
-	m_SceneType = SCENE_MAIN;	// シーンの種類
+	m_SceneType = SCENE_MAIN;		// シーンの種類
 	m_OldSceneType = SCENE_MAIN;	// シーンの種類(過去)
-	m_bControll = false;		// 操作できるか
-	m_fSceneTimer = 0.0f;		// シーンタイマー
-	m_courtSize = MyLib::Vector3();
+	m_bControll = false;			// 操作できるか
+	m_fSceneTimer = 0.0f;			// シーンタイマー
+	m_courtSize = MyLib::Vector3();	// コートサイズ
+	m_endInfo = SEndInfo();			// 終了時情報
 
 	m_pGymWallManager = nullptr;		// ジム壁マネジャー
 	m_pCharmManager = nullptr;			// モテマネージャ
@@ -334,6 +340,9 @@ void CGameManager::SceneSpecial_Stag()
 //==========================================================================
 void CGameManager::SceneEnd()
 {
+	// 試合終了処理
+	EndGame();
+
 	// 操作出来ない
 	m_bControll = false;
 
@@ -546,6 +555,123 @@ void CGameManager::CreateTeamStatus()
 }
 
 //==========================================================================
+// チームステータス保存
+//==========================================================================
+void CGameManager::Save()
+{
+	// ファイルを開く
+	std::ofstream File(ResultManager::TEXTFILE);
+	if (!File.is_open()) {
+		return;
+	}
+
+	// 勝利
+	int winteam = 0;
+	float tension = 10.0f;
+
+	// テキストファイル名目次
+	File << TOP_LINE << std::endl;
+	File << "# チーム情報" << std::endl;
+	File << TOP_LINE << std::endl;
+	
+	File << TEXT_LINE << std::endl;
+	File << "# 試合情報" << std::endl;
+	File << TEXT_LINE << std::endl;
+	File << "WIN = " << m_endInfo.m_winteam << std::endl;
+	File << "TENSION = "<< m_endInfo.m_fTension << std::endl;
+
+	int i = 0;
+	for (const auto& team : m_pTeamStatus)
+	{
+		if (team == nullptr) continue;
+
+		File << TEXT_LINE << std::endl;
+		File << "# チーム" << i << std::endl;
+		File << TEXT_LINE << std::endl;
+		File << "CHARMVALUE = " << team->GetCharmInfo().fValue << std::endl;
+		File << std::endl;
+
+		i++;
+	}
+
+	// ファイルを閉じる
+	File.close();
+}
+
+//==========================================================================
+// 試合終了
+//==========================================================================
+void CGameManager::EndGame()
+{
+	// TODO: テンションを求める
+
+
+	// 勝利チーム決定
+	CheckVictory();
+
+	// 試合内容保存
+	Save();
+}
+
+//==========================================================================
+// 勝利チーム決定
+//==========================================================================
+void CGameManager::CheckVictory()
+{
+	int m_aAlive[ETeamSide::SIDE_MAX] = {};
+	int m_aLife[ETeamSide::SIDE_MAX] = {};
+
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+	{
+
+		// リストループ
+		CListManager<CPlayer> list = CPlayerManager::GetInstance()->GetInList(static_cast<ETeamSide>(i));
+		std::list<CPlayer*>::iterator itr = list.GetEnd();
+		CPlayer* pObj = nullptr;
+
+		while (list.ListLoop(itr))
+		{
+			pObj = (*itr);
+		
+			if (pObj->GetState() != CPlayer::EState::STATE_DEAD ||
+				pObj->GetState() != CPlayer::EState::STATE_DEAD)
+			{// 人数加算
+				m_aAlive[i]++;
+			}
+
+			// 体力加算
+			m_aLife[i] += pObj->GetLife();
+		}
+	}
+
+	if (m_aAlive[ETeamSide::SIDE_LEFT] > m_aAlive[ETeamSide::SIDE_RIGHT])
+	{// 左が多い
+		m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+	}
+	else if(m_aAlive[ETeamSide::SIDE_LEFT] < m_aAlive[ETeamSide::SIDE_RIGHT])
+	{// 右が多い
+		m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+	}
+	else
+	{// 左右同数
+
+		// 総合体力差
+		if (m_aLife[ETeamSide::SIDE_LEFT] > m_aLife[ETeamSide::SIDE_RIGHT])
+		{// 左が多い
+			m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+		}
+		else if (m_aLife[ETeamSide::SIDE_LEFT] < m_aLife[ETeamSide::SIDE_RIGHT])
+		{// 右が多い
+			m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+		}
+		else
+		{// 引き分け
+			m_endInfo.m_winteam = ETeamSide::SIDE_NONE;
+		}
+	}
+}
+
+//==========================================================================
 // デバッグ
 //==========================================================================
 void CGameManager::Debug()
@@ -581,7 +707,6 @@ void CGameManager::Debug()
 	}
 
 	// タイマー
-
 	if (ImGui::TreeNode("Timer"))
 	{
 
@@ -619,6 +744,12 @@ void CGameManager::Debug()
 		{
 			m_pTeamStatus[i]->Debug();
 		}
+	}
+
+	// 終了
+	if (ImGui::Button("end"))
+	{
+		SetSceneType(ESceneType::SCENE_END);
 	}
 
 #endif

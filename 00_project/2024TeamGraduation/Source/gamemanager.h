@@ -60,6 +60,15 @@ public:
 		SIDE_MAX		// この列挙型の総数
 	};
 
+	// 試合終了時情報
+	struct SEndInfo
+	{
+		ETeamSide m_winteam;			// 勝利チーム
+		float m_fTension;				// 盛り上がり度
+	
+		SEndInfo() : m_winteam(ETeamSide::SIDE_NONE), m_fTension(0.0f) {};
+	};
+
 	CGameManager();
 	~CGameManager();
 
@@ -84,7 +93,10 @@ public:
 	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
 	void AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType);			// モテ加算
 	void SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType);			// モテ減算
-	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);	// スペシャル加算
+	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);		// スペシャル加算
+	
+	void EndGame();			// 試合終了
+	void CheckVictory();	// 勝利チーム決定
 
 	static CGameManager* Create(CScene::MODE mode);				// 生成処理
 	static CGameManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
@@ -113,6 +125,7 @@ private:
 	void UpdateSpecialStag();		// スペシャル演出更新
 	void UpdateTeamStatus();		// チームステータス更新
 	void CreateTeamStatus();		// チームステータス生成
+	void Save();					// チームステータス保存
 
 	//=============================
 	// メンバ変数
@@ -123,6 +136,7 @@ private:
 	float m_fSceneTimer;		// シーンタイマー
 	MyLib::Vector3 m_courtSize;						// コートのサイズ
 	CTeamStatus* m_pTeamStatus[ETeamSide::SIDE_MAX];	// チームステータス
+	SEndInfo m_endInfo;									// 終了時情報
 
 	//--------------------------
 	// 生成したオブジェクト

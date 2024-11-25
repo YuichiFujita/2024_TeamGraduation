@@ -193,6 +193,7 @@
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\charmManager.cpp" />
+    <ClCompile Include="Source\charmText.cpp" />
     <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\charmManager.h" />
+    <ClInclude Include="Source\charmText.h" />
     <ClInclude Include="Source\charmValueManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
