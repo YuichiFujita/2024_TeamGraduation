@@ -29,6 +29,7 @@
 #include "teamStatus.h"
 #include "specialEffect.h"
 #include "charmManager.h"
+#include "playerMarker.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -240,10 +241,11 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pEfkCatchJust = nullptr;		// ジャストキャッチ
 
 	// その他
-	m_fEscapeTime = 0.0f;		// ボール所持タイマー
+	m_fEscapeTime = 0.0f;	// ボール所持タイマー
 	m_fHaveTime = 0.0f;		// ボール所持タイマー
 	m_nMyPlayerIdx = -1;	// プレイヤーインデックス番号
 	m_nPosIdx = -1;			// ポジション別インデックス
+	m_pMarker = nullptr;	// マーカーの情報
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
@@ -337,6 +339,14 @@ HRESULT CPlayer::Init()
 	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
 	{// 失敗していたら
+		return E_FAIL;
+	}
+
+	// マーカーの情報
+	m_pMarker = CPlayerMarker::Create(this);
+	if (m_pMarker == nullptr)
+	{ // 生成に失敗した場合
+
 		return E_FAIL;
 	}
 
@@ -508,29 +518,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	}
 
 #endif
-
-	// TODO：誰がユーザーなのか見えるようにするやつ
-#if 1
-	if (GetBaseType() == EBaseType::TYPE_USER)
-	{ // ベースがユーザーの場合
-
-		const D3DXCOLOR COL[] =
-		{
-			MyLib::color::Red(),
-			MyLib::color::Blue(),
-			MyLib::color::Yellow(),
-			MyLib::color::Green()
-		};
-
-		// 演出
-		CEffect3D::Create(
-			GetPosition() + MyLib::Vector3(0.0f, 180.0f, 0.0f),
-			MyLib::Vector3(0.0f, 0.0f, 0.0f),
-			COL[m_nMyPlayerIdx],
-			20.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
-#endif
-
 }
 
 //==========================================================================

@@ -20,6 +20,7 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CPlayerMarker;	// マーカー
 class CShadow;			// 影
 class CPlayerBase;		// ベースプレイヤー
 class CPlayerAction;	// アクション
@@ -486,6 +487,7 @@ private:
 	float m_fEscapeTime;		// 端逃げタイマー
 	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
 	int m_nPosIdx;				// ポジション別インデックス
+	CPlayerMarker* m_pMarker;	// マーカーの情報
 	CShadow* m_pShadow;			// 影の情報
 	CBall* m_pBall;				// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報

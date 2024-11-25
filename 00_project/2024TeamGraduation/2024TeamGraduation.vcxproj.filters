@@ -644,6 +644,12 @@
     <ClCompile Include="Source\ballHolderMarker.cpp">
       <Filter>ingame\marker</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerMarker.cpp">
+      <Filter>ingame\marker</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\resultmanager.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
     <ClCompile Include="Source\dressup_face.cpp">
       <Filter>character\dressup</Filter>
     </ClCompile>
@@ -1176,6 +1182,12 @@
     </ClInclude>
     <ClInclude Include="Source\ballHolderMarker.h">
       <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerMarker.h">
+      <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resultmanager.h">
+      <Filter>mode\result</Filter>
     </ClInclude>
     <ClInclude Include="Source\dressup_face.h">
       <Filter>character\dressup</Filter>

@@ -287,6 +287,7 @@
     <ClCompile Include="Source\playerEntry.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
+    <ClCompile Include="Source\playerMarker.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
     <ClCompile Include="Source\playerPosAdj_entry.cpp" />
@@ -308,6 +309,7 @@
     <ClCompile Include="Source\renderer.cpp" />
     <ClCompile Include="Source\renderTexture.cpp" />
     <ClCompile Include="Source\result.cpp" />
+    <ClCompile Include="Source\resultmanager.cpp" />
     <ClCompile Include="Source\sample_character.cpp" />
     <ClCompile Include="Source\sample_obj2D.cpp" />
     <ClCompile Include="Source\sample_obj3D.cpp" />
@@ -469,6 +471,7 @@
     <ClInclude Include="Source\playerEntry.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
+    <ClInclude Include="Source\playerMarker.h" />
     <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
     <ClInclude Include="Source\playerPosAdj_entry.h" />
@@ -487,6 +490,7 @@
     <ClInclude Include="Source\renderer.h" />
     <ClInclude Include="Source\renderTexture.h" />
     <ClInclude Include="Source\result.h" />
+    <ClInclude Include="Source\resultmanager.h" />
     <ClInclude Include="Source\sample_character.h" />
     <ClInclude Include="Source\sample_obj2D.h" />
     <ClInclude Include="Source\sample_obj3D.h" />

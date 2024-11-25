@@ -389,7 +389,7 @@ void CGameManager::UpdateTeamStatus()
 		AddSpecialValue(m_pTeamStatus[i]->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_ALLWAYS);
 
 #if _DEBUG
-#if 1
+#if 0
 		return;
 #endif	// デバッグ用
 #endif
