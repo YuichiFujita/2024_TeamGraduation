@@ -32,7 +32,7 @@ CModel::CModel(int nPriority)
 	m_scale = mylib_const::DEFAULT_SCALE;			// スケール
 	m_scaleOrigin = mylib_const::DEFAULT_SCALE;			// スケール
 	m_nIdxXFile = 0;								// Xファイルのインデックス番号
-	m_nIdxTexture = nullptr;							// テクスチャのインデックス番号
+	m_nIdxTexture.clear();							// テクスチャのインデックス番号
 	m_pParent = nullptr;								// 親モデルのポインタ
 	m_nNumAll++;									// 総数加算
 }
@@ -62,16 +62,12 @@ void CModel::BindXData(int nIdxXFile)
 //==========================================================================
 void CModel::BindTexture()
 {
-	if (m_nIdxTexture != nullptr)
-	{
-		delete[] m_nIdxTexture;
-	}
-
+	
 	// Xファイルのデータ取得
 	CXLoad::SXFile *pXData = CXLoad::GetInstance()->GetMyObject(m_nIdxXFile);
 
 	// マテリアル分メモリ確保
-	m_nIdxTexture = DEBUG_NEW int[(int)pXData->dwNumMat];
+	m_nIdxTexture.resize((int)pXData->dwNumMat);
 
 	// テクスチャのインデックス番号
 	for (int i = 0; i < (int)pXData->dwNumMat; i++)
@@ -172,11 +168,7 @@ HRESULT CModel::Init(const std::string& file)
 void CModel::Uninit()
 {
 	m_mtxParent = nullptr;
-
-	if (m_nIdxTexture != nullptr)
-	{
-		delete[] m_nIdxTexture;
-	}
+	m_nIdxTexture.clear();
 }
 
 //==========================================================================
@@ -367,13 +359,14 @@ void CModel::Draw()
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
 	// 頂点数分繰り返し
+	CTexture* pTexture = CTexture::GetInstance();
 	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
 	{
 		// マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nIdxTexture[nCntMat]));
+		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
@@ -416,13 +409,14 @@ void CModel::Draw(D3DXCOLOR col)
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
 	// 頂点数分繰り返し
+	CTexture* pTexture = CTexture::GetInstance();
 	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
 	{
 		// マテリアルの設定
 		pDevice->SetMaterial(&matNow.MatD3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nIdxTexture[nCntMat]));
+		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
@@ -468,6 +462,7 @@ void CModel::Draw(float fAlpha)
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
 	// 頂点数分繰り返し
+	CTexture* pTexture = CTexture::GetInstance();
 	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
 	{
 		// 不透明度設定
@@ -481,7 +476,7 @@ void CModel::Draw(float fAlpha)
 		pDevice->SetMaterial(&matNow.MatD3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nIdxTexture[nCntMat]));
+		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
@@ -500,15 +495,11 @@ void CModel::Draw(float fAlpha)
 //==========================================================================
 void CModel::SetIdxTexture(int i, int nIdx)
 {
+	if (static_cast<int>(m_nIdxTexture.size()) <= i)
+	{
+		assert(false);
+	}
 	m_nIdxTexture[i] = nIdx;
-}
-
-//==========================================================================
-// テクスチャインデックス番号割り当て
-//==========================================================================
-int CModel::GetIdxTexture(int nIdx)
-{
-	return m_nIdxTexture[nIdx];
 }
 
 //==========================================================================

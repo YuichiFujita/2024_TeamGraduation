@@ -56,11 +56,12 @@ public:
 		CPlayer* pPlayer;		// プレイヤー
 		CDressup* pHair;		// 髪着せ替え
 		CDressup* pAccessory;	// アクセ着せ替え
+		CDressup* pFace;		// 顔着せ替え
 		EEditType editType;		// エディットする種類
 		EChangeType changeType;	// 変更する種類
 
 		// コンストラクタ
-		SEntryDressup() : pPlayer(nullptr), pHair(nullptr), pAccessory(nullptr), editType(EEditType::EDIT_PROCESS), changeType(EChangeType::TYPE_HAIR) {}
+		SEntryDressup() : pPlayer(nullptr), pHair(nullptr), pAccessory(nullptr), pFace(nullptr), editType(EEditType::EDIT_PROCESS), changeType(EChangeType::TYPE_HAIR) {}
 	};
 
 	CEntry_Dressup();
@@ -85,11 +86,11 @@ private:
 	//=============================
 	void Save();					// セーブ
 	void Load();					// ロード
-	void ChangeEditType(int i);		// エディットする種類変更
-	void ChangeChangeType(int i);	// 変更する箇所の種類変更
+	void ChangeEditType(int nLoop, int nControllIdx);		// エディットする種類変更
+	void ChangeChangeType(int nLoop, int nControllIdx);	// 変更する箇所の種類変更
 
-	void ChangeBodyType(int i);		// 体型変更
-	void ChangeHandedness(int i);	// 利き手変更
+	void ChangeBodyType(int nLoop, int nControllIdx);		// 体型変更
+	void ChangeHandedness(int nLoop, int nControllIdx);	// 利き手変更
 	void ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body);		// プレイヤー再生成
 
 	//=============================

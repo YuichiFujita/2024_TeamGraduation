@@ -41,7 +41,8 @@ public:
 	// 定数
 	//=============================
 	static constexpr int ID_HAIR = 15;			// 髪のインデックス番号
-	static constexpr int ID_ACCESSORY = 16;	// アクセのインデックス番号
+	static constexpr int ID_ACCESSORY = 16;		// アクセのインデックス番号
+	static constexpr int ID_FACE = 2;			// 顔のインデックス番号
 
 	//=============================
 	// 列挙型定義
@@ -332,6 +333,11 @@ public:
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
 	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
 	void OutCourtSetting();												// コート越え処理
+	void SetHaveTime(float time) { m_fHaveTime = time; }				// ボール所持タイマー
+	float GetHaveTime() { return m_fHaveTime; }							// ボール所持タイマー
+	void SetEscapeTime(float time) { m_fEscapeTime = time; }			// 端逃げタイマー
+	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
+
 	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
 
 	//=============================
@@ -411,13 +417,6 @@ private:
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
 
 	//-----------------------------
-	// 非モテ関数
-	//-----------------------------
-	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
-	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
-	void EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 端に逃げ続ける
-
-	//-----------------------------
 	// モーション系関数
 	//-----------------------------
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
@@ -477,6 +476,7 @@ private:
 	//-----------------------------
 	CDressup* m_pDressup_Hair;		// 髪着せ替え
 	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
+	CDressup* m_pDressup_Face;		// 顔着せ替え
 
 	//-----------------------------
 	// スペシャル用

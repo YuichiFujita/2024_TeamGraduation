@@ -32,10 +32,10 @@ public:
 	void Draw(float fAlpha);
 	void BindXData(int nIdxXFile);
 
-	int *GetIdxTexture() {return m_nIdxTexture; }
-	int GetIdxTexture(int nIdx);	// テクスチャインデックス番号取得
-	void SetIdxTexture(int i, int nIdx);	// テクスチャのインデックス割り当て
-	int GetIdxXFile() const { return m_nIdxXFile; }
+	std::vector<int> GetIdxTexture() {return m_nIdxTexture; }		// テクスチャインデックス番号取得
+	int GetIdxTexture(int nIdx) { return m_nIdxTexture[nIdx]; }		// テクスチャインデックス番号取得
+	void SetIdxTexture(int i, int nIdx);							// テクスチャのインデックス割り当て
+	int GetIdxXFile() const { return m_nIdxXFile; }					// Xファイルのインデックス番号取得
 	void SetWorldMtx(const MyLib::Matrix mtx);		// マトリックス設定
 	MyLib::Matrix GetWorldMtx() ;			// マトリックス取得
 	MyLib::Matrix*GetPtrWorldMtx();			// ポインタマトリックス取得
@@ -72,19 +72,19 @@ private:
 	void CalWorldMtx();	// ワールドマトリックスの計算処理
 	void DrawShadowMtx();
 
-	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
-	MyLib::Matrix *m_mtxParent;	// 親マトリックスのポインタ
-	MyLib::Vector3 m_pos;		// 位置
-	MyLib::Vector3 m_posOld;	// 前回の位置
-	MyLib::Vector3 m_posOrigin;	// 元の位置
-	MyLib::Vector3 m_rot;		// 向き
-	MyLib::Vector3 m_rotOrigin;// 向き
-	MyLib::Vector3 m_scale;		// スケール
-	MyLib::Vector3 m_scaleOrigin;	// 元のスケール
-	int m_nIdxXFile;			// Xファイルのインデックス番号
-	int *m_nIdxTexture;			// テクスチャのインデックス番号
-	CModel *m_pParent;			// 親モデルのポインタ
-	static int m_nNumAll;		// 総数
+	MyLib::Matrix m_mtxWorld;			// ワールドマトリックス
+	MyLib::Matrix *m_mtxParent;			// 親マトリックスのポインタ
+	MyLib::Vector3 m_pos;				// 位置
+	MyLib::Vector3 m_posOld;			// 前回の位置
+	MyLib::Vector3 m_posOrigin;			// 元の位置
+	MyLib::Vector3 m_rot;				// 向き
+	MyLib::Vector3 m_rotOrigin;			// 向き
+	MyLib::Vector3 m_scale;				// スケール
+	MyLib::Vector3 m_scaleOrigin;		// 元のスケール
+	int m_nIdxXFile;					// Xファイルのインデックス番号
+	std::vector<int> m_nIdxTexture;		// テクスチャのインデックス番号
+	CModel *m_pParent;					// 親モデルのポインタ
+	static int m_nNumAll;				// 総数
 };
 
 

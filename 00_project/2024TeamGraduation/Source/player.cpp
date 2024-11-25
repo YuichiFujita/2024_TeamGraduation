@@ -25,9 +25,10 @@
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
-#include "charmManager.h"
+#include "charmValueManager.h"
 #include "teamStatus.h"
 #include "specialEffect.h"
+#include "charmManager.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -117,12 +118,6 @@ namespace Align	// 足揃え
 namespace Court	// 移動制限
 {
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
-}
-
-namespace UnCharm	// 非モテ
-{
-	const float HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
-	const float EDGE_ESCAPE = 10.0f;			// 端に逃げ続けている(秒数)
 }
 
 namespace Crab	// カニ歩き
@@ -232,12 +227,14 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 
 	// 着せ替え
 	m_pDressup_Hair = nullptr;		// 髪着せ替え
-	m_pDressup_Accessory = nullptr;	// アクセ更新
+	m_pDressup_Accessory = nullptr;	// アクセ着せ替え
+	m_pDressup_Face = nullptr;		// 顔着せ替え
 
 	// スぺシャルエフェクト
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
 
 	// その他
+	m_fEscapeTime = 0.0f;		// ボール所持タイマー
 	m_fHaveTime = 0.0f;		// ボール所持タイマー
 	m_nMyPlayerIdx = -1;	// プレイヤーインデックス番号
 	m_nPosIdx = -1;			// ポジション別インデックス
@@ -359,6 +356,12 @@ HRESULT CPlayer::Init()
 	if (m_pDressup_Accessory == nullptr)
 	{
 		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face == nullptr)
+	{
+		m_pDressup_Face = CDressup::Create(CDressup::EType::TYPE_FACE, this, CPlayer::ID_FACE);
 	}
 
 	// スぺシャルエフェクト
@@ -512,7 +515,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	}
 
 	// 非モテまとめ
-	UnCharm(fDeltaTime, fDeltaRate, fSlowRate);
+	CCharmManager::GetInstance()->UnCharm(this, fDeltaTime, fDeltaRate, fSlowRate);
 
 #if _DEBUG	// デバッグ処理
 
@@ -1160,7 +1163,7 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	
 	// モテ加算
-	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_JUSTCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_JUSTCATCH);
 	
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
@@ -1343,7 +1346,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_COVERCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_COVERCATCH);
 
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_COVERCATCH);
@@ -1842,69 +1845,6 @@ void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, cons
 }
 
 //==========================================================================
-// 非モテまとめ
-//==========================================================================
-void CPlayer::UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 持ち続け
-	LongHold(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 端に逃げまくる
-	EdgeEscape(fDeltaTime, fDeltaRate, fSlowRate);
-}
-
-//==========================================================================
-// 持ち続けている判定
-//==========================================================================
-void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	if (m_pBall == nullptr)
-	{// リセット
-		m_fHaveTime = 0.0f;
-		return;
-	}
-
-	CGameManager* pGameMgr = CGameManager::GetInstance();
-
-	// 加算
-	m_fHaveTime += fDeltaTime * fSlowRate;
-
-	if (m_fHaveTime > UnCharm::HAVE_LONG)
-	{// モテダウン
-
-		// モテ減算
-		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
-	
-		m_fHaveTime = 0.0;
-	}
-}
-
-//==========================================================================
-// 端に逃げ続ける
-//==========================================================================
-void CPlayer::EdgeEscape(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	CGameManager* pGameMgr = CGameManager::GetInstance();
-
-	//m_pPosAdj->CheckEdgeEscape();
-	if (true)
-	{// 端だったら
-
-		// 加算
-		m_fEscapeTime += fDeltaTime * fSlowRate;
-	}
-
-	if (m_fHaveTime > UnCharm::EDGE_ESCAPE)
-	{// モテダウン
-
-		// モテ減算
-		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
-
-		m_fHaveTime = 0.0;
-	}
-}
-
-//==========================================================================
 // 描画処理
 //==========================================================================
 void CPlayer::Draw()
@@ -2118,7 +2058,7 @@ void CPlayer::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Transform Info"))
 	{
-		MyLib::Vector3 pos = GetPosition();
+		MyLib::Vector3 pos = GetPosition(), posOrigin = GetOriginPosition();
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
@@ -2127,6 +2067,7 @@ void CPlayer::Debug()
 		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
+		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
@@ -2201,6 +2142,12 @@ void CPlayer::Debug()
 	if (m_pDressup_Accessory != nullptr)
 	{
 		m_pDressup_Accessory->Debug();
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face != nullptr)
+	{
+		m_pDressup_Face->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

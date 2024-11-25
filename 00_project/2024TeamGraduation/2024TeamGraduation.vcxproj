@@ -192,11 +192,13 @@
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\charmManager.cpp" />
+    <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\dressup.cpp" />
     <ClCompile Include="Source\dressup_accessory.cpp" />
+    <ClCompile Include="Source\dressup_face.cpp" />
     <ClCompile Include="Source\dressup_hair.cpp" />
     <ClCompile Include="Source\edit.cpp" />
     <ClCompile Include="Source\edithandle.cpp" />
@@ -371,6 +373,7 @@
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\charmManager.h" />
+    <ClInclude Include="Source\charmValueManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
@@ -378,6 +381,7 @@
     <ClInclude Include="Source\debugproc.h" />
     <ClInclude Include="Source\dressup.h" />
     <ClInclude Include="Source\dressup_accessory.h" />
+    <ClInclude Include="Source\dressup_face.h" />
     <ClInclude Include="Source\dressup_hair.h" />
     <ClInclude Include="Source\edit.h" />
     <ClInclude Include="Source\edithandle.h" />
