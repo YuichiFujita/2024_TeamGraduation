@@ -14,6 +14,7 @@
 #include "calculation.h"
 #include "model.h"
 #include "ballHolderMarker.h"
+#include "ballLandingMarker.h"
 #include "shadow.h"
 #include "specialManager.h"
 #include "playerManager.h"
@@ -179,7 +180,8 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
-	m_pMarker		(nullptr),		// ボール所持マーカー情報
+	m_pHoldMarker	(nullptr),		// ボール所持マーカー情報
+	m_pLandMarker	(nullptr),		// ボール着地点マーカー情報
 	m_pShadow		(nullptr),		// 影情報
 	m_pPlayer		(nullptr),		// プレイヤー情報
 	m_pTarget		(nullptr),		// ホーミングターゲット情報
@@ -254,9 +256,13 @@ HRESULT CBall::Init()
 	HRESULT hr = CObjectX::Init(MODEL);
 	if (FAILED(hr)) { return E_FAIL; }
 
-	// マーカーの生成
-	m_pMarker = CBallHolderMarker::Create(nullptr);
-	if (m_pMarker == nullptr) { return E_FAIL; }
+	// ボール所持マーカーの生成
+	m_pHoldMarker = CBallHolderMarker::Create(nullptr);
+	if (m_pHoldMarker == nullptr) { return E_FAIL; }
+
+	// ボール着地点マーカーの生成
+	m_pLandMarker = CBallLandingMarker::Create(this);
+	if (m_pLandMarker == nullptr) { return E_FAIL; }
 
 	// 影の生成
 	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
@@ -1534,8 +1540,8 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// キャッチしたプレイヤーをマーカーに割当
-	m_pMarker->BindPlayer(pPlayer);
+	// キャッチしたプレイヤーを所持マーカーに割当
+	m_pHoldMarker->BindPlayer(pPlayer);
 
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す
@@ -1560,8 +1566,8 @@ void CBall::Throw(CPlayer* pPlayer)
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
 
-	// マーカーからプレイヤーを破棄
-	m_pMarker->BindPlayer(nullptr);
+	// 所持マーカーからプレイヤーを破棄
+	m_pHoldMarker->BindPlayer(nullptr);
 
 	// ボールの移動ベクトルを作成
 	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き
