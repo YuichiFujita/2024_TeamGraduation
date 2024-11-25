@@ -644,6 +644,9 @@
     <ClCompile Include="Source\ballHolderMarker.cpp">
       <Filter>ingame\marker</Filter>
     </ClCompile>
+    <ClCompile Include="Source\resultmanager.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1173,6 +1176,9 @@
     </ClInclude>
     <ClInclude Include="Source\ballHolderMarker.h">
       <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resultmanager.h">
+      <Filter>mode\result</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
