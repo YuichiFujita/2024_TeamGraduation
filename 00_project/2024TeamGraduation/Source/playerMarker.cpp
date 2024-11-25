@@ -5,6 +5,8 @@
 // 
 //==========================================================================
 #include "playerMarker.h"
+#include "manager.h"
+#include "renderer.h"
 #include "gameManager.h"
 #include "player.h"
 
@@ -18,7 +20,8 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE = "data\\TEXTURE\\ballmarker\\circle.png";	// 円のテクスチャ
+	const std::string TEXTURE = "data\\TEXTURE\\playerMarker000.png";	// プレイヤーマーカーテクスチャ
+	const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
 }
 
 //==========================================================================
@@ -71,8 +74,11 @@ HRESULT CPlayerMarker::Init()
 	CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
 	// 親クラスの初期化
-	HRESULT hr = CObjectBillboardAnim::Init();
+	HRESULT hr = CObjectBillboardAnim::Init(PTRN.x, PTRN.y, 0.0f, false);
 	if (FAILED(hr)) { return E_FAIL; }
+
+	// 自動再生をOFFにする
+	SetEnableAutoPlay(false);
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
@@ -83,8 +89,9 @@ HRESULT CPlayerMarker::Init()
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 
 	// 横幅を元にサイズを設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 50.0f);
-	SetSize(MyLib::Vector2(size.x, size.y));
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 160.0f);
+	size.x /= (float)PTRN.x;
+	SetSize(size);
 	SetSizeOrigin(GetSize());
 
 	return S_OK;
@@ -114,10 +121,11 @@ void CPlayerMarker::Kill()
 void CPlayerMarker::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #ifdef DISP
-	m_pPlayer->GetMyPlayerIdx();
+	// 操作権インデックスの取得
+	int nPadIdx = m_pPlayer->GetMyPlayerIdx();
 
-	// プレイヤーいないと描画切る
-	bool bDisp = (m_pPlayer == nullptr) ? false : true;
+	// 操作権がない場合は描画OFF
+	bool bDisp = (nPadIdx <= -1) ? false : true;
 	SetEnableDisp(bDisp);
 
 	// 描画しない場合は抜ける
@@ -125,7 +133,10 @@ void CPlayerMarker::Update(const float fDeltaTime, const float fDeltaRate, const
 
 	// プレイヤーの頭上に位置を設定
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-	pos.y += 160.0f;
+	pos.y += 200.0f;
+
+	// 現在の操作権に合わせたパターンに変更
+	SetPatternAnim(nPadIdx);
 
 	// 位置の反映
 	SetPosition(pos);
@@ -142,6 +153,24 @@ void CPlayerMarker::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CPlayerMarker::Draw()
 {
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを無効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 	// 親クラスの描画
 	CObjectBillboardAnim::Draw();
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを有効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }

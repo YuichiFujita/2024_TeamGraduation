@@ -113,33 +113,32 @@ HRESULT CObjectBillboardAnim::Init(const int nDivisionU, const int nDivisionV, c
 //==========================================================================
 void CObjectBillboardAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
-	// カウントを更新
 	if (m_bAutoPlay)
 	{
+		// カウントを更新
 		m_fTimerAnim += fDeltaTime * fDeltaRate * fSlowRate;
-	}
 
-	// パターン更新
-	if (m_fTimerAnim >= m_fIntervalAnim)
-	{
-		// パターンNo.を更新
-		m_nPatternAnim = (m_nPatternAnim + 1) % (m_nDivisionU * m_nDivisionV);
-		if (m_nPatternAnim == 0)
-		{ // パターンが一周した時
+		// パターン更新
+		if (m_fTimerAnim >= m_fIntervalAnim)
+		{
+			// パターンNo.を更新
+			m_nPatternAnim = (m_nPatternAnim + 1) % (m_nDivisionU * m_nDivisionV);
+			if (m_nPatternAnim == 0)
+			{ // パターンが一周した時
 
-			// 終了状態
-			m_bFinish = true;
-			if (m_bAutoDeath)
-			{
-				// オブジェクト破棄
-				Uninit();
-				return;
+				// 終了状態
+				m_bFinish = true;
+				if (m_bAutoDeath)
+				{
+					// オブジェクト破棄
+					Uninit();
+					return;
+				}
 			}
-		}
 
-		// インターバル分減算
-		m_fTimerAnim -= m_fIntervalAnim;
+			// インターバル分減算
+			m_fTimerAnim -= m_fIntervalAnim;
+		}
 	}
 
 	// 更新処理

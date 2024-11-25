@@ -29,7 +29,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerMarker(int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CPlayerMarker(int nPriority = 7);
 	~CPlayerMarker();
 
 	//=============================
