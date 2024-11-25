@@ -122,7 +122,7 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 	}
 
 	// モテ加算(ボール投げた側)
-	pGameManager->AddCharmValue(sideBall, CCharmManager::ETypeAdd::ADD_HIT);
+	pGameManager->AddCharmValue(sideBall, CCharmValueManager::ETypeAdd::ADD_HIT);
 
 	// スペシャル加算
 	pGameManager->AddSpecialValue(sideBall, CSpecialValueManager::ETypeAdd::ADD_HIT);

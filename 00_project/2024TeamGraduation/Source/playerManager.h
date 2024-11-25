@@ -72,13 +72,18 @@ public:
 	// メンバ関数
 	//=============================
 	int RegistPlayer(CPlayer* pPlayer, const int nPosIdx = -1);	// プレイヤー登録
-	void DeletePlayer(CPlayer* pPlayer);				// プレイヤー削除
-	SOutInfo GetOutInfo(const EOutPos out);				// 外野情報取得
+	void DeletePlayer(CPlayer* pPlayer);	// プレイヤー削除
+
+	CListManager<CPlayer> GetInList(const CGameManager::ETeamSide team);	// 内野プレイヤーリスト取得
 	CPlayer* GetOutPlayer(const EOutPos out);			// 外野プレイヤー取得
 	EOutPos GetOutPosition(const CPlayer* pPlayer);		// 外野ポジション取得
+	SOutInfo GetOutInfo(const EOutPos out);				// 外野情報取得
 	void ChangeAIToUser(CPlayer* pPlayer);				// ユーザーベースのAI変更
 	void ChangeUserToAI(CPlayer* pPlayer);				// AIベースのユーザー変更
 	void SwapBase(CPlayer* pPlayer, CPlayer* pTarget);	// ベース入替
+
+	void SetEnableUserChange(const bool bUserChange) { m_bUserChange = bUserChange; }	// ユーザー変更操作フラグ設定
+	bool IsUserChange() const { return m_bUserChange; }	// ユーザー変更操作フラグ取得
 
 	//=============================
 	// 静的メンバ関数
@@ -116,6 +121,7 @@ private:
 	CListManager<CPlayer> m_listInLeft;		// 内野左プレイヤー
 	CListManager<CPlayer> m_listInRight;	// 内野右プレイヤー
 	CPlayer* m_apOut[OUT_MAX];				// 外野プレイヤー
+	bool m_bUserChange;						// ユーザー変更操作フラグ
 
 	//=============================
 	// 静的メンバ変数

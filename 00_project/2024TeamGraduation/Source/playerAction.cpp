@@ -55,6 +55,20 @@ CPlayerAction::START_FUNC CPlayerAction::m_StartFunc[] =	// 行動関数
 	nullptr,								// スペシャル
 };
 
+CPlayerAction::END_FUNC CPlayerAction::m_EndFunc[] =	// 行動関数
+{
+	nullptr,								// なし
+	&CPlayerAction::EndUnstable,			// おっとっと
+	nullptr,								// ブリンク
+	nullptr,								// 回避
+	nullptr,								// 走り
+	nullptr,								// ジャンプ
+	nullptr,								// キャッチ
+	nullptr,								// 投げ
+	nullptr,								// 投げ(ジャンプ)
+	nullptr,								// スペシャル
+};
+
 //==========================================================================
 // コンストラクタ
 //==========================================================================
@@ -188,7 +202,7 @@ void CPlayerAction::ActionRun(const float fDeltaTime, const float fDeltaRate, co
 void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (!m_pPlayer->IsJump())
-	{// キャッチ猶予
+	{// 着地で終了
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
 }
@@ -199,7 +213,7 @@ void CPlayerAction::ActionJump(const float fDeltaTime, const float fDeltaRate, c
 void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_pPlayer->GetMotion()->IsFinish())
-	{// キャッチ猶予
+	{// モーションと同時に終了
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
 }
@@ -297,10 +311,18 @@ void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, c
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(teamPlayer, CCharmManager::ETypeAdd::ADD_DODGE);
+	pGameMgr->AddCharmValue(teamPlayer, CCharmValueManager::ETypeAdd::ADD_DODGE);
 
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(teamPlayer, CSpecialValueManager::ETypeAdd::ADD_DODGE);
+}
+
+//==========================================================================
+// おっとっと
+//==========================================================================
+void CPlayerAction::EndUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	m_pPlayer->SetEnableBrake(false);
 }
 
 //==========================================================================
@@ -311,6 +333,12 @@ void CPlayerAction::SetAction(CPlayer::EAction action)
 	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();
 	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
 	float fSlowRate = CManager::GetInstance()->GetSlowRate();
+
+	// 行動終了
+	if (m_EndFunc[m_Action] != nullptr)
+	{
+		(this->*(m_EndFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	m_Action = action;
 	m_fActionTime = 0.0f;		// アクション時間

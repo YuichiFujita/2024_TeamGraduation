@@ -14,7 +14,7 @@
 #include "constans.h"
 #include "instantfade.h"
 #include "scene.h"
-#include "charmManager.h"
+#include "charmValueManager.h"
 #include "specialValueManager.h"
 
 //==========================================================================
@@ -25,6 +25,7 @@ class CCollisionLine_Box;
 class CTeamStatus;
 class CGymWallManager;
 class CTimerUI;
+class CCharmManager;
 
 //==========================================================================
 // クラス定義
@@ -37,6 +38,7 @@ public:
 	// 定数
 	static constexpr float FIELD_LIMIT = 0.0f;	// 地面Y座標
 	static constexpr float CENTER_LINE = 0.0f;	// センターラインX座標
+	static constexpr int MAX_SIDEPLAYER = 3;	// サイド毎のプレイヤー最大数
 
 	// シーンの種類
 	enum ESceneType
@@ -72,6 +74,7 @@ public:
 	bool IsControll() { return m_bControll; }								// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }					// コートサイズ取得
 	MyLib::Vector3 GetCourtSize(const ETeamSide team, MyLib::Vector3& pos);	// コートサイズ取得(チーム)
+	float GetHalfCourtDiagonal();											// チームコートの対角線取得
 	bool SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius = 0.0f);	// コート移動制限
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得
 
@@ -79,8 +82,8 @@ public:
 	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
 	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
-	void AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType);			// モテ加算
-	void SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType);			// モテ減算
+	void AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType);			// モテ加算
+	void SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType);			// モテ減算
 	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);	// スペシャル加算
 
 	static CGameManager* Create(CScene::MODE mode);				// 生成処理
@@ -126,6 +129,7 @@ private:
 	//--------------------------
 	CGymWallManager* m_pGymWallManager;					// 体育館の壁
 	CCharmManager* m_pCharmManager;						// モテマネージャ
+	CCharmValueManager* m_pCharmValueManager;			// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;		// スぺ値マネージャ
 	CTimerUI* m_pTimerUI;								// タイマーUI
 

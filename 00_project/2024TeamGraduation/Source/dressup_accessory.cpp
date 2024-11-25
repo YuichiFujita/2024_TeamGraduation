@@ -40,7 +40,7 @@ CDressup_Accessory::~CDressup_Accessory()
 HRESULT CDressup_Accessory::Init()
 {
 	// 全て読み込み
-	LoadAll(FOLDERNAME);
+	LoadAllModel(FOLDERNAME);
 
 	return S_OK;
 }
@@ -62,6 +62,37 @@ void CDressup_Accessory::Update(const float fDeltaTime, const float fDeltaRate, 
 {
 	// 親の更新
 	CDressup::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	int modelSize = static_cast<int>(m_vecModelName.size());
+	bool bChange = false;	// 変更フラグ
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx))
+	{// ループ
+		m_nNowIdx = (m_nNowIdx + 1) % modelSize;
+		bChange = true;
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
+	{// 逆ループ
+		m_nNowIdx = (m_nNowIdx + (modelSize - 1)) % modelSize;
+		bChange = true;
+	}
+
+	// 変更してなかったら終わる
+	if (!bChange) return;
+
+	if (m_nNowIdx == 0)
+	{
+		m_pObjChara->DeleteObject(m_nSwitchIdx);
+	}
+	else
+	{
+		// モデル切り替え
+		m_pObjChara->ChangeObject(m_nSwitchIdx, m_vecModelName[m_nNowIdx - 1]);
+	}
 }
 
 //==========================================================================

@@ -25,15 +25,18 @@
 #include "MyEffekseer.h"
 #include "map.h"
 #include "edit_map.h"
-#include "charmManager.h"
+#include "charmValueManager.h"
 #include "teamStatus.h"
 #include "specialEffect.h"
+#include "charmManager.h"
 
 // 派生先
+#include "playerDressup.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
+#include "playerEntry.h"
 
 // デバッグ
 #include "ObjectLine.h"
@@ -43,6 +46,7 @@
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
+#include "playerPosAdj_entry.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -72,7 +76,6 @@ namespace
 
 	const float DODGE_RADIUS = 300.0f;			// 回避範囲
 	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
-	const float HAVE_LONG = 10.0f;				// 持ち続けている
 }
 
 namespace Knockback
@@ -207,7 +210,8 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sKnockback = SKnockbackInfo();	// ノックバック情報
 
 	// 行動フラグ
-	m_bPossibleMove = false;		// 移動可能フラグ
+	m_bPossibleMove = false;		// 行動可能フラグ
+	m_bPossibleAction = false;		// 移動可能フラグ
 	m_bAutoMotionSet = false;		// オートモーション設定
 	m_bJump = false;				// ジャンプ中かどうか
 	m_bDash = false;				// ダッシュ判定
@@ -223,19 +227,21 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 
 	// 着せ替え
 	m_pDressup_Hair = nullptr;		// 髪着せ替え
-	m_pDressup_Accessory = nullptr;	// アクセ更新
+	m_pDressup_Accessory = nullptr;	// アクセ着せ替え
+	m_pDressup_Face = nullptr;		// 顔着せ替え
 
 	// スぺシャルエフェクト
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
 
 	// その他
+	m_fEscapeTime = 0.0f;		// ボール所持タイマー
 	m_fHaveTime = 0.0f;		// ボール所持タイマー
 	m_nMyPlayerIdx = -1;	// プレイヤーインデックス番号
 	m_nPosIdx = -1;			// ポジション別インデックス
 	m_pShadow = nullptr;	// 影の情報
 	m_pBall = nullptr;		// ボールの情報
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
-	m_Handress = EHandedness::HAND_R;	// 利き手
+	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
 
 	// ベースタイプを初期化
@@ -260,18 +266,33 @@ CPlayer* CPlayer::Create
 	EFieldArea	typeArea,				// ポジション
 	EBaseType	typeBase,				// ベースタイプ
 	EBody		typeBody,				// 体型
-	EHandedness	typeHand				// 利き手
+	EHandedness	typeHand,				// 利き手
+	CScene::MODE mode					// モード
 )
 {
 	// メモリの確保
-	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	CPlayer* pPlayer = nullptr;
+	switch (mode)
+	{
+	case CScene::MODE_ENTRY:
+		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, typeArea, typeBase);
+		break;
+
+	case CScene::MODE_GAME:
+		pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+		break;
+
+	default:
+		break;
+	}
+
 	if (pPlayer != nullptr)
 	{
 		// 体型を設定
 		pPlayer->m_BodyType = typeBody;
 
 		// 利き手を設定
-		pPlayer->m_Handress = typeHand;
+		pPlayer->m_Handedness = typeHand;
 
 		// クラスの初期化
 		if (FAILED(pPlayer->Init()))
@@ -307,7 +328,7 @@ HRESULT CPlayer::Init()
 	m_bPossibleMove = true;
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handress]);
+	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;
@@ -328,13 +349,19 @@ HRESULT CPlayer::Init()
 	// 着せ替え
 	if (m_pDressup_Hair == nullptr)
 	{
-		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, 15);	// 髪着せ替え
+		m_pDressup_Hair = CDressup::Create(CDressup::EType::TYPE_HAIR, this, CPlayer::ID_HAIR);
 	}
 
 	// アクセ
 	if (m_pDressup_Accessory == nullptr)
 	{
-		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, 16);	// 髪着せ替え
+		m_pDressup_Accessory = CDressup::Create(CDressup::EType::TYPE_ACCESSORY, this, CPlayer::ID_ACCESSORY);
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face == nullptr)
+	{
+		m_pDressup_Face = CDressup::Create(CDressup::EType::TYPE_FACE, this, CPlayer::ID_FACE);
 	}
 
 	// スぺシャルエフェクト
@@ -440,12 +467,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// ドレスアップの更新
 	UpdateDressUP(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// エディット中は抜ける
-	if (CGame::GetInstance()->GetEditType() != CGame::GetInstance()->EDITTYPE_OFF)
-	{
-		return;
-	}
-
 	// 過去の位置保存
 	SetOldPosition(GetPosition());
 
@@ -494,7 +515,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	}
 
 	// 非モテまとめ
-	UnCharm(fDeltaTime, fDeltaRate, fSlowRate);
+	CCharmManager::GetInstance()->UnCharm(this, fDeltaTime, fDeltaRate, fSlowRate);
 
 #if _DEBUG	// デバッグ処理
 
@@ -542,14 +563,14 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll() && m_bPossibleMove)
+	if (CGameManager::GetInstance()->IsControll())
 	{ // 行動できるとき
-
-		// ベース変更の更新
-		m_pBase->UpdateChangeBase();
 
 		// ベースの更新
 		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+		// ベース変更の更新
+		m_pBase->UpdateChangeBase();
 	}
 
 	// 情報取得
@@ -1142,7 +1163,7 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	
 	// モテ加算
-	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_JUSTCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_JUSTCATCH);
 	
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
@@ -1198,6 +1219,9 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 
 	// 死んだ
 	result->isdeath = true;
+
+	// 近くのAIに操作権を移し、自身をAIにする
+	CPlayerManager::GetInstance()->ChangeUserToAI(this);
 }
 
 //==========================================================================
@@ -1322,7 +1346,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pGameMgr == nullptr) return;
 
 	// モテ加算
-	pGameMgr->AddCharmValue(m_typeTeam, CCharmManager::ETypeAdd::ADD_COVERCATCH);
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_COVERCATCH);
 
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_COVERCATCH);
@@ -1721,6 +1745,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 
 	// 移動不可
 	m_bPossibleMove = false;
+	m_bPossibleAction = false;
 
 	// 走って戻す
 	SetMotion(CPlayer::EMotion::MOTION_WALK);
@@ -1753,6 +1778,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	if (ratio >= 1.0f)
 	{// 完了
 		m_bPossibleMove = true;
+		m_bPossibleAction = true;
 		SetState(EState::STATE_NONE);
 	}
 }
@@ -1789,6 +1815,10 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
 		break;
 
+	case EFieldArea::FIELD_ENTRY:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjEntry;
+		break;
+
 	default:
 		assert(false);
 		break;
@@ -1812,43 +1842,6 @@ void CPlayer::UpdateDressUP(const float fDeltaTime, const float fDeltaRate, cons
 		m_pDressup_Accessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-}
-
-//==========================================================================
-// 非モテまとめ
-//==========================================================================
-void CPlayer::UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 端に逃げまくる
-
-	// 持ち続け
-	LongHold(fDeltaTime, fDeltaRate, fSlowRate);
-}
-
-//==========================================================================
-// 持ち続けている判定
-//==========================================================================
-void CPlayer::LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	if (m_pBall == nullptr)
-	{// リセット
-		m_fHaveTime = 0.0f;
-		return;
-	}
-
-	CGameManager* pGameMgr = CGameManager::GetInstance();
-
-	// 加算
-	m_fHaveTime += fDeltaTime * fDeltaRate * fSlowRate;
-	int nTime = static_cast<int>(m_fHaveTime * 1000);
-	int nLong = static_cast<int>(HAVE_LONG * 1000);
-
-	if (nTime % nLong == 0)
-	{// モテダウン
-
-		// モテ減算
-		pGameMgr->SubCharmValue(m_typeTeam, CCharmManager::ETypeSub::SUB_LONG_HOLD);
-	}
 }
 
 //==========================================================================
@@ -1927,6 +1920,10 @@ void CPlayer::InitBase(EBaseType type)
 			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
 			break;
 
+		case EFieldArea::FIELD_ENTRY:
+			m_pBase = DEBUG_NEW CPlayerEntry(this, m_typeTeam, m_typeArea, TYPE_USER);
+			break;
+
 		default:
 			assert(false);
 			break;
@@ -1986,6 +1983,7 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// クラス型からベースを判定
 	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
 	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
+	else if (typeid(*m_pBase) == typeid(CPlayerEntry)) { return TYPE_USER; }
 
 	// ベース指定なし
 	assert(false);
@@ -2060,7 +2058,7 @@ void CPlayer::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Transform Info"))
 	{
-		MyLib::Vector3 pos = GetPosition();
+		MyLib::Vector3 pos = GetPosition(), posOrigin = GetOriginPosition();
 		MyLib::Vector3 rot = GetRotation();
 		MyLib::Vector3 move = GetMove();
 		CMotion* motion = GetMotion();
@@ -2069,6 +2067,7 @@ void CPlayer::Debug()
 		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
+		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
 		ImGui::Text("rotDest : [Y : %.2f]", GetRotDest());
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
@@ -2143,6 +2142,12 @@ void CPlayer::Debug()
 	if (m_pDressup_Accessory != nullptr)
 	{
 		m_pDressup_Accessory->Debug();
+	}
+
+	// 顔着せ替え
+	if (m_pDressup_Face != nullptr)
+	{
+		m_pDressup_Face->Debug();
 	}
 
 	if (ImGui::Button("Dead"))

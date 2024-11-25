@@ -1,0 +1,82 @@
+//==========================================================================
+// 
+//  エントリー用プレイヤー処理 [playerEntry.cpp]
+//  Author : 相馬靜雅
+// 
+//==========================================================================
+#include "playerEntry.h"
+#include "playerStatus.h"
+#include "EffekseerObj.h"
+
+// 使用クラス
+#include "playerUsercontrol_move.h"
+#include "playerUsercontrol_action.h"
+
+//==========================================================================
+// コンストラクタ
+//==========================================================================
+CPlayerEntry::CPlayerEntry(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) : CPlayerBase(pPlayer, typeTeam, typeArea, typeBase)
+{
+	// 操作の割当
+	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
+	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+}
+
+//==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerEntry::~CPlayerEntry()
+{
+
+}
+
+//==========================================================================
+// 更新処理
+//==========================================================================
+void CPlayerEntry::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// プレイヤーの取得
+	CPlayer* pPlayer = GetPlayer();
+
+	
+}
+
+//==========================================================================
+// ヒット
+//==========================================================================
+CPlayer::SHitInfo CPlayerEntry::Hit(CBall* pBall)
+{
+	return CPlayer::SHitInfo();
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerEntry::ChangeMoveControl(CPlayerControlMove* control)
+{
+	// 操作クラスの取得
+	CPlayerControlMove* pControlMove = GetPlayerControlMove();
+
+	// 操作クラスの入替
+	delete pControlMove;
+	pControlMove = control;
+
+	// 操作クラスの反映
+	SetPlayerControlMove(pControlMove);
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerEntry::ChangeActionControl(CPlayerControlAction* control)
+{
+	// 操作クラスの取得
+	CPlayerControlAction* pControlAction = GetPlayerControlAction();
+
+	// 操作クラスの入替
+	delete pControlAction;
+	pControlAction = control;
+
+	// 操作クラスの反映
+	SetPlayerControlAction(pControlAction);
+}

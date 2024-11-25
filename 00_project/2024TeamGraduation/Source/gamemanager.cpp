@@ -24,6 +24,7 @@
 #include "audience.h"
 #include "gymWallManager.h"
 #include "playerManager.h"
+#include "charmManager.h"
 #include "timerUI.h"
 
 //==========================================================================
@@ -31,10 +32,11 @@
 //==========================================================================
 namespace
 {
-	//ドッジボールコート情報
+	// ドッジボールコート情報
 	namespace Court
 	{
 		const MyLib::Vector3 SIZE = MyLib::Vector3(950.0f, 100.0f, 560.0f);	// サイズ
+		const float HALF_DIAGONAL = sqrtf(SIZE.x * SIZE.x + (SIZE.z * 2.0f) * (SIZE.z * 2.0f));	// チーム内コートの対角線
 	}
 }
 
@@ -69,11 +71,11 @@ CGameManager::CGameManager()
 
 	m_pGymWallManager = nullptr;		// ジム壁マネジャー
 	m_pCharmManager = nullptr;			// モテマネージャ
+	m_pCharmValueManager = nullptr;		// モテ値マネージャ
 	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
 	m_pTimerUI = nullptr;				// タイマーUI
 
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
-
 }
 
 //==========================================================================
@@ -154,6 +156,9 @@ HRESULT CGameManager::Init()
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
 
+	// モテ値マネージャ生成
+	m_pCharmValueManager = CCharmValueManager::Create();
+
 	// スぺ値マネージャ生成
 	m_pSpecialValueManager = CSpecialValueManager::Create();
 
@@ -185,6 +190,9 @@ void CGameManager::Uninit()
 
 	// モテマネージャ
 	SAFE_UNINIT(m_pCharmManager);
+
+	// モテ値マネージャ
+	SAFE_UNINIT(m_pCharmValueManager);
 
 	// スぺ値マネージャ
 	SAFE_UNINIT(m_pSpecialValueManager);
@@ -381,7 +389,7 @@ void CGameManager::UpdateTeamStatus()
 		AddSpecialValue(m_pTeamStatus[i]->GetTeam(), CSpecialValueManager::ETypeAdd::ADD_ALLWAYS);
 
 #if _DEBUG
-#if 1
+#if 0
 		return;
 #endif	// デバッグ用
 #endif
@@ -443,6 +451,15 @@ MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& 
 }
 
 //==========================================================================
+// チームコートの対角線取得
+//==========================================================================
+float CGameManager::GetHalfCourtDiagonal()
+{
+	// チームコートの対角線を返す
+	return Court::HALF_DIAGONAL;
+}
+
+//==========================================================================
 // コート移動制限
 //==========================================================================
 bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
@@ -477,20 +494,20 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
 //==========================================================================
 // モテ加算
 //==========================================================================
-void CGameManager::AddCharmValue(ETeamSide side, CCharmManager::ETypeAdd charmType)
+void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType)
 {
 	// チームステータス
-	float value = CCharmManager::GetInstance()->GetAddValue(charmType);
+	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
 }
 
 //==========================================================================
 // モテ減算
 //==========================================================================
-void CGameManager::SubCharmValue(ETeamSide side, CCharmManager::ETypeSub charmType)
+void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType)
 {
 	// チームステータス
-	float value = CCharmManager::GetInstance()->GetSubValue(charmType);
+	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
 }
 

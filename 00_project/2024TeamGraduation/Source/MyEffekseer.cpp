@@ -202,7 +202,18 @@ void CMyEffekseer::StopAll()
 	// 全て停止
 	m_efkManager->StopAllEffects();
 
-	
+	// 障害物のリスト取得
+	CListManager<CEffekseerObj> list = CEffekseerObj::GetListObj();
+
+	// 先頭を保存
+	std::list<CEffekseerObj*>::iterator itr = list.GetEnd();
+	CEffekseerObj* pObj = nullptr;
+
+	// リストループ
+	while (list.ListLoop(itr))
+	{
+		(*itr)->Uninit();
+	}
 }
 
 //==========================================================================
