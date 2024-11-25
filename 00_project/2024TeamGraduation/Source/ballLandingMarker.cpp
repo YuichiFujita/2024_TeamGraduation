@@ -1,16 +1,15 @@
 //==========================================================================
 // 
-//  プレイヤーマーカー処理 [playerMarker.cpp]
+//  ボール着地点マーカー処理 [ballLandingMarker.cpp]
 //  Author : 藤田勇一
 // 
 //==========================================================================
-#include "playerMarker.h"
+#include "ballLandingMarker.h"
 #include "manager.h"
 #include "renderer.h"
-#include "gameManager.h"
-#include "player.h"
+#include "ball.h"
 
-// TODO：プレイヤーマーカー表示
+// TODO：ボール着地点マーカー表示
 #if 1
 #define DISP
 #endif
@@ -20,15 +19,14 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE = "data\\TEXTURE\\playerMarker000.png";	// プレイヤーマーカーテクスチャ
-	const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
+	const std::string TEXTURE = "data\\TEXTURE\\ballmarker\\warning000.png";	// ボール着地点マーカーテクスチャ
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerMarker::CPlayerMarker(int nPriority) : CObjectBillboardAnim(nPriority),
-	m_pPlayer	(nullptr)	// 親プレイヤー情報
+CBallLandingMarker::CBallLandingMarker(int nPriority) : CObject3D(nPriority),
+	m_pBall	(nullptr)	// 親ボール情報
 {
 
 }
@@ -36,7 +34,7 @@ CPlayerMarker::CPlayerMarker(int nPriority) : CObjectBillboardAnim(nPriority),
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerMarker::~CPlayerMarker()
+CBallLandingMarker::~CBallLandingMarker()
 {
 
 }
@@ -44,14 +42,14 @@ CPlayerMarker::~CPlayerMarker()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayerMarker* CPlayerMarker::Create(CPlayer* pPlayer)
+CBallLandingMarker* CBallLandingMarker::Create(CBall* pBall)
 {
 	// メモリの確保
-	CPlayerMarker* pMarker = DEBUG_NEW CPlayerMarker;
+	CBallLandingMarker* pMarker = DEBUG_NEW CBallLandingMarker;
 	if (pMarker != nullptr)
 	{
 		// プレイヤー割当
-		pMarker->m_pPlayer = pPlayer;
+		pMarker->m_pBall = pBall;
 
 		// クラスの初期化
 		if (FAILED(pMarker->Init()))
@@ -68,17 +66,14 @@ CPlayerMarker* CPlayerMarker::Create(CPlayer* pPlayer)
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CPlayerMarker::Init()
+HRESULT CBallLandingMarker::Init()
 {
 	// オブジェクトの種類設定
 	CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
 	// 親クラスの初期化
-	HRESULT hr = CObjectBillboardAnim::Init(PTRN.x, PTRN.y, 0.0f, false);
+	HRESULT hr = CObject3D::Init();
 	if (FAILED(hr)) { return E_FAIL; }
-
-	// 自動再生をOFFにする
-	SetEnableAutoPlay(false);
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
@@ -89,9 +84,8 @@ HRESULT CPlayerMarker::Init()
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 
 	// 横幅を元にサイズを設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 160.0f);
-	size.x /= (float)PTRN.x;
-	SetSize(size);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 60.0f);
+	SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
 	SetSizeOrigin(GetSize());
 
 	return S_OK;
@@ -100,16 +94,16 @@ HRESULT CPlayerMarker::Init()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CPlayerMarker::Uninit()
+void CBallLandingMarker::Uninit()
 {
 	// 親クラスの終了
-	CObjectBillboardAnim::Uninit();
+	CObject3D::Uninit();
 }
 
 //==========================================================================
 // 削除処理
 //==========================================================================
-void CPlayerMarker::Kill()
+void CBallLandingMarker::Kill()
 {
 	// 自身の終了
 	Uninit();
@@ -118,34 +112,25 @@ void CPlayerMarker::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPlayerMarker::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CBallLandingMarker::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #ifdef DISP
-	// 操作権インデックスの取得
-	int nPadIdx = m_pPlayer->GetMyPlayerIdx();
-
-	// 操作権がない場合は描画OFF
-	bool bDisp = (nPadIdx <= -1) ? false : true;
+	// 外野から内野へのパスの場合は描画ON
+	bool bDisp = (m_pBall->GetState() == CBall::EState::STATE_PASS) ? true : false;
 	SetEnableDisp(bDisp);
 
 	// 描画しない場合は抜ける
 	if (!bDisp) { return; }
 
-	// プレイヤーの頭上に位置を設定
-	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-	pos.y += 200.0f;
-
-	// 現在の操作権に合わせたパターンに変更
-	SetPatternAnim(nPadIdx);
+	// パス終了地点に位置を設定
+	MyLib::Vector3 pos = m_pBall->GetPosPassEnd();
+	pos.y += 0.01f;
 
 	// 位置の反映
 	SetPosition(pos);
 
 	// 親クラスの更新
-	CObjectBillboardAnim::Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// TODO：プレイヤー切り替わったら放物線で遷移するようにしよう
-
+	CObject3D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 #else
 	SetEnableDisp(false);
 #endif
@@ -154,7 +139,7 @@ void CPlayerMarker::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CPlayerMarker::Draw()
+void CBallLandingMarker::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 
@@ -167,7 +152,7 @@ void CPlayerMarker::Draw()
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	// 親クラスの描画
-	CObjectBillboardAnim::Draw();
+	CObject3D::Draw();
 
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
