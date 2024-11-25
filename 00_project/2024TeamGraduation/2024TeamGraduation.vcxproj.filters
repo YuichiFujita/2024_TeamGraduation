@@ -635,6 +635,9 @@
     <ClCompile Include="Source\playerPosAdj_entry.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\charmValueManager.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
     <ClCompile Include="Source\playerDressup.cpp">
       <Filter>player</Filter>
     </ClCompile>
@@ -1164,6 +1167,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj_entry.h">
       <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmValueManager.h">
+      <Filter>ingame\charm</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerDressup.h">
       <Filter>player</Filter>

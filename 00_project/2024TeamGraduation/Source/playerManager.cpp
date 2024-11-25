@@ -158,7 +158,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 0
+#if 1
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
