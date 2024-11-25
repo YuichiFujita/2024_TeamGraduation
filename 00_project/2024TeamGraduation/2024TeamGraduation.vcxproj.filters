@@ -659,6 +659,9 @@
     <ClCompile Include="Source\charmText.cpp">
       <Filter>ingame\charm</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerSpawn.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1203,6 +1206,9 @@
     </ClInclude>
     <ClInclude Include="Source\charmText.h">
       <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerSpawn.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
