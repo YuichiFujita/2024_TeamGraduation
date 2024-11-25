@@ -1,7 +1,7 @@
 //=============================================================================
 // 
 //  リザルトマネージャヘッダー [resultmanager.h]
-//  Author : 相馬靜雅
+//  Author : Kai Takada
 // 
 //=============================================================================
 
@@ -18,23 +18,26 @@
 #include "gameManager.h"
 
 //==========================================================================
+// 名前空間
+//==========================================================================
+namespace ResultManager
+{
+	const std::string TEXTFILE = "data\\TEXT\\result\\teamStatus.txt";	// チームステータスtxt
+}
+
+//==========================================================================
 // 前方宣言
 //==========================================================================
-class CBall;
-class CCollisionLine_Box;
 class CTeamStatus;
-class CGymWallManager;
-class CTimerUI;
-class CCharmManager;
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// ゲームマネージャクラス定義
+// リザルトマネージャクラス定義
 class CResultManager
 {
 public:
-
+	
 	CResultManager();
 	~CResultManager();
 
@@ -42,32 +45,26 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void Debug();			// デバッグ
+	void CreatePrelude();							// 前座勝敗生成
+	void CreateCharmContest();						// モテ勝敗生成
 
-	static CResultManager* Create(CScene::MODE mode);				// 生成処理
+	void Debug();		// デバッグ
+	void Load();		// チームステータス読み込み
+
+	static CResultManager* Create();							// 生成処理
 	static CResultManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 private:
 	
 	//=============================
-	// メンバ関数
-	//=============================
-
-
-	//=============================
 	// メンバ変数
 	//=============================
+	float m_fTension;											// テンション
+	CGameManager::ETeamSide m_teamWin;							// 勝利チーム
+	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
+	float m_fTime;												// 時間経過
 
-
-	//--------------------------
-	// 生成したオブジェクト
-	//--------------------------
-	
-	float f[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
-	CGameManager::ETeamSide m_teamWin;				// 勝利チーム
-
-	static CResultManager* m_pThisPtr;				// 自身のポインタ
+	static CResultManager* m_pThisPtr;							// 自身のポインタ
 };
-
 
 #endif

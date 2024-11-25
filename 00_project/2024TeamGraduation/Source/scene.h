@@ -13,6 +13,7 @@
 //==========================================================================
 class CCamera;
 class CEdit_Map;
+class CResultValueManager;
 
 //==========================================================================
 // クラス定義
@@ -54,7 +55,7 @@ public:
 
 private:
 
-	MODE m_mode;				// 現在のモード
+	MODE m_mode;						// 現在のモード
 	CEdit_Map* m_pEditMap;
 };
 
