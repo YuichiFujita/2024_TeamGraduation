@@ -16,6 +16,7 @@
 #include "fog.h"
 #include "edit_map.h"
 #include "blackframe.h"
+#include "resultmanager.h"
 
 // ‘JˆÚæ
 #include "game.h"
