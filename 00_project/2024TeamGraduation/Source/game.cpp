@@ -198,10 +198,15 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 
-		if (ImGui::Button("CharmText"))
+		if (ImGui::Button("CharmText_Left"))
 		{
 			// オーディエンス生成
-			CCharmText::Create();
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+		}
+		if (ImGui::Button("CharmText_Rihgt"))
+		{
+			// オーディエンス生成
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 #endif
 

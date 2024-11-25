@@ -659,6 +659,12 @@
     <ClCompile Include="Source\charmText.cpp">
       <Filter>ingame\charm</Filter>
     </ClCompile>
+    <ClCompile Include="Source\charmText_Left.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\charmText_Right.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1202,6 +1208,12 @@
       <Filter>ingame\marker</Filter>
     </ClInclude>
     <ClInclude Include="Source\charmText.h">
+      <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText_Left.h">
+      <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText_Right.h">
       <Filter>ingame\charm</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,6 +12,8 @@
 // インクルードファイル
 //==========================================================================
 #include "object.h"
+#include "gameManager.h"
+#include "charmManager.h"
 
 //==========================================================================
 // 前方宣言
@@ -30,7 +32,7 @@ public:
 	//=============================
 	enum EState
 	{
-		STATE_FADEIN = 0,	// フェードイン
+		STATE_FADEIN = 0,	// フェードイン(モテチェイン可能)
 		STATE_WAIT,			// 待機(モテチェイン可能)
 		STATE_FADEOUT,		// フェードアウト
 		STATE_MAX
@@ -55,12 +57,14 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetState(EState state);	// 状態設定
+	void SetCountUP(int nCnt) { m_nCntUp = nCnt; }	// 上昇カウント設定
+	void AddCountUP(int nCnt) { m_nCntUp += nCnt; }	// 上昇カウント加算
+	void SetState(EState state);					// 状態設定
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CCharmText* Create();	// 生成
+	static CCharmText* Create(CGameManager::ETeamSide side);	// 生成
 
 private:
 
@@ -75,13 +79,28 @@ private:
 	//=============================
 	// 状態関数
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新
-	void StateFadeIn();		// フェードイン
-	void StateWait();		// 待機
-	void StateFadeOut();	// フェードアウト
 	
 	// 生成
 	HRESULT CreateFace();	// 顔アイコン生成
 	HRESULT CreateText();	// 文字生成
+
+protected:
+
+	//=============================
+	// 定数
+	//=============================
+	static constexpr float STATETIME_FADEIN = 0.2f;
+	static constexpr float STATETIME_WAIT = CCharmManager::TIME_CHAIN - STATETIME_FADEIN;
+	static constexpr float STATETIME_FADEOUT = 0.5f;
+	static constexpr float DISTANCE_UP = 40.0f;	// 上昇間隔
+
+	//=============================
+	// メンバ関数
+	//=============================
+	// 状態関数
+	virtual void StateFadeIn();		// フェードイン
+	virtual void StateWait();		// 待機
+	virtual void StateFadeOut();	// フェードアウト
 
 	//=============================
 	// メンバ変数
@@ -90,6 +109,7 @@ private:
 	CObject2D* m_pText;		// 文字
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
+	int m_nCntUp;			// 上昇カウント
 };
 
 #endif
