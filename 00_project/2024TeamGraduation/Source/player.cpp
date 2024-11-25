@@ -1792,11 +1792,31 @@ void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, c
 	if (m_pBall != nullptr)
 	{
 		m_fStateTime = 0.0f;
+
+		// チーム別向き設定
+		MyLib::Vector3 rot = GetRotation();
+		switch (m_typeTeam)
+		{
+		case CGameManager::SIDE_LEFT:	// 左チーム
+			rot.y = -HALF_PI;
+			break;
+
+		case CGameManager::SIDE_RIGHT:	// 右チーム
+			rot.y = HALF_PI;
+			break;
+
+		default:
+			return;
+			break;
+		}
+		SetRotDest(rot.y);
+
 		return;
 	}
 
 	if (pMotion->GetType() == EMotion::MOTION_TOSS && !pMotion->IsGetCancelable())
-	{
+	{// トスするまでここで終了
+
 		m_fStateTime = 0.0f;
 		return;
 	}
