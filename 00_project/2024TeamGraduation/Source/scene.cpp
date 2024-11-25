@@ -36,6 +36,7 @@ namespace
 	{
 		"data\\TEXT\\map\\info.txt",	// なし
 		"data\\TEXT\\map\\info.txt",	// タイトル
+		"data\\TEXT\\map\\info.txt",	// エントリー
 		"data\\TEXT\\map\\info.txt",	// チュートリアル
 		"data\\TEXT\\map\\info.txt",	// ゲーム
 		"data\\TEXT\\map\\info.txt",	// ゲーム

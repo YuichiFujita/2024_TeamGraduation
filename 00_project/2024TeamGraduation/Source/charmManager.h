@@ -20,6 +20,14 @@ class CCharmManager
 {
 public:
 
+	//=============================
+	// 定数
+	//=============================
+	static constexpr float TIME_CHAIN = 2.0f;	// チェイン可能な時間
+
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CCharmManager();
 	~CCharmManager();
 
@@ -29,24 +37,27 @@ public:
 	virtual HRESULT Init();		// 初期化
 	virtual void Uninit();		// 終了
 
-	//--------------------------
-	// その他
-	//--------------------------
-
-	// 静的関数
-	static CCharmManager* Create();	// 生成処理
-	static CCharmManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 	//-----------------------------
 	// 非モテ関数
 	//-----------------------------
 	void UnCharm(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
 
+	//--------------------------
+	// その他
+	//--------------------------
+
+	//=============================
+	// 静的関数
+	//=============================
+	static CCharmManager* Create();	// 生成処理
+	static CCharmManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
+
 private:
 
-	//-----------------------------
+	//=============================
 	// メンバ関数
-	//-----------------------------
+	//=============================
 	void LongHold(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
 	void EdgeEscape(CPlayer* pPlayer, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 端に逃げ続ける
 	

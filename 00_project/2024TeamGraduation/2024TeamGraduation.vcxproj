@@ -176,6 +176,7 @@
     <ClCompile Include="Source\audienceLowPoly.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\ballHolderMarker.cpp" />
+    <ClCompile Include="Source\ballLandingMarker.cpp" />
     <ClCompile Include="Source\ballStatus.cpp" />
     <ClCompile Include="Source\bindKey.cpp" />
     <ClCompile Include="Source\bindKeyBack.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\charmManager.cpp" />
+    <ClCompile Include="Source\charmText.cpp" />
     <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
@@ -287,6 +289,7 @@
     <ClCompile Include="Source\playerEntry.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
+    <ClCompile Include="Source\playerMarker.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
     <ClCompile Include="Source\playerPosAdj_entry.cpp" />
@@ -356,6 +359,7 @@
     <ClInclude Include="Source\audienceLowPoly.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\ballHolderMarker.h" />
+    <ClInclude Include="Source\ballLandingMarker.h" />
     <ClInclude Include="Source\ballStatus.h" />
     <ClInclude Include="Source\bindKey.h" />
     <ClInclude Include="Source\bindKeyBack.h" />
@@ -373,6 +377,7 @@
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\charmManager.h" />
+    <ClInclude Include="Source\charmText.h" />
     <ClInclude Include="Source\charmValueManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
@@ -470,6 +475,7 @@
     <ClInclude Include="Source\playerEntry.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
+    <ClInclude Include="Source\playerMarker.h" />
     <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
     <ClInclude Include="Source\playerPosAdj_entry.h" />
