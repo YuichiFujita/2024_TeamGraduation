@@ -32,6 +32,7 @@ public:
 	//=============================
 	virtual bool IsPress(const int nPadIdx) const override;		// 割当キープレス取得
 	virtual bool IsTrigger(const int nPadIdx) const override;	// 割当キートリガー取得
+	virtual bool IsStickTilt(const int nPadIdx) const override;	// 割当スティック傾き取得
 	virtual float GetRotation() const override;					// 割当キー向き取得
 	virtual CPlayer::EDashAngle GetAngle() const override;		// 割当キー方向列挙取得
 };
