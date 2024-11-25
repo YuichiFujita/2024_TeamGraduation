@@ -656,6 +656,9 @@
     <ClCompile Include="Source\ballLandingMarker.cpp">
       <Filter>ingame\marker</Filter>
     </ClCompile>
+    <ClCompile Include="Source\charmText.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1197,6 +1200,9 @@
     </ClInclude>
     <ClInclude Include="Source\ballLandingMarker.h">
       <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText.h">
+      <Filter>ingame\charm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

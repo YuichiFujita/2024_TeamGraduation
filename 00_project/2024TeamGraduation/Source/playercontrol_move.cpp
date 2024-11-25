@@ -137,6 +137,8 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 
 	// カニ歩きじゃないときは抜ける
 	if (!player->GetBase()->IsCrab()) return;
+	if (player->GetState() == CPlayer::EState::STATE_INVADE_TOSS ||
+		player->GetState() == CPlayer::EState::STATE_INVADE_RETURN) return;
 
 	// ボールの位置
 	MyLib::Vector3 posBall = pBall->GetPosition();

@@ -33,6 +33,7 @@
 // TODO：デバッグ、後で消しますいらないので
 #include "specialManager.h"
 #include "gymWallManager.h"
+#include "charmText.h"
 
 namespace
 {
@@ -195,6 +196,12 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		{
 			// オーディエンス生成
 			CAudience::Create(CAudience::EObjType::OBJTYPE_ANIM, CGameManager::ETeamSide::SIDE_RIGHT);
+		}
+
+		if (ImGui::Button("CharmText"))
+		{
+			// オーディエンス生成
+			CCharmText::Create();
 		}
 #endif
 
