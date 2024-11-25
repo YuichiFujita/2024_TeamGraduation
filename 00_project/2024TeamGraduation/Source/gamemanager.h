@@ -43,11 +43,12 @@ public:
 	// シーンの種類
 	enum ESceneType
 	{
-		SCENE_MAIN = 0,			// メイン
-		SCENE_START,			// 開始演出
-		SCENE_SPECIAL_STAG,		// スペシャル演出
-		SCENE_END,				// 終了
-		SCENE_DEBUG,			// デバッグ
+		SCENE_MAIN = 0,		// メイン
+		SCENE_SPAWN,		// 登場演出
+		SCENE_START,		// 開始演出
+		SCENE_SPECIAL_STAG,	// スペシャル演出
+		SCENE_END,			// 終了
+		SCENE_DEBUG,		// デバッグ
 		SCENE_MAX
 	};
 
@@ -63,8 +64,8 @@ public:
 	// 試合終了時情報
 	struct SEndInfo
 	{
-		ETeamSide m_winteam;			// 勝利チーム
-		float m_fTension;				// 盛り上がり度
+		ETeamSide m_winteam;	// 勝利チーム
+		float m_fTension;		// 盛り上がり度
 	
 		SEndInfo() : m_winteam(ETeamSide::SIDE_NONE), m_fTension(0.0f) {};
 	};
@@ -114,18 +115,19 @@ private:
 	//=============================
 	// シーン
 	void SceneMain();			// メイン
+	void SceneSpawn();			// 登場演出
 	void SceneStart();			// 開始演出
-	void SceneSpecial_Stag();	// スペシャル演出
+	void SceneSpecialStag();	// スペシャル演出
 	void SceneEnd();			// 終了演出
 	void SceneDebug();			// デバッグ
 
 	// その他
-	void UpdateLimitTimer();		// 制限時間更新
-	void UpdateAudience();			// 観客更新
-	void UpdateSpecialStag();		// スペシャル演出更新
-	void UpdateTeamStatus();		// チームステータス更新
-	void CreateTeamStatus();		// チームステータス生成
-	void Save();					// チームステータス保存
+	void UpdateLimitTimer();	// 制限時間更新
+	void UpdateAudience();		// 観客更新
+	void UpdateSpecialStag();	// スペシャル演出更新
+	void UpdateTeamStatus();	// チームステータス更新
+	void CreateTeamStatus();	// チームステータス生成
+	void Save();				// チームステータス保存
 
 	//=============================
 	// メンバ変数

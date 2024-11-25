@@ -51,8 +51,9 @@ namespace
 CGameManager::SCENE_FUNC CGameManager::m_SceneFunc[] =	// シーン関数
 {
 	&CGameManager::SceneMain,			// メイン
+	&CGameManager::SceneSpawn,			// 登場演出
 	&CGameManager::SceneStart,			// 開始演出
-	&CGameManager::SceneSpecial_Stag,	// スペシャル演出
+	&CGameManager::SceneSpecialStag,	// スペシャル演出
 	&CGameManager::SceneEnd,			// 終了演出
 	&CGameManager::SceneDebug,			// デバッグ
 };
@@ -146,7 +147,6 @@ HRESULT CGameManager::Init()
 	}
 
 #if _DEBUG
-
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
 	{
@@ -154,9 +154,10 @@ HRESULT CGameManager::Init()
 	}
 #endif
 
-	SetSceneType(ESceneType::SCENE_START);	// シーンの種類
+	// 開始シーンの設定
+	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 
-	//チームステータス
+	// チームステータスの生成
 	CreateTeamStatus();
 
 	// モテマネージャ生成
@@ -278,6 +279,21 @@ void CGameManager::UpdateLimitTimer()
 }
 
 //==========================================================================
+// 登場演出
+//==========================================================================
+void CGameManager::SceneSpawn()
+{
+	// 操作出来ない
+	m_bControll = false;
+
+	// TODO：登場演出が終わったら遷移！
+	{
+		// 開始演出へ遷移
+		SetSceneType(ESceneType::SCENE_START);
+	}
+}
+
+//==========================================================================
 // 開始演出
 //==========================================================================
 void CGameManager::SceneStart()
@@ -285,48 +301,51 @@ void CGameManager::SceneStart()
 	// 操作出来ない
 	m_bControll = false;
 
+	// TODO：開始演出が終わったら遷移！
+	{
 #if _DEBUG
-	// コートサイズのボックス
-	if (m_pCourtSizeBox == nullptr)
-	{
-		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-	}
+		// コートサイズのボックス
+		if (m_pCourtSizeBox == nullptr)
+		{
+			m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 #endif
 
-	// チームステータス
-	CreateTeamStatus();
+		// チームステータス
+		CreateTeamStatus();
 
-	// タイマーUI
-	if (m_pTimerUI == nullptr)
-	{
-		m_pTimerUI = CTimerUI::Create(
-			90.0f,
-			90.0f,
-			MyLib::Vector3(640.0f, 70.0f, 0.0f),
-			D3DXVECTOR2(40.0f, 40.0f),
-			D3DXVECTOR2(30.0f, 40.0f),
-			D3DXVECTOR2(40.0f, 0.0f),
-			D3DXVECTOR2(60.0f, 0.0f),
-			CTimerUI::EAlignX::XALIGN_CENTER,
-			CTimerUI::EAlignY::YALIGN_CENTER,
-			MyLib::Vector3(0.0f)
-		);
+		// タイマーUI
+		if (m_pTimerUI == nullptr)
+		{
+			m_pTimerUI = CTimerUI::Create(
+				90.0f,
+				90.0f,
+				MyLib::Vector3(640.0f, 70.0f, 0.0f),
+				D3DXVECTOR2(40.0f, 40.0f),
+				D3DXVECTOR2(30.0f, 40.0f),
+				D3DXVECTOR2(40.0f, 0.0f),
+				D3DXVECTOR2(60.0f, 0.0f),
+				CTimerUI::EAlignX::XALIGN_CENTER,
+				CTimerUI::EAlignY::YALIGN_CENTER,
+				MyLib::Vector3(0.0f)
+			);
 
-		// 開始
+			// 開始
 #if _NDEBUG
-		m_pTimerUI->Start();
+			m_pTimerUI->Start();
 #endif
 
-	}
+		}
 
-	// メインへ遷移
-	SetSceneType(ESceneType::SCENE_MAIN);
+		// メインへ遷移
+		SetSceneType(ESceneType::SCENE_MAIN);
+	}
 }
 
 //==========================================================================
 // スペシャル演出
 //==========================================================================
-void CGameManager::SceneSpecial_Stag()
+void CGameManager::SceneSpecialStag()
 {
 	// 操作出来ない
 	m_bControll = false;
