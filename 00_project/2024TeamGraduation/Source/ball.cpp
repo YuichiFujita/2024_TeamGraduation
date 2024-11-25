@@ -14,6 +14,7 @@
 #include "calculation.h"
 #include "model.h"
 #include "ballHolderMarker.h"
+#include "ballLandingMarker.h"
 #include "shadow.h"
 #include "specialManager.h"
 #include "playerManager.h"
@@ -133,11 +134,12 @@ namespace
 
 	namespace pass
 	{
-		const float MOVE_RATE = 0.015f;		// 移動速度の距離割合
-		const float TARGET_PULSY = 50.0f;	// ターゲット対象のY座標加算量
-		const float TIME_NORAML = 1.2f;		// 通常パスの経過時間
-		const float TIME_HOMING = 1.0f;		// ホーミングパスの経過時間
-		const float MAX_HEIGHT = 250.0f;	// ホーミングの最高到達点
+		const float MOVE_RATE = 0.015f;			// 移動速度の距離割合
+		const float HOMING_TIMERATE = 0.65f;	// Y座標のホーミングを行う時間割合
+		const float TARGET_PULSY = 50.0f;		// ターゲット対象のY座標加算量
+		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
+		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
+		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
 	}
 }
 
@@ -178,7 +180,8 @@ CListManager<CBall> CBall::m_list = {};	// リスト
 //==========================================================================
 CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_typeTeam		(CGameManager::SIDE_NONE),	// チームサイド
-	m_pMarker		(nullptr),		// ボール所持マーカー情報
+	m_pHoldMarker	(nullptr),		// ボール所持マーカー情報
+	m_pLandMarker	(nullptr),		// ボール着地点マーカー情報
 	m_pShadow		(nullptr),		// 影情報
 	m_pPlayer		(nullptr),		// プレイヤー情報
 	m_pTarget		(nullptr),		// ホーミングターゲット情報
@@ -253,9 +256,13 @@ HRESULT CBall::Init()
 	HRESULT hr = CObjectX::Init(MODEL);
 	if (FAILED(hr)) { return E_FAIL; }
 
-	// マーカーの生成
-	m_pMarker = CBallHolderMarker::Create(nullptr);
-	if (m_pMarker == nullptr) { return E_FAIL; }
+	// ボール所持マーカーの生成
+	m_pHoldMarker = CBallHolderMarker::Create(nullptr);
+	if (m_pHoldMarker == nullptr) { return E_FAIL; }
+
+	// ボール着地点マーカーの生成
+	m_pLandMarker = CBallLandingMarker::Create(this);
+	if (m_pLandMarker == nullptr) { return E_FAIL; }
 
 	// 影の生成
 	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
@@ -1003,18 +1010,6 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// ターゲット位置
 	MyLib::Vector3 vecMove = GetMove();						// 移動量
 
-	// XZ平面の位置をターゲット位置と同一にする
-	m_posPassEnd.x = posTarget.x;
-	m_posPassEnd.z = posTarget.z;
-
-	// パス終了Y座標を更新
-	if (posTarget.y + pass::TARGET_PULSY > m_posPassEnd.y)
-	{ // ターゲット位置が現在のパス終了Y座標より高い場合
-
-		// 現在のターゲット位置に再設定
-		m_posPassEnd.y = posTarget.y + pass::TARGET_PULSY;
-	}
-
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime * fSlowRate;
 	if (m_fStateTime <= pass::TIME_HOMING)
@@ -1022,6 +1017,18 @@ void CBall::UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, con
 		// 経過時間の割合を計算
 		float fTimeRate = m_fStateTime / pass::TIME_HOMING;
 		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
+
+		// XZ平面の位置をターゲット位置と同一にする
+		m_posPassEnd.x = posTarget.x;
+		m_posPassEnd.z = posTarget.z;
+
+		// パス終了Y座標を更新
+		if (m_posPassEnd.y < posTarget.y + pass::TARGET_PULSY && fTimeRate < pass::HOMING_TIMERATE)
+		{ // 現在のパス終了Y座標がターゲット位置より低い且つ、経過時間の割合が前半の場合
+
+			// 現在のターゲット位置に再設定
+			m_posPassEnd.y = posTarget.y + pass::TARGET_PULSY;
+		}
 
 		// 放物線上に位置を補正
 		posBall = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, pass::MAX_HEIGHT, fTimeRate);
@@ -1533,8 +1540,8 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// キャッチしたプレイヤーをマーカーに割当
-	m_pMarker->BindPlayer(pPlayer);
+	// キャッチしたプレイヤーを所持マーカーに割当
+	m_pHoldMarker->BindPlayer(pPlayer);
 
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す
@@ -1559,8 +1566,8 @@ void CBall::Throw(CPlayer* pPlayer)
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
 
-	// マーカーからプレイヤーを破棄
-	m_pMarker->BindPlayer(nullptr);
+	// 所持マーカーからプレイヤーを破棄
+	m_pHoldMarker->BindPlayer(nullptr);
 
 	// ボールの移動ベクトルを作成
 	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き

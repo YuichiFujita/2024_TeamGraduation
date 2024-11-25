@@ -16,6 +16,7 @@
 #include "fog.h"
 #include "edit_map.h"
 #include "blackframe.h"
+#include "resultmanager.h"
 
 // 遷移先
 #include "game.h"
@@ -35,6 +36,7 @@ namespace
 	{
 		"data\\TEXT\\map\\info.txt",	// なし
 		"data\\TEXT\\map\\info.txt",	// タイトル
+		"data\\TEXT\\map\\info.txt",	// エントリー
 		"data\\TEXT\\map\\info.txt",	// チュートリアル
 		"data\\TEXT\\map\\info.txt",	// ゲーム
 		"data\\TEXT\\map\\info.txt",	// ゲーム

@@ -78,6 +78,7 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 		Catch(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Jump(player, fDeltaTime, fDeltaRate, fSlowRate);
+		UserChange(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
@@ -157,6 +158,13 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 
 	// サウンド再生
 	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+
+	// エフェクト
+	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_JUMP,
+		player->GetPosition() + MyLib::Vector3(0.0f, 40.0f, 0.0f),
+		MyLib::Vector3(),	// 向き
+		MyLib::Vector3(),
+		15.0f, true);
 }
 
 //==========================================================================

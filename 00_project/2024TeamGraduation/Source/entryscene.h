@@ -10,7 +10,7 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "entryscene.h"
+#include "entry.h"
 #include "gameManager.h"
 
 //==========================================================================
@@ -35,11 +35,14 @@ public:
 	virtual void Uninit() = 0;		// 終了
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
+
 	//--------------------------
 	// その他
 	//--------------------------
+	virtual CEntry_SetUpTeam* GetSetupTeam() { return nullptr; }	// チーム等の設定取得
 	virtual void Debug() = 0;
 
+	static CEntryScene* Create(CEntry::ESceneType sceneType);	// 生成
 private:
 
 	//=============================
@@ -51,7 +54,6 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	
 
 };
 

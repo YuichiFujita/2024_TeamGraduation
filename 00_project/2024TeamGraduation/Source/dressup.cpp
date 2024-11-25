@@ -13,6 +13,7 @@
 // 派生先
 #include "dressup_hair.h"		// 髪
 #include "dressup_accessory.h"	// アクセ
+#include "dressup_face.h"		// 顔
 
 //==========================================================================
 // コンストラクタ
@@ -21,6 +22,7 @@ CDressup::CDressup()
 {
 	m_nSwitchIdx = 0;		// 切り替えるインデックス
 	m_nNowIdx = 0;			// 現在のインデックス
+	m_nControllIdx = 0;		// 操作するインデックス
 	m_pObjChara = nullptr;	// キャラクターのポインタ
 	m_vecModelName.clear();	// モデル名
 }
@@ -51,6 +53,10 @@ CDressup* CDressup::Create(EType type, CObjectChara* pObjChara, int nSwitchType)
 		pObj = DEBUG_NEW CDressup_Accessory;
 		break;
 
+	case CDressup::TYPE_FACE:
+		pObj = DEBUG_NEW CDressup_Face;
+		break;
+
 	default:
 		return nullptr;
 		break;
@@ -78,9 +84,9 @@ HRESULT CDressup::Init()
 }
 
 //==========================================================================
-// 全て読み込み
+// モデル全て読み込み
 //==========================================================================
-void CDressup::LoadAll(const std::wstring& folder)
+void CDressup::LoadAllModel(const std::wstring& folder)
 {
 	// 階層フォルダ追加
 	std::stack<std::wstring> folderStack;
@@ -107,6 +113,51 @@ void CDressup::LoadAll(const std::wstring& folder)
 				std::string fileName = UtilFunc::Transformation::WideToMultiByte((currentFolder + L"\\" + findFileData.cFileName).c_str());
 				if (fileName.find(".x") != std::string::npos)
 				{// .xのみ追加
+					m_vecModelName.push_back(fileName);
+				}
+			}
+			else if (lstrcmpW(findFileData.cFileName, L".") != 0 && lstrcmpW(findFileData.cFileName, L"..") != 0)
+			{// 階層確認
+				std::wstring subFolderPath = currentFolder + L"\\" + findFileData.cFileName;
+				folderStack.push(subFolderPath);
+			}
+
+		} while (FindNextFileW(hFind, &findFileData) != 0);	// 終端のフォルダまで確認
+
+		FindClose(hFind);
+	}
+}
+
+//==========================================================================
+// テクスチャ全読み込み
+//==========================================================================
+void CDressup::LoadAllTexture(const std::wstring& folder)
+{
+	// 階層フォルダ追加
+	std::stack<std::wstring> folderStack;
+	folderStack.push(folder);
+
+	while (!folderStack.empty())
+	{
+		std::wstring currentFolder = folderStack.top();
+		folderStack.pop();
+
+		WIN32_FIND_DATAW findFileData;
+		HANDLE hFind = FindFirstFileW((currentFolder + L"\\*").c_str(), &findFileData);
+
+		if (hFind == INVALID_HANDLE_VALUE)
+		{
+			continue;
+		}
+
+		do
+		{// 終端のフォルダまで確認
+
+			if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			{// ファイルパス格納
+				std::string fileName = UtilFunc::Transformation::WideToMultiByte((currentFolder + L"\\" + findFileData.cFileName).c_str());
+				if (fileName.find(".png") != std::string::npos || fileName.find(".jpg") != std::string::npos || fileName.find(".tga") != std::string::npos)
+				{
 					m_vecModelName.push_back(fileName);
 				}
 			}

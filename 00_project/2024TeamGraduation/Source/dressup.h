@@ -27,6 +27,7 @@ public:
 	{
 		TYPE_HAIR = 0,	// 髪
 		TYPE_ACCESSORY,	// アクセサリー
+		TYPE_FACE,		// 顔
 		TYPE_MAX
 	};
 
@@ -41,8 +42,14 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
 	//--------------------------
+	// キャラクター
+	//--------------------------
+	CObjectChara* BindObjectCharacter(CObjectChara* pObjChara) { m_pObjChara = pObjChara; }	// キャラクターのポインタ
+
+	//--------------------------
 	// その他
 	//--------------------------
+	void SetControllIdx(int idx) { m_nControllIdx = idx; }	// 操作するインデックス設定
 	virtual void Debug();
 
 	// 静的関数
@@ -50,13 +57,15 @@ public:
 
 protected:
 
-	void LoadAll(const std::wstring& folder);	// 全読み込み
+	void LoadAllModel(const std::wstring& folder);		// 全読み込み
+	void LoadAllTexture(const std::wstring& folder);	// 全読み込み
 
 	//=============================
 	// メンバ変数
 	//=============================
 	int m_nSwitchIdx;			// 切り替えるインデックス
 	int m_nNowIdx;				// 現在のインデックス
+	int m_nControllIdx;			// 操作するインデックス
 	CObjectChara* m_pObjChara;	// キャラクターのポインタ
 	std::vector<std::string> m_vecModelName;	// モデル名
 

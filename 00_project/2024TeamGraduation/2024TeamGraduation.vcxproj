@@ -176,6 +176,7 @@
     <ClCompile Include="Source\audienceLowPoly.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\ballHolderMarker.cpp" />
+    <ClCompile Include="Source\ballLandingMarker.cpp" />
     <ClCompile Include="Source\ballStatus.cpp" />
     <ClCompile Include="Source\bindKey.cpp" />
     <ClCompile Include="Source\bindKeyBack.cpp" />
@@ -192,11 +193,14 @@
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\charmManager.cpp" />
+    <ClCompile Include="Source\charmText.cpp" />
+    <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
     <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\dressup.cpp" />
     <ClCompile Include="Source\dressup_accessory.cpp" />
+    <ClCompile Include="Source\dressup_face.cpp" />
     <ClCompile Include="Source\dressup_hair.cpp" />
     <ClCompile Include="Source\edit.cpp" />
     <ClCompile Include="Source\edithandle.cpp" />
@@ -204,6 +208,7 @@
     <ClCompile Include="Source\EffekseerObj.cpp" />
     <ClCompile Include="Source\entry.cpp" />
     <ClCompile Include="Source\entryscene.cpp" />
+    <ClCompile Include="Source\entry_dressup.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
@@ -280,10 +285,14 @@
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerDressup.cpp" />
+    <ClCompile Include="Source\playerEntry.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
+    <ClCompile Include="Source\playerMarker.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
     <ClCompile Include="Source\playerPosAdj.cpp" />
+    <ClCompile Include="Source\playerPosAdj_entry.cpp" />
     <ClCompile Include="Source\playerPosAdj_in.cpp" />
     <ClCompile Include="Source\playerPosAdj_inLeft.cpp" />
     <ClCompile Include="Source\playerPosAdj_inRight.cpp" />
@@ -302,6 +311,7 @@
     <ClCompile Include="Source\renderer.cpp" />
     <ClCompile Include="Source\renderTexture.cpp" />
     <ClCompile Include="Source\result.cpp" />
+    <ClCompile Include="Source\resultmanager.cpp" />
     <ClCompile Include="Source\sample_character.cpp" />
     <ClCompile Include="Source\sample_obj2D.cpp" />
     <ClCompile Include="Source\sample_obj3D.cpp" />
@@ -325,6 +335,7 @@
     <ClCompile Include="Source\timerUI.cpp" />
     <ClCompile Include="Source\timeUI.cpp" />
     <ClCompile Include="Source\title.cpp" />
+    <ClCompile Include="Source\titleLogo.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
@@ -348,6 +359,7 @@
     <ClInclude Include="Source\audienceLowPoly.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\ballHolderMarker.h" />
+    <ClInclude Include="Source\ballLandingMarker.h" />
     <ClInclude Include="Source\ballStatus.h" />
     <ClInclude Include="Source\bindKey.h" />
     <ClInclude Include="Source\bindKeyBack.h" />
@@ -365,6 +377,8 @@
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\charmManager.h" />
+    <ClInclude Include="Source\charmText.h" />
+    <ClInclude Include="Source\charmValueManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
@@ -372,6 +386,7 @@
     <ClInclude Include="Source\debugproc.h" />
     <ClInclude Include="Source\dressup.h" />
     <ClInclude Include="Source\dressup_accessory.h" />
+    <ClInclude Include="Source\dressup_face.h" />
     <ClInclude Include="Source\dressup_hair.h" />
     <ClInclude Include="Source\edit.h" />
     <ClInclude Include="Source\edithandle.h" />
@@ -379,6 +394,7 @@
     <ClInclude Include="Source\EffekseerObj.h" />
     <ClInclude Include="Source\entry.h" />
     <ClInclude Include="Source\entryscene.h" />
+    <ClInclude Include="Source\entry_dressup.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
@@ -455,10 +471,14 @@
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerDressup.h" />
+    <ClInclude Include="Source\playerEntry.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
+    <ClInclude Include="Source\playerMarker.h" />
     <ClInclude Include="Source\playerOut.h" />
     <ClInclude Include="Source\playerPosAdj.h" />
+    <ClInclude Include="Source\playerPosAdj_entry.h" />
     <ClInclude Include="Source\playerPosAdj_in.h" />
     <ClInclude Include="Source\playerPosAdj_inLeft.h" />
     <ClInclude Include="Source\playerPosAdj_inRight.h" />
@@ -474,6 +494,7 @@
     <ClInclude Include="Source\renderer.h" />
     <ClInclude Include="Source\renderTexture.h" />
     <ClInclude Include="Source\result.h" />
+    <ClInclude Include="Source\resultmanager.h" />
     <ClInclude Include="Source\sample_character.h" />
     <ClInclude Include="Source\sample_obj2D.h" />
     <ClInclude Include="Source\sample_obj3D.h" />
@@ -497,6 +518,7 @@
     <ClInclude Include="Source\timerUI.h" />
     <ClInclude Include="Source\timeUI.h" />
     <ClInclude Include="Source\title.h" />
+    <ClInclude Include="Source\titleLogo.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
     <ClInclude Include="Source\Xload.h" />

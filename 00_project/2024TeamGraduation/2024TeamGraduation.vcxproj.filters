@@ -123,6 +123,9 @@
     <Filter Include="mode\entry">
       <UniqueIdentifier>{7d3b7316-2bdc-4a39-a27a-8e690014fb7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\marker">
+      <UniqueIdentifier>{86d8a8ce-0cb2-4d8e-a6d8-8f1834ba0d5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -611,9 +614,6 @@
     <ClCompile Include="Source\playerAIOut_controlAction.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ballHolderMarker.cpp">
-      <Filter>ingame\ball</Filter>
-    </ClCompile>
     <ClCompile Include="Source\entry.cpp">
       <Filter>mode\entry</Filter>
     </ClCompile>
@@ -622,6 +622,42 @@
     </ClCompile>
     <ClCompile Include="Source\entryscene.cpp">
       <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\titleLogo.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\entry_dressup.cpp">
+      <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerEntry.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_entry.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\charmValueManager.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerDressup.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ballHolderMarker.cpp">
+      <Filter>ingame\marker</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerMarker.cpp">
+      <Filter>ingame\marker</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\resultmanager.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dressup_face.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ballLandingMarker.cpp">
+      <Filter>ingame\marker</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\charmText.cpp">
+      <Filter>ingame\charm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1123,9 +1159,6 @@
     <ClInclude Include="Source\playerAIOut_controlAction.h">
       <Filter>player\playerAI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ballHolderMarker.h">
-      <Filter>ingame\ball</Filter>
-    </ClInclude>
     <ClInclude Include="Source\entry.h">
       <Filter>mode\entry</Filter>
     </ClInclude>
@@ -1134,6 +1167,42 @@
     </ClInclude>
     <ClInclude Include="Source\entryscene.h">
       <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\titleLogo.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entry_dressup.h">
+      <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerEntry.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_entry.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmValueManager.h">
+      <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerDressup.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ballHolderMarker.h">
+      <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerMarker.h">
+      <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resultmanager.h">
+      <Filter>mode\result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_face.h">
+      <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ballLandingMarker.h">
+      <Filter>ingame\marker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText.h">
+      <Filter>ingame\charm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

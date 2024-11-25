@@ -20,14 +20,15 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CPlayerMarker;	// マーカー
 class CShadow;			// 影
 class CPlayerBase;		// ベースプレイヤー
 class CPlayerAction;	// アクション
 class CPlayerStatus;	// ステータス
 class CBall;			// ボール
-class CDressup;			// 着せ替え
 class CSpecialEffect;	// スペシャル演出エフェクト
 class CBindKey;			// 割当キー基底クラス
+class CEffekseerObj;	// エフェクシアオブジェクト
 
 //==========================================================================
 // クラス定義
@@ -36,6 +37,14 @@ class CBindKey;			// 割当キー基底クラス
 class CPlayer : public CObjectChara
 {
 public:
+
+	//=============================
+	// 定数
+	//=============================
+	static constexpr int ID_HAIR = 15;			// 髪のインデックス番号
+	static constexpr int ID_ACCESSORY = 16;		// アクセのインデックス番号
+	static constexpr int ID_FACE = 2;			// 顔のインデックス番号
+
 	//=============================
 	// 列挙型定義
 	//=============================
@@ -181,6 +190,7 @@ public:
 	{
 		FIELD_IN = 0,	// 内野
 		FIELD_OUT,		// 外野
+		FIELD_ENTRY,	// エントリー用
 		FIELD_MAX		// この列挙型の総数
 	};
 
@@ -237,6 +247,8 @@ public:
 	{
 		bool bHit;	// 当たったか
 		EHit eHit;	// 動作状態
+
+		SHitInfo() : bHit(false), eHit(EHit::HIT_NONE) {}
 	};
 
 	//=============================
@@ -290,11 +302,6 @@ public:
 	CPlayerBase* GetBase() const			{ return m_pBase; }				// ベース取得
 
 	//=============================
-	// 着せ替え
-	//=============================
-	void UpdateDressUP(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ドレスアップの更新
-
-	//=============================
 	// スペシャル用
 	//=============================
 	CSpecialEffect* GetSpecialEffect() { return m_pSpecialEffect; }	// スぺシャルエフェクト取得
@@ -310,6 +317,8 @@ public:
 	EFieldArea GetAreaType() const { return m_typeArea; }			// ポジション取得
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
 	EState GetState() { return m_state; }					// 状態取得
+	EBody GetBodyType() { return m_BodyType; }				// 体型取得
+	EHandedness GetHandedness() { return m_Handedness; }	// 利き手取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
 	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }	// 自分のインデックス取得
 	int GetPositionIdx() const { return m_nPosIdx; }		// 自分のポジション別インデックス取得
@@ -320,6 +329,11 @@ public:
 	void CatchSetting(CBall* pBall);									// キャッチ時処理
 	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
 	void OutCourtSetting();												// コート越え処理
+	void SetHaveTime(float time) { m_fHaveTime = time; }				// ボール所持タイマー
+	float GetHaveTime() { return m_fHaveTime; }							// ボール所持タイマー
+	void SetEscapeTime(float time) { m_fEscapeTime = time; }			// 端逃げタイマー
+	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
+
 	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
 
 	//=============================
@@ -346,7 +360,8 @@ public:
 		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
 		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
 		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
+		EHandedness	typeHand = EHandedness::HAND_R,		// 利き手
+		CScene::MODE mode = CScene::MODE::MODE_GAME		// モード
 	);
 
 protected:
@@ -396,12 +411,6 @@ private:
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
-
-	//-----------------------------
-	// 非モテ関数
-	//-----------------------------
-	void UnCharm(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 非モテまとめ
-	void LongHold(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 持ち続けてる
 
 	//-----------------------------
 	// モーション系関数
@@ -459,26 +468,30 @@ private:
 	CPlayerBase*   m_pBase;				// ベース
 
 	//-----------------------------
-	// 着せ替え
-	//-----------------------------
-	CDressup* m_pDressup_Hair;		// 髪着せ替え
-	CDressup* m_pDressup_Accessory;	// アクセ着せ替え
-
-	//-----------------------------
 	// スペシャル用
 	//-----------------------------
 	CSpecialEffect* m_pSpecialEffect;	// スぺシャルエフェクト
 
 	//-----------------------------
+	// エフェクト用
+	//-----------------------------
+	CEffekseerObj* m_pEfkCatchStance;	// キャッチの構え
+	CEffekseerObj* m_pEfkCatchNormal;	// 通常キャッチ
+	CEffekseerObj* m_pEfkCatchJust;		// ジャストキャッチ
+
+
+	//-----------------------------
 	// その他変数
 	//-----------------------------
 	float m_fHaveTime;			// ボール所持タイマー
+	float m_fEscapeTime;		// 端逃げタイマー
 	int m_nMyPlayerIdx;			// プレイヤーインデックス番号
 	int m_nPosIdx;				// ポジション別インデックス
+	CPlayerMarker* m_pMarker;	// マーカーの情報
 	CShadow* m_pShadow;			// 影の情報
 	CBall* m_pBall;				// ボールの情報
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
-	EHandedness m_Handress;		// 利き手
+	EHandedness m_Handedness;	// 利き手
 	EBody m_BodyType;			// 体型
 	const EFieldArea m_typeArea;				// ポジション
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド

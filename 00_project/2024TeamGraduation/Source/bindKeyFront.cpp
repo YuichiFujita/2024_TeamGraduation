@@ -59,6 +59,18 @@ bool CBindKeyFront::IsTrigger(const int nPadIdx) const
 }
 
 //==========================================================================
+//	割当スティック傾きの取得処理
+//==========================================================================
+bool CBindKeyFront::IsStickTilt(const int nPadIdx) const
+{
+	// インプット情報の取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+
+	// 傾きフラグを返す
+	return (pPad->GetStickMoveL(nPadIdx).y > 0.0f);
+}
+
+//==========================================================================
 //	割当キー向きの取得処理
 //==========================================================================
 float CBindKeyFront::GetRotation() const

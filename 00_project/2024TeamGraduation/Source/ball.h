@@ -21,6 +21,7 @@
 class CShadow;
 class CPlayer;
 class CBallHolderMarker;
+class CBallLandingMarker;
 class CEffekseerObj;
 
 //==========================================================================
@@ -96,16 +97,18 @@ public:
 	void Pass(CPlayer* pPlayer);		// パス
 	void Toss(CPlayer* pPlayer);		// トス
 
-	CGameManager::ETeamSide GetTypeTeam() const { return m_typeTeam; }	// チームサイド取得
-	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }			// スペシャル種類取得
-	EAttack GetTypeAtk() const		{ return m_typeAtk; }				// 攻撃種類取得
-	EState GetState() const			{ return m_state; }					// 状態取得
-	CPlayer* GetPlayer() const		{ return m_pPlayer; }				// 所持プレイヤー取得
-	CPlayer* GetTarget() const		{ return m_pTarget; }				// ターゲット取得
-	CPlayer* GetCover() const		{ return m_pCover; }				// カバー対象プレイヤー取得
-	int GetDamage() const			{ return m_nDamage; }				// ダメージ取得
-	float GetKnockback() const		{ return m_fKnockback; }			// ノックバック取得
-	bool IsLanding() const			{ return m_bLanding; }				// 着地フラグ取得
+	MyLib::Vector3 GetPosPassStart() const		{ return m_posPassStart; }	// パス開始位置取得
+	MyLib::Vector3 GetPosPassEnd() const		{ return m_posPassEnd; }	// パス終了位置取得
+	CGameManager::ETeamSide GetTypeTeam() const	{ return m_typeTeam; }		// チームサイド取得
+	ESpecial GetTypeSpecial() const	{ return m_typeSpecial; }	// スペシャル種類取得
+	EAttack GetTypeAtk() const		{ return m_typeAtk; }		// 攻撃種類取得
+	EState GetState() const			{ return m_state; }			// 状態取得
+	CPlayer* GetPlayer() const		{ return m_pPlayer; }		// 所持プレイヤー取得
+	CPlayer* GetTarget() const		{ return m_pTarget; }		// ターゲット取得
+	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
+	int GetDamage() const			{ return m_nDamage; }		// ダメージ取得
+	float GetKnockback() const		{ return m_fKnockback; }	// ノックバック取得
+	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得
 	bool IsPass() const;			// パスフラグ取得
@@ -198,7 +201,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CBallHolderMarker* m_pMarker;	// ボール所持マーカー情報
+	CBallHolderMarker* m_pHoldMarker;	// ボール所持マーカー情報
+	CBallLandingMarker* m_pLandMarker;	// ボール着地点マーカー情報
 	CShadow* m_pShadow;		// 影情報
 	CPlayer* m_pPlayer;		// プレイヤー情報
 	CPlayer* m_pTarget;		// ホーミングターゲット情報

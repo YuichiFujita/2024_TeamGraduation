@@ -36,8 +36,16 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 
 	//--------------------------
+	// チーム情報
+	//--------------------------
+	int GetPlayerNum(CGameManager::ETeamSide side) { return m_nPlayerNum[side]; }	// プレイヤーの数取得
+	int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得
+	int GetEntryIdx(int i) { return m_nEntryIdx[i]; }	// エントリーのインデックス
+
+	//--------------------------
 	// その他
 	//--------------------------
+	virtual CEntry_SetUpTeam* GetSetupTeam() { return this; }	// チーム等の設定取得
 	virtual void Debug() override;
 
 private:
@@ -45,14 +53,19 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void Save();
+	void SelectTeam();		// チーム選択
+	void ChangeMaxPlayer();	// プレイヤー最大数変更
+	void Save();			// セーブ
+	void Load();			// ロード
 
 	//=============================
 	// メンバ変数
 	//=============================
 	std::vector<int> m_vecAddIdx[CGameManager::ETeamSide::SIDE_MAX];	// 追加されたインデックス
 	CGameManager::ETeamSide m_TeamSide[mylib_const::MAX_PLAYER];		// チームサイド
-	int m_vecPlayerNum[CGameManager::ETeamSide::SIDE_MAX];				// プレイヤーの数
+	int m_nMaxChangeIdx[CGameManager::ETeamSide::SIDE_MAX];				// 最大数変更するインデックス
+	int m_nPlayerNum[CGameManager::ETeamSide::SIDE_MAX];				// プレイヤーの数
+	int m_nEntryIdx[mylib_const::MAX_PLAYER];							// エントリーのインデックス
 };
 
 #endif

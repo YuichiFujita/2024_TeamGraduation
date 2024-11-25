@@ -3109,7 +3109,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\ë≤êß\\2024_TeamGraduation\\00_project\\2024TeamGraduation\\data\\TEXTURE\\player\\glass_tex_02.png";
+    "data\\TEXTURE\\player\\glass_tex_02.png";
    }
   }
  }

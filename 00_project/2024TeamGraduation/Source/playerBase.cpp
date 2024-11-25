@@ -129,6 +129,14 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// ダメージを受ける場合はフラグをONにする
 	hitInfo.bHit = true;
 
+	if (m_pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN)
+	{// コートから戻っているとき
+			
+		// モテ減少
+		CGameManager* pGameMgr = CGameManager::GetInstance();
+		pGameMgr->SubCharmValue(m_pPlayer->GetTeam(), CCharmValueManager::ETypeSub::SUB_INVADE_RUN);
+	}
+
 	return hitInfo;
 }
 

@@ -8,6 +8,7 @@
 #include "player.h"
 #include "playerStatus.h"
 #include "playerAction.h"
+#include "EffekseerObj.h"
 
 //==========================================================================
 // 定数定義
@@ -62,6 +63,13 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 
 			// 着地モーションの再生
 			pPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND);
+
+			// エフェクト
+			CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_LAND,
+				pos,
+				MyLib::Vector3(),	// 向き
+				MyLib::Vector3(),
+				15.0f, true);
 		}
 
 		// 重力の初期化
@@ -214,6 +222,10 @@ void CPlayerPosAdjIn::ReturnSetting(CPlayer* pPlayer)
 	infoKnock.posStart = pos;				// 位置設定
 	pPlayer->SetKnockBackInfo(infoKnock);	// 反映
 
+	CGameManager::ETeamSide team = pPlayer->GetTeam();		// チーム
+	
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
 	if (pBall == nullptr)
 	{ // ボールを持っていない場合
 
@@ -228,5 +240,8 @@ void CPlayerPosAdjIn::ReturnSetting(CPlayer* pPlayer)
 
 		// トス状態にする
 		pPlayer->SetState(CPlayer::EState::STATE_INVADE_TOSS);
+
+		// モテ減少
+		pGameMgr->SubCharmValue(team, CCharmValueManager::ETypeSub::SUB_INVADE_RUN);
 	}
 }
