@@ -78,11 +78,12 @@ private:
 
 	enum EMoveType	// 行動種類
 	{
-		MOVETYPE_NONE = 0,
+		MOVETYPE_NONE = 0,		// なし(待機)
 		MOVETYPE_WALK,			// 歩く
 		MOVETYPE_DASH,			// 走る
 		MOVETYPE_LEAVE,			// 離れる
 		MOVETYPE_APPROATCH,		// 近づく
+		MOVETYPE_RETURN,		// 戻る
 		MOVETYPE_MAX
 	};
 
@@ -129,14 +130,11 @@ private:
 		SMode sMode;				// モード
 		SThrowInfo sThrowInfo;		// 投げ情報
 		SCatchInfo sCatchInfo;		// キャッチ情報
-		SMoveInfo sMoveInfo;		// 行動情報
 	};
 
-	struct SLearn	// 学習
+	struct STarget	// 学習
 	{
-		float fDistanceIN;		// 内野にいる相手との距離
-		float fDistanceOUT;		// 外野にいる相手との距離
-		float fDistanceLine;	// 中央線との距離
+		float fDistance;		// 内野にいる相手との距離
 	};
 
 public:
@@ -172,10 +170,14 @@ private:
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
 
+	typedef void(CPlayerAIControl::* MOVE_FUNC)(CPlayer*);
+	static MOVE_FUNC m_MoveFunc[];			// 行動関数
+
 	//=============================
 	// メンバ関数
 	//=============================
-	void ModeManager();
+	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// モード管理
+	void MoveManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 行動管理
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
@@ -205,51 +207,61 @@ private:
 	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void FindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	// 行動
+	void MoveNone(CPlayer* pTarget);
+	void MoveWalk(CPlayer* pTarget);
+	void MoveDash(CPlayer* pTarget);
+	void MoveLeave(CPlayer* pTarget);
+	void MoveApproatch(CPlayer* pTarget);
+	void MoveReturn(CPlayer* pTarget);
 
 	//-----------------------------
 	// その他関数
 	//-----------------------------
 	CPlayer* GetThrowTarget();		// 投げるターゲット
-	CPlayer* GetCatchTarget();		// 投げるターゲット
+	CPlayer* GetCatchTarget();		// キャッチターゲット
 
 	void PlanThrowFlow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げる流れ
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
 
-	void CatchDistance(CPlayer* pTarget);	//
-	void CatchOutDistance();
-	void CatchLineLeftDistance();
-	bool IsPassTarget();
-
-	void CatchMoveFlag();
-
-	void PlanIsJump(CPlayer* pTarget);	// 跳ぶかどうか
-	void PlanMove(CPlayer* pTarget);	// 行動プラン
-
-	bool IsLineOverBall();	// 線超え判定(ボール)
+	void CatchDistance(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離：キャッチ状態
+	void CatchOutDistance();				// 距離：外野
+	void CatchLineLeftDistance();			// パスする相手
+	void CatchMoveFlag();					// 行動：フラグ
+	void PlanIsJump(CPlayer* pTarget);		// 跳ぶかどうか
+	void PlanMove(CPlayer* pTarget);		// 行動プラン
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void Timing(CPlayer* pTarget);			// タイミングの思考
+	void Line(CPlayer* pTarget);			// 線
+	void LineLeftTeam(CPlayer* pTarget);	// 線：左チーム
+	void LineRightTeam(CPlayer* pTarget);	// 線：右チーム
 
-	void Timing(CPlayer* pTarget);	// タイミングの思考
-	void Line(CPlayer* pTarget);
-	void LineLeftTeam(CPlayer* pTarget);
-	void LineRightTeam(CPlayer* pTarget);
+	bool IsPassTarget();					// パスする相手がいるか判定
+	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
+	bool IsLineOverBall();					// 線超え判定(ボール)
+	bool IsLineOverPlayer();				// 線越え判定(プレイヤー)
 
-	bool IsWhoPicksUpTheBall();
+	void Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
+	void LeaveX(MyLib::Vector3 targetPos, float distance);		// 離れる：x軸
+	void LeaveZ(MyLib::Vector3 targetPos, float distance);		// 離れる：z軸
+	void Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
+	void ApproatchX(MyLib::Vector3 targetPos, float distance);	// 近づく：x軸
+	void ApproatchZ(MyLib::Vector3 targetPos, float distance);	// 近づく：z軸
 
-	void RunStartPos(CPlayer* pTarget);
-	void RunEndPos(CPlayer* pTarget);
-
-	void Reset();			// 変数リセット
-	void Debug();
+	void ResetFlag();			// 変数リセット
 
 	//=============================
 	// メンバ変数
 	//=============================
 	CPlayer* m_pAI;			// 自分自身
+	CPlayer* m_pTarget;		// ターゲット
 
 	SInfo m_sInfo;		// モード情報
-	SLearn m_sLearn;
+	STarget m_sTarget;
+	SMoveInfo m_sMoveInfo;		// 行動情報
 	ELine m_eLine;
 	EHeart m_eHeart;	// 心
 

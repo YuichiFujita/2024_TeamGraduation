@@ -199,7 +199,7 @@ void CPlayerAIOutControl::ModeThrowManager(const float fDeltaTime, const float f
 }
 
 //==========================================================================
-// 通常
+// 通常投げ
 //==========================================================================
 void CPlayerAIOutControl::ThrowNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -242,8 +242,6 @@ void CPlayerAIOutControl::Pass()
 	// AIコントロール情報(外野)の取得
 	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
 	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
-	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
-	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
 
 	// 投げる
 	pControlAIOutAction->SetIsPass(true);
@@ -257,8 +255,6 @@ void CPlayerAIOutControl::Throw()
 	// AIコントロール情報(外野)の取得
 	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
 	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
-	CPlayerControlMove* pControlMove = m_pAIOut->GetBase()->GetPlayerControlMove();
-	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
 
 	// ターゲット設定
 	m_pAIOut->SetRotDest(m_pAIOut->GetPosition().AngleXZ(GetThrowTarget()->GetPosition()));
