@@ -14,7 +14,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 {
 	// モード別BGM
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
-	{ TYPE_BGM,"data/BGM/game.wav", -1 },			// ゲーム
+	{ TYPE_BGM,"data/BGM/game01.wav", -1 },			// ゲーム
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング

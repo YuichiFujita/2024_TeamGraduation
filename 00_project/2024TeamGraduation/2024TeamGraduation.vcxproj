@@ -300,7 +300,9 @@
     <ClCompile Include="Source\playerPosAdj_inRight.cpp" />
     <ClCompile Include="Source\playerPosAdj_none.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
+    <ClCompile Include="Source\playerReferee.cpp" />
     <ClCompile Include="Source\playerSpawn.cpp" />
+    <ClCompile Include="Source\playerSpawnManager.cpp" />
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
     <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
@@ -490,7 +492,9 @@
     <ClInclude Include="Source\playerPosAdj_inRight.h" />
     <ClInclude Include="Source\playerPosAdj_none.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
+    <ClInclude Include="Source\playerReferee.h" />
     <ClInclude Include="Source\playerSpawn.h" />
+    <ClInclude Include="Source\playerSpawnManager.h" />
     <ClInclude Include="Source\playerUsercontrol_move.h" />
     <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />

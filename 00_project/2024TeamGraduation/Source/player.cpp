@@ -33,6 +33,8 @@
 
 // 派生先
 #include "playerDressup.h"
+#include "playerSpawn.h"
+#include "playerReferee.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
@@ -265,7 +267,7 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
-// 生成処理 (内野)
+// 生成処理 (ゲームプレイヤー)
 //==========================================================================
 CPlayer* CPlayer::Create
 (
@@ -274,23 +276,65 @@ CPlayer* CPlayer::Create
 	EFieldArea	typeArea,				// ポジション
 	EBaseType	typeBase,				// ベースタイプ
 	EBody		typeBody,				// 体型
-	EHandedness	typeHand,				// 利き手
-	CScene::MODE mode					// モード
+	EHandedness	typeHand				// 利き手
+)
+{
+	// メモリの確保
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	if (pPlayer != nullptr)
+	{
+		// 体型を設定
+		pPlayer->m_BodyType = typeBody;
+
+		// 利き手を設定
+		pPlayer->m_Handedness = typeHand;
+
+		// クラスの初期化
+		if (FAILED(pPlayer->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pPlayer);
+			return nullptr;
+		}
+
+		// 初期位置を設定
+		pPlayer->GetBase()->InitPosition(rPos);
+	}
+
+	return pPlayer;
+}
+
+//==========================================================================
+// 生成処理 (仮想プレイヤー)
+//==========================================================================
+CPlayer* CPlayer::Create
+(
+	const MyLib::Vector3& rPos,			// 位置
+	CGameManager::ETeamSide typeTeam,	// チームサイド
+	EHuman typeHuman,					// 人
+	EBody typeBody,						// 体型
+	EHandedness typeHand				// 利き手
 )
 {
 	// メモリの確保
 	CPlayer* pPlayer = nullptr;
-	switch (mode)
-	{
-	case CScene::MODE_ENTRY:
-		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, typeArea, typeBase);
+	switch (typeHuman)
+	{ // 人ごとの処理
+	case EHuman::HUMAN_ENTRY:
+		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
-	case CScene::MODE_GAME:
-		pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	case EHuman::HUMAN_SPAWN:
+		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
+	case EHuman::HUMAN_REFEREE:
+		pPlayer = DEBUG_NEW CPlayerReferee;
 		break;
 
 	default:
+		assert(false);
 		break;
 	}
 
@@ -382,9 +426,13 @@ HRESULT CPlayer::Init()
 		m_nMyPlayerIdx = -1;
 	}
 
-	// プレイヤーマネージャーに割当
-	CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
-	if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+	if (m_typeArea != EFieldArea::FIELD_NONE)
+	{ // ポジションの指定がある場合
+
+		// プレイヤーマネージャーに割当
+		CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
+		if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+	}
 
 	// プレイヤーリストに割当
 	m_List.Regist(this);
@@ -418,9 +466,13 @@ void CPlayer::Uninit()
 	// 終了処理
 	CObjectChara::Uninit();
 
-	// プレイヤーマネージャーから削除
-	CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
-	if (pManager != nullptr) { pManager->DeletePlayer(this); }	// マネージャーがある場合削除
+	if (m_typeArea != EFieldArea::FIELD_NONE)
+	{ // ポジションの指定がある場合
+
+		// プレイヤーマネージャーから削除
+		CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
+		if (pManager != nullptr) { pManager->DeletePlayer(this); }	// マネージャーがある場合削除
+	}
 
 	// プレイヤーリストから削除
 	m_List.Delete(this);
