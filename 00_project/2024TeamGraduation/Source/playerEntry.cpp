@@ -37,46 +37,4 @@ void CPlayerEntry::Update(const float fDeltaTime, const float fDeltaRate, const 
 {
 	// プレイヤーの取得
 	CPlayer* pPlayer = GetPlayer();
-
-	
-}
-
-//==========================================================================
-// ヒット
-//==========================================================================
-CPlayer::SHitInfo CPlayerEntry::Hit(CBall* pBall)
-{
-	return CPlayer::SHitInfo();
-}
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayerEntry::ChangeMoveControl(CPlayerControlMove* control)
-{
-	// 操作クラスの取得
-	CPlayerControlMove* pControlMove = GetPlayerControlMove();
-
-	// 操作クラスの入替
-	delete pControlMove;
-	pControlMove = control;
-
-	// 操作クラスの反映
-	SetPlayerControlMove(pControlMove);
-}
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayerEntry::ChangeActionControl(CPlayerControlAction* control)
-{
-	// 操作クラスの取得
-	CPlayerControlAction* pControlAction = GetPlayerControlAction();
-
-	// 操作クラスの入替
-	delete pControlAction;
-	pControlAction = control;
-
-	// 操作クラスの反映
-	SetPlayerControlAction(pControlAction);
 }

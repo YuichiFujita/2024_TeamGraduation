@@ -31,14 +31,8 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
-	virtual void MotionCrab(int nStartKey) override {}		// カニ歩き変化
-
-	//=============================
-	// パターン
-	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override { return {}; }	// ヒット
+	virtual void MotionCrab(int nStartKey) override {}					// カニ歩き変化
 };
 
 #endif
