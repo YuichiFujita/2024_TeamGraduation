@@ -23,6 +23,7 @@
 class CBall;
 class CCollisionLine_Box;
 class CTeamStatus;
+class CGymDoor;
 class CGymWallManager;
 class CTimerUI;
 class CCharmManager;
@@ -59,6 +60,14 @@ public:
 		SIDE_LEFT,		// 左コート
 		SIDE_RIGHT,		// 右コート
 		SIDE_MAX		// この列挙型の総数
+	};
+
+	// ドア列挙
+	enum EDoor
+	{
+		DOOR_LEFT = 0,	// 左ドア
+		DOOR_RIGHT,		// 右ドア
+		DOOR_MAX		// この列挙型の総数
 	};
 
 	// 試合終了時情報
@@ -137,18 +146,19 @@ private:
 	ESceneType m_OldSceneType;	// シーンの種類
 	bool m_bControll;			// 操作できるか
 	float m_fSceneTimer;		// シーンタイマー
-	MyLib::Vector3 m_courtSize;						// コートのサイズ
+	MyLib::Vector3 m_courtSize;							// コートのサイズ
 	CTeamStatus* m_pTeamStatus[ETeamSide::SIDE_MAX];	// チームステータス
 	SEndInfo m_endInfo;									// 終了時情報
 
 	//--------------------------
 	// 生成したオブジェクト
 	//--------------------------
-	CGymWallManager* m_pGymWallManager;					// 体育館の壁
-	CCharmManager* m_pCharmManager;						// モテマネージャ
-	CCharmValueManager* m_pCharmValueManager;			// モテ値マネージャ
-	CSpecialValueManager* m_pSpecialValueManager;		// スぺ値マネージャ
-	CTimerUI* m_pTimerUI;								// タイマーUI
+	CGymDoor* m_apGymDoor[EDoor::DOOR_MAX];			// 体育館のドア
+	CGymWallManager* m_pGymWallManager;				// 体育館の壁
+	CCharmManager* m_pCharmManager;					// モテマネージャ
+	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
+	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
+	CTimerUI* m_pTimerUI;							// タイマーUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス

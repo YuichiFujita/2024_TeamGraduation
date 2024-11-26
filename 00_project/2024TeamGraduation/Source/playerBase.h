@@ -57,6 +57,8 @@ public:
 	// メンバ関数
 	void UpdateChangeBase();	// ベース変更更新
 	void DeleteControl();		// 操作破棄
+	void ChangeMoveControl(CPlayerControlMove* control);				// 移動の操作変更
+	void ChangeActionControl(CPlayerControlAction* control);			// アクションの操作変更
 	void SetPlayerControlMove(CPlayerControlMove* pControlMove);		// 操作設定 (移動)
 	void SetPlayerControlAction(CPlayerControlAction* pControlAction);	// 操作設定 (アクション)
 	void SetNewBase(const CPlayer::EBaseType typeBase)	{ m_newTypeBase = typeBase; }	// 新ベース設定

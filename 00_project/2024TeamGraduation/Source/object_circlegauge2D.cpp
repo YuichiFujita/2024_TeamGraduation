@@ -268,7 +268,8 @@ void CObjectCircleGauge2D::SetVtx()
 		pVtx[0].col = m_col;
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = mylib_const::DEFAULT_VECTOR2;
+		float ratio = (float)i / (float)(m_nNumVertex - 1);
+		pVtx[0].tex = D3DXVECTOR2(ratio, 1.0f);
 
 		pVtx += 1;
 	}
