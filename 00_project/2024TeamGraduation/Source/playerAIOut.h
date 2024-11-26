@@ -37,6 +37,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	virtual void MotionCrab(int nStartKey) override;		// カニ歩き変化
 	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
 	virtual void Debug() override;	// デバッグ
 	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
