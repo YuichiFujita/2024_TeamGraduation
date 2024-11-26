@@ -26,13 +26,6 @@ namespace Position
 	const MyLib::Vector3 FADEOUT(0.0f, -80.0f, 0.0f);	// 終了位置
 }
 
-namespace StateTime
-{
-	const float FADEIN = 0.2f;								// フェードイン
-	const float WAIT = CCharmManager::TIME_CHAIN - FADEIN;	// 待機
-	const float FADEOUT = 0.2f;								// フェードイン
-}
-
 //==========================================================================
 // 静的メンバ変数定義
 //==========================================================================
