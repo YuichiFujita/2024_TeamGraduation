@@ -1,6 +1,6 @@
 //============================================================
 //
-//	プレイヤー登場演出ヘッダー [playerSpawnManaegr.h]
+//	プレイヤー登場演出ヘッダー [playerSpawnManager.h]
 //	Author：藤田勇一
 //
 //============================================================
@@ -54,7 +54,8 @@ public:
 	EState GetState(void) const			{ return m_state; }		// 状態取得
 
 	// 静的メンバ関数
-	static CPlayerSpawnManager *Create();	// 生成
+	static CPlayerSpawnManager* Create();		// 生成
+	static CPlayerSpawnManager* GetInstance();	// 取得
 
 private:
 	// エイリアス定義
@@ -62,11 +63,10 @@ private:
 
 	// 静的メンバ変数
 	static AFuncUpdateState m_aFuncUpdateState[];	// 状態更新関数
-	static CPlayerSpawnManager* m_pThisClass;		// 自身のインスタンス
+	static CPlayerSpawnManager* m_pInstance;		// 自身のインスタンス
 
 	// メンバ関数
 	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カットイン更新
-	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了更新
 
 	// メンバ変数
 	EState m_state;		// 状態

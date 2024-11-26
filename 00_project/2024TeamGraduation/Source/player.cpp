@@ -426,9 +426,13 @@ HRESULT CPlayer::Init()
 		m_nMyPlayerIdx = -1;
 	}
 
-	// プレイヤーマネージャーに割当
-	CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
-	if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+	if (m_typeArea != EFieldArea::FIELD_NONE)
+	{ // ポジションの指定がある場合
+
+		// プレイヤーマネージャーに割当
+		CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
+		if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+	}
 
 	// プレイヤーリストに割当
 	m_List.Regist(this);
@@ -462,9 +466,13 @@ void CPlayer::Uninit()
 	// 終了処理
 	CObjectChara::Uninit();
 
-	// プレイヤーマネージャーから削除
-	CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
-	if (pManager != nullptr) { pManager->DeletePlayer(this); }	// マネージャーがある場合削除
+	if (m_typeArea != EFieldArea::FIELD_NONE)
+	{ // ポジションの指定がある場合
+
+		// プレイヤーマネージャーから削除
+		CPlayerManager* pManager = CPlayerManager::GetInstance();	// プレイヤーマネージャー
+		if (pManager != nullptr) { pManager->DeletePlayer(this); }	// マネージャーがある場合削除
+	}
 
 	// プレイヤーリストから削除
 	m_List.Delete(this);
