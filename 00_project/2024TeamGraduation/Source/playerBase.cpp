@@ -215,6 +215,26 @@ void CPlayerBase::DeleteControl()
 }
 
 //==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerBase::ChangeMoveControl(CPlayerControlMove* control)
+{
+	// 操作クラスの入替
+	delete m_pControlMove;
+	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerBase::ChangeActionControl(CPlayerControlAction* control)
+{
+	// 操作クラスの入替
+	delete m_pControlAction;
+	m_pControlAction = control;
+}
+
+//==========================================================================
 // 操作の設定 (移動)
 //==========================================================================
 void CPlayerBase::SetPlayerControlMove(CPlayerControlMove* pControlMove)

@@ -43,6 +43,7 @@ namespace
 	{
 		const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
 		const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+		const MyLib::Vector3 POS[] = { POS_LEFT, POS_RIGHT };	// ドア位置
 	}
 
 	// ドッジボールコート情報
@@ -90,6 +91,7 @@ CGameManager::CGameManager()
 	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
 	m_pTimerUI = nullptr;				// タイマーUI
 
+	memset(&m_apGymDoor[0], 0, sizeof(m_apGymDoor));		// 体育館のドア
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 }
 
@@ -144,18 +146,16 @@ HRESULT CGameManager::Init()
 	// コートサイズ
 	m_courtSize = Court::SIZE;
 
-	// 体育館左ドア生成
-	if (CGymDoor::Create(Gym::POS_LEFT) == nullptr)
-	{ // 生成に失敗した場合
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
 
-		return E_FAIL;
-	}
-
-	// 体育館右ドア生成
-	if (CGymDoor::Create(Gym::POS_RIGHT) == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
+		// 体育館ドア生成
+		m_apGymDoor[i] = CGymDoor::Create(Gym::POS[i]);
+		if (m_apGymDoor[i] == nullptr)
+		{ // 生成に失敗した場合
+	
+			return E_FAIL;
+		}
 	}
 
 	// ジム壁マネージャ生成

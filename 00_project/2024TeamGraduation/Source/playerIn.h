@@ -33,12 +33,6 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;		// ヒット
 	virtual CPlayerIn* GetPlayerIn() override { return this; }	// 外野プレイヤー取得
-
-	//=============================
-	// パターン
-	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
 };
 
 #endif
