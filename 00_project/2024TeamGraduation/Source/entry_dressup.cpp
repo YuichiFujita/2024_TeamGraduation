@@ -65,11 +65,9 @@ HRESULT CEntry_Dressup::Init()
 		(
 			pos + offset, 						// 位置
 			CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
-			CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
-			CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
+			CPlayer::EHuman::HUMAN_ENTRY,		// ポジション
 			CPlayer::EBody::BODY_NORMAL,		// 体系
-			CPlayer::EHandedness::HAND_R,		// 利き手
-			CScene::MODE::MODE_ENTRY
+			CPlayer::EHandedness::HAND_R		// 利き手
 		);
 		m_vecDressupInfo[i].pPlayer->CObject::SetOriginPosition(pos + offset);
 
@@ -109,6 +107,15 @@ HRESULT CEntry_Dressup::Init()
 //==========================================================================
 void CEntry_Dressup::Uninit()
 {
+	for (auto& info : m_vecDressupInfo)
+	{
+		info.pPlayer->Uninit();
+		info.pHair->Uninit();
+		info.pAccessory->Uninit();
+		info.pFace->Uninit();
+	}
+
+	delete this;
 }
 
 //==========================================================================
@@ -323,11 +330,9 @@ void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPla
 	(
 		pos, 								// 位置
 		CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
-		CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
-		CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
+		CPlayer::EHuman::HUMAN_ENTRY,		// ポジション
 		body,								// 体系
-		handedness,							// 利き手
-		CScene::MODE::MODE_ENTRY
+		handedness							// 利き手
 	);
 
 	// 元の位置設定

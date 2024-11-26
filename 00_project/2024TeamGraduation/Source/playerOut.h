@@ -33,7 +33,7 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	virtual void InitPosition(const MyLib::Vector3& rPos) override;		// 位置初期化
 	virtual void MotionCrab(int nStartKey) override { assert(false); }	// カニ歩き変化
-	virtual bool IsCrab() override { return false; }					// カニ歩き判定
+	virtual bool IsCrab() override;					// カニ歩き判定
 	virtual CPlayerOut* GetPlayerOut() override { return this; }		// 外野プレイヤー取得
 
 	//=============================
@@ -44,6 +44,8 @@ public:
 	MyLib::Vector3 GetPosLeft() { return m_posLeft; }	// 移動可能な左位置の取得
 	MyLib::Vector3 GetPosRight() { return m_posRight; }	// 移動可能な右位置の取得
 
+	void SetIsClab(bool clab) { m_bClab = clab; }
+
 private:
 
 	//=============================
@@ -51,6 +53,7 @@ private:
 	//=============================
 	MyLib::Vector3 m_posLeft;	// 移動可能左位置
 	MyLib::Vector3 m_posRight;	// 移動可能右位置
+	bool m_bClab;	// カニ歩きフラグ
 };
 
 #endif

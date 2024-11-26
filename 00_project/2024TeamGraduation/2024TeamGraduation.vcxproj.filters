@@ -126,6 +126,9 @@
     <Filter Include="ingame\marker">
       <UniqueIdentifier>{86d8a8ce-0cb2-4d8e-a6d8-8f1834ba0d5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\playerBase">
+      <UniqueIdentifier>{0ab8008f-32ea-42bb-9b51-f8b0021b44a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -515,9 +518,6 @@
     <ClCompile Include="Source\playercontrol_move.cpp">
       <Filter>player\playerControl</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerBase.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\playerAIcontrol.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
@@ -590,12 +590,6 @@
     <ClCompile Include="Source\bindKeyRight.cpp">
       <Filter>player\playerUser\KeyBind</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerIn.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playerOut.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\playerAIOut_controlMove.cpp">
       <Filter>player\playerAI</Filter>
     </ClCompile>
@@ -628,12 +622,6 @@
     </ClCompile>
     <ClCompile Include="Source\entry_dressup.cpp">
       <Filter>mode\entry</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playerEntry.cpp">
-      <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playerPosAdj_entry.cpp">
-      <Filter>player\playerPosAdj</Filter>
     </ClCompile>
     <ClCompile Include="Source\charmValueManager.cpp">
       <Filter>ingame\charm</Filter>
@@ -670,6 +658,27 @@
     </ClCompile>
     <ClCompile Include="Source\gymDoor.cpp">
       <Filter>ingame\gym</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerIn.cpp">
+      <Filter>player\playerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerBase.cpp">
+      <Filter>player\playerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerOut.cpp">
+      <Filter>player\playerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerNone.cpp">
+      <Filter>player\playerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerPosAdj_none.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerSpawnManager.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerReferee.cpp">
+      <Filter>player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1072,9 +1081,6 @@
     <ClInclude Include="Source\playercontrol_move.h">
       <Filter>player\playerControl</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerBase.h">
-      <Filter>player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\playerAIcontrol.h">
       <Filter>player\playerAI</Filter>
     </ClInclude>
@@ -1147,12 +1153,6 @@
     <ClInclude Include="Source\bindKeyRight.h">
       <Filter>player\playerUser\KeyBind</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerIn.h">
-      <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playerOut.h">
-      <Filter>player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\playerAIOut_controlMove.h">
       <Filter>player\playerAI</Filter>
     </ClInclude>
@@ -1185,12 +1185,6 @@
     </ClInclude>
     <ClInclude Include="Source\entry_dressup.h">
       <Filter>mode\entry</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playerEntry.h">
-      <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playerPosAdj_entry.h">
-      <Filter>player\playerPosAdj</Filter>
     </ClInclude>
     <ClInclude Include="Source\charmValueManager.h">
       <Filter>ingame\charm</Filter>
@@ -1227,6 +1221,27 @@
     </ClInclude>
     <ClInclude Include="Source\gymDoor.h">
       <Filter>ingame\gym</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerIn.h">
+      <Filter>player\playerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerBase.h">
+      <Filter>player\playerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerOut.h">
+      <Filter>player\playerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerNone.h">
+      <Filter>player\playerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerPosAdj_none.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerSpawnManager.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerReferee.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

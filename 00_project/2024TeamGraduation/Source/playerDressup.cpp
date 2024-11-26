@@ -13,7 +13,6 @@
 #include "sound.h"
 #include "fade.h"
 
-
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -33,7 +32,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerDressUP::CPlayerDressUP(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, const CPlayerDressUP::EBaseType typeBase, int nPriority) : 
+CPlayerDressUP::CPlayerDressUP(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) :
 	CPlayer(typeTeam, typeArea, typeBase, nPriority)
 {
 
@@ -81,7 +80,6 @@ void CPlayerDressUP::Kill()
 //==========================================================================
 void CPlayerDressUP::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
 	// 過去の位置保存
 	SetOldPosition(GetPosition());
 

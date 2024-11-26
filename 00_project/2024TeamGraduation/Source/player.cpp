@@ -33,11 +33,13 @@
 
 // 派生先
 #include "playerDressup.h"
+#include "playerSpawn.h"
+#include "playerReferee.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
-#include "playerEntry.h"
+#include "playerNone.h"
 
 // デバッグ
 #include "ObjectLine.h"
@@ -47,7 +49,7 @@
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
-#include "playerPosAdj_entry.h"
+#include "playerPosAdj_none.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -265,7 +267,7 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
-// 生成処理 (内野)
+// 生成処理 (ゲームプレイヤー)
 //==========================================================================
 CPlayer* CPlayer::Create
 (
@@ -274,23 +276,65 @@ CPlayer* CPlayer::Create
 	EFieldArea	typeArea,				// ポジション
 	EBaseType	typeBase,				// ベースタイプ
 	EBody		typeBody,				// 体型
-	EHandedness	typeHand,				// 利き手
-	CScene::MODE mode					// モード
+	EHandedness	typeHand				// 利き手
+)
+{
+	// メモリの確保
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	if (pPlayer != nullptr)
+	{
+		// 体型を設定
+		pPlayer->m_BodyType = typeBody;
+
+		// 利き手を設定
+		pPlayer->m_Handedness = typeHand;
+
+		// クラスの初期化
+		if (FAILED(pPlayer->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pPlayer);
+			return nullptr;
+		}
+
+		// 初期位置を設定
+		pPlayer->GetBase()->InitPosition(rPos);
+	}
+
+	return pPlayer;
+}
+
+//==========================================================================
+// 生成処理 (仮想プレイヤー)
+//==========================================================================
+CPlayer* CPlayer::Create
+(
+	const MyLib::Vector3& rPos,			// 位置
+	CGameManager::ETeamSide typeTeam,	// チームサイド
+	EHuman typeHuman,					// 人
+	EBody typeBody,						// 体型
+	EHandedness typeHand				// 利き手
 )
 {
 	// メモリの確保
 	CPlayer* pPlayer = nullptr;
-	switch (mode)
-	{
-	case CScene::MODE_ENTRY:
-		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, typeArea, typeBase);
+	switch (typeHuman)
+	{ // 人ごとの処理
+	case EHuman::HUMAN_ENTRY:
+		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
-	case CScene::MODE_GAME:
-		pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	case EHuman::HUMAN_SPAWN:
+		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
+	case EHuman::HUMAN_REFEREE:
+		pPlayer = DEBUG_NEW CPlayerReferee;
 		break;
 
 	default:
+		assert(false);
 		break;
 	}
 
@@ -450,6 +494,13 @@ void CPlayer::Kill()
 	{
 		m_pStatus->Kill();
 		m_pStatus = nullptr;
+	}
+
+	// マーカー
+	if (m_pMarker != nullptr)
+	{
+		m_pMarker->Kill();
+		m_pMarker = nullptr;
 	}
 
 	// 終了処理
@@ -1945,6 +1996,10 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 	// 位置補正クラスの変更
 	switch (area)
 	{ // ポジションごとの処理
+	case EFieldArea::FIELD_NONE:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjNone;
+		break;
+
 	case EFieldArea::FIELD_IN:
 		switch (team)
 		{ // チームコートごとの処理
@@ -1964,10 +2019,6 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 
 	case EFieldArea::FIELD_OUT:
 		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
-		break;
-
-	case EFieldArea::FIELD_ENTRY:
-		m_pPosAdj = DEBUG_NEW CPlayerPosAdjEntry;
 		break;
 
 	default:
@@ -2044,16 +2095,16 @@ void CPlayer::InitBase(EBaseType type)
 	case TYPE_USER:
 		switch (m_typeArea)
 		{ // ポジションごとの処理
-		case FIELD_IN:
+		case EFieldArea::FIELD_NONE:
+			m_pBase = DEBUG_NEW CPlayerNone(this, m_typeTeam, m_typeArea);
+			break;
+
+		case EFieldArea::FIELD_IN:
 			m_pBase = DEBUG_NEW CPlayerUserIn(this, m_typeTeam, m_typeArea);
 			break;
 
-		case FIELD_OUT:
+		case EFieldArea::FIELD_OUT:
 			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
-			break;
-
-		case EFieldArea::FIELD_ENTRY:
-			m_pBase = DEBUG_NEW CPlayerEntry(this, m_typeTeam, m_typeArea, TYPE_USER);
 			break;
 
 		default:
@@ -2065,11 +2116,11 @@ void CPlayer::InitBase(EBaseType type)
 	case TYPE_AI:
 		switch (m_typeArea)
 		{ // ポジションごとの処理
-		case FIELD_IN:
+		case EFieldArea::FIELD_IN:
 			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeTeam, m_typeArea);
 			break;
 
-		case FIELD_OUT:
+		case EFieldArea::FIELD_OUT:
 			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeTeam, m_typeArea);
 			break;
 
@@ -2115,7 +2166,7 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// クラス型からベースを判定
 	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
 	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
-	else if (typeid(*m_pBase) == typeid(CPlayerEntry)) { return TYPE_USER; }
+	else if (typeid(*m_pBase) == typeid(CPlayerNone))													{ return TYPE_USER; }
 
 	// ベース指定なし
 	assert(false);

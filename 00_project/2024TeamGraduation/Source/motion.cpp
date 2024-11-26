@@ -92,6 +92,7 @@ HRESULT CMotion::Init()
 	m_ppModel = nullptr;		// モデルのポインタ
 	m_nNumModel = 0;		// モデルの総数
 	m_fSlowFactor = 1.0f;	// 遅延係数
+	m_pPartsOld = nullptr;
 
 	return S_OK;
 }
@@ -526,6 +527,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 	// デバッグ用処理
 	if (nType >= m_nNumMotion)
 	{// 総数を超えていたら
+		MyAssert::CustomAssert(false, "範囲外のモーション");
 		return;
 	}
 

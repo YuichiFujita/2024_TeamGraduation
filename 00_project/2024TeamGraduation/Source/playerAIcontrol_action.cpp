@@ -23,8 +23,8 @@
 //==========================================================================
 namespace
 {
-	const float TAPTIME = 0.15f;	// タップの入力時間
-	const float TAPRATE_MIN = 0.7f;	// タップの最小割合
+	const float TAPTIME = 0.125f;	// タップの入力時間
+	const float TAPRATE_MIN = 0.6f;	// タップの最小割合
 	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }
 
@@ -39,6 +39,8 @@ bool CPlayerAIControlAction::m_bAutoThrow = true;
 CPlayerAIControlAction::CPlayerAIControlAction()
 {
 	ZeroMemory(&m_sFlag, sizeof(m_sFlag));
+	m_fJumpTimer = 0.0f;
+	m_fJumpRate = 0.0f;
 }
 
 //==========================================================================
@@ -103,6 +105,17 @@ void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const
 
 		JumpSetting(player);
 	}
+
+	if (m_sFlag.bJumpFloat)
+	{// ジャンプボタンホールドで上昇
+		JumpFloat(player);
+	}
+	if (!m_sFlag.bJumpFloat)
+	{// ジャンプボタン離した
+
+		// ジャンプトリガーOFF
+		SetEnableJumpTrigger(false);
+	}
 }
 
 //==========================================================================
@@ -113,28 +126,59 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player)
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
 
-	if (bJump && IsJumpTrigger())
+	if (bJump)
 	{// ジャンプ中は押してる間距離伸びていく
 
-		// インプット情報取得
-		CInputGamepad* pPad = CInputGamepad::GetInstance();
-
 		//ジャンプ処理
-		CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
+		m_fJumpTimer += TAPTIME;
 
-		if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
-		{// タップ範囲 && 入力継続
+		float timer = m_fJumpTimer / TAPRATE_MAX;
+		timer *= 0.1f;
+		m_fJumpRate = 1.0f;
 
+		//if ((TAPRATE_MAX * m_fJumpRate) < timer)
+		if (timer < (TAPRATE_MAX * m_fJumpRate))
+		{
 			// 移動量取得
 			MyLib::Vector3 move = player->GetMove();
 
-			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
+			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * timer;
 			move.y = player->GetParameter().fVelocityJump * jumpRatio;
 
 			// 移動量設定
 			player->SetMove(move);
 		}
+		else
+		{// 終了
+			bJump = false;
+			m_fJumpTimer = 0.0f;
+		}
+
+		return;
 	}
+
+	// タイマーリセット
+	m_fJumpTimer = 0.0f;
+
+	/*if (決めた割合 >= timer)
+	{
+		終了
+	}*/
+
+	//CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
+
+	//if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
+	//{// タップ範囲 && 入力継続
+
+	//	// 移動量取得
+	//	MyLib::Vector3 move = player->GetMove();
+
+	//	float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
+	//	move.y = player->GetParameter().fVelocityJump * jumpRatio;
+
+	//	// 移動量設定
+	//	player->SetMove(move);
+	//}
 }
 
 //==========================================================================
