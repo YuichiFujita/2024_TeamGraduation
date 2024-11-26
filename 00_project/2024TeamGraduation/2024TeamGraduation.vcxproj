@@ -216,6 +216,7 @@
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
+    <ClCompile Include="Source\gymDoor.cpp" />
     <ClCompile Include="Source\gymWall.cpp" />
     <ClCompile Include="Source\gymWallManager.cpp" />
     <ClCompile Include="Source\handle_Move.cpp" />
@@ -403,6 +404,7 @@
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gamemanager.h" />
+    <ClInclude Include="Source\gymDoor.h" />
     <ClInclude Include="Source\gymWall.h" />
     <ClInclude Include="Source\gymWallManager.h" />
     <ClInclude Include="Source\handle_Move.h" />
