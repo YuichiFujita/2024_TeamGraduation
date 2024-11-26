@@ -22,7 +22,7 @@
 //==========================================================================
 namespace
 {
-	const float TAPTIME = 0.125f;		// タップの入力時間
+	const float TAPTIME = 0.125f;	// タップの入力時間
 	const float TAPRATE_MIN = 0.6f;	// タップの最小割合
 	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
 }

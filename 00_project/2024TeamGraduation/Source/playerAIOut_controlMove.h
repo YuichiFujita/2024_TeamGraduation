@@ -40,7 +40,15 @@ public:
 	void SetIsBlink(bool bBlink) { m_bBlink = bBlink; }
 	void SetIsDash(bool bDash) { m_bDash = bDash; }
 	void SetIsWalk(bool bWalk) { m_bWalk = bWalk; }
+	void SetIsClab(bool clab) { m_bClab = clab;}
 	void SetVecRot(float rot) { m_fRot = rot; }
+
+	void SetClabDirection(float clabDirection) { m_fClabDirection = clabDirection; }
+	float GetClabDirection() { return m_fClabDirection; }	// カニ進行方向の取得
+
+	//=============================
+	// メンバ変数
+	//=============================
 
 private:
 
@@ -58,7 +66,8 @@ private:
 	bool m_bBlink;
 	bool m_bDash;
 	bool m_bWalk;
-
+	bool m_bClab;
+	float m_fClabDirection;	// カニのしんこう方向
 	float m_fRot;	// 向き設定用変数（+の時は左、－の時は右）
 };
 

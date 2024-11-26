@@ -68,6 +68,9 @@ void CPlayerStatus::Init()
 	int nNum = 0;
 	switch (teamSide)
 	{
+	case CGameManager::ETeamSide::SIDE_NONE:
+		return;
+
 	case CGameManager::ETeamSide::SIDE_LEFT:
 
 		// Šù‚É‚ ‚é•ªl—¶‚µ‚Ä‚¸‚ç‚·

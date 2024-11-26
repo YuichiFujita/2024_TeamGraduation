@@ -77,13 +77,6 @@ void CPlayerAIOutControlAction::Throw(CPlayer* player, const float fDeltaTime, c
 
 	if (m_sFlag.bThrow)
 	{
-		/*if (pBall == nullptr)
-		{
-			m_sFlag.bThrow = false;
-
-			return;
-		}*/
-
 		m_sFlag.bThrow = false;
 
 		// 投げる
@@ -91,13 +84,6 @@ void CPlayerAIOutControlAction::Throw(CPlayer* player, const float fDeltaTime, c
 	}
 	else if (m_sFlag.bPass)
 	{
-		/*if (pBall == nullptr)
-		{
-			m_sFlag.bPass = false;
-
-			return;
-		}*/
-
 		m_sFlag.bPass = false;
 
 		// パス
@@ -120,7 +106,19 @@ void CPlayerAIOutControlAction::Jump(CPlayer* player, const float fDeltaTime, co
 		// フラグリセット
 		m_sFlag.bJump = false;
 
+		// ジャンプセット
 		JumpSetting(player);
+	}
+
+	if (m_sFlag.bJumpFloat)
+	{// ジャンプボタンホールドで上昇
+		JumpFloat(player);
+	}
+	if (!m_sFlag.bJumpFloat)
+	{// ジャンプボタン離した
+
+		// ジャンプトリガーOFF
+		SetEnableJumpTrigger(false);
 	}
 }
 

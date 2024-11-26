@@ -1,9 +1,9 @@
-//==========================================================================
+//=============================================================================
 // 
-//  登場用プレイヤーヘッダー [playerSpawn.h]
+//  登場演出用プレイヤーヘッダー [playerSpawn.h]
 //  Author : 藤田勇一
 // 
-//==========================================================================
+//=============================================================================
 
 #ifndef _PLAYER_SPAWN_
 #define _PLAYER_SPAWN_	// 二重インクルード防止
@@ -11,28 +11,40 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "playerBase.h"
+#include "player.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
-// 登場用プレイヤークラス
-class CPlayerSpawn : public CPlayerBase
+// 登場演出用プレイヤークラス
+class CPlayerSpawn : public CPlayer
 {
 public:
 	
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerSpawn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase);
-	virtual ~CPlayerSpawn() override;
+	CPlayerSpawn(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority = mylib_const::PRIORITY_DEFAULT);
+	~CPlayerSpawn();
 
 	//=============================
 	// オーバーライド関数
 	//=============================
-	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	virtual CPlayer::SHitInfo Hit(CBall* pBall) override { return {}; }	// ヒット
-	virtual void MotionCrab(int nStartKey) override {}					// カニ歩き変化
+	virtual HRESULT Init() override;
+	virtual void Uninit() override;
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	virtual void Draw() override;
+	virtual void Kill() override;	// 動的削除
+
+private:
+
+	//=============================
+	// メンバ関数
+	//=============================
+
+	//=============================
+	// メンバ変数
+	//=============================
 };
 
 #endif
