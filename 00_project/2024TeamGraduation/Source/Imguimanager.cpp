@@ -67,20 +67,20 @@ void ImguiMgr::Init(HWND hwnd, LPDIRECT3DDEVICE9 pd3dDevice)
 
 
 
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevive = CManager::GetInstance()->GetRenderer()->GetDevice();
-	
-	// 画像のロード
-	HRESULT hr = D3DXCreateTextureFromFileEx(pDevive, "data\\TEXTURE\\forest_01.png", 0, 0, 0, 0, D3DFMT_UNKNOWN,
-		D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 255, 255, 255),
-		NULL, NULL, &texture);
+	//// デバイスの取得
+	//LPDIRECT3DDEVICE9 pDevive = CManager::GetInstance()->GetRenderer()->GetDevice();
+	//
+	//// 画像のロード
+	//HRESULT hr = D3DXCreateTextureFromFileEx(pDevive, "data\\TEXTURE\\forest_01.png", 0, 0, 0, 0, D3DFMT_UNKNOWN,
+	//	D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 255, 255, 255),
+	//	NULL, NULL, &texture);
 
-	D3DSURFACE_DESC desc;
-	texture->GetLevelDesc(0, &desc);
-	textureWidth = desc.Width;
-	textureHeight = desc.Height;
+	//D3DSURFACE_DESC desc;
+	//texture->GetLevelDesc(0, &desc);
+	//textureWidth = desc.Width;
+	//textureHeight = desc.Height;
 
-	imageSize = ImVec2(50, 50);
+	//imageSize = ImVec2(50, 50);
 
 	//if (SUCCEEDED(hr))
 	//{
