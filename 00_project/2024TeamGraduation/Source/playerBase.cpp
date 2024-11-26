@@ -89,7 +89,8 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	// リバウンドボールの場合キャッチする
-	if (stateBall == CBall::STATE_REBOUND)
+	if (stateBall == CBall::STATE_REBOUND &&
+		m_pPlayer->GetState() != CPlayer::EState::STATE_DMG)
 	{
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
@@ -107,7 +108,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
 	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived)	// FUJITA: リバウンドボール即座に取得はちゃうやん
+	if (!m_pPlayer->GetDamageInfo().bReceived)
 	{
 		hitInfo.bHit = true;
 		return hitInfo;
@@ -211,6 +212,26 @@ void CPlayerBase::DeleteControl()
 
 	// アクション操作の破棄
 	SAFE_DELETE(m_pControlAction);
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerBase::ChangeMoveControl(CPlayerControlMove* control)
+{
+	// 操作クラスの入替
+	delete m_pControlMove;
+	m_pControlMove = control;
+}
+
+//==========================================================================
+// 移動の操作変更
+//==========================================================================
+void CPlayerBase::ChangeActionControl(CPlayerControlAction* control)
+{
+	// 操作クラスの入替
+	delete m_pControlAction;
+	m_pControlAction = control;
 }
 
 //==========================================================================

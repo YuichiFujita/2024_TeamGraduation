@@ -60,7 +60,8 @@ private:
 	// メンバ変数
 	//=============================
 	float m_fTension;											// テンション
-	CGameManager::ETeamSide m_teamWin;							// 勝利チーム
+	CGameManager::ETeamSide m_teamPreludeWin;					// 勝利チーム(前座)
+	CGameManager::ETeamSide m_teamContestWin;					// 勝利チーム(モテ)
 	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
 	float m_fTime;												// 時間経過
 
