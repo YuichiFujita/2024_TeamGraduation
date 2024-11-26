@@ -231,11 +231,15 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #
 #==============================================================================
 #------------------------------------------------------------------------------
+# モーション数
+#------------------------------------------------------------------------------
+NUM_MOTION = 3
+
 # モーションファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/referee/motion_def.txt	# デフォルト
-MOTION_FILENAME = data/TEXT/character/referee/motion_wait.txt	# 待機
-MOTION_FILENAME = data/TEXT/character/referee/motion_toss.txt	# トス
+MOTION_FILENAME = data/TEXT/character/referee/motion_def.txt					# デフォルト
+MOTION_FILENAME = data/TEXT/character/referee/motion_wait.txt					# 待機
+MOTION_FILENAME = data/TEXT/character/referee/motion_toss.txt					# トス
 
 
 
