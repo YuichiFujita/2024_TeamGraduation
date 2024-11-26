@@ -22,6 +22,7 @@
 #include "collisionLine_Box.h"
 #include "teamStatus.h"
 #include "audience.h"
+#include "gymDoor.h"
 #include "gymWallManager.h"
 #include "playerManager.h"
 #include "charmManager.h"
@@ -38,6 +39,14 @@ namespace
 	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// テキストのライン
 
 	// ドッジボールコート情報
+	namespace Gym
+	{
+		const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
+		const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+		const MyLib::Vector3 POS[] = { POS_LEFT, POS_RIGHT };	// ドア位置
+	}
+
+	// ドッジボールコート情報
 	namespace Court
 	{
 		const MyLib::Vector3 SIZE = MyLib::Vector3(950.0f, 100.0f, 560.0f);	// サイズ
@@ -51,8 +60,9 @@ namespace
 CGameManager::SCENE_FUNC CGameManager::m_SceneFunc[] =	// シーン関数
 {
 	&CGameManager::SceneMain,			// メイン
+	&CGameManager::SceneSpawn,			// 登場演出
 	&CGameManager::SceneStart,			// 開始演出
-	&CGameManager::SceneSpecial_Stag,	// スペシャル演出
+	&CGameManager::SceneSpecialStag,	// スペシャル演出
 	&CGameManager::SceneEnd,			// 終了演出
 	&CGameManager::SceneDebug,			// デバッグ
 };
@@ -81,6 +91,7 @@ CGameManager::CGameManager()
 	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
 	m_pTimerUI = nullptr;				// タイマーUI
 
+	memset(&m_apGymDoor[0], 0, sizeof(m_apGymDoor));		// 体育館のドア
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
 }
 
@@ -135,8 +146,25 @@ HRESULT CGameManager::Init()
 	// コートサイズ
 	m_courtSize = Court::SIZE;
 
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア生成
+		m_apGymDoor[i] = CGymDoor::Create(Gym::POS[i]);
+		if (m_apGymDoor[i] == nullptr)
+		{ // 生成に失敗した場合
+	
+			return E_FAIL;
+		}
+	}
+
 	// ジム壁マネージャ生成
 	m_pGymWallManager = CGymWallManager::Create();
+	if (m_pGymWallManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// プレイヤーマネージャー生成
 	if (CPlayerManager::Create() == nullptr)
@@ -146,7 +174,6 @@ HRESULT CGameManager::Init()
 	}
 
 #if _DEBUG
-
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
 	{
@@ -154,19 +181,35 @@ HRESULT CGameManager::Init()
 	}
 #endif
 
-	SetSceneType(ESceneType::SCENE_START);	// シーンの種類
+	// 開始シーンの設定
+	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 
-	//チームステータス
+	// チームステータスの生成
 	CreateTeamStatus();
 
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
+	if (m_pCharmManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// モテ値マネージャ生成
 	m_pCharmValueManager = CCharmValueManager::Create();
+	if (m_pCharmValueManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// スぺ値マネージャ生成
 	m_pSpecialValueManager = CSpecialValueManager::Create();
+	if (m_pSpecialValueManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -278,6 +321,21 @@ void CGameManager::UpdateLimitTimer()
 }
 
 //==========================================================================
+// 登場演出
+//==========================================================================
+void CGameManager::SceneSpawn()
+{
+	// 操作出来ない
+	m_bControll = false;
+
+	// TODO：登場演出が終わったら遷移！
+	{
+		// 開始演出へ遷移
+		SetSceneType(ESceneType::SCENE_START);
+	}
+}
+
+//==========================================================================
 // 開始演出
 //==========================================================================
 void CGameManager::SceneStart()
@@ -285,48 +343,51 @@ void CGameManager::SceneStart()
 	// 操作出来ない
 	m_bControll = false;
 
+	// TODO：開始演出が終わったら遷移！
+	{
 #if _DEBUG
-	// コートサイズのボックス
-	if (m_pCourtSizeBox == nullptr)
-	{
-		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-	}
+		// コートサイズのボックス
+		if (m_pCourtSizeBox == nullptr)
+		{
+			m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 #endif
 
-	// チームステータス
-	CreateTeamStatus();
+		// チームステータス
+		CreateTeamStatus();
 
-	// タイマーUI
-	if (m_pTimerUI == nullptr)
-	{
-		m_pTimerUI = CTimerUI::Create(
-			90.0f,
-			90.0f,
-			MyLib::Vector3(640.0f, 70.0f, 0.0f),
-			D3DXVECTOR2(40.0f, 40.0f),
-			D3DXVECTOR2(30.0f, 40.0f),
-			D3DXVECTOR2(40.0f, 0.0f),
-			D3DXVECTOR2(60.0f, 0.0f),
-			CTimerUI::EAlignX::XALIGN_CENTER,
-			CTimerUI::EAlignY::YALIGN_CENTER,
-			MyLib::Vector3(0.0f)
-		);
+		// タイマーUI
+		if (m_pTimerUI == nullptr)
+		{
+			m_pTimerUI = CTimerUI::Create(
+				90.0f,
+				90.0f,
+				MyLib::Vector3(640.0f, 70.0f, 0.0f),
+				D3DXVECTOR2(40.0f, 40.0f),
+				D3DXVECTOR2(30.0f, 40.0f),
+				D3DXVECTOR2(40.0f, 0.0f),
+				D3DXVECTOR2(60.0f, 0.0f),
+				CTimerUI::EAlignX::XALIGN_CENTER,
+				CTimerUI::EAlignY::YALIGN_CENTER,
+				MyLib::Vector3(0.0f)
+			);
 
-		// 開始
+			// 開始
 #if _NDEBUG
-		m_pTimerUI->Start();
+			m_pTimerUI->Start();
 #endif
 
-	}
+		}
 
-	// メインへ遷移
-	SetSceneType(ESceneType::SCENE_MAIN);
+		// メインへ遷移
+		SetSceneType(ESceneType::SCENE_MAIN);
+	}
 }
 
 //==========================================================================
 // スペシャル演出
 //==========================================================================
-void CGameManager::SceneSpecial_Stag()
+void CGameManager::SceneSpecialStag()
 {
 	// 操作出来ない
 	m_bControll = false;
@@ -340,14 +401,16 @@ void CGameManager::SceneSpecial_Stag()
 //==========================================================================
 void CGameManager::SceneEnd()
 {
-	// 試合終了処理
-	EndGame();
-
 	// 操作出来ない
 	m_bControll = false;
 
 	// 遷移
-	GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT);
+	if (GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT))
+	{// 一度だけ
+
+		// 試合終了処理
+		EndGame();
+	}
 }
 
 //==========================================================================
@@ -577,7 +640,8 @@ void CGameManager::Save()
 	File << TEXT_LINE << std::endl;
 	File << "# 試合情報" << std::endl;
 	File << TEXT_LINE << std::endl;
-	File << "WIN = " << m_endInfo.m_winteam << std::endl;
+	File << "PRELUDE_WIN = " << m_endInfo.m_winteamPrelude << std::endl;
+	File << "CONTEST_WIN = " << m_endInfo.m_winteamCharm << std::endl;
 	File << "TENSION = "<< m_endInfo.m_fTension << std::endl;
 
 	int i = 0;
@@ -623,7 +687,6 @@ void CGameManager::CheckVictory()
 
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
-
 		// リストループ
 		CListManager<CPlayer> list = CPlayerManager::GetInstance()->GetInList(static_cast<ETeamSide>(i));
 		std::list<CPlayer*>::iterator itr = list.GetEnd();
@@ -646,11 +709,11 @@ void CGameManager::CheckVictory()
 
 	if (m_aAlive[ETeamSide::SIDE_LEFT] > m_aAlive[ETeamSide::SIDE_RIGHT])
 	{// 左が多い
-		m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+		m_endInfo.m_winteamPrelude = ETeamSide::SIDE_LEFT;
 	}
 	else if(m_aAlive[ETeamSide::SIDE_LEFT] < m_aAlive[ETeamSide::SIDE_RIGHT])
 	{// 右が多い
-		m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+		m_endInfo.m_winteamPrelude = ETeamSide::SIDE_RIGHT;
 	}
 	else
 	{// 左右同数
@@ -658,16 +721,37 @@ void CGameManager::CheckVictory()
 		// 総合体力差
 		if (m_aLife[ETeamSide::SIDE_LEFT] > m_aLife[ETeamSide::SIDE_RIGHT])
 		{// 左が多い
-			m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_LEFT;
 		}
 		else if (m_aLife[ETeamSide::SIDE_LEFT] < m_aLife[ETeamSide::SIDE_RIGHT])
 		{// 右が多い
-			m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_RIGHT;
 		}
 		else
 		{// 引き分け
-			m_endInfo.m_winteam = ETeamSide::SIDE_NONE;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_NONE;
 		}
+	}
+
+	//--------------------------
+	//モテ
+	
+	float fCharmL = m_pTeamStatus[CGameManager::ETeamSide::SIDE_LEFT]->GetCharmInfo().fValue;
+	float fCharmR = m_pTeamStatus[CGameManager::ETeamSide::SIDE_RIGHT]->GetCharmInfo().fValue;
+
+
+	// モテ勝利
+	if (fCharmL > fCharmR)
+	{// 左が多い
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_LEFT;
+	}
+	else if (fCharmL < fCharmR)
+	{// 右が多い
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_RIGHT;
+	}
+	else
+	{
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_NONE;
 	}
 }
 

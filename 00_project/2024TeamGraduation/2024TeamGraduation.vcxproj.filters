@@ -659,6 +659,18 @@
     <ClCompile Include="Source\charmText.cpp">
       <Filter>ingame\charm</Filter>
     </ClCompile>
+    <ClCompile Include="Source\charmText_Left.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\charmText_Right.cpp">
+      <Filter>ingame\charm</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerSpawn.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gymDoor.cpp">
+      <Filter>ingame\gym</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1203,6 +1215,18 @@
     </ClInclude>
     <ClInclude Include="Source\charmText.h">
       <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText_Left.h">
+      <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\charmText_Right.h">
+      <Filter>ingame\charm</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerSpawn.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gymDoor.h">
+      <Filter>ingame\gym</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

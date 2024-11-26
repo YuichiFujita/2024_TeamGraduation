@@ -477,7 +477,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\komono\\‚¤‚¿‚í_•\\–Ê.png";
+    "data\\TEXTURE\\komono\\uchiwa_surface.png";
    }
   }
   Material {
@@ -486,7 +486,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\komono\\‚¤‚¿‚í_— –Ê.png";
+    "data\\TEXTURE\\komono\\uchiwa_back.png";
    }
   }
  }

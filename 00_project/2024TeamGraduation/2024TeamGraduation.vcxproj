@@ -194,6 +194,8 @@
     <ClCompile Include="Source\characterStatus.cpp" />
     <ClCompile Include="Source\charmManager.cpp" />
     <ClCompile Include="Source\charmText.cpp" />
+    <ClCompile Include="Source\charmText_Left.cpp" />
+    <ClCompile Include="Source\charmText_Right.cpp" />
     <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
@@ -216,6 +218,7 @@
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
+    <ClCompile Include="Source\gymDoor.cpp" />
     <ClCompile Include="Source\gymWall.cpp" />
     <ClCompile Include="Source\gymWallManager.cpp" />
     <ClCompile Include="Source\handle_Move.cpp" />
@@ -297,6 +300,7 @@
     <ClCompile Include="Source\playerPosAdj_inLeft.cpp" />
     <ClCompile Include="Source\playerPosAdj_inRight.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
+    <ClCompile Include="Source\playerSpawn.cpp" />
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
     <ClCompile Include="Source\playerUsercontrol_action.cpp" />
     <ClCompile Include="Source\playerStatus.cpp" />
@@ -378,6 +382,8 @@
     <ClInclude Include="Source\characterStatus.h" />
     <ClInclude Include="Source\charmManager.h" />
     <ClInclude Include="Source\charmText.h" />
+    <ClInclude Include="Source\charmText_Left.h" />
+    <ClInclude Include="Source\charmText_Right.h" />
     <ClInclude Include="Source\charmValueManager.h" />
     <ClInclude Include="Source\collisionLine_Box.h" />
     <ClInclude Include="Source\constans.h" />
@@ -402,6 +408,7 @@
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gamemanager.h" />
+    <ClInclude Include="Source\gymDoor.h" />
     <ClInclude Include="Source\gymWall.h" />
     <ClInclude Include="Source\gymWallManager.h" />
     <ClInclude Include="Source\handle_Move.h" />
@@ -483,6 +490,7 @@
     <ClInclude Include="Source\playerPosAdj_inLeft.h" />
     <ClInclude Include="Source\playerPosAdj_inRight.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
+    <ClInclude Include="Source\playerSpawn.h" />
     <ClInclude Include="Source\playerUsercontrol_move.h" />
     <ClInclude Include="Source\playerUsercontrol_action.h" />
     <ClInclude Include="Source\playerStatus.h" />

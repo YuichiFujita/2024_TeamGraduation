@@ -183,7 +183,7 @@ void CFade::Draw()
 //==========================================================================
 // ŽŸ‚Ìƒ‚[ƒhÝ’è
 //==========================================================================
-void CFade::SetFade(CScene::MODE mode)
+bool CFade::SetFade(CScene::MODE mode)
 {
 	if (m_state != STATE_FADEOUT &&
 		m_state != STATE_FADECOMPLETION)
@@ -195,7 +195,11 @@ void CFade::SetFade(CScene::MODE mode)
 
 		// FÝ’è
 		m_aObject2D->SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f));
+
+		return true;
 	}
+
+	return false;
 }
 
 //==========================================================================

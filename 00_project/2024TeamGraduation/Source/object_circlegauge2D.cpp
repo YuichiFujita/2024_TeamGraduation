@@ -6,11 +6,11 @@
 //=============================================================================
 #include "object_circlegauge2D.h"
 #include "manager.h"
-#include "renderer.h"
-#include "texture.h"
 #include "calculation.h"
-#include "debugproc.h"
 
+//==========================================================================
+// 定数定義
+//==========================================================================
 namespace
 {
 	int MIN_POLYGON = 4;	// 最小多角形
@@ -22,13 +22,12 @@ namespace
 CObjectCircleGauge2D::CObjectCircleGauge2D(int nPriority, const LAYER layer) : CObject(nPriority, layer)
 {
 	m_col = mylib_const::DEFAULT_COLOR;	// 色
-	m_fRate = 0.0f;		// 割合
-	m_fRateDest = 0.0f;	// 目標の割合
-	m_fSize = 0.0f;		// サイズ
-	m_nNumVertex = 0;	// 頂点数
+	m_fRate = 0.0f;						// 割合
+	m_fRateDest = 0.0f;					// 目標の割合
+	m_fSize = 0.0f;						// サイズ
+	m_nNumVertex = 0;					// 頂点数
 	m_nTexIdx = 0;						// テクスチャのインデックス番号
-	m_pVtxBuff = nullptr;					// 頂点バッファ
-
+	m_pVtxBuff = nullptr;				// 頂点バッファ
 }
 
 //==========================================================================
@@ -40,50 +39,33 @@ CObjectCircleGauge2D::~CObjectCircleGauge2D()
 }
 
 //==========================================================================
-// テクスチャの割り当て
-//==========================================================================
-void CObjectCircleGauge2D::BindTexture(int nIdx)
-{
-	// 割り当てる
-	m_nTexIdx = nIdx;
-}
-
-//==========================================================================
 // 生成処理
 //==========================================================================
-CObjectCircleGauge2D *CObjectCircleGauge2D::Create(int nPolygon, float fSize)
+CObjectCircleGauge2D* CObjectCircleGauge2D::Create(int nPolygon, float fSize)
 {
-	// 生成用のオブジェクト
-	CObjectCircleGauge2D *pObject2D = nullptr;
-
-	if (pObject2D == nullptr)
-	{// nullptrだったら
-
-		if (nPolygon < MIN_POLYGON)
-		{// 四角形未満は円にならないから抜ける
-			return nullptr;
-		}
-
-		// メモリの確保
-		pObject2D = DEBUG_NEW CObjectCircleGauge2D;
-
-		if (pObject2D != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 頂点数
-			pObject2D->m_nNumVertex = nPolygon + 2;
-
-			// サイズ
-			pObject2D->m_fSize = fSize;
-
-			// 初期化処理
-			pObject2D->Init();
-		}
-
-		return pObject2D;
+	
+	if (nPolygon < MIN_POLYGON)
+	{// 四角形未満は円にならないから抜ける
+		return nullptr;
 	}
 
-	return nullptr;
+	// メモリ確保
+	CObjectCircleGauge2D* pObject2D = DEBUG_NEW CObjectCircleGauge2D;
+
+	if (pObject2D != nullptr)
+	{// メモリの確保が出来ていたら
+
+		// 頂点数
+		pObject2D->m_nNumVertex = nPolygon + 2;
+
+		// サイズ
+		pObject2D->m_fSize = fSize;
+
+		// 初期化処理
+		pObject2D->Init();
+	}
+
+	return pObject2D;
 }
 
 //==========================================================================
@@ -91,7 +73,11 @@ CObjectCircleGauge2D *CObjectCircleGauge2D::Create(int nPolygon, float fSize)
 //==========================================================================
 HRESULT CObjectCircleGauge2D::Init()
 {
-	HRESULT hr;
+	m_fRate = 1.0f;		// 割合
+	m_fRateDest = 1.0f;	// 目標の割合
+
+	// 種類設定
+	CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
 
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
@@ -102,7 +88,7 @@ HRESULT CObjectCircleGauge2D::Init()
 		return E_FAIL;
 	}
 
-	hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * m_nNumVertex,
+	HRESULT hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * m_nNumVertex,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -220,8 +206,9 @@ void CObjectCircleGauge2D::SetVtx()
 		// 今回の向き
 		float fRot = fRotDivision * i;
 		
-		if (bEnd == false)
-		{
+		if (!bEnd)
+		{// 終端じゃない
+
 			// 前回のインデックス番号
 			int nIdx = i - 1;
 			UtilFunc::Transformation::ValueNormalize(nIdx, m_nNumVertex, 0);
@@ -259,8 +246,9 @@ void CObjectCircleGauge2D::SetVtx()
 			}
 		}
 
-		if (bEnd == false)
-		{
+		if (!bEnd)
+		{// 一周していたら最後をそろえる
+
 			// 頂点座標の設定
 			pVtx[0].pos = MyLib::Vector3(
 				pos.x + cosf(D3DX_PI * -0.5f + fRot + rot.z) * m_fSize,
@@ -280,59 +268,12 @@ void CObjectCircleGauge2D::SetVtx()
 		pVtx[0].col = m_col;
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = mylib_const::DEFAULT_VECTOR2;
+		float ratio = (float)i / (float)(m_nNumVertex - 1);
+		pVtx[0].tex = D3DXVECTOR2(ratio, 1.0f);
 
 		pVtx += 1;
 	}
 
 	// 頂点バッファをアンロックロック
 	m_pVtxBuff->Unlock();
-}
-
-//==========================================================================
-// 色設定
-//==========================================================================
-void CObjectCircleGauge2D::SetColor(const D3DXCOLOR col)
-{
-	m_col = col;
-}
-
-//==========================================================================
-// 色取得
-//==========================================================================
-D3DXCOLOR CObjectCircleGauge2D::GetColor() const
-{
-	return m_col;
-}
-
-//==========================================================================
-// 割合設定
-//==========================================================================
-void CObjectCircleGauge2D::SetRate(const float fRate)
-{
-	m_fRate = fRate;
-}
-
-//==========================================================================
-// 割合取得
-//==========================================================================
-float CObjectCircleGauge2D::GetRate() const
-{
-	return m_fRate;
-}
-
-//==========================================================================
-// 目標の割合設定
-//==========================================================================
-void CObjectCircleGauge2D::SetRateDest(const float fRate)
-{
-	m_fRateDest = fRate;
-}
-
-//==========================================================================
-// 目標の割合取得
-//==========================================================================
-float CObjectCircleGauge2D::GetRateDest() const
-{
-	return m_fRateDest;
 }

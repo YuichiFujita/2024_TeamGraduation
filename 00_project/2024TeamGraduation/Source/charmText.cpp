@@ -5,9 +5,13 @@
 // 
 //==========================================================================
 #include "charmText.h"
-#include "gameManager.h"
 #include "player.h"
 #include "object2D.h"
+#include "charmManager.h"
+
+// 派生先
+#include "charmText_Left.h"
+#include "charmText_Right.h"
 
 //==========================================================================
 // 定数定義
@@ -16,16 +20,9 @@ namespace
 {
 	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";			// 顔アイコンのテクスチャ
 	const std::string TEXTURE_TEXT = "data\\TEXTURE\\charmtext\\window_full.png";	// テキストのテクスチャ
-
-	const float SIZE_FACE = 50.0f;	// 顔アイコンのサイズ
+	const float SIZE_FACE = 20.0f;	// 顔アイコンのサイズ
 	const MyLib::Vector3 OFFSET_TEXT = MyLib::Vector3(SIZE_FACE, 0.0f, 0.0f);	// テキストのオフセット位置
-}
-
-
-namespace StateTime
-{
-	const float FADEIN = 0.2f;	// フェードイン
-	const float FADEOUT = 0.2f;	// フェードイン
+	const int COUNT_FADESTART = 5;	// フェード開始するカウント
 }
 
 //==========================================================================
@@ -43,7 +40,8 @@ CCharmText::STATE_FUNC CCharmText::m_StateFunc[] =	// シーン関数
 //==========================================================================
 CCharmText::CCharmText(int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_state(EState::STATE_FADEIN),	// 状態
-	m_fStateTime(0.0f)				// 状態タイマー
+	m_fStateTime(0.0f),				// 状態タイマー
+	m_nCntUp(0)
 {
 
 }
@@ -59,10 +57,25 @@ CCharmText::~CCharmText()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CCharmText* CCharmText::Create()
+CCharmText* CCharmText::Create(CGameManager::ETeamSide side)
 {
 	// メモリの確保
-	CCharmText* pMarker = DEBUG_NEW CCharmText;
+	CCharmText* pMarker = nullptr;
+
+	switch (side)
+	{
+	case CGameManager::SIDE_LEFT:
+		pMarker = DEBUG_NEW CCharmText_Left;
+		break;
+
+	case CGameManager::SIDE_RIGHT:
+		pMarker = DEBUG_NEW CCharmText_Right;
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
 
 	if (pMarker != nullptr)
 	{
@@ -196,11 +209,8 @@ void CCharmText::Kill()
 //==========================================================================
 void CCharmText::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	MyLib::Vector3 pos = GetPosition();
-
-	// 位置設定
-	m_pFace->SetPosition(pos);
-	m_pText->SetPosition(pos + OFFSET_TEXT);
+	// 状態更新
+	CCharmText::UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -221,9 +231,9 @@ void CCharmText::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 void CCharmText::StateFadeIn()
 {
 
-	if (m_fStateTime >= StateTime::FADEIN)
-	{
-
+	if (m_fStateTime >= STATETIME_FADEIN)
+	{// フェードイン完了
+		SetState(EState::STATE_WAIT);
 	}
 }
 
@@ -232,7 +242,11 @@ void CCharmText::StateFadeIn()
 //==========================================================================
 void CCharmText::StateWait()
 {
-
+	if (m_nCntUp >= COUNT_FADESTART ||
+		m_fStateTime >= STATETIME_WAIT)
+	{// 待機終了
+		SetState(EState::STATE_FADEOUT);
+	}
 }
 
 //==========================================================================
@@ -241,6 +255,10 @@ void CCharmText::StateWait()
 void CCharmText::StateFadeOut()
 {
 
+	if (m_fStateTime >= STATETIME_FADEOUT)
+	{// フェードアウト
+		Kill();
+	}
 }
 
 //==========================================================================

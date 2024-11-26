@@ -2610,7 +2610,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "Mask_CatMirror_Mirror.png";
+    "data\\TEXTURE\\komono\\Mask_CatMirror_Mirror.png";
    }
   }
   Material {

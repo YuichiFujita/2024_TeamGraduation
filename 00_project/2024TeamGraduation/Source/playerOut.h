@@ -37,12 +37,6 @@ public:
 	virtual CPlayerOut* GetPlayerOut() override { return this; }		// 外野プレイヤー取得
 
 	//=============================
-	// パターン
-	//=============================
-	void ChangeMoveControl(CPlayerControlMove* control);		// 移動の操作変更
-	void ChangeActionControl(CPlayerControlAction* control);	// アクションの操作変更
-
-	//=============================
 	// メンバ関数
 	//=============================
 	void SetPosLeft(const MyLib::Vector3& rPosLeft)		{ m_posLeft = rPosLeft; }	// 移動可能な左位置の設定

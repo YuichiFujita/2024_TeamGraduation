@@ -38,13 +38,15 @@ class CResultManager
 {
 public:
 	
-
 	CResultManager();
 	~CResultManager();
 
 	virtual HRESULT Init();
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	void CreatePrelude();							// 前座勝敗生成
+	void CreateCharmContest();						// モテ勝敗生成
 
 	void Debug();		// デバッグ
 	void Load();		// チームステータス読み込み
@@ -55,19 +57,15 @@ public:
 private:
 	
 	//=============================
-	// メンバ関数
-	//=============================
-
-
-	//=============================
 	// メンバ変数
 	//=============================
 	float m_fTension;											// テンション
-	CGameManager::ETeamSide m_teamWin;							// 勝利チーム
+	CGameManager::ETeamSide m_teamPreludeWin;					// 勝利チーム(前座)
+	CGameManager::ETeamSide m_teamContestWin;					// 勝利チーム(モテ)
 	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
+	float m_fTime;												// 時間経過
 
 	static CResultManager* m_pThisPtr;							// 自身のポインタ
 };
-
 
 #endif
