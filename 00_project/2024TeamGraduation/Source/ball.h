@@ -91,6 +91,7 @@ public:
 	void Kill();	// 削除
 	void CatchAttack(CPlayer* pPlayer);	// 攻撃キャッチ
 	void CatchLand(CPlayer* pPlayer);	// 着地キャッチ
+	void Spawn(CPlayer* pPlayer);		// スポーン
 	void ThrowNormal(CPlayer* pPlayer);	// 通常投げ
 	void ThrowJump(CPlayer* pPlayer);	// ジャンプ投げ
 	void Special(CPlayer* pPlayer);		// スペシャル発動
