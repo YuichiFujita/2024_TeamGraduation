@@ -215,6 +215,9 @@ void CPlayerReferee::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		{// トス
 			GetBall()->Toss(this);
 		}
+
+		// スタートにする
+		CGameManager::GetInstance()->StartSetting();
 		break;
 
 	default:
