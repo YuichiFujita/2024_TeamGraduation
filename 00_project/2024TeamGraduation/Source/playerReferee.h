@@ -26,6 +26,27 @@ class CPlayerReferee : public CPlayer
 public:
 
 	//=============================
+	// 列挙型定義
+	//=============================
+	// モーション列挙
+	enum EMotion
+	{
+		MOTION_DEF = 0,	// ニュートラルモーション
+		MOTION_WAIT,	// 待機
+		MOTION_TOSS,	// トス
+		MOTION_MAX
+	};
+
+	// 状態
+	enum EState
+	{
+		STATE_NONE = 0,		// なにもない
+		STATE_TOSSWAIT,		// トス待機
+		STATE_TOSS,			// トス
+		STATE_MAX
+	};
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerReferee(
@@ -43,6 +64,42 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 	virtual void Kill() override;	// 動的削除
+
+	//=============================
+	// メンバ関数
+	//=============================
+	void SetState(EState state);		// 状態設定
+
+private:
+
+	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CPlayerReferee::* STATE_FUNC)(const float, const float, const float);
+	static STATE_FUNC m_StateFunc[];	// 状態関数
+
+	//=============================
+	// オーバーライド関数
+	//=============================
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 状態更新
+	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+
+	//=============================
+	// メンバ関数
+	//=============================
+	//-----------------------------
+	// 状態関数
+	//-----------------------------
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
+	void StateTossWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// トス待ち
+	void StateToss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// トス
+
+	//-----------------------------
+	// 状態
+	//-----------------------------
+	EState m_state;		// 状態
+	float m_fStateTime;	// 状態時間
+
 };
 
 #endif

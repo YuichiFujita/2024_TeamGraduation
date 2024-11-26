@@ -414,7 +414,7 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
 	void StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 無敵
 	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
@@ -444,8 +444,8 @@ private:
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
 	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モーション別更新処理
-	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)

@@ -246,6 +246,17 @@ HRESULT CPlayerManager::Init()
 	}
 #endif
 
+	// 審判生成
+	CPlayer::Create
+	(
+		MyLib::Vector3(0.0f, 0.0f, CGameManager::GetInstance()->GetCourtSize().z),			// 位置
+		CGameManager::ETeamSide::SIDE_NONE,			// チームサイド
+		CPlayer::EHuman::HUMAN_REFEREE,				// 人
+		CPlayer::EBody::BODY_NORMAL,				// 体型
+		CPlayer::EHandedness::HAND_R				// 利き手
+	);
+
+
 	return S_OK;
 }
 
@@ -313,7 +324,7 @@ void CPlayerManager::DeletePlayer(CPlayer* pPlayer)
 		break;
 
 	default:
-		assert(false);
+		return;
 		break;
 	}
 }
