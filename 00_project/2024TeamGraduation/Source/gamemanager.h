@@ -73,10 +73,11 @@ public:
 	// 試合終了時情報
 	struct SEndInfo
 	{
-		ETeamSide m_winteam;	// 勝利チーム
+		ETeamSide m_winteamPrelude;	// 勝利チーム(前座)
+		ETeamSide m_winteamCharm;	// 勝利チーム(モテ)
 		float m_fTension;		// 盛り上がり度
 	
-		SEndInfo() : m_winteam(ETeamSide::SIDE_NONE), m_fTension(0.0f) {};
+		SEndInfo() : m_winteamPrelude(ETeamSide::SIDE_NONE), m_winteamCharm(ETeamSide::SIDE_NONE), m_fTension(0.0f) {};
 	};
 
 	CGameManager();
