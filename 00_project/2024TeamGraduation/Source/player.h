@@ -188,10 +188,10 @@ public:
 	// ポジション列挙
 	enum EFieldArea
 	{
-		FIELD_IN = 0,	// 内野
-		FIELD_OUT,		// 外野
-		FIELD_ENTRY,	// エントリー用
-		FIELD_MAX		// この列挙型の総数
+		FIELD_NONE = -1,	// 指定なし
+		FIELD_IN,			// 内野
+		FIELD_OUT,			// 外野
+		FIELD_MAX			// この列挙型の総数
 	};
 
 	//=============================

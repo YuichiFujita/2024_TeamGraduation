@@ -65,7 +65,7 @@ HRESULT CEntry_Dressup::Init()
 		(
 			pos + offset, 						// 位置
 			CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
-			CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
+			CPlayer::EFieldArea::FIELD_NONE,	// ポジション
 			CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
 			CPlayer::EBody::BODY_NORMAL,		// 体系
 			CPlayer::EHandedness::HAND_R,		// 利き手
@@ -332,7 +332,7 @@ void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPla
 	(
 		pos, 								// 位置
 		CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
-		CPlayer::EFieldArea::FIELD_ENTRY,	// ポジション
+		CPlayer::EFieldArea::FIELD_NONE,	// ポジション
 		CPlayer::EBaseType::TYPE_USER,		// ベースタイプ
 		body,								// 体系
 		handedness,							// 利き手

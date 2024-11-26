@@ -1,10 +1,11 @@
 //==========================================================================
 // 
-//  プレイヤー位置補正_エントリー用処理 [playerPosAdj_entry.cpp]
+//  プレイヤー位置補正_指定なし処理 [playerPosAdj_none.cpp]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
 //==========================================================================
-#include "playerPosAdj_entry.h"
+#include "playerPosAdj_none.h"
 #include "player.h"
 
 //==========================================================================
@@ -18,7 +19,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerPosAdjEntry::CPlayerPosAdjEntry()
+CPlayerPosAdjNone::CPlayerPosAdjNone()
 {
 
 }
@@ -26,7 +27,7 @@ CPlayerPosAdjEntry::CPlayerPosAdjEntry()
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPlayerPosAdjEntry::~CPlayerPosAdjEntry()
+CPlayerPosAdjNone::~CPlayerPosAdjNone()
 {
 
 }
@@ -34,10 +35,7 @@ CPlayerPosAdjEntry::~CPlayerPosAdjEntry()
 //==========================================================================
 // 調整
 //==========================================================================
-void CPlayerPosAdjEntry::UpdateAdjuster(CPlayer* pPlayer)
+void CPlayerPosAdjNone::UpdateAdjuster(CPlayer* /*pPlayer*/)
 {
-	MyLib::Vector3 pos = pPlayer->GetOriginPosition();	// 位置
 
-	// 位置を反映
-	pPlayer->SetPosition(pos);
 }

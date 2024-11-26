@@ -1,12 +1,13 @@
 //==========================================================================
 // 
-//  エントリー用プレイヤーヘッダー [playerEntry.h]
+//  指定なしプレイヤーヘッダー [playerNone.h]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _PLAYER_ENTRY_
-#define _PLAYER_ENTRY_	// 二重インクルード防止
+#ifndef _PLAYER_NONE_
+#define _PLAYER_NONE_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -16,16 +17,16 @@
 //==========================================================================
 // クラス定義
 //==========================================================================
-// エントリー用プレイヤークラス
-class CPlayerEntry : public CPlayerBase
+// 指定なしプレイヤークラス
+class CPlayerNone : public CPlayerBase
 {
 public:
 	
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerEntry(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase);
-	virtual ~CPlayerEntry() override;
+	CPlayerNone(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea);
+	virtual ~CPlayerNone() override;
 
 	//=============================
 	// オーバーライド関数

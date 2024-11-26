@@ -1,12 +1,13 @@
 //==========================================================================
 // 
-//  プレイヤー位置補正_エントリー用ヘッダー [playerPosAdj_entry.h]
+//  プレイヤー位置補正_指定なしヘッダー [playerPosAdj_none.h]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
 //==========================================================================
 
-#ifndef _PLAYER_POSADJ_ENTRY_H_
-#define _PLAYER_POSADJ_ENTRY_H_	// 二重インクルード防止
+#ifndef _PLAYER_POSADJ_NONE_H_
+#define _PLAYER_POSADJ_NONE_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -14,23 +15,22 @@
 #include "playerPosAdj.h"
 
 //==========================================================================
-// プレイヤー位置補正_内野コート定義
+// プレイヤー位置補正_指定なし定義
 //==========================================================================
-class CPlayerPosAdjEntry : public CPlayerPosAdj
+class CPlayerPosAdjNone : public CPlayerPosAdj
 {
 public:
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerPosAdjEntry();
-	virtual ~CPlayerPosAdjEntry() override;
+	CPlayerPosAdjNone();
+	virtual ~CPlayerPosAdjNone() override;
 
 	//=============================
 	// オーバーライド関数
 	//=============================
 	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// 調整
-
 };
 
 #endif
