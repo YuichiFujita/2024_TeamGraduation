@@ -12,23 +12,38 @@
 //==========================================================================
 namespace
 {
-	const MyLib::Vector3 POS_POLY[CGameManager::ETeamSide::SIDE_MAX] =
-	{
-		MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.6f, 0.0f),
-		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f, 0.0f),
-	};
+	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);
+}
+
+namespace Draw
+{// 引き分け
+	const MyLib::Vector3 POS_PRELUDE = MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.4f, 0.0f);
+	const MyLib::Vector3 POS_CONTEST = MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.6f, 0.0f);
+	const std::string TEXFILE = "data\\TEXTURE\\result\\draw.jpg";
 }
 
 namespace Prelude
 {
-	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\rank_C.png";		// 負け
-	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\rank_B.png";		// 勝ち
+	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\prelude_lose.jpg";		// 負け
+	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\prelude_win.jpg";		// 勝ち
+
+	const MyLib::Vector3 POS_POLY[CGameManager::ETeamSide::SIDE_MAX] =
+	{
+		MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.4f, 0.0f),
+		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f, 0.0f),
+	};
 }
 
 namespace Contest
 {
-	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\rank_A.png";		// 負け
-	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\rank_S.png";		// 勝ち
+	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\contest_lose.jpg";		// 負け
+	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\contest_win.jpg";		// 勝ち
+
+	const MyLib::Vector3 POS_POLY[CGameManager::ETeamSide::SIDE_MAX] =
+	{
+		MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.6f, 0.0f),
+		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.6f, 0.0f),
+	};
 }
 
 //==========================================================================
@@ -41,10 +56,11 @@ CResultManager* CResultManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 CResultManager::CResultManager()
 {
-	m_fTime = 0.0f;											// 時間経過
-	m_fTension = 0.0f;										// 盛り上がり値
-	m_teamWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
-	memset(&m_fCharmValue[0], 0, sizeof(m_fCharmValue));	// モテ値
+	m_fTime = 0.0f;													// 時間経過
+	m_fTension = 0.0f;												// 盛り上がり値
+	m_teamPreludeWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
+	m_teamContestWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
+	memset(&m_fCharmValue[0], 0, sizeof(m_fCharmValue));			// モテ値
 }
 
 //==========================================================================
@@ -141,20 +157,31 @@ void CResultManager::CreatePrelude()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
+	if (m_teamPreludeWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分けだったら
+		CObject2D* pObj = CObject2D::Create();
+
+		pObj->SetPosition(Draw::POS_PRELUDE);
+		pObj->SetSize(SIZE_POLY);
+		pObj->BindTexture(pTexture->Regist(Draw::TEXFILE));
+		return;
+	}
+
 	// ポリゴン生成
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
 		CObject2D* pObj = CObject2D::Create();
 	
-		pObj->SetPosition(POS_POLY[i]);
+		pObj->SetPosition(Prelude::POS_POLY[i]);
+		pObj->SetSize(SIZE_POLY);
 
-		if (m_teamWin == static_cast<CGameManager::ETeamSide>(i))
+		if (m_teamPreludeWin == static_cast<CGameManager::ETeamSide>(i))
 		{// 勝利チームの場合
-			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_LOSE));
+			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_WIN));
 		}
 		else
 		{
-			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_WIN));
+			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_LOSE));
 		}
 	}
 }
@@ -166,21 +193,32 @@ void CResultManager::CreateCharmContest()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
+	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分けだったら
+		CObject2D* pObj = CObject2D::Create();
+
+		pObj->SetPosition(Draw::POS_CONTEST);
+		pObj->SetSize(SIZE_POLY);
+		pObj->BindTexture(pTexture->Regist(Draw::TEXFILE));
+		return;
+	}
+
 	//TAKADA: モテ値出す？
 	// ポリゴン生成
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
 		CObject2D* pObj = CObject2D::Create();
 
-		pObj->SetPosition(POS_POLY[i]);
+		pObj->SetPosition(Contest::POS_POLY[i]);
+		pObj->SetSize(SIZE_POLY);
 
-		if (m_teamWin == static_cast<CGameManager::ETeamSide>(i))
+		if (m_teamContestWin == static_cast<CGameManager::ETeamSide>(i))
 		{// 勝利チームの場合
-			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
+			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_WIN));
 		}
 		else
 		{
-			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_WIN));
+			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
 		}
 	}
 }
@@ -213,8 +251,8 @@ void CResultManager::Load()
 			continue;
 		}
 
-		if (line.find("WIN") != std::string::npos)
-		{// PLAYERNUMでチーム毎のプレイヤー数読み込み
+		if (line.find("PRELUDE_WIN") != std::string::npos)
+		{// 前座勝利
 
 			// ストリーム作成
 			std::istringstream lineStream(line);
@@ -225,11 +263,26 @@ void CResultManager::Load()
 				hoge >>		// ＝
 				winteam;	// 勝利チーム
 
-			m_teamWin = static_cast<CGameManager::ETeamSide>(winteam);
+			m_teamPreludeWin = static_cast<CGameManager::ETeamSide>(winteam);
+		}
+
+		if (line.find("CONTEST_WIN") != std::string::npos)
+		{// モテ勝利
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				winteam;	// 勝利チーム
+
+			m_teamContestWin = static_cast<CGameManager::ETeamSide>(winteam);
 		}
 
 		if (line.find("TENSION") != std::string::npos)
-		{// PLAYERNUMでチーム毎のプレイヤー数読み込み
+		{// 盛り上がり値
 
 			// ストリーム作成
 			std::istringstream lineStream(line);
@@ -242,7 +295,7 @@ void CResultManager::Load()
 		}
 
 		if (line.find("CHARMVALUE") != std::string::npos)
-		{// PLAYERNUMでチーム毎のプレイヤー数読み込み
+		{// モテ値
 
 			// ストリーム作成
 			std::istringstream lineStream(line);

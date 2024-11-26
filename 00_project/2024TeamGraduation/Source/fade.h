@@ -45,7 +45,7 @@ public:
 
 	CObject2D *GetMyObject();
 	static CFade *Create();
-	void SetFade(CScene::MODE mode);	// 次のモード設定
+	bool SetFade(CScene::MODE mode);	// 次のモード設定
 	STATE GetState();	// 状態取得
 
 private:

@@ -359,14 +359,16 @@ void CGameManager::SceneSpecialStag()
 //==========================================================================
 void CGameManager::SceneEnd()
 {
-	// 試合終了処理
-	EndGame();
-
 	// 操作出来ない
 	m_bControll = false;
 
 	// 遷移
-	GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT);
+	if (GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT))
+	{// 一度だけ
+
+		// 試合終了処理
+		EndGame();
+	}
 }
 
 //==========================================================================
@@ -596,7 +598,8 @@ void CGameManager::Save()
 	File << TEXT_LINE << std::endl;
 	File << "# 試合情報" << std::endl;
 	File << TEXT_LINE << std::endl;
-	File << "WIN = " << m_endInfo.m_winteam << std::endl;
+	File << "PRELUDE_WIN = " << m_endInfo.m_winteamPrelude << std::endl;
+	File << "CONTEST_WIN = " << m_endInfo.m_winteamCharm << std::endl;
 	File << "TENSION = "<< m_endInfo.m_fTension << std::endl;
 
 	int i = 0;
@@ -642,7 +645,6 @@ void CGameManager::CheckVictory()
 
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
-
 		// リストループ
 		CListManager<CPlayer> list = CPlayerManager::GetInstance()->GetInList(static_cast<ETeamSide>(i));
 		std::list<CPlayer*>::iterator itr = list.GetEnd();
@@ -665,11 +667,11 @@ void CGameManager::CheckVictory()
 
 	if (m_aAlive[ETeamSide::SIDE_LEFT] > m_aAlive[ETeamSide::SIDE_RIGHT])
 	{// 左が多い
-		m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+		m_endInfo.m_winteamPrelude = ETeamSide::SIDE_LEFT;
 	}
 	else if(m_aAlive[ETeamSide::SIDE_LEFT] < m_aAlive[ETeamSide::SIDE_RIGHT])
 	{// 右が多い
-		m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+		m_endInfo.m_winteamPrelude = ETeamSide::SIDE_RIGHT;
 	}
 	else
 	{// 左右同数
@@ -677,16 +679,37 @@ void CGameManager::CheckVictory()
 		// 総合体力差
 		if (m_aLife[ETeamSide::SIDE_LEFT] > m_aLife[ETeamSide::SIDE_RIGHT])
 		{// 左が多い
-			m_endInfo.m_winteam = ETeamSide::SIDE_LEFT;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_LEFT;
 		}
 		else if (m_aLife[ETeamSide::SIDE_LEFT] < m_aLife[ETeamSide::SIDE_RIGHT])
 		{// 右が多い
-			m_endInfo.m_winteam = ETeamSide::SIDE_RIGHT;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_RIGHT;
 		}
 		else
 		{// 引き分け
-			m_endInfo.m_winteam = ETeamSide::SIDE_NONE;
+			m_endInfo.m_winteamPrelude = ETeamSide::SIDE_NONE;
 		}
+	}
+
+	//--------------------------
+	//モテ
+	
+	float fCharmL = m_pTeamStatus[CGameManager::ETeamSide::SIDE_LEFT]->GetCharmInfo().fValue;
+	float fCharmR = m_pTeamStatus[CGameManager::ETeamSide::SIDE_RIGHT]->GetCharmInfo().fValue;
+
+
+	// モテ勝利
+	if (fCharmL > fCharmR)
+	{// 左が多い
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_LEFT;
+	}
+	else if (fCharmL < fCharmR)
+	{// 右が多い
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_RIGHT;
+	}
+	else
+	{
+		m_endInfo.m_winteamCharm = ETeamSide::SIDE_NONE;
 	}
 }
 
