@@ -244,7 +244,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 33
+NUM_MOTION = 34
 
 
 #------------------------------------------------------------------------------
@@ -283,6 +283,7 @@ MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt				# ダメ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt				# 死亡
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt			# 通常グリップ
 MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt			# 前グリップ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_unstable.txt			# 前グリップ
 
 
 END_SCRIPT		# この行は絶対消さないこと！

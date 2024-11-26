@@ -15,6 +15,7 @@
 
 // シーン
 #include "entryscene.h"
+#include "entry_setupTeam.h"
 
 
 //==========================================================================
@@ -57,6 +58,8 @@ CEntry::CEntry()
 	// 値のクリア
 	m_SceneType = ESceneType::SCENETYPE_NONE;	// シーンの種類
 	m_fSceneTime = 0.0f;						// シーンカウンター
+	m_pEntryScene = nullptr;		// エントリーシーン
+	m_pSetupTeam = nullptr;	// チーム等の設定取得
 }
 
 //==========================================================================
@@ -112,6 +115,19 @@ HRESULT CEntry::Init()
 //==========================================================================
 void CEntry::Uninit()
 {
+	// エントリーシーン終了
+	if (m_pEntryScene != nullptr)
+	{
+		m_pEntryScene->Uninit();
+		m_pEntryScene = nullptr;
+	}
+
+	if (m_pSetupTeam != nullptr)
+	{
+		m_pSetupTeam->Uninit();
+		m_pSetupTeam = nullptr;
+	}
+
 	m_pThisPtr = nullptr;
 
 	// 終了処理
