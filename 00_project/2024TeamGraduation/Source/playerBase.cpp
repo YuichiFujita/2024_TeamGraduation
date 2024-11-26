@@ -53,6 +53,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	MyLib::Vector3 posB = pBall->GetPosition();			// ボール位置
 	MyLib::HitResult_Character hitresult = {};			// 衝突情報
 	CPlayerStatus* pStatus = m_pPlayer->GetStatus();	// ステータス情報
+	CPlayer::EState state = m_pPlayer->GetState();		// プレイヤー状態
 
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
@@ -65,9 +66,10 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if (stateBall == CBall::STATE_LAND																			// ボールが着地している
-	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()							// フリーボール且つ自チームのボールじゃない
-	||  pBall->IsPass() && (pBall->GetTarget() == m_pPlayer || pBall->GetTypeTeam() != m_pPlayer->GetTeam()))	// パス状態且つターゲットが自分自身か敵チーム
+	if ((stateBall == CBall::STATE_LAND																			// ボールが着地している
+		||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()							// フリーボール且つ自チームのボールじゃない
+		|| pBall->IsPass() && (pBall->GetTarget() == m_pPlayer || pBall->GetTypeTeam() != m_pPlayer->GetTeam()))	// パス状態且つターゲットが自分自身か敵チーム
+		&& state != CPlayer::EState::STATE_INVADE_RETURN)														// コートに戻る状態でないとき(&)
 	{ // 上記の条件の場合
 
 		// ボールをキャッチ
@@ -89,8 +91,10 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	// リバウンドボールの場合キャッチする
+	
 	if (stateBall == CBall::STATE_REBOUND &&
-		m_pPlayer->GetState() != CPlayer::EState::STATE_DMG)
+		state != CPlayer::EState::STATE_INVADE_RETURN &&
+		state != CPlayer::EState::STATE_DMG)
 	{
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
@@ -130,7 +134,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// ダメージを受ける場合はフラグをONにする
 	hitInfo.bHit = true;
 
-	if (m_pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN)
+	if (state == CPlayer::EState::STATE_INVADE_RETURN)
 	{// コートから戻っているとき
 			
 		// モテ減少

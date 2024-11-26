@@ -19,7 +19,7 @@
 //************************************************************
 namespace
 {
-	const char *TEXTURE_NUM = "data\\TEXTURE\\number000.png";		// 数字テクスチャ
+	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\number000.png";		// 数字テクスチャ
 	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";	// 区切りテクスチャ
 	const int PRIORITY = 6;	// タイムUIの優先順位
 }

@@ -106,7 +106,8 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 
 	// ‚à‚¤–ß‚Á‚Ä‚éê‡‚Í”²‚¯‚é
 	if (state == CPlayer::EState::STATE_INVADE_RETURN
-	||  state == CPlayer::EState::STATE_INVADE_TOSS) { return; }
+	||  state == CPlayer::EState::STATE_INVADE_TOSS
+	||	state == CPlayer::EState::STATE_DMG) { return; }
 
 	if (IsLineOut(pPlayer))
 	{ // ƒ‰ƒCƒ“‚ğ’´‚¦‚Ä‚¢‚½ê‡

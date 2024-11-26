@@ -176,6 +176,18 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pGameManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// 左チームのモテ値増減
+	CTeamStatus* pTeamLeft = CGameManager::GetInstance()->GetTeamStatus(CGameManager::ETeamSide::SIDE_LEFT);	// チーム情報
+	CTeamStatus::SCharmInfo infoLeft = pTeamLeft->GetCharmInfo();	// モテ情報
+	ImGui::DragFloat("MoteValue : Left", &infoLeft.fValue, 0.1f, 0.0f, infoLeft.fValueMax, "%.2f");	// モテ値の変動操作
+	pTeamLeft->SetCharmInfo(infoLeft);	// モテ値割当
+
+	// 右チームのモテ値増減
+	CTeamStatus* pTeamRight = CGameManager::GetInstance()->GetTeamStatus(CGameManager::ETeamSide::SIDE_RIGHT);	// チーム情報
+	CTeamStatus::SCharmInfo infoRight = pTeamRight->GetCharmInfo();	// モテ情報
+	ImGui::DragFloat("MoteValue : Right", &infoRight.fValue, 0.1f, 0.0f, infoRight.fValueMax, "%.2f");	// モテ値の変動操作
+	pTeamRight->SetCharmInfo(infoRight);	// モテ値割当
+
 #if _DEBUG
 	// エディット切り替え処理
 	ChangeEdit();

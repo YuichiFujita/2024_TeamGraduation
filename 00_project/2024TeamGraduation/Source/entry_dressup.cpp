@@ -109,6 +109,15 @@ HRESULT CEntry_Dressup::Init()
 //==========================================================================
 void CEntry_Dressup::Uninit()
 {
+	for (auto& info : m_vecDressupInfo)
+	{
+		info.pPlayer->Uninit();
+		info.pHair->Uninit();
+		info.pAccessory->Uninit();
+		info.pFace->Uninit();
+	}
+
+	delete this;
 }
 
 //==========================================================================
