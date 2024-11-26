@@ -49,7 +49,8 @@ private:
 	//=============================
 	CPlayer* m_pPlayer;					// プレイヤーのポインタ
 	CObjectCircleGauge2D* m_pLifeGauge;	// 体力ゲージ
-	CListManager<CObjectCircleGauge2D> m_LifeGaugeList;	// 体力ゲージのリスト
+	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListLeft;	// 左体力ゲージのリスト
+	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListRight;	// 右体力ゲージのリスト
 
 };
 
