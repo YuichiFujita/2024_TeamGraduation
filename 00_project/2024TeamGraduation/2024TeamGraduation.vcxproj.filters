@@ -674,6 +674,9 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerReferee.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1230,6 +1233,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerPosAdj_none.h">
       <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerReferee.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

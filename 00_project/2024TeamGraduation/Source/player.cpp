@@ -33,6 +33,7 @@
 
 // 派生先
 #include "playerDressup.h"
+#include "playerReferee.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
