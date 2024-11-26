@@ -90,35 +90,3 @@ bool CPlayerOut::IsCrab()
 	return true;
 
 }
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayerOut::ChangeMoveControl(CPlayerControlMove* control)
-{
-	// 操作クラスの取得
-	CPlayerControlMove* pControlMove = GetPlayerControlMove();
-
-	// 操作クラスの入替
-	delete pControlMove;
-	pControlMove = control;
-
-	// 操作クラスの反映
-	SetPlayerControlMove(pControlMove);
-}
-
-//==========================================================================
-// 移動の操作変更
-//==========================================================================
-void CPlayerOut::ChangeActionControl(CPlayerControlAction* control)
-{
-	// 操作クラスの取得
-	CPlayerControlAction* pControlAction = GetPlayerControlAction();
-
-	// 操作クラスの入替
-	delete pControlAction;
-	pControlAction = control;
-
-	// 操作クラスの反映
-	SetPlayerControlAction(pControlAction);
-}
