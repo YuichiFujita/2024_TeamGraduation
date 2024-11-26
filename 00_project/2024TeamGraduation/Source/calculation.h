@@ -2242,21 +2242,24 @@ namespace UtilFunc	// 便利関数
 			UtilFunc::Transformation::RotUnNormalize(angle);
 			UtilFunc::Transformation::RotUnNormalize(maxAngle);
 			UtilFunc::Transformation::RotUnNormalize(minAngle);
-			
+
 			// 度数法に変換
-			int nAngle = UtilFunc::Transformation::RadianChangeToDegree(angle);
-			int nMaxAngle = UtilFunc::Transformation::RadianChangeToDegree(maxAngle);
-			int nMinAngle = UtilFunc::Transformation::RadianChangeToDegree(minAngle);
+			int nAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(angle));
+			int nMaxAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(maxAngle));
+			int nMinAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(minAngle));
 
 			if (nMaxAngle <= nMinAngle)
 			{// 範囲が360°を跨ぐ場合
 
-				bool bRange = !(nAngle >= nMaxAngle && nAngle <= nMinAngle);
+				// nAngleがMin以上Max以下。
+				bool bRange = (nMaxAngle <= nAngle && nAngle <= nMinAngle);
 				return bRange;
 			}
 			else
 			{// 範囲が通常の順序で指定されている場合
-				bool bRange = (nAngle <= nMaxAngle && nMinAngle <= nAngle);
+
+				// nAngleがMin以上Max以下。
+				bool bRange = (nMaxAngle >= nAngle && nAngle >= nMinAngle);
 				return bRange;
 			}
 

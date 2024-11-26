@@ -136,7 +136,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 0
+#if 1
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -147,7 +147,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 0
+#if 1
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
@@ -201,7 +201,7 @@ HRESULT CPlayerManager::Init()
 	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
 
 	// プレイヤー外野生成 (右サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -223,7 +223,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤー外野生成 (左サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
