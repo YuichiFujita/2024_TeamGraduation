@@ -185,6 +185,9 @@ HRESULT CGameManager::Init()
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 
+	// ドアを開放する
+	SetEnableOpen(true);
+
 	// チームステータスの生成
 	CreateTeamStatus();
 
@@ -278,6 +281,49 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 		ImGui::TreePop();
 	}
 #endif
+}
+
+//==========================================================================
+// ドア開放フラグの設定
+//==========================================================================
+void CGameManager::SetEnableOpen(const bool bOpen, const float fMoveTime)
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア開放フラグの設定
+		m_apGymDoor[i]->SetEnableOpen(bOpen, fMoveTime);
+	}
+}
+
+//==========================================================================
+// ドア開放フラグの取得
+//==========================================================================
+bool CGameManager::IsOpen() const
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// ドアが開放されていない場合抜ける
+		if (!m_apGymDoor[i]->IsOpen()) { return false; }
+	}
+
+	return true;
+}
+
+//==========================================================================
+// ドア稼働中フラグの取得
+//==========================================================================
+bool CGameManager::IsMove() const
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// ドアが稼働中ではない場合抜ける
+		if (!m_apGymDoor[i]->IsMove()) { return false; }
+	}
+
+	return true;
 }
 
 //==========================================================================

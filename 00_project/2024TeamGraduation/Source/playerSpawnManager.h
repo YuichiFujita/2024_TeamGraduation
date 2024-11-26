@@ -31,7 +31,9 @@ public:
 	enum EState
 	{
 		STATE_NONE = 0,		// 何もしない状態
-		STATE_CUTIN,		// カットイン状態
+		STATE_WALK_Z,		// Z軸移動状態
+		STATE_ROTATE,		// 回転状態
+		STATE_WALK_X,		// X軸移動状態
 		STATE_END,			// 終了状態
 		STATE_MAX			// この列挙型の総数
 	};
@@ -66,7 +68,9 @@ private:
 	static CPlayerSpawnManager* m_pInstance;		// 自身のインスタンス
 
 	// メンバ関数
-	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カットイン更新
+	void UpdateWalkAxisZ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// Z軸移動状態の更新
+	void UpdateRotate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回転状態の更新
+	void UpdateWalkAxisX(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// X軸移動状態の更新
 
 	// メンバ変数
 	EState m_state;		// 状態

@@ -459,8 +459,11 @@ void CPlayer::Uninit()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
-	
-	// ステータス
+
+	// マーカー
+	SAFE_UNINIT(m_pMarker);
+
+	// プレイヤー位置補正
 	SAFE_DELETE(m_pPosAdj);
 
 	// 終了処理
