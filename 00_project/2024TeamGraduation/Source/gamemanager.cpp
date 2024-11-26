@@ -24,6 +24,7 @@
 #include "audience.h"
 #include "gymDoor.h"
 #include "gymWallManager.h"
+#include "playerSpawnManager.h"
 #include "playerManager.h"
 #include "charmManager.h"
 #include "timerUI.h"
@@ -161,6 +162,13 @@ HRESULT CGameManager::Init()
 	// ジム壁マネージャ生成
 	m_pGymWallManager = CGymWallManager::Create();
 	if (m_pGymWallManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// プレイヤー登場演出マネージャー生成
+	if (CPlayerSpawnManager::Create() == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -318,12 +326,19 @@ void CGameManager::UpdateLimitTimer()
 //==========================================================================
 void CGameManager::SceneSpawn()
 {
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	assert(pManager != nullptr);
+
 	// 操作出来ない
 	m_bControll = false;
 
-	// TODO：登場演出が終わったら遷移！
-	{
-		// プレイヤーマネージャー生成
+	if (pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
+	{ // 登場演出が終わった場合
+
+		// プレイヤー登場演出マネージャーの終了
+		SAFE_UNINIT(pManager);
+
+		// プレイヤーマネージャーの生成
 		CPlayerManager::Create();
 
 		// 追従カメラの設定

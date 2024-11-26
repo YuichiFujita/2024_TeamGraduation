@@ -66,7 +66,7 @@ CSpecialManager::AFuncUpdateSpecial CSpecialManager::m_aFuncUpdateSpecial[] =	//
 	nullptr,							// スペシャル無し
 	&CSpecialManager::UpdateKamehameha,	// かめはめ波の更新
 };
-CSpecialManager* CSpecialManager::m_pThisClass = nullptr;	// 自身のインスタンス
+CSpecialManager* CSpecialManager::m_pInstance = nullptr;	// 自身のインスタンス
 
 //************************************************************
 //	親クラス [CSpecialManager] のメンバ関数
@@ -189,7 +189,7 @@ void CSpecialManager::Uninit(void)
 	Release();
 
 	// 自身の保存していたインスタンスを初期化
-	m_pThisClass = nullptr;
+	m_pInstance = nullptr;
 }
 
 //============================================================
@@ -244,11 +244,11 @@ void CSpecialManager::Draw()
 //============================================================
 CSpecialManager *CSpecialManager::Create(CPlayer* pAttack, CPlayer* pTarget)
 {
-	if (m_pThisClass != nullptr)
+	if (m_pInstance != nullptr)
 	{ // 自クラスの他インスタンスがある場合
 
 		// インスタンスを破棄
-		SAFE_UNINIT(m_pThisClass);
+		SAFE_UNINIT(m_pInstance);
 	}
 
 	// スペシャル演出マネージャーの生成
@@ -271,8 +271,8 @@ CSpecialManager *CSpecialManager::Create(CPlayer* pAttack, CPlayer* pTarget)
 		}
 
 		// インスタンスを保存
-		assert(m_pThisClass == nullptr);
-		m_pThisClass = pSpecialManager;
+		assert(m_pInstance == nullptr);
+		m_pInstance = pSpecialManager;
 
 		// 確保したアドレスを返す
 		return pSpecialManager;
