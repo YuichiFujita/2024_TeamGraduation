@@ -330,7 +330,7 @@ CPlayer* CPlayer::Create
 		break;
 
 	case EHuman::HUMAN_REFEREE:
-		//pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);	// SEIGA：ここに体育教師の生成
+		pPlayer = DEBUG_NEW CPlayerReferee;
 		break;
 
 	default:
