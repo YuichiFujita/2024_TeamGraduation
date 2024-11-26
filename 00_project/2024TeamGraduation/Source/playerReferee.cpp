@@ -213,7 +213,7 @@ void CPlayerReferee::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_TOSS:
 		if (GetBall() != nullptr)
 		{// トス
-			GetBall()->Toss(this);
+			GetBall()->Spawn(this);
 		}
 
 		// スタートにする
