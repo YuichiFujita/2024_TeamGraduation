@@ -668,6 +668,9 @@
     <ClCompile Include="Source\playerSpawn.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\gymDoor.cpp">
+      <Filter>ingame\gym</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1221,6 +1224,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerSpawn.h">
       <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gymDoor.h">
+      <Filter>ingame\gym</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

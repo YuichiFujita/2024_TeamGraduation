@@ -22,6 +22,7 @@
 #include "collisionLine_Box.h"
 #include "teamStatus.h"
 #include "audience.h"
+#include "gymDoor.h"
 #include "gymWallManager.h"
 #include "playerManager.h"
 #include "charmManager.h"
@@ -36,6 +37,13 @@ namespace
 {
 	const std::string TOP_LINE = "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// テキストのライン
+
+	// ドッジボールコート情報
+	namespace Gym
+	{
+		const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
+		const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+	}
 
 	// ドッジボールコート情報
 	namespace Court
@@ -136,8 +144,27 @@ HRESULT CGameManager::Init()
 	// コートサイズ
 	m_courtSize = Court::SIZE;
 
+	// 体育館左ドア生成
+	if (CGymDoor::Create(Gym::POS_LEFT) == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 体育館右ドア生成
+	if (CGymDoor::Create(Gym::POS_RIGHT) == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// ジム壁マネージャ生成
 	m_pGymWallManager = CGymWallManager::Create();
+	if (m_pGymWallManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// プレイヤーマネージャー生成
 	if (CPlayerManager::Create() == nullptr)
@@ -162,12 +189,27 @@ HRESULT CGameManager::Init()
 
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
+	if (m_pCharmManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// モテ値マネージャ生成
 	m_pCharmValueManager = CCharmValueManager::Create();
+	if (m_pCharmValueManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// スぺ値マネージャ生成
 	m_pSpecialValueManager = CSpecialValueManager::Create();
+	if (m_pSpecialValueManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
