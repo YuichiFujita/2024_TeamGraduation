@@ -37,7 +37,7 @@
 #include "playerAIOut.h"
 #include "playerUserIn.h"
 #include "playerUserOut.h"
-#include "playerEntry.h"
+#include "playerNone.h"
 
 // デバッグ
 #include "ObjectLine.h"
@@ -47,7 +47,7 @@
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
-#include "playerPosAdj_entry.h"
+#include "playerPosAdj_none.h"
 #include "playerAction.h"
 #include "playerStatus.h"
 #include "playercontrol_action.h"
@@ -450,6 +450,13 @@ void CPlayer::Kill()
 	{
 		m_pStatus->Kill();
 		m_pStatus = nullptr;
+	}
+
+	// マーカー
+	if (m_pMarker != nullptr)
+	{
+		m_pMarker->Kill();
+		m_pMarker = nullptr;
 	}
 
 	// 終了処理
@@ -1945,6 +1952,10 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 	// 位置補正クラスの変更
 	switch (area)
 	{ // ポジションごとの処理
+	case EFieldArea::FIELD_NONE:
+		m_pPosAdj = DEBUG_NEW CPlayerPosAdjNone;
+		break;
+
 	case EFieldArea::FIELD_IN:
 		switch (team)
 		{ // チームコートごとの処理
@@ -1964,10 +1975,6 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 
 	case EFieldArea::FIELD_OUT:
 		m_pPosAdj = DEBUG_NEW CPlayerPosAdjOut;
-		break;
-
-	case EFieldArea::FIELD_ENTRY:
-		m_pPosAdj = DEBUG_NEW CPlayerPosAdjEntry;
 		break;
 
 	default:
@@ -2044,16 +2051,16 @@ void CPlayer::InitBase(EBaseType type)
 	case TYPE_USER:
 		switch (m_typeArea)
 		{ // ポジションごとの処理
-		case FIELD_IN:
+		case EFieldArea::FIELD_NONE:
+			m_pBase = DEBUG_NEW CPlayerNone(this, m_typeTeam, m_typeArea);
+			break;
+
+		case EFieldArea::FIELD_IN:
 			m_pBase = DEBUG_NEW CPlayerUserIn(this, m_typeTeam, m_typeArea);
 			break;
 
-		case FIELD_OUT:
+		case EFieldArea::FIELD_OUT:
 			m_pBase = DEBUG_NEW CPlayerUserOut(this, m_typeTeam, m_typeArea);
-			break;
-
-		case EFieldArea::FIELD_ENTRY:
-			m_pBase = DEBUG_NEW CPlayerEntry(this, m_typeTeam, m_typeArea, TYPE_USER);
 			break;
 
 		default:
@@ -2065,11 +2072,11 @@ void CPlayer::InitBase(EBaseType type)
 	case TYPE_AI:
 		switch (m_typeArea)
 		{ // ポジションごとの処理
-		case FIELD_IN:
+		case EFieldArea::FIELD_IN:
 			m_pBase = DEBUG_NEW CPlayerAIIn(this, m_typeTeam, m_typeArea);
 			break;
 
-		case FIELD_OUT:
+		case EFieldArea::FIELD_OUT:
 			m_pBase = DEBUG_NEW CPlayerAIOut(this, m_typeTeam, m_typeArea);
 			break;
 
@@ -2115,7 +2122,7 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// クラス型からベースを判定
 	if		(typeid(*m_pBase) == typeid(CPlayerUserIn) || typeid(*m_pBase) == typeid(CPlayerUserOut))	{ return TYPE_USER; }
 	else if	(typeid(*m_pBase) == typeid(CPlayerAIIn)   || typeid(*m_pBase) == typeid(CPlayerAIOut))		{ return TYPE_AI; }
-	else if (typeid(*m_pBase) == typeid(CPlayerEntry)) { return TYPE_USER; }
+	else if (typeid(*m_pBase) == typeid(CPlayerNone))													{ return TYPE_USER; }
 
 	// ベース指定なし
 	assert(false);

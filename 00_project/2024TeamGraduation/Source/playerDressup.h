@@ -28,7 +28,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerDressUP(const CGameManager::ETeamSide typeTeam, const EFieldArea typeArea, const CPlayerDressUP::EBaseType typeBase, int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CPlayerDressUP(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority = mylib_const::PRIORITY_DEFAULT);
 	~CPlayerDressUP();
 
 	//=============================
@@ -38,30 +38,7 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
-	virtual void Kill() override;	// 動的削除処理
-
-	//=============================
-	// 静的関数
-	//=============================
-	/*
-		@brief	プレイヤーの生成処理
-		@param	rPos	 [in]	初期位置 (内野のみ)
-		@param	typeTeam [in]	左/右
-		@param	typeArea [in]	内野/外野
-		@param	typeBase [in]	User/AI
-		@param	typeBody [in]	標準/デブ/ガリ
-		@param	typeHand [in]	右利き/左利き
-	*/
-	static CPlayerDressUP* Create
-	(
-		const MyLib::Vector3&	rPos,					// 位置
-		CGameManager::ETeamSide	typeTeam,				// チームサイド
-		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
-		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
-		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
-	);
-
+	virtual void Kill() override;	// 動的削除
 };
 
 #endif
