@@ -33,6 +33,7 @@
 
 // 派生先
 #include "playerDressup.h"
+#include "playerSpawn.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
@@ -265,7 +266,7 @@ CPlayer::~CPlayer()
 }
 
 //==========================================================================
-// 生成処理 (内野)
+// 生成処理 (ゲームプレイヤー)
 //==========================================================================
 CPlayer* CPlayer::Create
 (
@@ -274,23 +275,65 @@ CPlayer* CPlayer::Create
 	EFieldArea	typeArea,				// ポジション
 	EBaseType	typeBase,				// ベースタイプ
 	EBody		typeBody,				// 体型
-	EHandedness	typeHand,				// 利き手
-	CScene::MODE mode					// モード
+	EHandedness	typeHand				// 利き手
+)
+{
+	// メモリの確保
+	CPlayer* pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	if (pPlayer != nullptr)
+	{
+		// 体型を設定
+		pPlayer->m_BodyType = typeBody;
+
+		// 利き手を設定
+		pPlayer->m_Handedness = typeHand;
+
+		// クラスの初期化
+		if (FAILED(pPlayer->Init()))
+		{ // 初期化に失敗した場合
+
+			// クラスの終了
+			SAFE_UNINIT(pPlayer);
+			return nullptr;
+		}
+
+		// 初期位置を設定
+		pPlayer->GetBase()->InitPosition(rPos);
+	}
+
+	return pPlayer;
+}
+
+//==========================================================================
+// 生成処理 (仮想プレイヤー)
+//==========================================================================
+CPlayer* CPlayer::Create
+(
+	const MyLib::Vector3& rPos,			// 位置
+	CGameManager::ETeamSide typeTeam,	// チームサイド
+	EHuman typeHuman,					// 人
+	EBody typeBody,						// 体型
+	EHandedness typeHand				// 利き手
 )
 {
 	// メモリの確保
 	CPlayer* pPlayer = nullptr;
-	switch (mode)
-	{
-	case CScene::MODE_ENTRY:
-		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, typeArea, typeBase);
+	switch (typeHuman)
+	{ // 人ごとの処理
+	case EHuman::HUMAN_ENTRY:
+		pPlayer = DEBUG_NEW CPlayerDressUP(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
-	case CScene::MODE_GAME:
-		pPlayer = DEBUG_NEW CPlayer(typeTeam, typeArea, typeBase);
+	case EHuman::HUMAN_SPAWN:
+		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
+	case EHuman::HUMAN_REFEREE:
+		//pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);	// SEIGA：ここに体育教師の生成
 		break;
 
 	default:
+		assert(false);
 		break;
 	}
 
