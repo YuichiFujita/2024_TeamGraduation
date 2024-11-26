@@ -34,6 +34,7 @@ public:
 		MOTION_DEF = 0,	// ニュートラルモーション
 		MOTION_WAIT,	// 待機
 		MOTION_TOSS,	// トス
+		MOTION_RETUN,	// 戻る
 		MOTION_MAX
 	};
 
@@ -43,6 +44,7 @@ public:
 		STATE_NONE = 0,		// なにもない
 		STATE_TOSSWAIT,		// トス待機
 		STATE_TOSS,			// トス
+		STATE_RETURN,		// 戻る
 		STATE_MAX
 	};
 
@@ -93,6 +95,7 @@ private:
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
 	void StateTossWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// トス待ち
 	void StateToss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// トス
+	void StateReturn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 戻る
 
 	//-----------------------------
 	// 状態
