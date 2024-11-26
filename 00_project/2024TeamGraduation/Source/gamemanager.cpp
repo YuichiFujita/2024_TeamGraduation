@@ -166,13 +166,6 @@ HRESULT CGameManager::Init()
 		return E_FAIL;
 	}
 
-	// プレイヤーマネージャー生成
-	if (CPlayerManager::Create() == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
 #if _DEBUG
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
@@ -330,6 +323,13 @@ void CGameManager::SceneSpawn()
 
 	// TODO：登場演出が終わったら遷移！
 	{
+		// プレイヤーマネージャー生成
+		CPlayerManager::Create();
+
+		// 追従カメラの設定
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+		pCamera->SetState(CCamera::STATE_FOLLOW);
+
 		// 開始演出へ遷移
 		SetSceneType(ESceneType::SCENE_START);
 	}

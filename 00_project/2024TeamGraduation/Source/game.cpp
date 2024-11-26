@@ -114,9 +114,9 @@ HRESULT CGame::Init()
 	// ボールの生成
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
-	// 追従カメラの設定
+	// 通常カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
-	pCamera->SetState(CCamera::STATE_FOLLOW);
+	pCamera->SetState(CCamera::STATE_NONE);
 
 	// 体育館を明るくする
 	GET_MANAGER->GetLight()->SetEnableBright(true);
