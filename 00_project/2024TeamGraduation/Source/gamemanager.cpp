@@ -285,7 +285,48 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CGameManager::StartSetting()
 {
-	
+	// メインへ遷移
+	SetSceneType(ESceneType::SCENE_MAIN);
+
+	// TODO：開始演出が終わったら遷移！
+	{
+#if _DEBUG
+		// コートサイズのボックス
+		if (m_pCourtSizeBox == nullptr)
+		{
+			m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+#endif
+
+		// チームステータス
+		CreateTeamStatus();
+
+		// タイマーUI
+		if (m_pTimerUI == nullptr)
+		{
+			m_pTimerUI = CTimerUI::Create(
+				90.0f,
+				90.0f,
+				MyLib::Vector3(640.0f, 70.0f, 0.0f),
+				D3DXVECTOR2(40.0f, 40.0f),
+				D3DXVECTOR2(30.0f, 40.0f),
+				D3DXVECTOR2(40.0f, 0.0f),
+				D3DXVECTOR2(60.0f, 0.0f),
+				CTimerUI::EAlignX::XALIGN_CENTER,
+				CTimerUI::EAlignY::YALIGN_CENTER,
+				MyLib::Vector3(0.0f)
+			);
+
+			// 開始
+#if _NDEBUG
+			m_pTimerUI->Start();
+#endif
+
+		}
+
+		// メインへ遷移
+		SetSceneType(ESceneType::SCENE_MAIN);
+	}
 }
 
 //==========================================================================
@@ -357,46 +398,6 @@ void CGameManager::SceneStart()
 {
 	// 操作出来ない
 	m_bControll = false;
-
-	// TODO：開始演出が終わったら遷移！
-	{
-#if _DEBUG
-		// コートサイズのボックス
-		if (m_pCourtSizeBox == nullptr)
-		{
-			m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(-m_courtSize, m_courtSize), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-		}
-#endif
-
-		// チームステータス
-		CreateTeamStatus();
-
-		// タイマーUI
-		if (m_pTimerUI == nullptr)
-		{
-			m_pTimerUI = CTimerUI::Create(
-				90.0f,
-				90.0f,
-				MyLib::Vector3(640.0f, 70.0f, 0.0f),
-				D3DXVECTOR2(40.0f, 40.0f),
-				D3DXVECTOR2(30.0f, 40.0f),
-				D3DXVECTOR2(40.0f, 0.0f),
-				D3DXVECTOR2(60.0f, 0.0f),
-				CTimerUI::EAlignX::XALIGN_CENTER,
-				CTimerUI::EAlignY::YALIGN_CENTER,
-				MyLib::Vector3(0.0f)
-			);
-
-			// 開始
-#if _NDEBUG
-			m_pTimerUI->Start();
-#endif
-
-		}
-
-		// メインへ遷移
-		SetSceneType(ESceneType::SCENE_MAIN);
-	}
 }
 
 //==========================================================================
