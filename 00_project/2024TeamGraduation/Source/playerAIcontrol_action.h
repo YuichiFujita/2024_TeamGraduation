@@ -74,7 +74,7 @@ private:
 	void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// キャッチ
 	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// 投げ
 	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;			// ジャンプ
-	void JumpFloat(CPlayer* player) override;	// ジャンプ上昇
+	void JumpFloat(CPlayer* player) override;																			// ジャンプ上昇
 	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// スペシャル
 	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// モテ
 
@@ -87,6 +87,8 @@ private:
 	// メンバ変数
 	//=============================
 	float fThrowTime = 0.0f;
+	float m_fJumpTimer;
+	float m_fJumpRate;
 	SFlag m_sFlag;
 
 };

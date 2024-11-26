@@ -54,6 +54,9 @@ private:
 		TIMING_NORMAL,		// 通常
 		TIMING_QUICK,		// 速
 		TIMING_DELAY,		// 遅
+		TIMING_JUMP_NORMAL,	// ジャンプ通常
+		TIMING_JUMP_QUICK,	// ジャンプ速
+		TIMING_JUMP_DELAY,	// ジャンプ遅
 		TIMING_MAX
 	};
 
@@ -78,13 +81,21 @@ private:
 
 	enum EMoveType	// 行動種類
 	{
-		MOVETYPE_NONE = 0,		// なし(待機)
+		MOVETYPE_STOP = 0,		// 止まる
 		MOVETYPE_WALK,			// 歩く
 		MOVETYPE_DASH,			// 走る
 		MOVETYPE_LEAVE,			// 離れる
 		MOVETYPE_APPROATCH,		// 近づく
 		MOVETYPE_RETURN,		// 戻る
 		MOVETYPE_MAX
+	};
+
+	enum EActionType	// アクション種類
+	{
+		ACTIONTYPE_NONE = 0,	// なし
+		ACTIONTYPE_THROW,		// 投げ
+		ACTIONTYPE_PASS,		// パス
+		ACTIONTYPE_SPECIAL,		// スペシャル
 	};
 
 	enum ELine
@@ -167,6 +178,9 @@ private:
 	typedef void(CPlayerAIControl::* THROWTIMING_FUNC)(CPlayer*, const float, const float, const float);
 	static THROWTIMING_FUNC m_ThrowTimingFunc[];			// 投げタイミング関数
 
+	//typedef void(CPlayerAIControl::* ACTION_FUNC)(CPlayer*, const float, const float, const float);
+	//static ACTION_FUNC m_ActionFunc[];			// 投げタイミング関数
+
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
 
@@ -197,10 +211,13 @@ private:
 	void ThrowMoveDash(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// 投げタイミング
-	void ThrowJumpTimingNone(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
-	void ThrowJumpTimingNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ThrowJumpTimingQuick(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ThrowJumpTimingDelay(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingNone(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
+	void ThrowTimingNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingQuick(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingDelay(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingJumpNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingJumpQuick(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ThrowTimingJumpDelay(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// キャッチ
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
@@ -209,13 +226,17 @@ private:
 	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
+	/*void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);*/
+
 	// 行動
-	void MoveNone(CPlayer* pTarget);
-	void MoveWalk(CPlayer* pTarget);
-	void MoveDash(CPlayer* pTarget);
-	void MoveLeave(CPlayer* pTarget);
-	void MoveApproatch(CPlayer* pTarget);
-	void MoveReturn(CPlayer* pTarget);
+	void MoveStop(CPlayer* pTarget);			// なし
+	void MoveWalk(CPlayer* pTarget);			// 歩く
+	void MoveDash(CPlayer* pTarget);			// 走る
+	void MoveLeave(CPlayer* pTarget);			// 離れる
+	void MoveApproatch(CPlayer* pTarget);		// 近づく
+	void MoveReturn(CPlayer* pTarget);			// 戻る
 
 	//-----------------------------
 	// その他関数
@@ -256,14 +277,14 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CPlayer* m_pAI;			// 自分自身
-	CPlayer* m_pTarget;		// ターゲット
+	CPlayer* m_pAI;				// 自分情報
+	CPlayer* m_pTarget;			// ターゲット情報
 
-	SInfo m_sInfo;		// モード情報
-	STarget m_sTarget;
+	SInfo m_sInfo;				// モード情報
+	STarget m_sTarget;			// ターゲット情報
 	SMoveInfo m_sMoveInfo;		// 行動情報
-	ELine m_eLine;
-	EHeart m_eHeart;	// 心
+	ELine m_eLine;				// 線
+	EHeart m_eHeart;			// 心
 
 	bool m_bStart;
 	bool m_bEnd;
