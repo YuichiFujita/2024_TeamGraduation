@@ -12,7 +12,23 @@
 //==========================================================================
 namespace
 {
+	const MyLib::Vector3 POS_POLY[CGameManager::ETeamSide::SIDE_MAX] =
+	{
+		MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.6f, 0.0f),
+		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f, 0.0f),
+	};
+}
 
+namespace Prelude
+{
+	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\rank_C.png";		// 負け
+	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\rank_B.png";		// 勝ち
+}
+
+namespace Contest
+{
+	const std::string TEXFILE_LOSE = "data\\TEXTURE\\result\\rank_A.png";		// 負け
+	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\rank_S.png";		// 勝ち
 }
 
 //==========================================================================
@@ -25,6 +41,7 @@ CResultManager* CResultManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 CResultManager::CResultManager()
 {
+	m_fTime = 0.0f;											// 時間経過
 	m_fTension = 0.0f;										// 盛り上がり値
 	m_teamWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
 	memset(&m_fCharmValue[0], 0, sizeof(m_fCharmValue));	// モテ値
@@ -74,6 +91,10 @@ HRESULT CResultManager::Init()
 	//チームステータス
 	Load();
 
+	CreatePrelude();
+
+	CreateCharmContest();
+
 	return S_OK;
 }
 
@@ -93,6 +114,9 @@ void CResultManager::Uninit()
 //==========================================================================
 void CResultManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 時間経過
+	m_fTime += fDeltaTime * fSlowRate;
+
 	// 最初勝利チームドーン
 	// その後モテ値勝利ドーン
 	// 盛り上がり値ドーン
@@ -102,12 +126,63 @@ void CResultManager::Update(const float fDeltaTime, const float fDeltaRate, cons
 
 #if _DEBUG	// デバッグ処理
 
-	if (ImGui::TreeNode("GameManager"))
+	if (ImGui::TreeNode("ResultManager"))
 	{
 		Debug();
 		ImGui::TreePop();
 	}
 #endif
+}
+
+//==========================================================================
+// 前座勝敗生成
+//==========================================================================
+void CResultManager::CreatePrelude()
+{
+	CTexture* pTexture = CTexture::GetInstance();
+
+	// ポリゴン生成
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CObject2D* pObj = CObject2D::Create();
+	
+		pObj->SetPosition(POS_POLY[i]);
+
+		if (m_teamWin == static_cast<CGameManager::ETeamSide>(i))
+		{// 勝利チームの場合
+			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_LOSE));
+		}
+		else
+		{
+			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_WIN));
+		}
+	}
+}
+
+//==========================================================================
+// モテ勝敗生成
+//==========================================================================
+void CResultManager::CreateCharmContest()
+{
+	CTexture* pTexture = CTexture::GetInstance();
+
+	//TAKADA: モテ値出す？
+	// ポリゴン生成
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CObject2D* pObj = CObject2D::Create();
+
+		pObj->SetPosition(POS_POLY[i]);
+
+		if (m_teamWin == static_cast<CGameManager::ETeamSide>(i))
+		{// 勝利チームの場合
+			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
+		}
+		else
+		{
+			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_WIN));
+		}
+	}
 }
 
 //==========================================================================
@@ -198,14 +273,7 @@ void CResultManager::Debug()
 {
 #if _DEBUG
 
-	// タイマー
 
-	if (ImGui::TreeNode("Timer"))
-	{
-		ImGui::Text("bStop");
-
-		ImGui::TreePop();
-	}
 
 #endif
 }
