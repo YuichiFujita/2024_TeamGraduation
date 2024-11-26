@@ -360,6 +360,7 @@ HRESULT CPlayer::Init()
 	if (m_pStatus == nullptr)
 	{
 		m_pStatus = DEBUG_NEW CPlayerStatus(this);
+		m_pStatus->Init();
 	}
 
 	// スぺシャルエフェクト
@@ -445,7 +446,11 @@ void CPlayer::Kill()
 	}
 
 	// ステータス
-	SAFE_DELETE(m_pStatus);
+	if (m_pStatus != nullptr)
+	{
+		m_pStatus->Kill();
+		m_pStatus = nullptr;
+	}
 
 	// 終了処理
 	Uninit();

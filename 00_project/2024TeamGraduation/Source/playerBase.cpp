@@ -89,7 +89,8 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	// リバウンドボールの場合キャッチする
-	if (stateBall == CBall::STATE_REBOUND)
+	if (stateBall == CBall::STATE_REBOUND &&
+		m_pPlayer->GetState() != CPlayer::EState::STATE_DMG)
 	{
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
@@ -107,7 +108,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
 	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived)	// FUJITA: リバウンドボール即座に取得はちゃうやん
+	if (!m_pPlayer->GetDamageInfo().bReceived)
 	{
 		hitInfo.bHit = true;
 		return hitInfo;
