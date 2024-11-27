@@ -99,37 +99,6 @@ void CPlayerUserIn::MotionCrab(int nStartKey)
 	// 向き
 	MyLib::Vector3 rot = GetPlayer()->GetRotation();
 
-	// ラムダ(bool)
-	auto CollisionRangeAngle = [](float angle, float maxAngle, float minAngle)
-	{
-		// 正規化解除
-		UtilFunc::Transformation::RotUnNormalize(angle);
-		UtilFunc::Transformation::RotUnNormalize(maxAngle);
-		UtilFunc::Transformation::RotUnNormalize(minAngle);
-
-		// 度数法に変換
-		int nAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(angle));
-		int nMaxAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(maxAngle));
-		int nMinAngle = static_cast<int>(UtilFunc::Transformation::RadianChangeToDegree(minAngle));
-
-		if (nMaxAngle <= nMinAngle)
-		{// 範囲が360°を跨ぐ場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle <= nAngle && nAngle <= nMinAngle);
-			return bRange;
-		}
-		else
-		{// 範囲が通常の順序で指定されている場合
-
-			// nAngleがMin以上Max以下。
-			bool bRange = (nMaxAngle >= nAngle && nAngle >= nMinAngle);
-			return bRange;
-		}
-
-		return false;
-	};
-
 	//--------------------------------
 	// プレイヤー方向
 	//--------------------------------
@@ -140,25 +109,25 @@ void CPlayerUserIn::MotionCrab(int nStartKey)
 	
 	float fRangeZero = Crab::RANGE_MIN_MAX[0];
 	UtilFunc::Transformation::RotNormalize(fRangeZero);
-	if (!CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+	if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
 	{// 下向き
 		playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
 	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
 	{// 上向き
 		playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
 	{// 左向き
 		playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	else if (CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
 	{// 右向き
 		playerDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
 		bRot = true;

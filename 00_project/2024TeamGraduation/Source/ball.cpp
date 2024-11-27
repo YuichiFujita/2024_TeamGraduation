@@ -23,7 +23,7 @@
 #include "3D_Effect.h"
 
 // TODO：AI/User切り替え
-#if 0
+#if 1
 #define CHANGE
 #endif
 
@@ -140,6 +140,12 @@ namespace
 		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
 		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
 		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
+	}
+
+	namespace spawn
+	{
+		const float THROW_MOVE = 3.5f;	// スポーン移動速度
+		const float MOVE_UP = 6.5f;		// スポーン上移動量
 	}
 }
 
@@ -428,6 +434,35 @@ void CBall::CatchLand(CPlayer* pPlayer)
 
 	// キャッチ処理
 	Catch(pPlayer);
+}
+
+//==========================================================================
+// スポーン処理
+//==========================================================================
+void CBall::Spawn(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// 生成状態にする
+	SetState(STATE_SPAWN);
+
+	// 横位置を初期化
+	MyLib::Vector3 pos = GetPosition();
+	pos.x = pos.z = 0.0f;
+	SetPosition(pos);
+
+	// 上移動量を与える
+	MyLib::Vector3 move = GetMove();
+	move.x = move.z = 0.0f;
+	move.y = spawn::MOVE_UP;
+	SetMove(move);
+
+	// 移動量を設定
+	m_fMoveSpeed = spawn::THROW_MOVE;
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
 
 //==========================================================================

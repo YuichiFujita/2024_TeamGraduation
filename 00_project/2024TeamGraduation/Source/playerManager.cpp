@@ -85,11 +85,13 @@ CPlayerManager* CPlayerManager::Create()
 //==========================================================================
 HRESULT CPlayerManager::Init()
 {
+	// FUJITA：エントリーで外部に保存されたプレイヤー情報を取得しプレイヤーを生成
+
 	//----------------------------------------------------------------------
 	// プレイヤー内野生成
 	//----------------------------------------------------------------------
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
@@ -136,7 +138,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 0
+#if 1
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -147,7 +149,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 0
+#if 1
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
@@ -201,7 +203,7 @@ HRESULT CPlayerManager::Init()
 	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
 
 	// プレイヤー外野生成 (右サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -223,7 +225,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤー外野生成 (左サイド)
-#if 1
+#if 0
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -243,6 +245,17 @@ HRESULT CPlayerManager::Init()
 		}
 	}
 #endif
+
+	// 審判生成
+	CPlayer::Create
+	(
+		MyLib::Vector3(0.0f, 0.0f, CGameManager::GetInstance()->GetCourtSize().z),			// 位置
+		CGameManager::ETeamSide::SIDE_NONE,			// チームサイド
+		CPlayer::EHuman::HUMAN_REFEREE,				// 人
+		CPlayer::EBody::BODY_NORMAL,				// 体型
+		CPlayer::EHandedness::HAND_R				// 利き手
+	);
+
 
 	return S_OK;
 }
@@ -311,7 +324,7 @@ void CPlayerManager::DeletePlayer(CPlayer* pPlayer)
 		break;
 
 	default:
-		assert(false);
+		return;
 		break;
 	}
 }

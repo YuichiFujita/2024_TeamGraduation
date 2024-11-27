@@ -83,6 +83,10 @@ public:
 	CGameManager();
 	~CGameManager();
 
+
+	//=============================
+	// メンバ関数
+	//=============================
 	virtual HRESULT Init();
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
@@ -99,13 +103,16 @@ public:
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得
 
 	void Debug();			// デバッグ
-	void StartSetting();	// スタート時の設定
 	CBall* GetBall();		// ボール取得
 	CTeamStatus* GetTeamStatus(const ETeamSide team) { return m_pTeamStatus[team]; }	// チームステータス取得
 	void AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType);			// モテ加算
 	void SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType);			// モテ減算
 	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);		// スペシャル加算
-	
+
+	//-----------------------------
+	// モード毎の設定処理
+	//-----------------------------
+	void StartSetting();	// スタート時の設定
 	void EndGame();			// 試合終了
 	void CheckVictory();	// 勝利チーム決定
 

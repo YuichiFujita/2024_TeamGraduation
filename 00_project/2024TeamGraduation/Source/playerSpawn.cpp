@@ -1,25 +1,27 @@
 //==========================================================================
 // 
-//  登場用プレイヤー処理 [playerSpawn.cpp]
+//  登場演出用プレイヤー処理 [playerSpawn.cpp]
 //  Author : 藤田勇一
 // 
 //==========================================================================
 #include "playerSpawn.h"
-#include "playerStatus.h"
-#include "EffekseerObj.h"
+#include "manager.h"
 
-// 使用クラス
-#include "playerUsercontrol_move.h"
-#include "playerUsercontrol_action.h"
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+
+}
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerSpawn::CPlayerSpawn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase) : CPlayerBase(pPlayer, typeTeam, typeArea, typeBase)
+CPlayerSpawn::CPlayerSpawn(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) :
+	CPlayer(typeTeam, typeArea, typeBase, nPriority)
 {
-	// 操作の割当
-	ChangeMoveControl(DEBUG_NEW CPlayerUserControlMove());
-	ChangeActionControl(DEBUG_NEW CPlayerUserControlAction());
+
 }
 
 //==========================================================================
@@ -27,7 +29,37 @@ CPlayerSpawn::CPlayerSpawn(CPlayer* pPlayer, const CGameManager::ETeamSide typeT
 //==========================================================================
 CPlayerSpawn::~CPlayerSpawn()
 {
+	
+}
 
+//==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CPlayerSpawn::Init()
+{
+	// 親クラスの初期化
+	HRESULT hr = CPlayer::Init();
+	if (FAILED(hr)) { return E_FAIL; }
+
+	return S_OK;
+}
+
+//==========================================================================
+// 終了処理
+//==========================================================================
+void CPlayerSpawn::Uninit()
+{
+	// 親クラスの終了
+	CPlayer::Uninit();
+}
+
+//==========================================================================
+// 削除
+//==========================================================================
+void CPlayerSpawn::Kill()
+{
+	// 親クラスの終了
+	CPlayer::Kill();
 }
 
 //==========================================================================
@@ -35,5 +67,18 @@ CPlayerSpawn::~CPlayerSpawn()
 //==========================================================================
 void CPlayerSpawn::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 過去の位置保存
+	SetOldPosition(GetPosition());
 
+	// 親クラスの更新処理
+	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 描画処理
+//==========================================================================
+void CPlayerSpawn::Draw()
+{
+	// 親クラスの描画
+	CPlayer::Draw();
 }

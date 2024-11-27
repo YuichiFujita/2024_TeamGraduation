@@ -24,6 +24,7 @@
 #include "audience.h"
 #include "gymDoor.h"
 #include "gymWallManager.h"
+#include "playerSpawnManager.h"
 #include "playerManager.h"
 #include "charmManager.h"
 #include "timerUI.h"
@@ -166,8 +167,8 @@ HRESULT CGameManager::Init()
 		return E_FAIL;
 	}
 
-	// プレイヤーマネージャー生成
-	if (CPlayerManager::Create() == nullptr)
+	// プレイヤー登場演出マネージャー生成
+	if (CPlayerSpawnManager::Create() == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -284,64 +285,8 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CGameManager::StartSetting()
 {
-	
-}
-
-//==========================================================================
-// メイン
-//==========================================================================
-void CGameManager::SceneMain()
-{
-	// 操作出来る
-	m_bControll = true;
-
-	// 観客更新
-	UpdateAudience();
-
-	// 制限時間更新
-	UpdateLimitTimer();
-
-	// チームステータス更新
-	UpdateTeamStatus();
-}
-
-//==========================================================================
-// 制限時間更新
-//==========================================================================
-void CGameManager::UpdateLimitTimer()
-{
-	// タイマー無いと抜ける
-	if (m_pTimerUI == nullptr) return;
-
-	// 終了したら
-	if (m_pTimerUI->IsEnd())
-	{
-		SetSceneType(ESceneType::SCENE_END);
-	}
-}
-
-//==========================================================================
-// 登場演出
-//==========================================================================
-void CGameManager::SceneSpawn()
-{
-	// 操作出来ない
-	m_bControll = false;
-
-	// TODO：登場演出が終わったら遷移！
-	{
-		// 開始演出へ遷移
-		SetSceneType(ESceneType::SCENE_START);
-	}
-}
-
-//==========================================================================
-// 開始演出
-//==========================================================================
-void CGameManager::SceneStart()
-{
-	// 操作出来ない
-	m_bControll = false;
+	// メインへ遷移
+	SetSceneType(ESceneType::SCENE_MAIN);
 
 	// TODO：開始演出が終わったら遷移！
 	{
@@ -382,6 +327,77 @@ void CGameManager::SceneStart()
 		// メインへ遷移
 		SetSceneType(ESceneType::SCENE_MAIN);
 	}
+}
+
+//==========================================================================
+// メイン
+//==========================================================================
+void CGameManager::SceneMain()
+{
+	// 操作出来る
+	m_bControll = true;
+
+	// 観客更新
+	UpdateAudience();
+
+	// 制限時間更新
+	UpdateLimitTimer();
+
+	// チームステータス更新
+	UpdateTeamStatus();
+}
+
+//==========================================================================
+// 制限時間更新
+//==========================================================================
+void CGameManager::UpdateLimitTimer()
+{
+	// タイマー無いと抜ける
+	if (m_pTimerUI == nullptr) return;
+
+	// 終了したら
+	if (m_pTimerUI->IsEnd())
+	{
+		SetSceneType(ESceneType::SCENE_END);
+	}
+}
+
+//==========================================================================
+// 登場演出
+//==========================================================================
+void CGameManager::SceneSpawn()
+{
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	assert(pManager != nullptr);
+
+	// 操作出来ない
+	m_bControll = false;
+
+	if (pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
+	{ // 登場演出が終わった場合
+
+		// プレイヤー登場演出マネージャーの終了
+		SAFE_UNINIT(pManager);
+
+		// プレイヤーマネージャーの生成
+		CPlayerManager::Create();
+
+		// 追従カメラの設定
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+		pCamera->SetState(CCamera::STATE_FOLLOW);
+
+		// 開始演出へ遷移
+		SetSceneType(ESceneType::SCENE_START);
+	}
+}
+
+//==========================================================================
+// 開始演出
+//==========================================================================
+void CGameManager::SceneStart()
+{
+	// 操作出来ない
+	m_bControll = false;
 }
 
 //==========================================================================

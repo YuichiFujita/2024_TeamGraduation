@@ -70,7 +70,7 @@ private:
 	// 静的メンバ変数
 	static AFuncUpdateState m_aFuncUpdateState[];		// 状態更新関数
 	static AFuncUpdateSpecial m_aFuncUpdateSpecial[];	// スペシャル更新関数
-	static CSpecialManager* m_pThisClass;				// 自身のインスタンス
+	static CSpecialManager* m_pInstance;				// 自身のインスタンス
 
 	// メンバ関数
 	void UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// カットイン更新

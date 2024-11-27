@@ -188,10 +188,20 @@ public:
 	// ポジション列挙
 	enum EFieldArea
 	{
-		FIELD_IN = 0,	// 内野
-		FIELD_OUT,		// 外野
-		FIELD_ENTRY,	// エントリー用
-		FIELD_MAX		// この列挙型の総数
+		FIELD_NONE = -1,	// 指定なし
+		FIELD_IN,			// 内野
+		FIELD_OUT,			// 外野
+		FIELD_MAX			// この列挙型の総数
+	};
+
+	// 人間列挙
+	enum EHuman
+	{
+		HUMAN_NONE = -1,	// 指定なし
+		HUMAN_ENTRY,		// エントリー
+		HUMAN_SPAWN,		// 登場演出
+		HUMAN_REFEREE,		// 体育教師
+		HUMAN_MAX			// この列挙型の総数
 	};
 
 	//=============================
@@ -345,7 +355,7 @@ public:
 	// 静的関数
 	//=============================
 	/*
-		@brief	プレイヤーの生成処理
+		@brief	ゲームプレイヤーの生成処理
 		@param	rPos	 [in]	初期位置 (内野のみ)
 		@param	typeTeam [in]	左/右
 		@param	typeArea [in]	内野/外野
@@ -360,8 +370,24 @@ public:
 		EFieldArea	typeArea = EFieldArea::FIELD_IN,	// ポジション
 		EBaseType	typeBase = EBaseType::TYPE_USER,	// ベースタイプ
 		EBody		typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness	typeHand = EHandedness::HAND_R,		// 利き手
-		CScene::MODE mode = CScene::MODE::MODE_GAME		// モード
+		EHandedness	typeHand = EHandedness::HAND_R		// 利き手
+	);
+
+	/*
+		@brief	仮想プレイヤーの生成処理
+		@param	rPos	  [in]	初期位置
+		@param	typeTeam  [in]	左/右
+		@param	typeHuman [in]	人種類
+		@param	typeBody  [in]	標準/デブ/ガリ
+		@param	typeHand  [in]	右利き/左利き
+	*/
+	static CPlayer* Create
+	(
+		const MyLib::Vector3& rPos,			// 位置
+		CGameManager::ETeamSide typeTeam,	// チームサイド
+		EHuman typeHuman,					// 人
+		EBody typeBody = EBody::BODY_NORMAL,		// 体型
+		EHandedness typeHand = EHandedness::HAND_R	// 利き手
 	);
 
 protected:
@@ -388,7 +414,7 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
 	void StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 無敵
 	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
@@ -418,8 +444,8 @@ private:
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
 	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モーション別更新処理
-	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
