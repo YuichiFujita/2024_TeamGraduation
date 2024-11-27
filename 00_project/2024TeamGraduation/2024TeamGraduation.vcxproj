@@ -332,6 +332,7 @@
     <ClCompile Include="Source\specialEffect_kamehameha.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
     <ClCompile Include="Source\specialValueManager.cpp" />
+    <ClCompile Include="Source\startText.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\teamStatus.cpp" />
@@ -521,6 +522,7 @@
     <ClInclude Include="Source\specialEffect_kamehameha.h" />
     <ClInclude Include="Source\specialManager.h" />
     <ClInclude Include="Source\specialValueManager.h" />
+    <ClInclude Include="Source\startText.h" />
     <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\teamStatus.h" />

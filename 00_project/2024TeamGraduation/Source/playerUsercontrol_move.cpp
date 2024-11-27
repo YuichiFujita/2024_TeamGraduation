@@ -541,6 +541,9 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	player->SetMotionFrag(motionFrag);
 	
 	SetBlink(bDash);	//走るフラグ設定
+
+	//走るフラグ設定
+	player->SetEnableDash(true);
 }
 
 //==========================================================================

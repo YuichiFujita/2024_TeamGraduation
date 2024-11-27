@@ -75,8 +75,8 @@ CHARACTERSET
 	END_CENTERSET
 	
 	BALLSET
-		PARTS = 8		# 中心にするパーツ
-		OFFSET = 6.50 -12.00 0.00		# オフセット位置
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = -6.50 -12.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
@@ -236,6 +236,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 MOTION_FILENAME = data/TEXT/character/referee/motion_def.txt	# デフォルト
 MOTION_FILENAME = data/TEXT/character/referee/motion_wait.txt	# 待機
 MOTION_FILENAME = data/TEXT/character/referee/motion_toss.txt	# トス
+MOTION_FILENAME = data/TEXT/character/referee/motion_return.txt	# 戻る
 
 
 

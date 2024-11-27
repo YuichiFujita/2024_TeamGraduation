@@ -177,9 +177,6 @@ bool CPlayerBase::IsCrab()
 	// ボールの状態：敵側であるか
 	if (pBall->GetTypeTeam() == m_pPlayer->GetTeam())	{ return false; }
 
-	// 敵チームで攻撃判定がある場合はカニ歩き
-	if (pBall->IsAttack()) { return true; }
-
 	if (pBall->GetTypeTeam() == CGameManager::ETeamSide::SIDE_NONE)	{ return false; }
 
 	// フリーボールはカニ歩きしない
@@ -189,6 +186,9 @@ bool CPlayerBase::IsCrab()
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// アクションパターン
 	if (action == CPlayer::EAction::ACTION_BLINK) { return false; }
 	if (m_pPlayer->IsDash()) { return false; }
+
+	// 敵チームで攻撃判定がある場合はカニ歩き
+	if (pBall->IsAttack()) { return true; }
 
 	return true;
 }

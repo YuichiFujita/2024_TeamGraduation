@@ -12,6 +12,7 @@
 #include "calculation.h"
 #include "sound.h"
 #include "fade.h"
+#include "startText.h"
 
 //==========================================================================
 // 定数定義
@@ -19,11 +20,14 @@
 namespace
 {
 	const std::string CHARAFILE = "data\\TEXT\\character\\referee\\setup_player.txt";	// キャラクターファイル
+	const MyLib::Vector3 POSITION_START = MyLib::Vector3(0.0f, 0.0f, 50.0f);	// 初期位置
 }
 
 namespace StateTime
 {
-	const float TOSSWAIT = 3.0f;	// トス待ち
+	const float TOSSWAIT = 3.0f;			// トス待ち
+	const float CREATE_STARTTEXT = 2.0f;	// スタート文字生成
+	const float RETURN = 1.0f;				// 戻る
 }
 
 //==========================================================================
@@ -34,6 +38,7 @@ CPlayerReferee::STATE_FUNC CPlayerReferee::m_StateFunc[] =	// 状態関数
 	&CPlayerReferee::StateNone,		// なし
 	&CPlayerReferee::StateTossWait,	// トス待機
 	&CPlayerReferee::StateToss,		// トス
+	&CPlayerReferee::StateReturn,	// 戻る
 };
 
 //==========================================================================
@@ -46,7 +51,8 @@ CPlayerReferee::STATE_FUNC CPlayerReferee::m_StateFunc[] =	// 状態関数
 CPlayerReferee::CPlayerReferee(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) :
 	CPlayer(typeTeam, typeArea, typeBase, nPriority),
 	m_state			(EState::STATE_NONE),	// 状態
-	m_fStateTime	(0.0f)					// 状態時間
+	m_fStateTime	(0.0f),					// 状態時間
+	m_pStartText	(nullptr)				// スタート文字
 {
 
 }
@@ -83,6 +89,9 @@ HRESULT CPlayerReferee::Init()
 	{
 		pBall->CatchLand(this);
 	}
+
+	// 中央付近に置く
+	SetPosition(POSITION_START);
 
 	// カメラの方向向きにする
 	SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
@@ -167,11 +176,24 @@ void CPlayerReferee::StateTossWait(const float fDeltaTime, const float fDeltaRat
 		pMotion->Set(EMotion::MOTION_WAIT);
 	}
 
+	// 中央付近に置く
+	SetPosition(POSITION_START);
+
+
+	// スタートの文字生成
+	if (m_fStateTime >= StateTime::CREATE_STARTTEXT &&
+		m_pStartText == nullptr)
+	{
+		m_pStartText = CStartText::Create();
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WHISTLE);
+	}
+
 	if (m_fStateTime >= StateTime::TOSSWAIT)
 	{
 		// トスへ遷移
 		pMotion->Set(EMotion::MOTION_TOSS);
 		SetState(EState::STATE_TOSS);
+
 	}
 }
 
@@ -188,6 +210,35 @@ void CPlayerReferee::StateToss(const float fDeltaTime, const float fDeltaRate, c
 		pMotion->IsFinish())
 	{// トスモーションが終了してたら
 
+		// 戻る状態にする
+		pMotion->Set(EMotion::MOTION_RETUN);
+		SetState(EState::STATE_RETURN);
+	}
+}
+
+//==========================================================================
+// 戻る
+//==========================================================================
+void CPlayerReferee::StateReturn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->GetType() != EMotion::MOTION_RETUN)
+	{// 戻ってなかったらモーション強制
+		pMotion->Set(EMotion::MOTION_RETUN);
+	}
+
+	// 位置補正
+	MyLib::Vector3 pos = UtilFunc::Correction::EasingLinear(
+		POSITION_START,
+		MyLib::Vector3(0.0f, 0.0f, CGameManager::GetInstance()->GetCourtSize().z),
+		0.0f, StateTime::RETURN, m_fStateTime);
+	SetPosition(pos);
+
+	if (m_fStateTime >= StateTime::RETURN)
+	{
 		// NONEにする
 		pMotion->Set(EMotion::MOTION_DEF);
 		SetState(EState::STATE_NONE);

@@ -223,6 +223,7 @@ void CObjectChara::MotionInProgressAction()
 
 	// î•ñæ“¾
 	std::vector<CMotion::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
+	if (attackInfo.empty()) return;
 
 	// UŒ‚ˆ—
 	int i = 0;
