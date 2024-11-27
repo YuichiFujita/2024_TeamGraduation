@@ -12,6 +12,7 @@
 #include "calculation.h"
 #include "sound.h"
 #include "fade.h"
+#include "startText.h"
 
 //==========================================================================
 // 定数定義
@@ -24,8 +25,9 @@ namespace
 
 namespace StateTime
 {
-	const float TOSSWAIT = 3.0f;	// トス待ち
-	const float RETURN = 1.0f;		// 戻る
+	const float TOSSWAIT = 3.0f;			// トス待ち
+	const float CREATE_STARTTEXT = 2.0f;	// スタート文字生成
+	const float RETURN = 1.0f;				// 戻る
 }
 
 //==========================================================================
@@ -49,7 +51,8 @@ CPlayerReferee::STATE_FUNC CPlayerReferee::m_StateFunc[] =	// 状態関数
 CPlayerReferee::CPlayerReferee(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) :
 	CPlayer(typeTeam, typeArea, typeBase, nPriority),
 	m_state			(EState::STATE_NONE),	// 状態
-	m_fStateTime	(0.0f)					// 状態時間
+	m_fStateTime	(0.0f),					// 状態時間
+	m_pStartText	(nullptr)				// スタート文字
 {
 
 }
@@ -176,11 +179,20 @@ void CPlayerReferee::StateTossWait(const float fDeltaTime, const float fDeltaRat
 	// 中央付近に置く
 	SetPosition(POSITION_START);
 
+
+	// スタートの文字生成
+	if (m_fStateTime >= StateTime::CREATE_STARTTEXT &&
+		m_pStartText == nullptr)
+	{
+		m_pStartText = CStartText::Create();
+	}
+
 	if (m_fStateTime >= StateTime::TOSSWAIT)
 	{
 		// トスへ遷移
 		pMotion->Set(EMotion::MOTION_TOSS);
 		SetState(EState::STATE_TOSS);
+
 	}
 }
 
