@@ -463,6 +463,9 @@ void CPlayer::Uninit()
 	// ステータス
 	SAFE_DELETE(m_pPosAdj);
 
+	// スぺシャルエフェクト
+	SAFE_DELETE(m_pSpecialEffect);
+
 	// 終了処理
 	CObjectChara::Uninit();
 

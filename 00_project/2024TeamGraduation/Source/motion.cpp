@@ -568,11 +568,13 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 		attackInfo.bEndAtk = false;
 
 		// 初期フレームより前の物は設定済み
+#if 0
 		if (m_fAllFrame >= static_cast<float>(attackInfo.nInpactCnt))
 		{
 			attackInfo.bInpactAct = true;
 			attackInfo.bInpactActSet = true;
 		}
+#endif
 	}
 
 	// パーツサイズ

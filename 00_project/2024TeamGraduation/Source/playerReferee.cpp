@@ -185,6 +185,7 @@ void CPlayerReferee::StateTossWait(const float fDeltaTime, const float fDeltaRat
 		m_pStartText == nullptr)
 	{
 		m_pStartText = CStartText::Create();
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WHISTLE);
 	}
 
 	if (m_fStateTime >= StateTime::TOSSWAIT)
