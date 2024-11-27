@@ -1,0 +1,94 @@
+//==========================================================================
+// 
+//  プレイヤー位置補正_左内野コート処理 [playerPosAdj_inLeft.cpp]
+//  Author : 藤田勇一
+// 
+//==========================================================================
+#include "playerAIPosAdj_inLeft.h"
+#include "playerPosAdj_inLeft.h"
+#include "player.h"
+#include "playerBase.h"
+#include "playercontrol_move.h"
+#include "input_gamepad.h"
+#include "input_keyboard.h"
+#include "manager.h"
+#include "camera.h"
+
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+
+}
+
+//==========================================================================
+// コンストラクタ
+//==========================================================================
+CPlayerAIPosAdjInLeft::CPlayerAIPosAdjInLeft()
+{
+
+}
+
+//==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerAIPosAdjInLeft::~CPlayerAIPosAdjInLeft()
+{
+
+}
+
+//==========================================================================
+// ライン越えフラグ取得
+//==========================================================================
+bool CPlayerAIPosAdjInLeft::IsLineOut(CPlayer* pPlayer)
+{
+	// ラインを越えている場合フラグONを返す
+	if (pPlayer->GetPosition().x > 0.0f) { return true; }
+
+	// ラインを越えていない場合フラグOFFを返す
+	return false;
+}
+
+//==========================================================================
+// おっとっとフラグ取得
+//==========================================================================
+bool CPlayerAIPosAdjInLeft::IsUnstable(CPlayer* pPlayer)
+{
+	// ラインを越えている場合フラグONを返す
+	if (pPlayer->GetPosition().x > -UNSTABLE_LINE &&
+		pPlayer->GetPosition().x < 0.0f)
+	{
+		return true;
+	}
+
+	// ラインを越えていない場合フラグOFFを返す
+	return false;
+}
+
+//==========================================================================
+// おっとっと時入力フラグ取得
+//==========================================================================
+CPlayerPosAdjIn::EInputUnstable CPlayerAIPosAdjInLeft::IsInputLine(CPlayer* pPlayer)
+{
+#if 0
+
+	// 移動量の取得
+	MyLib::Vector3 move = pPlayer->GetMove();
+
+	// 右を入力していたらtrue
+	if (move.x > 0.0f)
+	{
+		return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
+	}
+	else if (move.x < 0.0f)
+	{
+		return CPlayerPosAdjIn::EInputUnstable::INPUT_FRIEND;
+	}
+
+#else
+	return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
+#endif
+
+	return CPlayerPosAdjIn::EInputUnstable::INPUT_NONE;
+}

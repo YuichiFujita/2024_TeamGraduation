@@ -305,7 +305,7 @@ public:
 	//=============================
 	// パターン
 	//=============================
-	void ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area);	// プレイヤー位置補正変更
+	void ChangePosAdjuster(EBaseType base, CGameManager::ETeamSide team, EFieldArea area);	// プレイヤー位置補正変更
 	CPlayerPosAdj* GetPosAdjuster() const	{ return m_pPosAdj; }			// プレイヤー位置補正取得
 	CPlayerAction* GetActionPattern() const	{ return m_pActionPattern; }	// アクション取得
 	CPlayerStatus* GetStatus() const		{ return m_pStatus; }			// ステータス取得

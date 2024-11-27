@@ -30,7 +30,7 @@ CPlayerBase::CPlayerBase(CPlayer* pPlayer, const CGameManager::ETeamSide typeTea
 	m_pControlAction (nullptr)		// アクション操作
 {
 	// 位置補正の割当
-	pPlayer->ChangePosAdjuster(typeTeam, typeArea);
+	pPlayer->ChangePosAdjuster(typeBase, typeTeam, typeArea);
 }
 
 //==========================================================================

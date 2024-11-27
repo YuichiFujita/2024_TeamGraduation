@@ -91,7 +91,7 @@ HRESULT CPlayerManager::Init()
 	// プレイヤー内野生成
 	//----------------------------------------------------------------------
 	// プレイヤーUser四人生成(左右)
-#if 1
+#if 0
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
@@ -149,7 +149,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 1
+#if 0
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
@@ -160,7 +160,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 0
+#if 1
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -183,7 +183,7 @@ HRESULT CPlayerManager::Init()
 
 	// プレイヤーAI四人生成(右)
 #if 0
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
@@ -203,7 +203,7 @@ HRESULT CPlayerManager::Init()
 	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
 
 	// プレイヤー外野生成 (右サイド)
-#if 0
+#if 1
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
@@ -225,7 +225,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤー外野生成 (左サイド)
-#if 0
+#if 1
 	for (int i = 0; i < nHalfMax; i++)
 	{ // チームごとの外野人数分繰り返す
 
