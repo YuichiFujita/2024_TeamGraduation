@@ -48,6 +48,8 @@
 #include "playerPosAdj_in.h"
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
+#include "playerAIPosAdj_inLeft.h"
+#include "playerAIPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
 #include "playerPosAdj_none.h"
 #include "playerAction.h"
@@ -1996,7 +1998,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 // プレイヤー位置補正の変更
 //==========================================================================
-void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
+void CPlayer::ChangePosAdjuster(EBaseType base, CGameManager::ETeamSide team, EFieldArea area)
 {
 	// プレイヤー位置補正の破棄
 	SAFE_DELETE(m_pPosAdj);
@@ -2012,11 +2014,28 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 		switch (team)
 		{ // チームコートごとの処理
 		case CGameManager::ETeamSide::SIDE_LEFT:
-			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
+
+			if (EBaseType::TYPE_USER == base)
+			{// ユーザー
+				m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
+			}
+			else
+			{
+				m_pPosAdj = DEBUG_NEW CPlayerAIPosAdjInLeft;
+			}
+
 			break;
 
 		case CGameManager::ETeamSide::SIDE_RIGHT:
-			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
+			if (EBaseType::TYPE_USER == base)
+			{// ユーザー
+				m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
+			}
+			else
+			{
+				m_pPosAdj = DEBUG_NEW CPlayerAIPosAdjInRight;
+			}
+
 			break;
 
 		default:

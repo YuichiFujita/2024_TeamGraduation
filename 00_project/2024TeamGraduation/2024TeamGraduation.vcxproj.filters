@@ -680,6 +680,12 @@
     <ClCompile Include="Source\playerReferee.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerAIPosAdj_inLeft.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIPosAdj_inRight.cpp">
+      <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1242,6 +1248,12 @@
     </ClInclude>
     <ClInclude Include="Source\playerReferee.h">
       <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIPosAdj_inLeft.h">
+      <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIPosAdj_inRight.h">
+      <Filter>player\playerPosAdj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -85,7 +85,7 @@ CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeT
 //==========================================================================
 CPlayerAIOut::~CPlayerAIOut()
 {
-	if (!m_pAIOutControl)
+	if (m_pAIOutControl)
 	{
 		delete m_pAIOutControl;
 		m_pAIOutControl = nullptr;

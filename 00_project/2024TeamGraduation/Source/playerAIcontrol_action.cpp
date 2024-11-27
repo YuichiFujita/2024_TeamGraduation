@@ -94,55 +94,48 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	bool bJump = player->IsJump();
-
-	if (bJump) return;
+	//if (bJump) return;
 
 	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
-	if (m_sFlag.bJump)
+	if (!bJump && m_sFlag.bJump)
 	{
 		// フラグリセット
-		m_sFlag.bJump = false;
+		//m_sFlag.bJump = false;
 
+		// ジャンプトリガーON
+		SetEnableJumpTrigger(true);
+
+		// ジャンプ設定
 		JumpSetting(player);
 	}
 
 	if (m_sFlag.bJumpFloat)
 	{// ジャンプボタンホールドで上昇
-		JumpFloat(player);
-	}
-	if (!m_sFlag.bJumpFloat)
-	{// ジャンプボタン離した
-
-		// ジャンプトリガーOFF
-		SetEnableJumpTrigger(false);
+		JumpFloat(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
 //==========================================================================
 // ジャンプ上昇
 //==========================================================================
-void CPlayerAIControlAction::JumpFloat(CPlayer* player)
+void CPlayerAIControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();
 
-	if (bJump)
+	if (bJump && IsJumpTrigger())
 	{// ジャンプ中は押してる間距離伸びていく
 
 		//ジャンプ処理
-		m_fJumpTimer += TAPTIME;
-
-		float timer = m_fJumpTimer / TAPRATE_MAX;
-		timer *= 0.1f;
-		m_fJumpRate = 1.0f;
-
-		//if ((TAPRATE_MAX * m_fJumpRate) < timer)
-		if (timer < (TAPRATE_MAX * m_fJumpRate))
+		m_fJumpTimer += fDeltaTime * fSlowRate;
+		float rate = m_fJumpTimer / TAPTIME;
+		
+		if (m_fJumpRate > rate)
 		{
 			// 移動量取得
 			MyLib::Vector3 move = player->GetMove();
 
-			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * timer;
+			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * rate;
 			move.y = player->GetParameter().fVelocityJump * jumpRatio;
 
 			// 移動量設定
@@ -150,8 +143,12 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player)
 		}
 		else
 		{// 終了
-			bJump = false;
+			// フラグリセット
+			m_sFlag.bJumpFloat = false;
 			m_fJumpTimer = 0.0f;
+
+			// ジャンプトリガーOFF
+			SetEnableJumpTrigger(false);
 		}
 
 		return;
@@ -159,26 +156,6 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player)
 
 	// タイマーリセット
 	m_fJumpTimer = 0.0f;
-
-	/*if (決めた割合 >= timer)
-	{
-		終了
-	}*/
-
-	//CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx(), TAPTIME);
-
-	//if (tapInfo.fRatio < 1.0f && pPad->GetPress(CInputGamepad::BUTTON_A, player->GetMyPlayerIdx()))
-	//{// タップ範囲 && 入力継続
-
-	//	// 移動量取得
-	//	MyLib::Vector3 move = player->GetMove();
-
-	//	float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * tapInfo.fRatio;
-	//	move.y = player->GetParameter().fVelocityJump * jumpRatio;
-
-	//	// 移動量設定
-	//	player->SetMove(move);
-	//}
 }
 
 //==========================================================================

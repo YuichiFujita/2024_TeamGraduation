@@ -74,7 +74,7 @@ private:
 	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// 投げ
 
 	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;			// ジャンプ
-	void JumpFloat(CPlayer* player) override;	// ジャンプ上昇
+	void JumpFloat(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ジャンプ上昇
 	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// スペシャル
 	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// モテ
 

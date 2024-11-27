@@ -170,7 +170,7 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 //==========================================================================
 // ジャンプ上昇
 //==========================================================================
-void CPlayerControlAction::JumpFloat(CPlayer* player)
+void CPlayerControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();

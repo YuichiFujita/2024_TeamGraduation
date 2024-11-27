@@ -172,6 +172,7 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 		// “ü—Íó‹µ
 		EInputUnstable inputUnstable = IsInputLine(pPlayer);
+
 		if (inputUnstable == EInputUnstable::INPUT_ENEMY)
 		{// “G‘¤‚É“ü—Í‚³‚ê‚½
 

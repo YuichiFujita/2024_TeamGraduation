@@ -284,6 +284,8 @@
     <ClCompile Include="Source\playerAIOut_control.cpp" />
     <ClCompile Include="Source\playerAIOut_controlAction.cpp" />
     <ClCompile Include="Source\playerAIOut_controlMove.cpp" />
+    <ClCompile Include="Source\playerAIPosAdj_inLeft.cpp" />
+    <ClCompile Include="Source\playerAIPosAdj_inRight.cpp" />
     <ClCompile Include="Source\playerBase.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
@@ -476,6 +478,8 @@
     <ClInclude Include="Source\playerAIOut_control.h" />
     <ClInclude Include="Source\playerAIOut_controlAction.h" />
     <ClInclude Include="Source\playerAIOut_controlMove.h" />
+    <ClInclude Include="Source\playerAIPosAdj_inLeft.h" />
+    <ClInclude Include="Source\playerAIPosAdj_inRight.h" />
     <ClInclude Include="Source\playerBase.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
