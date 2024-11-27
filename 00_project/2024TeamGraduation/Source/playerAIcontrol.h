@@ -75,6 +75,7 @@ private:
 		CATCH_TYPE_NORMAL,		// 通常
 		CATCH_TYPE_JUST,		// ジャスト
 		CATCH_TYPE_DASH,		// ダッシュ
+		CATCH_TYPE_PASS,		// パス
 		CATCH_TYPE_FIND,		// 取りに行く
 		CATCH_TYPE_MAX
 	};
@@ -145,7 +146,8 @@ private:
 
 	struct STarget	// 学習
 	{
-		float fDistance;		// 内野にいる相手との距離
+		float fDistanceIN;		// 内野との距離
+		float fDistanceOUT;		// 外野との距離
 	};
 
 public:
@@ -224,11 +226,13 @@ private:
 	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void CatchPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	/*void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);*/
+	void ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);*/
+	//void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// 行動
 	void MoveStop(CPlayer* pTarget);			// なし
@@ -251,7 +255,6 @@ private:
 	void CatchDistance(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離：キャッチ状態
 	void CatchOutDistance();				// 距離：外野
 	void CatchLineLeftDistance();			// パスする相手
-	void CatchMoveFlag();					// 行動：フラグ
 	void PlanIsJump(CPlayer* pTarget);		// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);		// 行動プラン
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
@@ -266,6 +269,7 @@ private:
 	bool IsLineOverPlayer();				// 線越え判定(プレイヤー)
 
 	void Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
+	void LeaveOut(float distance);											// 離れる
 	void LeaveX(MyLib::Vector3 targetPos, float distance);		// 離れる：x軸
 	void LeaveZ(MyLib::Vector3 targetPos, float distance);		// 離れる：z軸
 	void Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
