@@ -156,19 +156,16 @@ void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const fl
 					pObj->Update(fDeltaTime, fDeltaRate, fSlowRate);
 				}
 
-#if 0
 				if (pObj->m_bDeath)
 				{
 					// Œã‚ÅÁ‚·vector‚ÉŠi”[
 					objectsToRemove[layer.first][priority.first].push_back(pObj);
 					priority.second.erase(std::find(priority.second.begin(), priority.second.end(), pObj)); // erase—v‘f‚Æitr‚ðƒCƒ“ƒNƒŠƒƒ“ƒg
 				}
-#endif
 			}
 		}
 	}
 
-#if 0
 	//*******************************
 	// Ž€–Sˆ—
 	//*******************************
@@ -180,13 +177,11 @@ void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const fl
 			{
 				// ‘”Œ¸ŽZ
 				m_nNumAll--;
-				obj->Uninit();
 				delete obj;
 			}
 		}
 	}
 	objectsToRemove.clear();
-#endif
 }
 
 //==========================================================================

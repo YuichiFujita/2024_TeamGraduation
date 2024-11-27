@@ -60,12 +60,12 @@ namespace
 //==========================================================================
 CGameManager::SCENE_FUNC CGameManager::m_SceneFunc[] =	// シーン関数
 {
-	&CGameManager::SceneMain,			// メイン
-	&CGameManager::SceneSpawn,			// 登場演出
-	&CGameManager::SceneStart,			// 開始演出
-	&CGameManager::SceneSpecialStag,	// スペシャル演出
-	&CGameManager::SceneEnd,			// 終了演出
-	&CGameManager::SceneDebug,			// デバッグ
+	&CGameManager::SceneMain,		// メイン
+	&CGameManager::SceneSpawn,		// 登場演出
+	&CGameManager::SceneStart,		// 開始演出
+	&CGameManager::SceneSpecial,	// スペシャル演出
+	&CGameManager::SceneEnd,		// 終了演出
+	&CGameManager::SceneDebug,		// デバッグ
 };
 
 //==========================================================================
@@ -413,27 +413,29 @@ void CGameManager::UpdateLimitTimer()
 //==========================================================================
 void CGameManager::SceneSpawn()
 {
-	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	// プレイヤー登場演出マネージャーの取得
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();
 	assert(pManager != nullptr);
+
+	// 入力情報の取得
+	CInputKeyboard* pKey = GET_INPUTKEY;
+	CInputGamepad* pPad = GET_INPUTPAD;
 
 	// 操作出来ない
 	m_bControll = false;
 
-	if (pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
-	{ // 登場演出が終わった場合
+	bool bInput = pKey->GetTrigger(DIK_RETURN)
+			   || pKey->GetTrigger(DIK_SPACE)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, 0);
 
-		// プレイヤー登場演出マネージャーの終了
-		SAFE_UNINIT(pManager);
+	if (bInput || pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
+	{ // スキップ操作、または登場演出が終わった場合
 
-		// プレイヤーマネージャーの生成
-		CPlayerManager::Create();
-
-		// 追従カメラの設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
-		pCamera->SetState(CCamera::STATE_FOLLOW);
-
-		// 開始演出へ遷移
-		SetSceneType(ESceneType::SCENE_START);
+		// 登場演出のスキップ
+		SkipSpawn();
 	}
 }
 
@@ -449,13 +451,13 @@ void CGameManager::SceneStart()
 //==========================================================================
 // スペシャル演出
 //==========================================================================
-void CGameManager::SceneSpecialStag()
+void CGameManager::SceneSpecial()
 {
 	// 操作出来ない
 	m_bControll = false;
 
 	// スペシャル演出更新
-	UpdateSpecialStag();
+	UpdateSpecial();
 }
 
 //==========================================================================
@@ -485,6 +487,28 @@ void CGameManager::SceneDebug()
 }
 
 //==========================================================================
+// 登場演出スキップ
+//==========================================================================
+void CGameManager::SkipSpawn()
+{
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	assert(pManager != nullptr);
+
+	// プレイヤー登場演出マネージャーの終了
+	SAFE_UNINIT(pManager);
+
+	// プレイヤーマネージャーの生成
+	CPlayerManager::Create();
+
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
+
+	// 開始演出へ遷移
+	SetSceneType(ESceneType::SCENE_START);
+}
+
+//==========================================================================
 // 観客更新
 //==========================================================================
 void CGameManager::UpdateAudience()
@@ -505,7 +529,7 @@ void CGameManager::UpdateAudience()
 //==========================================================================
 // スペシャル演出更新
 //==========================================================================
-void CGameManager::UpdateSpecialStag()
+void CGameManager::UpdateSpecial()
 {
 
 }
