@@ -50,6 +50,7 @@ CMyEffekseer::CMyEffekseer()
 	// 変数のクリア
 	fTime = 0.0f;
 	efkHandle = 0;
+	m_vecLoadInfo.clear();	// 読み込み情報
 }
 
 //==========================================================================
@@ -94,8 +95,6 @@ HRESULT CMyEffekseer::Init()
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
-	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
-
 	// エフェクトのマネージャーの作成
 	m_efkManager = ::Effekseer::Manager::Create(12800);
 
@@ -114,6 +113,9 @@ HRESULT CMyEffekseer::Init()
 
 	// カメラ行列を設定
 	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
+
+	// 読み込み情報
+	m_vecLoadInfo.clear();
 
 	return S_OK;
 }
@@ -145,8 +147,18 @@ Effekseer::EffectRef CMyEffekseer::LoadEffect(EEfkLabel label)
 //==========================================================================
 Effekseer::EffectRef CMyEffekseer::LoadProcess(const std::u16string& efkpath)
 {
+	// 構造体の中の文字列を探す
+	auto itr = std::find_if(m_vecLoadInfo.begin(), m_vecLoadInfo.end(),
+		[&efkpath](const CMyEffekseer::SLoadInfo& info) {return info.filename == efkpath; });
+
+	// 見つかった場合
+	if (itr != m_vecLoadInfo.end())
+	{// 読み込み済み情報を返す
+		return (*itr).ref;
+	}
+
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(m_efkManager, efkpath.c_str());
+	Effekseer::EffectRef effect = Effekseer::Effect::Create(m_efkManager, efkpath.c_str());
 
 	onLostDevice = [effect]() -> void
 	{
@@ -165,6 +177,11 @@ Effekseer::EffectRef CMyEffekseer::LoadProcess(const std::u16string& efkpath)
 			effect->ReloadResources();
 		}
 	};
+
+	// 読み込み情報追加
+	m_vecLoadInfo.emplace_back();
+	m_vecLoadInfo.back().filename = efkpath;	// ファイル名
+	m_vecLoadInfo.back().ref = effect;			// リファレンス
 
 	return effect;
 }
