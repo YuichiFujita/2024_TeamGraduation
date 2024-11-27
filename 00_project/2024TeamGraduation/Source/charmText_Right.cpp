@@ -163,3 +163,41 @@ void CCharmText_Right::StateFadeOut()
 	// フェードアウト
 	CCharmText::StateFadeOut();
 }
+
+//==========================================================================
+// チェインの確認
+//==========================================================================
+void CCharmText_Right::CheckChain()
+{
+	std::vector<int> chainIdx;	// チェインするインデックス
+
+	// 既に存在しているものから確認
+	CListManager<CCharmText_Right>::Iterator itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		// ポインタ変換
+		CCharmText_Right* pText = (*itr);
+
+		// チェイン可能フラグ取得
+		bool bPossibleChain = pText->IsPossibleChain();
+
+		if (bPossibleChain)
+		{// チェイン可能なやつと、そいつがもっている全てとチェインする
+
+			// 既にチェインしているやつとそいつのインデックス取得
+			chainIdx = pText->GetChainIdx();
+			int pairIdx = m_List.FindIdx(pText);
+
+			// インデックス追加
+			chainIdx.push_back(pairIdx);
+
+			// もうチェイン出来なくする
+			pText->SetEnablePossibleChain(false);
+			break;
+		}
+	}
+
+	// チェインインデックス割り当て
+	m_nVecChainIdx = chainIdx;
+}

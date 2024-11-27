@@ -932,6 +932,20 @@ void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, con
 	default:
 		break;
 	}
+
+	//-----------------------------
+	// キャッチ
+	//-----------------------------
+	if (nType != EMotion::MOTION_CATCH_STANCE &&
+		nType != EMotion::MOTION_CATCH_STANCE_JUMP)
+	{
+		// エフェクト破棄
+		if (m_pEfkCatchStance != nullptr)
+		{
+			m_pEfkCatchStance->SetTrigger(0);
+			m_pEfkCatchStance = nullptr;
+		}
+	}
 }
 
 //==========================================================================
@@ -986,13 +1000,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_CATCH_STANCE:
 	case EMotion::MOTION_CATCH_STANCE_JUMP:
 	{
-		// エフェクト破棄
-		if (m_pEfkCatchStance != nullptr)
-		{
-			m_pEfkCatchStance->SetTrigger(0);
-			m_pEfkCatchStance = nullptr;
-		}
-
 		// エフェクトの位置
 		MyLib::Vector3 setpos = GetPosition();
 		MyLib::Vector3 rot = GetRotation();
@@ -1293,13 +1300,6 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		break;
 	}
 
-	// エフェクト破棄
-	if (m_pEfkCatchStance != nullptr)
-	{
-		m_pEfkCatchStance->SetTrigger(0);
-		m_pEfkCatchStance = nullptr;
-	}
-
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
 
@@ -1321,13 +1321,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-
-	// エフェクト破棄
-	if (m_pEfkCatchStance != nullptr)
-	{
-		m_pEfkCatchStance->SetTrigger(0);
-		m_pEfkCatchStance = nullptr;
-	}
 
 	switch (atkBall)
 	{

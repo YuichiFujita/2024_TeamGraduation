@@ -454,7 +454,7 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);	// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
-	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
+	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
 
 	//=============================
 	// メンバ変数
