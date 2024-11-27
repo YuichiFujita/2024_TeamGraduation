@@ -71,6 +71,8 @@ bool CPlayerAIPosAdjInLeft::IsUnstable(CPlayer* pPlayer)
 //==========================================================================
 CPlayerPosAdjIn::EInputUnstable CPlayerAIPosAdjInLeft::IsInputLine(CPlayer* pPlayer)
 {
+#if 0
+
 	// ˆÚ“®—Ê‚ÌŽæ“¾
 	MyLib::Vector3 move = pPlayer->GetMove();
 
@@ -83,6 +85,10 @@ CPlayerPosAdjIn::EInputUnstable CPlayerAIPosAdjInLeft::IsInputLine(CPlayer* pPla
 	{
 		return CPlayerPosAdjIn::EInputUnstable::INPUT_FRIEND;
 	}
+
+#else
+	return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
+#endif
 
 	return CPlayerPosAdjIn::EInputUnstable::INPUT_NONE;
 }
