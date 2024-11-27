@@ -137,6 +137,8 @@ void CPlayerControlMove::CrabSetting(CPlayer* player)
 
 	// カニ歩きじゃないときは抜ける
 	if (!player->GetBase()->IsCrab()) return;
+
+	// コート復帰中は抜ける
 	if (player->GetState() == CPlayer::EState::STATE_INVADE_TOSS ||
 		player->GetState() == CPlayer::EState::STATE_INVADE_RETURN) return;
 
@@ -162,6 +164,13 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player, const float fDeltaTim
 
 	// プレイヤー番号取得
 	int playerIdx = player->GetMyPlayerIdx();
+
+	// プレイヤーでない
+	if (playerIdx == -1)
+	{
+		SAFE_DELETE(m_pInputAngle);
+		return;
+	}
 
 	CPlayer::EDashAngle eAngle = CPlayer::EDashAngle::ANGLE_UP;
 	bool bInput = false;

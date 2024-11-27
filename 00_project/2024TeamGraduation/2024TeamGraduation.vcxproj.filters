@@ -683,6 +683,9 @@
     <ClCompile Include="Source\playerReferee.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerResult.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
     <ClCompile Include="Source\startText.cpp">
       <Filter>ingame\visual</Filter>
     </ClCompile>
@@ -1247,6 +1250,9 @@
       <Filter>player</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerReferee.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerResult.h">
       <Filter>player</Filter>
     </ClInclude>
     <ClInclude Include="Source\startText.h">

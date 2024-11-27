@@ -182,9 +182,17 @@ bool CPlayerBase::IsCrab()
 	// フリーボールはカニ歩きしない
 	if (pBall->GetState() == CBall::EState::STATE_FREE) { return false; }
 
-	// 自身の状態：ブリンク＆走りでない
+	// 自身の状態：
+	// ブリンク
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// アクションパターン
 	if (action == CPlayer::EAction::ACTION_BLINK) { return false; }
+
+	// 死亡状態
+	CPlayer::EState state = m_pPlayer->GetState();	// 状態
+	if (state == CPlayer::EState::STATE_DEAD
+	 || state == CPlayer::EState::STATE_DEAD_AFTER) { return false; }
+
+	// 走りでない
 	if (m_pPlayer->IsDash()) { return false; }
 
 	// 敵チームで攻撃判定がある場合はカニ歩き

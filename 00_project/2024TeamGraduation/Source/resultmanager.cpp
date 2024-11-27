@@ -7,6 +7,9 @@
 #include "resultmanager.h"
 #include "result.h"
 
+#include "playerResult.h"
+#include "audience.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -43,6 +46,34 @@ namespace Contest
 	{
 		MyLib::Vector3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.6f, 0.0f),
 		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.6f, 0.0f),
+	};
+}
+
+// プレイヤー
+namespace Player
+{
+	const float INIT_IN_X	(100.0f);	// 初期位置(内野)
+	const float INIT_IN_Z	(100.0f);	// 初期位置(内野)
+	const float INIT_OUT_X	(100.0f);	// 初期位置(外野)
+	const float INIT_OUT_Z	(300.0f);	// 初期位置(外野)
+	const float SHIFT	(50.0f);	// ずらし値
+
+	const MyLib::Vector3 POS_IN[CGameManager::ETeamSide::SIDE_MAX] =
+	{// 内野位置
+		MyLib::Vector3(-INIT_IN_X, 0.0f, +INIT_IN_Z),
+		MyLib::Vector3(+INIT_IN_X, 0.0f, +INIT_IN_Z),
+	};
+
+	const MyLib::Vector3 POS_OUT[CGameManager::ETeamSide::SIDE_MAX] =
+	{// 外野位置
+		MyLib::Vector3(-INIT_OUT_X, 0.0f, +INIT_OUT_Z),
+		MyLib::Vector3(+INIT_OUT_X, 0.0f, +INIT_OUT_Z),
+	};
+
+	const MyLib::Vector3 POS_SHIFT[CGameManager::ETeamSide::SIDE_MAX] =
+	{// ずらし値
+		MyLib::Vector3(-SHIFT, 0.0f, -SHIFT),
+		MyLib::Vector3(-SHIFT, 0.0f, -SHIFT),
 	};
 }
 
@@ -104,11 +135,16 @@ CResultManager* CResultManager::Create()
 //==========================================================================
 HRESULT CResultManager::Init()
 {
-	//チームステータス
+	//チームステータス＆プレイヤー生成
 	Load();
 
+	// 観客生成
+	CreateAudience();
+
+	// 前座勝敗ポリゴン生成
 	CreatePrelude();
 
+	// モテ勝敗ポリゴン生成
 	CreateCharmContest();
 
 	return S_OK;
@@ -119,7 +155,6 @@ HRESULT CResultManager::Init()
 //==========================================================================
 void CResultManager::Uninit()
 {
-
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;
@@ -224,7 +259,22 @@ void CResultManager::CreateCharmContest()
 }
 
 //==========================================================================
-// チームステータス読み込み
+// 観客更新
+//==========================================================================
+void CResultManager::CreateAudience()
+{
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		float fMoteRate = m_fCharmValue[i] / 100.0f;					// モテ割合	//TODO: マジックナンバー
+		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);		// 現在の観客数
+
+		// 観客数を設定
+		CAudience::SetNumWatch(nNumAudience, static_cast<CGameManager::ETeamSide>(i));
+	}
+}
+
+//==========================================================================
+// 試合情報読み込み
 //==========================================================================
 void CResultManager::Load()
 {
@@ -294,18 +344,10 @@ void CResultManager::Load()
 				m_fTension;	// 盛り上がり値
 		}
 
-		if (line.find("CHARMVALUE") != std::string::npos)
-		{// モテ値
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				m_fCharmValue[i];	// モテ値
-
+		if (line.find("SETTEAM") != std::string::npos)
+		{// チーム情報
+			LoadTeam(&File, line, i);
+	
 			i++;
 		}
 
@@ -320,12 +362,184 @@ void CResultManager::Load()
 }
 
 //==========================================================================
+// チームステータス読み込み
+//==========================================================================
+void CResultManager::LoadTeam(std::ifstream* File, std::string line, int nTeam)
+{
+	// コメント用
+	std::string hoge;
+	int j = 0;	// プレイヤー人数
+
+	while (std::getline(*File, line))
+	{
+		// コメントはスキップ
+		if (line.empty() ||
+			line[0] == '#')
+		{
+			continue;
+		}
+
+		if (line.find("END_SETTEAM") != std::string::npos)
+		{// 終了
+			break;
+		}
+
+		if (line.find("CHARMVALUE") != std::string::npos)
+		{// モテ値
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				m_fCharmValue[nTeam];	// モテ値
+		}
+
+		if (line.find("SETPLAYER") != std::string::npos)
+		{// プレイヤー情報
+
+			LoadPlayer(File, line, nTeam, j);
+
+			j++;	// 人数加算
+		}
+	}
+}
+
+//==========================================================================
+// チームステータス読み込み
+//==========================================================================
+void CResultManager::LoadPlayer(std::ifstream* File, std::string line, int nTeam, int nIdxPlayer)
+{
+	// コメント用
+	std::string hoge;
+
+	// チーム
+	CGameManager::ETeamSide team = static_cast<CGameManager::ETeamSide>(nTeam);
+
+	CPlayer::EHandedness eHanded = CPlayer::EHandedness::HAND_R;	// 利き手
+	CPlayer::EBody eBody = CPlayer::EBody::BODY_NORMAL;				// 体型
+	int nHair = -1;													// 髪
+	int nAccessory = -1;											// アクセサリー
+	int nFace = -1;													// 顔
+
+	while (std::getline(*File, line))
+	{
+		// コメントはスキップ
+		if (line.empty() ||
+			line[0] == '#')
+		{
+			continue;
+		}
+
+		if (line.find("END_SETPLAYER") != std::string::npos)
+		{// 終了
+			break;
+		}
+
+		if (line.find("HANDED") != std::string::npos)
+		{// 利き手
+
+			int hand = -1;
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				hand;		// 利き手
+
+			eHanded = static_cast<CPlayer::EHandedness>(hand);
+		}
+
+		if (line.find("BODY") != std::string::npos)
+		{// 体型
+
+			int body = -1;
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				body;		// 体型
+
+			eBody = static_cast<CPlayer::EBody>(body);
+		}
+
+		if (line.find("HAIR") != std::string::npos)
+		{// 髪
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				nHair;		// 髪
+		}
+
+		if (line.find("ACCESSORY") != std::string::npos)
+		{// アクセサリー
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				nHair;		// アクセサリー
+		}
+
+		if (line.find("FACE") != std::string::npos)
+		{// 顔
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			// 情報渡す
+			lineStream >>
+				hoge >>
+				hoge >>		// ＝
+				nFace;		// 顔
+		}
+	}
+
+	// 位置
+	MyLib::Vector3 pos = Player::POS_OUT[team];
+	pos += (Player::POS_SHIFT[team] * nIdxPlayer);
+
+	// プレイヤー生成
+	CPlayer* player = CPlayer::Create(pos, team, CPlayer::EHuman::HUMAN_RESULT, eBody, eHanded);
+}
+
+//==========================================================================
 // デバッグ
 //==========================================================================
 void CResultManager::Debug()
 {
 #if _DEBUG
 
+	if (ImGui::TreeNode("Audience"))
+	{
+		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+		{
+			// 観客数を設定
+			int num = CAudience::GetNumWatchAll(static_cast<CGameManager::ETeamSide>(i));
+	
+			ImGui::Text("NumWatch%d: %d", i, num);
+		}
+
+		// 位置設定
+		ImGui::TreePop();
+	}
 
 
 #endif

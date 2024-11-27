@@ -1,0 +1,195 @@
+﻿//=============================================================================
+// 
+//  リザルト用プレイヤー処理 [playerResult.cpp]
+//  Author : Kai Takada
+// 
+//=============================================================================
+#include "playerResult.h"
+#include "playerManager.h"
+#include "camera.h"
+#include "manager.h"
+#include "input.h"
+#include "calculation.h"
+#include "sound.h"
+#include "fade.h"
+
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const std::string CHARAFILE[CPlayer::EBody::BODY_MAX] =		// キャラクターファイル
+	{
+		"data\\TEXT\\character\\result\\setup_player.txt",
+		"data\\TEXT\\character\\result\\setup_player_fat.txt",
+		"data\\TEXT\\character\\result\\setup_player_gari.txt",
+	};
+}
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+CPlayerResult::STATE_FUNC CPlayerResult::m_StateFunc[] =	// 状態関数
+{
+	&CPlayerResult::StateNone,		// なし
+	&CPlayerResult::StateWin,		// 勝利
+	&CPlayerResult::StateLose,		// 敗北
+};
+
+//==========================================================================
+// 静的メンバ変数
+//==========================================================================
+
+//==========================================================================
+// コンストラクタ
+//==========================================================================
+CPlayerResult::CPlayerResult(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority) :
+	CPlayer(typeTeam, typeArea, typeBase, nPriority),
+	m_state			(EState::STATE_NONE),	// 状態
+	m_fStateTime	(0.0f)					// 状態時間
+{
+
+}
+
+//==========================================================================
+// デストラクタ
+//==========================================================================
+CPlayerResult::~CPlayerResult()
+{
+
+}
+
+//==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CPlayerResult::Init()
+{
+	// 種類の設定
+	CObject::SetType(CObject::TYPE_PLAYER);
+
+	// キャラ作成
+	HRESULT hr = SetCharacter(CHARAFILE[GetBodyType()]);
+	if (FAILED(hr))
+	{// 失敗していたら
+		return E_FAIL;
+	}
+
+	// カメラの方向向きにする
+	SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+
+	// 待機にしておく
+	SetState(EState::STATE_NONE);
+	return S_OK;
+}
+
+//==========================================================================
+// 終了処理
+//==========================================================================
+void CPlayerResult::Uninit()
+{
+	// 終了処理
+	CPlayer::Uninit();
+}
+
+//==========================================================================
+// 動的削除処理
+//==========================================================================
+void CPlayerResult::Kill()
+{
+	// 動的削除処理
+	CPlayer::Kill();
+}
+
+//==========================================================================
+// 更新処理
+//==========================================================================
+void CPlayerResult::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 過去の位置保存
+	SetOldPosition(GetPosition());
+
+	// 親の更新処理
+	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 状態更新
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 状態更新
+//==========================================================================
+void CPlayerResult::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 状態タイマー加算
+	m_fStateTime += fDeltaTime * fSlowRate;
+
+	// 状態更新
+	if (m_StateFunc[m_state] != nullptr)
+	{
+		(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// なし
+//==========================================================================
+void CPlayerResult::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// タイマーリセット
+	m_fStateTime = 0.0f;
+
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	// ニュートラル設定
+	pMotion->Set(EMotion::MOTION_DEF);
+}
+
+//==========================================================================
+// 勝利
+//==========================================================================
+void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->GetType() != EMotion::MOTION_WIN)
+	{// 勝利モーション以外なら勝利にする
+		pMotion->Set(EMotion::MOTION_WIN);
+	}
+}
+
+//==========================================================================
+// 敗北モーション
+//==========================================================================
+void CPlayerResult::StateLose(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->GetType() != EMotion::MOTION_LOSE)
+	{// 敗北モーション以外なら敗北にする
+		pMotion->Set(EMotion::MOTION_LOSE);
+	}
+}
+
+//==========================================================================
+// 描画処理
+//==========================================================================
+void CPlayerResult::Draw()
+{
+	// 描画処理
+	CPlayer::Draw();
+}
+
+//==========================================================================
+// 状態設定
+//==========================================================================
+void CPlayerResult::SetState(EState state)
+{
+	m_state = state;
+	m_fStateTime = 0.0f;
+}
