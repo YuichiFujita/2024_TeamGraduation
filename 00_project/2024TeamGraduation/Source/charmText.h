@@ -92,7 +92,8 @@ private:
 	//--------------------------
 	virtual void SetChain(int nChainIdx);	// チェイン設定
 	virtual void CheckChain() = 0;			// チェインの確認
-	
+	virtual void EffectChain();				// チェインエフェクト
+
 	// 生成
 	HRESULT CreateFace();	// 顔アイコン生成
 	HRESULT CreateText();	// 文字生成

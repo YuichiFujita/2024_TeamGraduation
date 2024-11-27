@@ -98,7 +98,6 @@ void CCharmText_Left::Uninit()
 	// リストから削除
 	m_List.Delete(this);
 
-
 	// 既に存在しているものを上げる
 	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
 	while (m_List.ListLoop(itr))
@@ -115,11 +114,11 @@ void CCharmText_Left::Uninit()
 		}
 		pText->SetChainIdx(vecIdx);
 
+		// 自分のインデックスも減らす
 		int myChainIdx = pText->GetMyChainIdx();
 		myChainIdx--;
 		pText->SetMyChainIdx(myChainIdx);
 	}
-
 
 
 	itr = m_List.GetEnd();
@@ -128,30 +127,14 @@ void CCharmText_Left::Uninit()
 
 		CCharmText_Left* pText = (*itr);
 
-		//if (pText->GetState() == EState::STATE_FADEOUT) continue;
-
+		// 格納している全てを減算
 		std::vector<int> vecIdx = pText->GetChainIdx();		// チェインしているインデックス番号取得
-		
 		for (auto& idx : vecIdx)
 		{
 			idx--;
 		}
 		pText->SetChainIdx(vecIdx);
 	}
-
-
-
-
-
-	//{
-	//	// 既に存在している分チェインインデックスを減らす
-	//	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
-	//	while (m_List.ListLoop(itr))
-	//	{
-	//		// チェインインデックス減算
-	//		m_nMyChainIdx--;
-	//	}
-	//}
 
 	// 終了処理
 	CCharmText::Uninit();
@@ -258,6 +241,9 @@ void CCharmText_Left::CheckChain()
 
 			// もうチェイン出来なくする
 			pText->SetEnablePossibleChain(false);
+
+			// TODO : チェイン演出
+
 			break;
 		}
 	}
