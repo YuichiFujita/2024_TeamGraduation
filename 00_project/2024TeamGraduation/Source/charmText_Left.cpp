@@ -67,12 +67,22 @@ HRESULT CCharmText_Left::Init()
 		m_pText->SetPosition(Position::START + m_pFace->GetSize().x);
 	}
 
+
+	// 自分のチェインインデックス
+	m_nMyChainIdx = 0;
+
 	// 既に存在しているものを上げる
 	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
 	while (m_List.ListLoop(itr))
 	{// ループ
 		(*itr)->AddCountUP(1);
+
+		// チェインインデックスも加算
+		m_nMyChainIdx++;
 	}
+
+	// チェイン確認
+	CheckChain();
 
 	// リスト追加
 	m_List.Regist(this);
@@ -87,6 +97,61 @@ void CCharmText_Left::Uninit()
 {
 	// リストから削除
 	m_List.Delete(this);
+
+
+	// 既に存在しているものを上げる
+	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		CCharmText_Left* pText = (*itr);
+
+		std::vector<int> vecIdx = pText->GetChainIdx();		// チェインしているインデックス番号取得
+		std::vector<int>::iterator itrIdx = std::find(vecIdx.begin(), vecIdx.end(), m_nMyChainIdx);
+
+		if (itrIdx != vecIdx.end())
+		{// 今回分消す
+			vecIdx.erase(itrIdx);
+		}
+		pText->SetChainIdx(vecIdx);
+
+		int myChainIdx = pText->GetMyChainIdx();
+		myChainIdx--;
+		pText->SetMyChainIdx(myChainIdx);
+	}
+
+
+
+	itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		CCharmText_Left* pText = (*itr);
+
+		//if (pText->GetState() == EState::STATE_FADEOUT) continue;
+
+		std::vector<int> vecIdx = pText->GetChainIdx();		// チェインしているインデックス番号取得
+		
+		for (auto& idx : vecIdx)
+		{
+			idx--;
+		}
+		pText->SetChainIdx(vecIdx);
+	}
+
+
+
+
+
+	//{
+	//	// 既に存在している分チェインインデックスを減らす
+	//	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
+	//	while (m_List.ListLoop(itr))
+	//	{
+	//		// チェインインデックス減算
+	//		m_nMyChainIdx--;
+	//	}
+	//}
 
 	// 終了処理
 	CCharmText::Uninit();
@@ -161,4 +226,42 @@ void CCharmText_Left::StateFadeOut()
 
 	// フェードアウト
 	CCharmText::StateFadeOut();
+}
+
+//==========================================================================
+// チェインの確認
+//==========================================================================
+void CCharmText_Left::CheckChain()
+{
+	std::vector<int> chainIdx;	// チェインするインデックス
+
+	// 既に存在しているものから確認
+	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		// ポインタ変換
+		CCharmText_Left* pText = (*itr);
+
+		// チェイン可能フラグ取得
+		bool bPossibleChain = pText->IsPossibleChain();
+
+		if (bPossibleChain)
+		{// チェイン可能なやつと、そいつがもっている全てとチェインする
+
+			// 既にチェインしているやつとそいつのインデックス取得
+			chainIdx = pText->GetChainIdx();
+			int pairIdx = pText->GetMyChainIdx();
+			
+			// インデックス追加
+			chainIdx.push_back(pairIdx);
+
+			// もうチェイン出来なくする
+			pText->SetEnablePossibleChain(false);
+			break;
+		}
+	}
+
+	// チェインインデックス割り当て
+	m_nVecChainIdx = chainIdx;
 }

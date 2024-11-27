@@ -129,6 +129,9 @@
     <Filter Include="player\playerBase">
       <UniqueIdentifier>{0ab8008f-32ea-42bb-9b51-f8b0021b44a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\visual">
+      <UniqueIdentifier>{4fc88a46-4426-47cf-a5e7-046fa3185965}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -685,6 +688,12 @@
     </ClCompile>
     <ClCompile Include="Source\playerAIPosAdj_inRight.cpp">
       <Filter>player\playerPosAdj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerResult.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\startText.cpp">
+      <Filter>ingame\visual</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1254,6 +1263,12 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIPosAdj_inRight.h">
       <Filter>player\playerPosAdj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerResult.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\startText.h">
+      <Filter>ingame\visual</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

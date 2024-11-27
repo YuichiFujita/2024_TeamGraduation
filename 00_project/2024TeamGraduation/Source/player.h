@@ -81,7 +81,6 @@ public:
 		MOTION_TOSS,				// トス
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
-		MOTION_WIN,					// 勝利
 		MOTION_DAMAGE,				// ダメージ
 		MOTION_DEAD,				// 死亡
 		MOTION_DEAD_AFTER,			// 死亡後
@@ -201,6 +200,7 @@ public:
 		HUMAN_ENTRY,		// エントリー
 		HUMAN_SPAWN,		// 登場演出
 		HUMAN_REFEREE,		// 体育教師
+		HUMAN_RESULT,		// リザルト
 		HUMAN_MAX			// この列挙型の総数
 	};
 
@@ -454,7 +454,7 @@ private:
 	//void CatchSettingFlyNormal(CBall::EAttack atkBall);	// キャッチ時処理(空中・通常)
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
-	void SetMoveMotion(bool bNowDrop);						// 移動モーション設定
+	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
 
 	//=============================
 	// メンバ変数

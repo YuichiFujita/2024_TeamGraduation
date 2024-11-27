@@ -45,11 +45,14 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void CreatePrelude();							// 前座勝敗生成
-	void CreateCharmContest();						// モテ勝敗生成
+	void CreatePrelude();				// 前座勝敗生成
+	void CreateCharmContest();			// モテ勝敗生成
+	void CreateAudience();				// 観客生成
 
 	void Debug();		// デバッグ
-	void Load();		// チームステータス読み込み
+	void Load();		// ゲーム情報読み込み
+	void LoadTeam(std::ifstream* File, std::string line, int nTeam);						// チーム情報読み込み
+	void LoadPlayer(std::ifstream* File, std::string line, int nTeam, int nIdxPlayer);		// プレイヤー情報読み込み
 
 	static CResultManager* Create();							// 生成処理
 	static CResultManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得

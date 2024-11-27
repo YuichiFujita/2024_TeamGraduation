@@ -57,9 +57,16 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetCountUP(int nCnt) { m_nCntUp = nCnt; }	// 上昇カウント設定
-	void AddCountUP(int nCnt) { m_nCntUp += nCnt; }	// 上昇カウント加算
-	void SetState(EState state);					// 状態設定
+	void SetCountUP(int nCnt)							{ m_nCntUp = nCnt; }			// 上昇カウント設定
+	void AddCountUP(int nCnt)							{ m_nCntUp += nCnt; }			// 上昇カウント加算
+	void SetEnablePossibleChain(bool bChain)			{ m_bPossibleChain = bChain; }	// チェイン可能フラグ設定
+	bool IsPossibleChain()								{ return m_bPossibleChain; }	// チェイン可能フラグ取得
+	void SetMyChainIdx(int idx)							{ m_nMyChainIdx = idx; }		// 自分のチェインインデックス
+	int GetMyChainIdx()									{ return m_nMyChainIdx; }		// 自分のチェインインデックス
+	void SetChainIdx(const std::vector<int>& vecIdx)	{ m_nVecChainIdx = vecIdx; }	// チェインしているインデックス番号設定
+	std::vector<int> GetChainIdx()						{ return m_nVecChainIdx; }		// チェインしているインデックス番号取得
+	void SetState(EState state);			// 状態設定
+	EState GetState() { return m_state; }	// 状態取得
 
 	//=============================
 	// 静的メンバ関数
@@ -79,6 +86,12 @@ private:
 	//=============================
 	// 状態関数
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新
+
+	//--------------------------
+	// チェイン
+	//--------------------------
+	virtual void SetChain(int nChainIdx);	// チェイン設定
+	virtual void CheckChain() = 0;			// チェインの確認
 	
 	// 生成
 	HRESULT CreateFace();	// 顔アイコン生成
@@ -110,6 +123,9 @@ protected:
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 	int m_nCntUp;			// 上昇カウント
+	bool m_bPossibleChain;	// チェイン可能フラグ
+	int m_nMyChainIdx;		// 自分のチェインインデックス
+	std::vector<int> m_nVecChainIdx;	// チェインしているインデックス番号
 };
 
 #endif

@@ -39,9 +39,10 @@ CCharmText::STATE_FUNC CCharmText::m_StateFunc[] =	// シーン関数
 // コンストラクタ
 //==========================================================================
 CCharmText::CCharmText(int nPriority, const LAYER layer) : CObject(nPriority, layer),
-	m_state(EState::STATE_FADEIN),	// 状態
-	m_fStateTime(0.0f),				// 状態タイマー
-	m_nCntUp(0)
+	m_state				(EState::STATE_FADEIN),	// 状態
+	m_fStateTime		(0.0f),					// 状態タイマー
+	m_nCntUp			(0),					// 上昇カウント
+	m_bPossibleChain	(true)					// チェイン可能フラグ
 {
 
 }
@@ -211,6 +212,14 @@ void CCharmText::Update(const float fDeltaTime, const float fDeltaRate, const fl
 {
 	// 状態更新
 	CCharmText::UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (m_bPossibleChain)
+	{
+		for (const auto& idx : m_nVecChainIdx)
+		{
+			ImGui::Text("%d", idx);
+		}
+	}
 }
 
 //==========================================================================
@@ -230,6 +239,8 @@ void CCharmText::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CCharmText::StateFadeIn()
 {
+	// チェイン可能
+	//m_bPossibleChain = true;
 
 	if (m_fStateTime >= STATETIME_FADEIN)
 	{// フェードイン完了
@@ -242,9 +253,17 @@ void CCharmText::StateFadeIn()
 //==========================================================================
 void CCharmText::StateWait()
 {
+	// チェイン可能
+	//m_bPossibleChain = true;
+
 	if (m_nCntUp >= COUNT_FADESTART ||
 		m_fStateTime >= STATETIME_WAIT)
 	{// 待機終了
+
+		// チェイン不可能
+		m_bPossibleChain = false;
+
+		// 状態遷移
 		SetState(EState::STATE_FADEOUT);
 	}
 }
@@ -254,6 +273,8 @@ void CCharmText::StateWait()
 //==========================================================================
 void CCharmText::StateFadeOut()
 {
+	// チェイン不可能
+	m_bPossibleChain = false;
 
 	if (m_fStateTime >= STATETIME_FADEOUT)
 	{// フェードアウト
@@ -289,4 +310,20 @@ void CCharmText::SetEnableDisp(bool bDisp)
 	// 描画状況設定
 	m_pFace->SetEnableDisp(bDisp);
 	m_pText->SetEnableDisp(bDisp);
+}
+
+//==========================================================================
+// チェインの確認
+//==========================================================================
+void CCharmText::CheckChain()
+{
+
+}
+
+//==========================================================================
+// チェイン設定
+//==========================================================================
+void CCharmText::SetChain(int nChainIdx)
+{
+
 }

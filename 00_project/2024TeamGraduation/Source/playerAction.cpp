@@ -251,6 +251,9 @@ void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRa
 	{
 		fMoveY *= JUMPTHROW_DOWN_COR;
 	}
+
+	fMoveY *= fDeltaRate * fSlowRate;
+
 	move.y += fMoveY;
 	m_pPlayer->SetMove(move);
 

@@ -303,6 +303,7 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
     <ClCompile Include="Source\playerReferee.cpp" />
+    <ClCompile Include="Source\playerResult.cpp" />
     <ClCompile Include="Source\playerSpawn.cpp" />
     <ClCompile Include="Source\playerSpawnManager.cpp" />
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
@@ -334,6 +335,7 @@
     <ClCompile Include="Source\specialEffect_kamehameha.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
     <ClCompile Include="Source\specialValueManager.cpp" />
+    <ClCompile Include="Source\startText.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\teamStatus.cpp" />
@@ -497,6 +499,7 @@
     <ClInclude Include="Source\playerPosAdj_none.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
     <ClInclude Include="Source\playerReferee.h" />
+    <ClInclude Include="Source\playerResult.h" />
     <ClInclude Include="Source\playerSpawn.h" />
     <ClInclude Include="Source\playerSpawnManager.h" />
     <ClInclude Include="Source\playerUsercontrol_move.h" />
@@ -525,6 +528,7 @@
     <ClInclude Include="Source\specialEffect_kamehameha.h" />
     <ClInclude Include="Source\specialManager.h" />
     <ClInclude Include="Source\specialValueManager.h" />
+    <ClInclude Include="Source\startText.h" />
     <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\teamStatus.h" />

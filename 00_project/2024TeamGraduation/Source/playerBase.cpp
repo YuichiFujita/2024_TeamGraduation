@@ -66,10 +66,10 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if ((stateBall == CBall::STATE_LAND																			// ボールが着地している
-		||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()							// フリーボール且つ自チームのボールじゃない
+	if ((stateBall == CBall::STATE_LAND || stateBall == CBall::EState::STATE_SPAWN									// ボールが着地している
+		|| stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()							// フリーボール且つ自チームのボールじゃない
 		|| pBall->IsPass() && (pBall->GetTarget() == m_pPlayer || pBall->GetTypeTeam() != m_pPlayer->GetTeam()))	// パス状態且つターゲットが自分自身か敵チーム
-		&& state != CPlayer::EState::STATE_INVADE_RETURN)														// コートに戻る状態でないとき(&)
+		&& state != CPlayer::EState::STATE_INVADE_RETURN)															// コートに戻る状態でないとき(&)
 	{ // 上記の条件の場合
 
 		// ボールをキャッチ
@@ -182,9 +182,17 @@ bool CPlayerBase::IsCrab()
 	// フリーボールはカニ歩きしない
 	if (pBall->GetState() == CBall::EState::STATE_FREE) { return false; }
 
-	// 自身の状態：ブリンク＆走りでない
+	// 自身の状態：
+	// ブリンク
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// アクションパターン
 	if (action == CPlayer::EAction::ACTION_BLINK) { return false; }
+
+	// 死亡状態
+	CPlayer::EState state = m_pPlayer->GetState();	// 状態
+	if (state == CPlayer::EState::STATE_DEAD
+	 || state == CPlayer::EState::STATE_DEAD_AFTER) { return false; }
+
+	// 走りでない
 	if (m_pPlayer->IsDash()) { return false; }
 
 	// 敵チームで攻撃判定がある場合はカニ歩き
