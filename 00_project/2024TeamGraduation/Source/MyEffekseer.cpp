@@ -165,6 +165,7 @@ Effekseer::EffectRef CMyEffekseer::LoadProcess(const std::u16string& efkpath)
 		// 読み込んだエフェクトのリソースは全て破棄する。
 		if (effect != nullptr)
 		{
+			assert(false);
 			effect->UnloadResources();
 		}
 	};
@@ -174,6 +175,7 @@ Effekseer::EffectRef CMyEffekseer::LoadProcess(const std::u16string& efkpath)
 		// エフェクトのリソースを再読み込みする。
 		if (effect != nullptr)
 		{
+			assert(false);
 			effect->ReloadResources();
 		}
 	};

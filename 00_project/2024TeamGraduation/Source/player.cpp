@@ -1060,7 +1060,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 			setpos,
 			rot,	// 向き
 			MyLib::Vector3(),
-			15.0f, true);
+			20.0f, true);
 
 		if (m_pEfkCatchJust != nullptr)
 		{// 位置・向き更新
