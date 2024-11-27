@@ -43,6 +43,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/hit00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/hit01.wav",0},				// ジャンプ投げ
 
+	// その他
+	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル
+
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
 
