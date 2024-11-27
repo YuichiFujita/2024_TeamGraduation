@@ -45,8 +45,9 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void CreatePrelude();							// 前座勝敗生成
-	void CreateCharmContest();						// モテ勝敗生成
+	void CreatePrelude();				// 前座勝敗生成
+	void CreateCharmContest();			// モテ勝敗生成
+	void CreateAudience();				// 観客生成
 
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み

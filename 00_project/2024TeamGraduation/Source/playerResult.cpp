@@ -147,7 +147,7 @@ void CPlayerResult::StateNone(const float fDeltaTime, const float fDeltaRate, co
 }
 
 //==========================================================================
-// トス待ち
+// 勝利
 //==========================================================================
 void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -162,7 +162,7 @@ void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, con
 }
 
 //==========================================================================
-// トス
+// 敗北モーション
 //==========================================================================
 void CPlayerResult::StateLose(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {

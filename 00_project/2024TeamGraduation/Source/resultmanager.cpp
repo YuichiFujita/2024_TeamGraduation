@@ -8,6 +8,7 @@
 #include "result.h"
 
 #include "playerResult.h"
+#include "audience.h"
 
 //==========================================================================
 // 定数定義
@@ -137,6 +138,9 @@ HRESULT CResultManager::Init()
 	//チームステータス＆プレイヤー生成
 	Load();
 
+	// 観客生成
+	CreateAudience();
+
 	// 前座勝敗ポリゴン生成
 	CreatePrelude();
 
@@ -251,6 +255,21 @@ void CResultManager::CreateCharmContest()
 		{
 			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
 		}
+	}
+}
+
+//==========================================================================
+// 観客更新
+//==========================================================================
+void CResultManager::CreateAudience()
+{
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		float fMoteRate = m_fCharmValue[i] / 100.0f;					// モテ割合	//TODO: マジックナンバー
+		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);		// 現在の観客数
+
+		// 観客数を設定
+		CAudience::SetNumWatch(nNumAudience, static_cast<CGameManager::ETeamSide>(i));
 	}
 }
 
@@ -508,6 +527,19 @@ void CResultManager::Debug()
 {
 #if _DEBUG
 
+	if (ImGui::TreeNode("Audience"))
+	{
+		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+		{
+			// 観客数を設定
+			int num = CAudience::GetNumWatchAll(static_cast<CGameManager::ETeamSide>(i));
+	
+			ImGui::Text("NumWatch%d: %d", i, num);
+		}
+
+		// 位置設定
+		ImGui::TreePop();
+	}
 
 
 #endif

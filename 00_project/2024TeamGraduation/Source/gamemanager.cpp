@@ -247,6 +247,12 @@ void CGameManager::Uninit()
 	// スぺ値マネージャ
 	SAFE_UNINIT(m_pSpecialValueManager);
 
+	// 観客全消し
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CAudience::SetDespawnAll(static_cast<CGameManager::ETeamSide>(i));
+	}
+
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;

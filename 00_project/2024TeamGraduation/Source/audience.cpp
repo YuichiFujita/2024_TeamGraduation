@@ -342,8 +342,8 @@ void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespaw
 	{ // 削除数が指定されている場合
 
 		if		(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
-		else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
-		else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+		else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; }		// ローポリ
+		else																		{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
 	}
 
 	int nCurDespawn = 0;	// 現在の退場人数
@@ -370,8 +370,8 @@ void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespaw
 
 			// 次の削除対象オブジェクト種類を設定
 			if		(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_ANIM; }		// アニメーション
-			else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
-			else																			{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
+			else if	(m_aNumWatchAll[team] > (int)(MAX_WATCH * (RATE_HIGH)))				{ type = OBJTYPE_LOWPOLY; }		// ローポリ
+			else																		{ type = OBJTYPE_HIGHPOLY; }	// ハイポリ
 		}
 	}
 }
