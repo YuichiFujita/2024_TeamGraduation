@@ -4,16 +4,68 @@
 #------------------------------------------------------------------------------
 # 試合情報
 #------------------------------------------------------------------------------
-PRELUDE_WIN = 1
+PRELUDE_WIN = -1
 CONTEST_WIN = -1
 TENSION = 0
 #------------------------------------------------------------------------------
 # チーム0
 #------------------------------------------------------------------------------
-CHARMVALUE = 1
+SETTEAM
+	CHARMVALUE = 0
+	SETPLAYER
+		HANDED = 1
+		BODY = 2
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+	SETPLAYER
+		HANDED = 1
+		BODY = 2
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+	SETPLAYER
+		HANDED = 0
+		BODY = 0
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+END_SETTEAM
 
 #------------------------------------------------------------------------------
 # チーム1
 #------------------------------------------------------------------------------
-CHARMVALUE = 1
+SETTEAM
+	CHARMVALUE = 0
+	SETPLAYER
+		HANDED = 0
+		BODY = 1
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+	SETPLAYER
+		HANDED = 0
+		BODY = 1
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+	SETPLAYER
+		HANDED = 0
+		BODY = 0
+		HAIR = 1
+		ACCESSORY= 1
+		FACE = 1
+	END_SETPLAYER
+
+END_SETTEAM
 

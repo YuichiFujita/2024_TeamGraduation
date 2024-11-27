@@ -668,7 +668,32 @@ void CGameManager::Save()
 		File << TEXT_LINE << std::endl;
 		File << "# チーム" << i << std::endl;
 		File << TEXT_LINE << std::endl;
-		File << "CHARMVALUE = " << team->GetCharmInfo().fValue << std::endl;
+		File << "SETTEAM" << std::endl;
+
+		File << "	CHARMVALUE = " << team->GetCharmInfo().fValue << std::endl;
+
+		// リストループ
+		CListManager<CPlayer> list = CPlayerManager::GetInstance()->GetInList(static_cast<ETeamSide>(i));
+		std::list<CPlayer*>::iterator itr = list.GetEnd();
+		CPlayer* pObj = nullptr;
+
+		while (list.ListLoop(itr))
+		{
+			pObj = (*itr);
+		
+			File << "	SETPLAYER"  << std::endl;
+
+			File << "		HANDED = "		<< pObj->GetHandedness() << std::endl;		// 利き手
+			File << "		BODY = "		<< pObj->GetBodyType() << std::endl;		// 体型
+			File << "		HAIR = "		<< 1 << std::endl;		// 髪着せ替え
+			File << "		ACCESSORY= "	<< 1 << std::endl;		// アクセ着せ替え
+			File << "		FACE = "		<< 1 << std::endl;		// 顔着せ替え
+
+			File << "	END_SETPLAYER" << std::endl;
+			File << std::endl;
+		}
+
+		File << "END_SETTEAM" << std::endl;
 		File << std::endl;
 
 		i++;
