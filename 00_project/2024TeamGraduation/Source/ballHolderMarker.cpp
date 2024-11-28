@@ -170,10 +170,18 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 #ifdef DISP
 	// プレイヤーいないと描画切る
 	bool bDisp = (m_pPlayer == nullptr) ? false : true;
+
+	// 関与しないキャラでも描画切る
+	if (m_pPlayer != nullptr)
+	{
+		bDisp = (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_NONE) ? false : bDisp;
+	}
+
 	SetEnableDisp(bDisp);
 
 	// 描画しないときは更新無し
 	if (!bDisp) return;
+
 
 	// プレイヤーの位置に設定
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();

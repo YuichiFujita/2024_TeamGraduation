@@ -14,16 +14,14 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";			// 顔アイコンのテクスチャ
-	const std::string TEXTURE_TEXT = "data\\TEXTURE\\charmtext\\window_full.png";	// テキストのテクスチャ
 
 }
 
 namespace Position
 {
-	const MyLib::Vector3 START(SCREEN_WIDTH + 100.0f, 600.0f, 0.0f);	// 開始位置
-	const MyLib::Vector3 FADEIN(SCREEN_WIDTH - 60.0f, 600.0f, 0.0f);	// フェードイン位置
-	const MyLib::Vector3 FADEOUT(0.0f, -80.0f, 0.0f);					// 終了位置
+	const MyLib::Vector3 START(400.0f, 100.0f, 700.0f);						// 開始位置
+	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(150.0f, 150.0f, 0.0f);	// フェードイン位置
+	const MyLib::Vector3 FADEOUT = FADEIN + MyLib::Vector3(100.0f, 100.0f, 0.0f);					// 終了位置
 }
 
 //==========================================================================
@@ -64,7 +62,7 @@ HRESULT CCharmText_Right::Init()
 	// テキストの位置
 	if (m_pText != nullptr)
 	{
-		m_pText->SetAnchorType(CObject2D::AnchorPoint::RIGHT);
+		m_pText->SetAnchorType(CObjectBillboard::EAnchorPoint::RIGHT);
 		m_pText->SetPosition(Position::START - m_pFace->GetSize().x);
 	}
 
@@ -146,7 +144,9 @@ void CCharmText_Right::Update(const float fDeltaTime, const float fDeltaRate, co
 	MyLib::Vector3 pos = GetPosition();
 
 	// 間隔分上にあげる
-	pos.y -= DISTANCE_UP * m_nCntUp;
+	pos.x += DISTANCE_XZ * m_nCntUp;
+	pos.z += DISTANCE_XZ * m_nCntUp;
+	pos.y += DISTANCE_UP * m_nCntUp;
 
 	m_pFace->SetPosition(pos);
 	m_pText->SetPosition(pos - MyLib::Vector3(m_pFace->GetSize().x, 0.0f, 0.0f));
@@ -190,8 +190,7 @@ void CCharmText_Right::StateFadeOut()
 	float ratio = UtilFunc::Correction::EasingEaseOut(0.0f, 1.0f, 0.0f, STATETIME_FADEOUT, m_fStateTime);
 
 	// 位置更新
-	MyLib::Vector3 pos = Position::FADEIN;
-	pos.y += Position::FADEOUT.y * ratio;
+	MyLib::Vector3 pos = Position::FADEIN + (Position::FADEOUT - Position::FADEIN) * ratio;
 	SetPosition(pos);
 
 	// 不透明度更新

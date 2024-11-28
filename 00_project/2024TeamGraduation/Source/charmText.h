@@ -41,7 +41,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CCharmText(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_2D);
+	CCharmText(int nPriority = mylib_const::PRIORITY_ZSORT, const LAYER layer = LAYER::LAYER_2D);
 	~CCharmText();
 
 	//=============================
@@ -103,10 +103,11 @@ protected:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float STATETIME_FADEIN = 0.2f;
+	static constexpr float STATETIME_FADEIN = 0.3f;
 	static constexpr float STATETIME_WAIT = CCharmManager::TIME_CHAIN - STATETIME_FADEIN;
 	static constexpr float STATETIME_FADEOUT = 0.5f;
-	static constexpr float DISTANCE_UP = 40.0f;	// 上昇間隔
+	static constexpr float DISTANCE_UP = 20.0f;	// 上昇間隔
+	static constexpr float DISTANCE_XZ = 80.0f;	// 上昇間隔
 
 	//=============================
 	// メンバ関数
@@ -119,8 +120,8 @@ protected:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObject2D* m_pFace;		// 顔アイコン
-	CObject2D* m_pText;		// 文字
+	CObjectBillboard* m_pFace;		// 顔アイコン
+	CObjectBillboard* m_pText;		// 文字
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 	int m_nCntUp;			// 上昇カウント

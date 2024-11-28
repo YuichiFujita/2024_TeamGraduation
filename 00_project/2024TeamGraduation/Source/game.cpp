@@ -34,6 +34,7 @@
 #include "specialManager.h"
 #include "gymWallManager.h"
 #include "charmText.h"
+#include "objectBillboard.h"
 
 namespace
 {
@@ -114,10 +115,6 @@ HRESULT CGame::Init()
 	// ボールの生成
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
-	// 通常カメラの設定
-	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
-	pCamera->SetState(CCamera::STATE_NONE);
-
 	// 体育館を明るくする
 	GET_MANAGER->GetLight()->SetEnableBright(true);
 
@@ -181,7 +178,9 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	ChangeEdit();
 #endif
 
+
 #if _DEBUG
+
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
@@ -222,6 +221,9 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
+
+
+
 #endif
 
 		// ツリー終端

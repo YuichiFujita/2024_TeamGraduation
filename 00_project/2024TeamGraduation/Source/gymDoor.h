@@ -63,8 +63,9 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetEnableOpen(const bool bOpen, const float fMoveTime = 0.0f);	// ドア開放フラグ設定
-	inline bool IsOpen() const { return m_bOpen; }	// ドア開放フラグ取得
+	void SetEnableOpen(const bool bOpen, const float fMoveTime = 0.0f);		// ドア開放フラグ設定
+	inline bool IsOpen() const { return m_bOpen; }							// ドア開放フラグ取得
+	inline bool IsMove() const { return (m_state == EState::STATE_MOVE); }	// ドア稼働中フラグ取得
 
 private:
 

@@ -25,6 +25,7 @@ public:
 	enum MOTION
 	{
 		MOTION_PASS = 0,		// パスモーション
+		MOTION_SPAWN,			// 登場演出モーション
 		MOTION_SPECIAL_HYPE,	// スペシャル盛り上げモーション
 		MOTION_KAMEHAMEHA,		// かめはめ波モーション
 		MOTION_MAX
@@ -53,7 +54,7 @@ public:
 		MyLib::Vector3 rotDest;		// 目標の向き
 		float distance;				// 距離
 		float playTime;				// 再生フレーム
-		EEasing easeType;	// イージングの種類
+		EEasing easeType;			// イージングの種類
 
 		MotionKey() : posRDest(0.0f), rotDest(0.0f), distance(0.0f), playTime(1.0f), easeType(EEasing::Linear) {}
 	};
@@ -126,13 +127,15 @@ public:
 	inline void SetEnableSystemPause(bool bPause)	{ m_bSystemPause = bPause; }	// システムポーズ判定
 	inline bool IsPause()							{ return m_bPause; }			// ポーズ判定
 
+	inline int GetNowTriggerIdx() { return m_nNowTriggerIdx; }
 	inline int GetNowKeyIdx() { return m_nNowKeyIdx; }
 	inline int GetNowKeyMax() { return m_vecMotionInfo[m_nNowMotionIdx].Key.size(); }
 	inline int GetKeyMax(const MOTION motion) { return m_vecMotionInfo[motion].Key.size(); }
 
 	MotionKey GetKeyData(const MOTION motion, const int nKeyIdx);	// キー情報取得
-	float GetWholeCurTimer();	// 現在の全体時間取得
-	float GetWholeMaxTimer();	// 最大の全体時間取得
+	float GetWholeCurTimer();			// 現在の全体時間取得
+	float GetWholeMaxTimer();			// 最大の全体時間取得
+	bool IsImpactFrame(int nCntAtk);	// 指定したインデックスの情報が衝撃カウントか
 
 	// 静的関数
 	static CCameraMotion* Create();	// 生成処理
@@ -146,6 +149,15 @@ private:
 	typedef void(CCameraMotion::*MOTION_FUNC)();
 	static MOTION_FUNC m_MotionFunc[];
 
+#if 0
+	// vec3線形補正リスト
+	typedef MyLib::Vector3(*VEC3_EASING_FUNC)(const MyLib::Vector3&, const MyLib::Vector3&, float);
+	static VEC3_EASING_FUNC m_Vec3EasingFunc[];
+
+	// float線形補正リスト
+	typedef float(*FLOAT_EASING_FUNC)(float, float, float);
+	static FLOAT_EASING_FUNC m_FloatEasingFunc[];
+#else
 	// vec3線形補正リスト
 	typedef MyLib::Vector3(*VEC3_EASING_FUNC)(const MyLib::Vector3&, const MyLib::Vector3&, float, float, float);
 	static VEC3_EASING_FUNC m_Vec3EasingFunc[];
@@ -153,6 +165,7 @@ private:
 	// float線形補正リスト
 	typedef float(*FLOAT_EASING_FUNC)(float, float, float, float, float);
 	static FLOAT_EASING_FUNC m_FloatEasingFunc[];
+#endif
 
 	//=============================
 	// メンバ関数
@@ -163,7 +176,8 @@ private:
 
 	// モーション
 	void MotionPass();			// パス
-	void MotionSpecial();		// スペシャル
+	void MotionSpawn();			// 登場演出
+	void MotionSpecial();		// スペシャル盛り上げ
 	void MotionKamehameha();	// かめはめ波
 
 	// エディット用
