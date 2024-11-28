@@ -617,12 +617,8 @@ void CPlayerAIControl::ThrowTimingJumpNormal(CPlayer* pTarget, const float fDelt
 	m_eAction = EAction::ACTION_JUMP;
 
 	if (m_pAI->GetPosition().y >= JUMP_END_POS)	// 高さによって変わる
-	{// カウント0以上
-		// 投げる
-		m_eThrow = EThrow::THROW_THROW;
-
-		// 変数リセット
-		ResetFlag();
+	{
+		m_eThrow = EThrow::THROW_THROW;	// 投げる
 	}
 }
 
@@ -789,8 +785,8 @@ void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDel
 	else if (pBall->GetPlayer() == nullptr)
 	{// 誰もボールを持っていない場合
 
-		// 自分よりボールの近くに味方がいた場合
-		if (!IsWhoPicksUpTheBall()) return;
+		// 自分よりボールの近くに味方がいる&&ボールが相手側の場合
+		if (!IsWhoPicksUpTheBall() && IsLineOverBall()) return;
 
 		// ボールを取りに行く
 		m_sInfo.sCatchInfo.eCatchType = ECatchType::CATCH_TYPE_FIND;
@@ -857,8 +853,6 @@ void CPlayerAIControl::CatchPass(const float fDeltaTime, const float fDeltaRate,
 //--------------------------------------------------------------------------
 void CPlayerAIControl::CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (IsLineOverBall()) { return; }
-
 	// AIコントロール情報の取得
 	CPlayerControlAction* pControlAction = m_pAI->GetBase()->GetPlayerControlAction();
 	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
@@ -871,17 +865,15 @@ void CPlayerAIControl::CatchFindBall(const float fDeltaTime, const float fDeltaR
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr) 
 	{// ボールがnullptr&&プレイヤーがボールを取っている場合
 		ResetFlag();	// 変数リセット
+		m_sMoveInfo.eType = EMoveType::MOVETYPE_STOP;
 		return;
 	}
 
 	// 行動状態：走る
 	m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
 
-	// 角度を求める(playerからみたボール)
-	float fAngle = m_pAI->GetPosition().AngleXZ(pBall->GetPosition());
-
-	// 方向設定
-	m_pAI->SetRotDest(fAngle);
+	// 近づく
+	Approatch(pBall->GetPosition(), 5.0f);
 }
 
 //==========================================================================
@@ -1294,11 +1286,13 @@ void CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	float direction = myPos.AngleXZ(targetPos);
 
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-
-	if (pBall && pBall->GetTypeTeam() != m_pAI->GetTeam())
-	{// ボールがある&&違うチームが持っている場合
-		// カニ進行方向の設定
-		pControlAIMove->SetClabDirection(direction);
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// ボールがある&&違うチームが持っている場合
+			// カニ進行方向の設定
+			pControlAIMove->SetClabDirection(direction);
+		}
 	}
 	else
 	{
