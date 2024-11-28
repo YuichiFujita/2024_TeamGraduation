@@ -52,9 +52,6 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	// 入力フラグ
 	bool bInput = false;
 
-	// ダッシュ判定
-	CPlayer::SDashInfo info;
-
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
@@ -62,7 +59,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 	bool bBlink = IsBlink();									// 走るフラグ取得
 
 	// ダッシュする
-	if (info.bDash && !bBlink)
+	if (!bBlink)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
@@ -74,8 +71,8 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 			float velocityBlink = player->GetParameter().fVelocityBlink;
 
 			// 移動量更新
-			move.x += sinf(division * info.eAngle + Camerarot.y) * velocityBlink;
-			move.z += cosf(division * info.eAngle + Camerarot.y) * velocityBlink;
+			move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * velocityBlink;
+			move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * velocityBlink;
 
 			if (player->IsJump())
 			{//ジャンプ時補正
@@ -91,7 +88,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 		}
 
 		// 向き設定
-		player->SetRotDest(info.eAngle * division + D3DX_PI + Camerarot.y);
+		player->SetRotDest(rot.y + /*D3DX_PI +*/ Camerarot.y);
 
 		// ダッシュフラグ
 		bBlink = true;
@@ -115,7 +112,7 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	if (bBlink)
+	if (bBlink && m_bDash)
 	{// ダッシュ解除
 		bBlink = false;
 

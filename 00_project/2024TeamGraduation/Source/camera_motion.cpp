@@ -381,7 +381,8 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 	// キー更新
 	//=============================
 	if (m_fMotionTimer >= nowInfo.Key[m_nNowKeyIdx].playTime)
-	{
+	{// 再生時間過ぎていたら
+
 		// キー更新
 		m_fMotionTimer = 0.0f;
 		m_nNowKeyIdx = (m_nNowKeyIdx + 1) % keySize;

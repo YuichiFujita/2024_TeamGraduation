@@ -117,7 +117,7 @@ void CPlayerUserControlAction::Jump(CPlayer* player, const float fDeltaTime, con
 	if (pKey->GetPress(DIK_SPACE) ||
 		pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx()))
 	{// ジャンプボタンホールドで上昇
-		JumpFloat(player);
+		JumpFloat(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	if ((!pKey->GetPress(DIK_SPACE) && !pPad->GetPress(CInputGamepad::BUTTON::BUTTON_A, player->GetMyPlayerIdx())))

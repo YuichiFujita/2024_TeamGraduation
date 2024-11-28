@@ -85,7 +85,7 @@ CPlayerAIIn::CPlayerAIIn(CPlayer* pPlayer, const CGameManager::ETeamSide typeTea
 //==========================================================================
 CPlayerAIIn::~CPlayerAIIn()
 {
-	if (!m_pAIControl)
+	if (m_pAIControl)
 	{
 		delete m_pAIControl;
 		m_pAIControl = nullptr;

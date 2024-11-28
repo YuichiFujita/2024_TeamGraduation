@@ -112,7 +112,7 @@ void CPlayerAIOutControlAction::Jump(CPlayer* player, const float fDeltaTime, co
 
 	if (m_sFlag.bJumpFloat)
 	{// ジャンプボタンホールドで上昇
-		JumpFloat(player);
+		JumpFloat(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	if (!m_sFlag.bJumpFloat)
 	{// ジャンプボタン離した
@@ -125,7 +125,7 @@ void CPlayerAIOutControlAction::Jump(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 // ジャンプ上昇
 //==========================================================================
-void CPlayerAIOutControlAction::JumpFloat(CPlayer* player)
+void CPlayerAIOutControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ジャンプ判定取得
 	bool bJump = player->IsJump();

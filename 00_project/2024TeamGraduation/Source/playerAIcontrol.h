@@ -75,6 +75,7 @@ private:
 		CATCH_TYPE_NORMAL,		// 通常
 		CATCH_TYPE_JUST,		// ジャスト
 		CATCH_TYPE_DASH,		// ダッシュ
+		CATCH_TYPE_PASS,		// パス
 		CATCH_TYPE_FIND,		// 取りに行く
 		CATCH_TYPE_MAX
 	};
@@ -90,12 +91,19 @@ private:
 		MOVETYPE_MAX
 	};
 
-	enum EActionType	// アクション種類
+	enum EThrow	// アクション種類
 	{
-		ACTIONTYPE_NONE = 0,	// なし
-		ACTIONTYPE_THROW,		// 投げ
-		ACTIONTYPE_PASS,		// パス
-		ACTIONTYPE_SPECIAL,		// スペシャル
+		THROW_NONE = 0,		// なし
+		THROW_THROW,		// 投げ
+		THROW_PASS,			// パス
+		THROW_SPECIAL,		// スペシャル
+	};
+
+	enum EAction
+	{
+		ACTION_NONE = 0,
+		ACTION_JUMP,
+		ACTION_MAX
 	};
 
 	enum ELine
@@ -145,7 +153,8 @@ private:
 
 	struct STarget	// 学習
 	{
-		float fDistance;		// 内野にいる相手との距離
+		float fDistanceIN;		// 内野との距離
+		float fDistanceOUT;		// 外野との距離
 	};
 
 public:
@@ -178,14 +187,17 @@ private:
 	typedef void(CPlayerAIControl::* THROWTIMING_FUNC)(CPlayer*, const float, const float, const float);
 	static THROWTIMING_FUNC m_ThrowTimingFunc[];			// 投げタイミング関数
 
-	//typedef void(CPlayerAIControl::* ACTION_FUNC)(CPlayer*, const float, const float, const float);
-	//static ACTION_FUNC m_ActionFunc[];			// 投げタイミング関数
+	typedef void(CPlayerAIControl::* THROW_FUNC)();
+	static THROW_FUNC m_ThrowFunc[];			// 投げタイミング関数
 
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
 
 	typedef void(CPlayerAIControl::* MOVE_FUNC)(CPlayer*);
 	static MOVE_FUNC m_MoveFunc[];			// 行動関数
+
+	typedef void(CPlayerAIControl::* ACTION_FUNC)();
+	static ACTION_FUNC m_ActionFunc[];			// 行動関数
 
 	//=============================
 	// メンバ関数
@@ -224,11 +236,14 @@ private:
 	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void CatchPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	/*void ActionNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);*/
+	void ThrowNone() {};
+	void Throw();
+	void ThrowPass();
+	void ThrowSpecial();
+	//void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// 行動
 	void MoveStop(CPlayer* pTarget);			// なし
@@ -238,20 +253,22 @@ private:
 	void MoveApproatch(CPlayer* pTarget);		// 近づく
 	void MoveReturn(CPlayer* pTarget);			// 戻る
 
+	// アクション
+	void ActionNone();
+	void ActionJump();
+
 	//-----------------------------
 	// その他関数
 	//-----------------------------
 	CPlayer* GetThrowTarget();		// 投げるターゲット
 	CPlayer* GetCatchTarget();		// キャッチターゲット
 
-	void PlanThrowFlow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げる流れ
 	void PlanHeart();		// 心のプラン
 	void PlanThrow(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げるプラン
 
 	void CatchDistance(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離：キャッチ状態
 	void CatchOutDistance();				// 距離：外野
 	void CatchLineLeftDistance();			// パスする相手
-	void CatchMoveFlag();					// 行動：フラグ
 	void PlanIsJump(CPlayer* pTarget);		// 跳ぶかどうか
 	void PlanMove(CPlayer* pTarget);		// 行動プラン
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
@@ -266,6 +283,7 @@ private:
 	bool IsLineOverPlayer();				// 線越え判定(プレイヤー)
 
 	void Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
+	void LeaveOut(float distance);											// 離れる
 	void LeaveX(MyLib::Vector3 targetPos, float distance);		// 離れる：x軸
 	void LeaveZ(MyLib::Vector3 targetPos, float distance);		// 離れる：z軸
 	void Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
@@ -285,6 +303,8 @@ private:
 	SMoveInfo m_sMoveInfo;		// 行動情報
 	ELine m_eLine;				// 線
 	EHeart m_eHeart;			// 心
+	EAction m_eAction;
+	EThrow m_eThrow;
 
 	bool m_bStart;
 	bool m_bEnd;
