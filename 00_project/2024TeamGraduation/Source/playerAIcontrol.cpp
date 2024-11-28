@@ -45,7 +45,7 @@ namespace
 	const float LENGTH_LINE = 100.0f;
 
 	// 線越え判定(中心(x)からの距離)
-	const float LINE_DISTANCE_OVER = 200.0f;	// 線超え判定の距離(中心 x:0.0f)
+	const float LINE_DISTANCE_OVER = 100.0f;	// 線超え判定の距離(中心 x:0.0f)
 	const float RETURN_POS = 400.0f;			// 戻る位置(中心 x:0.0f)
 
 	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
@@ -1028,7 +1028,7 @@ void CPlayerAIControl::MoveReturn(CPlayer* pTarget)
 		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 		// 歩く
-		m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
+		//m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
 
 		// 近づく
 		Approatch({ -RETURN_POS, myPos.y, myPos.z }, OK_LENGTH);
@@ -1040,7 +1040,7 @@ void CPlayerAIControl::MoveReturn(CPlayer* pTarget)
 		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 		// 歩く
-		m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
+		//m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
 
 		// 近づく
 		Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH);
@@ -1157,13 +1157,17 @@ void CPlayerAIControl::Leave(MyLib::Vector3 targetPos, float distance)
 	// 移動タイプ：歩く
 	m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
 
-	float direction = targetPos.AngleXZ(myPos);	// 角度：相手から見た自分
+	// 自分からターゲットの角度
+	float direction = myPos.AngleXZ(targetPos);
 
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-
-	if (pBall && pBall->GetTypeTeam() != m_pAI->GetTeam())
-	{// ボールがある&&違うチームが持っている場合
-		pControlAIMove->SetClabDirection(direction);
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// 違うチームが持っている場合
+			// カニ進行方向の設定
+			pControlAIMove->SetClabDirection(direction);
+		}
 	}
 	else
 	{
@@ -1226,9 +1230,22 @@ void CPlayerAIControl::LeaveX(MyLib::Vector3 targetPos, float distance)
 	return;
 	}
 
-	// カニ歩き方向の設定
-	float direction = posTarget.AngleXZ(myPos);	// 角度：相手から見た自分
-	pControlAIMove->SetClabDirection(direction);
+	// 自分からターゲットの角度
+	float direction = myPos.AngleXZ(targetPos);
+
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// 違うチームが持っている場合
+			// カニ進行方向の設定
+			pControlAIMove->SetClabDirection(direction);
+		}
+	}
+	else
+	{
+		m_pAI->SetRotation({ 0.0f, direction, 0.0f });
+	}
 }
 
 //==========================================================================
@@ -1254,9 +1271,22 @@ void CPlayerAIControl::LeaveZ(MyLib::Vector3 targetPos, float distance)
 		return;
 	}
 
-	// カニ歩き方向の設定
-	float direction = posTarget.AngleXZ(myPos);	// 角度：相手から見た自分
-	pControlAIMove->SetClabDirection(direction);
+	// 自分からターゲットの角度
+	float direction = myPos.AngleXZ(targetPos);
+
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// 違うチームが持っている場合
+			// カニ進行方向の設定
+			pControlAIMove->SetClabDirection(direction);
+		}
+	}
+	else
+	{
+		m_pAI->SetRotation({ 0.0f, direction, 0.0f });
+	}
 }
 
 //==========================================================================
@@ -1279,9 +1309,6 @@ void CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 		return;
 	}
 
-	// 移動タイプ：歩く
-	m_sMoveInfo.eType = EMoveType::MOVETYPE_WALK;
-
 	// 自分からターゲットの角度
 	float direction = myPos.AngleXZ(targetPos);
 
@@ -1289,7 +1316,7 @@ void CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	if (pBall && pBall->GetPlayer())
 	{
 		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
-		{// ボールがある&&違うチームが持っている場合
+		{// 違うチームが持っている場合
 			// カニ進行方向の設定
 			pControlAIMove->SetClabDirection(direction);
 		}
@@ -1340,9 +1367,13 @@ void CPlayerAIControl::ApproatchX(MyLib::Vector3 targetPos, float distance)
 	// 自分からターゲットの角度
 	float direction = myPos.AngleXZ(targetPos.AngleXZ(myPos));
 
-	if (CGameManager::GetInstance()->GetBall())
-	{// カニ進行方向の設定
-		pControlAIMove->SetClabDirection(direction);
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// 違うチームが持っている場合
+			pControlAIMove->SetClabDirection(direction);
+		}
 	}
 	else
 	{
@@ -1376,9 +1407,13 @@ void CPlayerAIControl::ApproatchZ(MyLib::Vector3 targetPos, float distance)
 	// 自分からターゲットの角度
 	float direction = myPos.AngleXZ(targetPos.AngleXZ(myPos));
 
-	if (CGameManager::GetInstance()->GetBall())
-	{// カニ進行方向の設定
-		pControlAIMove->SetClabDirection(direction);
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall && pBall->GetPlayer())
+	{
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		{// 違うチームが持っている場合
+			pControlAIMove->SetClabDirection(direction);
+		}
 	}
 	else
 	{
@@ -1386,6 +1421,23 @@ void CPlayerAIControl::ApproatchZ(MyLib::Vector3 targetPos, float distance)
 	}
 }
 
+
+
+//==========================================================================
+// 走り投げ
+//==========================================================================
+void CPlayerAIControl::AttackDash()
+{
+	// ターゲットのしゅとく
+	CPlayer* pTarget = GetThrowTarget();
+	MyLib::Vector3 posTarget = pTarget->GetPosition();
+	// 自分の位置取得
+	MyLib::Vector3 posMy = m_pAI->GetPosition();
+
+
+
+
+}
 
 
 

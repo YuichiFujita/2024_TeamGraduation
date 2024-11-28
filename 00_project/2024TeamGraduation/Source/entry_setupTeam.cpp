@@ -89,7 +89,7 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	// 一旦シーン切り替え
+	// 一旦シーン切り替え TODO : 全員エントリーしてたらとかにする
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0))
 	{
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);

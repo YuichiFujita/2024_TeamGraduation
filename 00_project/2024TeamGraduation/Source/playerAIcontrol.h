@@ -283,12 +283,14 @@ private:
 	bool IsLineOverPlayer();				// 線越え判定(プレイヤー)
 
 	void Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
-	void LeaveOut(float distance);											// 離れる
+	void LeaveOut(float distance);								// 離れる
 	void LeaveX(MyLib::Vector3 targetPos, float distance);		// 離れる：x軸
 	void LeaveZ(MyLib::Vector3 targetPos, float distance);		// 離れる：z軸
 	void Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
 	void ApproatchX(MyLib::Vector3 targetPos, float distance);	// 近づく：x軸
 	void ApproatchZ(MyLib::Vector3 targetPos, float distance);	// 近づく：z軸
+
+	void AttackDash();
 
 	void ResetFlag();			// 変数リセット
 

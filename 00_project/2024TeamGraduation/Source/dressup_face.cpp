@@ -85,10 +85,19 @@ void CDressup_Face::Update(const float fDeltaTime, const float fDeltaRate, const
 	// ƒ‚ƒfƒ‹Ø‚è‘Ö‚¦
 	if (bChange)
 	{
-		CModel* pModel = m_pObjChara->GetModel(m_nSwitchIdx);
-		int idx = CTexture::GetInstance()->Regist(m_vecModelName[m_nNowIdx]);
-		pModel->SetIdxTexture(0, idx);
+		ReRegist();
 	}
+}
+
+//==========================================================================
+// ÄŠ„‚è“–‚Ä
+//==========================================================================
+void CDressup_Face::ReRegist()
+{
+	// ŠçØ‚è‘Ö‚¦
+	CModel* pModel = m_pObjChara->GetModel(m_nSwitchIdx);
+	int idx = CTexture::GetInstance()->Regist(m_vecModelName[m_nNowIdx]);
+	pModel->SetIdxTexture(0, idx);
 }
 
 //==========================================================================

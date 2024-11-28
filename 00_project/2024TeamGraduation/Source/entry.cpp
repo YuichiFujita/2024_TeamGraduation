@@ -147,10 +147,10 @@ void CEntry::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	// シーン毎の更新
 	m_pEntryScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
+#if 0
 	// 状態別更新処理
 	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
 
-#if 0
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();

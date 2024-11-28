@@ -10,6 +10,7 @@
 // シーン
 #include "entry_setupTeam.h"
 #include "entry_dressup.h"
+#include "entry_gameSetting.h"
 
 //==========================================================================
 // コンストラクタ
@@ -46,6 +47,7 @@ CEntryScene* CEntryScene::Create(CEntry::ESceneType sceneType)
 		break;
 
 	case CEntry::SCENETYPE_GAMESETTING:
+		pScene = DEBUG_NEW CEntry_GameSetting;
 		break;
 
 	default:

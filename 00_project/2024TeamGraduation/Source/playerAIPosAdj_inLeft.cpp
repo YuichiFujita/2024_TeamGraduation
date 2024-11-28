@@ -87,7 +87,7 @@ CPlayerPosAdjIn::EInputUnstable CPlayerAIPosAdjInLeft::IsInputLine(CPlayer* pPla
 	}
 
 #else
-	return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
+	return CPlayerPosAdjIn::EInputUnstable::INPUT_FRIEND;
 #endif
 
 	return CPlayerPosAdjIn::EInputUnstable::INPUT_NONE;
