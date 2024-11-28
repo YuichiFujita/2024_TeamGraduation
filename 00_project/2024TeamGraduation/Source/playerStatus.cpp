@@ -114,6 +114,8 @@ void CPlayerStatus::Kill()
 	// íœ
 	if (m_pLifeGauge != nullptr)
 	{
+		m_LifeGaugeListLeft.Delete(m_pLifeGauge);
+		m_LifeGaugeListRight.Delete(m_pLifeGauge);
 		m_pLifeGauge->Kill();
 		m_pLifeGauge = nullptr;
 	}

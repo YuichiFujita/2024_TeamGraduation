@@ -22,6 +22,7 @@ namespace
 	const std::string TEXTURE_TEXT = "data\\TEXTURE\\speech\\sample.png";	// テキストのテクスチャ
 
 	const float SIZE_FACE = 40.0f;	// 顔アイコンのサイズ
+	const float SIZE_SPEECH = 120.0f;	// スピーチのサイズ
 	const MyLib::Vector3 OFFSET_TEXT = MyLib::Vector3(SIZE_FACE, 0.0f, 0.0f);	// テキストのオフセット位置
 	const int COUNT_FADESTART = 5;	// フェード開始するカウント
 }
@@ -100,14 +101,14 @@ HRESULT CCharmText::Init()
 	// オブジェクトの種類設定
 	CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
 
-	// 顔アイコン生成
-	if (FAILED(CreateFace()))
+	// 文字生成
+	if (FAILED(CreateText()))
 	{
 		return E_FAIL;
 	}
 
-	// 文字生成
-	if (FAILED(CreateText()))
+	// 顔アイコン生成
+	if (FAILED(CreateFace()))
 	{
 		return E_FAIL;
 	}
@@ -167,7 +168,7 @@ HRESULT CCharmText::CreateText()
 	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
 
 	// 縦幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_FACE);
+	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_SPEECH);
 	m_pText->SetSize(MyLib::Vector2());
 	m_pText->SetSizeOrigin(size);
 

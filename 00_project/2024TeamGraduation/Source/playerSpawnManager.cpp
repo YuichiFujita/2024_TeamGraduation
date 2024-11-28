@@ -137,7 +137,11 @@ void CPlayerSpawnManager::Uninit(void)
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
 		// プレイヤーの終了
-		SAFE_UNINIT(pPlayer);
+		if (pPlayer != nullptr)
+		{
+			pPlayer->Kill();
+			pPlayer = nullptr;
+		}
 	}
 
 	// オブジェクトを破棄

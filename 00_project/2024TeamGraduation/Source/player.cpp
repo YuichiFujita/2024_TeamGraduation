@@ -890,12 +890,11 @@ void CPlayer::ResetFrag()
 	m_sMotionFrag.bMove = false;
 
 	// ダッシュリセット
-	m_bDash = false;
+	//m_bDash = false;
 
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
-	m_bDash = false;
 
 	// オートモーション設定
 	m_bAutoMotionSet = true;

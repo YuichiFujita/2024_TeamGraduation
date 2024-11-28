@@ -20,8 +20,9 @@ namespace
 namespace Position
 {
 	const MyLib::Vector3 START(-400.0f, 100.0f, 700.0f);						// 開始位置
-	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(150.0f, 150.0f, 0.0f);	// フェードイン位置
+	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(-150.0f, 150.0f, 0.0f);	// フェードイン位置
 	const MyLib::Vector3 FADEOUT = FADEIN + MyLib::Vector3(-100.0f, 100.0f, 0.0f);						// 終了位置
+	const MyLib::Vector3 OFFSET_ICON = MyLib::Vector3(40.0f, 0.0f, 0.0f);	// テキストのオフセット位置
 }
 
 //==========================================================================
@@ -158,8 +159,9 @@ void CCharmText_Left::Update(const float fDeltaTime, const float fDeltaRate, con
 	pos.z += DISTANCE_XZ * m_nCntUp;
 	pos.y += DISTANCE_UP * m_nCntUp;
 
-	m_pFace->SetPosition(pos);
-	m_pText->SetPosition(pos + MyLib::Vector3(m_pFace->GetSize().x, 0.0f, 0.0f));
+	MyLib::Vector2 size = m_pText->GetSize() * 0.5f;
+	m_pFace->SetPosition(pos + MyLib::Vector3(size.x, -size.y, -50.0f));
+	m_pText->SetPosition(pos);
 }
 
 //==========================================================================

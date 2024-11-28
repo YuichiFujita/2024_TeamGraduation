@@ -110,7 +110,7 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 	// モーションフラグ取得
 	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	if (bBlink && m_bDash)
+	if (!m_bDash)
 	{// ダッシュ解除
 		bBlink = false;
 
@@ -121,6 +121,9 @@ void CPlayerAIControlMove::Dash(CPlayer* player, const float fDeltaTime, const f
 		{// ダッシュからは派生
 			player->SetMotion(CPlayer::EMotion::MOTION_GRIP_FRONT);
 		}
+
+		// 走るフラグ設定
+		player->SetEnableDash(false);
 	}
 	else
 	{
