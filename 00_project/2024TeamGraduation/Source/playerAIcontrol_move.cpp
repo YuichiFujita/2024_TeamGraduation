@@ -47,19 +47,17 @@ CPlayerAIControlMove::~CPlayerAIControlMove()
 //==========================================================================
 void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!m_bBlink) { return; }
-
 	// 入力フラグ
 	bool bInput = false;
+	// 走るフラグ取得
+	bool bBlink = IsBlink();
 
 	// カメラ情報取得
 	CCamera* pCamera = CManager::GetInstance()->GetCamera();
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-	bool bBlink = IsBlink();									// 走るフラグ取得
-
 	// ダッシュする
-	if (!bBlink)
+	if (!bBlink && m_bBlink)
 	{
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		MyLib::Vector3 rot = player->GetRotation();
