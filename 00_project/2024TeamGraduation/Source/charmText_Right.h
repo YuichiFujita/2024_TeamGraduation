@@ -48,6 +48,11 @@ private:
 	void StateFadeIn() override;	// フェードイン
 	void StateWait() override;		// 待機
 	void StateFadeOut() override;	// フェードアウト
+
+	//--------------------------
+	// チェイン
+	//--------------------------
+	virtual void CheckChain() override;				// チェインの確認
 	
 	//=============================
 	// メンバ変数

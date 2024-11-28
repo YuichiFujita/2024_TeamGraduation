@@ -35,6 +35,7 @@
 #include "playerDressup.h"
 #include "playerSpawn.h"
 #include "playerReferee.h"
+#include "playerResult.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
 #include "playerUserIn.h"
@@ -48,6 +49,8 @@
 #include "playerPosAdj_in.h"
 #include "playerPosAdj_inLeft.h"
 #include "playerPosAdj_inRight.h"
+#include "playerAIPosAdj_inLeft.h"
+#include "playerAIPosAdj_inRight.h"
 #include "playerPosAdj_out.h"
 #include "playerPosAdj_none.h"
 #include "playerAction.h"
@@ -331,6 +334,10 @@ CPlayer* CPlayer::Create
 
 	case EHuman::HUMAN_REFEREE:
 		pPlayer = DEBUG_NEW CPlayerReferee;
+		break;
+
+	case EHuman::HUMAN_RESULT:
+		pPlayer = DEBUG_NEW CPlayerResult(typeTeam);
 		break;
 
 	default:
@@ -935,6 +942,20 @@ void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, con
 	default:
 		break;
 	}
+
+	//-----------------------------
+	// キャッチ
+	//-----------------------------
+	if (nType != EMotion::MOTION_CATCH_STANCE &&
+		nType != EMotion::MOTION_CATCH_STANCE_JUMP)
+	{
+		// エフェクト破棄
+		if (m_pEfkCatchStance != nullptr)
+		{
+			m_pEfkCatchStance->SetTrigger(0);
+			m_pEfkCatchStance = nullptr;
+		}
+	}
 }
 
 //==========================================================================
@@ -989,13 +1010,6 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_CATCH_STANCE:
 	case EMotion::MOTION_CATCH_STANCE_JUMP:
 	{
-		// エフェクト破棄
-		if (m_pEfkCatchStance != nullptr)
-		{
-			m_pEfkCatchStance->SetTrigger(0);
-			m_pEfkCatchStance = nullptr;
-		}
-
 		// エフェクトの位置
 		MyLib::Vector3 setpos = GetPosition();
 		MyLib::Vector3 rot = GetRotation();
@@ -1063,7 +1077,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 			setpos,
 			rot,	// 向き
 			MyLib::Vector3(),
-			15.0f, true);
+			20.0f, true);
 
 		if (m_pEfkCatchJust != nullptr)
 		{// 位置・向き更新
@@ -1296,13 +1310,6 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		break;
 	}
 
-	// エフェクト破棄
-	if (m_pEfkCatchStance != nullptr)
-	{
-		m_pEfkCatchStance->SetTrigger(0);
-		m_pEfkCatchStance = nullptr;
-	}
-
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
 
@@ -1324,13 +1331,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-
-	// エフェクト破棄
-	if (m_pEfkCatchStance != nullptr)
-	{
-		m_pEfkCatchStance->SetTrigger(0);
-		m_pEfkCatchStance = nullptr;
-	}
 
 	switch (atkBall)
 	{
@@ -1863,6 +1863,9 @@ void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, c
 	{
 		m_fStateTime = 0.0f;
 
+		// ずっとトスモーション
+		pMotion->Set(EMotion::MOTION_TOSS);
+
 		// チーム別向き設定
 		MyLib::Vector3 rot = GetRotation();
 		switch (m_typeTeam)
@@ -2002,7 +2005,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 // プレイヤー位置補正の変更
 //==========================================================================
-void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
+void CPlayer::ChangePosAdjuster(EBaseType base, CGameManager::ETeamSide team, EFieldArea area)
 {
 	// プレイヤー位置補正の破棄
 	SAFE_DELETE(m_pPosAdj);
@@ -2018,11 +2021,28 @@ void CPlayer::ChangePosAdjuster(CGameManager::ETeamSide team, EFieldArea area)
 		switch (team)
 		{ // チームコートごとの処理
 		case CGameManager::ETeamSide::SIDE_LEFT:
-			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
+
+			if (EBaseType::TYPE_USER == base)
+			{// ユーザー
+				m_pPosAdj = DEBUG_NEW CPlayerPosAdjInLeft;
+			}
+			else
+			{
+				m_pPosAdj = DEBUG_NEW CPlayerAIPosAdjInLeft;
+			}
+
 			break;
 
 		case CGameManager::ETeamSide::SIDE_RIGHT:
-			m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
+			if (EBaseType::TYPE_USER == base)
+			{// ユーザー
+				m_pPosAdj = DEBUG_NEW CPlayerPosAdjInRight;
+			}
+			else
+			{
+				m_pPosAdj = DEBUG_NEW CPlayerAIPosAdjInRight;
+			}
+
 			break;
 
 		default:

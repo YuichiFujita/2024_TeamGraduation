@@ -299,7 +299,6 @@ MOTION_FILENAME = data/TEXT/character/player/righthand/motion_throw_pass.txt		# 
 MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# トス
 MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# 盛り上げ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# スペシャル
-MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt					# 勝利
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ダメージ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# 死亡
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死亡後

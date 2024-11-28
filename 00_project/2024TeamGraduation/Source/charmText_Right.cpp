@@ -89,6 +89,44 @@ void CCharmText_Right::Uninit()
 	// リストから削除
 	m_List.Delete(this);
 
+	// 既に存在しているものを上げる
+	CListManager<CCharmText_Right>::Iterator itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		CCharmText_Right* pText = (*itr);
+
+		std::vector<int> vecIdx = pText->GetChainIdx();		// チェインしているインデックス番号取得
+		std::vector<int>::iterator itrIdx = std::find(vecIdx.begin(), vecIdx.end(), m_nMyChainIdx);
+
+		if (itrIdx != vecIdx.end())
+		{// 今回分消す
+			vecIdx.erase(itrIdx);
+		}
+		pText->SetChainIdx(vecIdx);
+
+		// 自分のインデックスも減らす
+		int myChainIdx = pText->GetMyChainIdx();
+		myChainIdx--;
+		pText->SetMyChainIdx(myChainIdx);
+	}
+
+
+	itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		CCharmText_Right* pText = (*itr);
+
+		// 格納している全てを減算
+		std::vector<int> vecIdx = pText->GetChainIdx();		// チェインしているインデックス番号取得
+		for (auto& idx : vecIdx)
+		{
+			idx--;
+		}
+		pText->SetChainIdx(vecIdx);
+	}
+
 	// 終了処理
 	CCharmText::Uninit();
 }
@@ -162,4 +200,42 @@ void CCharmText_Right::StateFadeOut()
 
 	// フェードアウト
 	CCharmText::StateFadeOut();
+}
+
+//==========================================================================
+// チェインの確認
+//==========================================================================
+void CCharmText_Right::CheckChain()
+{
+	std::vector<int> chainIdx;	// チェインするインデックス
+
+	// 既に存在しているものから確認
+	CListManager<CCharmText_Right>::Iterator itr = m_List.GetEnd();
+	while (m_List.ListLoop(itr))
+	{// ループ
+
+		// ポインタ変換
+		CCharmText_Right* pText = (*itr);
+
+		// チェイン可能フラグ取得
+		bool bPossibleChain = pText->IsPossibleChain();
+
+		if (bPossibleChain)
+		{// チェイン可能なやつと、そいつがもっている全てとチェインする
+
+			// 既にチェインしているやつとそいつのインデックス取得
+			chainIdx = pText->GetChainIdx();
+			int pairIdx = pText->GetMyChainIdx();
+
+			// インデックス追加
+			chainIdx.push_back(pairIdx);
+
+			// もうチェイン出来なくする
+			pText->SetEnablePossibleChain(false);
+			break;
+		}
+	}
+
+	// チェインインデックス割り当て
+	m_nVecChainIdx = chainIdx;
 }

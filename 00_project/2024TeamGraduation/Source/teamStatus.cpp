@@ -138,6 +138,7 @@ void CTeamStatus::CheckAllDead()
 
 		// “¯‚¶ƒ`[ƒ€‚ª¶‚«‚Ä‚¢‚éê‡ = ‘S–Å‚µ‚Ä‚¢‚È‚¢
 		if (pPlayer->GetTeam() == m_typeTeam &&
+			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN &&	// “à–ì
 			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
 		{
 			return;

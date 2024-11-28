@@ -211,6 +211,7 @@
     <ClCompile Include="Source\entry.cpp" />
     <ClCompile Include="Source\entryscene.cpp" />
     <ClCompile Include="Source\entry_dressup.cpp" />
+    <ClCompile Include="Source\entry_gameSetting.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
@@ -284,6 +285,8 @@
     <ClCompile Include="Source\playerAIOut_control.cpp" />
     <ClCompile Include="Source\playerAIOut_controlAction.cpp" />
     <ClCompile Include="Source\playerAIOut_controlMove.cpp" />
+    <ClCompile Include="Source\playerAIPosAdj_inLeft.cpp" />
+    <ClCompile Include="Source\playerAIPosAdj_inRight.cpp" />
     <ClCompile Include="Source\playerBase.cpp" />
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
@@ -301,6 +304,7 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
     <ClCompile Include="Source\playerReferee.cpp" />
+    <ClCompile Include="Source\playerResult.cpp" />
     <ClCompile Include="Source\playerSpawn.cpp" />
     <ClCompile Include="Source\playerSpawnManager.cpp" />
     <ClCompile Include="Source\playerUsercontrol_move.cpp" />
@@ -404,6 +408,7 @@
     <ClInclude Include="Source\entry.h" />
     <ClInclude Include="Source\entryscene.h" />
     <ClInclude Include="Source\entry_dressup.h" />
+    <ClInclude Include="Source\entry_gameSetting.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
@@ -477,6 +482,8 @@
     <ClInclude Include="Source\playerAIOut_control.h" />
     <ClInclude Include="Source\playerAIOut_controlAction.h" />
     <ClInclude Include="Source\playerAIOut_controlMove.h" />
+    <ClInclude Include="Source\playerAIPosAdj_inLeft.h" />
+    <ClInclude Include="Source\playerAIPosAdj_inRight.h" />
     <ClInclude Include="Source\playerBase.h" />
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
@@ -494,6 +501,7 @@
     <ClInclude Include="Source\playerPosAdj_none.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
     <ClInclude Include="Source\playerReferee.h" />
+    <ClInclude Include="Source\playerResult.h" />
     <ClInclude Include="Source\playerSpawn.h" />
     <ClInclude Include="Source\playerSpawnManager.h" />
     <ClInclude Include="Source\playerUsercontrol_move.h" />

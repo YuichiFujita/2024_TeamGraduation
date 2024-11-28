@@ -10,7 +10,7 @@
 #include "object3D.h"
 
 // TODO：ボールマーカー表示
-#if 0
+#if 1
 #define DISP
 #endif
 
@@ -109,7 +109,7 @@ HRESULT CBallHolderMarker::CreateCircle()
 	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
 
 	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 135.0f);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 100.0f);
 	m_pCircle->SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
 	m_pCircle->SetSizeOrigin(m_pCircle->GetSize());
 
@@ -137,7 +137,7 @@ HRESULT CBallHolderMarker::CreateArrow()
 	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
 
 	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 60.0f);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 40.0f);
 	m_pArrow->SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
 	m_pArrow->SetSizeOrigin(m_pArrow->GetSize());
 
@@ -182,7 +182,12 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 
 	// 円と矢印の位置設定
 	m_pCircle->SetPosition(pos);
-	m_pArrow->SetPosition(pos);
+	m_pArrow->SetPosition(pos + MyLib::Vector3(0.0f, 0.1f, 0.0f));
+
+	MyLib::Vector3 rot = m_pPlayer->GetRotation();
+	rot.y += D3DX_PI;
+	m_pArrow->SetRotation(rot);
+
 #else
 	SetEnableDisp(false);
 #endif

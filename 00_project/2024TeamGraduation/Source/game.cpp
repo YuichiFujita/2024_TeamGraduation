@@ -203,6 +203,20 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
 		}
+		if (ImGui::Button("Double CharmText_Left"))
+		{
+			// オーディエンス生成
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+		}
+		if (ImGui::Button("Tripple CharmText_Left"))
+		{
+			// オーディエンス生成
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+			CCharmText::Create(CGameManager::ETeamSide::SIDE_LEFT);
+		}
+
 		if (ImGui::Button("CharmText_Rihgt"))
 		{
 			// オーディエンス生成

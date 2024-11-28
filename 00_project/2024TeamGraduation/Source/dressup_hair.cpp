@@ -84,8 +84,16 @@ void CDressup_Hair::Update(const float fDeltaTime, const float fDeltaRate, const
 	// ƒ‚ƒfƒ‹Ø‚è‘Ö‚¦
 	if (bChange)
 	{
-		m_pObjChara->ChangeObject(m_nSwitchIdx, m_vecModelName[m_nNowIdx]);
+		ReRegist();
 	}
+}
+
+//==========================================================================
+// ÄŠ„‚è“–‚Ä
+//==========================================================================
+void CDressup_Hair::ReRegist()
+{
+	m_pObjChara->ChangeObject(m_nSwitchIdx, m_vecModelName[m_nNowIdx]);
 }
 
 //==========================================================================

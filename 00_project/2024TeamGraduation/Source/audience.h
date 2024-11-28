@@ -146,7 +146,7 @@ private:
 	// 静的メンバ変数
 	//=============================
 	static CListManager<CAudience> m_list;	// リスト
-	static int m_aNumWatchAll[2];			// 観戦中の人数
+	static int m_aNumWatchAll[CGameManager::ETeamSide::SIDE_MAX];			// 観戦中の人数
 
 	//=============================
 	// メンバ変数

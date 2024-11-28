@@ -57,6 +57,7 @@ public:
 	void SetIsJump(bool bJump) { m_sFlag.bJump = bJump; }					// ジャンプするか設定
 	void SetIsJumpFloat(bool passFloat) { m_sFlag.bJumpFloat = passFloat; }	// じゃんぷを継続するか設定
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }		// スペシャル撃つか設定
+	void SetJumpRate(float rate) { m_fJumpRate = rate; }
 	SFlag GetIsFlag() { return m_sFlag; }
 
 
@@ -74,7 +75,7 @@ private:
 	void Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// キャッチ
 	void Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// 投げ
 	void Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;			// ジャンプ
-	void JumpFloat(CPlayer* player) override;																			// ジャンプ上昇
+	void JumpFloat(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;																			// ジャンプ上昇
 	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// スペシャル
 	void Charm(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// モテ
 

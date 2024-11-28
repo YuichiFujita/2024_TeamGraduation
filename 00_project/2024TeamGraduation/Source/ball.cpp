@@ -822,6 +822,9 @@ void CBall::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const fl
 	// 情報を反映
 	SetPosition(pos);	// 位置
 	SetMove(vecMove);	// 移動量
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
 }
 
 //==========================================================================

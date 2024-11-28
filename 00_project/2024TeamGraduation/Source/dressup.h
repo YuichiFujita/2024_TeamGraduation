@@ -44,12 +44,13 @@ public:
 	//--------------------------
 	// キャラクター
 	//--------------------------
-	CObjectChara* BindObjectCharacter(CObjectChara* pObjChara) { m_pObjChara = pObjChara; }	// キャラクターのポインタ
+	void BindObjectCharacter(CObjectChara* pObjChara) { m_pObjChara = pObjChara; }	// キャラクターのポインタ
 
 	//--------------------------
 	// その他
 	//--------------------------
 	void SetControllIdx(int idx) { m_nControllIdx = idx; }	// 操作するインデックス設定
+	virtual void ReRegist() = 0;							// 再割り当て
 	virtual void Debug();
 
 	// 静的関数

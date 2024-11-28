@@ -94,6 +94,12 @@ public:
 		SDebugInfo() : label(EEfkLabel::EFKLABEL_SAMPLE_LASER), scale(10.0f), pEfkObj(nullptr) {}
 	};
 
+	struct SLoadInfo	// 読み込み用
+	{
+		std::u16string filename;	// ファイル名
+		Effekseer::EffectRef ref;	// リファレンス
+	};
+
 	template <typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -140,9 +146,10 @@ private:
 	std::function<void()> onResetDevice;
 
 	// 自作変数
-	SDebugInfo m_debugInfo;							// デバッグ情報
-	static std::string m_EffectName[EFKLABEL_MAX];	// エフェクトのファイル名
-	static CMyEffekseer* m_pMyEffekseer;			// 自身のポインタ
+	SDebugInfo m_debugInfo;								// デバッグ情報
+	std::vector<SLoadInfo> m_vecLoadInfo;				// 読み込み情報
+	static std::string m_EffectName[EFKLABEL_MAX];		// エフェクトのファイル名
+	static CMyEffekseer* m_pMyEffekseer;				// 自身のポインタ
 };
 
 
