@@ -18,6 +18,12 @@ namespace
 	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);
 }
 
+// 状態時間
+namespace StateTime
+{
+	const float PRELUDE(5.0f);	// 前座
+}
+
 namespace Draw
 {// 引き分け
 	const MyLib::Vector3 POS_PRELUDE = MyLib::Vector3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.4f, 0.0f);
@@ -78,6 +84,16 @@ namespace Player
 }
 
 //==========================================================================
+// 関数ポインタ
+//==========================================================================
+CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =	// 状態関数
+{
+	& CResultManager::StateNone,				// なし
+	& CResultManager::StatePrelude,				// 前座勝敗
+	& CResultManager::StateCharmContest,		// モテ勝敗
+};
+
+//==========================================================================
 // 静的メンバ変数
 //==========================================================================
 CResultManager* CResultManager::m_pThisPtr = nullptr;	// 自身のポインタ
@@ -87,11 +103,12 @@ CResultManager* CResultManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 CResultManager::CResultManager()
 {
-	m_fTime = 0.0f;													// 時間経過
 	m_fTension = 0.0f;												// 盛り上がり値
 	m_teamPreludeWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
 	m_teamContestWin = CGameManager::ETeamSide::SIDE_NONE;			// 勝利チーム
 	memset(&m_fCharmValue[0], 0, sizeof(m_fCharmValue));			// モテ値
+	m_state = EState::STATE_NONE;									// 状態
+	m_fStateTime = 0.0f;											// 状態時間
 }
 
 //==========================================================================
@@ -165,14 +182,12 @@ void CResultManager::Uninit()
 //==========================================================================
 void CResultManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 時間経過
-	m_fTime += fDeltaTime * fSlowRate;
+	// 状態更新
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 最初勝利チームドーン
 	// その後モテ値勝利ドーン
 	// 盛り上がり値ドーン
-
-
 
 
 #if _DEBUG	// デバッグ処理
@@ -183,6 +198,50 @@ void CResultManager::Update(const float fDeltaTime, const float fDeltaRate, cons
 		ImGui::TreePop();
 	}
 #endif
+}
+
+//==========================================================================
+// 状態更新
+//==========================================================================
+void CResultManager::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 状態タイマー加算
+	m_fStateTime += fDeltaTime * fSlowRate;
+
+	// 状態更新
+	if (m_StateFunc[m_state] != nullptr)
+	{
+		(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// なし
+//==========================================================================
+void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// タイマーリセット
+	m_fStateTime = 0.0f;
+}
+
+//==========================================================================
+// 勝利
+//==========================================================================
+void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 指定時間を過ぎたら
+	if (m_fStateTime >= StateTime::PRELUDE)
+	{
+		SetState(EState::STATE_CONTEST);
+	}
+}
+
+//==========================================================================
+// 敗北モーション
+//==========================================================================
+void CResultManager::StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
 }
 
 //==========================================================================
@@ -518,6 +577,15 @@ void CResultManager::LoadPlayer(std::ifstream* File, std::string line, int nTeam
 
 	// プレイヤー生成
 	CPlayer* player = CPlayer::Create(pos, team, CPlayer::EHuman::HUMAN_RESULT, eBody, eHanded);
+}
+
+//==========================================================================
+// 状態設定
+//==========================================================================
+void CResultManager::SetState(EState state)
+{
+	m_state = state;
+	m_fStateTime = 0.0f;
 }
 
 //==========================================================================

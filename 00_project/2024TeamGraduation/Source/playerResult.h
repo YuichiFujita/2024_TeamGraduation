@@ -82,6 +82,7 @@ private:
 	// オーバーライド関数
 	//=============================
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 状態更新
+	void CheckVictory(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 勝敗チェック
 
 	//=============================
 	// メンバ関数
@@ -98,7 +99,6 @@ private:
 	//-----------------------------
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
-
 };
 
 #endif

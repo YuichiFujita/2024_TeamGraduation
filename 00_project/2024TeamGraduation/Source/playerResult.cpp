@@ -5,13 +5,7 @@
 // 
 //=============================================================================
 #include "playerResult.h"
-#include "playerManager.h"
-#include "camera.h"
-#include "manager.h"
-#include "input.h"
-#include "calculation.h"
-#include "sound.h"
-#include "fade.h"
+#include "resultmanager.h"
 
 //==========================================================================
 // 定数定義
@@ -173,6 +167,23 @@ void CPlayerResult::StateLose(const float fDeltaTime, const float fDeltaRate, co
 	if (pMotion->GetType() != EMotion::MOTION_LOSE)
 	{// 敗北モーション以外なら敗北にする
 		pMotion->Set(EMotion::MOTION_LOSE);
+	}
+}
+
+//==========================================================================
+// 勝敗チェック
+//==========================================================================
+void CPlayerResult::CheckVictory(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CResultManager* pRsltMgr = CResultManager::GetInstance();
+	CResultManager::EState resultState = pRsltMgr->GetState();
+	if (resultState == CResultManager::EState::STATE_PRELUDE)
+	{
+		pRsltMgr->GetTeamPreludeWin();
+	}
+	else if (resultState == CResultManager::EState::STATE_CONTEST)
+	{
+		pRsltMgr->GetTeamContestWin();
 	}
 }
 
