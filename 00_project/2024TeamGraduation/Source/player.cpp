@@ -337,7 +337,7 @@ CPlayer* CPlayer::Create
 		break;
 
 	case EHuman::HUMAN_RESULT:
-		pPlayer = DEBUG_NEW CPlayerResult;
+		pPlayer = DEBUG_NEW CPlayerResult(typeTeam);
 		break;
 
 	default:

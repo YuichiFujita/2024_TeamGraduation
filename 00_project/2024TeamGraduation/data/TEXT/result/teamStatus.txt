@@ -4,29 +4,15 @@
 #------------------------------------------------------------------------------
 # ééçáèÓïÒ
 #------------------------------------------------------------------------------
-PRELUDE_WIN = -1
+PRELUDE_WIN = 0
 CONTEST_WIN = 0
 TENSION = 0
+
 #------------------------------------------------------------------------------
 # É`Å[ÉÄ0
 #------------------------------------------------------------------------------
 SETTEAM
-	CHARMVALUE = 17.2
-	SETPLAYER
-		HANDED = 1
-		BODY = 2
-		HAIR = 1
-		ACCESSORY= 1
-		FACE = 1
-	END_SETPLAYER
-
-	SETPLAYER
-		HANDED = 1
-		BODY = 2
-		HAIR = 1
-		ACCESSORY= 1
-		FACE = 1
-	END_SETPLAYER
+	CHARMVALUE = 39
 
 	SETPLAYER
 		HANDED = 0
@@ -43,21 +29,6 @@ END_SETTEAM
 #------------------------------------------------------------------------------
 SETTEAM
 	CHARMVALUE = 0
-	SETPLAYER
-		HANDED = 0
-		BODY = 1
-		HAIR = 1
-		ACCESSORY= 1
-		FACE = 1
-	END_SETPLAYER
-
-	SETPLAYER
-		HANDED = 0
-		BODY = 1
-		HAIR = 1
-		ACCESSORY= 1
-		FACE = 1
-	END_SETPLAYER
 
 	SETPLAYER
 		HANDED = 0

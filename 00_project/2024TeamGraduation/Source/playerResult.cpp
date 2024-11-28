@@ -214,7 +214,7 @@ void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDel
 		SetState(EState::STATE_WIN);
 	}
 	else
-	{
+	{// 敗北者なら
 		SetState(EState::STATE_LOSE);
 	}
 }
@@ -230,7 +230,7 @@ void CPlayerResult::CheckVictoryContest(const float fDeltaTime, const float fDel
 		SetState(EState::STATE_WIN);
 	}
 	else
-	{// 
+	{// 敗北者なら
 		SetState(EState::STATE_LOSE);
 	}
 }

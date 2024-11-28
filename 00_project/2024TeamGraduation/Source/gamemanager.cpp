@@ -646,7 +646,6 @@ void CGameManager::CreateTeamStatus()
 		// チーム設定
 		side = static_cast<ETeamSide>(i);
 		m_pTeamStatus[i]->TeamSetting(side);
-
 	}
 }
 
@@ -676,6 +675,7 @@ void CGameManager::Save()
 	File << "PRELUDE_WIN = " << m_endInfo.m_winteamPrelude << std::endl;
 	File << "CONTEST_WIN = " << m_endInfo.m_winteamCharm << std::endl;
 	File << "TENSION = "<< m_endInfo.m_fTension << std::endl;
+	File << std::endl;
 
 	int i = 0;
 	for (const auto& team : m_pTeamStatus)
@@ -688,6 +688,7 @@ void CGameManager::Save()
 		File << "SETTEAM" << std::endl;
 
 		File << "	CHARMVALUE = " << team->GetCharmInfo().fValue << std::endl;
+		File << std::endl;
 
 		// リストループ
 		CListManager<CPlayer> list = CPlayerManager::GetInstance()->GetInList(static_cast<ETeamSide>(i));
