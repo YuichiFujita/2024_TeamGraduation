@@ -695,6 +695,9 @@
     <ClCompile Include="Source\startText.cpp">
       <Filter>ingame\visual</Filter>
     </ClCompile>
+    <ClCompile Include="Source\entry_gameSetting.cpp">
+      <Filter>mode\entry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1269,6 +1272,9 @@
     </ClInclude>
     <ClInclude Include="Source\startText.h">
       <Filter>ingame\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\entry_gameSetting.h">
+      <Filter>mode\entry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
