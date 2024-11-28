@@ -156,7 +156,7 @@ void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const fl
 					pObj->Update(fDeltaTime, fDeltaRate, fSlowRate);
 				}
 
-#if 0
+#if 1
 				if (pObj->m_bDeath)
 				{
 					// Œã‚ÅÁ‚·vector‚ÉŠi”[
@@ -168,7 +168,7 @@ void CObject::UpdateAll(const float fDeltaTime, const float fDeltaRate, const fl
 		}
 	}
 
-#if 0
+#if 1
 	//*******************************
 	// €–Sˆ—
 	//*******************************

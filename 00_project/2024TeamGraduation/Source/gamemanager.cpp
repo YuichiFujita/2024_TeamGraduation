@@ -27,6 +27,7 @@
 #include "playerSpawnManager.h"
 #include "playerManager.h"
 #include "charmManager.h"
+#include "charmText.h"
 #include "timerUI.h"
 
 #include "resultManager.h"
@@ -182,9 +183,16 @@ HRESULT CGameManager::Init()
 	}
 #endif
 
+#if 0	// TODO : 藤田用に戻す
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
+#else
+	// 開始シーンの設定
+	SetSceneType(ESceneType::SCENE_START);	// 登場演出
 
+	// プレイヤーマネージャーの生成
+	CPlayerManager::Create();
+#endif
 	// チームステータスの生成
 	CreateTeamStatus();
 
@@ -593,6 +601,9 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
+
+	// モテ文字生成
+	CCharmText::Create(side);
 }
 
 //==========================================================================
