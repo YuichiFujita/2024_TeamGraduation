@@ -29,6 +29,7 @@ public:
 	HRESULT Init() override;	// ‰Šú‰»
 	void Uninit() override;		// I—¹
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override; // XV
+	virtual void ReRegist() override;	// ÄŠ„‚è“–‚Ä
 
 private:
 

@@ -84,6 +84,15 @@ void CDressup_Accessory::Update(const float fDeltaTime, const float fDeltaRate, 
 	// •ÏX‚µ‚Ä‚È‚©‚Á‚½‚çI‚í‚é
 	if (!bChange) return;
 
+	// ÄŠ„‚è“–‚Ä
+	ReRegist();
+}
+
+//==========================================================================
+// ÄŠ„‚è“–‚Ä
+//==========================================================================
+void CDressup_Accessory::ReRegist()
+{
 	if (m_nNowIdx == 0)
 	{
 		m_pObjChara->DeleteObject(m_nSwitchIdx);
