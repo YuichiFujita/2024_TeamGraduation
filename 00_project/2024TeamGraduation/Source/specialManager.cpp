@@ -163,7 +163,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// ゲームをスペシャル演出シーンに変更
-	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL_STAG);
+	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
 #endif
 
 	// 通常カメラの設定

@@ -324,7 +324,7 @@ void CPlayerManager::DeletePlayer(CPlayer* pPlayer)
 		break;
 
 	default:
-		return;
+		assert(false);
 		break;
 	}
 }

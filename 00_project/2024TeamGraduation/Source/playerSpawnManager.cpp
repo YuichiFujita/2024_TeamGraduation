@@ -18,7 +18,10 @@
 //************************************************************
 namespace
 {
-	const int PRIORITY = 4;	// 優先順位
+	const int	PRIORITY = 4;			// 優先順位
+	const float	ZLINE_OFFSET = 200.0f;	// Z軸オフセット
+	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1817.35f);	// 左先頭プレイヤー初期位置
+	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1817.35f);	// 右先頭プレイヤー初期位置
 }
 
 //************************************************************
@@ -26,9 +29,13 @@ namespace
 //************************************************************
 CPlayerSpawnManager::AFuncUpdateState CPlayerSpawnManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
-	nullptr,							// 何もしない更新
-	&CPlayerSpawnManager::UpdateCutIn,	// カットイン更新
-	nullptr,							// 終了更新
+	nullptr,								// 何もしない状態
+	&CPlayerSpawnManager::UpdateOpenDoor,	// ドア開放状態
+	&CPlayerSpawnManager::UpdateWalkAxisZ,	// Z軸移動状態
+	&CPlayerSpawnManager::UpdateRotate,		// 回転状態
+	&CPlayerSpawnManager::UpdateWalkAxisX,	// X軸移動状態
+	&CPlayerSpawnManager::UpdateBow,		// お辞儀状態
+	nullptr,								// 終了更新
 };
 CPlayerSpawnManager* CPlayerSpawnManager::m_pInstance = nullptr;	// 自身のインスタンス
 
@@ -62,49 +69,56 @@ HRESULT CPlayerSpawnManager::Init(void)
 	// FUJITA：エントリーで外部に保存されたプレイヤー情報を取得しプレイヤーを生成
 
 	// メンバ変数を初期化
-	m_state		= STATE_CUTIN;	// 状態
-	m_fCurTime	= 0.0f;			// 現在の待機時間
+	m_state		= STATE_OPEN_DOOR;	// 状態
+	m_fCurTime	= 0.0f;				// 現在の待機時間
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
-	//// 左チームプレイヤー生成
-	//for (int i = 0; i < 5; i++)
-	//{
-	//	MyLib::Vector3 pos = MyLib::Vector3(-200.0f, 0.0f, -100.0f);
-	//	MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-	//	CPlayer* pLeftPlayer = CPlayer::Create
-	//	(
-	//		pos + offset, 					// 位置
-	//		CGameManager::SIDE_LEFT,		// チームサイド
-	//		CPlayer::EHuman::HUMAN_SPAWN,	// 人
-	//		CPlayer::EBody::BODY_GARI,		// 体系
-	//		CPlayer::EHandedness::HAND_L	// 利き手
-	//	);
-	//	if (pLeftPlayer == nullptr)
-	//	{
-	//		return E_FAIL;
-	//	}
-	//}
+	// 左チームプレイヤー生成
+	for (int i = 0; i < 6; i++)
+	{
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
+		CPlayer* pLeftPlayer = CPlayer::Create
+		(
+			POS_LEFT + offset, 				// 位置
+			CGameManager::SIDE_LEFT,		// チームサイド
+			CPlayer::EHuman::HUMAN_SPAWN,	// 人
+			CPlayer::EBody::BODY_GARI,		// 体系
+			CPlayer::EHandedness::HAND_L	// 利き手
+		);
+		if (pLeftPlayer == nullptr)
+		{
+			return E_FAIL;
+		}
+	}
 
-	//// 右チームプレイヤー生成
-	//for (int i = 0; i < 5; i++)
-	//{
-	//	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
-	//	MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 200.0f * (float)i);
-	//	CPlayer* pRightPlayer = CPlayer::Create
-	//	(
-	//		pos + offset, 					// 位置
-	//		CGameManager::SIDE_RIGHT,		// チームサイド
-	//		CPlayer::EHuman::HUMAN_SPAWN,	// 人
-	//		CPlayer::EBody::BODY_DEBU,		// 体系
-	//		CPlayer::EHandedness::HAND_R	// 利き手
-	//	);
-	//	if (pRightPlayer == nullptr)
-	//	{
-	//		return E_FAIL;
-	//	}
-	//}
+	// 右チームプレイヤー生成
+	for (int i = 0; i < 6; i++)
+	{
+		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
+		CPlayer* pRightPlayer = CPlayer::Create
+		(
+			POS_RIGHT + offset, 			// 位置
+			CGameManager::SIDE_RIGHT,		// チームサイド
+			CPlayer::EHuman::HUMAN_SPAWN,	// 人
+			CPlayer::EBody::BODY_DEBU,		// 体系
+			CPlayer::EHandedness::HAND_R	// 利き手
+		);
+		if (pRightPlayer == nullptr)
+		{
+			return E_FAIL;
+		}
+	}
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+	// カメラ位置を原点にする
+	pCameraMotion->SetPosition(VEC3_ZERO);
+
+	// 登場演出モーションを設定
+	pCameraMotion->SetMotion(CCameraMotion::MOTION_SPAWN);
 
 	// 成功を返す
 	return S_OK;
@@ -154,9 +168,6 @@ void CPlayerSpawnManager::Update(const float fDeltaTime, const float fDeltaRate,
 		// 各状態ごとの更新
 		(this->*(m_aFuncUpdateState[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-	// 終了状態にする
-	m_state = STATE_END;
 }
 
 //============================================================
@@ -200,6 +211,56 @@ CPlayerSpawnManager *CPlayerSpawnManager::Create()
 }
 
 //============================================================
+// プレイヤー登録処理
+//============================================================
+void CPlayerSpawnManager::RegistPlayer(CPlayer* pPlayer)
+{
+	switch (pPlayer->GetTeam())
+	{ // チームサイドごとの処理
+	case CGameManager::ETeamSide::SIDE_LEFT:
+
+		// 左リストに登録
+		m_listLeft.Regist(pPlayer);
+		break;
+
+	case CGameManager::ETeamSide::SIDE_RIGHT:
+
+		// 右リストに登録
+		m_listRight.Regist(pPlayer);
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+}
+
+//============================================================
+// プレイヤー削除処理
+//============================================================
+void CPlayerSpawnManager::DeletePlayer(CPlayer* pPlayer)
+{
+	switch (pPlayer->GetTeam())
+	{ // チームサイドごとの処理
+	case CGameManager::ETeamSide::SIDE_LEFT:
+
+		// 左リストから削除
+		m_listLeft.Delete(pPlayer);
+		break;
+
+	case CGameManager::ETeamSide::SIDE_RIGHT:
+
+		// 右リストから削除
+		m_listRight.Delete(pPlayer);
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+}
+
+//============================================================
 //	インスタンス取得処理
 //============================================================
 CPlayerSpawnManager* CPlayerSpawnManager::GetInstance()
@@ -212,14 +273,254 @@ CPlayerSpawnManager* CPlayerSpawnManager::GetInstance()
 }
 
 //============================================================
-//	カットインの更新処理
+//	ドア開放状態の更新処理
 //============================================================
-void CPlayerSpawnManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//if ()
-	{ // 
+	const float TIME_END = 0.65f;	// 終了時間
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	if (pCameraMotion->GetNowTriggerIdx() <= 0) { return; }		// トリガーが次に行くまで待機
+
+	if (pCameraMotion->IsImpactFrame(0))
+	{
+		// ドアを開放する
+		CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
+		pManager->SetEnableOpen(true, 0.25f);
+	}
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END)
+	{ // 経過しきった場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// Z軸移動状態にする
+		m_state = EState::STATE_WALK_Z;
+	}
+}
+
+//============================================================
+//	Z軸移動状態の更新処理
+//============================================================
+void CPlayerSpawnManager::UpdateWalkAxisZ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const MyLib::Vector3 LEFT_POSEND = MyLib::Vector3(POS_LEFT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const MyLib::Vector3 RIGHT_POSEND = MyLib::Vector3(POS_RIGHT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const float TIME_END = 4.5f;	// 終了時間
+
+	bool bEndState = false;	// 状態終了フラグ
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END)
+	{ // 経過しきった場合
+
+		// 経過時間を補正
+		m_fCurTime = TIME_END;
+
+		// 状態の終了を保存
+		bEndState = true;
+	}
+
+	CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
+	if (pManager->IsOpen() && m_fCurTime >= 1.6f)
+	{ // ドアが閉じていない場合
+
+		// ドアをゆっくり閉める
+		pManager->SetEnableOpen(false, 1.6f);
+	}
+
+	std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+	int nCntLeft = 0;	// 左チームループ回数
+	while (m_listLeft.ListLoop(itrLeft))
+	{ // 左チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+
+		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntLeft);	// Z軸オフセット
+
+		// 線形補間で移動
+		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(POS_LEFT + offset, LEFT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+
+		// ループ数の加算
+		nCntLeft++;
+	}
+
+	std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+	int nCntRight = 0;	// 右チームループ回数
+	while (m_listRight.ListLoop(itrRight))
+	{ // 右チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+
+		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntRight);	// Z軸オフセット
+
+		// 線形補間で移動
+		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(POS_RIGHT + offset, RIGHT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+
+		// ループ数の加算
+		nCntRight++;
+	}
+
+	if (bEndState)
+	{ // 状態を終了する場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// 回転状態にする
+		m_state = EState::STATE_ROTATE;
+	}
+}
+
+//============================================================
+//	回転状態の更新処理
+//============================================================
+void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const MyLib::Vector3 LEFT_ROTEND = MyLib::Vector3(0.0f, -HALF_PI, 0.0f);	// 終了地点	// TODO：まともな終了地点に
+	const MyLib::Vector3 RIGHT_ROTEND = MyLib::Vector3(0.0f, HALF_PI, 0.0f);	// 終了地点	// TODO：まともな終了地点に
+	const float TIME_END = 0.5f;	// 終了時間
+
+	bool bEndState = false;	// 状態終了フラグ
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END)
+	{ // 経過しきった場合
+
+		// 経過時間を補正
+		m_fCurTime = TIME_END;
+
+		// 状態の終了を保存
+		bEndState = true;
+	}
+
+	std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+	while (m_listLeft.ListLoop(itrLeft))
+	{ // 左チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+
+		// 線形補間で回転
+		pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, LEFT_ROTEND, 0.0f, TIME_END, m_fCurTime));
+	}
+
+	std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+	while (m_listRight.ListLoop(itrRight))
+	{ // 右チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+
+		// 線形補間で回転
+		pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, RIGHT_ROTEND, 0.0f, TIME_END, m_fCurTime));
+	}
+
+	if (bEndState)
+	{ // 状態を終了する場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// X軸移動状態にする
+		m_state = EState::STATE_WALK_X;
+	}
+}
+
+//============================================================
+//	X軸移動状態の更新処理
+//============================================================
+void CPlayerSpawnManager::UpdateWalkAxisX(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const MyLib::Vector3 LEFT_OLD_POSEND = MyLib::Vector3(POS_LEFT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const MyLib::Vector3 RIGHT_OLD_POSEND = MyLib::Vector3(POS_RIGHT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const MyLib::Vector3 LEFT_POSEND = MyLib::Vector3(-100.0f, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const MyLib::Vector3 RIGHT_POSEND = MyLib::Vector3(100.0f, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
+	const float TIME_END = 2.5f;	// 終了時間
+
+	bool bEndState = false;	// 状態終了フラグ
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END)
+	{ // 経過しきった場合
+
+		// 経過時間を補正
+		m_fCurTime = TIME_END;
+
+		// 状態の終了を保存
+		bEndState = true;
+	}
+
+	std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+	int nCntLeft = 0;	// 左チームループ回数
+	while (m_listLeft.ListLoop(itrLeft))
+	{ // 左チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+
+		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntLeft);	// Z軸オフセット
+
+		// 線形補間で移動
+		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(LEFT_OLD_POSEND + offset, LEFT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+
+		// ループ数の加算
+		nCntLeft++;
+	}
+
+	std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+	int nCntRight = 0;	// 右チームループ回数
+	while (m_listRight.ListLoop(itrRight))
+	{ // 右チームリスト内の要素数分繰り返す
+
+		CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+
+		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntRight);	// Z軸オフセット
+
+		// 線形補間で移動
+		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(RIGHT_OLD_POSEND + offset, RIGHT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+
+		// ループ数の加算
+		nCntRight++;
+	}
+
+	if (bEndState)
+	{ // 状態を終了する場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// お辞儀状態にする
+		m_state = EState::STATE_BOW;
+	}
+}
+
+//============================================================
+//	お辞儀状態の更新処理
+//============================================================
+void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const float TIME_END = 1.0f;	// 終了時間
+
+	// TODO：ここはお辞儀モーションから遷移タイミングを決める
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END
+	&&  pCameraMotion->IsFinish())
+	{ // 経過しきった場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
 
 		// 終了状態にする
-		m_state = STATE_END;
+		m_state = EState::STATE_END;
 	}
 }

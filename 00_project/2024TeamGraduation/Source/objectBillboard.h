@@ -20,10 +20,32 @@ class CObjectBillboard : public CObject
 {
 public:
 
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum AnchorPoint
+	{
+		LEFT = 0,		// 左
+		TOP_LEFT,		// 左上
+		TOP_CENTER,		// 上
+		TOP_RIGHT,		// 右上
+		RIGHT,			// 右
+		UNDER_RIGHT,	// 右下
+		UNDER_CENTER,	// 下
+		UNDER_LEFT,		// 左下
+		CENTER,			// 中央
+		MAX
+	};
+
+	//=============================
+	// コンストラクタ / デストラクタ
+	//=============================
 	CObjectBillboard(int nPriority = mylib_const::PRIORITY_ZSORT);
 	~CObjectBillboard();
 
-	// オーバーライドされた関数
+	//=============================
+	// オーバーライド関数
+	//=============================
 	HRESULT Init() override;
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;

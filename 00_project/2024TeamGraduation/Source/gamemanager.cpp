@@ -61,12 +61,12 @@ namespace
 //==========================================================================
 CGameManager::SCENE_FUNC CGameManager::m_SceneFunc[] =	// シーン関数
 {
-	&CGameManager::SceneMain,			// メイン
-	&CGameManager::SceneSpawn,			// 登場演出
-	&CGameManager::SceneStart,			// 開始演出
-	&CGameManager::SceneSpecialStag,	// スペシャル演出
-	&CGameManager::SceneEnd,			// 終了演出
-	&CGameManager::SceneDebug,			// デバッグ
+	&CGameManager::SceneMain,		// メイン
+	&CGameManager::SceneSpawn,		// 登場演出
+	&CGameManager::SceneStart,		// 開始演出
+	&CGameManager::SceneSpecial,	// スペシャル演出
+	&CGameManager::SceneEnd,		// 終了演出
+	&CGameManager::SceneDebug,		// デバッグ
 };
 
 //==========================================================================
@@ -168,13 +168,6 @@ HRESULT CGameManager::Init()
 		return E_FAIL;
 	}
 
-	// プレイヤー登場演出マネージャー生成
-	if (CPlayerSpawnManager::Create() == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
 #if _DEBUG
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
@@ -186,6 +179,17 @@ HRESULT CGameManager::Init()
 #if 0	// TODO : 藤田用に戻す
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
+
+	// プレイヤー登場演出マネージャー生成
+	if (CPlayerSpawnManager::Create() == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 通常カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_NONE);
 #else
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_START);
@@ -193,7 +197,9 @@ HRESULT CGameManager::Init()
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create();
 
-	GET_MANAGER->GetCamera()->SetState(CCamera::STATE::STATE_FOLLOW);
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
 #endif
 	// チームステータスの生成
 	CreateTeamStatus();
@@ -297,6 +303,49 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 }
 
 //==========================================================================
+// ドア開放フラグの設定
+//==========================================================================
+void CGameManager::SetEnableOpen(const bool bOpen, const float fMoveTime)
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア開放フラグの設定
+		m_apGymDoor[i]->SetEnableOpen(bOpen, fMoveTime);
+	}
+}
+
+//==========================================================================
+// ドア開放フラグの取得
+//==========================================================================
+bool CGameManager::IsOpen() const
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// ドアが開放されていない場合抜ける
+		if (!m_apGymDoor[i]->IsOpen()) { return false; }
+	}
+
+	return true;
+}
+
+//==========================================================================
+// ドア稼働中フラグの取得
+//==========================================================================
+bool CGameManager::IsMove() const
+{
+	for (int i = 0; i < EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// ドアが稼働中ではない場合抜ける
+		if (!m_apGymDoor[i]->IsMove()) { return false; }
+	}
+
+	return true;
+}
+
+//==========================================================================
 // スタート時の設定
 //==========================================================================
 void CGameManager::StartSetting()
@@ -383,27 +432,29 @@ void CGameManager::UpdateLimitTimer()
 //==========================================================================
 void CGameManager::SceneSpawn()
 {
-	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	// プレイヤー登場演出マネージャーの取得
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();
 	assert(pManager != nullptr);
+
+	// 入力情報の取得
+	CInputKeyboard* pKey = GET_INPUTKEY;
+	CInputGamepad* pPad = GET_INPUTPAD;
 
 	// 操作出来ない
 	m_bControll = false;
 
-	if (pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
-	{ // 登場演出が終わった場合
+	bool bInput = pKey->GetTrigger(DIK_RETURN)
+			   || pKey->GetTrigger(DIK_SPACE)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0)
+			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, 0);
 
-		// プレイヤー登場演出マネージャーの終了
-		SAFE_UNINIT(pManager);
+	if (bInput || pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
+	{ // スキップ操作、または登場演出が終わった場合
 
-		// プレイヤーマネージャーの生成
-		CPlayerManager::Create();
-
-		// 追従カメラの設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
-		pCamera->SetState(CCamera::STATE_FOLLOW);
-
-		// 開始演出へ遷移
-		SetSceneType(ESceneType::SCENE_START);
+		// 登場演出のスキップ
+		SkipSpawn();
 	}
 }
 
@@ -419,13 +470,13 @@ void CGameManager::SceneStart()
 //==========================================================================
 // スペシャル演出
 //==========================================================================
-void CGameManager::SceneSpecialStag()
+void CGameManager::SceneSpecial()
 {
 	// 操作出来ない
 	m_bControll = false;
 
 	// スペシャル演出更新
-	UpdateSpecialStag();
+	UpdateSpecial();
 }
 
 //==========================================================================
@@ -455,6 +506,32 @@ void CGameManager::SceneDebug()
 }
 
 //==========================================================================
+// 登場演出スキップ
+//==========================================================================
+void CGameManager::SkipSpawn()
+{
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	assert(pManager != nullptr);
+
+	// プレイヤー登場演出マネージャーの終了
+	SAFE_UNINIT(pManager);
+
+	// プレイヤーマネージャーの生成
+	CPlayerManager::Create();
+
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
+
+	// カメラモーションの終了
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	pCameraMotion->SetFinish(true);
+
+	// 開始演出へ遷移
+	SetSceneType(ESceneType::SCENE_START);
+}
+
+//==========================================================================
 // 観客更新
 //==========================================================================
 void CGameManager::UpdateAudience()
@@ -475,7 +552,7 @@ void CGameManager::UpdateAudience()
 //==========================================================================
 // スペシャル演出更新
 //==========================================================================
-void CGameManager::UpdateSpecialStag()
+void CGameManager::UpdateSpecial()
 {
 
 }

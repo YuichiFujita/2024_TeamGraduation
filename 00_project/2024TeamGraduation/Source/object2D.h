@@ -18,6 +18,9 @@ class CObject2D : public CObject
 {
 public:
 
+	//=============================
+	// —ñ‹“Œ^’è‹`
+	//=============================
 	enum AnchorPoint
 	{
 		LEFT = 0,		// ¶
