@@ -168,13 +168,6 @@ HRESULT CGameManager::Init()
 		return E_FAIL;
 	}
 
-	// プレイヤー登場演出マネージャー生成
-	if (CPlayerSpawnManager::Create() == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
 #if _DEBUG
 	// コートサイズのボックス
 	if (m_pCourtSizeBox == nullptr)
@@ -186,6 +179,17 @@ HRESULT CGameManager::Init()
 #if 0	// TODO : 藤田用に戻す
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
+
+	// プレイヤー登場演出マネージャー生成
+	if (CPlayerSpawnManager::Create() == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 通常カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_NONE);
 #else
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_START);
@@ -193,7 +197,9 @@ HRESULT CGameManager::Init()
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create();
 
-	GET_MANAGER->GetCamera()->SetState(CCamera::STATE::STATE_FOLLOW);
+	// 追従カメラの設定
+	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
+	pCamera->SetState(CCamera::STATE_FOLLOW);
 #endif
 	// チームステータスの生成
 	CreateTeamStatus();
@@ -516,6 +522,10 @@ void CGameManager::SkipSpawn()
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_FOLLOW);
+
+	// カメラモーションの終了
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	pCameraMotion->SetFinish(true);
 
 	// 開始演出へ遷移
 	SetSceneType(ESceneType::SCENE_START);

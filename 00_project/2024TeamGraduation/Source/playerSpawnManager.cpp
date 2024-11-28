@@ -508,9 +508,13 @@ void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRa
 
 	// TODO：ここはお辞儀モーションから遷移タイミングを決める
 
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
 	// 経過時間を加算
 	m_fCurTime += fDeltaTime * fSlowRate;
-	if (m_fCurTime >= TIME_END)
+	if (m_fCurTime >= TIME_END
+	&&  pCameraMotion->IsFinish())
 	{ // 経過しきった場合
 
 		// 待機時間を初期化
