@@ -188,10 +188,12 @@ HRESULT CGameManager::Init()
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 #else
 	// 開始シーンの設定
-	SetSceneType(ESceneType::SCENE_START);	// 登場演出
+	SetSceneType(ESceneType::SCENE_START);
 
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create();
+
+	GET_MANAGER->GetCamera()->SetState(CCamera::STATE::STATE_FOLLOW);
 #endif
 	// チームステータスの生成
 	CreateTeamStatus();
