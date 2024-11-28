@@ -1860,6 +1860,9 @@ void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, c
 	{
 		m_fStateTime = 0.0f;
 
+		// ずっとトスモーション
+		pMotion->Set(EMotion::MOTION_TOSS);
+
 		// チーム別向き設定
 		MyLib::Vector3 rot = GetRotation();
 		switch (m_typeTeam)

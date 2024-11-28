@@ -1316,7 +1316,8 @@ void CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall && pBall->GetPlayer())
 	{
-		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam())
+		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam() ||
+			pBall->GetPlayer() == m_pAI)
 		{// 違うチームが持っている場合
 			// カニ進行方向の設定
 			pControlAIMove->SetClabDirection(direction);
@@ -1324,7 +1325,7 @@ void CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	}
 	else
 	{
-		m_pAI->SetRotation({ 0.0f, direction, 0.0f });
+		m_pAI->SetRotDest(direction);
 	}
 
 #ifdef _DEBUG

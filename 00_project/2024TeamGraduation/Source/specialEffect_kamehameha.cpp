@@ -89,14 +89,17 @@ void CSpecialEffect_Kamehame::FinishSetting()
 	// 漂う空間オーラ
 	m_pAtmosphere->SetTrigger(0);
 	m_pAtmosphere->DeleteLater(1.0f);
+	m_pAtmosphere = nullptr;
 
 	// チャージ時の雷
 	m_pChargeThunder->SetTrigger(0);
 	m_pChargeThunder->DeleteLater(1.0f);
+	m_pChargeThunder = nullptr;
 
 	// がれき
 	m_pBallast->SetTrigger(0);
 	m_pBallast->DeleteLater(1.0f);
+	m_pBallast = nullptr;
 }
 
 //==========================================================================
