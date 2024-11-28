@@ -20,7 +20,7 @@ namespace
 namespace Position
 {
 	const MyLib::Vector3 START(400.0f, 100.0f, 700.0f);						// 開始位置
-	const MyLib::Vector3 FADEIN(START.x + 150.0f, START.y + 150.0f, 0.0f);	// フェードイン位置
+	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(150.0f, 150.0f, 0.0f);	// フェードイン位置
 	const MyLib::Vector3 FADEOUT = FADEIN + MyLib::Vector3(100.0f, 100.0f, 0.0f);					// 終了位置
 }
 
