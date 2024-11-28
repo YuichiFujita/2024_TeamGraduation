@@ -34,6 +34,7 @@
 #include "specialManager.h"
 #include "gymWallManager.h"
 #include "charmText.h"
+#include "objectBillboard.h"
 
 namespace
 {
@@ -177,7 +178,9 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	ChangeEdit();
 #endif
 
+
 #if _DEBUG
+
 	// 生成
 	if (ImGui::TreeNode("Create"))
 	{
@@ -218,6 +221,9 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
+
+
+
 #endif
 
 		// ツリー終端
