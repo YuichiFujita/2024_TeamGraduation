@@ -268,9 +268,9 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #==============================================================================
 # モーションファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/referee/motion_def.txt		# デフォルト
-MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt	# 勝利
-MOTION_FILENAME = data/TEXT/character/player/common/motion_win.txt	# 敗北
+MOTION_FILENAME = data/TEXT/character/result/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/result/motion_win.txt		# 勝利
+MOTION_FILENAME = data/TEXT/character/result/motion_lose.txt	# 敗北
 
 END_SCRIPT		# この行は絶対消さないこと！
 
