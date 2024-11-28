@@ -80,18 +80,22 @@ private:
 		CATCH_TYPE_MAX
 	};
 
+	enum EMoveForcibly	// 強制行動
+	{
+		FORCIBLY_NONE = 0,		// なし
+		FORCIBLY_RETURN,		// 戻る
+		FORCIBLY_MAX,
+	};
+
 	enum EMoveType	// 行動種類
 	{
 		MOVETYPE_STOP = 0,		// 止まる
 		MOVETYPE_WALK,			// 歩く
 		MOVETYPE_DASH,			// 走る
-		MOVETYPE_LEAVE,			// 離れる
-		MOVETYPE_APPROATCH,		// 近づく
-		MOVETYPE_RETURN,		// 戻る
 		MOVETYPE_MAX
 	};
 
-	enum EThrow	// アクション種類
+	enum EThrow	// 投げ種類
 	{
 		THROW_NONE = 0,		// なし
 		THROW_THROW,		// 投げ
@@ -99,7 +103,7 @@ private:
 		THROW_SPECIAL,		// スペシャル
 	};
 
-	enum EAction
+	enum EAction	// アクション
 	{
 		ACTION_NONE = 0,
 		ACTION_JUMP,
@@ -131,12 +135,6 @@ private:
 	struct SCatchInfo	// キャッチ情報
 	{
 		ECatchType eCatchType;		// キャッチ種類
-	};
-
-	struct SMoveInfo	// 行動
-	{
-		EMoveType eType;	// タイプ
-		bool bJump;			// ジャンプフラグ
 	};
 
 	struct SMode	// モード
@@ -175,6 +173,9 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
+	typedef void(CPlayerAIControl::* AREA_FUNC)();
+	static AREA_FUNC m_AreaFunc[];			// モード関数
+
 	typedef void(CPlayerAIControl::* MODE_FUNC)(const float, const float, const float);
 	static MODE_FUNC m_ModeFunc[];			// モード関数
 
@@ -193,7 +194,10 @@ private:
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];			// キャッチ関数
 
-	typedef void(CPlayerAIControl::* MOVE_FUNC)(CPlayer*);
+	typedef void(CPlayerAIControl::* MOVEFORCIBLY_FUNC)();
+	static MOVEFORCIBLY_FUNC m_MoveForciblyFunc[];			// 行動関数
+
+	typedef void(CPlayerAIControl::* MOVE_FUNC)();
 	static MOVE_FUNC m_MoveFunc[];			// 行動関数
 
 	typedef void(CPlayerAIControl::* ACTION_FUNC)();
@@ -207,6 +211,10 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
+	void AreaNone();
+	void AreaLeft();
+	void AreaRight();
+
 	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
 	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
 	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
@@ -245,13 +253,14 @@ private:
 	void ThrowSpecial();
 	//void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
+	// 強制行動
+	void ForciblyNone() {};			// なし
+	void ForciblyReturn();			// 歩く
+
 	// 行動
-	void MoveStop(CPlayer* pTarget);			// なし
-	void MoveWalk(CPlayer* pTarget);			// 歩く
-	void MoveDash(CPlayer* pTarget);			// 走る
-	void MoveLeave(CPlayer* pTarget);			// 離れる
-	void MoveApproatch(CPlayer* pTarget);		// 近づく
-	void MoveReturn(CPlayer* pTarget);			// 戻る
+	void MoveStop();			// なし
+	void MoveWalk();			// 歩く
+	void MoveDash();			// 走る
 
 	// アクション
 	void ActionNone();
@@ -270,25 +279,17 @@ private:
 	void CatchOutDistance();				// 距離：外野
 	void CatchLineLeftDistance();			// パスする相手
 	void PlanIsJump(CPlayer* pTarget);		// 跳ぶかどうか
-	void PlanMove(CPlayer* pTarget);		// 行動プラン
 	void JumpThrowTiming(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Timing(CPlayer* pTarget);			// タイミングの思考
-	void Line(CPlayer* pTarget);			// 線
-	void LineLeftTeam(CPlayer* pTarget);	// 線：左チーム
-	void LineRightTeam(CPlayer* pTarget);	// 線：右チーム
 
 	bool IsPassTarget();					// パスする相手がいるか判定
 	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
 	bool IsLineOverBall();					// 線超え判定(ボール)
 	bool IsLineOverPlayer();				// 線越え判定(プレイヤー)
 
-	void Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
+	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
 	void LeaveOut(float distance);								// 離れる
-	void LeaveX(MyLib::Vector3 targetPos, float distance);		// 離れる：x軸
-	void LeaveZ(MyLib::Vector3 targetPos, float distance);		// 離れる：z軸
-	void Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
-	void ApproatchX(MyLib::Vector3 targetPos, float distance);	// 近づく：x軸
-	void ApproatchZ(MyLib::Vector3 targetPos, float distance);	// 近づく：z軸
+	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
 
 	void AttackDash();
 
@@ -302,7 +303,8 @@ private:
 
 	SInfo m_sInfo;				// モード情報
 	STarget m_sTarget;			// ターゲット情報
-	SMoveInfo m_sMoveInfo;		// 行動情報
+	EMoveForcibly m_eForcibly;	// 強制行動
+	EMoveType m_eMove;			// 行動タイプ
 	ELine m_eLine;				// 線
 	EHeart m_eHeart;			// 心
 	EAction m_eAction;
