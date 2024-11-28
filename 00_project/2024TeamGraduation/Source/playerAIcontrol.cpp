@@ -46,7 +46,7 @@ namespace
 
 	// 線越え判定(中心(x)からの距離)
 	const float LINE_DISTANCE_OVER = 100.0f;	// 線超え判定の距離(中心 x:0.0f)
-	const float RETURN_POS = 400.0f;			// 戻る位置(中心 x:0.0f)
+	const float RETURN_POS = 700.0f;			// 戻る位置(中心 x:0.0f)
 
 	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
 
@@ -198,7 +198,7 @@ void CPlayerAIControl::Uninit()
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モード管理
-	//ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
+	ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
 
 	AttackDash();
 	// 行動管理
@@ -230,16 +230,16 @@ void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRat
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		m_sInfo.sMode.eMode = EMode::MODE_CATCH;
 	}
-	else if (pBall->GetPlayer() == m_pAI)
-	{// ボールを持っているのが自分だった場合
-		m_sInfo.sMode.eMode = EMode::MODE_THROW;
-	}
+	//else if (pBall->GetPlayer() == m_pAI)
+	//{// ボールを持っているのが自分だった場合
+	//	m_sInfo.sMode.eMode = EMode::MODE_THROW;
+	//}
 
 	// モード更新
 	(this->*(m_ModeFunc[m_sInfo.sMode.eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// アクション更新
-	(this->*(m_ActionFunc[m_eThrow]))();
+	(this->*(m_ActionFunc[m_eAction]))();
 
 	// 投げ更新
 	(this->*(m_ThrowFunc[m_eThrow]))();
@@ -1431,6 +1431,7 @@ void CPlayerAIControl::AttackDash()
 {
 	// ターゲットのしゅとく
 	CPlayer* pTarget = GetThrowTarget();
+	if (!pTarget) return;
 	MyLib::Vector3 posTarget = pTarget->GetPosition();
 	// 自分の位置取得
 	MyLib::Vector3 posMy = m_pAI->GetPosition();
