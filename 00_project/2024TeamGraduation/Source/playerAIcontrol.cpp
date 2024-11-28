@@ -198,8 +198,9 @@ void CPlayerAIControl::Uninit()
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モード管理
-	ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
+	//ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
 
+	AttackDash();
 	// 行動管理
 	MoveManager(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -1434,8 +1435,8 @@ void CPlayerAIControl::AttackDash()
 	// 自分の位置取得
 	MyLib::Vector3 posMy = m_pAI->GetPosition();
 
-
-
+	// 相手の位置に近づく
+	Approatch(posTarget, 0.0f);
 
 }
 
