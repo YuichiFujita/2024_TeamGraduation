@@ -23,7 +23,7 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum AnchorPoint
+	enum EAnchorPoint
 	{
 		LEFT = 0,		// 左
 		TOP_LEFT,		// 左上
@@ -91,6 +91,10 @@ public:
 	void SetUV(const std::vector<D3DXVECTOR2>& uv) { m_vecUV = uv; }		// テクスチャ座標設定
 	std::vector<D3DXVECTOR2> GetUV() { return m_vecUV; }					// テクスチャ座標取得
 
+	// アンカーポイント
+	void SetAnchorType(const EAnchorPoint& type) { m_AnchorType = type; }	// アンカーポイントの種類設定
+	EAnchorPoint GetAnchorType() { return m_AnchorType; }					// アンカーポイントの種類取得
+
 	void BindTexture(int nIdx) { m_nTexIdx = nIdx; }	// テクスチャ割り当て
 	static CObjectBillboard *Create(int nPriority = mylib_const::PRIORITY_ZSORT);
 	static CObjectBillboard *Create(const MyLib::Vector3& pos, const MyLib::Vector3& rot);
@@ -98,6 +102,11 @@ public:
 	LPDIRECT3DVERTEXBUFFER9 GetVtxBuff() const { return m_pVtxBuff; }	// 頂点バッファ取得
 
 private:
+
+	//=============================
+	// メンバ関数
+	//=============================
+	MyLib::Vector3 RotateVtx(const MyLib::Vector3& vtx, const MyLib::Vector3& center);
 
 	//=============================
 	// メンバ変数
@@ -108,6 +117,7 @@ private:
 	D3DXCOLOR m_colOrigin;				// 元の色
 	D3DXVECTOR2 m_size;					// サイズ
 	D3DXVECTOR2 m_sizeOrigin;			// 元のサイズ
+	EAnchorPoint m_AnchorType;			// アンカーポイントの種類
 	float m_fLength;					// 対角線の長さ
 	float m_fAngle;						// 対角線の向き
 	std::vector<D3DXVECTOR2> m_vecUV;	// テクスチャ座標

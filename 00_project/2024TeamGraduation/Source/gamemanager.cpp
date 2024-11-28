@@ -176,7 +176,7 @@ HRESULT CGameManager::Init()
 	}
 #endif
 
-#if 0	// TODO : 藤田用に戻す
+#if 1	// TODO : 藤田用に戻す
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 

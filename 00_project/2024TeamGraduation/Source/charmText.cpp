@@ -19,8 +19,9 @@
 namespace
 {
 	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";			// 顔アイコンのテクスチャ
-	const std::string TEXTURE_TEXT = "data\\TEXTURE\\charmtext\\window_full.png";	// テキストのテクスチャ
-	const float SIZE_FACE = 20.0f;	// 顔アイコンのサイズ
+	const std::string TEXTURE_TEXT = "data\\TEXTURE\\speech\\sample.png";	// テキストのテクスチャ
+
+	const float SIZE_FACE = 40.0f;	// 顔アイコンのサイズ
 	const MyLib::Vector3 OFFSET_TEXT = MyLib::Vector3(SIZE_FACE, 0.0f, 0.0f);	// テキストのオフセット位置
 	const int COUNT_FADESTART = 5;	// フェード開始するカウント
 }
@@ -120,11 +121,11 @@ HRESULT CCharmText::Init()
 HRESULT CCharmText::CreateFace()
 {
 	// 生成処理
-	m_pFace = CObject2D::Create(GetPriority());
+	m_pFace = CObjectBillboard::Create(GetPriority());
 	if (m_pFace == nullptr) return E_FAIL;
 
 	// オブジェクトの種類設定
-	m_pFace->CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
+	m_pFace->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
 	// テクスチャ設定
 	CTexture* pTexture = CTexture::GetInstance();
@@ -136,7 +137,7 @@ HRESULT CCharmText::CreateFace()
 
 	// 横幅を元にサイズ設定
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, SIZE_FACE);
-	m_pFace->SetSize(size);
+	m_pFace->SetSize(MyLib::Vector2());
 	m_pFace->SetSizeOrigin(size);
 
 	return S_OK;
@@ -148,14 +149,14 @@ HRESULT CCharmText::CreateFace()
 HRESULT CCharmText::CreateText()
 {
 	// 生成処理
-	m_pText = CObject2D::Create(GetPriority());
+	m_pText = CObjectBillboard::Create(GetPriority());
 	if (m_pText == nullptr) return E_FAIL;
 
 	// 左端をアンカーポイントにする
-	m_pText->SetAnchorType(CObject2D::AnchorPoint::LEFT);
+	m_pText->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
 
 	// オブジェクトの種類設定
-	m_pText->CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
+	m_pText->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
 	// テクスチャ設定
 	CTexture* pTexture = CTexture::GetInstance();
@@ -167,7 +168,7 @@ HRESULT CCharmText::CreateText()
 
 	// 縦幅を元にサイズ設定
 	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_FACE);
-	m_pText->SetSize(size);
+	m_pText->SetSize(MyLib::Vector2());
 	m_pText->SetSizeOrigin(size);
 
 	return S_OK;
@@ -212,14 +213,6 @@ void CCharmText::Update(const float fDeltaTime, const float fDeltaRate, const fl
 {
 	// 状態更新
 	CCharmText::UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
-
-	if (m_bPossibleChain)
-	{
-		for (const auto& idx : m_nVecChainIdx)
-		{
-			ImGui::Text("%d", idx);
-		}
-	}
 }
 
 //==========================================================================
@@ -239,8 +232,21 @@ void CCharmText::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CCharmText::StateFadeIn()
 {
-	// チェイン可能
-	//m_bPossibleChain = true;
+	// サイズ更新
+	MyLib::Vector2 size, sizeOrigin;
+	// 顔
+	{
+		sizeOrigin = m_pFace->GetSizeOrigin();
+		size.x = UtilFunc::Correction::EasingQuintOut(sizeOrigin.x * 0.0f, sizeOrigin.x, 0.0f, STATETIME_FADEIN, m_fStateTime);
+		size.y = UtilFunc::Correction::EasingQuintOut(sizeOrigin.y * 0.0f, sizeOrigin.y, 0.0f, STATETIME_FADEIN, m_fStateTime);
+		m_pFace->SetSize(size);
+	}
+	{// テキスト
+		sizeOrigin = m_pText->GetSizeOrigin();
+		size.x = UtilFunc::Correction::EasingQuintOut(sizeOrigin.x * 0.0f, sizeOrigin.x, 0.0f, STATETIME_FADEIN, m_fStateTime);
+		size.y = UtilFunc::Correction::EasingQuintOut(sizeOrigin.y * 0.0f, sizeOrigin.y, 0.0f, STATETIME_FADEIN, m_fStateTime);
+		m_pText->SetSize(size);
+	}
 
 	if (m_fStateTime >= STATETIME_FADEIN)
 	{// フェードイン完了
