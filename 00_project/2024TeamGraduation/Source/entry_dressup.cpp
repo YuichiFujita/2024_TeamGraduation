@@ -85,7 +85,7 @@ HRESULT CEntry_Dressup::Init()
 
 		// 顔切り替え生成
 		m_vecDressupInfo[i].pFace = CDressup::Create(
-			CDressup::EType::TYPE_ACCESSORY,		// 着せ替えの種類
+			CDressup::EType::TYPE_FACE,		// 着せ替えの種類
 			m_vecDressupInfo[i].pPlayer,	// 変更するプレイヤー
 			CPlayer::ID_FACE);				// 変更箇所のインデックス
 
@@ -109,7 +109,6 @@ void CEntry_Dressup::Uninit()
 {
 	for (auto& info : m_vecDressupInfo)
 	{
-		info.pPlayer->Uninit();
 		info.pHair->Uninit();
 		info.pAccessory->Uninit();
 		info.pFace->Uninit();
@@ -335,9 +334,21 @@ void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPla
 		handedness							// 利き手
 	);
 
+	// インデックス上書き
+	m_vecDressupInfo[i].pPlayer->SetMyPlayerIdx(i);
+
 	// 元の位置設定
 	m_vecDressupInfo[i].pPlayer->CObject::SetPosition(pos);
 	m_vecDressupInfo[i].pPlayer->CObject::SetOriginPosition(pos);
+
+	// ドレスアップに再割り当て
+	m_vecDressupInfo[i].pHair->BindObjectCharacter(m_vecDressupInfo[i].pPlayer);
+	m_vecDressupInfo[i].pAccessory->BindObjectCharacter(m_vecDressupInfo[i].pPlayer);
+	m_vecDressupInfo[i].pFace->BindObjectCharacter(m_vecDressupInfo[i].pPlayer);
+
+	m_vecDressupInfo[i].pHair->ReRegist();
+	m_vecDressupInfo[i].pAccessory->ReRegist();
+	m_vecDressupInfo[i].pFace->ReRegist();
 }
 
 //==========================================================================
