@@ -174,7 +174,7 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 	// ŠÖ—^‚µ‚È‚¢ƒLƒƒƒ‰‚Å‚à•`‰æØ‚é
 	if (m_pPlayer != nullptr)
 	{
-		bDisp = (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_NONE) ? bDisp : false;
+		bDisp = (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_NONE) ? false : bDisp;
 	}
 
 	SetEnableDisp(bDisp);
