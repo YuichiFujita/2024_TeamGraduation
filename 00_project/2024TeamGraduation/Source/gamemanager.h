@@ -44,12 +44,12 @@ public:
 	// シーンの種類
 	enum ESceneType
 	{
-		SCENE_MAIN = 0,		// メイン
-		SCENE_SPAWN,		// 登場演出
-		SCENE_START,		// 開始演出
-		SCENE_SPECIAL_STAG,	// スペシャル演出
-		SCENE_END,			// 終了
-		SCENE_DEBUG,		// デバッグ
+		SCENE_MAIN = 0,	// メイン
+		SCENE_SPAWN,	// 登場演出
+		SCENE_START,	// 開始演出
+		SCENE_SPECIAL,	// スペシャル演出
+		SCENE_END,		// 終了
+		SCENE_DEBUG,	// デバッグ
 		SCENE_MAX
 	};
 
@@ -75,7 +75,7 @@ public:
 	{
 		ETeamSide m_winteamPrelude;	// 勝利チーム(前座)
 		ETeamSide m_winteamCharm;	// 勝利チーム(モテ)
-		float m_fTension;		// 盛り上がり度
+		float m_fTension;			// 盛り上がり度
 	
 		SEndInfo() : m_winteamPrelude(ETeamSide::SIDE_NONE), m_winteamCharm(ETeamSide::SIDE_NONE), m_fTension(0.0f) {};
 	};
@@ -90,6 +90,10 @@ public:
 	virtual HRESULT Init();
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	void SetEnableOpen(const bool bOpen, const float fMoveTime = 0.0f);	// ドア開放フラグ設定
+	bool IsOpen() const;	// ドア開放フラグ取得
+	bool IsMove() const;	// ドア稼働中フラグ取得
 
 	void SetSceneType(ESceneType type);					// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
@@ -131,17 +135,20 @@ private:
 	// メンバ関数
 	//=============================
 	// シーン
-	void SceneMain();			// メイン
-	void SceneSpawn();			// 登場演出
-	void SceneStart();			// 開始演出
-	void SceneSpecialStag();	// スペシャル演出
-	void SceneEnd();			// 終了演出
-	void SceneDebug();			// デバッグ
+	void SceneMain();		// メイン
+	void SceneSpawn();		// 登場演出
+	void SceneStart();		// 開始演出
+	void SceneSpecial();	// スペシャル演出
+	void SceneEnd();		// 終了演出
+	void SceneDebug();		// デバッグ
+
+	// シーンスキップ
+	void SkipSpawn();	// 登場演出スキップ
 
 	// その他
 	void UpdateLimitTimer();	// 制限時間更新
 	void UpdateAudience();		// 観客更新
-	void UpdateSpecialStag();	// スペシャル演出更新
+	void UpdateSpecial();		// スペシャル演出更新
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成
 	void Save();				// チームステータス保存

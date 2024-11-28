@@ -6,6 +6,7 @@
 //==========================================================================
 #include "playerSpawn.h"
 #include "manager.h"
+#include "playerSpawnManager.h"
 
 //==========================================================================
 // 定数定義
@@ -41,6 +42,10 @@ HRESULT CPlayerSpawn::Init()
 	HRESULT hr = CPlayer::Init();
 	if (FAILED(hr)) { return E_FAIL; }
 
+	// プレイヤー登場演出マネージャーに割当
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	if (pManager != nullptr) { pManager->RegistPlayer(this); }			// マネージャーがある場合登録
+
 	return S_OK;
 }
 
@@ -51,6 +56,10 @@ void CPlayerSpawn::Uninit()
 {
 	// 親クラスの終了
 	CPlayer::Uninit();
+
+	// プレイヤー登場演出マネージャーから削除
+	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
+	if (pManager != nullptr) { pManager->DeletePlayer(this); }			// マネージャーがある場合削除
 }
 
 //==========================================================================
