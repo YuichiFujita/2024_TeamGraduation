@@ -21,6 +21,7 @@ namespace
 // 状態時間
 namespace StateTime
 {
+	const float NONE(5.0f);		// なし
 	const float PRELUDE(5.0f);	// 前座
 }
 
@@ -220,12 +221,15 @@ void CResultManager::UpdateState(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// タイマーリセット
-	m_fStateTime = 0.0f;
+	// 指定時間を過ぎたら
+	if (m_fStateTime >= StateTime::NONE)
+	{
+		SetState(EState::STATE_PRELUDE);
+	}
 }
 
 //==========================================================================
-// 勝利
+// 前座勝敗状態
 //==========================================================================
 void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -237,11 +241,12 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
-// 敗北モーション
+// モテ勝敗状態
 //==========================================================================
 void CResultManager::StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	// タイマーリセット
+	m_fStateTime = 0.0f;
 }
 
 //==========================================================================

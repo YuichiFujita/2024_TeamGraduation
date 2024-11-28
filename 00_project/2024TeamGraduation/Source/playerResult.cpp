@@ -30,6 +30,13 @@ CPlayerResult::STATE_FUNC CPlayerResult::m_StateFunc[] =	// 状態関数
 	&CPlayerResult::StateLose,		// 敗北
 };
 
+CPlayerResult::VICTORY_FUNC CPlayerResult::m_VictoryFunc[] =	// 状態関数
+{
+	&CPlayerResult::CheckVictoryNone,		// なし
+	&CPlayerResult::CheckVictoryPrelude,	// 前座勝敗
+	&CPlayerResult::CheckVictoryContest,	// モテ勝敗
+};
+
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
@@ -105,6 +112,9 @@ void CPlayerResult::Update(const float fDeltaTime, const float fDeltaRate, const
 	// 親の更新処理
 	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// 勝敗チェック
+	CheckVictory(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -177,13 +187,51 @@ void CPlayerResult::CheckVictory(const float fDeltaTime, const float fDeltaRate,
 {
 	CResultManager* pRsltMgr = CResultManager::GetInstance();
 	CResultManager::EState resultState = pRsltMgr->GetState();
-	if (resultState == CResultManager::EState::STATE_PRELUDE)
+
+	// 状態更新
+	if (m_VictoryFunc[resultState] != nullptr)
 	{
-		pRsltMgr->GetTeamPreludeWin();
+		(this->*(m_VictoryFunc[resultState]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-	else if (resultState == CResultManager::EState::STATE_CONTEST)
-	{
-		pRsltMgr->GetTeamContestWin();
+}
+
+//==========================================================================
+// 勝敗チェック
+//==========================================================================
+void CPlayerResult::CheckVictoryNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	SetState(EState::STATE_NONE);
+}
+
+//==========================================================================
+// 勝敗チェック
+//==========================================================================
+void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CResultManager* pRsltMgr = CResultManager::GetInstance();
+	if (GetTeam() == pRsltMgr->GetTeamPreludeWin())
+	{// 勝利チームだったら
+		SetState(EState::STATE_WIN);
+	}
+	else
+	{// 敗北者なら
+		SetState(EState::STATE_LOSE);
+	}
+}
+
+//==========================================================================
+// 勝敗チェック
+//==========================================================================
+void CPlayerResult::CheckVictoryContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CResultManager* pRsltMgr = CResultManager::GetInstance();
+	if (GetTeam() == pRsltMgr->GetTeamContestWin())
+	{// 勝利チームだったら
+		SetState(EState::STATE_WIN);
+	}
+	else
+	{// 敗北者なら
+		SetState(EState::STATE_LOSE);
 	}
 }
 

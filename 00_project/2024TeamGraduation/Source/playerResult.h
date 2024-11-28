@@ -77,6 +77,9 @@ private:
 	//=============================
 	typedef void(CPlayerResult::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
+	
+	typedef void(CPlayerResult::* VICTORY_FUNC)(const float, const float, const float);
+	static VICTORY_FUNC m_VictoryFunc[];	// 勝敗判定関数
 
 	//=============================
 	// オーバーライド関数
@@ -93,6 +96,13 @@ private:
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
 	void StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 勝利
 	void StateLose(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 敗北
+	
+	//-----------------------------
+	// 判定関数
+	//-----------------------------
+	void CheckVictoryNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗チェック
+	void CheckVictoryPrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗チェック
+	void CheckVictoryContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モテ勝敗チェック
 
 	//-----------------------------
 	// 状態
