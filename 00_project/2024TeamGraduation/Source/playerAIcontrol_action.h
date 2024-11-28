@@ -58,7 +58,6 @@ public:
 	void SetIsJumpFloat(bool passFloat) { m_sFlag.bJumpFloat = passFloat; }	// ‚¶‚á‚ñ‚Õ‚ğŒp‘±‚·‚é‚©İ’è
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }		// ƒXƒyƒVƒƒƒ‹Œ‚‚Â‚©İ’è
 	void SetJumpRate(float rate) { m_fJumpRate = rate; }
-	SFlag GetIsFlag() { return m_sFlag; }
 
 
 #ifdef _DEBUG

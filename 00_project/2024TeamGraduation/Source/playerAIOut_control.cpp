@@ -271,7 +271,7 @@ void CPlayerAIOutControl::LookBall()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall) return;
 
-	if (m_pAIOut->GetBall()) return;
+	if (m_pAIOut->GetBall()) return;	// ボールを持っていた場合
 
 	// 自分からボールの位置を見る
 	float rot = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());

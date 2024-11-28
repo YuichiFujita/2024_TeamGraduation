@@ -176,8 +176,6 @@ void CPlayerAIControlMove::Walk(CPlayer* player, const float fDeltaTime, const f
 	// Œü‚«Žæ“¾
 	MyLib::Vector3 rot = player->GetRotation();
 	
-	float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// Œü‚«
-
 	// TODO : •ûŒü‚É‰ž‚¶‚ÄƒJƒj•à‚«
 
 	if (player->GetBase()->IsCrab())
