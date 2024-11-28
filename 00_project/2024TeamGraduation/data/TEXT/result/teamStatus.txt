@@ -12,7 +12,7 @@ TENSION = 0
 # É`Å[ÉÄ0
 #------------------------------------------------------------------------------
 SETTEAM
-	CHARMVALUE = 39
+	CHARMVALUE = 2
 
 	SETPLAYER
 		HANDED = 0
