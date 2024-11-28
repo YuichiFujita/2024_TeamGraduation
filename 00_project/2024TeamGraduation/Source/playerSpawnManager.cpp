@@ -20,8 +20,8 @@ namespace
 {
 	const int	PRIORITY = 4;			// 優先順位
 	const float	ZLINE_OFFSET = 200.0f;	// Z軸オフセット
-	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// 左先頭プレイヤー初期位置
-	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// 右先頭プレイヤー初期位置
+	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1817.35f);	// 左先頭プレイヤー初期位置
+	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1817.35f);	// 右先頭プレイヤー初期位置
 }
 
 //************************************************************
@@ -30,6 +30,7 @@ namespace
 CPlayerSpawnManager::AFuncUpdateState CPlayerSpawnManager::m_aFuncUpdateState[] =	// 状態更新関数
 {
 	nullptr,								// 何もしない状態
+	&CPlayerSpawnManager::UpdateOpenDoor,	// ドア開放状態
 	&CPlayerSpawnManager::UpdateWalkAxisZ,	// Z軸移動状態
 	&CPlayerSpawnManager::UpdateRotate,		// 回転状態
 	&CPlayerSpawnManager::UpdateWalkAxisX,	// X軸移動状態
@@ -68,14 +69,14 @@ HRESULT CPlayerSpawnManager::Init(void)
 	// FUJITA：エントリーで外部に保存されたプレイヤー情報を取得しプレイヤーを生成
 
 	// メンバ変数を初期化
-	m_state		= STATE_WALK_Z;	// 状態
-	m_fCurTime	= 0.0f;			// 現在の待機時間
+	m_state		= STATE_OPEN_DOOR;	// 状態
+	m_fCurTime	= 0.0f;				// 現在の待機時間
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
 	// 左チームプレイヤー生成
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
 		CPlayer* pLeftPlayer = CPlayer::Create
@@ -93,7 +94,7 @@ HRESULT CPlayerSpawnManager::Init(void)
 	}
 
 	// 右チームプレイヤー生成
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
 		CPlayer* pRightPlayer = CPlayer::Create
@@ -109,6 +110,15 @@ HRESULT CPlayerSpawnManager::Init(void)
 			return E_FAIL;
 		}
 	}
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+	// カメラ位置を原点にする
+	pCameraMotion->SetPosition(VEC3_ZERO);
+
+	// 登場演出モーションを設定
+	pCameraMotion->SetMotion(CCameraMotion::MOTION_SPAWN);
 
 	// 成功を返す
 	return S_OK;
@@ -263,13 +273,44 @@ CPlayerSpawnManager* CPlayerSpawnManager::GetInstance()
 }
 
 //============================================================
+//	ドア開放状態の更新処理
+//============================================================
+void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	const float TIME_END = 0.65f;	// 終了時間
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+	if (pCameraMotion->GetNowTriggerIdx() <= 0) { return; }		// トリガーが次に行くまで待機
+
+	if (pCameraMotion->IsImpactFrame(0))
+	{
+		// ドアを開放する
+		CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
+		pManager->SetEnableOpen(true, 0.25f);
+	}
+
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime >= TIME_END)
+	{ // 経過しきった場合
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// Z軸移動状態にする
+		m_state = EState::STATE_WALK_Z;
+	}
+}
+
+//============================================================
 //	Z軸移動状態の更新処理
 //============================================================
 void CPlayerSpawnManager::UpdateWalkAxisZ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	const MyLib::Vector3 LEFT_POSEND = MyLib::Vector3(POS_LEFT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
 	const MyLib::Vector3 RIGHT_POSEND = MyLib::Vector3(POS_RIGHT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
-	const float TIME_END = 2.0f;	// 終了時間
+	const float TIME_END = 4.5f;	// 終了時間
 
 	bool bEndState = false;	// 状態終了フラグ
 
@@ -286,7 +327,7 @@ void CPlayerSpawnManager::UpdateWalkAxisZ(const float fDeltaTime, const float fD
 	}
 
 	CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
-	if (pManager->IsOpen() && m_fCurTime >= 0.6f)
+	if (pManager->IsOpen() && m_fCurTime >= 1.6f)
 	{ // ドアが閉じていない場合
 
 		// ドアをゆっくり閉める
@@ -464,6 +505,8 @@ void CPlayerSpawnManager::UpdateWalkAxisX(const float fDeltaTime, const float fD
 void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	const float TIME_END = 1.0f;	// 終了時間
+
+	// TODO：ここはお辞儀モーションから遷移タイミングを決める
 
 	// 経過時間を加算
 	m_fCurTime += fDeltaTime * fSlowRate;

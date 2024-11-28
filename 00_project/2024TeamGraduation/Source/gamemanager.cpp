@@ -185,9 +185,6 @@ HRESULT CGameManager::Init()
 	// 開始シーンの設定
 	SetSceneType(ESceneType::SCENE_SPAWN);	// 登場演出
 
-	// ドアを開放する
-	SetEnableOpen(true);
-
 	// チームステータスの生成
 	CreateTeamStatus();
 

@@ -32,6 +32,7 @@ public:
 	enum EState
 	{
 		STATE_NONE = 0,		// 何もしない状態
+		STATE_OPEN_DOOR,	// ドア開放状態
 		STATE_WALK_Z,		// Z軸移動状態
 		STATE_ROTATE,		// 回転状態
 		STATE_WALK_X,		// X軸移動状態
@@ -72,6 +73,7 @@ private:
 	static CPlayerSpawnManager* m_pInstance;		// 自身のインスタンス
 
 	// メンバ関数
+	void UpdateOpenDoor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ドア開放状態の更新
 	void UpdateWalkAxisZ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// Z軸移動状態の更新
 	void UpdateRotate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回転状態の更新
 	void UpdateWalkAxisX(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// X軸移動状態の更新

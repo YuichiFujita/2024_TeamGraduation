@@ -29,7 +29,8 @@ namespace
 CCameraMotion::MOTION_FUNC CCameraMotion::m_MotionFunc[] =
 {
 	&CCameraMotion::MotionPass,			// パス
-	&CCameraMotion::MotionSpecial,		// スペシャル
+	&CCameraMotion::MotionSpawn,		// 登場演出
+	&CCameraMotion::MotionSpecial,		// スペシャル盛り上げ
 	&CCameraMotion::MotionKamehameha,	// かめはめ波
 };
 
@@ -62,6 +63,8 @@ CCameraMotion::FLOAT_EASING_FUNC CCameraMotion::m_FloatEasingFunc[] =
 //==========================================================================
 CCameraMotion::CCameraMotion()
 {
+	static_assert(NUM_ARRAY(m_MotionFunc) == MOTION::MOTION_MAX, "ERROR : Motion Count Mismatch");
+
 	m_vecMotionInfo.clear();	// モーション情報
 	m_MotionFileName.clear();	// モーションファイル名
 	m_pos = 0.0f;				// 位置
@@ -73,6 +76,7 @@ CCameraMotion::CCameraMotion()
 	m_bFinish = false;			// 終了判定
 	m_bEdit = false;			// エディターフラグ
 	m_bPause = false;			// ポーズ判定
+	m_bTrigger = false;			// トリガー判定
 	m_bSystemPause = false;		// システムポーズ判定
 	m_bMovePos = true;			// 位置動作フラグ
 	m_bMoveRot = true;			// 向き動作フラグ
@@ -414,6 +418,50 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 	MotionKey nowKey  = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
 	MotionKey nextKey = nowInfo.Key[nextKeyID];		// 次のキー
 
+#if 0
+	float fPlayRate = 0.0f;	// 再生時間割合
+
+	// 再生の割合計算
+	if (UtilFunc::Calculation::IsNearlyTarget(nowKey.playTime, 0.0f, 0.001f))
+	{ // 再生時間がゼロの場合
+
+		// 再生時間の割合を補正
+		fPlayRate = 1.0f;
+	}
+	else
+	{ // 再生時間が設定済みの場合
+
+		// 再生時間の割合を計算
+		fPlayRate = m_fMotionTimer / nowKey.playTime;
+	}
+
+	if (m_bMovePos)
+	{ // 注視点が動作する場合
+
+		// 注視点の線形補正
+		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
+		posR = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.posRDest, nextKey.posRDest, fPlayRate);
+		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
+	}
+
+	if (m_bMoveRot)
+	{ // 向きが動作する場合
+
+		// 向きの線形補正
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
+		rot = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.rotDest, nextKey.rotDest, fPlayRate);
+		pCamera->SetRotation(rot);	// 向き反映
+	}
+
+	if (m_bMoveDis)
+	{ // 距離が動作する場合
+
+		// 距離の線形補正
+		float fDistance = pCamera->GetDistance();	// 距離
+		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, fPlayRate);
+		pCamera->SetDistance(fDistance);	// 距離反映
+	}
+#else
 	if (m_bMovePos)
 	{ // 注視点が動作する場合
 
@@ -440,6 +488,7 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetDistance(fDistance);	// 距離反映
 	}
+#endif
 
 	if (m_bInverse)
 	{ // 反転する場合
@@ -452,6 +501,9 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		UtilFunc::Transformation::RotNormalize(rot.y);
 		pCamera->SetRotation(rot);	// 向き反映
 	}
+
+	// 注視点の反映
+	pCamera->SetWarp(pCamera->GetPositionR());
 }
 
 //==========================================================================
@@ -495,7 +547,50 @@ void CCameraMotion::SetMotion
 	int nNextKeyID = (m_nNowKeyIdx + 1) % nKeySize;	// 次のキーインデックス
 	MotionKey nowKey = nowInfo.Key[m_nNowKeyIdx];	// 現在のキー
 	MotionKey nextKey = nowInfo.Key[nNextKeyID];	// 次のキー
+#if 0
+	float fPlayRate = 0.0f;	// 再生時間割合
 
+	// 再生の割合計算
+	if (UtilFunc::Calculation::IsNearlyTarget(nowKey.playTime, 0.0f, 0.001f))
+	{ // 再生時間がゼロの場合
+
+		// 再生時間の割合を補正
+		fPlayRate = 1.0f;
+	}
+	else
+	{ // 再生時間が設定済みの場合
+
+		// 再生時間の割合を計算
+		fPlayRate = m_fMotionTimer / nowKey.playTime;
+	}
+
+	if (m_bMovePos)
+	{ // 注視点が動作する場合
+
+		// 注視点の線形補正
+		MyLib::Vector3 posR = pCamera->GetPositionR();	// 注視点
+		posR = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.posRDest, nextKey.posRDest, fPlayRate);
+		pCamera->SetPositionR(m_pos + posR);	// 注視点反映
+	}
+
+	if (m_bMoveRot)
+	{ // 向きが動作する場合
+
+		// 向きの線形補正
+		MyLib::Vector3 rot = pCamera->GetRotation();	// 向き
+		rot = (m_Vec3EasingFunc[nowKey.easeType])(nowKey.rotDest, nextKey.rotDest, fPlayRate);
+		pCamera->SetRotation(rot);	// 向き反映
+	}
+
+	if (m_bMoveDis)
+	{ // 距離が動作する場合
+
+		// 距離の線形補正
+		float fDistance = pCamera->GetDistance();	// 距離
+		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, fPlayRate);
+		pCamera->SetDistance(fDistance);	// 距離反映
+	}
+#else
 	if (m_bMovePos)
 	{ // 注視点が動作する場合
 
@@ -522,6 +617,7 @@ void CCameraMotion::SetMotion
 		fDistance = (m_FloatEasingFunc[nowKey.easeType])(nowKey.distance, nextKey.distance, 0.0f, nowKey.playTime, m_fMotionTimer);
 		pCamera->SetDistance(fDistance);	// 距離反映
 	}
+#endif
 
 	if (m_bInverse)
 	{ // 反転する場合
@@ -534,6 +630,9 @@ void CCameraMotion::SetMotion
 		UtilFunc::Transformation::RotNormalize(rot.y);
 		pCamera->SetRotation(rot);	// 向き反映
 	}
+
+	// 注視点の反映
+	pCamera->SetWarp(pCamera->GetPositionR());
 }
 
 //==========================================================================
@@ -583,6 +682,20 @@ float CCameraMotion::GetWholeMaxTimer()
 }
 
 //==========================================================================
+// 指定したインデックスの情報が衝撃カウントか
+//==========================================================================
+bool CCameraMotion::IsImpactFrame(int nCntAtk)
+{
+	// 範囲外
+	if (static_cast<int>(m_vecMotionInfo[m_nNowMotionIdx].trigger.size()) <= nCntAtk) return false;
+
+	// 引数インデックスのトリガーがtrueの瞬間のみ
+	if (m_bTrigger && nCntAtk == m_nNowTriggerIdx - 1) return true;
+
+	return false;
+}
+
+//==========================================================================
 // トリガー判定の瞬間
 //==========================================================================
 void CCameraMotion::TriggerMoment()
@@ -602,7 +715,15 @@ void CCameraMotion::MotionPass()
 }
 
 //==========================================================================
-// スペシャル
+// 登場演出
+//==========================================================================
+void CCameraMotion::MotionSpawn()
+{
+
+}
+
+//==========================================================================
+// スペシャル盛り上げ
 //==========================================================================
 void CCameraMotion::MotionSpecial()
 {
@@ -832,6 +953,7 @@ void CCameraMotion::ChangeKey()
 				pCamera->SetPositionR(m_pos + m_EditInfo.motionInfo.Key[m_EditInfo.keyIdx].posRDest);
 				pCamera->SetRotation(m_EditInfo.motionInfo.Key[m_EditInfo.keyIdx].rotDest);
 				pCamera->SetDistance(m_EditInfo.motionInfo.Key[m_EditInfo.keyIdx].distance);
+				pCamera->SetWarp(pCamera->GetPositionR());	// 注視点反映
 			}
 			else
 			{
