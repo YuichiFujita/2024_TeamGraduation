@@ -70,10 +70,10 @@ protected:
 	CGameManager *m_pGameManager;			// ゲームマネージャのオブジェクト
 	EditType m_EditType;					// エディットの種類
 	CEdit* m_pEdit;							// エディター
-	bool m_bEdit;				// エディットの判定
-	bool m_clear; // クリア判定
+	bool m_bEdit;							// エディットの判定
+	bool m_clear;							// クリア判定
 
-	static CGame* m_pThisPtr;	// 自身のポインタ
+	static CGame* m_pThisPtr;				// 自身のポインタ
 };
 
 

@@ -32,11 +32,15 @@ public:
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
+	
+	static CResult* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 private:
 
 	// メンバ変数
 	CResultManager* m_pResultManager;			// リザルトマネージャのオブジェクト
+
+	static CResult* m_pThisPtr;	// 自身のポインタ
 };
 
 #endif
