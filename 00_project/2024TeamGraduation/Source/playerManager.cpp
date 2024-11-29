@@ -149,7 +149,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 0
+#if 1
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
@@ -171,7 +171,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(左)
-#if 0
+#if 1
 	CPlayer* pAI2 = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 200.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI2 == nullptr)
 	{
