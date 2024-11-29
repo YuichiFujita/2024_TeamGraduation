@@ -141,7 +141,7 @@ void CPlayerUserIn::MotionCrab(int nStartKey)
 	//--------------------------------
 	// “ü—Í•ûŒü
 	//--------------------------------
-	CPlayer::EDashAngle* angle = GetPlayerControlMove()->IsInputAngle();
+	CPlayer::EDashAngle* angle = GetPlayerControlMove()->GetInputAngle();
 	if (angle == nullptr) return;
 
 	switch (*angle)

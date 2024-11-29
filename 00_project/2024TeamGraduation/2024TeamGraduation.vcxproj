@@ -189,6 +189,7 @@
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
     <ClCompile Include="Source\camera_motion_trigger.cpp" />
+    <ClCompile Include="Source\catchSpecial.cpp" />
     <ClCompile Include="Source\char2D.cpp" />
     <ClCompile Include="Source\characterAnim.cpp" />
     <ClCompile Include="Source\characterStatus.cpp" />
@@ -384,6 +385,7 @@
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
     <ClInclude Include="Source\camera_motion_trigger.h" />
+    <ClInclude Include="Source\catchSpecial.h" />
     <ClInclude Include="Source\char2D.h" />
     <ClInclude Include="Source\characterAnim.h" />
     <ClInclude Include="Source\characterStatus.h" />

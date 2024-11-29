@@ -132,6 +132,9 @@
     <Filter Include="ingame\visual">
       <UniqueIdentifier>{4fc88a46-4426-47cf-a5e7-046fa3185965}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player\catch">
+      <UniqueIdentifier>{611ce03a-6330-468c-8885-1691e18ce740}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -697,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="Source\entry_gameSetting.cpp">
       <Filter>mode\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\catchSpecial.cpp">
+      <Filter>player\catch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1275,6 +1281,9 @@
     </ClInclude>
     <ClInclude Include="Source\entry_gameSetting.h">
       <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\catchSpecial.h">
+      <Filter>player\catch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
