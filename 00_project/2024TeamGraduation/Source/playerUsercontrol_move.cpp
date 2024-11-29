@@ -494,6 +494,8 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	bool bDash = IsBlink();	// 走るフラグ取得
 	if (!bDash)
 	{
+		// 走るフラグ設定
+		player->SetEnableDash(false);
 		return;
 	}
 

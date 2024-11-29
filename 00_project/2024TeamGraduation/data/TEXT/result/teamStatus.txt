@@ -12,7 +12,7 @@ TENSION = 0
 # チーム0
 #------------------------------------------------------------------------------
 SETTEAM
-	CHARMVALUE = 3
+	CHARMVALUE = 6
 
 	SETPLAYER
 		HANDED = 0
@@ -28,7 +28,7 @@ END_SETTEAM
 # チーム1
 #------------------------------------------------------------------------------
 SETTEAM
-	CHARMVALUE = 4
+	CHARMVALUE = 12
 
 	SETPLAYER
 		HANDED = 0
