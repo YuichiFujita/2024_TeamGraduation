@@ -90,10 +90,6 @@ CEntry* CEntry::Create()
 //==========================================================================
 HRESULT CEntry::Init()
 {
-
-	// BGM再生
-	CSound::GetInstance()->PlaySound(CSound::LABEL_BGM_TITLE);
-
 	// 初期化処理
 	if (FAILED(CScene::Init()))
 	{// 失敗した場合
@@ -105,6 +101,9 @@ HRESULT CEntry::Init()
 
 	// エントリーシーン生成
 	m_pEntryScene = CEntryScene::Create(ESceneType::SCENETYPE_SETUPTEAM);
+
+	// BGM再生
+	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_ENTRY);
 
 	// 成功
 	return S_OK;

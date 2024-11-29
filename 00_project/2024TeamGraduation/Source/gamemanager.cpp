@@ -529,6 +529,11 @@ void CGameManager::SkipSpawn()
 
 	// ŠJŽn‰‰o‚Ö‘JˆÚ
 	SetSceneType(ESceneType::SCENE_START);
+
+	// BGMÄ¶
+	CSound* pSound = CSound::GetInstance();
+	pSound->StopSound();
+	pSound->PlaySound(CSound::ELabel::LABEL_BGM_GAME);
 }
 
 //==========================================================================

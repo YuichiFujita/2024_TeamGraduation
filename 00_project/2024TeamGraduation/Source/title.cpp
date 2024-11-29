@@ -153,7 +153,7 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		pKey->GetTrigger(DIK_RETURN))
 	{
 		// ‘JˆÚ
-		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
 	}
 }
 

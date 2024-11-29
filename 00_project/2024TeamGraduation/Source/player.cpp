@@ -59,6 +59,10 @@
 #include "playercontrol_move.h"
 #include "dressup_hair.h"
 
+#if 0
+#define WALKSE()	// 徒歩音再生
+#endif
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -1089,7 +1093,9 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
 	{
+#ifdef WALKSE
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+#endif // WALKSE
 
 		// 設定位置計算
 		MyLib::Vector3 setpos = weponpos;	// セットする位置
@@ -1111,9 +1117,12 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_RUN:
 	case EMotion::MOTION_RUN_BALL:
 	{
+#ifdef WALKSE
 		// 設定するラベル
 		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
 		PLAY_SOUND(label);
+#endif // WALKSE
+
 
 		// 設定位置計算
 		MyLib::Vector3 setpos = weponpos;	// セットする位置
@@ -1311,6 +1320,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_PUSH);
 
 	// キャッチ状態
 	SetState(EState::STATE_CATCH_NORMAL);

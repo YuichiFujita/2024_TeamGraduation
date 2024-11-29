@@ -120,6 +120,11 @@ HRESULT CPlayerSpawnManager::Init(void)
 	// “oê‰‰oƒ‚[ƒVƒ‡ƒ“‚ğİ’è
 	pCameraMotion->SetMotion(CCameraMotion::MOTION_SPAWN);
 
+	// BGMÄ¶
+	CSound* pSound = CSound::GetInstance();
+	pSound->StopSound();
+	pSound->PlaySound(CSound::ELabel::LABEL_BGM_SPAWN);
+
 	// ¬Œ÷‚ğ•Ô‚·
 	return S_OK;
 }

@@ -14,10 +14,15 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 {
 	// モード別BGM
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
+	{ TYPE_BGM,"data/BGM/entry.wav", -1 },			// エントリー
 	{ TYPE_BGM,"data/BGM/game01.wav", -1 },			// ゲーム
+	{ TYPE_BGM,"data/BGM/spawn.wav", -1 },			// 登場時
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
+
+	// BGM関連
+	{ TYPE_SE,"data/SE/spawn_end.wav",0},			// 登場時終了
 
 	// 歩き
 	{ TYPE_SE,"data/SE/walk.wav",0},				// 歩き
@@ -32,6 +37,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	// キャッチ
 	{ TYPE_SE,"data/SE/catch01.wav",0},				// キャッチ
 	{ TYPE_SE,"data/SE/justcatch.wav",0},			// ジャストキャッチ
+	{ TYPE_SE,"data/SE/push_normal.wav",0},			// 押し戻し
 
 	// バウンド
 	{ TYPE_SE,"data/SE/Bound00.wav",0},				// バウンド(高め)
@@ -258,9 +264,12 @@ void CSound::Uninit()
 	}
 	
 	// マスターボイスの破棄
-	m_pMasteringVoice->DestroyVoice();
-	m_pMasteringVoice = nullptr;
-	
+	if (m_pMasteringVoice != nullptr)
+	{
+		m_pMasteringVoice->DestroyVoice();
+		m_pMasteringVoice = nullptr;
+	}
+
 	if(m_pXAudio2 != nullptr)
 	{
 		// XAudio2オブジェクトの開放
