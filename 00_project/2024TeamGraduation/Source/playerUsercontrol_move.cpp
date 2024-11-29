@@ -44,8 +44,11 @@ CPlayerUserControlMove::~CPlayerUserControlMove()
 //==========================================================================
 void CPlayerUserControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	BilnkKey(player, fDeltaTime, fDeltaRate, fSlowRate);	// キー入力のブリンク
-	BilnkStick(player, fDeltaTime, fDeltaRate, fSlowRate);	// スティック入力のブリンク
+	if (!player->IsDash())
+	{
+		BilnkKey(player, fDeltaTime, fDeltaRate, fSlowRate);	// キー入力のブリンク
+		BilnkStick(player, fDeltaTime, fDeltaRate, fSlowRate);	// スティック入力のブリンク
+	}
 }
 
 //==========================================================================
@@ -296,6 +299,9 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 		// トリガーのカウント設定
 		SetCntTrigger(nCntTrigger);
 
+		// トリガーのインターバル設定
+		SetTriggerInterval(0.0f);
+
 		// ダッシュフラグ
 		bDash = true;
 	}
@@ -469,6 +475,9 @@ void CPlayerUserControlMove::BilnkStick(CPlayer* player, const float fDeltaTime,
 		// トリガーのカウント設定
 		SetCntTrigger(nCntTrigger);
 
+		// トリガーのインターバル設定
+		SetTriggerInterval(0.0f);
+
 		// ダッシュフラグ
 		bBlink = true;
 	}
@@ -485,6 +494,8 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	bool bDash = IsBlink();	// 走るフラグ取得
 	if (!bDash)
 	{
+		// 走るフラグ設定
+		player->SetEnableDash(false);
 		return;
 	}
 
@@ -529,6 +540,10 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 		{// ダッシュからは派生
 			player->SetMotion(CPlayer::EMotion::MOTION_GRIP_FRONT);
 		}
+
+
+		// 走るフラグ設定
+		player->SetEnableDash(false);
 	}
 	else
 	{
@@ -542,8 +557,6 @@ void CPlayerUserControlMove::Dash(CPlayer* player, const float fDeltaTime, const
 	
 	SetBlink(bDash);	//走るフラグ設定
 
-	//走るフラグ設定
-	player->SetEnableDash(true);
 }
 
 //==========================================================================

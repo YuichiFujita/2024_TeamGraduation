@@ -15,10 +15,7 @@
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-std::vector<std::string> CMotion::m_sTextFile = {};		// テキストファイル名
-std::vector<std::vector<CMotion::Info>> CMotion::m_vecLoadData = {};	// モーションの読み込み情報
-int CMotion::m_nNumLoad = 0;								// 読み込んだ数
-std::vector<int> CMotion::m_nNumLoadData = {};				// モーション毎のデータ数
+CMotion::SLoadInfo CMotion::m_LoadInfo = {};	// 読み込みデータ
 
 //==========================================================================
 // コンストラクタ
@@ -41,9 +38,10 @@ CMotion::CMotion()
 
 	m_pObjChara = nullptr;		// オブジェクトのポインタ
 	m_ppModel = nullptr;		// モデルのポインタ
-	m_nNumModel = 0;		// モデルの総数
-	m_nNumMotion = 0;		// モーションの総数
-	m_vecInfo.clear();		// モーション情報
+	m_nNumModel = 0;			// モデルの総数
+	m_nNumMotion = 0;			// モーションの総数
+	m_vecDefaultIdx.clear();	// デフォルトのインデックス
+	m_vecInfo.clear();			// モーション情報
 	//m_pPartsOld = nullptr;	// 過去の情報
 
 }
@@ -93,6 +91,7 @@ HRESULT CMotion::Init()
 	m_nNumModel = 0;		// モデルの総数
 	m_fSlowFactor = 1.0f;	// 遅延係数
 	m_pPartsOld = nullptr;
+	m_vecDefaultIdx.push_back(0);	// デフォルトのインデックス
 
 	return S_OK;
 }
@@ -237,7 +236,10 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 再生フレーム保存
 	int nMaxFrame = nowKey.nFrame;
 
-	if (m_nType == 0 && m_nOldType != 0 && m_nPatternKey == 0)
+	// デフォルトモーション判定
+	bool bDefault = std::find(m_vecDefaultIdx.begin(), m_vecDefaultIdx.end(), m_nType) != m_vecDefaultIdx.end();
+
+	if (bDefault && m_nOldType != 0 && m_nPatternKey == 0)
 	{// ニュートラルで0個の時
 		nMaxFrame = 10;
 	}
@@ -261,65 +263,21 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 	for (int i = 0; i < static_cast<int>(nowKey.aParts.size()); i++)
 	{
 		// 現在のパーツ情報
-		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
 		const Parts& nowParts = nowKey.aParts[i];
+		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
 
 		// モデルがなかったら戻る
 		if (m_ppModel[i] == nullptr) continue;
 
 		//--------------------------
-		// 次と今の向きの差分取得
+		// 向き更新
 		//--------------------------
-		float rotDiffX = nextParts.rot.x - m_pPartsOld[i].rot.x;
-		float rotDiffY = nextParts.rot.y - m_pPartsOld[i].rot.y;
-		float rotDiffZ = nextParts.rot.z - m_pPartsOld[i].rot.z;
-
-		// 角度の正規化
-		UtilFunc::Transformation::RotNormalize(rotDiffX);
-		UtilFunc::Transformation::RotNormalize(rotDiffY);
-		UtilFunc::Transformation::RotNormalize(rotDiffZ);
-
+		UpdateRotation(i, nowParts, nextParts, ratio);
 
 		//--------------------------
-		// パーツの向きを設定
+		// スケール更新
 		//--------------------------
-		MyLib::Vector3 rot;
-		rot.x = m_pPartsOld[i].rot.x + (rotDiffX * ratio);
-		rot.y = m_pPartsOld[i].rot.y + (rotDiffY * ratio);
-		rot.z = m_pPartsOld[i].rot.z + (rotDiffZ * ratio);
-
-		// 角度の正規化
-		UtilFunc::Transformation::RotNormalize(rot);
-
-		// 向き設定
-		m_ppModel[i]->SetRotation(rot);
-
-
-		//--------------------------
-		// スケール
-		//--------------------------
-		// 次と今の向きの差分取得
-		float scaleDiffX = nowInfo.aKey[nNextKey].aParts[i].scale.x -
-			m_pPartsOld[i].scale.x;
-
-		float scaleDiffY = nowInfo.aKey[nNextKey].aParts[i].scale.y -
-			m_pPartsOld[i].scale.y;
-
-		float scaleDiffZ = nowInfo.aKey[nNextKey].aParts[i].scale.z -
-			m_pPartsOld[i].scale.z;
-
-
-		//--------------------------
-		// スケール反映
-		//--------------------------
-		MyLib::Vector3 scale = MyLib::Vector3(0.0f, 0.0f, 0.0f);
-		scale.x = m_pPartsOld[i].scale.x + (scaleDiffX * ratio);
-		scale.y = m_pPartsOld[i].scale.y + (scaleDiffY * ratio);
-		scale.z = m_pPartsOld[i].scale.z + (scaleDiffZ * ratio);
-
-		// スケール設定
-		m_ppModel[i]->SetScale(scale);
-
+		UpdateScale(i, nowParts, nextParts, ratio);
 
 		//--------------------------
 		// 位置反映
@@ -461,6 +419,9 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_bFinish = true;
 	}
 
+	//--------------------------
+	// キー更新
+	//--------------------------
 	if (m_fCntFrame >= static_cast<float>(nMaxFrame))
 	{// フレームのカウントがフレーム数に達したら
 
@@ -517,6 +478,70 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 			}
 		}
 	}
+}
+
+//==========================================================================
+// 向きの更新
+//==========================================================================
+void CMotion::UpdateRotation(int i, const Parts& nowParts, const Parts& nextParts, float ratio)
+{
+	
+	//--------------------------
+	// 次と今の向きの差分取得
+	//--------------------------
+	float rotDiffX = nextParts.rot.x - m_pPartsOld[i].rot.x;
+	float rotDiffY = nextParts.rot.y - m_pPartsOld[i].rot.y;
+	float rotDiffZ = nextParts.rot.z - m_pPartsOld[i].rot.z;
+
+	// 角度の正規化
+	UtilFunc::Transformation::RotNormalize(rotDiffX);
+	UtilFunc::Transformation::RotNormalize(rotDiffY);
+	UtilFunc::Transformation::RotNormalize(rotDiffZ);
+
+	//--------------------------
+	// パーツの向きを設定
+	//--------------------------
+	MyLib::Vector3 rot;
+	rot.x = m_pPartsOld[i].rot.x + (rotDiffX * ratio);
+	rot.y = m_pPartsOld[i].rot.y + (rotDiffY * ratio);
+	rot.z = m_pPartsOld[i].rot.z + (rotDiffZ * ratio);
+
+	// 角度の正規化
+	UtilFunc::Transformation::RotNormalize(rot);
+
+	// 向き設定
+	m_ppModel[i]->SetRotation(rot);
+}
+
+//==========================================================================
+// スケールの更新
+//==========================================================================
+void CMotion::UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, float ratio)
+{
+	//--------------------------
+	// スケール
+	//--------------------------
+	// 次と今の向きの差分取得
+	float scaleDiffX = nextParts.scale.x -
+		m_pPartsOld[i].scale.x;
+
+	float scaleDiffY = nextParts.scale.y -
+		m_pPartsOld[i].scale.y;
+
+	float scaleDiffZ = nextParts.scale.z -
+		m_pPartsOld[i].scale.z;
+
+
+	//--------------------------
+	// スケール反映
+	//--------------------------
+	MyLib::Vector3 scale = MyLib::Vector3(0.0f, 0.0f, 0.0f);
+	scale.x = m_pPartsOld[i].scale.x + (scaleDiffX * ratio);
+	scale.y = m_pPartsOld[i].scale.y + (scaleDiffY * ratio);
+	scale.z = m_pPartsOld[i].scale.z + (scaleDiffZ * ratio);
+
+	// スケール設定
+	m_ppModel[i]->SetScale(scale);
 }
 
 //==========================================================================
@@ -760,23 +785,27 @@ int CMotion::GetMaxAllCount(int nType)
 void CMotion::ReadText(const std::string& file)
 {
 	// 読み込み確認
-	std::vector<std::string>::iterator itr = std::find(m_sTextFile.begin(), m_sTextFile.end(), file);
-	if (itr != m_sTextFile.end())
+	std::vector<std::string>::iterator itr = std::find(m_LoadInfo.sTextFile.begin(), m_LoadInfo.sTextFile.end(), file);
+
+	if (itr != m_LoadInfo.sTextFile.end())
 	{// ファイル名が一致
 
 		// インデックス算出
-		int nIdx = itr - m_sTextFile.begin();
+		int nIdx = itr - m_LoadInfo.sTextFile.begin();
 
 		// モーション数
-		m_nNumMotion = static_cast<int>(m_vecLoadData[nIdx].size());
+		m_nNumMotion = static_cast<int>(m_LoadInfo.vecLoadData[nIdx].size());
 
 		// モーション情報渡す
-		m_vecInfo = m_vecLoadData[nIdx];
+		m_vecInfo = m_LoadInfo.vecLoadData[nIdx];
+
+		// デフォルトモーションインデックス
+		m_vecDefaultIdx = m_LoadInfo.vecDefaultIdx;
 		return;
 	}
 
 	// ファイル名保存
-	m_sTextFile.push_back(file);
+	m_LoadInfo.sTextFile.push_back(file);
 
 
 	//--------------------------
@@ -808,6 +837,24 @@ void CMotion::ReadText(const std::string& file)
 			continue;
 		}
 
+		if (line.find("DEFAULT_ID") != std::string::npos)
+		{// デフォルトモーション読み込み
+
+			// ストリーム作成
+			std::istringstream lineStream(line);
+
+			lineStream >>	// 題名
+				hoge >>		// ゴミ
+				hoge;		// ＝
+
+			// 情報渡す
+			int value;
+			while (lineStream >> value)
+			{
+				m_vecDefaultIdx.push_back(value);
+			}
+		}
+
 		if (line.find("MOTION_FILENAME") != std::string::npos)
 		{// モーションファイル名読み込み
 
@@ -835,7 +882,7 @@ void CMotion::ReadText(const std::string& file)
 
 
 	// 読み込みデータ渡す
-	m_vecLoadData.emplace_back();
+	m_LoadInfo.vecLoadData.emplace_back();
 
 	// 要素分繰り返し
 	for (int i = 0; i < static_cast<int>(motionFile.size()); i++)
@@ -846,13 +893,13 @@ void CMotion::ReadText(const std::string& file)
 
 
 	// モーション情報渡す
-	m_vecInfo = m_vecLoadData[m_nNumLoad];
+	m_vecInfo = m_LoadInfo.vecLoadData[m_LoadInfo.nNumLoad];
 
 	// モーション数
 	m_nNumMotion = static_cast<int>(m_vecInfo.size());
 
 	// 読み込んだ数加算
-	m_nNumLoad++;
+	m_LoadInfo.nNumLoad++;
 }
 
 //==========================================================================
@@ -1215,6 +1262,6 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 	}
 
 	// 読み込みデータ渡す
-	m_vecLoadData.back().push_back(loadInfo);
+	m_LoadInfo.vecLoadData.back().push_back(loadInfo);
 
 }

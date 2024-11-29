@@ -98,6 +98,16 @@ public:
 		Info() : bSpecial(false), nCancelableFrame(-1), nCombolableFrame(-1) {}
 	};
 
+	// 読み込み情報保存情報
+	struct SLoadInfo
+	{
+		std::vector<int> vecDefaultIdx;							// デフォルトのインデックス
+		std::vector<std::string> sTextFile;						// テキストファイル名
+		int nNumLoad;											// 読み込んだ数
+		std::vector<int> nNumLoadData;							// モーション毎のデータ数
+		std::vector<std::vector<CMotion::Info>> vecLoadData;	// モーションの読み込み情報
+	};
+
 	CMotion();
 	~CMotion();
 
@@ -167,7 +177,8 @@ private:
 	// メンバ関数
 	void ReadText(const std::string& file);
 	void LoadMotion(const std::string& file, int nMotion);
-	void UpdateRotation(int i);	// 向きの更新
+	void UpdateRotation(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// 向きの更新
+	void UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// スケールの更新
 
 	// メンバ変数
 	std::vector<Info> m_vecInfo;	// モーションの情報
@@ -185,14 +196,12 @@ private:
 	bool m_bCombiable;			// コンボ可能か
 	bool m_bAttaking;			// 攻撃判定中フラグ
 
-	CObjectChara* m_pObjChara;	// オブジェクトキャラクターのポインタ
-	CModel** m_ppModel;			// モデルのポインタ
-	int m_nNumModel;			// パーツの総数
-	int m_nNumMotion;			// モーションの総数
-	static std::vector<std::string> m_sTextFile;	// テキストファイル名
-	static int m_nNumLoad;	// 読み込んだ数
-	static std::vector<int> m_nNumLoadData;				// モーション毎のデータ数
-	static std::vector<std::vector<CMotion::Info>> m_vecLoadData;		// モーションの読み込み情報
+	CObjectChara* m_pObjChara;			// オブジェクトキャラクターのポインタ
+	CModel** m_ppModel;					// モデルのポインタ
+	int m_nNumModel;					// パーツの総数
+	int m_nNumMotion;					// モーションの総数
+	std::vector<int> m_vecDefaultIdx;	// デフォルトのインデックス
+	static SLoadInfo m_LoadInfo;		// 読み込みデータ
 };
 
 #endif

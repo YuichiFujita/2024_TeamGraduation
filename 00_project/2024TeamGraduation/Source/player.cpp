@@ -471,8 +471,11 @@ void CPlayer::Uninit()
 
 	// ステータス
 	SAFE_DELETE(m_pStatus);
-	
-	// ステータス
+
+	// マーカー
+	SAFE_UNINIT(m_pMarker);
+
+	// プレイヤー位置補正
 	SAFE_DELETE(m_pPosAdj);
 
 	// スぺシャルエフェクト
@@ -892,12 +895,11 @@ void CPlayer::ResetFrag()
 	m_sMotionFrag.bMove = false;
 
 	// ダッシュリセット
-	m_bDash = false;
+	//m_bDash = false;
 
 	//キャッチできない状態
 	m_sMotionFrag.bCatch = false;
 	m_sMotionFrag.bCatchJust = false;
-	m_bDash = false;
 
 	// オートモーション設定
 	m_bAutoMotionSet = true;
@@ -1903,6 +1905,9 @@ void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, c
 	if (m_pBall != nullptr)
 	{
 		m_fStateTime = 0.0f;
+
+		// ずっとトスモーション
+		pMotion->Set(EMotion::MOTION_TOSS);
 
 		// チーム別向き設定
 		MyLib::Vector3 rot = GetRotation();

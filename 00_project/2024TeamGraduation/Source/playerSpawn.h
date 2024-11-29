@@ -35,16 +35,6 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 	virtual void Kill() override;	// “®“Iíœ
-
-private:
-
-	//=============================
-	// ƒƒ“ƒoŠÖ”
-	//=============================
-
-	//=============================
-	// ƒƒ“ƒo•Ï”
-	//=============================
 };
 
 #endif
