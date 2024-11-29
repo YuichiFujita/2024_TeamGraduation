@@ -30,6 +30,7 @@
 #include "specialEffect.h"
 #include "charmManager.h"
 #include "playerMarker.h"
+#include "catchSpecial.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -197,6 +198,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateDodge,				// 回避
 	&CPlayer::StateCatch_Normal,		// 通常キャッチ
 	&CPlayer::StateCatch_Just,			// ジャストキャッチ
+	&CPlayer::StateCatch_Special,		// スペシャルキャッチ
 	&CPlayer::StateSpecial,				// スペシャル
 	&CPlayer::StateOutCourt,			// コート越え
 	&CPlayer::StateOutCourt_Return,		// コートに戻る
@@ -217,9 +219,9 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_typeArea	(typeArea)	// ポジション
 {
 	// 値のクリア
-	m_state = STATE_NONE;			// 状態
-	m_Oldstate = STATE_NONE;		// 前回の状態
-	m_fStateTime = 0.0f;			// 状態時間
+	m_state = EState::STATE_NONE;										// 状態
+	m_Oldstate = EState::STATE_NONE;									// 前回の状態
+	m_fStateTime = 0.0f;												// 状態時間
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
@@ -244,6 +246,9 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	// スぺシャルエフェクト
 	m_pSpecialEffect = nullptr;	// スぺシャルエフェクト
 
+	// キャッチスぺシャル
+	m_pCatchSpecial = nullptr;	// キャッチスぺシャル
+	
 	// エフェクト用
 	m_pEfkCatchStance = nullptr;	// キャッチの構え用
 	m_pEfkCatchNormal = nullptr;	// 通常キャッチ
@@ -385,7 +390,7 @@ HRESULT CPlayer::Init()
 	m_sDamageInfo.bReceived = true;
 	m_sDamageInfo.fReceiveTime = 0.0f;
 
-	m_state = STATE_NONE;	// 状態
+	m_state = EState::STATE_NONE;	// 状態
 	m_Oldstate = m_state;
 	m_sMotionFrag.bMove = true;
 	m_bPossibleMove = true;
@@ -1310,10 +1315,6 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		SetMotion(EMotion::MOTION_CATCH_JUMP);
 		break;
 
-	case CBall::ATK_SPECIAL:	//TODO: スペシャルに変更
-		SetMotion(EMotion::MOTION_CATCH_JUMP);
-		break;
-
 	default:
 		break;
 	}
@@ -1353,10 +1354,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
 		break;
 
-	case CBall::ATK_SPECIAL:	//TODO: スペシャルに変更
-		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
-		break;
-
 	default:
 		break;
 	}
@@ -1374,6 +1371,24 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	
 	// スペシャル加算
 	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
+}
+
+//==========================================================================
+// キャッチ時処理(スペシャル)
+//==========================================================================
+void CPlayer::CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial)
+{
+	// キャッチスペシャル生成＆設定
+	CCatchSpecial::EState state = CCatchSpecial::Check(this, bJust, typeSpecial);
+
+	// 生成
+	m_pCatchSpecial = CCatchSpecial::Create(this, state);
+
+	// ジャストキャッチ状態
+	SetState(EState::STATE_CATCH_SPECIAL);
+
+	// モーション設定
+	SetMotion(EMotion::MOTION_CATCHSPECIAL_SUCC);
 }
 
 //==========================================================================
@@ -1494,18 +1509,31 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 入力判定
 	bool bInput = false;
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
+	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 	if (angle != nullptr)
-	{
+	{// ジャスト範囲方向に入力していたら
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
 		float fRot = division * (*angle) + D3DX_PI + Camerarot.y;
 		UtilFunc::Transformation::RotNormalize(fRot);
 		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
 	}
 
+	// ジャスト判定
+	bool bJust = false;
+	if (m_sMotionFrag.bCatchJust && bInput)
+	{
+		bJust = true;
+	}
+
+	// スペシャル専用
+	if (atkBall == CBall::ATK_SPECIAL)
+	{
+		CatchSettingSpecial(bJust, pBall->GetTypeSpecial());		// キャッチ時処理(スペシャル)
+		return;
+	}
+
 	// モーション設定
-	if (m_sMotionFrag.bCatchJust
-		&& bInput)
+	if (bJust)
 	{// ジャストキャッチ
 
 		CatchSettingLandJust(atkBall);		// キャッチ時処理(地上・ジャスト)
@@ -1652,7 +1680,7 @@ void CPlayer::StateInvincible(const float fDeltaTime, const float fDeltaRate, co
 		m_sDamageInfo.fReceiveTime = 0.0f;
 		m_sDamageInfo.bReceived = true;
 
-		SetState(STATE_NONE);
+		SetState(EState::STATE_NONE);
 	}
 }
 
@@ -1790,6 +1818,22 @@ void CPlayer::StateCatch_Just(const float fDeltaTime, const float fDeltaRate, co
 }
 
 //==========================================================================
+// ジャストキャッチ
+//==========================================================================
+void CPlayer::StateCatch_Special(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// スペシャルキャッチ状態更新
+	if (m_pCatchSpecial != nullptr)
+	{
+		m_pCatchSpecial->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+	else
+	{// 終了すると自動的にnullptr
+		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
 // スペシャル
 //==========================================================================
 void CPlayer::StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -1800,7 +1844,7 @@ void CPlayer::StateSpecial(const float fDeltaTime, const float fDeltaRate, const
 	{ // モーションがスペシャルじゃなくなった場合
 
 		// 何もしない状態にする
-		SetState(STATE_NONE);
+		SetState(EState::STATE_NONE);
 	}
 }
 
@@ -2292,7 +2336,7 @@ void CPlayer::Debug()
 		CMotion* motion = GetMotion();
 		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 		CPlayer::EAction action = m_pActionPattern->GetAction();
-		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->IsInputAngle();
+		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);

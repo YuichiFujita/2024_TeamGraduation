@@ -98,7 +98,7 @@ private:
 	enum EThrow	// 投げ種類
 	{
 		THROW_NONE = 0,		// なし
-		THROW_THROW,		// 投げ
+		THROW_NORMAL,		// 投げ
 		THROW_PASS,			// パス
 		THROW_SPECIAL,		// スペシャル
 	};
@@ -132,21 +132,11 @@ private:
 		bool bThrow;		// 投げてよし！
 	};
 
-	struct SCatchInfo	// キャッチ情報
-	{
-		ECatchType eCatchType;		// キャッチ種類
-	};
-
-	struct SMode	// モード
-	{
-		EMode eMode;				// モード
-	};
-
 	struct SInfo
 	{
-		SMode sMode;				// モード
 		SThrowInfo sThrowInfo;		// 投げ情報
-		SCatchInfo sCatchInfo;		// キャッチ情報
+		EMode eMode;				// モード
+		ECatchType eCatchType;		// キャッチ種類
 	};
 
 	struct STarget	// 学習
@@ -166,7 +156,7 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetMode(EMode mode) { m_sInfo.sMode.eMode = mode; }	// モード設定
+	void SetMode(EMode mode) { m_sInfo.eMode = mode; }	// モード設定
 	void SetPlayerInfo(CPlayer* player) { m_pAI = player; }
 
 private:
@@ -208,6 +198,9 @@ private:
 	//=============================
 	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// モード管理
 	void MoveManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 行動管理
+	void ActionManager();
+	void ThrowManager();
+
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
@@ -293,7 +286,7 @@ private:
 
 	void AttackDash();
 
-	void ResetFlag();			// 変数リセット
+	void IsJumpCatch();
 
 	//=============================
 	// メンバ変数

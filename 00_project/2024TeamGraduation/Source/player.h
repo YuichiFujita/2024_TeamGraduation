@@ -29,6 +29,7 @@ class CBall;			// ボール
 class CSpecialEffect;	// スペシャル演出エフェクト
 class CBindKey;			// 割当キー基底クラス
 class CEffekseerObj;	// エフェクシアオブジェクト
+class CCatchSpecial;	// キャッチスペシャル
 
 //==========================================================================
 // クラス定義
@@ -72,6 +73,8 @@ public:
 		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
 		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
 		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
+		MOTION_CATCHSPECIAL_SUCC,	// キャッチスペシャル(成功)
+		MOTION_CATCHSPECIAL_FAIL,	// キャッチスペシャル(失敗)
 		MOTION_DROPCATCH_WALK,		// 落ちてるのキャッチ(歩き)
 		MOTION_THROW,				// 投げ
 		MOTION_THROW_RUN,			// 投げ(走り)
@@ -101,6 +104,7 @@ public:
 		STATE_DODGE,			// 回避
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
+		STATE_CATCH_SPECIAL,	// スペシャルキャッチ
 		STATE_SPECIAL,			// スペシャル
 		STATE_OUTCOURT,			// コート越え(ノックバック)
 		STATE_OUTCOURT_RETURN,	// コート越えから戻る(ノックバック)
@@ -317,34 +321,40 @@ public:
 	CSpecialEffect* GetSpecialEffect() { return m_pSpecialEffect; }	// スぺシャルエフェクト取得
 
 	//=============================
+	// スペシャルキャッチ用
+	//=============================
+	void SetCatchSpecial(CCatchSpecial* pCatch) { m_pCatchSpecial = pCatch; }	// スぺシャルキャッチ情報設定
+	CCatchSpecial* GetCatchSpecial() { return m_pCatchSpecial; }				// スぺシャルキャッチ情報取得
+
+	//=============================
 	// その他
 	//=============================
-	SHitInfo Hit(CBall* pBall);			// ヒット処理
-	void SetSpecialAttack();			// スペシャル攻撃設定
-	void SetState(EState state);		// 状態設定
-	void ChangeBase(EBaseType type);	// ベース変更
-	EBaseType GetBaseType() const;		// ベース取得
-	EFieldArea GetAreaType() const { return m_typeArea; }			// ポジション取得
-	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }	// チームサイド取得
-	EState GetState() { return m_state; }					// 状態取得
-	EBody GetBodyType() { return m_BodyType; }				// 体型取得
-	EHandedness GetHandedness() { return m_Handedness; }	// 利き手取得
-	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }	// 自分のインデックス設定
-	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }	// 自分のインデックス取得
-	int GetPositionIdx() const { return m_nPosIdx; }		// 自分のポジション別インデックス取得
-	void SetBall(CBall* pBall) { m_pBall = pBall; }			// ボール情報設定
-	CBall* GetBall() const { return m_pBall; }				// ボール情報取得
-	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
-	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
-	void CatchSetting(CBall* pBall);									// キャッチ時処理
-	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
-	void OutCourtSetting();												// コート越え処理
-	void SetHaveTime(float time) { m_fHaveTime = time; }				// ボール所持タイマー
-	float GetHaveTime() { return m_fHaveTime; }							// ボール所持タイマー
-	void SetEscapeTime(float time) { m_fEscapeTime = time; }			// 端逃げタイマー
-	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
+	SHitInfo Hit(CBall* pBall);													// ヒット処理
+	void SetSpecialAttack();													// スペシャル攻撃設定
+	void SetState(EState state);												// 状態設定
+	void ChangeBase(EBaseType type);											// ベース変更
+	EBaseType GetBaseType() const;												// ベース取得
+	EFieldArea GetAreaType() const { return m_typeArea; }						// ポジション取得
+	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }				// チームサイド取得
+	EState GetState() { return m_state; }										// 状態取得
+	EBody GetBodyType() { return m_BodyType; }									// 体型取得
+	EHandedness GetHandedness() { return m_Handedness; }						// 利き手取得
+	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }						// 自分のインデックス設定
+	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }						// 自分のインデックス取得
+	int GetPositionIdx() const { return m_nPosIdx; }							// 自分のポジション別インデックス取得
+	void SetBall(CBall* pBall) { m_pBall = pBall; }								// ボール情報設定
+	CBall* GetBall() const { return m_pBall; }									// ボール情報取得
+	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);			// 死亡設定
+	void DamageSetting(CBall* pBall);											// ダメージ発生時設定
+	void CatchSetting(CBall* pBall);											// キャッチ時処理
+	void CoverCatchSetting(CBall* pBall);										// カバーキャッチ時処理
+	void OutCourtSetting();														// コート越え処理
+	void SetHaveTime(float time) { m_fHaveTime = time; }						// ボール所持タイマー
+	float GetHaveTime() { return m_fHaveTime; }									// ボール所持タイマー
+	void SetEscapeTime(float time) { m_fEscapeTime = time; }					// 端逃げタイマー
+	float GetEscapeTime() { return m_fEscapeTime; }								// 端逃げタイマー
 
-	static CListManager<CPlayer> GetList() { return m_List; }			// リスト取得
+	static CListManager<CPlayer> GetList() { return m_List; }					// リスト取得
 
 	//=============================
 	// 定数
@@ -403,10 +413,10 @@ private:
 	// 関数リスト
 	//=============================
 	typedef void(CPlayer::* STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_StateFunc[];	// 状態関数
-	
+	static STATE_FUNC m_StateFunc[];							// 状態関数
+
 	typedef void(CPlayer::*ACTION_FUNC)();
-	static ACTION_FUNC m_ActionFunc[];	// 行動関数
+	static ACTION_FUNC m_ActionFunc[];							// 行動関数
 
 	//=============================
 	// メンバ関数
@@ -423,11 +433,17 @@ private:
 	void StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 回避
 	void StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常キャッチ
 	void StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャストキャッチ
+	void StateCatch_Special(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャルキャッチ
 	void StateSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル
 	void StateOutCourt(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// コート越え
 	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
 	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
+
+	//-----------------------------
+	// スペシャルキャッチ状態関数
+	//-----------------------------
+	void CheckSuccessStateCatchSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);	// スペシャルキャッチ成功判定
 
 	//-----------------------------
 	// その他関数
@@ -447,6 +463,8 @@ private:
 	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
+	void CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);					// キャッチ時処理(スペシャル)
+
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
 
@@ -462,9 +480,9 @@ private:
 	//-----------------------------
 	// 状態
 	//-----------------------------
-	EState m_Oldstate;	// 前回の状態
-	EState m_state;		// 状態
-	float m_fStateTime;	// 状態時間
+	EState m_Oldstate;							// 前回の状態
+	EState m_state;								// 状態
+	float m_fStateTime;							// 状態時間
 
 	//-----------------------------
 	// オブジェクトのパラメータ
@@ -497,6 +515,11 @@ private:
 	// スペシャル用
 	//-----------------------------
 	CSpecialEffect* m_pSpecialEffect;	// スぺシャルエフェクト
+	
+	//-----------------------------
+	// キャッチスペシャル用
+	//-----------------------------
+	CCatchSpecial* m_pCatchSpecial;				// キャッチスペシャル
 
 	//-----------------------------
 	// エフェクト用

@@ -48,12 +48,12 @@ CPlayerBase::~CPlayerBase()
 CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 {
 	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
-	CBall::EAttack atkBall	= pBall->GetTypeAtk();		// ボール攻撃種類
-	CBall::EState stateBall = pBall->GetState();		// ボール状態
-	MyLib::Vector3 posB = pBall->GetPosition();			// ボール位置
-	MyLib::HitResult_Character hitresult = {};			// 衝突情報
-	CPlayerStatus* pStatus = m_pPlayer->GetStatus();	// ステータス情報
-	CPlayer::EState state = m_pPlayer->GetState();		// プレイヤー状態
+	CBall::EAttack atkBall	= pBall->GetTypeAtk();				// ボール攻撃種類
+	CBall::EState stateBall = pBall->GetState();				// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();					// ボール位置
+	MyLib::HitResult_Character hitresult = {};					// 衝突情報
+	CPlayerStatus* pStatus = m_pPlayer->GetStatus();			// ステータス情報
+	CPlayer::EState state = m_pPlayer->GetState();				// プレイヤー状態
 
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
