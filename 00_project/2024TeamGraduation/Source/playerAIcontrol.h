@@ -98,7 +98,7 @@ private:
 	enum EThrow	// 投げ種類
 	{
 		THROW_NONE = 0,		// なし
-		THROW_THROW,		// 投げ
+		THROW_NORMAL,		// 投げ
 		THROW_PASS,			// パス
 		THROW_SPECIAL,		// スペシャル
 	};
