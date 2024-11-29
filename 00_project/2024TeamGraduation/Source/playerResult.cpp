@@ -28,6 +28,7 @@ CPlayerResult::STATE_FUNC CPlayerResult::m_StateFunc[] =	// 状態関数
 	&CPlayerResult::StateNone,		// なし
 	&CPlayerResult::StateWin,		// 勝利
 	&CPlayerResult::StateLose,		// 敗北
+	&CPlayerResult::StateDraw,		// 引き分け
 };
 
 CPlayerResult::VICTORY_FUNC CPlayerResult::m_VictoryFunc[] =	// 状態関数
@@ -151,7 +152,7 @@ void CPlayerResult::StateNone(const float fDeltaTime, const float fDeltaRate, co
 }
 
 //==========================================================================
-// 勝利
+// 勝利状態
 //==========================================================================
 void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -166,7 +167,7 @@ void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, con
 }
 
 //==========================================================================
-// 敗北モーション
+// 敗北状態
 //==========================================================================
 void CPlayerResult::StateLose(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -177,6 +178,21 @@ void CPlayerResult::StateLose(const float fDeltaTime, const float fDeltaRate, co
 	if (pMotion->GetType() != EMotion::MOTION_LOSE)
 	{// 敗北モーション以外なら敗北にする
 		pMotion->Set(EMotion::MOTION_LOSE);
+	}
+}
+
+//==========================================================================
+// 引き分け状態
+//==========================================================================
+void CPlayerResult::StateDraw(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->GetType() != EMotion::MOTION_DRAW)
+	{// 敗北モーション以外なら敗北にする
+		pMotion->Set(EMotion::MOTION_DRAW);
 	}
 }
 
@@ -209,9 +225,15 @@ void CPlayerResult::CheckVictoryNone(const float fDeltaTime, const float fDeltaR
 void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CResultManager* pRsltMgr = CResultManager::GetInstance();
-	if (GetTeam() == pRsltMgr->GetTeamPreludeWin())
+	CGameManager::ETeamSide teamWin = pRsltMgr->GetTeamPreludeWin();
+
+	if (GetTeam() == teamWin)
 	{// 勝利チームだったら
 		SetState(EState::STATE_WIN);
+	}
+	else if(teamWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分けなら
+		SetState(EState::STATE_DRAW);
 	}
 	else
 	{// 敗北者なら
@@ -225,9 +247,15 @@ void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDel
 void CPlayerResult::CheckVictoryContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CResultManager* pRsltMgr = CResultManager::GetInstance();
-	if (GetTeam() == pRsltMgr->GetTeamContestWin())
+	CGameManager::ETeamSide teamWin = pRsltMgr->GetTeamContestWin();
+	
+	if (GetTeam() == teamWin)
 	{// 勝利チームだったら
 		SetState(EState::STATE_WIN);
+	}
+	else if (teamWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分けなら
+		SetState(EState::STATE_DRAW);
 	}
 	else
 	{// 敗北者なら

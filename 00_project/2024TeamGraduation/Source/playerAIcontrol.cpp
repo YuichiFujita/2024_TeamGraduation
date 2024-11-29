@@ -37,6 +37,7 @@ namespace
 {
 	// ジャンプ投げの最大位置(ジャンプ力MAX：150)
 	const float JUMP_END_POS = 130.0f;
+	const float JUMP_RATE = 1.0f;
 
 	// 距離間(デフォルト)
 	const float LENGTH_IN = 500.0f;
@@ -876,7 +877,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget, const float fDeltaTime, c
 
 		m_eMove = EMoveType::MOVETYPE_WALK;
 
-		if (Leave(pTarget->GetPosition(), 300.0f))
+		if (Leave(pTarget->GetPosition(), 500.0f))
 		{
 			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
@@ -1074,7 +1075,7 @@ void CPlayerAIControl::ActionJump()
 	pControlAIAction->SetIsJump(true);
 	pControlAIAction->SetIsJumpFloat(true);
 
-	pControlAIAction->SetJumpRate(0.7f);
+	pControlAIAction->SetJumpRate(JUMP_RATE);
 
 	// アクション列挙：なし
 	m_eAction = EAction::ACTION_NONE;
@@ -1289,6 +1290,9 @@ void CPlayerAIControl::AttackDash()
 	float distanceTarget = 0.0f;
 	float JUMP_POS_X = 0.0f;
 
+	// ターゲットのエリアの取得
+	CGameManager::ETeamSide side = m_pAI->GetTeam();
+
 	if (m_pTarget)
 	{// ターゲットがいた場合
 		distanceTarget = posMy.DistanceXZ(m_pTarget->GetPosition());	// 自分と相手の距離
@@ -1300,21 +1304,41 @@ void CPlayerAIControl::AttackDash()
 		return;
 	}
 
+	// エリアごと
+	//if (side == CGameManager::ETeamSide::SIDE_LEFT)
+	//{// 左
+		if (distanceTarget > JUMP_POS_X && distanceLine > 300.0f)
+		{// 自分とターゲットの距離が700.0f以上&&
+			// 走る
+			m_eMove = EMoveType::MOVETYPE_DASH;
 
-	if (distanceTarget > JUMP_POS_X && distanceLine > 300.0f)
-	{// 自分とターゲットの距離が700.0f以上&&
-		// 走る
-		m_eMove = EMoveType::MOVETYPE_DASH;
+			// 相手の位置に近づく
+			if (Approatch(posTarget, 0.0f))
+			{// 範囲内の場合
+				m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
+				m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
+			}
 
-		// 相手の位置に近づく
-		if (Approatch(posTarget, 0.0f))
-		{// 範囲内の場合
-			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
-			m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
+			return;
 		}
+	//}
+	//else if (side == CGameManager::ETeamSide::SIDE_LEFT)
+	//{// 右
+	//	if (distanceTarget > JUMP_POS_X && distanceLine > 300.0f)
+	//	{// 自分とターゲットの距離が700.0f以上&&
+	//		// 走る
+	//		m_eMove = EMoveType::MOVETYPE_DASH;
 
-		return;
-	}
+	//		// 相手の位置に近づく
+	//		if (Approatch(posTarget, 0.0f))
+	//		{// 範囲内の場合
+	//			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
+	//			m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
+	//		}
+
+	//		return;
+	//	}
+	//}
 
 	m_eAction = EAction::ACTION_JUMP;
 

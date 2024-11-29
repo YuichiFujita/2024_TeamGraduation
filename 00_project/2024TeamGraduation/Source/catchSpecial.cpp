@@ -16,6 +16,14 @@ namespace StateTime
 	const float KAMEHAME_FAIL(5.0f);	// かめはめ波？キャッチ成功
 }
 
+// かめはめ波
+namespace Kamehameha
+{
+	const float FAN_ROT(5.0f);		// 成功判定の扇の角度(度数法)
+	const float RAD_JUST(0.5f);		// 成功判定のの許容割合(ジャスト時)
+	const float RAD_NORMAL(0.2f);	// 成功判定のの許容割合(平常時)
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -191,9 +199,23 @@ void CCatchSpecial::Failure()
 //==========================================================================
 CCatchSpecial::EState CCatchSpecial::Check_Kamehameha(const CPlayer* pPlayer, const bool bJust)
 {
-	// 成功判定	//TODO: ちゃんとした条件式を！
-	if (true)
-	{
+	// ・ジャストならコートの前50％
+	// ・ノーマルならコートの前20％
+	// ・スペシャル発動君の角度内(扇)
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	CGameManager::ETeamSide team = pPlayer->GetTeam();
+	MyLib::Vector3 pos = pPlayer->GetPosition();
+
+	// 規定割合
+	float fRad = 0.0f;
+	bJust ? fRad = Kamehameha::RAD_JUST : fRad = Kamehameha::RAD_NORMAL;
+
+	// コート内割合取得
+	float fRate = pGameMgr->GetCourtPosPercentage(team, pos);
+
+	if (fRate <= fRad)
+	{// (規定内)なら成功
+
 		return EState::STATE_BEAM_SUCC;
 	}
 

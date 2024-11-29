@@ -523,6 +523,7 @@ void CPlayer::Kill()
 	if (m_pStatus != nullptr)
 	{
 		m_pStatus->Kill();
+		SAFE_DELETE(m_pStatus);
 		m_pStatus = nullptr;
 	}
 

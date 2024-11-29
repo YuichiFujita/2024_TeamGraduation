@@ -102,6 +102,7 @@ public:
 	bool IsControll() { return m_bControll; }								// 操作のフラグ取得
 	MyLib::Vector3 GetCourtSize() { return m_courtSize; }					// コートサイズ取得
 	MyLib::Vector3 GetCourtSize(const ETeamSide team, MyLib::Vector3& pos);	// コートサイズ取得(チーム)
+	float GetCourtPosPercentage(const ETeamSide team, MyLib::Vector3 pos);	// コートの何パー位置か取得(チーム)
 	float GetHalfCourtDiagonal();											// チームコートの対角線取得
 	bool SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius = 0.0f);	// コート移動制限
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得

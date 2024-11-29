@@ -34,6 +34,7 @@ public:
 		MOTION_DEF = 0,	// ニュートラルモーション
 		MOTION_WIN,		// 勝利
 		MOTION_LOSE,	// 敗北
+		MOTION_DRAW,	// 引き分け
 		MOTION_MAX
 	};
 
@@ -43,6 +44,7 @@ public:
 		STATE_NONE = 0,		// なにもない
 		STATE_WIN,			// 勝利
 		STATE_LOSE,			// 敗北
+		STATE_DRAW,			// 引き分け
 		STATE_MAX
 	};
 
@@ -96,6 +98,7 @@ private:
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
 	void StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 勝利
 	void StateLose(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 敗北
+	void StateDraw(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 引き分け
 	
 	//-----------------------------
 	// 判定関数

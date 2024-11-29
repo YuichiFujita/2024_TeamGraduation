@@ -605,12 +605,12 @@ void CGameManager::SetSceneType(ESceneType type)
 	m_fSceneTimer = 0.0f;
 }
 
-/**
-@brief	コートサイズ取得(チーム)
-@param	team[in]	取得したいチーム
-@param	pos[out]	取得したコートの中心点
-@return	コートサイズ
-*/
+//==========================================================================
+// @brief	コートサイズ取得(チーム)
+// @param	team[in]	取得したいチーム
+// @param	pos[out]	取得したコートの中心点
+// @return	コートサイズ
+//==========================================================================
 MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& pos)
 {
 	// 片側コートサイズ
@@ -634,6 +634,32 @@ MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& 
 	}
 
 	return size;
+}
+
+//==========================================================================
+// @brief	コートの何パー位置か取得(チーム)
+// @param	team[in]	取得したいチーム
+// @param	pos[out]	取得したコートの中心点
+// @return	コートサイズ
+//==========================================================================
+float CGameManager::GetCourtPosPercentage(const ETeamSide team, MyLib::Vector3 pos)
+{
+	MyLib::Vector3 posCourt = MyLib::Vector3();
+	MyLib::Vector3 sizeCourt = GetCourtSize(team, posCourt);
+
+	// 最小大値
+	float min = posCourt.x - sizeCourt.x;
+	float max = posCourt.x + sizeCourt.x;
+
+	// 割合
+	float fRate = UtilFunc::Transformation::ValueToRate(pos.x, min, max);
+
+	if (team == ETeamSide::SIDE_LEFT)
+	{// 左は割合反転
+		fRate = 1.0f - fRate;
+	}
+
+	return fRate;
 }
 
 //==========================================================================
