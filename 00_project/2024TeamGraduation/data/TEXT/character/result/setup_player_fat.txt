@@ -271,6 +271,7 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 MOTION_FILENAME = data/TEXT/character/result/motion_def.txt		# デフォルト
 MOTION_FILENAME = data/TEXT/character/result/motion_win.txt		# 勝利
 MOTION_FILENAME = data/TEXT/character/result/motion_lose.txt	# 敗北
+MOTION_FILENAME = data/TEXT/character/result/motion_draw.txt	# 引き分け
 
 END_SCRIPT		# この行は絶対消さないこと！
 
