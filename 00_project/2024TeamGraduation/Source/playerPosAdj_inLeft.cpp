@@ -82,7 +82,7 @@ CPlayerPosAdjIn::EInputUnstable CPlayerPosAdjInLeft::IsInputLine(CPlayer* pPlaye
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
 	// “ü—Í•ûŒü‚ðŽæ“¾
-	CPlayer::EDashAngle* angle = pPlayer->GetBase()->GetPlayerControlMove()->IsInputAngle();
+	CPlayer::EDashAngle* angle = pPlayer->GetBase()->GetPlayerControlMove()->GetInputAngle();
 
 	// ‰E‚ð“ü—Í‚µ‚Ä‚¢‚½‚çtrue
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||

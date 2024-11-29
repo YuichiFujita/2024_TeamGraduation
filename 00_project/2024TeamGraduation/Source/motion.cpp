@@ -15,10 +15,7 @@
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-std::vector<std::string> CMotion::m_sTextFile = {};		// テキストファイル名
-std::vector<std::vector<CMotion::Info>> CMotion::m_vecLoadData = {};	// モーションの読み込み情報
-int CMotion::m_nNumLoad = 0;								// 読み込んだ数
-std::vector<int> CMotion::m_nNumLoadData = {};				// モーション毎のデータ数
+CMotion::SLoadInfo CMotion::m_LoadInfo = {};	// 読み込みデータ
 
 //==========================================================================
 // コンストラクタ
@@ -788,23 +785,27 @@ int CMotion::GetMaxAllCount(int nType)
 void CMotion::ReadText(const std::string& file)
 {
 	// 読み込み確認
-	std::vector<std::string>::iterator itr = std::find(m_sTextFile.begin(), m_sTextFile.end(), file);
-	if (itr != m_sTextFile.end())
+	std::vector<std::string>::iterator itr = std::find(m_LoadInfo.sTextFile.begin(), m_LoadInfo.sTextFile.end(), file);
+
+	if (itr != m_LoadInfo.sTextFile.end())
 	{// ファイル名が一致
 
 		// インデックス算出
-		int nIdx = itr - m_sTextFile.begin();
+		int nIdx = itr - m_LoadInfo.sTextFile.begin();
 
 		// モーション数
-		m_nNumMotion = static_cast<int>(m_vecLoadData[nIdx].size());
+		m_nNumMotion = static_cast<int>(m_LoadInfo.vecLoadData[nIdx].size());
 
 		// モーション情報渡す
-		m_vecInfo = m_vecLoadData[nIdx];
+		m_vecInfo = m_LoadInfo.vecLoadData[nIdx];
+
+		// デフォルトモーションインデックス
+		m_vecDefaultIdx = m_LoadInfo.vecDefaultIdx;
 		return;
 	}
 
 	// ファイル名保存
-	m_sTextFile.push_back(file);
+	m_LoadInfo.sTextFile.push_back(file);
 
 
 	//--------------------------
@@ -881,7 +882,7 @@ void CMotion::ReadText(const std::string& file)
 
 
 	// 読み込みデータ渡す
-	m_vecLoadData.emplace_back();
+	m_LoadInfo.vecLoadData.emplace_back();
 
 	// 要素分繰り返し
 	for (int i = 0; i < static_cast<int>(motionFile.size()); i++)
@@ -892,13 +893,13 @@ void CMotion::ReadText(const std::string& file)
 
 
 	// モーション情報渡す
-	m_vecInfo = m_vecLoadData[m_nNumLoad];
+	m_vecInfo = m_LoadInfo.vecLoadData[m_LoadInfo.nNumLoad];
 
 	// モーション数
 	m_nNumMotion = static_cast<int>(m_vecInfo.size());
 
 	// 読み込んだ数加算
-	m_nNumLoad++;
+	m_LoadInfo.nNumLoad++;
 }
 
 //==========================================================================
@@ -1261,6 +1262,6 @@ void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
 	}
 
 	// 読み込みデータ渡す
-	m_vecLoadData.back().push_back(loadInfo);
+	m_LoadInfo.vecLoadData.back().push_back(loadInfo);
 
 }

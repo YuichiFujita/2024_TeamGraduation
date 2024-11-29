@@ -53,7 +53,7 @@ public:
 		STATE_MAX				// この列挙型の総数
 	};
 
-	// スペシャル種類
+	// スペシャル種類		//Caution: 追加したらcatchSpecialのCHECK_FUNCも追加して
 	enum ESpecial
 	{
 		SPECIAL_NONE = 0,	// スペシャル無し
