@@ -39,37 +39,37 @@ private:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum EHeart	// 心
+	enum EHeart					// 心
 	{
-		HEART_NONE = 0,	// 抜け殻人
-		HEART_NORMAL,	// 通常
-		HEART_STRONG,	// 強気
-		HEART_TIMID,	// 弱気
+		HEART_NONE = 0,			// 抜け殻人
+		HEART_NORMAL,			// 通常
+		HEART_STRONG,			// 強気
+		HEART_TIMID,			// 弱気
 		HEART_MAX
 	};
 
-	enum ETiming	// タイミング
+	enum ETiming				// タイミング
 	{
 		TIMING_NONE = 0,
-		TIMING_NORMAL,		// 通常
-		TIMING_QUICK,		// 速
-		TIMING_DELAY,		// 遅
-		TIMING_JUMP_NORMAL,	// ジャンプ通常
-		TIMING_JUMP_QUICK,	// ジャンプ速
-		TIMING_JUMP_DELAY,	// ジャンプ遅
+		TIMING_NORMAL,			// 通常
+		TIMING_QUICK,			// 速
+		TIMING_DELAY,			// 遅
+		TIMING_JUMP_NORMAL,		// ジャンプ通常
+		TIMING_JUMP_QUICK,		// ジャンプ速
+		TIMING_JUMP_DELAY,		// ジャンプ遅
 		TIMING_MAX
 	};
 
-	enum  EThrowType	// 投げタイプ
+	enum  EThrowType			// 投げタイプ
 	{
-		THROWTYPE_NONE = 0,
-		THROWTYPE_NORMAL,
-		THROWTYPE_JUMP,
-		THROWTYPE_SPECIAL,
+		THROWTYPE_NONE = 0,		// なし
+		THROWTYPE_NORMAL,		// 通常
+		THROWTYPE_JUMP,			// ジャンプ
+		THROWTYPE_SPECIAL,		// スペシャル
 		THROWTYPE_MAX
 	};
 
-	enum ECatchType	// キャッチ種類
+	enum ECatchType				// キャッチ種類
 	{
 		CATCH_TYPE_NONE = 0,	// なし
 		CATCH_TYPE_NORMAL,		// 通常
@@ -80,14 +80,16 @@ private:
 		CATCH_TYPE_MAX
 	};
 
-	enum EMoveForcibly	// 強制行動
+	enum EMoveForcibly			// 強制行動
 	{
 		FORCIBLY_NONE = 0,		// なし
+		FORCIBLY_STOP,			// 止まる
 		FORCIBLY_RETURN,		// 戻る
+		FORCIBLY_START,			// 初め
 		FORCIBLY_MAX,
 	};
 
-	enum EMoveType	// 行動種類
+	enum EMoveType				// 行動種類
 	{
 		MOVETYPE_STOP = 0,		// 止まる
 		MOVETYPE_WALK,			// 歩く
@@ -95,7 +97,7 @@ private:
 		MOVETYPE_MAX
 	};
 
-	enum EThrow	// 投げ種類
+	enum EThrow				// 投げ種類
 	{
 		THROW_NONE = 0,		// なし
 		THROW_NORMAL,		// 投げ
@@ -248,7 +250,9 @@ private:
 
 	// 強制行動
 	void ForciblyNone() {};			// なし
-	void ForciblyReturn();			// 歩く
+	void ForciblyStop();			// 止まる
+	void ForciblyReturn();			// 戻る
+	void ForciblyStart();			// 初め
 
 	// 行動
 	void MoveStop();			// なし

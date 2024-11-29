@@ -119,7 +119,9 @@ CPlayerAIControl::CATCH_FUNC CPlayerAIControl::m_CatchFunc[] =	// キャッチ関数
 CPlayerAIControl::MOVEFORCIBLY_FUNC CPlayerAIControl::m_MoveForciblyFunc[] =	// 行動関数
 {
 	&CPlayerAIControl::ForciblyNone,		// なし
+	&CPlayerAIControl::ForciblyStop,		// 止まる
 	&CPlayerAIControl::ForciblyReturn,		// 戻る
+	&CPlayerAIControl::ForciblyStart,		// 初め
 };
 
 CPlayerAIControl::MOVE_FUNC CPlayerAIControl::m_MoveFunc[] =	// 行動関数
@@ -191,6 +193,7 @@ HRESULT CPlayerAIControl::Init()
 	m_eLine = ELine::LINE_IN;
 	m_eHeart = EHeart::HEART_NORMAL;
 	m_eThrow = EThrow::THROW_NONE;
+	m_eForcibly = EMoveForcibly::FORCIBLY_START;
 
 	return S_OK;
 }
@@ -256,8 +259,8 @@ void CPlayerAIControl::AreaRight()
 //==========================================================================
 void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (IsLineOverPlayer())
-	{// 線を超えていたら
+	if (IsLineOverPlayer() && m_eForcibly != EMoveForcibly::FORCIBLY_START)
+	{// 線を超えていた&&強制行動：初め 以外の場合
 		m_eForcibly = EMoveForcibly::FORCIBLY_RETURN;
 		return;
 	}
@@ -466,7 +469,7 @@ void CPlayerAIControl::ThrowMoveWalk(CPlayer* pTarget, const float fDeltaTime, c
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-	if (IsLineOverPlayer())
+	if (IsLineOverPlayer() && m_eForcibly != EMoveForcibly::FORCIBLY_START)
 	{// 線を超えていた場合(数値は固定変数)
 		m_eForcibly = EMoveForcibly::FORCIBLY_RETURN;
 		return;
@@ -888,6 +891,19 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget, const float fDeltaTime, c
 // 行動関連 =========================================================================================================================================================
 
 //==========================================================================
+// 強制：止まる
+//==========================================================================
+void CPlayerAIControl::ForciblyStop()
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// 歩く
+	m_eMove = EMoveType::MOVETYPE_STOP;
+}
+
+//==========================================================================
 // 強制：戻る
 //==========================================================================
 void CPlayerAIControl::ForciblyReturn()
@@ -909,7 +925,7 @@ void CPlayerAIControl::ForciblyReturn()
 		if (Approatch({ -RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
 		{
 			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
-			m_eMove = EMoveType::MOVETYPE_STOP;;
+			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
 	}
 	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
@@ -925,13 +941,37 @@ void CPlayerAIControl::ForciblyReturn()
 		if (Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
 		{
 			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
-			m_eMove = EMoveType::MOVETYPE_STOP;;
+			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
 	}
 	else
 	{// エラー
 		assert(false);
 	}
+}
+
+//==========================================================================
+// 強制：初めのダッシュ
+//==========================================================================
+void CPlayerAIControl::ForciblyStart()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall)
+	{// ボールがない場合
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		return;
+	}
+
+	CPlayer* pPlayer = pBall->GetPlayer();
+	if (pPlayer)
+	{// 誰かがボールを持った場合
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		return;
+	}
+
+	m_eAction = EAction::ACTION_JUMP;
+	m_eMove = EMoveType::MOVETYPE_WALK;
+
 }
 
 //==========================================================================
@@ -1088,6 +1128,10 @@ void CPlayerAIControl::ThrowSpecial()
 
 	// スペシャル投げ
 	pControlAIAction->SetIsSpecial(true);
+
+	// 投げなし
+	m_eThrow = EThrow::THROW_NONE;
+	m_sInfo.sThrowInfo.eType = EThrowType::THROWTYPE_NONE;
 }
 
 
