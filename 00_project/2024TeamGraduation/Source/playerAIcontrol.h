@@ -39,37 +39,37 @@ private:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum EHeart	// 心
+	enum EHeart					// 心
 	{
-		HEART_NONE = 0,	// 抜け殻人
-		HEART_NORMAL,	// 通常
-		HEART_STRONG,	// 強気
-		HEART_TIMID,	// 弱気
+		HEART_NONE = 0,			// 抜け殻人
+		HEART_NORMAL,			// 通常
+		HEART_STRONG,			// 強気
+		HEART_TIMID,			// 弱気
 		HEART_MAX
 	};
 
-	enum ETiming	// タイミング
+	enum ETiming				// タイミング
 	{
 		TIMING_NONE = 0,
-		TIMING_NORMAL,		// 通常
-		TIMING_QUICK,		// 速
-		TIMING_DELAY,		// 遅
-		TIMING_JUMP_NORMAL,	// ジャンプ通常
-		TIMING_JUMP_QUICK,	// ジャンプ速
-		TIMING_JUMP_DELAY,	// ジャンプ遅
+		TIMING_NORMAL,			// 通常
+		TIMING_QUICK,			// 速
+		TIMING_DELAY,			// 遅
+		TIMING_JUMP_NORMAL,		// ジャンプ通常
+		TIMING_JUMP_QUICK,		// ジャンプ速
+		TIMING_JUMP_DELAY,		// ジャンプ遅
 		TIMING_MAX
 	};
 
-	enum  EThrowType	// 投げタイプ
+	enum  EThrowType			// 投げタイプ
 	{
-		THROWTYPE_NONE = 0,
-		THROWTYPE_NORMAL,
-		THROWTYPE_JUMP,
-		THROWTYPE_SPECIAL,
+		THROWTYPE_NONE = 0,		// なし
+		THROWTYPE_NORMAL,		// 通常
+		THROWTYPE_JUMP,			// ジャンプ
+		THROWTYPE_SPECIAL,		// スペシャル
 		THROWTYPE_MAX
 	};
 
-	enum ECatchType	// キャッチ種類
+	enum ECatchType				// キャッチ種類
 	{
 		CATCH_TYPE_NONE = 0,	// なし
 		CATCH_TYPE_NORMAL,		// 通常
@@ -80,14 +80,16 @@ private:
 		CATCH_TYPE_MAX
 	};
 
-	enum EMoveForcibly	// 強制行動
+	enum EMoveForcibly			// 強制行動
 	{
 		FORCIBLY_NONE = 0,		// なし
+		FORCIBLY_STOP,			// 止まる
 		FORCIBLY_RETURN,		// 戻る
+		FORCIBLY_START,			// 初め
 		FORCIBLY_MAX,
 	};
 
-	enum EMoveType	// 行動種類
+	enum EMoveType				// 行動種類
 	{
 		MOVETYPE_STOP = 0,		// 止まる
 		MOVETYPE_WALK,			// 歩く
@@ -95,10 +97,10 @@ private:
 		MOVETYPE_MAX
 	};
 
-	enum EThrow	// 投げ種類
+	enum EThrow				// 投げ種類
 	{
 		THROW_NONE = 0,		// なし
-		THROW_THROW,		// 投げ
+		THROW_NORMAL,		// 投げ
 		THROW_PASS,			// パス
 		THROW_SPECIAL,		// スペシャル
 	};
@@ -132,21 +134,11 @@ private:
 		bool bThrow;		// 投げてよし！
 	};
 
-	struct SCatchInfo	// キャッチ情報
-	{
-		ECatchType eCatchType;		// キャッチ種類
-	};
-
-	struct SMode	// モード
-	{
-		EMode eMode;				// モード
-	};
-
 	struct SInfo
 	{
-		SMode sMode;				// モード
 		SThrowInfo sThrowInfo;		// 投げ情報
-		SCatchInfo sCatchInfo;		// キャッチ情報
+		EMode eMode;				// モード
+		ECatchType eCatchType;		// キャッチ種類
 	};
 
 	struct STarget	// 学習
@@ -166,7 +158,7 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetMode(EMode mode) { m_sInfo.sMode.eMode = mode; }	// モード設定
+	void SetMode(EMode mode) { m_sInfo.eMode = mode; }	// モード設定
 	void SetPlayerInfo(CPlayer* player) { m_pAI = player; }
 
 private:
@@ -208,6 +200,9 @@ private:
 	//=============================
 	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// モード管理
 	void MoveManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 行動管理
+	void ActionManager();
+	void ThrowManager();
+
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
@@ -255,7 +250,9 @@ private:
 
 	// 強制行動
 	void ForciblyNone() {};			// なし
-	void ForciblyReturn();			// 歩く
+	void ForciblyStop();			// 止まる
+	void ForciblyReturn();			// 戻る
+	void ForciblyStart();			// 初め
 
 	// 行動
 	void MoveStop();			// なし
@@ -293,7 +290,7 @@ private:
 
 	void AttackDash();
 
-	void ResetFlag();			// 変数リセット
+	void IsJumpCatch();
 
 	//=============================
 	// メンバ変数

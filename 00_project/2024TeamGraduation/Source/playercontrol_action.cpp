@@ -19,11 +19,10 @@
 //==========================================================================
 namespace
 {
-	const float TIME_THROWDROP = 10.0f / 60.0f;	// 投げ(ドロップボール)の猶予
-
 	const float TAPTIME = 0.10f;		// タップの入力時間
-	const float TAPRATE_MIN = 0.7f;	// タップの最小割合
-	const float TAPRATE_MAX = 1.0f;	// タップの最大割合
+	const float TAPRATE_MIN = 0.7f;		// タップの最小割合
+	const float TAPRATE_MAX = 1.0f;		// タップの最大割合
+	const float TIME_THROWDROP = (10.0f / 60.0f) + TAPTIME;	// 投げ(ドロップボール)の猶予
 }
 
 //==========================================================================

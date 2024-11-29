@@ -3078,7 +3078,7 @@ namespace UtilFunc	// 便利関数
 		@param	num	[in]	割合化する数値
 		@param	min	[in]	最小範囲
 		@param	max	[in]	最大範囲
-		@return	void
+		@return	vfloatoid
 		*/
 		template<class T>inline float ValueToRate(const T num, const T min, const T max)
 		{

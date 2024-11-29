@@ -501,6 +501,12 @@ void CCameraMotion::Update(const float fDeltaTime, const float fDeltaRate, const
 		// Œü‚«‚ð³‹K‰»
 		UtilFunc::Transformation::RotNormalize(rot.y);
 		pCamera->SetRotation(rot);	// Œü‚«”½‰f
+
+
+		// XŽ²‚à”½“]
+		MyLib::Vector3 posR = pCamera->GetPositionR() - m_pos;	// ’Ž‹“_
+		posR.x *= -1;
+		pCamera->SetPositionR(m_pos + posR);
 	}
 
 	// ’Ž‹“_‚Ì”½‰f

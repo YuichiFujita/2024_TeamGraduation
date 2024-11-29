@@ -60,6 +60,10 @@
 #include "playercontrol_move.h"
 #include "dressup_hair.h"
 
+#if 0
+#define WALKSE()	// 徒歩音再生
+#endif
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -1095,7 +1099,9 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_WALK:
 	case EMotion::MOTION_WALK_BALL:
 	{
+#ifdef WALKSE
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK);
+#endif // WALKSE
 
 		// 設定位置計算
 		MyLib::Vector3 setpos = weponpos;	// セットする位置
@@ -1117,9 +1123,12 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_RUN:
 	case EMotion::MOTION_RUN_BALL:
 	{
+#ifdef WALKSE
 		// 設定するラベル
 		CSound::ELabel label = static_cast<CSound::ELabel>(static_cast<int>(CSound::ELabel::LABEL_SE_RUN01) + nCntATK);
 		PLAY_SOUND(label);
+#endif // WALKSE
+
 
 		// 設定位置計算
 		MyLib::Vector3 setpos = weponpos;	// セットする位置
@@ -1313,6 +1322,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_CATCH);
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_PUSH);
 
 	// キャッチ状態
 	SetState(EState::STATE_CATCH_NORMAL);
@@ -2111,29 +2123,6 @@ void CPlayer::ChangePosAdjuster(EBaseType base, CGameManager::ETeamSide team, EF
 void CPlayer::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-
-	// ステンシルバッファ有効
-	pDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
-
-	// 参照値設定
-	pDevice->SetRenderState(D3DRS_STENCILREF, 0x01);
-
-	// バッファへの値に対してのマスク設定
-	pDevice->SetRenderState(D3DRS_STENCILMASK, 0xff);
-
-	// ステンシルテストの比較方法設定
-	pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
-
-	// テスト結果に対しての反映設定
-	pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);	// Z+ステンシル成功
-	pDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);		// Z+ステンシル失敗
-	pDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);		// Zテストのみ失敗
-
-	// ステンシル描画
-	//CObjectChara::Draw();
-
-	// ステンシルバッファ無効
-	//pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 
 	// 普通の描画
 	if (m_state == STATE_DMG)

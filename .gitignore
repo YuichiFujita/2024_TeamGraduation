@@ -400,3 +400,5 @@ FodyWeavers.xsd
 /00_project/2024TeamGraduation/imgui.ini
 /00_project/2024TeamGraduation/*.ipch
 *.ini
+/00_project/2024TeamGraduation/data/TEXT/result/teamStatus.txt
+/00_project/2024TeamGraduation/2024TeamGraduation.exe
