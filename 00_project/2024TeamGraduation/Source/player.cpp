@@ -1778,8 +1778,10 @@ void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, 
 	MyLib::Vector3 move = GetMove();
 
 	// 移動量更新
-	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
-	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio) * (fDeltaRate * fSlowRate);
+	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
+	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
+	move.x *= (fDeltaRate * fSlowRate);
+	move.z *= (fDeltaRate * fSlowRate);
 
 	// 位置更新
 	pos.x += move.x;
