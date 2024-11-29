@@ -152,13 +152,9 @@ void CObject2D::Draw()
 	CManager* pMgr = CManager::GetInstance();
 
 #if _DEBUG
-	if (pMgr->GetPause() != nullptr)
-	{
-		if (pMgr->GetPause()->IsPause()) return;	// ポーズ中
-		if (pMgr->Is2DDisp()) return;				// 2D表示
-	}
-
-	if (GetType() == CObject::TYPE::TYPE_UI && !pMgr->IsDisp_UI())
+	
+	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
+		(!GetType() == CObject::TYPE::TYPE_UI || !GetType() == CObject::TYPE::TYPE_NONE))
 	{
 		return;
 	}
@@ -185,6 +181,18 @@ void CObject2D::Draw()
 //==========================================================================
 void CObject2D::Draw(int nNumVertex)
 {
+	// マネージャのインスタンス取得
+	CManager* pMgr = CManager::GetInstance();
+
+#if _DEBUG
+
+	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
+		(!GetType() == CObject::TYPE::TYPE_UI || !GetType() == CObject::TYPE::TYPE_NONE))
+	{
+		return;
+	}
+#endif
+
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 

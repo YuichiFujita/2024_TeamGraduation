@@ -7,6 +7,7 @@
 #include "object_circlegauge2D.h"
 #include "manager.h"
 #include "calculation.h"
+#include "pause.h"
 
 //==========================================================================
 // 定数定義
@@ -148,6 +149,18 @@ void CObjectCircleGauge2D::Update(const float fDeltaTime, const float fDeltaRate
 //==========================================================================
 void CObjectCircleGauge2D::Draw()
 {
+	// マネージャのインスタンス取得
+	CManager* pMgr = CManager::GetInstance();
+
+#if _DEBUG
+
+	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
+		(!GetType() == CObject::TYPE::TYPE_UI || !GetType() == CObject::TYPE::TYPE_NONE))
+	{
+		return;
+	}
+#endif
+
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 

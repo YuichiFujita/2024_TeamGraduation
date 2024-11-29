@@ -60,6 +60,7 @@ void CPlayerStatus::Init()
 {
 	// 体力ゲージ生成
 	m_pLifeGauge = CObjectCircleGauge2D::Create(LifeGauge::DIVISION, LifeGauge::SIZE);
+	m_pLifeGauge->SetType(CObject::TYPE::TYPE_UI);
 
 	// チーム取得
 	CGameManager::ETeamSide teamSide = m_pPlayer->GetTeam();
