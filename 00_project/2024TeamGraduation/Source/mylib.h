@@ -28,6 +28,7 @@
 
 #define GET_DEVICE			(CManager::GetInstance()->GetRenderer()->GetDevice())		// デバイス情報取得
 #define PLAY_SOUND(label)	(CSound::GetInstance()->PlaySound((CSound::ELabel)(label)))	// サウンド再生
+#define PLAY_SOUND_IF(label, bStop)	(CSound::GetInstance()->PlaySound((CSound::ELabel)(label), bStop))	// サウンド再生
 
 /*
 	@brief	マイライブラリ

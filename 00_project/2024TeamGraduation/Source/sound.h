@@ -32,10 +32,13 @@ public:
 	enum ELabel
 	{
 		LABEL_BGM_TITLE = 0,	// タイトル
+		LABEL_BGM_ENTRY,		// エントリー
 		LABEL_BGM_GAME,			// ゲーム
+		LABEL_BGM_SPAWN,		// 登場時
 		LABEL_BGM_RESULT,		// リザルト
 		LABEL_BGM_TUTORIAL,		// チュートリアル
 		LABEL_BGM_RANKING,		// ランキング
+		LABEL_SE_SPAWNEND,		// 登場時演出終了時
 		LABEL_SE_WALK,			// 歩き
 		LABEL_SE_RUN01,			// 走り
 		LABEL_SE_RUN02,			// 走り
@@ -44,6 +47,7 @@ public:
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
 		LABEL_SE_CATCH,			// キャッチ
 		LABEL_SE_JUSTCATCH,		// ジャストキャッチ
+		LABEL_SE_PUSH,			// 押し戻し
 		LABEL_SE_BOUND_HIGH,	// バウンド(高め)
 		LABEL_SE_BOUND_MEDIUM,	// バウンド(普通)
 		LABEL_SE_BOUND_LOW,		// バウンド(低め)

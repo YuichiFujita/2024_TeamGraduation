@@ -121,9 +121,6 @@ HRESULT CGame::Init()
 	// ƒNƒŠƒA‚Ì”»’è
 	SetEnableClear(true);
 
-	// BGMÄ¶
-	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_GAME);
-
 	return S_OK;
 }
 
