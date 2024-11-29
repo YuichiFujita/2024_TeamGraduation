@@ -45,8 +45,8 @@ namespace
 	const float LENGTH_LINE = 100.0f;
 
 	// 線越え判定(中心(x)からの距離)
-	const float LINE_DISTANCE_OVER = 100.0f;	// 線超え判定の距離(中心 x:0.0f)
-	const float RETURN_POS = 700.0f;			// 戻る位置(中心 x:0.0f)
+	const float LINE_DISTANCE_OVER = 50.0f;	// 線超え判定の距離(中心 x:0.0f)
+	const float RETURN_POS = 600.0f;			// 戻る位置(中心 x:0.0f)
 
 	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
 
@@ -359,7 +359,7 @@ void CPlayerAIControl::PlanThrow(CPlayer* pTarget, const float fDeltaTime, const
 		{// 投げろフラグがオンだったら
 			int n = 0;
 			// 今はランダムで決定
-			//n = rand() % 2;
+			n = rand() % 2;
 			//n = 0;
 
 			switch (n)
@@ -416,8 +416,10 @@ void CPlayerAIControl::ThrowTypeSpecial(CPlayer* pTarget, const float fDeltaTime
 {
 	// その場なのか歩くのか走るのか
 
+	m_eThrow = EThrow::THROW_SPECIAL;
+
 	// 投げるまでの行動の更新
-	(this->*(m_ThrowMoveFunc[m_eMove]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
+	//(this->*(m_ThrowMoveFunc[m_eMove]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -849,7 +851,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget, const float fDeltaTime, c
 	if (area == CPlayer::EFieldArea::FIELD_IN)
 	{// ターゲットが内野
 
-		m_eMove = EMoveType::MOVETYPE_WALK;
+		//m_eMove = EMoveType::MOVETYPE_WALK;
 
 		if (Leave(pTarget->GetPosition(), 300.0f))
 		{
@@ -859,7 +861,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget, const float fDeltaTime, c
 	else if (area = CPlayer::EFieldArea::FIELD_OUT)
 	{// ターゲットが外野
 
-		m_eMove = EMoveType::MOVETYPE_WALK;
+		//m_eMove = EMoveType::MOVETYPE_WALK;
 
 		if (Leave(pTarget->GetPosition(), 300.0f))
 		{
@@ -1069,7 +1071,12 @@ void CPlayerAIControl::ThrowPass()
 //==========================================================================
 void CPlayerAIControl::ThrowSpecial()
 {
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = m_pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
 
+	// スペシャル投げ
+	pControlAIAction->SetIsSpecial(true);
 }
 
 
