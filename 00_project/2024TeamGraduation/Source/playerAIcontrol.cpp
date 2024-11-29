@@ -1128,6 +1128,10 @@ void CPlayerAIControl::ThrowSpecial()
 
 	// ƒXƒyƒVƒƒƒ‹“Š‚°
 	pControlAIAction->SetIsSpecial(true);
+
+	// “Š‚°‚È‚µ
+	m_eThrow = EThrow::THROW_NONE;
+	m_sInfo.sThrowInfo.eType = EThrowType::THROWTYPE_NONE;
 }
 
 
