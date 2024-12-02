@@ -50,6 +50,7 @@ public:
 	// その他
 	//--------------------------
 	void SetControllIdx(int idx) { m_nControllIdx = idx; }	// 操作するインデックス設定
+	virtual void ReRegist(int idx);							// 再割り当て
 	virtual void ReRegist() = 0;							// 再割り当て
 	virtual void Debug();
 	int GetNowIdx() { return m_nNowIdx; }					// 現在のインデックス取得

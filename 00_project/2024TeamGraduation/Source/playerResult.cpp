@@ -81,6 +81,9 @@ HRESULT CPlayerResult::Init()
 
 	// 待機にしておく
 	SetState(EState::STATE_NONE);
+
+	// ドレスアップ生成
+	CreateDressUp();
 	return S_OK;
 }
 

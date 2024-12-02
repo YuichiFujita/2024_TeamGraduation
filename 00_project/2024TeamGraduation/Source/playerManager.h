@@ -11,6 +11,7 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
+#include "manager.h"
 #include "listmanager.h"
 #include "gamemanager.h"
 #include "player.h"
@@ -78,7 +79,7 @@ public:
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerManager();
-	~CPlayerManager();
+	virtual ~CPlayerManager();
 
 	//=============================
 	// 仮想関数
@@ -110,7 +111,7 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CPlayerManager* Create();	// 生成
+	static CPlayerManager* Create(CScene::MODE mode);	// 生成
 	static CPlayerManager* GetInstance() { return m_pInstance; }	// インスタンス取得
 
 private:
@@ -139,8 +140,8 @@ private:
 	SOutInfo GetInfoRightNear();	// 右手前の外野情報取得
 
 	// 生成
-	HRESULT CreateLeftPlayer(const LoadInfo& info);	// 左のプレイヤー生成
-	HRESULT CreateRightPlayer(const LoadInfo& info);	// 右のプレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);		// 左のプレイヤー生成
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);	// 右のプレイヤー生成
 
 	// ファイル関連
 	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ

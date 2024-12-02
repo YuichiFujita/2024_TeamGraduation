@@ -94,7 +94,6 @@ private:
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み
 	void LoadTeam(std::ifstream* File, std::string line, int nTeam);						// チーム情報読み込み
-	void LoadPlayer(std::ifstream* File, std::string line, int nTeam, int nIdxPlayer);		// プレイヤー情報読み込み
 
 	//=============================
 	// メンバ変数

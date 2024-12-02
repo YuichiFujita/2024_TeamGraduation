@@ -11,6 +11,10 @@
 #include "bindKeyLeft.h"
 #include "bindKeyRight.h"
 
+// 派生クラス
+#include "playerManager_game.h"
+#include "playerManager_result.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -65,13 +69,27 @@ CPlayerManager::~CPlayerManager()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CPlayerManager* CPlayerManager::Create()
+CPlayerManager* CPlayerManager::Create(CScene::MODE mode)
 {
 	// 既に生成済みの場合抜ける
 	if (m_pInstance != nullptr) { return m_pInstance; }
 
 	// インスタンスの生成
-	m_pInstance = DEBUG_NEW CPlayerManager;
+	switch (mode)
+	{
+	case CScene::MODE_GAME:
+		m_pInstance = DEBUG_NEW CPlayerManager_Game;
+		break;
+
+	case CScene::MODE_RESULT:
+		m_pInstance = DEBUG_NEW CPlayerManager_Result;
+		break;
+
+	default:
+		m_pInstance = DEBUG_NEW CPlayerManager;
+		break;
+	}
+
 	if (m_pInstance != nullptr)
 	{ // メモリの確保が出来た場合
 
@@ -91,25 +109,32 @@ CPlayerManager* CPlayerManager::Create()
 //==========================================================================
 HRESULT CPlayerManager::Init()
 {
+#ifdef ENTRYSTART
+
 	// FUJITA：エントリーで外部に保存されたプレイヤー情報を取得しプレイヤーを生成
 	// 読み込み処理
 	Load();
 
 	// 読み込んだ情報をもとにプレイヤー生成
+	int nLeft = 0, nRight = 0;
 	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
 	{
 		// 左のプレイヤー生成
 		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size()))
 		{
-			CreateLeftPlayer(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
+			CreateLeftPlayer(nLeft, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
+			nLeft++;
 		}
 
 		// 右のプレイヤー生成
 		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size()))
 		{
-			CreateRightPlayer(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
+			CreateRightPlayer(nRight, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
+			nRight++;
 		}
 	}
+
+#else
 
 	//----------------------------------------------------------------------
 	// プレイヤー内野生成
@@ -270,15 +295,7 @@ HRESULT CPlayerManager::Init()
 	}
 #endif
 
-	// 審判生成
-	CPlayer::Create
-	(
-		MyLib::Vector3(0.0f, 0.0f, CGameManager::GetInstance()->GetCourtSize().z),			// 位置
-		CGameManager::ETeamSide::SIDE_NONE,			// チームサイド
-		CPlayer::EHuman::HUMAN_REFEREE,				// 人
-		CPlayer::EBody::BODY_NORMAL,				// 体型
-		CPlayer::EHandedness::HAND_R				// 利き手
-	);
+#endif // ENTRY
 
 
 	return S_OK;
@@ -287,7 +304,7 @@ HRESULT CPlayerManager::Init()
 //==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager::CreateLeftPlayer(const LoadInfo& info)
+HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info)
 {
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 
@@ -312,13 +329,16 @@ HRESULT CPlayerManager::CreateLeftPlayer(const LoadInfo& info)
 	// インデックス反映
 	pPlayer->SetMyPlayerIdx(info.nControllIdx);
 
+	// ドレスアップ反映
+	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
+
 	return S_OK;
 }
 
 //==========================================================================
 // 右のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager::CreateRightPlayer(const LoadInfo& info)
+HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info)
 {
 	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
 
@@ -342,6 +362,9 @@ HRESULT CPlayerManager::CreateRightPlayer(const LoadInfo& info)
 
 	// インデックス反映
 	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+
+	// ドレスアップ反映
+	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
 }
@@ -920,7 +943,7 @@ void CPlayerManager::SavePlayerInfo(std::ofstream* File, const std::vector<LoadI
 
 		(*File) << "\t\tID_CONTROLL = " << info.nControllIdx << std::endl;	// 操作するインデックス番号
 		(*File) << "\t\tHAIR = " << info.nHair << std::endl;				// 髪着せ替え
-		(*File) << "\t\tACCESSORY= " << info.nAccessory << std::endl;		// アクセ着せ替え
+		(*File) << "\t\tACCESSORY = " << info.nAccessory << std::endl;		// アクセ着せ替え
 		(*File) << "\t\tFACE = " << info.nFace << std::endl;				// 顔着せ替え
 		(*File) << "\t\tBODY = " << info.eBody << std::endl;				// 体型
 		(*File) << "\t\tHANDED = " << info.eHanded << std::endl;			// 利き手
