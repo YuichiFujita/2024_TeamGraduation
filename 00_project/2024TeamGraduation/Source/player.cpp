@@ -58,7 +58,11 @@
 #include "playerStatus.h"
 #include "playercontrol_action.h"
 #include "playercontrol_move.h"
+
+// ドレスアップ
 #include "dressup_hair.h"
+#include "dressup_accessory.h"
+#include "dressup_face.h"
 
 #if 0
 #define WALKSE()	// 徒歩音再生
@@ -253,6 +257,11 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pEfkCatchStance = nullptr;	// キャッチの構え用
 	m_pEfkCatchNormal = nullptr;	// 通常キャッチ
 	m_pEfkCatchJust = nullptr;		// ジャストキャッチ
+
+	// ドレスアップ
+	m_pDressUp_Hair = nullptr;		// ドレスアップ(髪)
+	m_pDressUp_Accessory = nullptr;	// ドレスアップ(アクセ)
+	m_pDressUp_Face = nullptr;		// ドレスアップ(顔)
 
 	// その他
 	m_fEscapeTime = 0.0f;	// ボール所持タイマー
@@ -450,6 +459,9 @@ HRESULT CPlayer::Init()
 		if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
 	}
 
+	// ドレスアップ生成
+	CreateDressUp();
+
 	// プレイヤーリストに割当
 	m_List.Regist(this);
 
@@ -484,6 +496,9 @@ void CPlayer::Uninit()
 
 	// スぺシャルエフェクト
 	SAFE_DELETE(m_pSpecialEffect);
+
+	// ドレスアップ
+	DeleteDressUp();
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -2232,6 +2247,54 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// ベース指定なし
 	assert(false);
 	return (EBaseType)-1;
+}
+
+//==========================================================================
+// ドレスアップ生成
+//==========================================================================
+void CPlayer::CreateDressUp()
+{
+	// ドレスアップ削除
+	DeleteDressUp();
+
+	// ドレスアップ(髪)
+	m_pDressUp_Hair = CDressup::Create(
+		CDressup::EType::TYPE_HAIR,		// 着せ替えの種類
+		this,							// 変更するプレイヤー
+		CPlayer::ID_HAIR);				// 変更箇所のインデックス
+
+	// ドレスアップ(アクセ)
+	m_pDressUp_Accessory = CDressup::Create(
+		CDressup::EType::TYPE_ACCESSORY,	// 着せ替えの種類
+		this,								// 変更するプレイヤー
+		CPlayer::ID_ACCESSORY);				// 変更箇所のインデックス
+
+	// ドレスアップ(顔)
+	m_pDressUp_Face = CDressup::Create(
+		CDressup::EType::TYPE_FACE,	// 着せ替えの種類
+		this,						// 変更するプレイヤー
+		CPlayer::ID_FACE);			// 変更箇所のインデックス
+}
+
+//==========================================================================
+// ドレスアップ削除
+//==========================================================================
+void CPlayer::DeleteDressUp()
+{
+	SAFE_UNINIT(m_pDressUp_Hair);
+	SAFE_UNINIT(m_pDressUp_Accessory);
+	SAFE_UNINIT(m_pDressUp_Face);
+}
+
+//==========================================================================
+// ドレスアップ割り当て
+//==========================================================================
+void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
+{
+	// 再割り当て
+	m_pDressUp_Hair->ReRegist(nHair);			// ドレスアップ(髪)
+	m_pDressUp_Accessory->ReRegist(nAccessory);	// ドレスアップ(アクセ)
+	m_pDressUp_Face->ReRegist(nFace);			// ドレスアップ(顔)
 }
 
 //==========================================================================

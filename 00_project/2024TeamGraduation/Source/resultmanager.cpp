@@ -8,6 +8,7 @@
 #include "result.h"
 
 #include "playerResult.h"
+#include "playerManager.h"
 #include "audience.h"
 
 //==========================================================================
@@ -153,8 +154,11 @@ CResultManager* CResultManager::Create()
 //==========================================================================
 HRESULT CResultManager::Init()
 {
-	//チームステータス＆プレイヤー生成
+	//チームステータス
 	Load();
+
+	// プレイヤーマネージャーの生成
+	CPlayerManager::Create(CScene::MODE::MODE_RESULT);
 
 	// 観客生成
 	CreateAudience();
@@ -461,127 +465,7 @@ void CResultManager::LoadTeam(std::ifstream* File, std::string line, int nTeam)
 				m_fCharmValue[nTeam];	// モテ値
 		}
 
-		if (line.find("SETPLAYER") != std::string::npos)
-		{// プレイヤー情報
-
-			LoadPlayer(File, line, nTeam, j);
-
-			j++;	// 人数加算
-		}
 	}
-}
-
-//==========================================================================
-// チームステータス読み込み
-//==========================================================================
-void CResultManager::LoadPlayer(std::ifstream* File, std::string line, int nTeam, int nIdxPlayer)
-{
-	// コメント用
-	std::string hoge;
-
-	// チーム
-	CGameManager::ETeamSide team = static_cast<CGameManager::ETeamSide>(nTeam);
-
-	CPlayer::EHandedness eHanded = CPlayer::EHandedness::HAND_R;	// 利き手
-	CPlayer::EBody eBody = CPlayer::EBody::BODY_NORMAL;				// 体型
-	int nHair = -1;													// 髪
-	int nAccessory = -1;											// アクセサリー
-	int nFace = -1;													// 顔
-
-	while (std::getline(*File, line))
-	{
-		// コメントはスキップ
-		if (line.empty() ||
-			line[0] == '#')
-		{
-			continue;
-		}
-
-		if (line.find("END_SETPLAYER") != std::string::npos)
-		{// 終了
-			break;
-		}
-
-		if (line.find("HANDED") != std::string::npos)
-		{// 利き手
-
-			int hand = -1;
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				hand;		// 利き手
-
-			eHanded = static_cast<CPlayer::EHandedness>(hand);
-		}
-
-		if (line.find("BODY") != std::string::npos)
-		{// 体型
-
-			int body = -1;
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				body;		// 体型
-
-			eBody = static_cast<CPlayer::EBody>(body);
-		}
-
-		if (line.find("HAIR") != std::string::npos)
-		{// 髪
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				nHair;		// 髪
-		}
-
-		if (line.find("ACCESSORY") != std::string::npos)
-		{// アクセサリー
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				nHair;		// アクセサリー
-		}
-
-		if (line.find("FACE") != std::string::npos)
-		{// 顔
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				nFace;		// 顔
-		}
-	}
-
-	// 位置
-	MyLib::Vector3 pos = Player::POS_OUT[team];
-	pos += (Player::POS_SHIFT[team] * nIdxPlayer);
-
-	// プレイヤー生成
-	CPlayer* player = CPlayer::Create(pos, team, CPlayer::EHuman::HUMAN_RESULT, eBody, eHanded);
 }
 
 //==========================================================================

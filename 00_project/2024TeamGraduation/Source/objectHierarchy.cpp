@@ -416,6 +416,7 @@ void CObjectHierarchy::Draw(D3DXCOLOR col)
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	for (const auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
 		model->Draw(col);
 	}
 }
@@ -432,6 +433,7 @@ void CObjectHierarchy::Draw(float fAlpha)
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	for (const auto& model : m_apModel)
 	{
+		if (model == nullptr) continue;
 		model->Draw(fAlpha);
 	}
 }

@@ -32,9 +32,13 @@ CEntry_SetUpTeam::CEntry_SetUpTeam() : CEntryScene()
 		m_nPlayerNum[i] = 1;		// プレイヤーの数
 	}
 
-	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
 	{
 		m_TeamSide[i] = CGameManager::ETeamSide::SIDE_NONE;	// チームサイド
+	}
+
+	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	{
 		m_nEntryIdx[i] = -1;								// エントリーのインデックス
 	}
 }
@@ -92,6 +96,32 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 	// 一旦シーン切り替え TODO : 全員エントリーしてたらとかにする
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0))
 	{
+		// 空いたところにAI追加
+		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+		{
+			// チームサイド追加
+			for (int j = 0; j < CGameManager::MAX_PLAYER; j++)
+			{
+				if (m_TeamSide[j] == CGameManager::ETeamSide::SIDE_NONE)
+				{// NONEの人を変える
+
+					if ((int)m_vecAddIdx[i].size() <= j &&
+						m_nPlayerNum[i] > (int)m_vecAddIdx[i].size())
+					{// サイド毎のプレイヤー数より大きい数 && チーム内人数を越えていない
+						m_TeamSide[j] = (CGameManager::ETeamSide)i;
+						m_vecAddIdx[i].push_back(-1);
+					}
+
+				}
+
+			}
+
+			//while (m_nPlayerNum[i] >= (int)m_vecAddIdx[i].size())
+			//{// 空きがなくなるまで
+			//	m_vecAddIdx[i].push_back(-1);
+			//}
+		}
+
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
 	}
 }
@@ -471,4 +501,13 @@ void CEntry_SetUpTeam::Debug()
 
 		ImGui::TreePop();
 	}
+}
+
+//==========================================================================
+// エントリーのインデックス
+//==========================================================================
+int CEntry_SetUpTeam::GetEntryIdx(int i)
+{
+	if (i >= mylib_const::MAX_PLAYER) return -1;
+	return m_nEntryIdx[i];
 }

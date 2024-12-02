@@ -517,7 +517,7 @@ void CGameManager::SkipSpawn()
 	SAFE_UNINIT(pManager);
 
 	// プレイヤーマネージャーの生成
-	CPlayerManager::Create();
+	CPlayerManager::Create(CScene::MODE::MODE_GAME);
 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報

@@ -280,7 +280,9 @@
     <ClCompile Include="Source\playerAction.cpp" />
     <ClCompile Include="Source\playerAIcontrol.cpp" />
     <ClCompile Include="Source\playerAIcontrol_action.cpp" />
+    <ClCompile Include="Source\playerAIcontrol_left.cpp" />
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
+    <ClCompile Include="Source\playerAIcontrol_right.cpp" />
     <ClCompile Include="Source\playerAIIn.cpp" />
     <ClCompile Include="Source\playerAIOut.cpp" />
     <ClCompile Include="Source\playerAIOut_control.cpp" />
@@ -295,6 +297,8 @@
     <ClCompile Include="Source\playerDressup.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
+    <ClCompile Include="Source\playerManager_game.cpp" />
+    <ClCompile Include="Source\playerManager_result.cpp" />
     <ClCompile Include="Source\playerMarker.cpp" />
     <ClCompile Include="Source\playerNone.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
@@ -478,7 +482,9 @@
     <ClInclude Include="Source\playerAction.h" />
     <ClInclude Include="Source\playerAIcontrol.h" />
     <ClInclude Include="Source\playerAIcontrol_action.h" />
+    <ClInclude Include="Source\playerAIcontrol_left.h" />
     <ClInclude Include="Source\playerAIcontrol_move.h" />
+    <ClInclude Include="Source\playerAIcontrol_right.h" />
     <ClInclude Include="Source\playerAIIn.h" />
     <ClInclude Include="Source\playerAIOut.h" />
     <ClInclude Include="Source\playerAIOut_control.h" />
@@ -493,6 +499,8 @@
     <ClInclude Include="Source\playerDressup.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
+    <ClInclude Include="Source\playerManager_game.h" />
+    <ClInclude Include="Source\playerManager_result.h" />
     <ClInclude Include="Source\playerMarker.h" />
     <ClInclude Include="Source\playerNone.h" />
     <ClInclude Include="Source\playerOut.h" />

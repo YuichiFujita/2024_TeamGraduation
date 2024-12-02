@@ -30,6 +30,7 @@ class CSpecialEffect;	// スペシャル演出エフェクト
 class CBindKey;			// 割当キー基底クラス
 class CEffekseerObj;	// エフェクシアオブジェクト
 class CCatchSpecial;	// キャッチスペシャル
+class CDressup;			// ドレスアップ(髪)
 
 //==========================================================================
 // クラス定義
@@ -327,6 +328,11 @@ public:
 	CCatchSpecial* GetCatchSpecial() { return m_pCatchSpecial; }				// スぺシャルキャッチ情報取得
 
 	//=============================
+	// ドレスアップ用
+	//=============================
+	void BindDressUp(int nHair, int nAccessory, int nFace);	// ドレスアップ割り当て
+
+	//=============================
 	// その他
 	//=============================
 	SHitInfo Hit(CBall* pBall);													// ヒット処理
@@ -407,6 +413,7 @@ protected:
 	//=============================
 	void Debug();			// デバッグ処理
 	void UpdateFootLR();	// 足左右の更新
+	void CreateDressUp();	// ドレスアップ生成
 
 private:
 	//=============================
@@ -473,6 +480,11 @@ private:
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
 	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
+	
+	//-----------------------------
+	// ドレスアップ
+	//-----------------------------
+	void DeleteDressUp();	// ドレスアップ削除
 
 	//=============================
 	// メンバ変数
@@ -527,6 +539,13 @@ private:
 	CEffekseerObj* m_pEfkCatchStance;	// キャッチの構え
 	CEffekseerObj* m_pEfkCatchNormal;	// 通常キャッチ
 	CEffekseerObj* m_pEfkCatchJust;		// ジャストキャッチ
+
+	//-----------------------------
+	// ドレスアップ
+	//-----------------------------
+	CDressup* m_pDressUp_Hair;		// ドレスアップ(髪)
+	CDressup* m_pDressUp_Accessory;	// ドレスアップ(アクセ)
+	CDressup* m_pDressUp_Face;		// ドレスアップ(顔)
 
 
 	//-----------------------------

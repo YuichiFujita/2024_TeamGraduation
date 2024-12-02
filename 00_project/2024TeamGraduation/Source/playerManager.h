@@ -11,14 +11,24 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
+#include "manager.h"
 #include "listmanager.h"
 #include "gamemanager.h"
+#include "player.h"
 
 //==========================================================================
 // 前方宣言
 //==========================================================================
 class CPlayer;
 class CBindKey;
+
+//==========================================================================
+// 名前空間
+//==========================================================================
+namespace PlayerManager
+{
+	const std::string TEXT_PLAYERINFO = "data\\TEXT\\playerManager\\playerInfo.txt";	// プレイヤー情報のテキストファイル
+}
 
 //==========================================================================
 // クラス定義
@@ -55,11 +65,21 @@ public:
 		CBindKey* pKeyRight;		// 右移動キー割当
 	};
 
+	struct LoadInfo		// 読み込み情報
+	{
+		int nControllIdx;				// 操作するインデックス番号
+		CPlayer::EHandedness eHanded;	// 利き手
+		CPlayer::EBody eBody;			// 体型
+		int nHair;						// 髪
+		int nAccessory;					// アクセサリー
+		int nFace;						// 顔
+	};
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerManager();
-	~CPlayerManager();
+	virtual ~CPlayerManager();
 
 	//=============================
 	// 仮想関数
@@ -84,11 +104,14 @@ public:
 
 	void SetEnableUserChange(const bool bUserChange) { m_bUserChange = bUserChange; }	// ユーザー変更操作フラグ設定
 	bool IsUserChange() const { return m_bUserChange; }	// ユーザー変更操作フラグ取得
+	
+	// ファイル関連
+	static void Save(const std::vector<LoadInfo>& LeftInfo, const std::vector<LoadInfo>& RightInfo);			// セーブ処理
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CPlayerManager* Create();	// 生成
+	static CPlayerManager* Create(CScene::MODE mode);	// 生成
 	static CPlayerManager* GetInstance() { return m_pInstance; }	// インスタンス取得
 
 private:
@@ -103,6 +126,7 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	// 内外野操作
 	int RegistOutPlayer(CPlayer* pPlayer, const int nPosIdx);	// 外野プレイヤー登録 (ポジション指定)
 	int RegistOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー登録
 	void DeleteOutPlayer(CPlayer* pPlayer);	// 外野プレイヤー削除
@@ -115,6 +139,15 @@ private:
 	SOutInfo GetInfoRight();		// 右の外野情報取得
 	SOutInfo GetInfoRightNear();	// 右手前の外野情報取得
 
+	// 生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);		// 左のプレイヤー生成
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);	// 右のプレイヤー生成
+
+	// ファイル関連
+	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
+	static void Load();
+	static void LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer);	// プレイヤー情報読み込み
+
 	//=============================
 	// メンバ変数
 	//=============================
@@ -122,6 +155,9 @@ private:
 	CListManager<CPlayer> m_listInRight;	// 内野右プレイヤー
 	CPlayer* m_apOut[OUT_MAX];				// 外野プレイヤー
 	bool m_bUserChange;						// ユーザー変更操作フラグ
+
+	// ファイル関連
+	static std::vector<LoadInfo> m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 読み込み情報
 
 	//=============================
 	// 静的メンバ変数
