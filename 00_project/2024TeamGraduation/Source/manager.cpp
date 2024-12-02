@@ -425,6 +425,7 @@ void CManager::Load()
 //==========================================================================
 void CManager::SetMode(CScene::MODE mode)
 {
+	// ロード解放
 	GetLoadManager()->UnLoad();
 
 	// 次のモード設定
@@ -689,7 +690,7 @@ void CManager::Update()
 {
 	// キーボード情報取得
 	CInputKeyboard* pInputKeyboard = CInputKeyboard::GetInstance();
-	CInputGamepad *pInputGamepad = CInputGamepad::GetInstance();
+	CInputGamepad* pInputGamepad = CInputGamepad::GetInstance();
 
 	// 経過時間の更新
 	UpdateDeltaTime();
@@ -702,45 +703,131 @@ void CManager::Update()
 
 	// 初回ロード判定
 	if (!m_bFirstLoad)
-	{
-		bool bComplete = GetLoadManager()->IsLoadComplete();
+	{// 初回ロードが完了していないとき
 
-		if (bComplete &&
-			!m_bLoadFadeSet)
-		{
-			CManager::GetInstance()->GetInstantFade()->SetFade();
-			m_bLoadFadeSet = true;	// フェードのセットフラグ
-		}
-
-		// ロードマネージャの更新
-		GetLoadManager()->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-		if (m_bLoadFadeSet)
-		{// フェードが設定されてる状態
-
-			// 遷移なしフェードの更新処理
-			m_pInstantFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-			if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
-			{
-				m_bLoadComplete = true;	// ロード完了
-				m_bNowLoading = false;	// ロード中フラグオフ
-				m_bFirstLoad = true;	// 初回ロード終了
-				SetMode(STARTMODE);
-			}
-		}
+		// 初回ロード処理
+		FirstLoad();
 		return;
 	}
 
-	if (m_bNowLoading)
+	// 通常ロード
+	NormalLoad();
+
+	if (!m_bLoadComplete)
+	{// ロード完了するまで抜ける
+		return;
+	}
+
+	// 入力機器の更新処理
+	m_pInput->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+	if (m_pPause != nullptr)
 	{
-		// ロード中
-		if (!m_bLoadComplete)
+		// ポーズの更新
+		m_pPause->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+		// ポーズ状況取得
+		bool bPause = m_pPause->IsPause();
+		CCameraMotion* pCamMotion = m_pCamera->GetCameraMotion();
+		if (pCamMotion != nullptr)
 		{
+			pCamMotion->SetEnableSystemPause(bPause);
+		}
+
+		// ポーズの更新処理
+		if (bPause)
+		{// ポーズ中だったら
+
+			if (!GetLoadManager()->IsLoadComplete())
+			{
+				return;
+			}
+
+			// カメラの更新処理
+			m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+			return;
+		}
+	}
+
+#if _DEBUG
+	// デバッグ処理
+	Debug();
+#endif
+
+	// シーンの更新処理
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+	}
+
+	// レンダラーの更新処理
+	if (m_pRenderer != nullptr)
+	{
+		m_pRenderer->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+	}
+
+	// ライトの更新処理
+	m_pLight->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+	// カメラの更新処理
+	m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+	// デバッグ表示の更新処理
+	m_pDebugProc->Update();
+}
+
+//==========================================================================
+// 初回ロード
+//==========================================================================
+void CManager::FirstLoad()
+{
+	// ロード完了フラグ取得
+	bool bComplete = GetLoadManager()->IsLoadComplete();
+
+	if (bComplete &&
+		!m_bLoadFadeSet)
+	{// ロードが完了している && フェードセット済み
+		CManager::GetInstance()->GetInstantFade()->SetFade();
+		m_bLoadFadeSet = true;	// フェードのセットフラグ
+	}
+
+	// ロードマネージャの更新
+	GetLoadManager()->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+	if (m_bLoadFadeSet)
+	{// フェードが設定されてる状態
+
+		// 遷移なしフェードの更新処理
+		m_pInstantFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+
+		if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
+		{
+			m_bLoadComplete = true;	// ロード完了
+			m_bNowLoading = false;	// ロード中フラグオフ
+			m_bFirstLoad = true;	// 初回ロード終了
+
+			// モード設定
+			SetMode(STARTMODE);
+		}
+	}
+}
+
+//==========================================================================
+// 通常ロード
+//==========================================================================
+void CManager::NormalLoad()
+{
+	if (m_bNowLoading)
+	{// ロード中
+
+		if (!m_bLoadComplete)
+		{// ロードが完了していない
+
 			// ロード時間加算
 			m_fLoadTimer += m_fDeltaTime;
 		}
 
+		// ロード完了フラグ取得
 		bool bComplete = GetLoadManager()->IsLoadComplete();
 
 		if (bComplete &&
@@ -773,73 +860,6 @@ void CManager::Update()
 
 	// 遷移なしフェードの更新処理
 	m_pInstantFade->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-	if (!m_bLoadComplete)
-	{
-		return;
-	}
-
-	if (m_bLoadComplete)
-	{// ロード完了
-
-		// 入力機器の更新処理
-		m_pInput->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-		if (m_pPause != nullptr)
-		{
-			// ポーズの更新
-			m_pPause->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-
-			// ポーズ状況取得
-			bool bPause = m_pPause->IsPause();
-			CCameraMotion* pCamMotion = m_pCamera->GetCameraMotion();
-			if (pCamMotion != nullptr)
-			{
-				pCamMotion->SetEnableSystemPause(bPause);
-			}
-
-
-			// ポーズの更新処理
-			if (bPause)
-			{// ポーズ中だったら
-
-				if (!GetLoadManager()->IsLoadComplete())
-				{
-					return;
-				}
-
-				// カメラの更新処理
-				m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-				return;
-			}
-		}
-
-#if _DEBUG
-		// デバッグ処理
-		Debug();
-#endif
-
-		if (m_pScene != nullptr)
-		{
-			m_pScene->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-		}
-
-		// レンダラーの更新処理
-		if (m_pRenderer != nullptr)
-		{
-			m_pRenderer->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-		}
-
-		// ライトの更新処理
-		m_pLight->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-		// カメラの更新処理
-		m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-		// デバッグ表示の更新処理
-		m_pDebugProc->Update();
-	}
 }
 
 //==========================================================================

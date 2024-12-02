@@ -41,36 +41,27 @@ CFade::~CFade()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CFade *CFade::Create()
+CFade* CFade::Create()
 {
-	// 生成用のオブジェクト
-	CFade *pFade = nullptr;
+	// メモリの確保
+	CFade* pFade = DEBUG_NEW CFade;
 
-	if (pFade == nullptr)
-	{// nullptrだったら
+	if (pFade != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pFade = DEBUG_NEW CFade;
-
-		if (pFade != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 初期化処理
-			if (FAILED(pFade->Init()))
-			{// 失敗していたら
-				return nullptr;
-			}
+		// 初期化処理
+		if (FAILED(pFade->Init()))
+		{// 失敗していたら
+			return nullptr;
 		}
-		else
-		{
-			delete pFade;
-			pFade = nullptr;
-		}
-
-		return pFade;
+	}
+	else
+	{
+		delete pFade;
+		pFade = nullptr;
 	}
 
-	return nullptr;
+	return pFade;
 }
 
 //==========================================================================

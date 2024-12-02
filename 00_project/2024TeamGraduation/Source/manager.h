@@ -8,6 +8,9 @@
 #ifndef _MANAGER_H_
 #define _MANAGER_H_	// 二重インクルード防止
 
+//==========================================================================
+// インクルードファイル
+//==========================================================================
 #include "main.h"
 #include "object.h"
 #include "scene.h"
@@ -19,7 +22,9 @@
 #include "input_keyboard.h"
 #include "input_gamepad.h"
 
+//==========================================================================
 // 前方宣言
+//==========================================================================
 class CRenderer;
 class CLightManager;
 class CCamera;
@@ -135,6 +140,8 @@ private:
 	void NoLoadSetMode(CScene::MODE mode);		// 次のモード設定
 	void Debug();			// デバッグ
 	void SampleEasing();	// イージングのサンプル
+	void FirstLoad();		// 初回ロード
+	void NormalLoad();		// 通常ロード
 
 	//=============================
 	// メンバ変数
@@ -167,10 +174,14 @@ private:
 	float m_fSlowRate;		// 速度低下の割合
 	int m_nNumPlayer;		// プレイヤーの数
 	float m_fLoadTimer;		// ロードのタイマー
+	
+	// ロードフラグ
 	bool m_bLoadComplete;	// ロード完了のフラグ
 	bool m_bLoadFadeSet;	// ロードのフェード設定フラグ
 	bool m_bNowLoading;		// ロード完了のフラグ
 	bool m_bFirstLoad;		// 初回ロード
+
+	// その他
 	bool m_bDisp_2D;		// 2Dの表示
 	bool m_bDisp_UI;		// UIの表示
 	bool m_bWindowed;		// ウィンドウモードか

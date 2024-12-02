@@ -31,6 +31,7 @@ public:
 		ADD_JUSTCATCH,		// ジャストキャッチ
 		ADD_COVERCATCH,		// カバーキャッチ
 		ADD_DODGE,			// 回避
+		ADD_CATCH_SPECIAL,	// スペシャルをキャッチした
 		ADD_MAX
 	};
 

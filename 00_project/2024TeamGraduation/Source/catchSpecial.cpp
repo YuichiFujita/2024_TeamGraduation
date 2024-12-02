@@ -136,7 +136,7 @@ void CCatchSpecial::State_Kamehame_Succ(const float fDeltaTime, const float fDel
 	if (m_fStateTime > StateTime::KAMEHAME_SUCC)
 	{// I—¹‚µ‚½‚ç
 		
-	 // ¬Œ÷Œø‰Ê
+		// ¬Œ÷Œø‰Ê
 		Success();
 
 		SetState(EState::STATE_NONE);
@@ -174,15 +174,19 @@ void CCatchSpecial::Success()
 {
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	CGameManager::ETeamSide team = m_pPlayer->GetTeam();
-
+	CGameManager::ETeamSide rivalTeam = pGameMgr->RivalTeam(team);
+	
 	// ¬Œ÷ƒtƒ‰ƒO
 	m_bSuccess = true;
 
+	// Ž©w
 	// ƒ‚ƒe‰ÁŽZ
-	pGameMgr->AddCharmValue(team, CCharmValueManager::ETypeAdd::ADD_JUSTCATCH);
-
+	pGameMgr->AddCharmValue(team, CCharmValueManager::ETypeAdd::ADD_CATCH_SPECIAL);
 	// ƒXƒyƒVƒƒƒ‹‰ÁŽZ
-	pGameMgr->AddSpecialValue(team, CSpecialValueManager::ETypeAdd::ADD_JUSTCATCH);
+	pGameMgr->AddSpecialValue(team, CSpecialValueManager::ETypeAdd::ADD_CATCH_SPECIAL);
+
+	// “Gw
+	pGameMgr->SubCharmValue(rivalTeam, CCharmValueManager::ETypeSub::SUB_SPECIAL_CATCH);
 }
 
 //==========================================================================

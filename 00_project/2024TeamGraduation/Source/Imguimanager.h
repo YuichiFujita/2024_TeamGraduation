@@ -20,6 +20,7 @@ namespace ImguiMgr
 
 	void Backup();
 	void Restore();
+
 }
 
 

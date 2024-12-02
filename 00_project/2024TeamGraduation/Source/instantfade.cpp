@@ -157,6 +157,7 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	case STATE_FADECOMPLETION:
 		m_state = STATE_FADEIN;
+		col.a = 1.0f;
 		break;
 	}
 

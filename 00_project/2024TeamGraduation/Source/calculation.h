@@ -199,6 +199,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EasingLinear(float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -218,6 +223,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 EasingLinear(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -505,6 +515,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EasingEaseInOutQuart(float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::InOutQuart(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
@@ -522,6 +537,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 EasingEaseInOutQuart(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::InOutQuart(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
@@ -705,6 +725,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EaseInExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -728,6 +753,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 EaseInExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -751,6 +781,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EaseOutExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -774,6 +809,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 EaseOutExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -797,6 +837,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline float EaseInOutExpo(float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -831,6 +876,11 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline MyLib::Vector3 EaseInOutExpo(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			// 割合
 			float ratio = (currentTime - startTime) / (endTime - startTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -855,6 +905,11 @@ namespace UtilFunc	// 便利関数
 
 		inline MyLib::Vector3 EasingQuintIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::InQuint(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
@@ -862,6 +917,11 @@ namespace UtilFunc	// 便利関数
 
 		inline float EasingQuintIn(const float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::InQuint(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
@@ -869,6 +929,11 @@ namespace UtilFunc	// 便利関数
 
 		inline MyLib::Vector3 EasingQuintOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::OutQuint(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
@@ -876,6 +941,11 @@ namespace UtilFunc	// 便利関数
 
 		inline float EasingQuintOut(const float start, float end, float startTime, float endTime, float currentTime)
 		{
+			if (endTime == startTime)
+			{// 開始値を返す
+				return start;
+			}
+
 			float ratio = UtilFunc::Correction::easing::OutQuint(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
