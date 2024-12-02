@@ -737,6 +737,27 @@ void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAd
 }
 
 //==========================================================================
+// ライバルチームに変換
+//==========================================================================
+CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
+{
+	switch (team)
+	{
+	case CGameManager::SIDE_LEFT:
+		return SIDE_RIGHT;
+		break;
+
+	case CGameManager::SIDE_RIGHT:
+		return SIDE_LEFT;
+		break;
+
+	default:
+		break;
+	}
+}
+
+
+//==========================================================================
 // チームステータス生成
 //==========================================================================
 void CGameManager::CreateTeamStatus()

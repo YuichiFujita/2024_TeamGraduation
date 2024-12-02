@@ -19,6 +19,7 @@ namespace
 		3.0f,	// カバーキャッチ
 		4.0f,	// 回避
 		10.0f,	// スペシャル
+		10.0f,	// スペシャルをキャッチした
 	};
 
 	const float SUBVALUE[CCharmValueManager::ETypeSub::SUB_MAX] =	// 減算量
@@ -27,6 +28,7 @@ namespace
 		2.0f,	// 端に逃げまくる
 		3.0f,	// 走っていってライン越え(ボール所持)
 		4.0f,	// ずっとボール持って投げない
+		10.0f,	// スペシャルをキャッチされた
 	};
 }
 

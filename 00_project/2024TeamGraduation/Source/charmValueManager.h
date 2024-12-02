@@ -29,6 +29,7 @@ public:
 		ADD_COVERCATCH,		// カバーキャッチ
 		ADD_DODGE,			// 回避
 		ADD_SPECIAL,		// スペシャル
+		ADD_CATCH_SPECIAL,	// スペシャルをキャッチ
 		ADD_MAX
 	};
 
@@ -41,6 +42,7 @@ public:
 		SUB_EDGE_ESCAPE,				// 端に逃げまくる
 		SUB_INVADE_RUN,					// 走っていってライン越え(ボール所持)
 		SUB_LONG_HOLD,					// ずっとボール持って投げない
+		SUB_SPECIAL_CATCH,				// スペシャルキャッチされた
 		SUB_MAX
 	};
 

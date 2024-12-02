@@ -14,12 +14,13 @@ namespace
 {
 	const float ADDVALUE[CSpecialValueManager::ETypeAdd::ADD_MAX] =	// 加算量
 	{
-		10.002f,	// 常に
+		0.002f,	// 常に
 		2.0f,	// ヒット
 		2.0f,	// キャッチ
 		5.0f,	// ジャストキャッチ
 		2.0f,	// カバーキャッチ
 		8.0f,	// 回避
+		20.0f,	// スペシャルをキャッチした
 	};
 }
 
