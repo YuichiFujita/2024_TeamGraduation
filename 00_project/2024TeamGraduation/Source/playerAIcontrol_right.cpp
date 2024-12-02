@@ -912,7 +912,6 @@ void CPlayerAIControlRight::CatchDistance(CPlayer* pTarget, const float fDeltaTi
 	}
 }
 
-
 // 行動関連 =========================================================================================================================================================
 
 //==========================================================================
@@ -937,41 +936,18 @@ void CPlayerAIControlRight::ForciblyReturn()
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
-	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
-	{// 左
-		// AIコントロール情報の取得
-		CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
-		// 歩く
-		m_eMove = EMoveType::MOVETYPE_WALK;
+	// 歩く
+	m_eMove = EMoveType::MOVETYPE_WALK;
 
-		// 近づく
-		if (Approatch({ -RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
-		{
-			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
-			m_eMove = EMoveType::MOVETYPE_STOP;
-		}
-	}
-	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{// 右
-		// AIコントロール情報の取得
-		CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-		CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-		// 歩く
-		m_eMove = EMoveType::MOVETYPE_WALK;
-
-		// 近づく
-		if (Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
-		{
-			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
-			m_eMove = EMoveType::MOVETYPE_STOP;
-		}
-	}
-	else
-	{// エラー
-		assert(false);
+	// 近づく
+	if (Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
+	{
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eMove = EMoveType::MOVETYPE_STOP;
 	}
 }
 
@@ -1329,64 +1305,33 @@ void CPlayerAIControlRight::AttackDash()
 		return;
 	}
 
-	//エリアごと
-	if (side == CGameManager::ETeamSide::SIDE_LEFT)
-	{// 左
-		if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_TARGET)
-		{// 自分とターゲットの距離が700.0f以上&&
-			// 走る
-			m_eMove = EMoveType::MOVETYPE_DASH;
+	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
+	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
 
-			// 相手の位置に近づく
-			if (Approatch(posTarget, JUMP_LENGTH_LINE))
-			{// 範囲内の場合
-				m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
-				m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
-			}
+		// 走る
+		m_eMove = EMoveType::MOVETYPE_DASH;
 
-			return;
+		// 相手の位置に近づく
+		if (Approatch(posTarget, JUMP_LENGTH_LINE))
+		{// 範囲内の場合
+			m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
+			m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
 		}
-		
-		if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
-		{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
-			// アクション：跳ぶ
-			m_eAction = EAction::ACTION_JUMP;
-		}
-		else
-		{
-			m_eThrow = EThrow::THROW_NORMAL;		// 投げる
-			m_eMove = EMoveType::MOVETYPE_STOP;
-		}
+
+		return;
 	}
-	else if (side == CGameManager::ETeamSide::SIDE_RIGHT)
-	{// 右
-		if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
-		{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
 
-			// 走る
-			m_eMove = EMoveType::MOVETYPE_DASH;
-
-			// 相手の位置に近づく
-			if (Approatch(posTarget, JUMP_LENGTH_LINE))
-			{// 範囲内の場合
-				m_eForcibly = EMoveForcibly::FORCIBLY_NONE;	// 強制行動：なし
-				m_eMove = EMoveType::MOVETYPE_STOP;			// 行動：止まる
-			}
-
-			return;
-		}
-
-		if (distanceTarget > JUMP_LENGTH_TARGET)
-		{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
-			// アクション：跳ぶ
-			m_eAction = EAction::ACTION_JUMP;
-		}
-		else
-		{
-			m_eThrow = EThrow::THROW_NORMAL;		// 投げる
-			m_eMove = EMoveType::MOVETYPE_STOP;
-		}
+	if (distanceTarget > JUMP_LENGTH_TARGET)
+	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
+		// アクション：跳ぶ
+		m_eAction = EAction::ACTION_JUMP;
 	}
+	else
+	{
+		m_eThrow = EThrow::THROW_NORMAL;		// 投げる
+		m_eMove = EMoveType::MOVETYPE_STOP;
+	}
+	
 
 	if (m_pAI->GetPosition().y >= JUMP_END_POS)	// 高さによって変わる
 	{
@@ -1460,31 +1405,24 @@ void CPlayerAIControlRight::CatchLineLeftDistance()
 	// 自身の位置
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
 
-	// チームタイプの取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
+	// 目標位置
+	MyLib::Vector3 Destpos = { 500.0f, myPos.y, myPos.z };
 
-	if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{// 右チームの場合
+	// 自分から見た位置
+	myPos.AngleXZ(Destpos);
 
-		// 目標位置
-		MyLib::Vector3 Destpos = { 500.0f, myPos.y, myPos.z };
-
-		// 自分から見た位置
-		myPos.AngleXZ(Destpos);
-
-		//if (myPos.x < LINE_DISTANCE_OVER)
-		//{// 距離が指定値以内の場合
-		//	// 移動状態を離れろ！
-		//	m_eLine = ELine::LINE_OVER;
-		//	// 動くんじゃない！
-		//	m_eMove = EMoveType::MOVETYPE_STOP;
-		//}
-		//else if (myPos.x > LINE_DISTANCE_OVER)
-		//{// 距離が指定値以外の場合
-		//	// 移動状態を近づけ！
-		//	m_eLine = ELine::LINE_IN;
-		//}
-	}
+	//if (myPos.x < LINE_DISTANCE_OVER)
+	//{// 距離が指定値以内の場合
+	//	// 移動状態を離れろ！
+	//	m_eLine = ELine::LINE_OVER;
+	//	// 動くんじゃない！
+	//	m_eMove = EMoveType::MOVETYPE_STOP;
+	//}
+	//else if (myPos.x > LINE_DISTANCE_OVER)
+	//{// 距離が指定値以外の場合
+	//	// 移動状態を近づけ！
+	//	m_eLine = ELine::LINE_IN;
+	//}
 }
 
 
@@ -1579,21 +1517,10 @@ bool CPlayerAIControlRight::IsLineOverPlayer()
 
 	// プレイヤー情報取得
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
-	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
-	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
-	{// 左
-		if (myPos.x > -LINE_DISTANCE_OVER)
-		{// 位置が超えていた場合
-			bOver = true;
-		}
-	}
-	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{// 右
-		if (myPos.x < LINE_DISTANCE_OVER)
-		{// 位置が超えていた場合
-			bOver = true;
-		}
+	if (myPos.x < LINE_DISTANCE_OVER)
+	{// 位置が超えていた場合
+		bOver = true;
 	}
 
 	return bOver;
@@ -1612,19 +1539,9 @@ bool CPlayerAIControlRight::IsLineOverBall()
 
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
 
-	if (typeTeam == CGameManager::ETeamSide::SIDE_LEFT)
+	if (pBall->GetPosition().x < 0.0f)
 	{
-		if (pBall->GetPosition().x > 0.0f)
-		{
-			bOver = true;
-		}
-	}
-	else if (typeTeam == CGameManager::ETeamSide::SIDE_RIGHT)
-	{
-		if (pBall->GetPosition().x < 0.0f)
-		{
-			bOver = true;
-		}
+		bOver = true;
 	}
 
 	return bOver;
@@ -1645,25 +1562,29 @@ void CPlayerAIControlRight::IsJumpCatch()
 	if (stateBall == CBall::EState::STATE_PASS ||
 		stateBall == CBall::EState::STATE_HOM_PASS ||
 		stateBall == CBall::EState::STATE_MOVE)
-	{// パス||ホーミングパスの場合
+	{// パス||ホーミングパス||移動状態の場合
 
 		// 位置の取得
-		MyLib::Vector3 posBall = pBall->GetPosition();
-		MyLib::Vector3 posEnd = pBall->GetPosPassEnd();
-		MyLib::Vector3 posMy = m_pAI->GetPosition();
+		MyLib::Vector3 posBall = pBall->GetPosition();		// ボール
+		MyLib::Vector3 posEnd = pBall->GetPosPassEnd();		// ボールのパス終了位置
+		MyLib::Vector3 posMy = m_pAI->GetPosition();		// 自分の位置
 
-
+		// 終了位置のx,zを参照した位置の設定
 		MyLib::Vector3 pos = { posEnd.x, posMy.y, posEnd.z };
 
-		pBall->GetPosPassEnd();
+		// ボールとの距離
+		float distance = posMy.DistanceXZ(posBall);
 
 		// 行動状態：歩く
-		m_eMove = EMoveType::MOVETYPE_WALK;
+		m_eMove = EMoveType::MOVETYPE_DASH;
+
+		const float CATCH_JUMP_LENGTH = 100.0f;
+		const float CATCH_JUMP_HEIGHT = 300.0f;
 
 		// ボールの方へ行く
-		if (Approatch(pos, 100.0f))
-		{
-			if (posBall.y < 300.0f)
+		if (Approatch(pos, CATCH_JUMP_LENGTH) || distance < CATCH_JUMP_LENGTH)
+		{// 終了位置に近づけた||ボールとの距離が範囲内の場合
+			if (posBall.y < CATCH_JUMP_HEIGHT)
 			{
 				m_eAction = EAction::ACTION_JUMP;
 			}
@@ -1684,9 +1605,6 @@ void CPlayerAIControlRight::IsJumpCatch()
 
 		return;
 	}
-
-	/*m_eMove = EMoveType::MOVETYPE_STOP;
-	m_eAction = EAction::ACTION_NONE;*/
 }
 
 
