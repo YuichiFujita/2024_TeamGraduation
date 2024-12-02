@@ -10,14 +10,6 @@
 
 using namespace ImguiMgr;
 
-LPDIRECT3DTEXTURE9 texture;
-
-// ImGuiでテクスチャを表示
-ImVec2 imageSize;
-
-int textureWidth;
-int textureHeight;
-
 HWND backupHWnd;
 LPDIRECT3DDEVICE9 device;
 
@@ -65,37 +57,6 @@ void ImguiMgr::Init(HWND hwnd, LPDIRECT3DDEVICE9 pd3dDevice)
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX9_Init(pd3dDevice);
 
-
-
-	//// デバイスの取得
-	//LPDIRECT3DDEVICE9 pDevive = CManager::GetInstance()->GetRenderer()->GetDevice();
-	//
-	//// 画像のロード
-	//HRESULT hr = D3DXCreateTextureFromFileEx(pDevive, "data\\TEXTURE\\forest_01.png", 0, 0, 0, 0, D3DFMT_UNKNOWN,
-	//	D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 255, 255, 255),
-	//	NULL, NULL, &texture);
-
-	//D3DSURFACE_DESC desc;
-	//texture->GetLevelDesc(0, &desc);
-	//textureWidth = desc.Width;
-	//textureHeight = desc.Height;
-
-	//imageSize = ImVec2(50, 50);
-
-	//if (SUCCEEDED(hr))
-	//{
-	//	// ImGuiでテクスチャを表示
-	//	ImVec2 imageSize(static_cast<float>(50), static_cast<float>(50));
-
-	//	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(texture), imageSize))
-	//	{
-	//		// ドラッグ操作の開始
-	//		ImGui::SetDragDropPayload("MY_TEXTURE_TYPE", &texture, sizeof(LPDIRECT3DTEXTURE9));
-	//	}
-
-	//	// テクスチャの解放
-	//	texture->Release();
-	//}
 }
 
 //==========================================================================
@@ -119,7 +80,6 @@ void ImguiMgr::Update()
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX9_NewFrame();
 	ImGui::NewFrame();
-
 
 #if 0
 	// ここにImguiのGUI要素を追加

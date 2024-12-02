@@ -84,6 +84,7 @@ void CLoadManager::Uninit()
 //==========================================================================
 void CLoadManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ロード画面の更新
 	if (m_pLoadScreen != nullptr)
 	{
 		m_pLoadScreen->Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -133,6 +134,7 @@ void CLoadManager::LoadScene(CScene::MODE mode)
 	// 次のモード
 	m_ModeNext = mode;
 
+	// ロード画面生成
 	if (m_pLoadScreen == nullptr)
 	{
 		m_pLoadScreen = CLoadScreen::Create();
@@ -158,7 +160,7 @@ void CLoadManager::LoadScene(CScene::MODE mode)
 }
 
 //==========================================================================
-// ロード画面を非同期で表示
+// シーンの初期化を非同期で行う処理
 //==========================================================================
 void CLoadManager::LoadInBackground()
 {
