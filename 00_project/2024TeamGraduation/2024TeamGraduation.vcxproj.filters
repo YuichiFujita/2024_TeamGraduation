@@ -704,6 +704,12 @@
     <ClCompile Include="Source\catchSpecial.cpp">
       <Filter>player\catch</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_left.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_right.cpp">
+      <Filter>player\playerAI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1284,6 +1290,12 @@
     </ClInclude>
     <ClInclude Include="Source\catchSpecial.h">
       <Filter>player\catch</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_left.h">
+      <Filter>player\playerAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_right.h">
+      <Filter>player\playerAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

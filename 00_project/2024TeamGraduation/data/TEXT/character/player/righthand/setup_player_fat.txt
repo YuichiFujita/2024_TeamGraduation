@@ -34,8 +34,8 @@ MODEL_FILENAME = data/MODEL/player/fat/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/fat/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/fat/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/fat/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair/bobobo.x		# [15]髪
-MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
+MODEL_FILENAME = data/MODEL/player/hair/mohikan.x		# [15]髪
+MODEL_FILENAME = data/MODEL/player/accessory/sukautare00.x	# [16]アクセサリー
 
 #------------------------------------------------------------------------------
 # キャラクター情報
