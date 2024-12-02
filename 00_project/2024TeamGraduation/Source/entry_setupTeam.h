@@ -40,7 +40,9 @@ public:
 	//--------------------------
 	int GetPlayerNum(CGameManager::ETeamSide side) { return m_nPlayerNum[side]; }	// プレイヤーの数取得
 	int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得
-	int GetEntryIdx(int i) { return m_nEntryIdx[i]; }	// エントリーのインデックス
+	int GetEntryIdx(int i);									// エントリーのインデックス
+	std::vector<int> GetIdxByTeam(CGameManager::ETeamSide side) { m_vecAddIdx[side]; }	// チームごとの追加されたインデックス取得
+	CGameManager::ETeamSide GetTeamSide(int i) { return m_TeamSide[i]; }		// チームサイド
 
 	//--------------------------
 	// その他
@@ -62,7 +64,7 @@ private:
 	// メンバ変数
 	//=============================
 	std::vector<int> m_vecAddIdx[CGameManager::ETeamSide::SIDE_MAX];	// 追加されたインデックス
-	CGameManager::ETeamSide m_TeamSide[mylib_const::MAX_PLAYER];		// チームサイド
+	CGameManager::ETeamSide m_TeamSide[CGameManager::MAX_PLAYER];		// チームサイド
 	int m_nMaxChangeIdx[CGameManager::ETeamSide::SIDE_MAX];				// 最大数変更するインデックス
 	int m_nPlayerNum[CGameManager::ETeamSide::SIDE_MAX];				// プレイヤーの数
 	int m_nEntryIdx[mylib_const::MAX_PLAYER];							// エントリーのインデックス

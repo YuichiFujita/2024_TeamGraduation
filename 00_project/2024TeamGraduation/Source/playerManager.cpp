@@ -5,7 +5,6 @@
 // 
 //==========================================================================
 #include "playerManager.h"
-#include "player.h"
 #include "playerUserOut.h"
 #include "bindKeyFront.h"
 #include "bindKeyBack.h"
@@ -17,7 +16,8 @@
 //==========================================================================
 namespace
 {
-
+	const std::string TOP_LINE = "#==============================================================================";	// ƒeƒLƒXƒg‚Ìƒ‰ƒCƒ“
+	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// ƒeƒLƒXƒg‚Ìƒ‰ƒCƒ“
 }
 
 //==========================================================================
@@ -38,6 +38,7 @@ CPlayerManager::INFO_FUNC CPlayerManager::m_InfoFuncList[] =
 // Ã“Iƒƒ“ƒo•Ï”
 //==========================================================================
 CPlayerManager* CPlayerManager::m_pInstance = nullptr;	// ©g‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+std::vector<CPlayerManager::LoadInfo> CPlayerManager::m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX] = {};	// “Ç‚İ‚İî•ñ
 
 //==========================================================================
 // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -46,6 +47,11 @@ CPlayerManager::CPlayerManager() : m_bUserChange(false)	// ƒ†[ƒU[•ÏX‘€ìƒtƒ‰ƒ
 {
 	// ƒƒ“ƒo•Ï”‚ğƒNƒŠƒA
 	memset(&m_apOut[0], 0, sizeof(m_apOut));	// ŠO–ìƒvƒŒƒCƒ„[
+
+	for (int i= 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		m_vecLoadInfo[i].clear();
+	}
 }
 
 //==========================================================================
@@ -86,6 +92,24 @@ CPlayerManager* CPlayerManager::Create()
 HRESULT CPlayerManager::Init()
 {
 	// FUJITAFƒGƒ“ƒgƒŠ[‚ÅŠO•”‚É•Û‘¶‚³‚ê‚½ƒvƒŒƒCƒ„[î•ñ‚ğæ“¾‚µƒvƒŒƒCƒ„[‚ğ¶¬
+	// “Ç‚İ‚İˆ—
+	Load();
+
+	// “Ç‚İ‚ñ‚¾î•ñ‚ğ‚à‚Æ‚ÉƒvƒŒƒCƒ„[¶¬
+	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
+	{
+		// ¶‚ÌƒvƒŒƒCƒ„[¶¬
+		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size()))
+		{
+			CreateLeftPlayer(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
+		}
+
+		// ‰E‚ÌƒvƒŒƒCƒ„[¶¬
+		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size()))
+		{
+			CreateRightPlayer(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
+		}
+	}
 
 	//----------------------------------------------------------------------
 	// ƒvƒŒƒCƒ„[“à–ì¶¬
@@ -256,6 +280,68 @@ HRESULT CPlayerManager::Init()
 		CPlayer::EHandedness::HAND_R				// —˜‚«è
 	);
 
+
+	return S_OK;
+}
+
+//==========================================================================
+// ¶‚ÌƒvƒŒƒCƒ„[¶¬
+//==========================================================================
+HRESULT CPlayerManager::CreateLeftPlayer(const LoadInfo& info)
+{
+	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
+
+	CPlayer::EBaseType baseType = (info.nControllIdx >= 0) ? CPlayer::EBaseType::TYPE_USER : CPlayer::EBaseType::TYPE_AI;	// ƒx[ƒXƒ^ƒCƒv
+
+	CPlayer* pPlayer = CPlayer::Create
+	(
+		pos, 								// ˆÊ’u
+		CGameManager::ETeamSide::SIDE_LEFT,	// ƒ`[ƒ€ƒTƒCƒh
+		CPlayer::EFieldArea::FIELD_IN,		// ƒ|ƒWƒVƒ‡ƒ“
+		baseType,							// ƒx[ƒXƒ^ƒCƒv
+		info.eBody,							// ‘ÌŒn
+		info.eHanded						// —˜‚«è
+	);
+	if (pPlayer == nullptr)
+	{
+		return E_FAIL;
+	}
+	pPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pPlayer->SetRotDest(HALF_PI);
+	
+	// ƒCƒ“ƒfƒbƒNƒX”½‰f
+	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+
+	return S_OK;
+}
+
+//==========================================================================
+// ‰E‚ÌƒvƒŒƒCƒ„[¶¬
+//==========================================================================
+HRESULT CPlayerManager::CreateRightPlayer(const LoadInfo& info)
+{
+	MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, -100.0f);
+
+	CPlayer::EBaseType baseType = (info.nControllIdx >= 0) ? CPlayer::EBaseType::TYPE_USER : CPlayer::EBaseType::TYPE_AI;	// ƒx[ƒXƒ^ƒCƒv
+
+	CPlayer* pPlayer = CPlayer::Create
+	(
+		pos, 								// ˆÊ’u
+		CGameManager::ETeamSide::SIDE_RIGHT,	// ƒ`[ƒ€ƒTƒCƒh
+		CPlayer::EFieldArea::FIELD_IN,		// ƒ|ƒWƒVƒ‡ƒ“
+		baseType,							// ƒx[ƒXƒ^ƒCƒv
+		info.eBody,							// ‘ÌŒn
+		info.eHanded						// —˜‚«è
+	);
+	if (pPlayer == nullptr)
+	{
+		return E_FAIL;
+	}
+	pPlayer->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
+	pPlayer->SetRotDest(-HALF_PI);
+
+	// ƒCƒ“ƒfƒbƒNƒX”½‰f
+	pPlayer->SetMyPlayerIdx(info.nControllIdx);
 
 	return S_OK;
 }
@@ -774,4 +860,256 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRightNear()
 	info.pKeyLeft	= DEBUG_NEW CBindKeyRight;	// ¶ˆÚ“®ƒL[
 	info.pKeyRight	= DEBUG_NEW CBindKeyLeft;	// ‰EˆÚ“®ƒL[
 	return info;
+}
+
+//==========================================================================
+// ƒZ[ƒuˆ—
+//==========================================================================
+void CPlayerManager::Save(const std::vector<LoadInfo>& LeftInfo, const std::vector<LoadInfo>& RightInfo)
+{
+	// ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	std::ofstream File(PlayerManager::TEXT_PLAYERINFO);
+	if (!File.is_open()) return;
+
+	// ˆø”î•ñ“n‚·
+	m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT] = LeftInfo;
+	m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT] = RightInfo;
+
+	// ƒeƒLƒXƒgƒtƒ@ƒCƒ‹–¼–ÚŸ
+	File << TOP_LINE << std::endl;
+	File << "# ƒ`[ƒ€î•ñ" << std::endl;
+	File << TOP_LINE << std::endl;
+
+	//--------------------------
+	// ¶ƒ`[ƒ€
+	//--------------------------
+	File << TEXT_LINE << std::endl;
+	File << "# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_LEFT << std::endl;
+	File << TEXT_LINE << std::endl;
+	File << "SETTEAM" << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	SavePlayerInfo(&File, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
+	File << "END_SETTEAM" << std::endl;
+
+	//--------------------------
+	// ‰Eƒ`[ƒ€
+	//--------------------------
+	File << TEXT_LINE << std::endl;
+	File << "# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_RIGHT << std::endl;
+	File << TEXT_LINE << std::endl;
+	File << "SETTEAM" << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	SavePlayerInfo(&File, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+
+	File << "END_SETTEAM" << std::endl;
+
+	// ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é
+	File.close();
+}
+
+//==========================================================================
+// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+//==========================================================================
+void CPlayerManager::SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info)
+{
+	for (const auto& info : Info)
+	{
+		(*File) << "\tSETPLAYER" << std::endl;
+
+		(*File) << "\t\tID_CONTROLL = " << info.nControllIdx << std::endl;	// ‘€ì‚·‚éƒCƒ“ƒfƒbƒNƒX”Ô†
+		(*File) << "\t\tHAIR = " << info.nHair << std::endl;				// ”¯’…‚¹‘Ö‚¦
+		(*File) << "\t\tACCESSORY= " << info.nAccessory << std::endl;		// ƒAƒNƒZ’…‚¹‘Ö‚¦
+		(*File) << "\t\tFACE = " << info.nFace << std::endl;				// Šç’…‚¹‘Ö‚¦
+		(*File) << "\t\tBODY = " << info.eBody << std::endl;				// ‘ÌŒ^
+		(*File) << "\t\tHANDED = " << info.eHanded << std::endl;			// —˜‚«è
+
+		(*File) << "\tEND_SETPLAYER" << std::endl;
+		(*File) << std::endl;
+	}
+}
+
+//==========================================================================
+// “Ç‚İ‚İ
+//==========================================================================
+void CPlayerManager::Load()
+{
+	// ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	std::ifstream File(PlayerManager::TEXT_PLAYERINFO);
+	if (!File.is_open()) return;
+
+	// ƒRƒƒ“ƒg—p
+	std::string hoge;
+
+	// ƒf[ƒ^“Ç‚İ‚İ
+	std::string line;
+
+	// ƒ`[ƒ€‚ÌÅ‘å”
+	int nTeam = 0;
+
+	while (std::getline(File, line))
+	{
+		// ƒRƒƒ“ƒg‚ÍƒXƒLƒbƒv
+		if (line.empty() ||
+			line[0] == '#')
+		{
+			continue;
+		}
+
+		if (line.find("SETTEAM") != std::string::npos)
+		{// ƒ`[ƒ€î•ñ
+
+			// “Ç‚İ‚İî•ñƒNƒŠƒA
+			m_vecLoadInfo[nTeam].clear();
+
+			int nPlayerNum = 0;	// ƒvƒŒƒCƒ„[”
+
+			while (line.find("END_SETTEAM") == std::string::npos)
+			{// END_SETTEAM‚ª—ˆ‚é‚Ü‚ÅŒJ‚è•Ô‚µ
+
+				// Šm”F‚·‚é
+				std::getline(File, line);
+
+				if (line.find("SETPLAYER") != std::string::npos)
+				{// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+
+					// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+					LoadPlayerInfo(&File, nTeam, nPlayerNum);
+
+					// ƒvƒŒƒCƒ„[”‰ÁZ
+					nPlayerNum++;
+				}
+			}
+
+			// ƒ`[ƒ€”‰ÁZ
+			nTeam++;
+		}
+
+		if (nTeam >= CGameManager::ETeamSide::SIDE_MAX)
+		{// ƒ`[ƒ€‚ÌÅ‘å”‚Ü‚Å“Ç‚İ‚ñ‚Å‚¢‚½‚çI—¹
+			break;
+		}
+	}
+}
+
+//==========================================================================
+// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+//==========================================================================
+void CPlayerManager::LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer)
+{
+	// ƒRƒƒ“ƒg—p
+	std::string hoge;
+
+	// ƒ`[ƒ€
+	CGameManager::ETeamSide team = static_cast<CGameManager::ETeamSide>(nTeam);
+
+	// “Ç‚İ‚İ—p•Ï”
+	LoadInfo info;	// “Ç‚İ‚İî•ñ
+
+	// ƒf[ƒ^“Ç‚İ‚İ
+	std::string line;
+	while (std::getline(*File, line))
+	{
+		// ƒRƒƒ“ƒg‚ÍƒXƒLƒbƒv
+		if (line.empty() ||
+			line[0] == '#')
+		{
+			continue;
+		}
+
+		if (line.find("END_SETPLAYER") != std::string::npos)
+		{// I—¹
+			break;
+		}
+
+		if (line.find("ID_CONTROLL") != std::string::npos)
+		{// ‘€ì‚·‚éƒCƒ“ƒfƒbƒNƒX”Ô†
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>			// 
+				info.nControllIdx;	// ‘€ì‚·‚éƒCƒ“ƒfƒbƒNƒX”Ô†
+		}
+
+		if (line.find("HAIR") != std::string::npos)
+		{// ”¯
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>		// 
+				info.nHair;		// ”¯
+		}
+
+		if (line.find("ACCESSORY") != std::string::npos)
+		{// ƒAƒNƒZƒTƒŠ[
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>		// 
+				info.nAccessory;		// ƒAƒNƒZƒTƒŠ[
+		}
+
+		if (line.find("FACE") != std::string::npos)
+		{// Šç
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>		// 
+				info.nFace;		// Šç
+		}
+
+		if (line.find("BODY") != std::string::npos)
+		{// ‘ÌŒ^
+
+			int body = -1;
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>		// 
+				body;		// ‘ÌŒ^
+
+			info.eBody = static_cast<CPlayer::EBody>(body);
+		}
+
+		if (line.find("HANDED") != std::string::npos)
+		{// —˜‚«è
+
+			int hand = -1;
+
+			// ƒXƒgƒŠ[ƒ€ì¬
+			std::istringstream lineStream(line);
+
+			// î•ñ“n‚·
+			lineStream >>
+				hoge >>
+				hoge >>		// 
+				hand;		// —˜‚«è
+
+			info.eHanded = static_cast<CPlayer::EHandedness>(hand);
+		}
+	}
+
+	// “Ç‚İ‚ñ‚¾î•ñ‚ğŠi”[
+	m_vecLoadInfo[nTeam].push_back(info);
 }

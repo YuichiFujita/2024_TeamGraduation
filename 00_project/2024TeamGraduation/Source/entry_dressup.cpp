@@ -10,6 +10,7 @@
 #include "input.h"
 #include "entry_setupTeam.h"
 #include "dressup.h"
+#include "playerManager.h"
 
 //==========================================================================
 // 定数定義
@@ -58,18 +59,34 @@ HRESULT CEntry_Dressup::Init()
 	// 生成処理
 	for (int i = 0; i < nPlyerNum; i++)
 	{
+		// エントリーした番号
+		int entryIdx = pSetupTeam->GetEntryIdx(i);
+
+		CGameManager::ETeamSide side;
+		if (entryIdx >= 0)
+		{// User
+			side = pSetupTeam->GetTeamSide(entryIdx);
+		}
+		else
+		{// AI
+			side = pSetupTeam->GetTeamSide(i);
+		}
+
 		// プレイヤー生成
 		MyLib::Vector3 pos = MyLib::Vector3(-400.0f, 0.0f, 0.0f);
 		MyLib::Vector3 offset = MyLib::Vector3(200.0f * i, 0.0f, 0.0f);
 		m_vecDressupInfo[i].pPlayer = CPlayer::Create
 		(
 			pos + offset, 						// 位置
-			CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
+			side,								// チームサイド
 			CPlayer::EHuman::HUMAN_ENTRY,		// ポジション
 			CPlayer::EBody::BODY_NORMAL,		// 体系
 			CPlayer::EHandedness::HAND_R		// 利き手
 		);
 		m_vecDressupInfo[i].pPlayer->CObject::SetOriginPosition(pos + offset);
+
+		// インデックス上書き
+		m_vecDressupInfo[i].pPlayer->SetMyPlayerIdx(entryIdx);
 
 		// 髪着せ替え生成
 		m_vecDressupInfo[i].pHair = CDressup::Create(
@@ -88,10 +105,6 @@ HRESULT CEntry_Dressup::Init()
 			CDressup::EType::TYPE_FACE,		// 着せ替えの種類
 			m_vecDressupInfo[i].pPlayer,	// 変更するプレイヤー
 			CPlayer::ID_FACE);				// 変更箇所のインデックス
-
-
-		// エントリーした番号
-		int entryIdx = pSetupTeam->GetEntryIdx(i);
 
 		// 操作するインデックス設定
 		m_vecDressupInfo[i].pHair->SetControllIdx(entryIdx);
@@ -136,15 +149,16 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 		// エントリーした番号順
 		int entryIdx = pSetupTeam->GetEntryIdx(i);
 		if (entryIdx < 0) continue;
+		if (entryIdx >= mylib_const::MAX_PLAYER) continue;
 
 		// エディットする種類変更
 		ChangeEditType(i, entryIdx);
 
-		switch (m_vecDressupInfo[entryIdx].editType)
+		switch (m_vecDressupInfo[i].editType)
 		{
 		case EEditType::EDIT_PROCESS:
 
-			switch (m_vecDressupInfo[entryIdx].changeType)
+			switch (m_vecDressupInfo[i].changeType)
 			{
 			case EChangeType::TYPE_HAIR:
 
@@ -200,6 +214,9 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 	// 一旦シーン切り替え TODO : 全員チェックしてたらとかにする
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0))
 	{
+		// セーブ処理
+		Save();
+
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_GAMESETTING);
 	}
 
@@ -329,24 +346,41 @@ void CEntry_Dressup::ChangeHandedness(int nLoop, int nControllIdx)
 //==========================================================================
 void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body)
 {
+	// チーム等設定
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
+	if (pSetupTeam == nullptr) return;
+
 	// 情報保存
 	MyLib::Vector3 pos = m_vecDressupInfo[i].pPlayer->CObject::GetOriginPosition();
 
 	// 削除
 	m_vecDressupInfo[i].pPlayer->Kill();
 
+	// エントリーした番号
+	int entryIdx = pSetupTeam->GetEntryIdx(i);
+
+	CGameManager::ETeamSide side;
+	if (entryIdx >= 0)
+	{// User
+		side = pSetupTeam->GetTeamSide(entryIdx);
+	}
+	else
+	{// AI
+		side = pSetupTeam->GetTeamSide(i);
+	}
+
 	// 再生成
 	m_vecDressupInfo[i].pPlayer = CPlayer::Create
 	(
 		pos, 								// 位置
-		CGameManager::ETeamSide::SIDE_NONE,	// チームサイド
+		side,								// チームサイド
 		CPlayer::EHuman::HUMAN_ENTRY,		// ポジション
 		body,								// 体系
 		handedness							// 利き手
 	);
 
 	// インデックス上書き
-	m_vecDressupInfo[i].pPlayer->SetMyPlayerIdx(i);
+	m_vecDressupInfo[i].pPlayer->SetMyPlayerIdx(entryIdx);
 
 	// 元の位置設定
 	m_vecDressupInfo[i].pPlayer->CObject::SetPosition(pos);
@@ -367,20 +401,33 @@ void CEntry_Dressup::ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPla
 //==========================================================================
 void CEntry_Dressup::Save()
 {
-	// ファイルを開く
-	std::ofstream File(TEXTFILE);
-	if (!File.is_open()) {
-		return;
+	// プレイヤーマネージャ取得
+	CPlayerManager* pPlayerMgr = CPlayerManager::GetInstance();
+
+	// 読み込み情報
+	std::vector<CPlayerManager::LoadInfo> vecSaveInfo[CGameManager::ETeamSide::SIDE_MAX];
+
+	// 今回のサイズ
+	int size = static_cast<int>(m_vecDressupInfo.size());
+	for (int i = 0; i < size; i++)
+	{
+		// 自身の操作するインデックス番号取得
+		int controllIdx = m_vecDressupInfo[i].pPlayer->GetMyPlayerIdx();
+		CGameManager::ETeamSide side = m_vecDressupInfo[i].pPlayer->GetTeam();
+
+		// 読み込み情報
+		vecSaveInfo[side].emplace_back();
+		CPlayerManager::LoadInfo* pLoadInfo = &vecSaveInfo[side].back();
+		pLoadInfo->nControllIdx = controllIdx;									// 自身の操作するインデックス番号取得
+		pLoadInfo->nHair = m_vecDressupInfo[i].pHair->GetNowIdx();				// 髪のインデックス番号
+		pLoadInfo->nAccessory = m_vecDressupInfo[i].pAccessory->GetNowIdx();	// アクセのインデックス番号
+		pLoadInfo->nFace = m_vecDressupInfo[i].pFace->GetNowIdx();				// 顔のインデックス番号
+		pLoadInfo->eBody = m_vecDressupInfo[i].pPlayer->GetBodyType();			// 体型
+		pLoadInfo->eHanded = m_vecDressupInfo[i].pPlayer->GetHandedness();		// 利き手
 	}
 
-	// テキストファイル名目次
-	File << TOP_LINE			<< std::endl;
-	File << "# チーム等設定"	<< std::endl;
-	File << TOP_LINE			<< std::endl;
-
-
-	// ファイルを閉じる
-	File.close();
+	// セーブ処理
+	pPlayerMgr->Save(vecSaveInfo[CGameManager::ETeamSide::SIDE_LEFT], vecSaveInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
 }
 
 //==========================================================================
