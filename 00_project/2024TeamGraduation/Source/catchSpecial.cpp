@@ -136,7 +136,7 @@ void CCatchSpecial::State_Kamehame_Succ(const float fDeltaTime, const float fDel
 	if (m_fStateTime > StateTime::KAMEHAME_SUCC)
 	{// I—¹‚µ‚½‚ç
 		
-	 // ¬Œ÷Œø‰Ê
+		// ¬Œ÷Œø‰Ê
 		Success();
 
 		SetState(EState::STATE_NONE);
