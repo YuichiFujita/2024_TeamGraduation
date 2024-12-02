@@ -635,6 +635,36 @@ MyLib::Vector3 CGameManager::GetCourtSize(const ETeamSide team, MyLib::Vector3& 
 
 	return size;
 }
+//==========================================================================
+// @brief	コート中心地取得(チーム)
+// @param	team[in]	取得したいチーム
+// @return	取得したコートの中心点
+//==========================================================================
+MyLib::Vector3 CGameManager::GetCourtMiddle(const ETeamSide team)
+{
+	// 片側コートサイズ
+	MyLib::Vector3 size = m_courtSize;
+	size.x *= 0.5f;
+
+	// チームに応じた位置
+	MyLib::Vector3 pos = MyLib::Vector3();
+	switch (team)
+	{
+	case SIDE_LEFT:
+		pos.x = -size.x;
+		break;
+
+	case SIDE_RIGHT:
+		pos.x = size.x;
+		break;
+
+	default:
+		pos.x = 0.0f;
+		break;
+	}
+
+	return pos;
+}
 
 //==========================================================================
 // @brief	コートの何パー位置か取得(チーム)

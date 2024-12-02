@@ -1790,14 +1790,6 @@ void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, 
 	SetMove(move);
 
 	//TODO: 砂埃的な何か
-
-	//スペシャル時ライン越え判定
-	if (m_sDamageInfo.eReiceiveType == CBall::EAttack::ATK_SPECIAL &&
-		CGameManager::GetInstance()->SetPosLimit(pos) &&
-		m_state != EState::STATE_OUTCOURT)
-	{
-		OutCourtSetting();
-	}
 		
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
@@ -1872,6 +1864,10 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 
 	if (pMotion->IsGetCancelable())
 	{// キャンセル可能
+
+		m_sKnockback.posStart = pos;
+		m_sKnockback.posEnd = CGameManager::GetInstance()->GetCourtMiddle(GetTeam());
+
 		SetState(EState::STATE_OUTCOURT_RETURN);
 	}
 }
@@ -1882,13 +1878,9 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	MyLib::Vector3 pos = GetPosition();
-	MyLib::Vector3 posStart = CGameManager::GetInstance()->GetCourtSize();
-	posStart.y = 0.0f;
-	posStart.z = 0.0f;
-	posStart.x *= 0.5f;
 
 	//コート内に戻る
-	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posEnd, posStart, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
+	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
 	// モーションのキャンセルで管理

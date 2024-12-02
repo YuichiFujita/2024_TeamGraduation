@@ -38,6 +38,17 @@ public:
 		STATE_MAX
 	};
 
+	// 状態内状態定義(勢い)
+	enum EMomentumState
+	{
+		MOMENTUM_NONE = 0,			// なし
+		MOMENTUM_SLIDE,			// ズザザー
+		MOMENTUM_BRAKE,			// 耐える
+		MOMENTUM_RESULT,			// 結果(成功)(失敗)
+		MOMENTUM_END,				// 終了
+		MOMENTUM_MAX
+	};
+
 	CCatchSpecial(CPlayer* pPlayer, EState state);
 	~CCatchSpecial();
 
@@ -50,11 +61,14 @@ public:
 
 	void SetState(EState state);			// 状態設定
 	EState GetState() { return m_state; }	// 状態取得
+	
+	void SetMomentumState(EMomentumState state);					// 勢い状態設定
+	EMomentumState GetMomentumState() { return m_momentumState; }	// 勢い状態設定
 
 	void SetEnableSuccess(bool bSuccess) { m_bSuccess = bSuccess; }		// 成功フラグ設定
 	bool IsState() { return m_bSuccess; }								// 成功フラグ取得
 
-		//-----------------------------
+	//-----------------------------
 	// 判定関数
 	//-----------------------------
 	static EState Check_Kamehameha(const CPlayer* pPlayer, const bool bJust);
@@ -70,17 +84,40 @@ private:
 	typedef void(CCatchSpecial::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 
+	// 状態関数
+	typedef void(CCatchSpecial::* MOMENTUM_FUNC)(const float, const float, const float);
+	static MOMENTUM_FUNC m_MomentumFunc[];	// 状態内状態関数
+
+	// 状態開始関数
+	typedef void(CCatchSpecial::* START_FUNC)();
+	static START_FUNC m_StartFunc[];	// 状態開始関数
+
+	// 判定関数
 	static std::vector<std::function<EState(const CPlayer*, const bool)>> s_CheckFunc;
 
 	//=============================
 	// メンバ関数
 	//=============================
 	//-----------------------------
-	// スペシャルキャッチ状態関数
+	// 状態関数
 	//-----------------------------
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
-	void State_Kamehame_Succ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ成功
-	void State_Kamehame_Fail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ失敗
+	void StateKamehameSucc(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ成功
+	void StateKamehameFail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ失敗
+
+	//-----------------------------
+	// 状態関数
+	//-----------------------------
+	void MomentumStateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
+	void MomentumStateSlide(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ズザザー
+	void MomentumStateBrake(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 耐える
+	void MomentumStateResult(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 結果(成功)(失敗)
+	void MomentumStateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了
+	
+	//-----------------------------
+	// 勢い状態開始関数
+	//-----------------------------
+	void MomentumStartSlide();		// ズザザー
 
 	void Success();		// 成功時共通
 	void Failure();		// 失敗時共通
@@ -88,10 +125,12 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	EState m_state;				// 状態
-	float m_fStateTime;			// 状態時間
-	CPlayer* m_pPlayer;			// プレイヤー
-	bool m_bSuccess;			// 成功フラグ
+	EState m_state;					// 状態
+	float m_fStateTime;				// 状態時間
+	EMomentumState m_momentumState;	// 状態内状態
+	float m_fMomentumStateTime;		// 状態内状態時間
+	CPlayer* m_pPlayer;				// プレイヤー
+	bool m_bSuccess;				// 成功フラグ
 };
 
 #endif

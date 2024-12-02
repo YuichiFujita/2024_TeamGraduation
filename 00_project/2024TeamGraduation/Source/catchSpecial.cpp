@@ -10,18 +10,31 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace StateTime
-{
-	const float KAMEHAME_SUCC(5.0f);	// かめはめ波？キャッチ成功
-	const float KAMEHAME_FAIL(5.0f);	// かめはめ波？キャッチ成功
-}
-
 // かめはめ波
 namespace Kamehameha
 {
 	const float FAN_ROT(5.0f);		// 成功判定の扇の角度(度数法)
 	const float RAD_JUST(0.5f);		// 成功判定のの許容割合(ジャスト時)
 	const float RAD_NORMAL(0.2f);	// 成功判定のの許容割合(平常時)
+	
+	const float MOMENTUM_TIME[] =
+	{
+		0.5f,		// なし
+		1.0f,		// ズザザー
+		2.0f,		// 耐える
+		1.0f,		// 結果(成功)(失敗)
+		0.0f,
+	};
+
+	// 状態内状態定義(勢い)
+	enum EMomentumState
+	{
+		STATE_NONE = 0,			// なし
+		STATE_SLIDE,			// ズザザー
+		STATE_BRAKE,			// 耐える
+		STATE_RESULT,			// 結果(成功)(失敗)
+		STATE_MAX
+	};
 }
 
 //==========================================================================
@@ -30,15 +43,33 @@ namespace Kamehameha
 CCatchSpecial::STATE_FUNC CCatchSpecial::m_StateFunc[] =	// スペシャルキャッチ状態関数
 {
 	&CCatchSpecial::StateNone,				// なし
-	&CCatchSpecial::State_Kamehame_Succ,	// かめはめ波？キャッチ成功
-	&CCatchSpecial::State_Kamehame_Fail,	// かめはめ波？キャッチ失敗
+	&CCatchSpecial::StateKamehameSucc,		// かめはめ波？キャッチ成功
+	&CCatchSpecial::StateKamehameFail,		// かめはめ波？キャッチ失敗
+};
+
+CCatchSpecial::MOMENTUM_FUNC CCatchSpecial::m_MomentumFunc[] =	// 勢い状態関数
+{
+	&CCatchSpecial::MomentumStateNone,		// なし
+	&CCatchSpecial::MomentumStateSlide,		// ズザザ
+	&CCatchSpecial::MomentumStateBrake,		// 耐える
+	&CCatchSpecial::MomentumStateResult,	// 結果
+	&CCatchSpecial::MomentumStateEnd,		// 終了
+};
+
+CCatchSpecial::START_FUNC CCatchSpecial::m_StartFunc[] =	// 勢い状態開始関数
+{
+	nullptr,								// なし
+	&CCatchSpecial::MomentumStartSlide,		// ズザザ
+	nullptr,								// 耐える
+	nullptr,								// 結果
+	nullptr,								// 終了
 };
 
 // 関数リスト
 std::vector<std::function<CCatchSpecial::EState(const CPlayer*, const bool)>> CCatchSpecial::s_CheckFunc =
 {
 	nullptr,								// NONE
-	CCatchSpecial::Check_Kamehameha,						// かめはめ波
+	CCatchSpecial::Check_Kamehameha,		// かめはめ波
 	nullptr,								// MAX
 };
 
@@ -53,8 +84,10 @@ CCatchSpecial::CCatchSpecial(CPlayer* pPlayer, EState state) :
 	m_pPlayer(pPlayer), m_state(state)
 {
 	// 値のクリア
-	m_fStateTime = 0.0f;	// 状態時間
-	m_bSuccess = false;		// 成功フラグ
+	m_fStateTime = 0.0f;							// 状態時間
+	m_momentumState = EMomentumState::MOMENTUM_NONE;	// 状態内状態
+	m_fMomentumStateTime = 0.0f;					// 状態内状態時間
+	m_bSuccess = false;								// 成功フラグ
 }
 
 //==========================================================================
@@ -109,7 +142,12 @@ void CCatchSpecial::Uninit()
 //==========================================================================
 void CCatchSpecial::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	MyAssert::CustomAssert(m_pPlayer != nullptr, "catchSpecial: プレイヤーどこ行ったん？");
+	m_pPlayer->SetEnableMove(false);
+	m_pPlayer->SetEnableAction(false);
+
 	m_fStateTime += fDeltaTime * fSlowRate;
+	m_fMomentumStateTime += fDeltaTime * fSlowRate;
 
 	// 状態更新
 	if (m_StateFunc[m_state] != nullptr)
@@ -124,6 +162,10 @@ void CCatchSpecial::Update(const float fDeltaTime, const float fDeltaRate, const
 void CCatchSpecial::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 終了
+
+	// 行動可能に
+	m_pPlayer->SetEnableMove(true);
+	m_pPlayer->SetEnableAction(true);
 	m_pPlayer->SetCatchSpecial(nullptr);
 	Uninit();
 }
@@ -131,10 +173,22 @@ void CCatchSpecial::StateNone(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 // かめはめ波？キャッチ成功
 //==========================================================================
-void CCatchSpecial::State_Kamehame_Succ(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CCatchSpecial::StateKamehameSucc(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fStateTime > StateTime::KAMEHAME_SUCC)
-	{// 終了したら
+	// 成功フラグ
+	m_bSuccess = true;
+
+	// 勢い更新
+	if (m_MomentumFunc[m_momentumState] != nullptr)
+	{
+		(this->*(m_MomentumFunc[m_momentumState]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// モーション設定
+	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC);
+
+	if (m_momentumState == EMomentumState::MOMENTUM_END)
+	{// 終了したら(結果時間が終わった)
 		
 		// 成功効果
 		Success();
@@ -146,9 +200,21 @@ void CCatchSpecial::State_Kamehame_Succ(const float fDeltaTime, const float fDel
 //==========================================================================
 // かめはめ波？キャッチ失敗
 //==========================================================================
-void CCatchSpecial::State_Kamehame_Fail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CCatchSpecial::StateKamehameFail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fStateTime > StateTime::KAMEHAME_SUCC)
+	// 成功フラグ
+	m_bSuccess = false;
+
+	// 勢い更新
+	if (m_MomentumFunc[m_momentumState] != nullptr)
+	{
+		(this->*(m_MomentumFunc[m_momentumState]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// モーション設定
+	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL);
+
+	if (m_momentumState == EMomentumState::MOMENTUM_END)
 	{// 終了したら
 
 		// 失敗効果
@@ -168,6 +234,129 @@ void CCatchSpecial::SetState(EState state)
 }
 
 //==========================================================================
+// [勢い] なし
+//==========================================================================
+void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// スローかける
+
+	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	{// 終了
+
+		// スロー戻す
+
+
+		SetMomentumState(EMomentumState::MOMENTUM_SLIDE);
+	}
+}
+
+//==========================================================================
+// [勢い] ズザザー
+//==========================================================================
+void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// ズザザでコート奥まで行く
+	MyLib::Vector3 pos = MyLib::Vector3();
+	float fBaseTime = Kamehameha::MOMENTUM_TIME[m_momentumState];
+	CPlayer::SKnockbackInfo knockback = m_pPlayer->GetKnockBackInfo();
+
+	// 移動量精製
+	MyLib::Vector3 move = knockback.posStart - knockback.posEnd;
+	float fAngle = atan2f(move.x, move.z) + D3DX_PI;		//目標の向き
+	UtilFunc::Transformation::RotNormalize(fAngle);
+
+	move = m_pPlayer->GetMove();
+	move.x = sinf(fAngle) * 1.0f;
+	move.z = cosf(fAngle) * 1.0f;
+
+	pos += move;
+
+	m_pPlayer->SetPosition(pos);
+
+	if (m_fMomentumStateTime > fBaseTime)
+	{// 終了
+
+		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
+	}
+}
+
+//==========================================================================
+// [勢い] 耐える
+//==========================================================================
+void CCatchSpecial::MomentumStateBrake(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	{// 終了
+
+		SetMomentumState(EMomentumState::MOMENTUM_RESULT);
+	}
+}
+
+//==========================================================================
+// [勢い] 結果(成功)(失敗)
+//==========================================================================
+void CCatchSpecial::MomentumStateResult(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	{// 終了
+
+		SetMomentumState(EMomentumState::MOMENTUM_END);
+	}
+}
+
+//==========================================================================
+// [勢い] 終了
+//==========================================================================
+void CCatchSpecial::MomentumStateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	m_fMomentumStateTime = 0.0f;
+}
+
+//==========================================================================
+// 勢い状態設定
+//==========================================================================
+void CCatchSpecial::SetMomentumState(EMomentumState state)
+{
+	m_momentumState = state;
+	m_fMomentumStateTime = 0.0f;
+
+	// 勢い更新
+	if (m_StartFunc[m_momentumState] != nullptr)
+	{
+		(this->*(m_StartFunc[m_momentumState]))();
+	}
+}
+
+//==========================================================================
+// ズザザ開始
+//==========================================================================
+void CCatchSpecial::MomentumStartSlide()
+{
+	CPlayer::SKnockbackInfo knockback = m_pPlayer->GetKnockBackInfo();
+
+	// 開始位置
+	MyLib::Vector3 pos = m_pPlayer->GetPosition();
+	MyLib::Vector3 rot = m_pPlayer->GetRotation();
+	knockback.posStart = pos;
+
+	// コート端で判定取ってその際を設定
+	CGameManager* pGmMgr = CGameManager::GetInstance();
+	
+	while(!pGmMgr->SetPosLimit(pos, m_pPlayer->GetRadius()))
+	{// 端に当たっていなかったら
+	
+		pos.x += sinf(rot.y) * 10.0f;
+		pos.z += cosf(rot.y) * 10.0f;
+	}
+	
+	// 終了位置
+	knockback.posEnd = pos;
+
+	// 設定
+	m_pPlayer->SetKnockBackInfo(knockback);
+}
+
+//==========================================================================
 // 成功時共通
 //==========================================================================
 void CCatchSpecial::Success()
@@ -175,9 +364,6 @@ void CCatchSpecial::Success()
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	CGameManager::ETeamSide team = m_pPlayer->GetTeam();
 	CGameManager::ETeamSide rivalTeam = pGameMgr->RivalTeam(team);
-	
-	// 成功フラグ
-	m_bSuccess = true;
 
 	// 自陣
 	// モテ加算
@@ -194,8 +380,14 @@ void CCatchSpecial::Success()
 //==========================================================================
 void CCatchSpecial::Failure()
 {
-	// 成功フラグ
-	m_bSuccess = false;
+	//スペシャル時ライン越え判定
+	MyLib::Vector3 pos = m_pPlayer->GetPosition();
+
+	if (m_state != CPlayer::EState::STATE_OUTCOURT &&
+		m_state != CPlayer::EState::STATE_OUTCOURT_RETURN)
+	{
+		m_pPlayer->OutCourtSetting();
+	}
 }
 
 //==========================================================================
