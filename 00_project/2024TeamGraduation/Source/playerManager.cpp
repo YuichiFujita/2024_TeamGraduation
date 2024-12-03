@@ -246,55 +246,6 @@ HRESULT CPlayerManager::Init()
 	}
 #endif
 
-	//----------------------------------------------------------------------
-	// プレイヤー外野生成
-	//----------------------------------------------------------------------
-	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
-
-	// プレイヤー外野生成 (右サイド)
-#if 1
-	for (int i = 0; i < nHalfMax; i++)
-	{ // チームごとの外野人数分繰り返す
-
-		// 左チームの外野プレイヤー生成
-		CPlayer* pOutLeft = CPlayer::Create
-		(
-			VEC3_ZERO,						// 位置
-			CGameManager::SIDE_RIGHT,		// チームサイド
-			CPlayer::EFieldArea::FIELD_OUT,	// ポジション
-			CPlayer::EBaseType::TYPE_AI		// ベースタイプ
-		);
-		if (pOutLeft == nullptr)
-		{ // 生成に失敗した場合
-
-			assert(false);
-			return E_FAIL;
-		}
-	}
-#endif
-
-	// プレイヤー外野生成 (左サイド)
-#if 1
-	for (int i = 0; i < nHalfMax; i++)
-	{ // チームごとの外野人数分繰り返す
-
-		// 左チームの外野プレイヤー生成
-		CPlayer* pOutLeft = CPlayer::Create
-		(
-			VEC3_ZERO,						// 位置
-			CGameManager::SIDE_LEFT,		// チームサイド
-			CPlayer::EFieldArea::FIELD_OUT,	// ポジション
-			CPlayer::EBaseType::TYPE_AI		// ベースタイプ
-		);
-		if (pOutLeft == nullptr)
-		{ // 生成に失敗した場合
-
-			assert(false);
-			return E_FAIL;
-		}
-	}
-#endif
-
 #endif // ENTRY
 
 

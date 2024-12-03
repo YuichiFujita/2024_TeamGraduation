@@ -23,7 +23,7 @@
 #include "input_gamepad.h"
 
 
-#if 1
+#if 0
 #define ENTRYSTART()	// エントリーして生成するかのフラグ
 #endif
 
