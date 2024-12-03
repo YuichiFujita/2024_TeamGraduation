@@ -1563,6 +1563,15 @@ void CBall::SetState(const EState state)
 //==========================================================================
 void CBall::Catch(CPlayer* pPlayer)
 {
+#ifdef CHANGE
+	if (IsPass())
+	{ // パス状態の場合
+
+		// 元ターゲットをAIに戻す
+		CPlayerManager::GetInstance()->ChangeUserToAI(m_pTarget);
+	}
+#endif
+
 	// 移動量を初期化
 	SetMove(VEC3_ZERO);
 

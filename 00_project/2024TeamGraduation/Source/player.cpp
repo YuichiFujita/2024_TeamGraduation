@@ -2396,10 +2396,14 @@ void CPlayer::Debug()
 		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
 		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
-		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
-		ImGui::Text("bDash: [%d]", m_bDash);
-		ImGui::Text("bBrake: [%d]", m_bBrake);
-		ImGui::Text("InputAngleCtr: [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
+		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
+		ImGui::Text("bDash : [%d]", m_bDash);
+		ImGui::Text("bBrake : [%d]", m_bBrake);
+		ImGui::Text("InputAngleCtr : [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
+
+		ImGui::Text("typeBase : [%s]", magic_enum::enum_name(GetBaseType()));
+		ImGui::Text("typeTeam : [%s]", magic_enum::enum_name(m_typeTeam));
+		ImGui::Text("typeArea : [%s]", magic_enum::enum_name(m_typeArea));
 
 		if (angle != nullptr)
 		{
@@ -2407,7 +2411,7 @@ void CPlayer::Debug()
 		}
 		else
 		{
-			ImGui::Text("InputAngle: [error]");
+			ImGui::Text("InputAngle : [error]");
 		}
 
 #if 0
