@@ -59,14 +59,18 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void SetState(EState state);			// 状態設定
-	EState GetState() { return m_state; }	// 状態取得
-	
+	void SetState(EState state);									// 状態設定
+	EState GetState() { return m_state; }							// 状態取得
 	void SetMomentumState(EMomentumState state);					// 勢い状態設定
 	EMomentumState GetMomentumState() { return m_momentumState; }	// 勢い状態設定
 
 	void SetEnableSuccess(bool bSuccess) { m_bSuccess = bSuccess; }		// 成功フラグ設定
 	bool IsState() { return m_bSuccess; }								// 成功フラグ取得
+
+	void SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }		// プレイヤー設定
+	CPlayer* GetPlayer() { return m_pPlayer; }						// プレイヤー取得
+
+	void Debug();		// 成功フラグ取得
 
 	//-----------------------------
 	// 判定関数
@@ -84,13 +88,17 @@ private:
 	typedef void(CCatchSpecial::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 
-	// 状態関数
+	// 勢い状態関数
 	typedef void(CCatchSpecial::* MOMENTUM_FUNC)(const float, const float, const float);
 	static MOMENTUM_FUNC m_MomentumFunc[];	// 状態内状態関数
 
 	// 状態開始関数
 	typedef void(CCatchSpecial::* START_FUNC)();
 	static START_FUNC m_StartFunc[];	// 状態開始関数
+
+	// 勢い状態開始関数
+	typedef void(CCatchSpecial::* MOMENTUM_START_FUNC)();
+	static MOMENTUM_START_FUNC m_MomentumStartFunc[];	// 状態開始関数
 
 	// 判定関数
 	static std::vector<std::function<EState(const CPlayer*, const bool)>> s_CheckFunc;
@@ -114,6 +122,11 @@ private:
 	void MomentumStateResult(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 結果(成功)(失敗)
 	void MomentumStateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了
 	
+	//-----------------------------
+	// 状態開始関数
+	//-----------------------------
+	void StateStartNone();		// なし
+
 	//-----------------------------
 	// 勢い状態開始関数
 	//-----------------------------
