@@ -21,8 +21,8 @@ namespace
 
 	namespace Side
 	{
-		const int LEFT_LINE[]	= { -1650, 1350 };	// チームサイドごとの左ライン
-		const int RIGHT_LINE[]	= { -1350, 1650 };	// チームサイドごとの右ライン
+		const int LEFT_LINE[]	= { -1675, 1350 };	// チームサイドごとの左ライン
+		const int RIGHT_LINE[]	= { -1350, 1675 };	// チームサイドごとの右ライン
 		const int NEAR_LINE		= -960;	// 手前の生成位置上限
 		const int FAR_LINE		= 960;	// 奥の生成位置上限
 	}

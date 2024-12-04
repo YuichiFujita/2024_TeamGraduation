@@ -66,12 +66,12 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
 	void Kill() override;	// 削除処理
-	inline void SetPosition(const MyLib::Vector3& pos) override	{ m_pAnimChara->SetPosition(pos); }		// 位置設定
-	inline MyLib::Vector3 GetPosition() const override			{ return m_pAnimChara->GetPosition(); }	// 位置取得
-	inline void SetMove(const MyLib::Vector3& move) override	{ m_pAnimChara->SetMove(move); }		// 移動量設定
-	inline MyLib::Vector3 GetMove() const override				{ return m_pAnimChara->GetMove(); }		// 移動量取得
-	inline void SetRotation(const MyLib::Vector3& rot) override	{ m_pAnimChara->SetRotation(rot); }		// 向き設定
-	inline MyLib::Vector3 GetRotation() const override			{ return m_pAnimChara->GetRotation(); }	// 向き取得
+	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
+	void SetMove(const MyLib::Vector3& move) override;		// 移動量設定
+	void SetRotation(const MyLib::Vector3& rot) override;	// 向き設定
+	inline MyLib::Vector3 GetPosition() const override		{ return m_pFrontAnimChara->GetPosition(); }	// 位置取得
+	inline MyLib::Vector3 GetMove() const override			{ return m_pFrontAnimChara->GetMove(); }		// 移動量取得
+	inline MyLib::Vector3 GetRotation() const override		{ return m_pFrontAnimChara->GetRotation(); }	// 向き取得
 
 protected:
 	//=============================
@@ -109,7 +109,8 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObjectCharaAnim* m_pAnimChara;	// キャラクターアニメーション情報
+	CObjectCharaAnim* m_pFrontAnimChara;	// 表面キャラクター情報
+	CObjectCharaAnim* m_pBackAnimChara;		// 裏面キャラクター情報
 	CObjectX* m_pLight;		// ペンライト情報
 	EMotion m_idolMotion;	// 待機モーション
 	EMotion m_jumpMotion;	// ジャンプモーション

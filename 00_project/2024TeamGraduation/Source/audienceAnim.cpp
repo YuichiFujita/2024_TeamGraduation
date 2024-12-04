@@ -15,9 +15,10 @@
 //==========================================================================
 namespace
 {
-	const char* SETUP_TXT = "data\\CHARACTER\\frisk.txt";	// プレイヤーセットアップテキスト
-	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
-	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
+	const char*	SETUP_FRONT_TXT	= "data\\CHARACTER\\frisk_front.txt";	// 表面プレイヤーセットアップテキスト
+	const char*	SETUP_BACK_TXT	= "data\\CHARACTER\\frisk_back.txt";	// 裏面プレイヤーセットアップテキスト
+	const char*	LIGHT_PATH	= "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
+	const int	PRIORITY	= mylib_const::PRIORITY_DEFAULT;	// 優先順位
 
 	namespace Far
 	{
@@ -60,11 +61,12 @@ CAudienceAnim::WATCH_POS_FUNC CAudienceAnim::m_CalcWatchPositionFunc[] =
 // コンストラクタ
 //==========================================================================
 CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pAnimChara	(nullptr),			// キャラクターアニメーション情報
-	m_pLight		(nullptr),			// ペンライト情報
-	m_idolMotion	(MOTION_IDOL_U),	// 待機モーション
-	m_jumpMotion	(MOTION_IDOL_U),	// ジャンプモーション
-	m_moveMotion	(MOTION_IDOL_U)		// 移動モーション
+	m_pFrontAnimChara	(nullptr),			// 表面キャラクター情報
+	m_pBackAnimChara	(nullptr),			// 裏面キャラクター情報
+	m_pLight			(nullptr),			// ペンライト情報
+	m_idolMotion		(MOTION_IDOL_U),	// 待機モーション
+	m_jumpMotion		(MOTION_IDOL_U),	// ジャンプモーション
+	m_moveMotion		(MOTION_IDOL_U)		// 移動モーション
 {
 }
 
@@ -148,7 +150,8 @@ void CAudienceAnim::Uninit()
 	CAudience::Uninit();
 
 	// オブジェクトキャラクターアニメーションの終了
-	SAFE_UNINIT(m_pAnimChara);
+	SAFE_UNINIT(m_pFrontAnimChara);
+	SAFE_UNINIT(m_pBackAnimChara);
 }
 
 //==========================================================================
@@ -160,7 +163,47 @@ void CAudienceAnim::Kill()
 	CAudience::Kill();
 
 	// オブジェクトキャラクターアニメーションの終了
-	SAFE_UNINIT(m_pAnimChara);
+	SAFE_UNINIT(m_pFrontAnimChara);
+	SAFE_UNINIT(m_pBackAnimChara);
+}
+
+//==========================================================================
+// 位置設定処理
+//==========================================================================
+void CAudienceAnim::SetPosition(const MyLib::Vector3& pos)
+{
+	// 親クラスの位置設定
+	CObject::SetPosition(pos);
+
+	// オブジェクトキャラクターアニメーションの位置設定
+	m_pFrontAnimChara->SetPosition(pos);
+	m_pBackAnimChara->SetPosition(pos);
+}
+
+//==========================================================================
+// 移動量設定処理
+//==========================================================================
+void CAudienceAnim::SetMove(const MyLib::Vector3& move)
+{
+	// 親クラスの移動量設定
+	CObject::SetMove(move);
+
+	// オブジェクトキャラクターアニメーションの移動量設定
+	m_pFrontAnimChara->SetMove(move);
+	m_pBackAnimChara->SetMove(move);
+}
+
+//==========================================================================
+// 向き設定処理
+//==========================================================================
+void CAudienceAnim::SetRotation(const MyLib::Vector3& rot)
+{
+	// 親クラスの向き設定
+	CObject::SetRotation(rot);
+
+	// オブジェクトキャラクターアニメーションの向き設定
+	m_pFrontAnimChara->SetRotation(rot);
+	m_pBackAnimChara->SetRotation(rot);
 }
 
 //==========================================================================
@@ -168,10 +211,16 @@ void CAudienceAnim::Kill()
 //==========================================================================
 void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_pAnimChara != nullptr)
+	if (m_pFrontAnimChara != nullptr)
 	{
-		// オブジェクトキャラクターアニメーションの更新
-		m_pAnimChara->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		// 表面キャラクターの更新
+		m_pFrontAnimChara->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	if (m_pBackAnimChara != nullptr)
+	{
+		// 裏面キャラクターの更新
+		m_pBackAnimChara->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 親クラスの更新
@@ -183,23 +232,29 @@ void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CAudienceAnim::Draw()
 {
-	if (m_pAnimChara != nullptr)
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 180);
+
+	if (m_pFrontAnimChara != nullptr)
 	{
-		LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
-
-		// アルファテストを有効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 180);
-
-		// オブジェクトキャラクターアニメーションの描画
-		m_pAnimChara->Draw();
-
-		// アルファテストを無効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+		// 表面キャラクターの描画
+		m_pFrontAnimChara->Draw();
 	}
+
+	if (m_pBackAnimChara != nullptr)
+	{
+		// 裏面キャラクターの描画
+		m_pBackAnimChara->Draw();
+	}
+
+	// アルファテストを無効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 
 	// 親クラスの描画
 	CAudience::Draw();
@@ -289,17 +344,18 @@ int CAudienceAnim::UpdateDespawn(const float fDeltaTime, const float fDeltaRate,
 void CAudienceAnim::SetMotion(const int nMotion)
 {
 	// キャラクターアニメーション情報がない場合抜ける
-	if (m_pAnimChara == nullptr) { return; }
+	if (m_pFrontAnimChara == nullptr) { return; }
 
-	int nAnimMotion = m_pAnimChara->GetMotion();	// 現在再生中のモーション
-	if (m_pAnimChara->IsLoop())
+	int nAnimMotion = m_pFrontAnimChara->GetMotion();	// 現在再生中のモーション
+	if (m_pFrontAnimChara->IsLoop())
 	{ // ループするモーションだった場合
 
 		if (nAnimMotion != nMotion)
 		{ // 現在のモーションが再生中のモーションと一致しない場合
 
 			// 現在のモーションの設定
-			m_pAnimChara->SetMotion(nMotion);
+			m_pFrontAnimChara->SetMotion(nMotion);
+			m_pBackAnimChara->SetMotion(nMotion);
 		}
 	}
 }
@@ -309,22 +365,42 @@ void CAudienceAnim::SetMotion(const int nMotion)
 //==========================================================================
 HRESULT CAudienceAnim::CreateAnimCharacter(const MyLib::Vector3& rPos)
 {
-	// オブジェクトキャラクターアニメーションの生成
-	m_pAnimChara = CObjectCharaAnim::Create(rPos);
-	if (m_pAnimChara == nullptr)
+	// 表面キャラクターの生成
+	m_pFrontAnimChara = CObjectCharaAnim::Create(rPos);
+	if (m_pFrontAnimChara == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
 
 	// キャラクター情報の割当
-	m_pAnimChara->BindCharaData(SETUP_TXT);
+	m_pFrontAnimChara->BindCharaData(SETUP_FRONT_TXT);
 
 	// モーションの設定
-	m_pAnimChara->SetMotion(m_moveMotion);
+	m_pFrontAnimChara->SetMotion(m_moveMotion);
 
 	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
-	m_pAnimChara->SetType(CObject::TYPE::TYPE_NONE);
+	m_pFrontAnimChara->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 裏面キャラクターの生成
+	m_pBackAnimChara = CObjectCharaAnim::Create(rPos);
+	if (m_pBackAnimChara == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// キャラクター情報の割当
+	m_pBackAnimChara->BindCharaData(SETUP_BACK_TXT);
+
+	// 向きを反転する
+	m_pBackAnimChara->SetRotation(MyLib::Vector3(0.0f, D3DX_PI, 0.0f));
+
+	// モーションの設定
+	m_pBackAnimChara->SetMotion(m_moveMotion);
+
+	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
+	m_pBackAnimChara->SetType(CObject::TYPE::TYPE_NONE);
 
 	return S_OK;
 }
