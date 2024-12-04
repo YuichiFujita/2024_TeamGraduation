@@ -11,6 +11,7 @@
 
 #include "main.h"
 #include "object3D.h"
+#include "gamemanager.h"
 
 //==========================================================================
 // クラス定義
@@ -25,7 +26,7 @@ public:
 	~CShadow();
 
 	// 静的メンバ関数
-	static CShadow *Create(CObject* pObject, float fRadius = 50.0f);
+	static CShadow *Create(CObject* pObject, float fRadius = 50.0f, float fLandY = CGameManager::FIELD_LIMIT);
 
 	// オーバーライドされた関数
 	HRESULT Init() override;
@@ -41,6 +42,7 @@ private:
 
 	// メンバ変数
 	CObject *m_pObject;	// オブジェクトのポインタ
+	float m_fLandY;		// 表示Y座標
 	int m_nTexIdx;		// テクスチャのインデックス番号
 };
 

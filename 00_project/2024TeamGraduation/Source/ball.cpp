@@ -37,6 +37,7 @@ namespace
 	const float	RADIUS = 14.0f;					// ”¼Œa
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// ”»’è—p”¼Œa
 	const float	RADIUS_SHADOW = 24.0f;	// ‰e‚Ì”¼Œa
+	const float	ALPHA_SHADOW = 0.55f;	// ‰e‚Ì“§–¾“x
 	const float	REV_MOVE = 0.025f;		// ˆÚ“®—Ê‚Ì•â³ŒW”
 	const float	REV_INIMOVE = 0.29f;	// ‰‘¬‚Ì•â³ŒW”
 	const float	MAX_DIS = 100000.0f;	// ƒz[ƒ~ƒ“ƒO‚·‚éÅ‘å‹——£
@@ -275,7 +276,7 @@ HRESULT CBall::Init()
 	if (m_pShadow == nullptr) { return E_FAIL; }
 
 	// “§–¾“x‚ÌÝ’è
-	m_pShadow->SetAlpha(0.8f);
+	m_pShadow->SetAlpha(ALPHA_SHADOW);
 
 	return S_OK;
 }
@@ -297,7 +298,8 @@ void CBall::Uninit()
 //==========================================================================
 void CBall::Kill()
 {
-	m_pShadow->Kill();
+	// ‰e‚Ìíœ
+	SAFE_KILL(m_pShadow);
 
 	// ƒŠƒXƒg‚©‚çíœ
 	m_list.Delete(this);
@@ -783,7 +785,6 @@ void CBall::CalWorldMtx()
 
 		// ƒLƒƒƒbƒ`Žž‚Ìƒ}ƒgƒŠƒbƒNƒX‚©‚çˆÊ’u‚ð”½‰f
 		SetPosition(mtxParts.GetWorldPosition());
-
 
 		// ‰e‚Ì•`‰æ‚ð’âŽ~
 		m_pShadow->SetEnableDisp(false);

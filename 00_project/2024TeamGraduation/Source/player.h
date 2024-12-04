@@ -416,6 +416,7 @@ protected:
 	//=============================
 	// メンバ関数
 	//=============================
+	HRESULT CreateShadow();	// 影生成
 	void Debug();			// デバッグ処理
 	void UpdateFootLR();	// 足左右の更新
 	void CreateDressUp();	// ドレスアップ生成
@@ -551,7 +552,6 @@ private:
 	CDressup* m_pDressUp_Hair;		// ドレスアップ(髪)
 	CDressup* m_pDressUp_Accessory;	// ドレスアップ(アクセ)
 	CDressup* m_pDressUp_Face;		// ドレスアップ(顔)
-
 
 	//-----------------------------
 	// その他変数

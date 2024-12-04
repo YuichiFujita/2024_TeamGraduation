@@ -16,6 +16,11 @@
 #include "listmanager.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CShadow;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // 観客クラス
@@ -129,6 +134,12 @@ protected:
 	inline float GetLandY() const					{ return m_fLandY; }	// 着地Y座標取得
 	inline CGameManager::ETeamSide GetTeam() const	{ return m_team; }		// 応援チーム取得
 
+protected:
+	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT CreateShadow(CObject* pParent);	// 影生成
+
 private:
 
 	//=============================
@@ -155,6 +166,7 @@ private:
 	const CGameManager::ETeamSide m_team;	// 応援チーム
 	const EObjType m_type;		// オブジェクト種類
 	const float m_fJumpLevel;	// ジャンプ量
+	CShadow* m_pShadow;			// 影情報
 	MyLib::Vector3 m_posSpawn;	// 入場位置
 	MyLib::Vector3 m_posWatch;	// 観戦位置
 	MyLib::Vector3 m_posDespawn;		// 退場位置

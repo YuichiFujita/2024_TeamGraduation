@@ -115,6 +115,13 @@ HRESULT CAudienceLowPoly::Init()
 		return E_FAIL;
 	}
 
+	// ‰e‚Ì¶¬
+	if (FAILED(CreateShadow(this)))
+	{ // ¶¬‚É¸”s‚µ‚½ê‡
+
+		return E_FAIL;
+	}
+
 	// í—Ş‚Ìİ’è
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 

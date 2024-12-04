@@ -19,10 +19,12 @@
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CShadow::CShadow(int nPriority) : CObject3D(nPriority)
+CShadow::CShadow(int nPriority) : CObject3D(nPriority),
+	m_pObject	(nullptr),	// オブジェクトのポインタ
+	m_fLandY	(0.0f),		// 表示Y座標
+	m_nTexIdx	(0)			// テクスチャのインデックス番号
 {
-	m_pObject = nullptr;	// オブジェクトのポインタ
-	m_nTexIdx = 0;			// テクスチャのインデックス番号
+
 }
 
 //==========================================================================
@@ -36,7 +38,7 @@ CShadow::~CShadow()
 //==========================================================================
 // 生成処理(オーバーロード)
 //==========================================================================
-CShadow *CShadow::Create(CObject* pObject, float fRadius)
+CShadow *CShadow::Create(CObject* pObject, float fRadius, float fLandY)
 {
 	// 生成用のオブジェクト
 	CShadow *pShadow = nullptr;
@@ -57,6 +59,9 @@ CShadow *CShadow::Create(CObject* pObject, float fRadius)
 
 			// 大きさの設定
 			pShadow->SetSize(MyLib::Vector3(fRadius, 0.0f, fRadius));
+
+			// 表示Y座標の設定
+			pShadow->m_fLandY = fLandY;
 
 			// 初期化処理
 			pShadow->Init();
@@ -138,7 +143,11 @@ void CShadow::Draw()
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 0); 
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// Zテストを無効にする
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 
 	// 描画処理
 	CObject3D::Draw();
@@ -152,6 +161,10 @@ void CShadow::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// Zテストを有効にする
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
 //==========================================================================
@@ -163,7 +176,7 @@ void CShadow::SetPositionRelative()
 	MyLib::Vector3 pos = m_pObject->GetPosition();
 
 	// Y座標を地面に設定
-	pos.y = CGameManager::FIELD_LIMIT + 1.0f;
+	pos.y = m_fLandY + 1.0f;
 
 	// 位置設定
 	SetPosition(pos);

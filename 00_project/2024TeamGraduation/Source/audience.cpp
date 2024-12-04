@@ -6,6 +6,7 @@
 //==========================================================================
 #include "audience.h"
 #include "gameManager.h"
+#include "shadow.h"
 
 // 派生先
 #include "audienceAnim.h"
@@ -19,10 +20,12 @@ namespace
 {
 	const int MIN_JUMP = 6;		// 最低ジャンプ量
 	const int MAX_JUMP = 12;	// 最大ジャンプ量
-	const float GRAVITY_RATE = 0.5f;	// 重力にかける割合
-	const float JUMP_RATE	 = 0.5f;	// ジャンプ力にかける割合
-	const float TIME_SPAWN	 = 2.4f;	// 入場時間
-	const float TIME_DESPAWN = 3.2f;	// 退場時間
+	const float	RADIUS_SHADOW	= 44.0f;	// 影の半径
+	const float	RADIUS_ALPHA	= 0.08f;	// 影の透明度
+	const float GRAVITY_RATE	= 0.5f;		// 重力にかける割合
+	const float JUMP_RATE		= 0.5f;		// ジャンプ力にかける割合
+	const float TIME_SPAWN		= 2.4f;		// 入場時間
+	const float TIME_DESPAWN	= 3.2f;		// 退場時間
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
 	const float RATE_HIGH = 0.1f;	// ハイポリ比率
@@ -58,6 +61,7 @@ int CAudience::m_aNumWatchAll[2] = {};	// 観戦中の人数
 CAudience::CAudience(EObjType type, CGameManager::ETeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel		(UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
 	m_fLandY			(CGameManager::FIELD_LIMIT),	// 着地Y座標
+	m_pShadow			(nullptr),		// 影情報
 	m_team				(team),			// 応援チーム
 	m_type				(type),			// オブジェクト種類
 	m_nArea				(0),			// 観戦エリア
@@ -121,6 +125,21 @@ CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team)
 }
 
 //==========================================================================
+// 影の生成処理
+//==========================================================================
+HRESULT CAudience::CreateShadow(CObject* pParent)
+{
+	// 影の生成
+	m_pShadow = CShadow::Create(pParent, RADIUS_SHADOW, m_fLandY);
+	if (m_pShadow == nullptr) { return E_FAIL; }
+
+	// 透明度の設定
+	m_pShadow->SetAlpha(RADIUS_ALPHA);
+
+	return S_OK;
+}
+
+//==========================================================================
 // 初期化処理
 //==========================================================================
 HRESULT CAudience::Init()
@@ -152,6 +171,9 @@ void CAudience::Uninit()
 //==========================================================================
 void CAudience::Kill()
 {
+	// 影の削除
+	SAFE_KILL(m_pShadow);
+
 	// 自身の終了
 	Uninit();
 }

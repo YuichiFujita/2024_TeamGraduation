@@ -76,7 +76,15 @@ HRESULT CPlayerReferee::Init()
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
 	if (FAILED(hr))
-	{// 失敗していたら
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 影の生成
+	if (FAILED(CreateShadow()))
+	{ // 生成に失敗した場合
+
 		return E_FAIL;
 	}
 
