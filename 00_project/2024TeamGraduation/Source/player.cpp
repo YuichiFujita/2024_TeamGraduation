@@ -449,6 +449,9 @@ void CPlayer::Uninit()
 	// スぺシャルエフェクト
 	SAFE_DELETE(m_pSpecialEffect);
 
+	// スペシャルキャッチ状態
+	SAFE_UNINIT(m_pCatchSpecial);
+
 	// ドレスアップ
 	DeleteDressUp();
 
@@ -1350,7 +1353,15 @@ void CPlayer::CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& type
 	CCatchSpecial::EState state = CCatchSpecial::Check(this, bJust, typeSpecial);
 
 	// 生成
-	m_pCatchSpecial = CCatchSpecial::Create(this, state);
+	if (m_pCatchSpecial == nullptr)
+	{// NULLだったら
+		m_pCatchSpecial = CCatchSpecial::Create(this, state);
+	}
+	else
+	{
+		m_pCatchSpecial->SetState(state);
+		m_pCatchSpecial->SetPlayer(this);
+	}
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_SPECIAL);
@@ -1804,12 +1815,10 @@ void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, 
 	// 移動量更新
 	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
 	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
-	move.x *= (fDeltaRate * fSlowRate);
-	move.z *= (fDeltaRate * fSlowRate);
 
 	// 位置更新
-	pos.x += move.x;
-	pos.z += move.z;
+	pos.x += move.x * (fDeltaRate * fSlowRate);
+	pos.z += move.z * (fDeltaRate * fSlowRate);
 	SetPosition(pos);
 	SetMove(move);
 
@@ -1886,7 +1895,7 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
 
-	if (pMotion->IsGetCancelable())
+	if (pMotion->IsFinish())
 	{// キャンセル可能
 
 		m_sKnockback.posStart = pos;
@@ -1907,9 +1916,14 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
-	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr) return;
+	MyAssert::CustomAssert(pMotion != nullptr,"モーションisどこ？");
+
+	if (pMotion->GetType() != MOTION_WALK)
+	{
+		// モーションのキャンセルで管理
+		SetMotion(MOTION_WALK);
+	}
 
 	if (m_fStateTime >= StateTime::COURT_RETURN)
 	{// キャンセル可能
@@ -2391,10 +2405,14 @@ void CPlayer::Debug()
 		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
 		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
-		ImGui::Text("StateTime: [%.2f]", m_fStateTime);
-		ImGui::Text("bDash: [%d]", m_bDash);
-		ImGui::Text("bBrake: [%d]", m_bBrake);
-		ImGui::Text("InputAngleCtr: [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
+		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
+		ImGui::Text("bDash : [%d]", m_bDash);
+		ImGui::Text("bBrake : [%d]", m_bBrake);
+		ImGui::Text("InputAngleCtr : [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
+
+		ImGui::Text("typeBase : [%s]", magic_enum::enum_name(GetBaseType()));
+		ImGui::Text("typeTeam : [%s]", magic_enum::enum_name(m_typeTeam));
+		ImGui::Text("typeArea : [%s]", magic_enum::enum_name(m_typeArea));
 
 		if (angle != nullptr)
 		{
@@ -2402,7 +2420,7 @@ void CPlayer::Debug()
 		}
 		else
 		{
-			ImGui::Text("InputAngle: [error]");
+			ImGui::Text("InputAngle : [error]");
 		}
 
 #if 0
@@ -2456,6 +2474,16 @@ void CPlayer::Debug()
 		DeadSetting(result,pBall);
 		delete result;
 		pBall->Kill();
+	}
+
+	if (ImGui::Button("CatchSpecial"))
+	{// キャッチ時処理(スペシャル)
+		CatchSettingSpecial(false, CBall::ESpecial::SPECIAL_KAMEHAMEHA);
+	}
+
+	if (m_pCatchSpecial != nullptr)
+	{
+		m_pCatchSpecial->Debug();
 	}
 
 	//-----------------------------

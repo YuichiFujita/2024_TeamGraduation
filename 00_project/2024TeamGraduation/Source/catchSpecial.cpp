@@ -20,7 +20,7 @@ namespace Kamehameha
 	const float MOMENTUM_TIME[] =
 	{
 		0.5f,		// なし
-		1.0f,		// ズザザー
+		2.0f,		// ズザザー
 		2.0f,		// 耐える
 		1.0f,		// 結果(成功)(失敗)
 		0.0f,
@@ -56,7 +56,16 @@ CCatchSpecial::MOMENTUM_FUNC CCatchSpecial::m_MomentumFunc[] =	// 勢い状態関数
 	&CCatchSpecial::MomentumStateEnd,		// 終了
 };
 
-CCatchSpecial::START_FUNC CCatchSpecial::m_StartFunc[] =	// 勢い状態開始関数
+CCatchSpecial::MOMENTUM_START_FUNC CCatchSpecial::m_StartFunc[] =	// 勢い状態開始関数
+{
+	&CCatchSpecial::StateStartNone,			// なし
+	nullptr,								// ズザザ
+	nullptr,								// 耐える
+	nullptr,								// 結果
+	nullptr,								// 終了
+};
+
+CCatchSpecial::MOMENTUM_START_FUNC CCatchSpecial::m_MomentumStartFunc[] =	// 勢い状態開始関数
 {
 	nullptr,								// なし
 	&CCatchSpecial::MomentumStartSlide,		// ズザザ
@@ -135,6 +144,8 @@ HRESULT CCatchSpecial::Init()
 void CCatchSpecial::Uninit()
 {
 	m_pPlayer = nullptr;			// プレイヤー
+
+	delete this;
 }
 
 //==========================================================================
@@ -161,13 +172,7 @@ void CCatchSpecial::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 void CCatchSpecial::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 終了
-
-	// 行動可能に
-	m_pPlayer->SetEnableMove(true);
-	m_pPlayer->SetEnableAction(true);
-	m_pPlayer->SetCatchSpecial(nullptr);
-	Uninit();
+	m_fStateTime = 0.0f;
 }
 
 //==========================================================================
@@ -231,6 +236,12 @@ void CCatchSpecial::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+
+	// 状態開始
+	if (m_StartFunc[m_state] != nullptr)
+	{
+		(this->*(m_StartFunc[m_state]))();
+	}
 }
 
 //==========================================================================
@@ -256,7 +267,7 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ズザザでコート奥まで行く
-	MyLib::Vector3 pos = MyLib::Vector3();
+	MyLib::Vector3 pos = m_pPlayer->GetPosition();
 	float fBaseTime = Kamehameha::MOMENTUM_TIME[m_momentumState];
 	CPlayer::SKnockbackInfo knockback = m_pPlayer->GetKnockBackInfo();
 
@@ -265,19 +276,29 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 	float fAngle = atan2f(move.x, move.z) + D3DX_PI;		//目標の向き
 	UtilFunc::Transformation::RotNormalize(fAngle);
 
-	move = m_pPlayer->GetMove();
-	move.x = sinf(fAngle) * 1.0f;
-	move.z = cosf(fAngle) * 1.0f;
+	//move = m_pPlayer->GetMove();
+	move.x = sinf(fAngle) * 20.0f * fDeltaRate * fSlowRate;
+	move.z = cosf(fAngle) * 20.0f * fDeltaRate * fSlowRate;
+	move.y = 0.0f;
 
 	pos += move;
 
-	m_pPlayer->SetPosition(pos);
+	//if (CGameManager::GetInstance()->SetPosLimit(pos))
+	//{
+	//	int i = 0;
+	//}
 
-	if (m_fMomentumStateTime > fBaseTime)
-	{// 終了
+	if (m_fMomentumStateTime > fBaseTime ||
+		CGameManager::GetInstance()->SetPosLimit(pos))
+	//if (m_fMomentumStateTime > fBaseTime)
+	{// 終了or画面端判定
 
 		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
 	}
+
+	// 位置設定
+	m_pPlayer->SetPosition(pos);
+	m_pPlayer->SetPosition(pos);
 }
 
 //==========================================================================
@@ -320,11 +341,23 @@ void CCatchSpecial::SetMomentumState(EMomentumState state)
 	m_momentumState = state;
 	m_fMomentumStateTime = 0.0f;
 
-	// 勢い更新
-	if (m_StartFunc[m_momentumState] != nullptr)
+	// 勢い開始
+	if (m_MomentumStartFunc[m_momentumState] != nullptr)
 	{
-		(this->*(m_StartFunc[m_momentumState]))();
+		(this->*(m_MomentumStartFunc[m_momentumState]))();
 	}
+}
+
+//==========================================================================
+// なし開始
+//==========================================================================
+void CCatchSpecial::StateStartNone()
+{
+	// 行動可能に
+	m_pPlayer->SetEnableMove(true);
+	m_pPlayer->SetEnableAction(true);
+	m_pPlayer->SetCatchSpecial(nullptr);
+	Uninit();
 }
 
 //==========================================================================
@@ -341,14 +374,14 @@ void CCatchSpecial::MomentumStartSlide()
 
 	// コート端で判定取ってその際を設定
 	CGameManager* pGmMgr = CGameManager::GetInstance();
-	
-	while(!pGmMgr->SetPosLimit(pos, m_pPlayer->GetRadius()))
+
+	while (!pGmMgr->SetPosLimit(pos, m_pPlayer->GetRadius()))
 	{// 端に当たっていなかったら
-	
+
 		pos.x += sinf(rot.y) * 10.0f;
 		pos.z += cosf(rot.y) * 10.0f;
 	}
-	
+
 	// 終了位置
 	knockback.posEnd = pos;
 
@@ -381,8 +414,6 @@ void CCatchSpecial::Success()
 void CCatchSpecial::Failure()
 {
 	//スペシャル時ライン越え判定
-	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-
 	if (m_state != CPlayer::EState::STATE_OUTCOURT &&
 		m_state != CPlayer::EState::STATE_OUTCOURT_RETURN)
 	{
@@ -432,4 +463,26 @@ CCatchSpecial::EState CCatchSpecial::Check(CPlayer* pPlayer, bool bJust, CBall::
 	}
 
 	return catchState;
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CCatchSpecial::Debug()
+{
+#if _DEBUG
+	//-----------------------------
+	// 情報表示
+	//-----------------------------
+	if (ImGui::TreeNode("CatchSpecial Info"))
+	{
+		ImGui::Text("m_state : %s", magic_enum::enum_name(m_state));
+		ImGui::Text("m_fStateTime : [Y : %.2f]", m_fStateTime);
+		ImGui::Text("m_momentumState : %s", magic_enum::enum_name(m_momentumState));
+		ImGui::Text("m_fMomentumStateTime : [Y : %.2f]", m_fMomentumStateTime);
+		
+		ImGui::TreePop();
+	}
+
+#endif
 }
