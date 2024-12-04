@@ -138,6 +138,9 @@
     <Filter Include="player\playerManager">
       <UniqueIdentifier>{cc393f57-f701-4674-89b3-3bc4ec4bbe0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\buzz">
+      <UniqueIdentifier>{1b7c632a-77de-4d2c-854e-3abab307d05b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -680,6 +683,9 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp">
       <Filter>player\playerPosAdj</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerSpawnManager.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
     <ClCompile Include="Source\playerReferee.cpp">
       <Filter>player</Filter>
     </ClCompile>
@@ -716,8 +722,11 @@
     <ClCompile Include="Source\playerManager_result.cpp">
       <Filter>player\playerManager</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerSpawnManager.cpp">
-      <Filter>player\playerManager</Filter>
+    <ClCompile Include="Source\schoolnurse.cpp">
+      <Filter>ingame\buzz</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\stretcher.cpp">
+      <Filter>ingame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1273,6 +1282,9 @@
     <ClInclude Include="Source\playerPosAdj_none.h">
       <Filter>player\playerPosAdj</Filter>
     </ClInclude>
+    <ClInclude Include="Source\playerSpawnManager.h">
+      <Filter>player</Filter>
+    </ClInclude>
     <ClInclude Include="Source\playerReferee.h">
       <Filter>player</Filter>
     </ClInclude>
@@ -1309,8 +1321,11 @@
     <ClInclude Include="Source\playerManager_result.h">
       <Filter>player\playerManager</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerSpawnManager.h">
-      <Filter>player\playerManager</Filter>
+    <ClInclude Include="Source\schoolnurse.h">
+      <Filter>ingame\buzz</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\stretcher.h">
+      <Filter>ingame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

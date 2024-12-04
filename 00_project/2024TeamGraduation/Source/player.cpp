@@ -31,6 +31,7 @@
 #include "charmManager.h"
 #include "playerMarker.h"
 #include "catchSpecial.h"
+#include "stretcher.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -151,6 +152,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateDamage,				// ダメージ
 	&CPlayer::StateDead,				// 死亡
 	&CPlayer::StateDeadAfter,			// 死亡後
+	&CPlayer::StateDeadCarry,			// 死後運搬
 	&CPlayer::StateDodge,				// 回避
 	&CPlayer::StateCatch_Normal,		// 通常キャッチ
 	&CPlayer::StateCatch_Just,			// ジャストキャッチ
@@ -166,6 +168,9 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 // 静的メンバ変数
 //==========================================================================
 CListManager<CPlayer> CPlayer::m_List = {};	// リスト
+#if _DEBUG	// デバッグ用ID
+int CPlayer::m_nDebugID = 0;	// デバッグ用ID
+#endif
 
 //==========================================================================
 // コンストラクタ
@@ -226,6 +231,12 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
 	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
+
+
+#if _DEBUG	// デバッグ用ID
+	m_nThisDebugID = m_nDebugID;
+	m_nDebugID++;
+#endif // _DEBUG
 
 	// ベースタイプを初期化
 	InitBase(typeBase);
@@ -567,12 +578,17 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 #if _DEBUG	// デバッグ処理
 
-	std::string treename = "Player" + std::to_string(m_nMyPlayerIdx);	// ツリー名
-	if (ImGui::TreeNode(treename.c_str()))
+	// Xの向き
+	ImGui::PushID(m_nThisDebugID); // ウィジェットごとに異なるIDを割り当てる
 	{
-		Debug();
-		ImGui::TreePop();
+		std::string treename = "Player" + std::to_string(m_nMyPlayerIdx);	// ツリー名
+		if (ImGui::TreeNode(treename.c_str()))
+		{
+			Debug();
+			ImGui::TreePop();
+		}
 	}
+	ImGui::PopID();
 
 #endif
 }
@@ -1774,9 +1790,30 @@ void CPlayer::StateDead(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//死亡状態をキャンセル不能にする
+	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
-	//m_sMotionFrag.bDead = true;
+
+	// モーションの終了で管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsFinish())
+	{// 死亡後モーションが終了
+
+		// 死亡運搬
+		SetState(EState::STATE_DEAD_CARRY);
+
+		// 担架生成
+		CStretcher::Create(this);
+	}
+}
+
+//==========================================================================
+// 死亡運搬
+//==========================================================================
+void CPlayer::StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
 }
 
 //==========================================================================
