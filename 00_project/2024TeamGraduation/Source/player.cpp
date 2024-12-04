@@ -1476,7 +1476,7 @@ void CPlayer::DamageSetting(CBall* pBall)
 	// プレイヤー方向
 	//--------------------------------
 	CPlayer::CRAB_DIRECTION hitDir = CPlayer::CRAB_DIRECTION::CRAB_NONE;
-	float fRotY = D3DX_PI * 0.0f + GetPosition().AngleXZ(pBall->GetPosition()) - rotDest;
+	float fRotY = D3DX_PI * 1.0f + GetPosition().AngleXZ(pBall->GetPosition()) + rotDest;
 	UtilFunc::Transformation::RotNormalize(fRotY);
 
 	float fRangeZero = Crab::RANGE_MIN_MAX[0];

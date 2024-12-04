@@ -59,6 +59,18 @@ CPlayerStatus::~CPlayerStatus()
 void CPlayerStatus::Init()
 {
 	// ‘Ì—ÍƒQ[ƒW¶¬
+	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
+	{// “à–ì‚Ì‚Ý¶¬
+		CreateLifeGuge();
+	}
+}
+
+//==========================================================================
+// ‘Ì—ÍƒQ[ƒW¶¬
+//==========================================================================
+void CPlayerStatus::CreateLifeGuge()
+{
+	// ‘Ì—ÍƒQ[ƒW¶¬
 	m_pLifeGauge = CObjectCircleGauge2D::Create(LifeGauge::DIVISION, LifeGauge::SIZE);
 	m_pLifeGauge->SetType(CObject::TYPE::TYPE_UI);
 
