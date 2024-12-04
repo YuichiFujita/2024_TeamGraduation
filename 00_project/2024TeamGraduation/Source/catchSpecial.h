@@ -41,11 +41,11 @@ public:
 	// 状態内状態定義(勢い)
 	enum EMomentumState
 	{
-		MOMENTUM_NONE = 0,			// なし
+		MOMENTUM_NONE = 0,		// なし
 		MOMENTUM_SLIDE,			// ズザザー
 		MOMENTUM_BRAKE,			// 耐える
-		MOMENTUM_RESULT,			// 結果(成功)(失敗)
-		MOMENTUM_END,				// 終了
+		MOMENTUM_RESULT,		// 結果(成功)(失敗)
+		MOMENTUM_END,			// 終了
 		MOMENTUM_MAX
 	};
 
@@ -131,6 +131,7 @@ private:
 	// 勢い状態開始関数
 	//-----------------------------
 	void MomentumStartSlide();		// ズザザー
+	void MomentumStartResult();		// 結果
 
 	void Success();		// 成功時共通
 	void Failure();		// 失敗時共通

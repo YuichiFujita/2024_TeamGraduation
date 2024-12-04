@@ -1365,9 +1365,6 @@ void CPlayer::CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& type
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_SPECIAL);
-
-	// モーション設定
-	SetMotion(EMotion::MOTION_CATCHSPECIAL_SUCC);
 }
 
 //==========================================================================
