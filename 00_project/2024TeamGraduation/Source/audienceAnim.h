@@ -29,22 +29,27 @@ class CAudienceAnim : public CAudience
 public:
 
 	//=============================
-	// 定数
-	//=============================
-	static constexpr float NEAR_LINE = 1200.0f;	// 手前の生成位置上限
-	static constexpr float FAR_LINE = 1750.0f; 	// 奥の生成位置上限
-
-	//=============================
 	// 列挙型定義
 	//=============================
 	// モーション列挙
 	enum EMotion
 	{
-		MOTION_IDOL = 0,	// 待機モーション
-		MOTION_JUMP,		// ジャンプモーション
-		MOTION_MOVE_L,		// 左移動モーション
+		MOTION_IDOL_U = 0,	// 上待機モーション
+		MOTION_IDOL_D,		// 下待機モーション
+		MOTION_JUMP_U,		// 上ジャンプモーション
+		MOTION_JUMP_D,		// 下ジャンプモーション
+		MOTION_MOVE_L,		// 左移動モーションz 
 		MOTION_MOVE_R,		// 右移動モーション
 		MOTION_MAX			// この列挙型の総数
+	};
+
+	// 観戦エリア列挙
+	enum EArea
+	{
+		AREA_FAR = 0,	// 奥
+		AREA_UP,		// 上
+		AREA_NEAR,		// 手前
+		AREA_MAX		// この列挙型の総数
 	};
 
 	//=============================
@@ -86,10 +91,28 @@ protected:
 private:
 
 	//=============================
+	// 関数リスト
+	//=============================
+	// 観戦位置計算リスト
+	typedef void(CAudienceAnim::*WATCH_POS_FUNC)();
+	static WATCH_POS_FUNC m_CalcWatchPositionFunc[];
+
+	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT CreateAnimCharacter(const MyLib::Vector3& rPos);	// キャラクター生成
+	HRESULT CreatePenLight();		// ペンライト生成
+	void CalcWatchPositionFar();	// 観戦位置計算 (奥)
+	void CalcWatchPositionUp();		// 観戦位置計算 (上)
+	void CalcWatchPositionNear();	// 観戦位置計算 (手前)
+
+	//=============================
 	// メンバ変数
 	//=============================
 	CObjectCharaAnim* m_pAnimChara;	// キャラクターアニメーション情報
 	CObjectX* m_pLight;		// ペンライト情報
+	EMotion m_idolMotion;	// 待機モーション
+	EMotion m_jumpMotion;	// ジャンプモーション
 	EMotion m_moveMotion;	// 移動モーション
 };
 

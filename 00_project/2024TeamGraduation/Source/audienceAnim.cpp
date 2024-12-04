@@ -19,17 +19,52 @@ namespace
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
 
-	const int LEFT_LINE[]  = { (int)CAudienceAnim::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };		// チームサイドごとの左ライン
-	const int RIGHT_LINE[] = { (int)CGameManager::CENTER_LINE, (int)CAudienceAnim::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
+	namespace Far
+	{
+		const int LEFT_LINE[]	= { (int)CAudience::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };	// チームサイドごとの左ライン
+		const int RIGHT_LINE[]	= { (int)CGameManager::CENTER_LINE, (int)CAudience::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
+		const int NEAR_LINE		= 1360;	// 手前の生成位置上限
+		const int FAR_LINE		= 1700;	// 奥の生成位置上限
+	}
+
+	namespace Up
+	{
+		const int LEFT_LINE[]	= { (int)CAudience::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };	// チームサイドごとの左ライン
+		const int RIGHT_LINE[]	= { (int)CGameManager::CENTER_LINE, (int)CAudience::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
+		const int NEAR_LINE		= 1700;		// 手前の生成位置上限
+		const int FAR_LINE		= 1900;		// 奥の生成位置上限
+		const float LANDY		= 540.0f;	// 着地Y座標
+	}
+
+	namespace Down
+	{
+		const int LEFT_LINE[]	= { (int)CAudience::MAX_LEFT_LINE, (int)CGameManager::CENTER_LINE };	// チームサイドごとの左ライン
+		const int RIGHT_LINE[]	= { (int)CGameManager::CENTER_LINE, (int)CAudience::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
+		const int NEAR_LINE		= -1700;	// 手前の生成位置上限
+		const int FAR_LINE		= -1360;	// 奥の生成位置上限
+	}
 }
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+// 観戦位置計算リスト
+CAudienceAnim::WATCH_POS_FUNC CAudienceAnim::m_CalcWatchPositionFunc[] =
+{
+	&CAudienceAnim::CalcWatchPositionFar,	// 奥観戦位置
+	&CAudienceAnim::CalcWatchPositionUp,	// 上観戦位置
+	&CAudienceAnim::CalcWatchPositionNear,	// 手前観戦位置
+};
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pAnimChara	(nullptr),		// キャラクターアニメーション情報
-	m_pLight		(nullptr),		// ペンライト情報
-	m_moveMotion	(MOTION_IDOL)	// 移動モーション
+	m_pAnimChara	(nullptr),			// キャラクターアニメーション情報
+	m_pLight		(nullptr),			// ペンライト情報
+	m_idolMotion	(MOTION_IDOL_U),	// 待機モーション
+	m_jumpMotion	(MOTION_IDOL_U),	// ジャンプモーション
+	m_moveMotion	(MOTION_IDOL_U)		// 移動モーション
 {
 }
 
@@ -53,32 +88,11 @@ HRESULT CAudienceAnim::Init()
 		return E_FAIL;
 	}
 
-	// ペンライトの生成
-	m_pLight = CObjectX::Create(LIGHT_PATH, VEC3_ZERO);
-	if (m_pLight == nullptr)
-	{ // 生成に失敗した場合
+	// 観戦エリアの設定
+	SetArea((int)(rand() % EArea::AREA_MAX));
 
-		return E_FAIL;
-	}
-
-	// 種類を設定
-	m_pLight->SetType(CObject::TYPE::TYPE_OBJECTX);
-
-	// 自動描画フラグをオフにする
-	m_pLight->SetEnableDisp(false);
-
-	// TODO：スケール調整後で消す
-#if 1
-	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
-#endif
-
-	// ランダムに観戦位置を設定
-	int nIdxTeam = GetTeam();
-	MyLib::Vector3 posWatch;
-	posWatch.x = (float)UtilFunc::Transformation::Random(LEFT_LINE[nIdxTeam], RIGHT_LINE[nIdxTeam]);
-	posWatch.y = CGameManager::FIELD_LIMIT;
-	posWatch.z = (float)UtilFunc::Transformation::Random((int)NEAR_LINE, (int)FAR_LINE);
-	SetWatchPosition(posWatch);
+	// 観戦位置の設定
+	(this->*(m_CalcWatchPositionFunc[GetArea()]))();
 
 	// ランダムに生成方向を設定
 	float fTurn = 0.0f;	// 方向係数
@@ -95,27 +109,29 @@ HRESULT CAudienceAnim::Init()
 		fTurn = -1.0f;
 	}
 
-	// 生成位置を設定
-	MyLib::Vector3 posSpawn = posWatch;
+	// 生成位置の設定
+	MyLib::Vector3 posSpawn = GetWatchPosition();
 	posSpawn.x = CAudience::SPAWN_SIDE_LINE * fTurn;
 	SetSpawnPosition(posSpawn);
 
-	// オブジェクトキャラクターアニメーションの生成
-	m_pAnimChara = CObjectCharaAnim::Create(posSpawn);
-	if (m_pAnimChara == nullptr)
+	// 退場位置の設定
+	MyLib::Vector3 posDespawn = posSpawn;
+	posDespawn.x = -posSpawn.x;
+	SetDespawnPosition(posDespawn);
+
+	// アニメーションキャラクターの生成
+	if (FAILED(CreateAnimCharacter(posSpawn)))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
 
-	// キャラクター情報の割当
-	m_pAnimChara->BindCharaData(SETUP_TXT);
+	// ペンライトの生成
+	if (FAILED(CreatePenLight()))
+	{ // 生成に失敗した場合
 
-	// モーションを設定
-	m_pAnimChara->SetMotion(m_moveMotion);
-
-	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
-	m_pAnimChara->SetType(CObject::TYPE::TYPE_NONE);
+		return E_FAIL;
+	}
 
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
@@ -216,7 +232,7 @@ int CAudienceAnim::UpdateNormal(const float fDeltaTime, const float fDeltaRate, 
 	m_pLight->SetEnableDisp(false);
 
 	// 待機モーションを返す
-	return MOTION_IDOL;
+	return m_idolMotion;
 }
 
 //==========================================================================
@@ -231,7 +247,7 @@ int CAudienceAnim::UpdateJump(const float fDeltaTime, const float fDeltaRate, co
 	m_pLight->SetEnableDisp(false);
 
 	// ジャンプモーションを返す
-	return MOTION_JUMP;
+	return m_jumpMotion;
 }
 
 //==========================================================================
@@ -249,7 +265,7 @@ int CAudienceAnim::UpdateSpecial(const float fDeltaTime, const float fDeltaRate,
 	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
 
 	// ジャンプモーションを返す
-	return MOTION_JUMP;
+	return m_jumpMotion;
 }
 
 //==========================================================================
@@ -286,4 +302,113 @@ void CAudienceAnim::SetMotion(const int nMotion)
 			m_pAnimChara->SetMotion(nMotion);
 		}
 	}
+}
+
+//==========================================================================
+// キャラクター生成
+//==========================================================================
+HRESULT CAudienceAnim::CreateAnimCharacter(const MyLib::Vector3& rPos)
+{
+	// オブジェクトキャラクターアニメーションの生成
+	m_pAnimChara = CObjectCharaAnim::Create(rPos);
+	if (m_pAnimChara == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// キャラクター情報の割当
+	m_pAnimChara->BindCharaData(SETUP_TXT);
+
+	// モーションの設定
+	m_pAnimChara->SetMotion(m_moveMotion);
+
+	// アニメーション3Dの自動更新/自動描画/自動破棄をしない種類にする
+	m_pAnimChara->SetType(CObject::TYPE::TYPE_NONE);
+
+	return S_OK;
+}
+
+//==========================================================================
+// ペンライト生成
+//==========================================================================
+HRESULT CAudienceAnim::CreatePenLight()
+{
+	// ペンライトの生成
+	m_pLight = CObjectX::Create(LIGHT_PATH, VEC3_ZERO);
+	if (m_pLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 種類を設定
+	m_pLight->SetType(CObject::TYPE::TYPE_OBJECTX);
+
+	// 自動描画フラグをオフにする
+	m_pLight->SetEnableDisp(false);
+
+	// TODO：スケール調整後で消す
+#if 1
+	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
+#endif
+
+	return S_OK;
+}
+
+//==========================================================================
+// 観戦位置の計算処理 (奥)
+//==========================================================================
+void CAudienceAnim::CalcWatchPositionFar()
+{
+	// ランダムに観戦位置を設定
+	int nIdxTeam = GetTeam();
+	MyLib::Vector3 posWatch;
+	posWatch.x = (float)UtilFunc::Transformation::Random(Far::LEFT_LINE[nIdxTeam], Far::RIGHT_LINE[nIdxTeam]);
+	posWatch.y = GetLandY();
+	posWatch.z = (float)UtilFunc::Transformation::Random(Far::NEAR_LINE, Far::FAR_LINE);
+	SetWatchPosition(posWatch);
+
+	// モーションの設定
+	m_idolMotion = MOTION_IDOL_D;	// 下待機モーション
+	m_jumpMotion = MOTION_JUMP_D;	// 下ジャンプモーション
+}
+
+//==========================================================================
+// 観戦位置の計算処理 (上)
+//==========================================================================
+void CAudienceAnim::CalcWatchPositionUp()
+{
+	// 着地Y座標の設定
+	SetLandY(Up::LANDY);
+
+	// ランダムに観戦位置を設定
+	int nIdxTeam = GetTeam();
+	MyLib::Vector3 posWatch;
+	posWatch.x = (float)UtilFunc::Transformation::Random(Up::LEFT_LINE[nIdxTeam], Up::RIGHT_LINE[nIdxTeam]);
+	posWatch.y = GetLandY();
+	posWatch.z = (float)UtilFunc::Transformation::Random(Up::NEAR_LINE, Up::FAR_LINE);
+	SetWatchPosition(posWatch);
+
+	// モーションの設定
+	m_idolMotion = MOTION_IDOL_D;	// 下待機モーション
+	m_jumpMotion = MOTION_JUMP_D;	// 下ジャンプモーション
+}
+
+//==========================================================================
+// 観戦位置の計算処理 (手前)
+//==========================================================================
+void CAudienceAnim::CalcWatchPositionNear()
+{
+	// ランダムに観戦位置を設定
+	int nIdxTeam = GetTeam();
+	MyLib::Vector3 posWatch;
+	posWatch.x = (float)UtilFunc::Transformation::Random(Down::LEFT_LINE[nIdxTeam], Down::RIGHT_LINE[nIdxTeam]);
+	posWatch.y = GetLandY();
+	posWatch.z = (float)UtilFunc::Transformation::Random(Down::NEAR_LINE, Down::FAR_LINE);
+	SetWatchPosition(posWatch);
+
+	// モーションの設定
+	m_idolMotion = MOTION_IDOL_U;	// 上待機モーション
+	m_jumpMotion = MOTION_JUMP_U;	// 上ジャンプモーション
 }
