@@ -86,7 +86,7 @@ CPlayerManager* CPlayerManager::Create(CScene::MODE mode)
 		break;
 
 	default:
-		m_pInstance = DEBUG_NEW CPlayerManager;
+		assert(false);
 		break;
 	}
 
@@ -318,15 +318,6 @@ HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info)
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
-}
-
-//==========================================================================
-// 終了処理
-//==========================================================================
-void CPlayerManager::Uninit()
-{
-	// 自身のインスタンスの破棄
-	SAFE_DELETE(m_pInstance);
 }
 
 //==========================================================================
