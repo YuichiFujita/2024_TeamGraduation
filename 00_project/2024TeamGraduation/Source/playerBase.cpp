@@ -47,21 +47,23 @@ CPlayerBase::~CPlayerBase()
 //==========================================================================
 CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 {
-	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
-	CBall::EAttack atkBall	= pBall->GetTypeAtk();				// ボール攻撃種類
-	CBall::EState stateBall = pBall->GetState();				// ボール状態
-	MyLib::Vector3 posB = pBall->GetPosition();					// ボール位置
-	MyLib::HitResult_Character hitresult = {};					// 衝突情報
-	CPlayerStatus* pStatus = m_pPlayer->GetStatus();			// ステータス情報
-	CPlayer::EState state = m_pPlayer->GetState();				// プレイヤー状態
+	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();				// ボールチームサイド
+	CBall::EAttack atkBall	= pBall->GetTypeAtk();							// ボール攻撃種類
+	CBall::EState stateBall = pBall->GetState();							// ボール状態
+	MyLib::Vector3 posB = pBall->GetPosition();								// ボール位置
+	MyLib::HitResult_Character hitresult = {};								// 衝突情報
+	CPlayerStatus* pStatus = m_pPlayer->GetStatus();						// ステータス情報
+	CPlayer::EState state = m_pPlayer->GetState();							// プレイヤー状態
+	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// プレイヤー行動状態
 
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
 	hitInfo.eHit = CPlayer::HIT_NONE;
 	hitInfo.bHit = false;
 
-	if (m_pPlayer->GetMotionFrag().bDead)
-	{ // 死亡状態ならすり抜け
+	if (m_pPlayer->GetMotionFrag().bDead ||
+		action == CPlayer::EAction::ACTION_DODGE)
+	{ // 死亡状態or回避行動中ならすり抜け
 
 		return hitInfo;
 	}

@@ -31,6 +31,7 @@
 #include "charmManager.h"
 #include "playerMarker.h"
 #include "catchSpecial.h"
+#include "stretcher.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -89,8 +90,11 @@ namespace
 		}
 	};
 
-	const float DODGE_RADIUS = 300.0f;			// 回避範囲
-	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
+	const float SHADOW_RADIUS = 50.0f;		// 影の半径
+	const float	SHADOW_MIN_ALPHA = 0.18f;	// 影の透明度
+	const float	SHADOW_MAX_ALPHA = 0.48f;	// 影の透明度
+	const float DODGE_RADIUS = 300.0f;		// 回避範囲
+	const float JUST_VIEW = 90.0f;			// ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
 
 namespace Knockback
@@ -151,6 +155,7 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 	&CPlayer::StateDamage,				// ダメージ
 	&CPlayer::StateDead,				// 死亡
 	&CPlayer::StateDeadAfter,			// 死亡後
+	&CPlayer::StateDeadCarry,			// 死後運搬
 	&CPlayer::StateDodge,				// 回避
 	&CPlayer::StateCatch_Normal,		// 通常キャッチ
 	&CPlayer::StateCatch_Just,			// ジャストキャッチ
@@ -166,6 +171,9 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 // 静的メンバ変数
 //==========================================================================
 CListManager<CPlayer> CPlayer::m_List = {};	// リスト
+#if _DEBUG	// デバッグ用ID
+int CPlayer::m_nDebugID = 0;	// デバッグ用ID
+#endif
 
 //==========================================================================
 // コンストラクタ
@@ -175,9 +183,9 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_typeArea	(typeArea)	// ポジション
 {
 	// 値のクリア
-	m_state = EState::STATE_NONE;										// 状態
-	m_Oldstate = EState::STATE_NONE;									// 前回の状態
-	m_fStateTime = 0.0f;												// 状態時間
+	m_state = EState::STATE_NONE;		// 状態
+	m_Oldstate = EState::STATE_NONE;	// 前回の状態
+	m_fStateTime = 0.0f;				// 状態時間
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
@@ -226,6 +234,12 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
 	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
+
+
+#if _DEBUG	// デバッグ用ID
+	m_nThisDebugID = m_nDebugID;
+	m_nDebugID++;
+#endif // _DEBUG
 
 	// ベースタイプを初期化
 	InitBase(typeBase);
@@ -359,7 +373,15 @@ HRESULT CPlayer::Init()
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
-	{// 失敗していたら
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 影の生成
+	if (FAILED(CreateShadow()))
+	{ // 生成に失敗した場合
+
 		return E_FAIL;
 	}
 
@@ -475,12 +497,8 @@ void CPlayer::Uninit()
 //==========================================================================
 void CPlayer::Kill()
 {
-	// 影を消す
-	if (m_pShadow != nullptr)
-	{
-		m_pShadow->Uninit();
-		m_pShadow = nullptr;
-	}
+	// 影の削除
+	SAFE_KILL(m_pShadow);
 
 	// アクションパターン
 	if (m_pActionPattern != nullptr)
@@ -556,23 +574,22 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
-	// 影の位置更新
-	if (m_pShadow != nullptr)
-	{
-		m_pShadow->SetPosition(MyLib::Vector3(pos.x, m_pShadow->GetPosition().y, pos.z));
-	}
-
 	// 非モテまとめ
 	CCharmManager::GetInstance()->UnCharm(this, fDeltaTime, fDeltaRate, fSlowRate);
 
 #if _DEBUG	// デバッグ処理
 
-	std::string treename = "Player" + std::to_string(m_nMyPlayerIdx);	// ツリー名
-	if (ImGui::TreeNode(treename.c_str()))
+	// Xの向き
+	ImGui::PushID(m_nThisDebugID); // ウィジェットごとに異なるIDを割り当てる
 	{
-		Debug();
-		ImGui::TreePop();
+		std::string treename = "Player" + std::to_string(m_nMyPlayerIdx);	// ツリー名
+		if (ImGui::TreeNode(treename.c_str()))
+		{
+			Debug();
+			ImGui::TreePop();
+		}
 	}
+	ImGui::PopID();
 
 #endif
 }
@@ -1365,9 +1382,6 @@ void CPlayer::CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& type
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_SPECIAL);
-
-	// モーション設定
-	SetMotion(EMotion::MOTION_CATCHSPECIAL_SUCC);
 }
 
 //==========================================================================
@@ -1774,9 +1788,30 @@ void CPlayer::StateDead(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//死亡状態をキャンセル不能にする
+	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
-	//m_sMotionFrag.bDead = true;
+
+	// モーションの終了で管理
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->IsFinish())
+	{// 死亡後モーションが終了
+
+		// 死亡運搬
+		SetState(EState::STATE_DEAD_CARRY);
+
+		// 担架生成
+		CStretcher::Create(this);
+	}
+}
+
+//==========================================================================
+// 死亡運搬
+//==========================================================================
+void CPlayer::StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
 }
 
 //==========================================================================
@@ -2321,6 +2356,22 @@ void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
 }
 
 //==========================================================================
+// 影の生成処理
+//==========================================================================
+HRESULT CPlayer::CreateShadow()
+{
+	// 影の生成
+	m_pShadow = CShadow::Create(this, SHADOW_RADIUS, SHADOW_MIN_ALPHA, SHADOW_MAX_ALPHA);
+	if (m_pShadow == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
 // デバッグ処理
 //==========================================================================
 void CPlayer::Debug()
@@ -2443,6 +2494,26 @@ void CPlayer::Debug()
 		ImGui::DragInt("nLife", &nLife, 1, 0, 50, "%d");
 
 		SetLife(nLife);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Dodge"))
+	{// 回避時処理
+		float min = m_pActionPattern->GetSlowStart();
+		float max = m_pActionPattern->GetSlowEnd();
+
+		ImGui::DragFloat("start", &min, 0.01f, 0.0f, 2.0f, "%f");
+		ImGui::DragFloat("end", &max, 0.01f, 0.0f, 2.0f, "%f");
+
+		m_pActionPattern->SetSlowStart(min);
+		m_pActionPattern->SetSlowEnd(max);
+
+		if (ImGui::Button("Let's Action!"))
+		{// スペシャル
+
+			m_pActionPattern->SetAction(EAction::ACTION_DODGE);
+		}
 
 		ImGui::TreePop();
 	}

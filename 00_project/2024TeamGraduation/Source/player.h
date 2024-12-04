@@ -53,47 +53,49 @@ public:
 	// モーション列挙
 	enum EMotion
 	{
-		MOTION_DEF = 0,				// ニュートラルモーション
-		MOTION_DEF_BALL,			// ニュートラルモーション(ボール所持)
-		MOTION_WALK,				// 移動
-		MOTION_WALK_BALL,			// 移動(ボール所持)
-		MOTION_CRAB_FRONT,			// カニ歩き(前)
-		MOTION_CRAB_BACK,			// カニ歩き(後)
-		MOTION_CRAB_LEFT,			// カニ歩き(左)
-		MOTION_CRAB_RIGHT,			// カニ歩き(右)
-		MOTION_RUN,					// 走り
-		MOTION_RUN_BALL,			// 走り(ボール所持)
-		MOTION_BLINK,				// ブリンク
-		MOTION_DODGE,				// 回避成功時
-		MOTION_JUMP,				// ジャンプ
-		MOTION_JUMP_BALL,			// ジャンプ(ボール所持)
-		MOTION_LAND,				// 着地
-		MOTION_CATCH_STANCE,		// キャッチの構え
-		MOTION_CATCH_STANCE_JUMP,	// キャッチの構え(ジャンプ)
-		MOTION_CATCH_NORMAL,		// キャッチ(通常)
-		MOTION_CATCH_JUMP,			// キャッチ(ジャンプ)
-		MOTION_JUSTCATCH_NORMAL,	// ジャストキャッチ(通常)
-		MOTION_JUSTCATCH_JUMP,		// ジャストキャッチ(ジャンプ)
-		MOTION_CATCHSPECIAL_SUCC,	// キャッチスペシャル(成功)
-		MOTION_CATCHSPECIAL_FAIL,	// キャッチスペシャル(失敗)
-		MOTION_DROPCATCH_WALK,		// 落ちてるのキャッチ(歩き)
-		MOTION_THROW,				// 投げ
-		MOTION_THROW_RUN,			// 投げ(走り)
-		MOTION_THROW_JUMP,			// 投げ(ジャンプ)
-		MOTION_THROW_DROP,			// 投げ(ドロップボール)
-		MOTION_THROW_PASS,			// 投げ(パス)
-		MOTION_TOSS,				// トス
-		MOTION_HYPE,				// 盛り上げ
-		MOTION_SPECIAL,				// スペシャル
-		MOTION_DAMAGE,				// ダメージ
-		MOTION_DAMAGE_LEFT,			// 左ダメージ
-		MOTION_DAMAGE_RIGHT,		// 右ダメージ
-		MOTION_DAMAGE_BACK,			// 背後ダメージ
-		MOTION_DEAD,				// 死亡
-		MOTION_DEAD_AFTER,			// 死亡後
-		MOTION_GRIP_DEF,			// デフォグリップ
-		MOTION_GRIP_FRONT,			// 前グリップ
-		MOTION_UNSTABLE,			// おっとっと
+		MOTION_DEF = 0,					// ニュートラルモーション
+		MOTION_DEF_BALL,				// ニュートラルモーション(ボール所持)
+		MOTION_WALK,					// 移動
+		MOTION_WALK_BALL,				// 移動(ボール所持)
+		MOTION_CRAB_FRONT,				// カニ歩き(前)
+		MOTION_CRAB_BACK,				// カニ歩き(後)
+		MOTION_CRAB_LEFT,				// カニ歩き(左)
+		MOTION_CRAB_RIGHT,				// カニ歩き(右)
+		MOTION_RUN,						// 走り
+		MOTION_RUN_BALL,				// 走り(ボール所持)
+		MOTION_BLINK,					// ブリンク
+		MOTION_DODGE,					// 回避成功時
+		MOTION_JUMP,					// ジャンプ
+		MOTION_JUMP_BALL,				// ジャンプ(ボール所持)
+		MOTION_LAND,					// 着地
+		MOTION_CATCH_STANCE,			// キャッチの構え
+		MOTION_CATCH_STANCE_JUMP,		// キャッチの構え(ジャンプ)
+		MOTION_CATCH_NORMAL,			// キャッチ(通常)
+		MOTION_CATCH_JUMP,				// キャッチ(ジャンプ)
+		MOTION_JUSTCATCH_NORMAL,		// ジャストキャッチ(通常)
+		MOTION_JUSTCATCH_JUMP,			// ジャストキャッチ(ジャンプ)
+		MOTION_CATCHSPECIAL_CAPTURE,	// キャッチスペシャル(捕獲)
+		MOTION_CATCHSPECIAL_BRAKE,		// キャッチスペシャル(耐え)
+		MOTION_CATCHSPECIAL_SUCC,		// キャッチスペシャル(成功)
+		MOTION_CATCHSPECIAL_FAIL,		// キャッチスペシャル(失敗)
+		MOTION_DROPCATCH_WALK,			// 落ちてるのキャッチ(歩き)
+		MOTION_THROW,					// 投げ
+		MOTION_THROW_RUN,				// 投げ(走り)
+		MOTION_THROW_JUMP,				// 投げ(ジャンプ)
+		MOTION_THROW_DROP,				// 投げ(ドロップボール)
+		MOTION_THROW_PASS,				// 投げ(パス)
+		MOTION_TOSS,					// トス
+		MOTION_HYPE,					// 盛り上げ
+		MOTION_SPECIAL,					// スペシャル
+		MOTION_DAMAGE,					// ダメージ
+		MOTION_DAMAGE_LEFT,				// 左ダメージ
+		MOTION_DAMAGE_RIGHT,			// 右ダメージ
+		MOTION_DAMAGE_BACK,				// 背後ダメージ
+		MOTION_DEAD,					// 死亡
+		MOTION_DEAD_AFTER,				// 死亡後
+		MOTION_GRIP_DEF,				// デフォグリップ
+		MOTION_GRIP_FRONT,				// 前グリップ
+		MOTION_UNSTABLE,				// おっとっと
 		MOTION_MAX
 	};
 
@@ -105,6 +107,7 @@ public:
 		STATE_DMG,				// ダメージ
 		STATE_DEAD,				// 死
 		STATE_DEAD_AFTER,		// 死後
+		STATE_DEAD_CARRY,		// 死後運搬
 		STATE_DODGE,			// 回避
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
@@ -414,6 +417,7 @@ protected:
 	//=============================
 	// メンバ関数
 	//=============================
+	HRESULT CreateShadow();	// 影生成
 	void Debug();			// デバッグ処理
 	void UpdateFootLR();	// 足左右の更新
 	void CreateDressUp();	// ドレスアップ生成
@@ -440,6 +444,7 @@ private:
 	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
 	void StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 死亡
 	void StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡後
+	void StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡運搬
 	void StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 回避
 	void StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常キャッチ
 	void StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャストキャッチ
@@ -550,7 +555,6 @@ private:
 	CDressup* m_pDressUp_Accessory;	// ドレスアップ(アクセ)
 	CDressup* m_pDressUp_Face;		// ドレスアップ(顔)
 
-
 	//-----------------------------
 	// その他変数
 	//-----------------------------
@@ -567,6 +571,13 @@ private:
 	const EFieldArea m_typeArea;				// ポジション
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	static CListManager<CPlayer> m_List;		// リスト
+
+#if  _DEBUG
+	static int m_nDebugID;	// デバッグ用ID
+	int m_nThisDebugID;		// 自分のID
+#endif //  _DEBUG
+
+
 };
 
 

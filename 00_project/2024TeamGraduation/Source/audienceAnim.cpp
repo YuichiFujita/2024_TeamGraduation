@@ -34,7 +34,7 @@ namespace
 		const int RIGHT_LINE[]	= { (int)CGameManager::CENTER_LINE, (int)CAudience::MAX_RIGHT_LINE };	// チームサイドごとの右ライン
 		const int NEAR_LINE		= 1700;		// 手前の生成位置上限
 		const int FAR_LINE		= 1900;		// 奥の生成位置上限
-		const float LANDY		= 540.0f;	// 着地Y座標
+		const float LANDY		= 545.0f;	// 着地Y座標
 	}
 
 	namespace Down
@@ -130,6 +130,13 @@ HRESULT CAudienceAnim::Init()
 
 	// ペンライトの生成
 	if (FAILED(CreatePenLight()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 影の生成
+	if (FAILED(CreateShadow(this)))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;

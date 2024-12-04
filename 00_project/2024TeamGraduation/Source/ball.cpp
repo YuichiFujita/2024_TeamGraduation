@@ -36,7 +36,9 @@ namespace
 	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ƒ{[ƒ‹‚É‚©‚©‚éd—Í
 	const float	RADIUS = 14.0f;					// ”¼Œa
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// ”»’è—p”¼Œa
-	const float	RADIUS_SHADOW = 24.0f;	// ‰e‚Ì”¼Œa
+	const float	RADIUS_SHADOW = 20.0f;			// ‰e‚Ì”¼Œa
+	const float	MIN_ALPHA_SHADOW = 0.32f;		// ‰e‚Ì“§–¾“x
+	const float	MAX_ALPHA_SHADOW = 0.48f;		// ‰e‚Ì“§–¾“x
 	const float	REV_MOVE = 0.025f;		// ˆÚ“®—Ê‚Ì•â³ŒW”
 	const float	REV_INIMOVE = 0.29f;	// ‰‘¬‚Ì•â³ŒW”
 	const float	MAX_DIS = 100000.0f;	// ƒz[ƒ~ƒ“ƒO‚·‚éÅ‘å‹——£
@@ -271,11 +273,8 @@ HRESULT CBall::Init()
 	if (m_pLandMarker == nullptr) { return E_FAIL; }
 
 	// ‰e‚Ì¶¬
-	m_pShadow = CShadow::Create(this, RADIUS_SHADOW);
+	m_pShadow = CShadow::Create(this, RADIUS_SHADOW, MIN_ALPHA_SHADOW, MAX_ALPHA_SHADOW);
 	if (m_pShadow == nullptr) { return E_FAIL; }
-
-	// “§–¾“x‚ÌÝ’è
-	m_pShadow->SetAlpha(0.8f);
 
 	return S_OK;
 }
@@ -297,7 +296,8 @@ void CBall::Uninit()
 //==========================================================================
 void CBall::Kill()
 {
-	m_pShadow->Kill();
+	// ‰e‚Ìíœ
+	SAFE_KILL(m_pShadow);
 
 	// ƒŠƒXƒg‚©‚çíœ
 	m_list.Delete(this);
@@ -783,7 +783,6 @@ void CBall::CalWorldMtx()
 
 		// ƒLƒƒƒbƒ`Žž‚Ìƒ}ƒgƒŠƒbƒNƒX‚©‚çˆÊ’u‚ð”½‰f
 		SetPosition(mtxParts.GetWorldPosition());
-
 
 		// ‰e‚Ì•`‰æ‚ð’âŽ~
 		m_pShadow->SetEnableDisp(false);
@@ -1564,8 +1563,8 @@ void CBall::SetState(const EState state)
 void CBall::Catch(CPlayer* pPlayer)
 {
 #ifdef CHANGE
-	if (IsPass())
-	{ // ƒpƒXó‘Ô‚Ìê‡
+	if (IsPass() && m_pTarget != pPlayer)
+	{ // ƒpƒXó‘ÔŠŽ‚ÂAƒ^[ƒQƒbƒgˆÈŠO‚ªƒLƒƒƒbƒ`‚µ‚½ê‡
 
 		// Œ³ƒ^[ƒQƒbƒg‚ðAI‚É–ß‚·
 		CPlayerManager::GetInstance()->ChangeUserToAI(m_pTarget);
