@@ -86,6 +86,9 @@ public:
 		MOTION_HYPE,				// 盛り上げ
 		MOTION_SPECIAL,				// スペシャル
 		MOTION_DAMAGE,				// ダメージ
+		MOTION_DAMAGE_LEFT,			// 左ダメージ
+		MOTION_DAMAGE_RIGHT,		// 右ダメージ
+		MOTION_DAMAGE_BACK,			// 背後ダメージ
 		MOTION_DEAD,				// 死亡
 		MOTION_DEAD_AFTER,			// 死亡後
 		MOTION_GRIP_DEF,			// デフォグリップ
@@ -565,5 +568,57 @@ private:
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	static CListManager<CPlayer> m_List;		// リスト
 };
+
+
+//==========================================================================
+// 名前空間
+//==========================================================================
+namespace Crab	// カニ歩き
+{
+	const float RANGE = D3DX_PI * 0.25f;	// 判定角度の半分
+
+	const float RANGE_MIN_MAX[] =	// 判定角度列挙
+	{
+		D3DX_PI * 1.0f + RANGE,		// 下Max
+		D3DX_PI * 1.0f - RANGE,		// 下Min
+		D3DX_PI * 0.0f + RANGE,		// 上Max
+		D3DX_PI * 0.0f - RANGE,		// 上Min
+		D3DX_PI * -0.5f + RANGE,	// 左Max
+		D3DX_PI * -0.5f - RANGE,	// 左Min
+		D3DX_PI * 0.5f + RANGE,		// 右Max
+		D3DX_PI * 0.5f - RANGE,		// 右Min
+	};
+
+	// カニ歩きモーション設定列挙
+	const CPlayer::EMotion MOTION_WALK[CPlayer::CRAB_DIRECTION::CRAB_MAX][CPlayer::CRAB_DIRECTION::CRAB_MAX] =
+	{
+		// [ プレイヤー向き ][ インプット向き ]
+
+		{// UP(プレイヤーが上向き)
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// UP 
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// DOWN
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// LEFT
+			CPlayer::EMotion::MOTION_CRAB_RIGHT		// RIGHT
+		},
+		{// DOWN(プレイヤーが下向き)
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// UP 
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// DOWN
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// LEFT
+			CPlayer::EMotion::MOTION_CRAB_LEFT 		// RIGHT
+		},
+		{// LEFT(プレイヤーが左向き)
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// UP 
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// DOWN
+			CPlayer::EMotion::MOTION_CRAB_FRONT,	// LEFT
+			CPlayer::EMotion::MOTION_CRAB_BACK 		// RIGHT
+		},
+		{// RIGHT(プレイヤーが右向き)
+			CPlayer::EMotion::MOTION_CRAB_LEFT,		// UP 
+			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// DOWN
+			CPlayer::EMotion::MOTION_CRAB_BACK,		// LEFT
+			CPlayer::EMotion::MOTION_CRAB_FRONT 	// RIGHT
+		},
+	};
+}
 
 #endif

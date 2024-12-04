@@ -85,7 +85,7 @@ public:
 	// 仮想関数
 	//=============================
 	virtual HRESULT Init();
-	virtual void Uninit();
+	virtual void Uninit() = 0;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	//=============================
@@ -159,6 +159,7 @@ private:
 	// ファイル関連
 	static std::vector<LoadInfo> m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 読み込み情報
 
+protected:
 	//=============================
 	// 静的メンバ変数
 	//=============================

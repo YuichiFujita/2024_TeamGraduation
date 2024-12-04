@@ -141,54 +141,6 @@ namespace Court	// 移動制限
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
 }
 
-namespace Crab	// カニ歩き
-{
-	const float RANGE = D3DX_PI * 0.25f;	// 判定角度の半分
-
-	const float RANGE_MIN_MAX[] =	// 判定角度列挙
-	{
-		D3DX_PI * 1.0f + RANGE,		// 下Max
-		D3DX_PI * 1.0f - RANGE,		// 下Min
-		D3DX_PI * 0.0f + RANGE,		// 上Max
-		D3DX_PI * 0.0f - RANGE,		// 上Min
-		D3DX_PI * -0.5f + RANGE,	// 左Max
-		D3DX_PI * -0.5f - RANGE,	// 左Min
-		D3DX_PI * 0.5f + RANGE,		// 右Max
-		D3DX_PI * 0.5f - RANGE,		// 右Min
-	};
-
-	// カニ歩きモーション設定列挙
-	const CPlayer::EMotion MOTION_WALK[CPlayer::CRAB_DIRECTION::CRAB_MAX][CPlayer::CRAB_DIRECTION::CRAB_MAX] =
-	{
-		// [ プレイヤー向き ][ インプット向き ]
-
-		{// UP(プレイヤーが上向き)
-			CPlayer::EMotion::MOTION_CRAB_FRONT,	// UP 
-			CPlayer::EMotion::MOTION_CRAB_BACK,		// DOWN
-			CPlayer::EMotion::MOTION_CRAB_LEFT,		// LEFT
-			CPlayer::EMotion::MOTION_CRAB_RIGHT		// RIGHT
-		},
-		{// DOWN(プレイヤーが下向き)
-			CPlayer::EMotion::MOTION_CRAB_BACK,		// UP 
-			CPlayer::EMotion::MOTION_CRAB_FRONT,	// DOWN
-			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// LEFT
-			CPlayer::EMotion::MOTION_CRAB_LEFT 		// RIGHT
-		},
-		{// LEFT(プレイヤーが左向き)
-			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// UP 
-			CPlayer::EMotion::MOTION_CRAB_LEFT,		// DOWN
-			CPlayer::EMotion::MOTION_CRAB_FRONT,	// LEFT
-			CPlayer::EMotion::MOTION_CRAB_BACK 		// RIGHT
-		},
-		{// RIGHT(プレイヤーが右向き)
-			CPlayer::EMotion::MOTION_CRAB_LEFT,		// UP 
-			CPlayer::EMotion::MOTION_CRAB_RIGHT,	// DOWN
-			CPlayer::EMotion::MOTION_CRAB_BACK,		// LEFT
-			CPlayer::EMotion::MOTION_CRAB_FRONT 	// RIGHT
-		},
-	};
-}
-
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
@@ -496,6 +448,9 @@ void CPlayer::Uninit()
 
 	// スぺシャルエフェクト
 	SAFE_DELETE(m_pSpecialEffect);
+
+	// スペシャルキャッチ状態
+	SAFE_UNINIT(m_pCatchSpecial);
 
 	// ドレスアップ
 	DeleteDressUp();
@@ -1398,7 +1353,15 @@ void CPlayer::CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& type
 	CCatchSpecial::EState state = CCatchSpecial::Check(this, bJust, typeSpecial);
 
 	// 生成
-	m_pCatchSpecial = CCatchSpecial::Create(this, state);
+	if (m_pCatchSpecial == nullptr)
+	{// NULLだったら
+		m_pCatchSpecial = CCatchSpecial::Create(this, state);
+	}
+	else
+	{
+		m_pCatchSpecial->SetState(state);
+		m_pCatchSpecial->SetPlayer(this);
+	}
 
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_SPECIAL);
@@ -1469,7 +1432,6 @@ void CPlayer::DamageSetting(CBall* pBall)
 {
 	// ダメージ状態にする
 	SetState(EState::STATE_DMG);
-	SetMotion(EMotion::MOTION_DAMAGE);
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -1503,6 +1465,64 @@ void CPlayer::DamageSetting(CBall* pBall)
 		break;
 
 	default:
+		break;
+	}
+
+
+	// 向き取得
+	float rotDest = GetRotDest();
+
+	//--------------------------------
+	// プレイヤー方向
+	//--------------------------------
+	CPlayer::CRAB_DIRECTION hitDir = CPlayer::CRAB_DIRECTION::CRAB_NONE;
+	float fRotY = D3DX_PI * 1.0f + GetPosition().AngleXZ(pBall->GetPosition()) + rotDest;
+	UtilFunc::Transformation::RotNormalize(fRotY);
+
+	float fRangeZero = Crab::RANGE_MIN_MAX[0];
+	UtilFunc::Transformation::RotNormalize(fRangeZero);
+	if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+	{// 下向き
+		hitDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+	{// 上向き
+		hitDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+	{// 左向き
+		hitDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+	{// 右向き
+		hitDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+	}
+	else
+	{// 抜けちゃった
+		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
+	}
+
+
+	switch (hitDir)
+	{
+	case CPlayer::CRAB_UP:
+		SetMotion(EMotion::MOTION_DAMAGE);
+		break;
+
+	case CPlayer::CRAB_DOWN:
+		SetMotion(EMotion::MOTION_DAMAGE_BACK);
+		break;
+
+	case CPlayer::CRAB_LEFT:
+		SetMotion(EMotion::MOTION_DAMAGE_LEFT);
+		break;
+
+	case CPlayer::CRAB_RIGHT:
+		SetMotion(EMotion::MOTION_DAMAGE_RIGHT);
+		break;
+
+	default:
+		MyAssert::CustomAssert(false, "被弾：どこ見てんねん");
 		break;
 	}
 }
@@ -1795,12 +1815,10 @@ void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, 
 	// 移動量更新
 	move.x += sinf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
 	move.z += cosf(D3DX_PI + rot.y) * (Catch::Impact[m_sDamageInfo.eReiceiveType] * ratio);
-	move.x *= (fDeltaRate * fSlowRate);
-	move.z *= (fDeltaRate * fSlowRate);
 
 	// 位置更新
-	pos.x += move.x;
-	pos.z += move.z;
+	pos.x += move.x * (fDeltaRate * fSlowRate);
+	pos.z += move.z * (fDeltaRate * fSlowRate);
 	SetPosition(pos);
 	SetMove(move);
 
@@ -1877,7 +1895,7 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr) return;
 
-	if (pMotion->IsGetCancelable())
+	if (pMotion->IsFinish())
 	{// キャンセル可能
 
 		m_sKnockback.posStart = pos;
@@ -1898,9 +1916,14 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
-	// モーションのキャンセルで管理
 	CMotion* pMotion = GetMotion();
-	if (pMotion == nullptr) return;
+	MyAssert::CustomAssert(pMotion != nullptr,"モーションisどこ？");
+
+	if (pMotion->GetType() != MOTION_WALK)
+	{
+		// モーションのキャンセルで管理
+		SetMotion(MOTION_WALK);
+	}
 
 	if (m_fStateTime >= StateTime::COURT_RETURN)
 	{// キャンセル可能
@@ -2451,6 +2474,16 @@ void CPlayer::Debug()
 		DeadSetting(result,pBall);
 		delete result;
 		pBall->Kill();
+	}
+
+	if (ImGui::Button("CatchSpecial"))
+	{// キャッチ時処理(スペシャル)
+		CatchSettingSpecial(false, CBall::ESpecial::SPECIAL_KAMEHAMEHA);
+	}
+
+	if (m_pCatchSpecial != nullptr)
+	{
+		m_pCatchSpecial->Debug();
 	}
 
 	//-----------------------------

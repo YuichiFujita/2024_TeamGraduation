@@ -236,7 +236,7 @@ DEFAULT_ID = 0 1
 # モーションファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/player/common/motion_def.txt					# デフォルト
-MOTION_FILENAME = data/TEXT/character/player/common/motion_def_ball.txt				# デフォルト(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/righthand/motion_def_ball.txt			# デフォルト(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk.txt					# 歩き
 MOTION_FILENAME = data/TEXT/character/player/common/motion_walk_ball.txt			# 歩き(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_crab_front.txt			# カニ歩き(前)
@@ -268,6 +268,9 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_toss.txt					# トス
 MOTION_FILENAME = data/TEXT/character/player/common/motion_hype.txt					# 盛り上げ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_special.txt				# スペシャル
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage.txt				# ダメージ
+MOTION_FILENAME = data/TEXT/character/player/common/motion_damage_left.txt			# ダメージ(左)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_damage_right.txt			# ダメージ(右)
+MOTION_FILENAME = data/TEXT/character/player/common/motion_damage_back.txt			# ダメージ(背後)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# 死亡
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死亡後
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# 前グリップ

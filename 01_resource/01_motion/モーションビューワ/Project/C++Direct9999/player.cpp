@@ -1592,12 +1592,9 @@ void CPlayer::SetPartsRot(void)
 			ImGui::PushID(nID); // ウィジェットごとに異なるIDを割り当てる
 			{
 				ImGui::SetNextItemWidth(windowWidth);
-				ImGui::DragFloat("scale", &scale.x, 0.01f, 0.0f, 0.0f, "%.2f");
+				ImGui::DragFloat3("scale", (float*)&scale, 0.01f, 0.0f, 0.0f, "%.2f");
 			}
 			ImGui::PopID();
-
-			scale.y = scale.x;
-			scale.z = scale.x;
 
 			// 位置設定
 			pModel->SetScale(scale);

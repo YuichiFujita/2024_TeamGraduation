@@ -63,8 +63,12 @@ CPlayerManager_Result::~CPlayerManager_Result()
 //==========================================================================
 HRESULT CPlayerManager_Result::Init()
 {
+#ifdef ENTRYSTART
 	// 初期化処理
 	CPlayerManager::Init();
+#else
+
+#endif
 
 	return S_OK;
 }
@@ -119,4 +123,13 @@ HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
+}
+
+//==========================================================================
+// 終了処理
+//==========================================================================
+void CPlayerManager_Result::Uninit()
+{
+	// 自身のインスタンスの破棄
+	SAFE_DELETE(m_pInstance);
 }

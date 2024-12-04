@@ -338,7 +338,8 @@ void CPlayerAction::SetAction(CPlayer::EAction action)
 	float fSlowRate = CManager::GetInstance()->GetSlowRate();
 
 	// s“®I—¹
-	if (m_EndFunc[m_Action] != nullptr)
+	if (m_Action != action &&
+		m_EndFunc[m_Action] != nullptr)
 	{
 		(this->*(m_EndFunc[m_Action]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
