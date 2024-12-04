@@ -89,8 +89,10 @@ namespace
 		}
 	};
 
-	const float DODGE_RADIUS = 300.0f;			// 回避範囲
-	const float JUST_VIEW = 90.0f;				// ジャストキャッチ時の方向ゆとり(左右1/8π)
+	const float SHADOW_RADIUS = 38.0f;	// 影の半径
+	const float	ALPHA_SHADOW = 0.55f;	// 影の透明度
+	const float DODGE_RADIUS = 300.0f;	// 回避範囲
+	const float JUST_VIEW = 90.0f;		// ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
 
 namespace Knockback
@@ -359,7 +361,15 @@ HRESULT CPlayer::Init()
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE[m_BodyType][m_Handedness]);
 	if (FAILED(hr))
-	{// 失敗していたら
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 影の生成
+	if (FAILED(CreateShadow()))
+	{ // 生成に失敗した場合
+
 		return E_FAIL;
 	}
 
@@ -475,12 +485,8 @@ void CPlayer::Uninit()
 //==========================================================================
 void CPlayer::Kill()
 {
-	// 影を消す
-	if (m_pShadow != nullptr)
-	{
-		m_pShadow->Uninit();
-		m_pShadow = nullptr;
-	}
+	// 影の削除
+	SAFE_KILL(m_pShadow);
 
 	// アクションパターン
 	if (m_pActionPattern != nullptr)
@@ -555,12 +561,6 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
-
-	// 影の位置更新
-	if (m_pShadow != nullptr)
-	{
-		m_pShadow->SetPosition(MyLib::Vector3(pos.x, m_pShadow->GetPosition().y, pos.z));
-	}
 
 	// 非モテまとめ
 	CCharmManager::GetInstance()->UnCharm(this, fDeltaTime, fDeltaRate, fSlowRate);
@@ -2318,6 +2318,25 @@ void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
 	m_pDressUp_Hair->ReRegist(nHair);			// ドレスアップ(髪)
 	m_pDressUp_Accessory->ReRegist(nAccessory);	// ドレスアップ(アクセ)
 	m_pDressUp_Face->ReRegist(nFace);			// ドレスアップ(顔)
+}
+
+//==========================================================================
+// 影の生成処理
+//==========================================================================
+HRESULT CPlayer::CreateShadow()
+{
+	// 影の生成
+	m_pShadow = CShadow::Create(this, SHADOW_RADIUS);
+	if (m_pShadow == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 透明度の設定
+	m_pShadow->SetAlpha(ALPHA_SHADOW);
+
+	return S_OK;
 }
 
 //==========================================================================

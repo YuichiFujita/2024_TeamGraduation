@@ -185,7 +185,7 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 
 	// プレイヤーの位置に設定
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();
-	pos.y = 0.01f;
+	pos.y = 2.0f;
 	SetPosition(pos);
 
 	// 円と矢印の位置設定
