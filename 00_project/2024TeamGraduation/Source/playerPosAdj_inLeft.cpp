@@ -55,8 +55,7 @@ bool CPlayerPosAdjInLeft::IsLineOut(CPlayer* pPlayer)
 bool CPlayerPosAdjInLeft::IsUnstable(CPlayer* pPlayer)
 {
 	// ƒ‰ƒCƒ“‚ð‰z‚¦‚Ä‚¢‚éê‡ƒtƒ‰ƒOON‚ð•Ô‚·
-	if (pPlayer->GetPosition().x > -UNSTABLE_LINE &&
-		pPlayer->GetPosition().x < 0.0f)
+	if (pPlayer->GetPosition().x > -UNSTABLE_LINE)
 	{
 		return true;
 	}

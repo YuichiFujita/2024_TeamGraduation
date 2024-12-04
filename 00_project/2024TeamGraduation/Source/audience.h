@@ -26,8 +26,8 @@ public:
 	//=============================
 	// 定数
 	//=============================
-	static constexpr float MAX_LEFT_LINE = -2100.0f;	// 左の生成位置上限
-	static constexpr float MAX_RIGHT_LINE = 2100.0f;	// 右の生成位置上限
+	static constexpr float MAX_LEFT_LINE = -2000.0f;	// 左の生成位置上限
+	static constexpr float MAX_RIGHT_LINE = 2000.0f;	// 右の生成位置上限
 	static constexpr float SPAWN_SIDE_LINE = 2500.0f;	// 生成する横位置
 	static constexpr int MAX_WATCH = 500;				// 観戦する最大人数
 
@@ -81,11 +81,6 @@ public:
 	virtual MyLib::Vector3 GetRotation() const override = 0;			// 向き取得
 
 	//=============================
-	// 仮想関数
-	//=============================
-
-
-	//=============================
 	// メンバ関数
 	//=============================
 	void SetEnableJump(const bool bJump);	// 盛り上がり設定
@@ -95,10 +90,10 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CAudience* Create(EObjType type, CGameManager::ETeamSide team);				// 生成
-	static HRESULT SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team);		// 観戦中の人数設定
+	static CAudience* Create(EObjType type, CGameManager::ETeamSide team);					// 生成
+	static HRESULT SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team);			// 観戦中の人数設定
 	static int GetNumWatchAll(CGameManager::ETeamSide team);								// 全観戦中の人数取得
-	static void SetEnableJumpAll(const bool bJump, CGameManager::ETeamSide team);		// 全盛り上がり設定
+	static void SetEnableJumpAll(const bool bJump, CGameManager::ETeamSide team);			// 全盛り上がり設定
 	static void SetSpecialAll(CGameManager::ETeamSide team);								// 全スペシャル設定
 	static void SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespawn = -1);	// 全退場設定
 
@@ -122,11 +117,17 @@ protected:
 	// メンバ関数
 	//=============================
 	// ゲッター/セッター
-	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	{ m_posSpawn = rPos;}	// 入場位置設定
-	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }	// 入場位置取得
-	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}	// 観戦位置設定
-	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }	// 観戦位置取得
-	inline CGameManager::ETeamSide GetTeam() const				{ return m_team; }		// 応援チーム取得
+	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	{ m_posSpawn = rPos;}		// 入場位置設定
+	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }		// 入場位置取得
+	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}		// 観戦位置設定
+	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }		// 観戦位置取得
+	inline void SetDespawnPosition(const MyLib::Vector3& rPos)	{ m_posDespawn = rPos;}		// 退場位置設定
+	inline MyLib::Vector3 GetDespawnPosition() const			{ return m_posDespawn; }	// 退場位置取得
+	inline void SetArea(const int nArea)			{ m_nArea = nArea; }	// 観戦エリア設定
+	inline int GetArea() const						{ return m_nArea; }		// 観戦エリア取得
+	inline void SetLandY(const float fLandY)		{ m_fLandY = fLandY; }	// 着地Y座標設定
+	inline float GetLandY() const					{ return m_fLandY; }	// 着地Y座標取得
+	inline CGameManager::ETeamSide GetTeam() const	{ return m_team; }		// 応援チーム取得
 
 private:
 
@@ -146,7 +147,7 @@ private:
 	// 静的メンバ変数
 	//=============================
 	static CListManager<CAudience> m_list;	// リスト
-	static int m_aNumWatchAll[CGameManager::ETeamSide::SIDE_MAX];			// 観戦中の人数
+	static int m_aNumWatchAll[CGameManager::ETeamSide::SIDE_MAX];	// 観戦中の人数
 
 	//=============================
 	// メンバ変数
@@ -156,9 +157,12 @@ private:
 	const float m_fJumpLevel;	// ジャンプ量
 	MyLib::Vector3 m_posSpawn;	// 入場位置
 	MyLib::Vector3 m_posWatch;	// 観戦位置
+	MyLib::Vector3 m_posDespawn;		// 退場位置
 	MyLib::Vector3 m_posDespawnStart;	// 退場開始位置
 	EState m_state;		// 状態
 	float m_fTimeState;	// 状態管理時間
+	float m_fLandY;		// 着地Y座標
+	int m_nArea;		// 観戦エリア
 };
 
 #endif

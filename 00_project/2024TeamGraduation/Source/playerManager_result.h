@@ -35,6 +35,7 @@ public:
 	// âºëzä÷êî
 	//=============================
 	virtual HRESULT Init() override;
+	virtual void Uninit() override;
 
 private:
 

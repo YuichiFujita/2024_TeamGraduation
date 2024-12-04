@@ -124,3 +124,12 @@ HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 
 	return S_OK;
 }
+
+//==========================================================================
+// 終了処理
+//==========================================================================
+void CPlayerManager_Result::Uninit()
+{
+	// 自身のインスタンスの破棄
+	SAFE_DELETE(m_pInstance);
+}
