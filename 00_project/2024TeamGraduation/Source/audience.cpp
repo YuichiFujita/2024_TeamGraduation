@@ -20,12 +20,13 @@ namespace
 {
 	const int MIN_JUMP = 6;		// 最低ジャンプ量
 	const int MAX_JUMP = 12;	// 最大ジャンプ量
-	const float	RADIUS_SHADOW	= 44.0f;	// 影の半径
-	const float	RADIUS_ALPHA	= 0.08f;	// 影の透明度
-	const float GRAVITY_RATE	= 0.5f;		// 重力にかける割合
-	const float JUMP_RATE		= 0.5f;		// ジャンプ力にかける割合
-	const float TIME_SPAWN		= 2.4f;		// 入場時間
-	const float TIME_DESPAWN	= 3.2f;		// 退場時間
+	const float	RADIUS_SHADOW	 = 44.0f;	// 影の半径
+	const float	MIN_ALPHA_SHADOW = 0.02f;	// 影の透明度
+	const float	MAX_ALPHA_SHADOW = 0.08f;	// 影の透明度
+	const float GRAVITY_RATE	 = 0.5f;	// 重力にかける割合
+	const float JUMP_RATE		 = 0.5f;	// ジャンプ力にかける割合
+	const float TIME_SPAWN		 = 2.4f;	// 入場時間
+	const float TIME_DESPAWN	 = 3.2f;	// 退場時間
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
 	const float RATE_HIGH = 0.1f;	// ハイポリ比率
@@ -130,11 +131,8 @@ CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team)
 HRESULT CAudience::CreateShadow(CObject* pParent)
 {
 	// 影の生成
-	m_pShadow = CShadow::Create(pParent, RADIUS_SHADOW, m_fLandY);
+	m_pShadow = CShadow::Create(pParent, RADIUS_SHADOW, MIN_ALPHA_SHADOW, MAX_ALPHA_SHADOW, m_fLandY);
 	if (m_pShadow == nullptr) { return E_FAIL; }
-
-	// 透明度の設定
-	m_pShadow->SetAlpha(RADIUS_ALPHA);
 
 	return S_OK;
 }

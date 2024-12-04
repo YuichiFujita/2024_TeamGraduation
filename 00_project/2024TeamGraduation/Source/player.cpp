@@ -89,10 +89,11 @@ namespace
 		}
 	};
 
-	const float SHADOW_RADIUS = 38.0f;	// 影の半径
-	const float	ALPHA_SHADOW = 0.55f;	// 影の透明度
-	const float DODGE_RADIUS = 300.0f;	// 回避範囲
-	const float JUST_VIEW = 90.0f;		// ジャストキャッチ時の方向ゆとり(左右1/8π)
+	const float SHADOW_RADIUS = 50.0f;		// 影の半径
+	const float	SHADOW_MIN_ALPHA = 0.18f;	// 影の透明度
+	const float	SHADOW_MAX_ALPHA = 0.48f;	// 影の透明度
+	const float DODGE_RADIUS = 300.0f;		// 回避範囲
+	const float JUST_VIEW = 90.0f;			// ジャストキャッチ時の方向ゆとり(左右1/8π)
 }
 
 namespace Knockback
@@ -177,9 +178,9 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_typeArea	(typeArea)	// ポジション
 {
 	// 値のクリア
-	m_state = EState::STATE_NONE;										// 状態
-	m_Oldstate = EState::STATE_NONE;									// 前回の状態
-	m_fStateTime = 0.0f;												// 状態時間
+	m_state = EState::STATE_NONE;		// 状態
+	m_Oldstate = EState::STATE_NONE;	// 前回の状態
+	m_fStateTime = 0.0f;				// 状態時間
 
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
@@ -2326,15 +2327,12 @@ void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
 HRESULT CPlayer::CreateShadow()
 {
 	// 影の生成
-	m_pShadow = CShadow::Create(this, SHADOW_RADIUS);
+	m_pShadow = CShadow::Create(this, SHADOW_RADIUS, SHADOW_MIN_ALPHA, SHADOW_MAX_ALPHA);
 	if (m_pShadow == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
-
-	// 透明度の設定
-	m_pShadow->SetAlpha(ALPHA_SHADOW);
 
 	return S_OK;
 }
