@@ -9,6 +9,9 @@
 #include "gameManager.h"
 #include "player.h"
 
+// デバッグ用
+#include "collisionLine_Box.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -28,7 +31,7 @@ CCharmManager* CCharmManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 CCharmManager::CCharmManager()
 {
-	
+	m_pCourtSizeBox = nullptr;
 }
 
 //==========================================================================
@@ -67,6 +70,14 @@ CCharmManager* CCharmManager::Create()
 HRESULT CCharmManager::Init()
 {
 
+#if _DEBUG
+	// コートサイズのボックス
+	if (m_pCourtSizeBox == nullptr)
+	{
+		m_pCourtSizeBox = CCollisionLine_Box::Create(MyLib::AABB(), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+#endif
+
 	return S_OK;
 }
 
@@ -75,6 +86,10 @@ HRESULT CCharmManager::Init()
 //==========================================================================
 void CCharmManager::Uninit()
 {
+#if _DEBUG
+	//SAFE_UNINIT(m_pCourtSizeBox);
+#endif
+
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;
 }
@@ -213,6 +228,17 @@ bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
 		}
 
 	}
+
+#if _DEBUG
+	// サイズ設定
+	if (m_pCourtSizeBox != nullptr)
+	{
+		D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		m_pCourtSizeBox->SetPosition(lineMid);
+		m_pCourtSizeBox->SetAABB(MyLib::AABB(-areaSize, areaSize));
+		m_pCourtSizeBox->SetColor(col);
+	}
+#endif
 
 	if (UtilFunc::Collision::CollisionSquare(lineMid, areaSize, 0.0f, pos))
 	{// 端エリア内にいるか
