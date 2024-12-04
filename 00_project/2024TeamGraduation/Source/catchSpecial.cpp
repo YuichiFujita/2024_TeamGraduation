@@ -6,6 +6,7 @@
 //=============================================================================
 #include "catchSpecial.h"
 #include "player.h"
+#include "manager.h"
 
 //==========================================================================
 // 定数定義
@@ -249,7 +250,29 @@ void CCatchSpecial::SetState(EState state)
 //==========================================================================
 void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// モーション設定
+	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_CAPTURE);
+
 	// スローかける
+	float fRate = 1.0f;	// 割合
+	float fFrame = m_pPlayer->GetMotion()->GetAllCount();	// 現
+	float fFrameMax = m_pPlayer->GetMotion()->GetMaxAllCount();	// 目標
+
+	const float fSlowStart = 1.0f;	// 麓
+	const float fSlowEnd = 0.5f;	// 山
+
+	if (fFrame <= fFrameMax * 0.5f)
+	{
+		fRate = UtilFunc::Correction::EasingEaseIn(fSlowStart, fSlowEnd, 0.0f, fFrameMax * 0.5f, fFrame);
+	}
+	else
+	{// 半分を超えたら
+		fRate = UtilFunc::Correction::EasingEaseOut(fSlowEnd, fSlowStart, fFrameMax * 0.5f, fFrameMax, fFrame);
+	}
+
+	// スロー設定
+	UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
+	GET_MANAGER->SetSlowRate(fRate);
 
 	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
 	{// 終了
@@ -276,28 +299,20 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 	float fAngle = atan2f(move.x, move.z) + D3DX_PI;		//目標の向き
 	UtilFunc::Transformation::RotNormalize(fAngle);
 
-	//move = m_pPlayer->GetMove();
 	move.x = sinf(fAngle) * 20.0f * fDeltaRate * fSlowRate;
 	move.z = cosf(fAngle) * 20.0f * fDeltaRate * fSlowRate;
 	move.y = 0.0f;
 
 	pos += move;
 
-	//if (CGameManager::GetInstance()->SetPosLimit(pos))
-	//{
-	//	int i = 0;
-	//}
-
 	if (m_fMomentumStateTime > fBaseTime ||
 		CGameManager::GetInstance()->SetPosLimit(pos))
-	//if (m_fMomentumStateTime > fBaseTime)
 	{// 終了or画面端判定
 
 		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
 	}
 
 	// 位置設定
-	m_pPlayer->SetPosition(pos);
 	m_pPlayer->SetPosition(pos);
 }
 
@@ -306,7 +321,11 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 //==========================================================================
 void CCatchSpecial::MomentumStateBrake(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	// モーション設定
+	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_BRAKE);
+	
+	CMotion* motion = m_pPlayer->GetMotion();
+	if (motion->IsFinish())
 	{// 終了
 
 		SetMomentumState(EMomentumState::MOMENTUM_RESULT);
@@ -318,7 +337,8 @@ void CCatchSpecial::MomentumStateBrake(const float fDeltaTime, const float fDelt
 //==========================================================================
 void CCatchSpecial::MomentumStateResult(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	CMotion* motion = m_pPlayer->GetMotion();
+	if (motion->IsFinish())
 	{// 終了
 
 		SetMomentumState(EMomentumState::MOMENTUM_END);
@@ -349,7 +369,7 @@ void CCatchSpecial::SetMomentumState(EMomentumState state)
 }
 
 //==========================================================================
-// なし開始
+// [開始]なし
 //==========================================================================
 void CCatchSpecial::StateStartNone()
 {
@@ -361,7 +381,7 @@ void CCatchSpecial::StateStartNone()
 }
 
 //==========================================================================
-// ズザザ開始
+// [開始]ズザザ
 //==========================================================================
 void CCatchSpecial::MomentumStartSlide()
 {
@@ -387,6 +407,26 @@ void CCatchSpecial::MomentumStartSlide()
 
 	// 設定
 	m_pPlayer->SetKnockBackInfo(knockback);
+}
+
+//==========================================================================
+// [開始]結果
+//==========================================================================
+void CCatchSpecial::MomentumStartResult()
+{
+	CPlayer::EMotion motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC;
+
+	if (m_bSuccess)
+	{
+		motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC;
+	}
+	else
+	{
+		motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL;
+	}
+
+	// モーション設定
+	m_pPlayer->SetMotion(motionType);
 }
 
 //==========================================================================
