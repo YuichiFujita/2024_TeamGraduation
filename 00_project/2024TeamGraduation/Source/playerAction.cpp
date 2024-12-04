@@ -1,7 +1,7 @@
 //=============================================================================
 // 
 //  プレイヤーコントロール処理 [playerAction.cpp]
-//  Author : 相馬靜雅
+//  Author : Kai Takada
 // 
 //=============================================================================
 #include "playerAction.h"
@@ -14,8 +14,13 @@
 
 namespace
 {
-	const float DODGE_SLOW = 0.8f;			//回避時スロー値
 	const float JUMPTHROW_DOWN_COR = 0.5f;	//下降時ジャンプ投げ移動量補正値
+}
+
+namespace DodgeSlow
+{
+	const float END = 0.1f;			// 最大値
+	const float START = 1.0f;		// 最小値
 }
 
 namespace ActionTime
@@ -60,7 +65,7 @@ CPlayerAction::END_FUNC CPlayerAction::m_EndFunc[] =	// 行動関数
 	nullptr,								// なし
 	&CPlayerAction::EndUnstable,			// おっとっと
 	nullptr,								// ブリンク
-	nullptr,								// 回避
+	&CPlayerAction::EndDodge,				// 回避
 	nullptr,								// 走り
 	nullptr,								// ジャンプ
 	nullptr,								// キャッチ
@@ -78,6 +83,9 @@ CPlayerAction::CPlayerAction(CPlayer* player)
 	m_Action = CPlayer::EAction::ACTION_NONE;	// アクション
 	m_fActionTime = 0.0f;						// アクション時間
 	m_pPlayer = player;							// プレイヤーのポインタ
+
+	m_fSlowStart = DodgeSlow::START;		// スロー倍率(最小)
+	m_fSlowEnd = DodgeSlow::END;			// スロー倍率(最大)
 }
 
 //==========================================================================
@@ -119,48 +127,39 @@ void CPlayerAction::ActionUnstable(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	//ダメージ受付しない時間設定
+	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	
 	if (m_fActionTime >= ActionTime::BLINK)
 	{// ブリンク経過
-		
-		CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+
 		DmgInfo.fReceiveTime = 0.0f;
 		m_pPlayer->SetDamageInfo(DmgInfo);
 
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
 
-	if (m_pPlayer->GetBall() != nullptr)
-	{
-		return;
-	}
+	// 自分ボール持ってる
+	if (m_pPlayer->GetBall() != nullptr) return;
 
-	//ダメージ受付しない時間設定
-	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
-	DmgInfo.fReceiveTime = 0.1f;
+	DmgInfo.fReceiveTime = 1.0f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
 	//回避判定
-	CListManager<CBall> sampleList = CBall::GetListObj();
-	std::list<CBall*>::iterator itr = sampleList.GetEnd();
-	CBall* pObj = nullptr;
+	CBall* pObj = CGameManager::GetInstance()->GetBall();
 	CGameManager::ETeamSide teamPlayer = m_pPlayer->GetTeam();
 
-	while (sampleList.ListLoop(itr))
+	// 攻撃状態でないor自陣
+	if (!pObj->IsAttack() || pObj->GetTypeTeam() == teamPlayer) return;
+
+	// 判定
+	if (UtilFunc::Collision::CollisionCircleCylinder(
+		pObj->GetPosition(), m_pPlayer->GetPosition(),		// 位置
+		pObj->GetRadius(), m_pPlayer->GetRadius() * 2.0f,	// 半径
+		m_pPlayer->GetParameter().fHeight * 1.3f))			// 高さ
 	{
-		pObj = (*itr);
-
-		if (!pObj->IsAttack() ||
-			pObj->GetTypeTeam() == teamPlayer)
-		{
-			return;
-		}
-
-		if (UtilFunc::Collision::CollisionCircleCylinder(
-			pObj->GetPosition(), m_pPlayer->GetPosition(), pObj->GetRadius(), m_pPlayer->GetRadius(), m_pPlayer->GetParameter().fHeight))
-		{
-			// アクション設定
-			SetAction(CPlayer::EAction::ACTION_DODGE);
-		}
+		// アクション設定
+		SetAction(CPlayer::EAction::ACTION_DODGE);
 	}
 }
 
@@ -169,21 +168,31 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 無敵時間付与
 	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
 	DmgInfo.fReceiveTime = 0.1f;
 	m_pPlayer->SetDamageInfo(DmgInfo);
 
+	// スローかける
+	float fRate = 1.0f;	// 割合
+	float fFrame = m_pPlayer->GetMotion()->GetAllCount();
+	float fFrameMax = m_pPlayer->GetMotion()->GetMaxAllCount();
+
+	if (fFrame <= fFrameMax * 0.5f)
+	{
+		fRate = UtilFunc::Correction::EasingEaseIn(m_fSlowStart, m_fSlowEnd, 0.0f, fFrameMax * 0.5f, fFrame);
+	}
+	else
+	{// 半分を超えたら
+		fRate = UtilFunc::Correction::EasingEaseOut(m_fSlowEnd, m_fSlowStart, fFrameMax * 0.5f, fFrameMax, fFrame);
+	}
+
+	UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
+	GET_MANAGER->SetSlowRate(fRate);
+
 	if (m_pPlayer->GetMotion()->IsFinish())
-	//if (m_fActionTime >= ActionTime::DODGE)
 	{// 終了
 
-		//スロー
-		float fRate = GET_MANAGER->GetSlowRate();
-		fRate += DODGE_SLOW;
-		UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
-		GET_MANAGER->SetSlowRate(fRate);
-
-		m_pPlayer->SetEnableMove(true);
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
 }
@@ -224,11 +233,6 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CMotion* pMotion = m_pPlayer->GetMotion();
-	
-	//途中で変更アサ―ト
-#if 0
-	MyAssert::CustomAssert(pMotion->GetType() == CPlayer::MOTION_THROW, "投げちゃうやん");
-#endif
 
 	if (pMotion->IsFinish())
 	{// 終了
@@ -272,7 +276,7 @@ void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
-// ジャンプ投げ(スタート)
+// [開始] ジャンプ投げ
 //==========================================================================
 void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -292,7 +296,7 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 }
 
 //==========================================================================
-// 回避(スタート)
+// [開始] 回避
 //==========================================================================
 void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -321,7 +325,27 @@ void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, c
 }
 
 //==========================================================================
-// おっとっと
+// [終了] 回避
+//==========================================================================
+void CPlayerAction::EndDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 無敵時間解除
+	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
+	DmgInfo.fReceiveTime = 0.0f;
+	m_pPlayer->SetDamageInfo(DmgInfo);
+
+	// スロー解除
+	float fRate = 1.0f;
+	m_pPlayer->SetEnableMove(true);
+	UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
+	GET_MANAGER->SetSlowRate(fRate);
+
+	// 状態解除
+	m_pPlayer->SetState(CPlayer::EState::STATE_NONE);
+}
+
+//==========================================================================
+// [終了] おっとっと
 //==========================================================================
 void CPlayerAction::EndUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -333,9 +357,9 @@ void CPlayerAction::EndUnstable(const float fDeltaTime, const float fDeltaRate, 
 //==========================================================================
 void CPlayerAction::SetAction(CPlayer::EAction action)
 {
-	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();
-	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();
-	float fSlowRate = CManager::GetInstance()->GetSlowRate();
+	float fDeltaTime = CManager::GetInstance()->GetDeltaTime();		// 1フレーム間の経過時間
+	float fDeltaRate = CManager::GetInstance()->GetDeltaRate();		// 経過時間の割合
+	float fSlowRate = CManager::GetInstance()->GetSlowRate();		// 速度低下の割合
 
 	// 行動終了
 	if (m_EndFunc[m_Action] != nullptr)

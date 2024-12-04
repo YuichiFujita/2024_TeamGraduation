@@ -1,7 +1,7 @@
 //=============================================================================
 // 
 //  プレイヤーアクションヘッダー [playerAction.h]
-//  Author : 相馬靜雅
+//  Author : Kai Takada
 // 
 //=============================================================================
 
@@ -29,6 +29,12 @@ public:
 	void SetEnableCharm(bool bCharm) { m_bCharm = bCharm; }			// モテボタン状態設定
 	bool IsCharm() { return m_bCharm; }							// モテボタン状態取得
 	void BindPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }	// プレイヤー割り当て
+
+	void SetSlowStart(float rate) { m_fSlowStart = rate; }		// スロー倍率(開始)設定
+	float GetSlowStart() { return m_fSlowStart; }				// スロー倍率(開始)取得
+	void SetSlowEnd(float rate) { m_fSlowEnd = rate; }			// スロー倍率(終了)設定
+	float GetSlowEnd() { return m_fSlowEnd; }					// スロー倍率(終了)取得
+
 private:
 	
 	//=============================
@@ -63,6 +69,7 @@ private:
 	void StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 回避
 
 	// 状態エンド系
+	void EndDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 回避
 	void EndUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// おっとっと
 
 	void Debug();
@@ -74,6 +81,11 @@ private:
 	CPlayer::EAction m_Action;	// アクション
 	float m_fActionTime;		// アクション時間
 	CPlayer* m_pPlayer;			// プレイヤーのポインタ
+
+#if 1
+	float m_fSlowStart;			// スロー倍率(最小)
+	float m_fSlowEnd;			// スロー倍率(最大)
+#endif	// 値調整用
 };
 
 

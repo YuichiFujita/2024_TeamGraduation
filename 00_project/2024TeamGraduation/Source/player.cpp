@@ -2447,6 +2447,26 @@ void CPlayer::Debug()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Dodge"))
+	{// 回避時処理
+		float min = m_pActionPattern->GetSlowStart();
+		float max = m_pActionPattern->GetSlowEnd();
+
+		ImGui::DragFloat("start", &min, 0.01f, 0.0f, 2.0f, "%f");
+		ImGui::DragFloat("end", &max, 0.01f, 0.0f, 2.0f, "%f");
+
+		m_pActionPattern->SetSlowStart(min);
+		m_pActionPattern->SetSlowEnd(max);
+
+		if (ImGui::Button("Let's Action!"))
+		{// スペシャル
+
+			m_pActionPattern->SetAction(EAction::ACTION_DODGE);
+		}
+
+		ImGui::TreePop();
+	}
+
 	if (ImGui::Button("Special(Motion)"))
 	{// スペシャル
 
