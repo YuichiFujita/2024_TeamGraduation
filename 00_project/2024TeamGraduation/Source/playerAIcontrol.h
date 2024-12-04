@@ -266,8 +266,7 @@ private:
 	void UpdateThrow();			// 投げ
 	void UpdateThrowTiming(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げタイミング
 	void UpdateCatch();			// キャッチ
-
-	void UpdateSee();
+	void UpdateSee();			// 見る
 
 	void PlanThrow();
 	void PlanHeart();		// 心のプラン

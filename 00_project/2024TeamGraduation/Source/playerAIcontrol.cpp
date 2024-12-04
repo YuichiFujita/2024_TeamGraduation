@@ -48,10 +48,13 @@ namespace
 	const float CATCH_JUMP_HEIGHT = 300.0f;		// ジャンプキャッチする高さ
 
 	// 距離間(デフォルト)
-	const float LENGTH_IN = 500.0f;
-	const float LENGTH_SPACE = 10.0f;
-	const float LENGTH_OUT = 200.0f;
-	const float LENGTH_LINE = 100.0f;
+	const float LENGTH = 500.0f;				// 内野
+	const float LENGTH_SPACE = 10.0f;			// 
+	const float LENGTH_OUT = 200.0f;			// 外野
+	const float LENGTH_LINE = 100.0f;			// 線
+
+	// パス
+	const float STEAL_CANCEL_LENGTH = 100.0f;	// あきらめる距離
 
 	// 線越え判定(中心(x)からの距離)
 	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
@@ -677,6 +680,7 @@ void CPlayerAIControl::Throw()
 
 	// 投げ状態：無
 	m_eThrow = EThrow::THROW_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //--------------------------------------------------------------------------
@@ -701,7 +705,7 @@ void CPlayerAIControl::ThrowSpecial()
 
 	// 投げなし
 	m_eThrow = EThrow::THROW_NONE;
-	//m_sInfo.sThrowInfo.eType = EThrowType::THROWTYPE_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //================================================================================
@@ -955,8 +959,12 @@ void CPlayerAIControl::CatchPassSteal()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall) return;
 
+	// 同じチームの場合
+	if (pBall->GetTypeTeam() == m_pAI->GetTeam()) return;
+
 	// ボールステート取得
 	CBall::EState stateBall = pBall->GetState();
+	CPlayer* pTarget = pBall->GetTarget();
 
 	if (stateBall == CBall::EState::STATE_PASS ||
 		stateBall == CBall::EState::STATE_HOM_PASS ||
@@ -974,32 +982,26 @@ void CPlayerAIControl::CatchPassSteal()
 		// ボールとの距離
 		float distance = posMy.DistanceXZ(posBall);
 
-		// 行動状態：歩く
+		// ターゲットとボールの位置
+		float distanth0 = pTarget->GetPosition().DistanceXZ(posBall);
+
+		if (distanth0 < STEAL_CANCEL_LENGTH)
+		{// ボールとパス先の距離が範囲内ならあきらめる
+			m_eMove = EMoveType::MOVETYPE_STOP;
+			return;
+		}
+
+		// 行動状態：走る
 		m_eMove = EMoveType::MOVETYPE_DASH;
 
 		// ボールの方へ行く
 		if (Approatch(pos, CATCH_JUMP_LENGTH) || distance < CATCH_JUMP_LENGTH)
 		{// 終了位置に近づけた||ボールとの距離が範囲内の場合
 			if (posBall.y < CATCH_JUMP_HEIGHT)
-			{
+			{// 取れそうな高さに来た！
 				m_eAction = EAction::ACTION_JUMP;
 			}
 		}
-
-#ifdef _DEBUG
-		CEffect3D::Create
-		(// デバッグ用エフェクト(ターゲット)
-			pos,
-			VEC3_ZERO,
-			MyLib::color::Red(),
-			20.0f,
-			0.1f,
-			1,
-			CEffect3D::TYPE::TYPE_NORMAL
-		);
-#endif
-
-		return;
 	}
 }
 
@@ -1075,7 +1077,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 
 		m_eMove = EMoveType::MOVETYPE_WALK;
 
-		if (Leave(pTarget->GetPosition(), 500.0f))
+		if (Leave(pTarget->GetPosition(), LENGTH))
 		{
 			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
@@ -1085,7 +1087,7 @@ void CPlayerAIControl::CatchDistance(CPlayer* pTarget)
 
 		m_eMove = EMoveType::MOVETYPE_WALK;
 
-		if (Leave(pTarget->GetPosition(), 500.0f))
+		if (Leave(pTarget->GetPosition(), LENGTH))
 		{
 			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
@@ -1218,7 +1220,6 @@ void CPlayerAIControl::SeeBall()
 	// 角度の設定
 	m_pAI->SetRotDest(angle);
 }
-
 
 //==========================================================================
 // 離れる : Leave(離れる相手、離れる距離)
