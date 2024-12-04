@@ -332,6 +332,7 @@
     <ClCompile Include="Source\sample_obj3D.cpp" />
     <ClCompile Include="Source\sample_objX.cpp" />
     <ClCompile Include="Source\scene.cpp" />
+    <ClCompile Include="Source\schoolnurse.cpp" />
     <ClCompile Include="Source\screen.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\shaderMono.cpp" />
@@ -342,6 +343,7 @@
     <ClCompile Include="Source\specialManager.cpp" />
     <ClCompile Include="Source\specialValueManager.cpp" />
     <ClCompile Include="Source\startText.cpp" />
+    <ClCompile Include="Source\stretcher.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
     <ClCompile Include="Source\targetpoint.cpp" />
     <ClCompile Include="Source\teamStatus.cpp" />
@@ -531,6 +533,7 @@
     <ClInclude Include="Source\sample_obj3D.h" />
     <ClInclude Include="Source\sample_objX.h" />
     <ClInclude Include="Source\scene.h" />
+    <ClInclude Include="Source\schoolnurse.h" />
     <ClInclude Include="Source\screen.h" />
     <ClInclude Include="Source\shader.h" />
     <ClInclude Include="Source\shaderMono.h" />
@@ -541,6 +544,7 @@
     <ClInclude Include="Source\specialManager.h" />
     <ClInclude Include="Source\specialValueManager.h" />
     <ClInclude Include="Source\startText.h" />
+    <ClInclude Include="Source\stretcher.h" />
     <ClInclude Include="Source\string2D.h" />
     <ClInclude Include="Source\targetpoint.h" />
     <ClInclude Include="Source\teamStatus.h" />

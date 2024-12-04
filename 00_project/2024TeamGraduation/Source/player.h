@@ -107,6 +107,7 @@ public:
 		STATE_DMG,				// ダメージ
 		STATE_DEAD,				// 死
 		STATE_DEAD_AFTER,		// 死後
+		STATE_DEAD_CARRY,		// 死後運搬
 		STATE_DODGE,			// 回避
 		STATE_CATCH_NORMAL,		// 通常キャッチ
 		STATE_CATCH_JUST,		// ジャストキャッチ
@@ -443,6 +444,7 @@ private:
 	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
 	void StateDead(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 死亡
 	void StateDeadAfter(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡後
+	void StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 死亡運搬
 	void StateDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 回避
 	void StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常キャッチ
 	void StateCatch_Just(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ジャストキャッチ
@@ -569,6 +571,13 @@ private:
 	const EFieldArea m_typeArea;				// ポジション
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	static CListManager<CPlayer> m_List;		// リスト
+
+#if  _DEBUG
+	static int m_nDebugID;	// デバッグ用ID
+	int m_nThisDebugID;		// 自分のID
+#endif //  _DEBUG
+
+
 };
 
 

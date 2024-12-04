@@ -115,11 +115,6 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 				}
 
 			}
-
-			//while (m_nPlayerNum[i] >= (int)m_vecAddIdx[i].size())
-			//{// ãÛÇ´Ç™Ç»Ç≠Ç»ÇÈÇ‹Ç≈
-			//	m_vecAddIdx[i].push_back(-1);
-			//}
 		}
 
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
@@ -200,8 +195,11 @@ void CEntry_SetUpTeam::SelectTeam()
 			
 			// ä˘Ç…Ç†ÇÈèÍçáÇÕí«â¡ÇµÇ»Ç¢
 			const auto& itr = std::find(m_vecAddIdx[side].begin(), m_vecAddIdx[side].end(), nowIdx);
-			if (itr == m_vecAddIdx[side].end())
-			{// ë∂ç›ÇµÇ»Ç¢
+			bool bAlready = itr == m_vecAddIdx[side].end();
+
+			if (!bAlready && 
+				m_nPlayerNum[side] > static_cast<int>(m_vecAddIdx[side].size()))
+			{// ë∂ç›ÇµÇ»Ç¢ && êlêîè„å¿
 				m_vecAddIdx[side].push_back(nowIdx);
 			}
 		}
