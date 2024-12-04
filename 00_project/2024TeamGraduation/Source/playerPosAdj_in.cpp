@@ -84,13 +84,17 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 	if (!pPlayer->IsJump() && !flagMotion.bDead)
 	{ // 相手コートに侵入したときはコート内に補正
 
-		// チームコートに戻す
-		CheckReturn(pPlayer);
-
 #if 1
 		// おっとっとする
 		CheckUnstable(pPlayer);
 #endif
+
+		// チームコートに戻す
+		if (pPlayer->GetActionPattern()->GetAction() != CPlayer::EAction::ACTION_UNSTABLE)
+		{// おっとっと中じゃない
+			CheckReturn(pPlayer);
+		}
+
 	}
 
 	// 位置を反映
@@ -131,7 +135,7 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 	CPlayerAction* pAction = pPlayer->GetActionPattern();
 	CPlayer::SMotionFrag motionFrag = pPlayer->GetMotionFrag();	// モーションフラグ
 
-	CPlayer::EAction action = CPlayer::EAction::ACTION_NONE;	// アクション種類
+	CPlayer::EAction action = pAction->GetAction();	// アクション種類
 
 	bool bBrake = pPlayer->IsBrake();							// ブレーキフラグ
 	MyLib::Vector3 move = pPlayer->GetMove();					// 移動量
@@ -144,8 +148,12 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 		return;
 	}
 
-	if (IsUnstable(pPlayer))
+	if (pPlayer->GetState() != CPlayer::EState::STATE_DMG &&
+		(IsUnstable(pPlayer) || action == CPlayer::EAction::ACTION_UNSTABLE))
 	{ // おっとっとラインを超えていた場合
+
+		// アクション設定
+		action = CPlayer::EAction::ACTION_UNSTABLE;
 
 		// ブレーキフラグ
 		if (!bBrake)
@@ -178,6 +186,10 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 
 			// 復帰設定
 			ReturnSetting(pPlayer);
+
+			// アクション設定
+			action = CPlayer::EAction::ACTION_NONE;
+			pAction->SetAction(action);
 		}
 		else if (inputUnstable == EInputUnstable::INPUT_FRIEND)
 		{// 味方側に入力された
@@ -185,6 +197,11 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 			bBrake = false;
 			pPlayer->SetEnableAction(true);
 			pPlayer->SetEnableMove(true);
+
+			// アクション設定
+			action = CPlayer::EAction::ACTION_NONE;
+			pAction->SetAction(action);
+
 			return;
 		}
 
@@ -203,11 +220,17 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 	else
 	{
 		bBrake = false;
+
+		// アクション設定
+		action = CPlayer::EAction::ACTION_NONE;
+		pAction->SetAction(action);
 	}
 
 	// 設定
 	pPlayer->SetMove(move);
 	pPlayer->SetEnableBrake(bBrake);
+	
+	// アクション設定
 	pAction->SetAction(action);
 }
 

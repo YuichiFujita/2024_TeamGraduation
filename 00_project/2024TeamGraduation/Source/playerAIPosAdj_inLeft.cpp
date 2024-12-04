@@ -57,7 +57,7 @@ bool CPlayerAIPosAdjInLeft::IsUnstable(CPlayer* pPlayer)
 {
 	// ƒ‰ƒCƒ“‚ð‰z‚¦‚Ä‚¢‚éê‡ƒtƒ‰ƒOON‚ð•Ô‚·
 	if (pPlayer->GetPosition().x > -UNSTABLE_LINE &&
-		pPlayer->GetPosition().x < 0.0f)
+		pPlayer->GetPosition().x <= 0.0f)
 	{
 		return true;
 	}

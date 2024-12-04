@@ -26,7 +26,7 @@ namespace
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
 	const float RATE_HIGH = 0.1f;	// ハイポリ比率
-	const float RATE_LOW  = 0.1f;	// ローポリ比率
+	const float RATE_LOW  = 0.2f;	// ローポリ比率
 #else
 	const float RATE_HIGH = 0.12f;	// ハイポリ比率
 	const float RATE_LOW = 0.28f;	// ローポリ比率
@@ -57,10 +57,13 @@ int CAudience::m_aNumWatchAll[2] = {};	// 観戦中の人数
 //==========================================================================
 CAudience::CAudience(EObjType type, CGameManager::ETeamSide team, int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_fJumpLevel		(UtilFunc::Transformation::Random(MIN_JUMP * 100, MAX_JUMP * 100) * 0.01f),	// ジャンプ量
+	m_fLandY			(CGameManager::FIELD_LIMIT),	// 着地Y座標
 	m_team				(team),			// 応援チーム
 	m_type				(type),			// オブジェクト種類
+	m_nArea				(0),			// 観戦エリア
 	m_posSpawn			(VEC3_ZERO),	// 入場位置
 	m_posWatch			(VEC3_ZERO),	// 観戦位置
+	m_posDespawn		(VEC3_ZERO),	// 退場位置
 	m_posDespawnStart	(VEC3_ZERO),	// 退場開始位置
 	m_state				(STATE_SPAWN),	// 状態
 	m_fTimeState		(0.0f)			// 状態管理時間
@@ -507,15 +510,11 @@ int CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, con
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 move = GetMove();	// 移動量
 
-	// 退場位置を作成
-	MyLib::Vector3 posDespawn = m_posSpawn;	// 退場位置
-	posDespawn.x = -m_posSpawn.x;			// X座標を反転させる
-
 	// 経過時間を加算
 	m_fTimeState += fDeltaTime * fSlowRate;
 
-	// 観戦位置から入場位置の逆方向に移動 (Y座標は無視する)
-	MyLib::Vector3 posDest = UtilFunc::Correction::EasingLinear(m_posDespawnStart, posDespawn, 0.0f, TIME_DESPAWN, m_fTimeState);
+	// 観戦位置から入場位置に移動 (Y座標は無視する)
+	MyLib::Vector3 posDest = UtilFunc::Correction::EasingLinear(m_posDespawnStart, m_posDespawn, 0.0f, TIME_DESPAWN, m_fTimeState);
 	pos.x = posDest.x;
 	pos.z = posDest.z;
 
@@ -528,9 +527,9 @@ int CAudience::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, con
 		// 経過時間を初期化
 		m_fTimeState = 0.0f;
 
-		// 観戦位置に補正
-		pos.x = posDespawn.x;
-		pos.z = posDespawn.z;
+		// 入場位置に補正
+		pos.x = m_posDespawn.x;
+		pos.z = m_posDespawn.z;
 
 		// 自身を削除する
 		Kill();
@@ -555,11 +554,11 @@ bool CAudience::UpdateGravity(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const
 	// 位置に重力を反映
 	pPos->y += pMove->y * fDeltaRate * fSlowRate;
 
-	if (pPos->y < CGameManager::FIELD_LIMIT)
+	if (pPos->y < m_fLandY)
 	{ // 観客が地面に埋もれている場合
 
 		// 観客の位置を補正
-		pPos->y = CGameManager::FIELD_LIMIT;
+		pPos->y = m_fLandY;
 		return true;
 	}
 
