@@ -37,7 +37,7 @@ namespace
 	const float	RADIUS = 14.0f;					// ”¼Œa
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// ”»’è—p”¼Œa
 	const float	RADIUS_SHADOW = 20.0f;			// ‰e‚Ì”¼Œa
-	const float	MIN_ALPHA_SHADOW = 0.18f;		// ‰e‚Ì“§–¾“x
+	const float	MIN_ALPHA_SHADOW = 0.32f;		// ‰e‚Ì“§–¾“x
 	const float	MAX_ALPHA_SHADOW = 0.48f;		// ‰e‚Ì“§–¾“x
 	const float	REV_MOVE = 0.025f;		// ˆÚ“®—Ê‚Ì•â³ŒW”
 	const float	REV_INIMOVE = 0.29f;	// ‰‘¬‚Ì•â³ŒW”
