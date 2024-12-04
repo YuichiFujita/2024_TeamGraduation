@@ -1,28 +1,33 @@
-//=============================================================================
+//==========================================================================
 // 
 //  影処理 [shadow.cpp]
 //  Author : 相馬靜雅
 //  Adder  : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 #include "shadow.h"
 #include "texture.h"
 #include "manager.h"
 #include "renderer.h"
-#include "game.h"
 
 //==========================================================================
-// マクロ定義
+//	定数宣言
 //==========================================================================
-#define POS_SHADOW	(50.0f)
+namespace
+{
+	const float	MAX_DIS_HEIGHT	= 260.0f;	// 影と親の縦の距離の最大値
+	const float	MAX_PLUS_RADIUS	= 50.0f;	// 影の大きさ加算量の最大値
+}
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CShadow::CShadow(int nPriority) : CObject3D(nPriority)
+CShadow::CShadow(int nPriority) : CObject3D(nPriority),
+	m_pObject	(nullptr),	// オブジェクトのポインタ
+	m_fLandY	(0.0f),		// 表示Y座標
+	m_nTexIdx	(0)			// テクスチャのインデックス番号
 {
-	m_pObject = nullptr;	// オブジェクトのポインタ
-	m_nTexIdx = 0;			// テクスチャのインデックス番号
+
 }
 
 //==========================================================================
@@ -36,11 +41,17 @@ CShadow::~CShadow()
 //==========================================================================
 // 生成処理(オーバーロード)
 //==========================================================================
-CShadow *CShadow::Create(CObject* pObject, float fRadius)
+CShadow *CShadow::Create
+(
+	CObject* pObject,	// 親オブジェクト
+	float fRadius,		// 元の半径
+	float fMinAlpha,	// 最小透明度
+	float fMaxAlpha,	// 最大透明度
+	float fLandY		// 表示Y座標
+)
 {
 	// 生成用のオブジェクト
 	CShadow *pShadow = nullptr;
-
 	if (pShadow == nullptr)
 	{// nullptrだったら
 
@@ -57,6 +68,18 @@ CShadow *CShadow::Create(CObject* pObject, float fRadius)
 
 			// 大きさの設定
 			pShadow->SetSize(MyLib::Vector3(fRadius, 0.0f, fRadius));
+
+			// 元の半径の設定
+			pShadow->m_fOriginRadius = fRadius;
+
+			// 表示Y座標の設定
+			pShadow->m_fLandY = fLandY;
+
+			// 透明度の最小値
+			pShadow->m_fMinAlpha = fMinAlpha;
+
+			// 透明度の最大値
+			pShadow->m_fMaxAlpha = fMaxAlpha;
 
 			// 初期化処理
 			pShadow->Init();
@@ -138,7 +161,11 @@ void CShadow::Draw()
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 0); 
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// Zテストを無効にする
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 
 	// 描画処理
 	CObject3D::Draw();
@@ -152,6 +179,10 @@ void CShadow::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// Zテストを有効にする
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
 //==========================================================================
@@ -159,12 +190,30 @@ void CShadow::Draw()
 //==========================================================================
 void CShadow::SetPositionRelative()
 {
-	// 位置取得
-	MyLib::Vector3 pos = m_pObject->GetPosition();
+	MyLib::Vector3 posParent = m_pObject->GetPosition();	// 親オブジェクト位置
+	MyLib::Vector3 posShadow = posParent;	// 影位置
+	MyLib::Vector3 sizeShadow = VEC3_ZERO;	// 影大きさ
+	float fDis = 0.0f;		// 影と親の距離
+	float fAlpha = 0.0f;	// 透明度
 
 	// Y座標を地面に設定
-	pos.y = CGameManager::FIELD_LIMIT + 1.0f;
+	posShadow.y = m_fLandY + 1.0f;
 
-	// 位置設定
-	SetPosition(pos);
+	// 影と親の縦座標の距離を求める
+	fDis = fabsf(posParent.y - posShadow.y);								// 縦の距離を求める
+	UtilFunc::Transformation::ValueNormalize(fDis, MAX_DIS_HEIGHT, 0.0f);	// 縦の距離を制限
+	fDis *= 1.0f / MAX_DIS_HEIGHT;											// 距離を割合化
+
+	// 影の大きさを求める
+	float fRadius = m_fOriginRadius + (MAX_PLUS_RADIUS * fDis);	// 半径
+	sizeShadow = MyLib::Vector3(fRadius, 0.0f, fRadius);
+
+	// α値を求める
+	fAlpha = fabsf(fDis - 1.0f);	// α値を設定
+	UtilFunc::Transformation::ValueNormalize(fAlpha, m_fMaxAlpha, m_fMinAlpha);	// α値を制限
+
+	// 影の描画情報を設定
+	SetPosition(posShadow);	// 位置
+	SetSize(sizeShadow);	// 大きさ
+	SetAlpha(fAlpha);		// 透明度
 }

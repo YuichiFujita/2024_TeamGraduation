@@ -29,12 +29,6 @@ class CAudienceHighPoly : public CAudience
 public:
 
 	//=============================
-	// 定数
-	//=============================
-	static constexpr float NEAR_LINE = 1000.0f;	// 手前の生成位置上限
-	static constexpr float FAR_LINE = 1100.0f; 	// 奥の生成位置上限
-
-	//=============================
 	// 列挙型定義
 	//=============================
 	// モーション列挙
@@ -46,6 +40,15 @@ public:
 		MOTION_SPECIAL,	// スペシャル状態
 		MOTION_DESPAWN,	// 退場状態
 		MOTION_MAX		// この列挙型の総数
+	};
+
+	// 観戦エリア列挙
+	enum EArea
+	{
+		AREA_FAR = 0,	// 奥
+		AREA_SIDE,		// 横
+		AREA_NEAR,		// 手前
+		AREA_MAX		// この列挙型の総数
 	};
 
 	//=============================
@@ -88,9 +91,20 @@ protected:
 private:
 
 	//=============================
+	// 関数リスト
+	//=============================
+	// 観戦位置計算リスト
+	typedef void(CAudienceHighPoly::*WATCH_POS_FUNC)();
+	static WATCH_POS_FUNC m_CalcWatchPositionFunc[];
+
+	//=============================
 	// メンバ関数
 	//=============================
-	HRESULT CreateCharacter(const MyLib::Vector3& pos);	// キャラクター生成
+	HRESULT CreateCharacter(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot);	// キャラクター生成
+	HRESULT CreatePenLight();		// ペンライト生成
+	void CalcWatchPositionFar();	// 観戦位置計算 (奥)
+	void CalcWatchPositionSide();	// 観戦位置計算 (横)
+	void CalcWatchPositionNear();	// 観戦位置計算 (手前)
 
 	//=============================
 	// メンバ変数

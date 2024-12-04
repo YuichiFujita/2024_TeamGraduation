@@ -179,6 +179,10 @@ void CMotion::ResetPose(int nType)
 //==========================================================================
 void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (m_vecInfo[0].aKey.size() == 0)
+	{// モーション情報メモリリーク？
+		MyAssert::CustomAssert(false,"観客壊れる可能性あり");
+	}
 
 	// 再生中の情報
 	Info& nowInfo = m_vecInfo[m_nType];

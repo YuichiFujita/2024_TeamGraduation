@@ -140,7 +140,7 @@ HRESULT CPlayerManager::Init()
 	// プレイヤー内野生成
 	//----------------------------------------------------------------------
 	// プレイヤーUser四人生成(左右)
-#if 0
+#if 1
 	// プレイヤーUser二人生成(右)
 	for (int i = 0; i < 2; i++)
 	{
@@ -187,7 +187,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 1
+#if 0
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -209,7 +209,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -247,7 +247,6 @@ HRESULT CPlayerManager::Init()
 #endif
 
 #endif // ENTRY
-
 
 	return S_OK;
 }
@@ -318,6 +317,15 @@ HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info)
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
+}
+
+//==========================================================================
+// 終了処理
+//==========================================================================
+void CPlayerManager::Uninit()
+{
+	// 自身のインスタンスの破棄
+	SAFE_DELETE(m_pInstance);
 }
 
 //==========================================================================

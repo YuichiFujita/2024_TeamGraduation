@@ -372,8 +372,10 @@ void CModel::Draw()
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
 
+#if 0
 	// シャドウマトリックス描画
 	DrawShadowMtx();
+#endif
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
@@ -422,9 +424,10 @@ void CModel::Draw(D3DXCOLOR col)
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
 
-
+#if 0
 	// シャドウマトリックス描画
 	DrawShadowMtx();
+#endif
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
@@ -482,9 +485,10 @@ void CModel::Draw(float fAlpha)
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
 
-
+#if 0
 	// シャドウマトリックス描画
 	DrawShadowMtx();
+#endif
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
