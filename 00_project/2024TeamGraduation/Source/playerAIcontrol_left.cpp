@@ -65,6 +65,9 @@ CPlayerAIControlLeft* CPlayerAIControlLeft::Create(CPlayer* player)
 //==========================================================================
 HRESULT CPlayerAIControlLeft::Init()
 {
+	// Šî’êƒNƒ‰ƒX‚Ì‰Šúˆ—
+	CPlayerAIControl::Init();
+
 	return S_OK;
 }
 
