@@ -37,6 +37,7 @@ public:
 	enum EEfkLabel
 	{
 		EFKLABEL_SAMPLE_LASER = 0,		// サンプルのレーザー
+		EFKLABEL_BALL,					// ボール
 		EFKLABEL_THROWLINE_NORMAL,		// 投げた時の線(通常)
 		EFKLABEL_THROWLINE_FAST,		// 投げた時の線(早い)
 		EFKLABEL_CAMEHAME_ENERGY,		// かめはめ波エネルギー部分

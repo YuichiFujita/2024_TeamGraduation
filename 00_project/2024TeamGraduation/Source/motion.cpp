@@ -13,6 +13,14 @@
 #include "debugproc.h"
 
 //==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const int IDX_VISUALMOVE = 2;	// 見た目のみ移動
+}
+
+//==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
 CMotion::SLoadInfo CMotion::m_LoadInfo = {};	// 読み込みデータ
@@ -286,81 +294,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		//--------------------------
 		// 位置反映
 		//--------------------------
-		if (i == 0)
-		{
-			// 本体の位置取得
-			MyLib::Vector3 pos = m_pObjChara->GetPosition();
-
-			// 本体の向き取得
-			MyLib::Vector3 rot = m_pObjChara->GetRotation();
-
-			// 元の位置取得
-			MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
-
-			// パーツの位置取得
-			MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
-			MyLib::Vector3 posPartsOld = m_ppModel[i]->GetPosition();
-
-			// 目標の位置との差分を求める
-			float posDiffX = nowInfo.aKey[nNextKey].aParts[i].pos.x -
-				m_pPartsOld[i].pos.x;
-
-			float posDiffY = nowInfo.aKey[nNextKey].aParts[i].pos.y -
-				m_pPartsOld[i].pos.y;
-
-			float posDiffZ = nowInfo.aKey[nNextKey].aParts[i].pos.z -
-				m_pPartsOld[i].pos.z;
-
-			// 親のYを補正
-			posParts.y =
-				m_pPartsOld[i].pos.y + (posDiffY * ratio);
-
-			// 位置設定
-			m_ppModel[i]->SetPosition(posParts + posOrigin);
-
-			int nNextMoveKey = m_nPatternKey + 1;
-			if (nNextMoveKey >= nowInfo.nNumKey)
-			{
-				nNextMoveKey = m_nPatternKey;
-			}
-
-			// 動いた長さを求める
-			float fMoveDiff =
-				sqrtf((nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x)
-					+ (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z));
-			fMoveDiff /= (static_cast<float>(nMaxFrame) / (fDeltaRate * fSlowRate));
-
-			// 動きの向きを一時代入
-			float fRot = nowInfo.aKey[nNextMoveKey].fRotMove;
-
-			// 動きの向き方向へ移動
-			pos.x += sinf(D3DX_PI + fRot + rot.y) * fMoveDiff;
-			pos.z += cosf(D3DX_PI + fRot + rot.y) * fMoveDiff;
-
-			// 位置設定
-			m_pObjChara->SetPosition(pos);
-		}
-		else
-		{
-			// パーツの位置取得
-			MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
-
-			// 元の位置取得
-			MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
-
-			// 目標の位置との差分を求める
-			float posDiffX = nextParts.pos.x - m_pPartsOld[i].pos.x;
-			float posDiffY = nextParts.pos.y - m_pPartsOld[i].pos.y;
-			float posDiffZ = nextParts.pos.z - m_pPartsOld[i].pos.z;
-
-			// パーツの位置を設定
-			posParts.y = m_pPartsOld[i].pos.y + (posDiffY * ratio);
-			posParts.x = m_pPartsOld[i].pos.x + (posDiffX * ratio);
-			posParts.z = m_pPartsOld[i].pos.z + (posDiffZ * ratio);
-
-			// 位置設定
-			m_ppModel[i]->SetPosition(posParts + m_ppModel[i]->GetOriginPosition());
-		}
+		UpdatePosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, fDeltaTime, fDeltaRate, fSlowRate);
 
 	}
 
@@ -549,6 +483,207 @@ void CMotion::UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, 
 }
 
 //==========================================================================
+// 位置更新
+//==========================================================================
+void CMotion::UpdatePosition(
+	int i, 
+	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	float ratio, int nMaxFrame,
+	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (nowInfo.nMove == IDX_VISUALMOVE)
+	{// 見た目のみ位置更新
+		UpdateVisualPosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, fDeltaTime, fDeltaRate, fSlowRate);
+	}
+	else
+	{
+		UpdateEntityPosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, fDeltaTime, fDeltaRate, fSlowRate);
+	}
+}
+
+//==========================================================================
+// 本体ごと位置更新
+//==========================================================================
+void CMotion::UpdateEntityPosition(
+	int i, 
+	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	float ratio, int nMaxFrame,
+	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 次のキー
+	int nNextKey = (m_nPatternKey + 1) % nowInfo.nNumKey;
+
+	if (i == 0)
+	{
+		// 本体の位置取得
+		MyLib::Vector3 pos = m_pObjChara->GetPosition();
+
+		// 本体の向き取得
+		MyLib::Vector3 rot = m_pObjChara->GetRotation();
+
+		// 元の位置取得
+		MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
+
+		// パーツの位置取得
+		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
+		MyLib::Vector3 posPartsOld = m_ppModel[i]->GetPosition();
+
+		// 目標の位置との差分を求める
+		float posDiffX = nowInfo.aKey[nNextKey].aParts[i].pos.x -
+			m_pPartsOld[i].pos.x;
+
+		float posDiffY = nowInfo.aKey[nNextKey].aParts[i].pos.y -
+			m_pPartsOld[i].pos.y;
+
+		float posDiffZ = nowInfo.aKey[nNextKey].aParts[i].pos.z -
+			m_pPartsOld[i].pos.z;
+
+		// 親のYを補正
+		posParts.y =
+			m_pPartsOld[i].pos.y + (posDiffY * ratio);
+
+		// 位置設定
+		m_ppModel[i]->SetPosition(posParts + posOrigin);
+
+		int nNextMoveKey = m_nPatternKey + 1;
+		if (nNextMoveKey >= nowInfo.nNumKey)
+		{
+			nNextMoveKey = m_nPatternKey;
+		}
+
+		// 動いた長さを求める
+		float fMoveDiff =
+			sqrtf((nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.x - m_pPartsOld[i].pos.x)
+				+ (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z) * (nowInfo.aKey[nNextMoveKey].aParts[i].pos.z - m_pPartsOld[i].pos.z));
+		fMoveDiff /= (static_cast<float>(nMaxFrame) / (fDeltaRate * fSlowRate));
+
+		// 動きの向きを一時代入
+		float fRot = nowInfo.aKey[nNextMoveKey].fRotMove;
+
+		// 動きの向き方向へ移動
+		pos.x += sinf(D3DX_PI + fRot + rot.y) * fMoveDiff;
+		pos.z += cosf(D3DX_PI + fRot + rot.y) * fMoveDiff;
+
+		// 位置設定
+		m_pObjChara->SetPosition(pos);
+	}
+	else
+	{
+		// パーツの位置取得
+		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
+
+		// 元の位置取得
+		MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
+
+		// 目標の位置との差分を求める
+		float posDiffX = nextParts.pos.x - m_pPartsOld[i].pos.x;
+		float posDiffY = nextParts.pos.y - m_pPartsOld[i].pos.y;
+		float posDiffZ = nextParts.pos.z - m_pPartsOld[i].pos.z;
+
+		// パーツの位置を設定
+		posParts.y = m_pPartsOld[i].pos.y + (posDiffY * ratio);
+		posParts.x = m_pPartsOld[i].pos.x + (posDiffX * ratio);
+		posParts.z = m_pPartsOld[i].pos.z + (posDiffZ * ratio);
+
+		// 位置設定
+		m_ppModel[i]->SetPosition(posParts + m_ppModel[i]->GetOriginPosition());
+	}
+}
+
+//==========================================================================
+// 見た目のみ位置更新
+//==========================================================================
+void CMotion::UpdateVisualPosition(
+	int i, 
+	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	float ratio, int nMaxFrame,
+	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 次のキー
+	int nNextKey = (m_nPatternKey + 1) % nowInfo.nNumKey;
+
+	if (i == 0)
+	{
+		//// 本体の位置取得
+		//MyLib::Vector3 pos = m_pObjChara->GetPosition();
+
+		//// 本体の向き取得
+		//MyLib::Vector3 rot = m_pObjChara->GetRotation();
+
+		//// 元の位置取得
+		//MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
+
+		//// パーツの位置取得
+		//MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
+		//MyLib::Vector3 posPartsOld = m_ppModel[i]->GetPosition();
+
+		//// 目標の位置との差分を求める
+		//float posDiffX = nowInfo.aKey[nNextKey].aParts[i].pos.x -
+		//	m_pPartsOld[i].pos.x;
+
+		//float posDiffY = nowInfo.aKey[nNextKey].aParts[i].pos.y -
+		//	m_pPartsOld[i].pos.y;
+
+		//float posDiffZ = nowInfo.aKey[nNextKey].aParts[i].pos.z -
+		//	m_pPartsOld[i].pos.z;
+
+		//// 親のYを補正
+		//posParts.y =
+		//	m_pPartsOld[i].pos.y + (posDiffY * ratio);
+
+		//// 位置設定
+		//m_ppModel[i]->SetPosition(posParts + posOrigin);
+
+
+
+
+
+		// パーツの位置取得
+		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
+
+		// 元の位置取得
+		MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
+
+		// 目標の位置との差分を求める
+		float posDiffX = nextParts.pos.x - m_pPartsOld[i].pos.x;
+		float posDiffY = nextParts.pos.y - m_pPartsOld[i].pos.y;
+		float posDiffZ = nextParts.pos.z - m_pPartsOld[i].pos.z;
+
+		// パーツの位置を設定
+		posParts.y = m_pPartsOld[i].pos.y + (posDiffY * ratio);
+		posParts.x = m_pPartsOld[i].pos.x + (posDiffX * ratio);
+		posParts.z = m_pPartsOld[i].pos.z + (posDiffZ * ratio);
+
+		// 位置設定
+		m_ppModel[i]->SetPosition(posParts + m_ppModel[i]->GetOriginPosition());
+
+
+
+	}
+	else
+	{
+		// パーツの位置取得
+		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
+
+		// 元の位置取得
+		MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
+
+		// 目標の位置との差分を求める
+		float posDiffX = nextParts.pos.x - m_pPartsOld[i].pos.x;
+		float posDiffY = nextParts.pos.y - m_pPartsOld[i].pos.y;
+		float posDiffZ = nextParts.pos.z - m_pPartsOld[i].pos.z;
+
+		// パーツの位置を設定
+		posParts.y = m_pPartsOld[i].pos.y + (posDiffY * ratio);
+		posParts.x = m_pPartsOld[i].pos.x + (posDiffX * ratio);
+		posParts.z = m_pPartsOld[i].pos.z + (posDiffZ * ratio);
+
+		// 位置設定
+		m_ppModel[i]->SetPosition(posParts + m_ppModel[i]->GetOriginPosition());
+	}
+}
+
+//==========================================================================
 // モーションの設定処理
 //==========================================================================
 void CMotion::Set(int nType, int nStartKey, bool bBlend)
@@ -626,6 +761,12 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 			if (nCntParts == 0)
 			{// 親はキャラクターの位置にする
 				m_pPartsOld[nCntParts].pos = m_ppModel[nCntParts]->GetPosition() - m_pObjChara->GetOriginPosition();
+
+				if (m_vecInfo[m_nOldType].nMove == IDX_VISUALMOVE)
+				{
+					m_pPartsOld[nCntParts].pos = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos;
+					m_ppModel[nCntParts]->SetPosition(m_ppModel[nCntParts]->GetOriginPosition() + nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos);
+				}
 			}
 			else
 			{

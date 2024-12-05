@@ -804,12 +804,55 @@ CPlayer::SDashInfo CPlayerUserControlMove::Trigger(CPlayer* player, CPlayer::EDa
 	// トリガーのインターバルリセット
 	fTriggerInterval = TIME_INTERVAL;
 
-	// トリガーのカウント
-	nCntTrigger[eAngle] = (nCntTrigger[eAngle] + 1) % 2;
+	// 逆方向判定
+	if (IsInverseTrigger(eAngle, nCntTrigger))
+	{
+		// トリガーのカウントリセット
+		memset(nCntTrigger, 0, sizeof(nCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
+	}
+	else
+	{// 同方向
+
+		// トリガーのカウント加算
+		nCntTrigger[eAngle] = (nCntTrigger[eAngle] + 1) % 2;
+	}
 
 	//コントロール系
 	SetCntTrigger(nCntTrigger);				// トリガーのカウント
 	SetTriggerInterval(fTriggerInterval);	// トリガーのインターバル
 
 	return info;
+}
+
+//==========================================================================
+// 逆方向判定(true : 逆入力)
+//==========================================================================
+bool CPlayerUserControlMove::IsInverseTrigger(CPlayer::EDashAngle eAngle, int* nCntTrigger)
+{
+	auto Loop = [](int i, int max)
+	{
+		return (i + 1) % max;
+	};
+
+	// 判定する向き
+	int nAngle = eAngle;
+
+	int startNG = nAngle;
+	for (int i = 0; i < 3; i++)
+	{
+		startNG = Loop(startNG, CPlayer::EDashAngle::ANGLE_MAX);
+	}
+
+	// 逆方向
+	int nNGAngle0 = startNG;
+	int nNGAngle1 = Loop(nNGAngle0, CPlayer::EDashAngle::ANGLE_MAX);
+	int nNGAngle2 = Loop(nNGAngle1, CPlayer::EDashAngle::ANGLE_MAX);
+
+	if (nCntTrigger[nNGAngle0] == 1 ||
+		nCntTrigger[nNGAngle1] == 1 ||
+		nCntTrigger[nNGAngle2] == 1)
+	{
+		return true;
+	}
+	return false;
 }

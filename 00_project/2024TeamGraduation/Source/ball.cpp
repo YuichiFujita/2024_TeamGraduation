@@ -204,6 +204,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_state			(STATE_SPAWN),	// 状態
 	m_fStateTime	(0.0f),			// 状態カウンター
 	m_pThrowLine	(nullptr),		// 投げのライン
+	m_pAura			(nullptr),		// オーラ
 	m_nDamage		(0),			// ダメージ
 	m_fKnockback	(0.0f)			// ノックバック
 {
@@ -275,6 +276,13 @@ HRESULT CBall::Init()
 	// 影の生成
 	m_pShadow = CShadow::Create(this, RADIUS_SHADOW, MIN_ALPHA_SHADOW, MAX_ALPHA_SHADOW);
 	if (m_pShadow == nullptr) { return E_FAIL; }
+
+	// オーラ生成
+	m_pAura = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_BALL,
+			GetPosition(),
+			MyLib::Vector3(),
+			MyLib::Vector3(),
+			15.0f);
 
 	return S_OK;
 }
@@ -1766,6 +1774,16 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 //==========================================================================
 void CBall::UpdateThrowLine()
 {
+	// オーラ更新
+	if (m_pAura != nullptr)
+	{
+		// ワールドマトリックス計算
+		CalWorldMtx();
+
+		// 位置設定
+		m_pAura->SetPosition(GetWorldMtx().GetWorldPosition());
+	}
+
 	if (IsAttack())
 	{// 攻撃中
 
