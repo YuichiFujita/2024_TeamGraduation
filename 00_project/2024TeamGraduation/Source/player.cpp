@@ -647,7 +647,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	UtilFunc::Transformation::RotNormalize(fRotDiff);
 
 	// 角度の補正をする
-	rot.y += fRotDiff * (0.25f * fDeltaRate * fSlowRate);
+	rot.y += fRotDiff * (0.35f * fDeltaRate * fSlowRate);
 	UtilFunc::Transformation::RotNormalize(rot.y);
 
 	// 向き設定
@@ -1191,12 +1191,6 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 			//ジャストフラグON
 			m_sMotionFrag.bCatchJust = true;
-		
-			CEffect3D::Create(
-				GetPosition(),
-				MyLib::Vector3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
 
 		{
@@ -2096,8 +2090,8 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	MyLib::Vector3 move = GetMove();
 	MyLib::Vector3 rot = GetRotation();
 #if 1
-	move.x += sinf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
-	move.z += cosf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
+	move.x += sinf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE * fDeltaRate * fSlowRate;
+	move.z += cosf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE * fDeltaRate * fSlowRate;
 #else
 	move.x += sinf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
 	move.z += cosf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
@@ -2402,10 +2396,14 @@ void CPlayer::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Parameter"))
 	{
+		// 拡大率の調整
+		float scale = GetScale();
+		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
+		SetScale(scale);
+
 		// 取得
 		CCharacterStatus* pStatus = GetCharStatus();
 		CCharacterStatus::CharParameter parameter = pStatus->GetParameter();
-		CBallStatus::SBallParameter ballParam = GetBallParameter();
 
 		ImGui::DragFloat("fVelocityNormal", (float*)&parameter.fVelocityNormal, 0.01f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fVelocityDash", (float*)&parameter.fVelocityDash, 0.01f, 0.0f, 100.0f, "%.2f");
@@ -2416,20 +2414,30 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");		
 		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
 
-		ImGui::DragFloat("fKnockbackNormal", &ballParam.fKnockbackNormal, 0.1f, 0.0f, 10000.0f, "%.3f");
-		ImGui::DragFloat("fKnockbackJump", &ballParam.fKnockbackJump, 0.1f, 0.0f, 10000.0f, "%.3f");
-		ImGui::DragFloat("fKnockbackSpecial", &ballParam.fKnockbackSpecial, 0.1f, 0.0f, 10000.0f, "%.3f");
-
 		SetRadius(parameter.fRadius);	// 半径反映
 
 		// パラメーター反映
 		pStatus->SetParameter(parameter);
-		SetBallParameter(ballParam);
 
-		// 拡大率の調整
-		float scale = GetScale();
-		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
-		SetScale(scale);
+		// ボールのパラメータ
+		if (ImGui::TreeNodeEx("Ball Parameter", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			// ボールのパラメータ取得
+			CBallStatus::SBallParameter ballParam = GetBallParameter();
+
+			ImGui::DragFloat("fThrowMoveNormal", &ballParam.fThrowMoveNormal, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fThrowMoveJump", &ballParam.fThrowMoveJump, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fThrowMoveSpecial", &ballParam.fThrowMoveSpecial, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackNormal", &ballParam.fKnockbackNormal, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackJump", &ballParam.fKnockbackJump, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackSpecial", &ballParam.fKnockbackSpecial, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fCatchRange", &ballParam.fCatchRange, 0.01f, 0.0f, 10000.0f, "%.3f");
+
+			// パラメーター反映
+			SetBallParameter(ballParam);
+
+			ImGui::TreePop();
+		}
 
 		ImGui::TreePop();
 	}

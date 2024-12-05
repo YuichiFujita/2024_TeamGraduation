@@ -142,7 +142,7 @@ private:
 	// メンバ関数
 	//=============================
 	// オーバーライド関数
-	void CalWorldMtx();	// ワールドマトリックスの計算
+	void CalWorldMtx() override;	// ワールドマトリックスの計算
 
 	//--------------------------
 	// 状態関数
@@ -223,6 +223,7 @@ private:
 	int m_nDamage;			// ダメージ
 	float m_fKnockback;		// ノックバック
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
+	CEffekseerObj* m_pAura;	// オーラ
 };
 
 #endif

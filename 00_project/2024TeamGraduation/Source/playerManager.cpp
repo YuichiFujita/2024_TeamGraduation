@@ -217,6 +217,22 @@ HRESULT CPlayerManager::Init()
 	}
 	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
 	pAI->SetRotDest(HALF_PI);
+
+	pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, -200.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+	if (pAI == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI->SetRotDest(HALF_PI);
+
+	pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 200.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+	if (pAI == nullptr)
+	{
+		return E_FAIL;
+	}
+	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+	pAI->SetRotDest(HALF_PI);
 #endif
 
 	// プレイヤーAI一人生成(左)

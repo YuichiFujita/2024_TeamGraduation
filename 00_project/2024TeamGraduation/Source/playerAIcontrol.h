@@ -18,6 +18,20 @@ class CPlayerAIControlAction;	// アクション(AI)
 class CPlayer;
 
 //==========================================================================
+// 定数定義
+//==========================================================================
+namespace playerAIcontrol
+{
+	// 投げ関連
+	const float THROW_JUMP_END = 130.0f;			// ジャンプ投げの最大位置(ジャンプ力MAX：150)
+
+	// 線越え判定(中心(x)からの距離)
+	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
+	const float RETURN_POS = 500.0f;			// 戻る位置
+	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
+}
+
+//==========================================================================
 // プレイヤーコントロールクラス定義
 //==========================================================================
 class CPlayerAIControl
@@ -145,7 +159,9 @@ public:
 	void SetMove(EMoveType move) { m_eMove = move; }
 	EMoveType GetMove() { return m_eMove; }
 	void SetAction(EAction action) { m_eAction = action; }
-	void SetThrow(EThrow a) { m_eThrow = a; }
+	EAction GetAction() { return m_eAction; }
+	void SetThrow(EThrow Throw) { m_eThrow = Throw; }
+	EThrow GetThrow() { return m_eThrow; }
 
 	void SetPlayer(CPlayer* player) { m_pAI = player; }
 	CPlayer* GetPlayer() { return m_pAI; }
@@ -270,10 +286,13 @@ private:
 
 	void CatchState();
 
+
 	void PlanThrow();
 	void PlanHeart();		// 心のプラン
 
-	void CatchDistance(CPlayer* pTarget);	// 距離：キャッチ状態
+	void DistanceCatch(CPlayer* pTarget);	// 距離：キャッチ状態
+	void DistanceTeam();
+
 	bool IsPassTarget();					// パスする相手がいるか判定
 	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
 

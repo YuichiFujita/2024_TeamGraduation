@@ -2843,17 +2843,6 @@ namespace UtilFunc	// 便利関数
 			D3DXVec3TransformCoord(&rotatedAABBMin, &aabbMin, &rotationMatrix);
 			D3DXVec3TransformCoord(&rotatedAABBMax, &aabbMax, &rotationMatrix);
 
-			CEffect3D::Create(
-				rotatedAABBMin,
-				MyLib::Vector3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-				40.0f, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-			CEffect3D::Create(
-				rotatedAABBMax,
-				MyLib::Vector3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-				40.0f, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-
 			// AABBの境界ボックスとボックスの境界ボックスが一部でも重なっているかどうかを確認
 			bool collisionX = rotatedAABBMax.x >= boxMin.x && rotatedAABBMin.x <= boxMax.x;
 			bool collisionY = rotatedAABBMax.y >= boxMin.y && rotatedAABBMin.y <= boxMax.y;
