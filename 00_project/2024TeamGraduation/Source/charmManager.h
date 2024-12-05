@@ -11,6 +11,7 @@
 // 前方宣言
 //==========================================================================
 class CPlayer;
+class CCollisionLine_Box;
 
 //==========================================================================
 // クラス定義
@@ -67,6 +68,10 @@ private:
 	// メンバ変数
 	//=============================
 
+#if _DEBUG
+	// CCollisionLine_Box* m_pCourtSizeBox;	// コートサイズのボックス
+	CCollisionLine_Box* m_pCourtSizeBox[4];	// コートサイズのボックス
+#endif
 	static CCharmManager* m_pThisPtr;	// 自身のポインタ
 };
 

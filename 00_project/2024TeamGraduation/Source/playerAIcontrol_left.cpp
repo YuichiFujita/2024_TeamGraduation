@@ -109,8 +109,6 @@ void CPlayerAIControlLeft::Uninit()
 {
 	// Šî’êƒNƒ‰ƒX‚ÌI—¹ˆ—
 	CPlayerAIControl::Uninit();
-
-	//delete this;
 }
 
 //==========================================================================

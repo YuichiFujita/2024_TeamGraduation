@@ -1736,7 +1736,7 @@ namespace UtilFunc	// 便利関数
 			MyLib::Vector3 vecLine = pos1 - pos0;
 
 			// 2Dベクトルの外積
-			float det = vecLine.x * vecLine.z - vecLine.z * vecLine.x;
+			float det = vecLine.x * vecDir.z - vecLine.z * vecDir.x;
 
 			// 平行の場合、交差しない
 			if (fabs(det) < 1e-6f) return false;
@@ -1747,7 +1747,7 @@ namespace UtilFunc	// 便利関数
 
 			// パラメータを計算
 			float lineRate = (deltaX * vecDir.z - deltaZ * vecDir.x) / det;		// 線分に対する割合
-			float vecRate = (deltaX * vecLine.z - deltaZ * vecLine.z) / det;	// 線分に対するベクトルの割合
+			float vecRate = (deltaX * vecLine.z - deltaZ * vecLine.x) / det;	// 線分に対するベクトルの割合
 
 			// 交差判定
 			if (lineRate >= 0.0f && lineRate <= 1.0f &&
@@ -1900,7 +1900,7 @@ namespace UtilFunc	// 便利関数
 		@details 4つの頂点がまだ求められていない場合に使う
 		@param	posSquare	[in]	判定する四角形の中心座標
 		@param	SquareSize	[in]	判定する四角形のサイズ
-		@param	fSquareRot	[in]	判定する四角形のサイズ
+		@param	fSquareRot	[in]	判定する四角形の角度
 		@param	MainPos		[in]	自分の位置
 		@return	中にいるかのbool値
 		*/
