@@ -647,7 +647,7 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	UtilFunc::Transformation::RotNormalize(fRotDiff);
 
 	// 角度の補正をする
-	rot.y += fRotDiff * (0.25f * fDeltaRate * fSlowRate);
+	rot.y += fRotDiff * (0.35f * fDeltaRate * fSlowRate);
 	UtilFunc::Transformation::RotNormalize(rot.y);
 
 	// 向き設定
@@ -1191,12 +1191,6 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 			//ジャストフラグON
 			m_sMotionFrag.bCatchJust = true;
-		
-			CEffect3D::Create(
-				GetPosition(),
-				MyLib::Vector3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-				80.0f, 1.0f/60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 		}
 
 		{
@@ -2096,8 +2090,8 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	MyLib::Vector3 move = GetMove();
 	MyLib::Vector3 rot = GetRotation();
 #if 1
-	move.x += sinf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
-	move.z += cosf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE;
+	move.x += sinf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE * fDeltaRate * fSlowRate;
+	move.z += cosf(D3DX_PI + rot.y) * Court::VELOCITY_INVADE * fDeltaRate * fSlowRate;
 #else
 	move.x += sinf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
 	move.z += cosf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;

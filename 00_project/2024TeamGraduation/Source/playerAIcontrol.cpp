@@ -1301,7 +1301,7 @@ bool CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 		m_pAI->SetRotDest(direction);
 	}
 
-#ifdef _DEBUG
+#if 0
 	CEffect3D::Create
 	(// デバッグ用エフェクト(ターゲット)
 		targetPos,

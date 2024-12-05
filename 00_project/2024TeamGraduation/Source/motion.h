@@ -137,8 +137,8 @@ public:
 	//--------------------------
 	// フラグ
 	//--------------------------
-	inline int IsGetMove() { return m_vecInfo[m_nType].nMove; }			// 移動の判定取得
-	inline int IsGetMove(int nType) { return m_vecInfo[nType].nMove; }	// 移動の判定取得
+	inline int IsGetMove() { return (m_vecInfo[m_nType].nMove == 0) ? 0 : 1; }			// 移動の判定取得
+	inline int IsGetMove(int nType) { return (m_vecInfo[nType].nMove == 0) ? 0 : 1; }	// 移動の判定取得
 	inline bool IsFinish() { return m_bFinish; }						// 終了しているかの判定
 	inline void ToggleFinish(bool bFinish) { m_bFinish = bFinish; }		// 終了しているかの判定強制切り替え
 	inline bool IsGetCancelable() { return m_bCancelable; }				// キャンセル可能の判定取得
@@ -179,6 +179,9 @@ private:
 	void LoadMotion(const std::string& file, int nMotion);
 	void UpdateRotation(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// 向きの更新
 	void UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// スケールの更新
+	void UpdatePosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 位置更新
+	void UpdateEntityPosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 本体ごと位置更新
+	void UpdateVisualPosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 見た目のみ位置更新
 
 	// メンバ変数
 	std::vector<Info> m_vecInfo;	// モーションの情報

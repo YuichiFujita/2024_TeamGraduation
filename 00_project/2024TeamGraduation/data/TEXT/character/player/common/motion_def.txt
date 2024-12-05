@@ -32,7 +32,7 @@ MOTIONSET
 		FRAME = 15
 		PARTS	# ----- [ 0 ] -----
 			ROT = 0.09 -0.16 0.00
-			POS = 0.00 -11.00 0.50
+			POS = 0.00 -11.00 0.00
 			SCALE = 1.00 1.00 1.00
 		END_PARTS
 
