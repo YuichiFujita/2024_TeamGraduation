@@ -2459,12 +2459,13 @@ void CPlayer::Debug()
 		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
 		ImGui::Text("bDash : [%d]", m_bDash);
 		ImGui::Text("bBrake : [%d]", m_bBrake);
-		ImGui::Text("InputAngleCtr : [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
-
+		ImGui::Text("EscapeTime : [%.2f]", m_fEscapeTime);
+		
 		ImGui::Text("typeBase : [%s]", magic_enum::enum_name(GetBaseType()));
 		ImGui::Text("typeTeam : [%s]", magic_enum::enum_name(m_typeTeam));
 		ImGui::Text("typeArea : [%s]", magic_enum::enum_name(m_typeArea));
 
+		ImGui::Text("InputAngleCtr : [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
 		if (angle != nullptr)
 		{
 			ImGui::Text("InputAngle : [%s]", magic_enum::enum_name(*angle));

@@ -196,7 +196,7 @@ bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
 	MyLib::Vector3 posBP = pBallPlayer->GetPosition();
 
 	// ボール所持プレイヤーと自陣中央のベクトル
-	MyLib::Vector3 vecDiff = (posBP - posCourt).Normal();
+	MyLib::Vector3 vecDiff = (posCourt - posBP).Normal();
 
 	// 端エリアをベクトルから交差判定
 	// 自陣4点(上下左右)
@@ -211,7 +211,7 @@ bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
 	MyLib::Vector3 AreaMid = MyLib::Vector3();	// 交点
 	MyLib::Vector2 areaSize = MyLib::Vector2(sizeCourt.x, sizeCourt.z);		// エリアサイズ
 	areaSize.x *= 0.2f;							//z長x短
-	float fAngle = 0.0f;						//rot
+	float fAngle = D3DX_PI * 0.5f;						//rot
 	int nIdx = 0;
 
 	// 判定
@@ -219,51 +219,21 @@ bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
 	{
 		MyLib::Vector3 posEdgeNext = posEdge[0];
 		if (i < 3)
-		{
+		{// 通常
 			posEdgeNext = posEdge[i + 1];
 		}
-		
-		// 判定エリアの中心設定
-		D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 
-		MyLib::Vector3 size = MyLib::Vector3(areaSize.x, 100.0f, areaSize.y);		// エリアサイズ
-		AreaMid = UtilFunc::Calculation::GetCenterPosition3D(posEdge[i], posEdgeNext);
-		if (m_pCourtSizeBox[i] != nullptr)
-		{
-			m_pCourtSizeBox[i]->SetColor(col);
-			m_pCourtSizeBox[i]->SetPosition(AreaMid);
-			m_pCourtSizeBox[i]->SetAABB(MyLib::AABB(-size, size));
-		}
+		fAngle += D3DX_PI * 0.5f;
+		UtilFunc::Transformation::RotNormalize(fAngle);
 
 		// ボール持ちプレイヤーの対角にある自陣の辺を見つける
 		// コート中央からボール持ちプレイヤーの矢印飛ばして当たるとこ
-		if (UtilFunc::Collision::IsVecToLine(posEdge[i], posEdgeNext, posCourt, vecDiff))
+		if (UtilFunc::Collision::IsVecToLine(posEdge[i], posEdgeNext, posCourt, vecDiff, &AreaMid))
 		{// ライン交差
 
-			nIdx = i;
-			
-			col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
-			if (m_pCourtSizeBox[i] != nullptr)
-			{
-				m_pCourtSizeBox[i]->SetColor(col);
-			}
 			break;
 		}
 	}
-
-#if _DEBUG
-	//// サイズ設定
-	// areaSize;
-	// MyLib::Vector3 size = MyLib::Vector3(areaSize.x, 100.0f, areaSize.y);		// エリアサイズ
-
-	//if (m_pCourtSizeBox != nullptr)
-	//{
-	//	D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	//	m_pCourtSizeBox->SetColor(col);
-	//	m_pCourtSizeBox->SetPosition(AreaMid);
-	//	m_pCourtSizeBox->SetAABB(MyLib::AABB(-size, size), 1.0f);
-	//}
-#endif
 
 	if (UtilFunc::Collision::CollisionSquare(AreaMid, areaSize, fAngle, pos))
 	{// 端エリア内にいるか
