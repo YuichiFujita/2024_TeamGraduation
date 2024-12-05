@@ -34,7 +34,7 @@ namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
 	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
-	const float	RADIUS = 14.0f;					// 半径
+	const float	RADIUS = 17.0f;					// 半径
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// 判定用半径
 	const float	RADIUS_SHADOW = 20.0f;			// 影の半径
 	const float	MIN_ALPHA_SHADOW = 0.32f;		// 影の透明度
