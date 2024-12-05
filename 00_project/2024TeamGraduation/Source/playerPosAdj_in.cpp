@@ -50,6 +50,9 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 
 		// コート内に補正
 		CGameManager::GetInstance()->SetPosLimit(pos);
+
+		// 位置を反映
+		pPlayer->SetPosition(pos);
 	}
 
 	if (pos.y <= CGameManager::FIELD_LIMIT)
@@ -57,6 +60,9 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 
 		// 地面に着地させる
 		pos.y = CGameManager::FIELD_LIMIT;
+
+		// 位置を反映
+		pPlayer->SetPosition(pos);
 
 		if (bJump && !flagMotion.bDead)
 		{ // ジャンプ中着地
@@ -96,9 +102,6 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		}
 
 	}
-
-	// 位置を反映
-	pPlayer->SetPosition(pos);
 }
 
 //==========================================================================
@@ -126,16 +129,21 @@ void CPlayerPosAdjIn::CheckReturn(CPlayer* pPlayer)
 //==========================================================================
 void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 {
-	// 侵入から戻る状態
-	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN ||
-		pPlayer->GetState() == CPlayer::EState::STATE_INVADE_TOSS)
-		return;
-
 	CMotion* motion = pPlayer->GetMotion();
 	CPlayerAction* pAction = pPlayer->GetActionPattern();
 	CPlayer::SMotionFrag motionFrag = pPlayer->GetMotionFrag();	// モーションフラグ
 
 	CPlayer::EAction action = pAction->GetAction();	// アクション種類
+
+	// 侵入から戻る状態
+	if (pPlayer->GetState() == CPlayer::EState::STATE_INVADE_RETURN ||
+		pPlayer->GetState() == CPlayer::EState::STATE_INVADE_TOSS)
+	{
+		// アクション設定
+		action = CPlayer::EAction::ACTION_NONE;
+		pAction->SetAction(action);
+		return;
+	}
 
 	bool bBrake = pPlayer->IsBrake();							// ブレーキフラグ
 	MyLib::Vector3 move = pPlayer->GetMove();					// 移動量
@@ -194,6 +202,7 @@ void CPlayerPosAdjIn::CheckUnstable(CPlayer* pPlayer)
 		else if (inputUnstable == EInputUnstable::INPUT_FRIEND)
 		{// 味方側に入力された
 
+			// フラグ再設定
 			bBrake = false;
 			pPlayer->SetEnableAction(true);
 			pPlayer->SetEnableMove(true);

@@ -19,6 +19,7 @@
 std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェクトのファイル名
 {
 	"data/Effekseer/Laser01.efkefc",					// サンプルのレーザー
+	"data/Effekseer/ball.efkefc",						// ボール
 	"data/Effekseer/throwLine_normal.efkefc",			// 投げた時の線(通常)
 	"data/Effekseer/throwLine_fast.efkefc",				// 投げた時の線(早い)
 	"data/Effekseer/kamehame_chargeStart.efkefc",		// かめはめ波(開始)

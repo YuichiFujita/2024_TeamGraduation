@@ -25,40 +25,6 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace timing
-{
-	// タイミング
-	const float TIMING_NORMAL = 1.0f;	// 通常
-	const int TIMING_RAND_MAX = 100;	// randMAX値
-	const int TIMING_RAND_MIN = -80;	// randMIN値
-}
-
-namespace
-{
-	// 投げ関連
-	const float THROW_JUMP_END = 130.0f;			// ジャンプ投げの最大位置(ジャンプ力MAX：150)
-
-	// キャッチ関連
-	const float CHATCH_LENGTH_IN = 500.0f;		// 内野との距離
-	const float CHATCH_LENGTH_OUT = 700.0f;		// 外野との距離
-	const float CATCH_JUMP_LENGTH = 100.0f;		// ジャンプキャッチの距離
-	const float CATCH_JUMP_HEIGHT = 300.0f;		// ジャンプキャッチする高さ
-
-	// 距離間(デフォルト)
-	const float LENGTH_IN = 500.0f;
-	const float LENGTH_SPACE = 10.0f;
-	const float LENGTH_OUT = 200.0f;
-	const float LENGTH_LINE = 100.0f;
-
-	// 線越え判定(中心(x)からの距離)
-	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
-	const float RETURN_POS = 500.0f;			// 戻る位置
-	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
-
-	// ステータス関連
-	const float JUMP_RATE = 1.0f;				// ジャンプの割合(高さ)
-
-}
 
 //==========================================================================
 // コンストラクタ
@@ -139,7 +105,7 @@ void CPlayerAIControlLeft::ForciblyReturn()
 	SetMove(EMoveType::MOVETYPE_WALK);
 
 	// 近づく
-	if (Approatch({ -RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
+	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
 		SetMove(EMoveType::MOVETYPE_STOP);
@@ -208,7 +174,7 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
 	}
 
-	if (pMy->GetPosition().y >= THROW_JUMP_END)	// 高さによって変わる
+	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
 		SetMove(EMoveType::MOVETYPE_STOP);	// 行動：止まる
 		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
@@ -228,7 +194,7 @@ bool CPlayerAIControlLeft::IsLineOverPlayer()
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	if (myPos.x > -LINE_DISTANCE_OVER)
+	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER)
 	{// 位置が超えていた場合
 		bOver = true;
 	}

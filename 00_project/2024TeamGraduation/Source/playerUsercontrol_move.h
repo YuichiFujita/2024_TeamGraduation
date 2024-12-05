@@ -50,6 +50,7 @@ private:
 	void Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ダッシュ
 	void Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;		// ウォーク
 	CPlayer::SDashInfo Trigger(CPlayer* player, CPlayer::EDashAngle eAngle) override;	// ダッシュ時のトリガー
+	bool IsInverseTrigger(CPlayer::EDashAngle eAngle, int* nCntTrigger);	// 逆方向判定
 };
 
 #endif

@@ -25,16 +25,6 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace
-{
-	// 投げ関連
-	const float THROW_JUMP_END = 130.0f;			// ジャンプ投げの最大位置(ジャンプ力MAX：150)
-
-	// 線越え判定(中心(x)からの距離)
-	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
-	const float RETURN_POS = 500.0f;			// 戻る位置
-	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
-}
 
 //==========================================================================
 // コンストラクタ
@@ -158,7 +148,7 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
 	}
 
-	if (pMy->GetPosition().y >= THROW_JUMP_END)	// 高さによって変わる
+	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
 		SetMove(EMoveType::MOVETYPE_STOP);	// 行動：止まる
 		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
@@ -184,7 +174,7 @@ void CPlayerAIControlRight::ForciblyReturn()
 	SetMove(EMoveType::MOVETYPE_WALK);
 
 	// 近づく
-	if (Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
+	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
 		SetMove(EMoveType::MOVETYPE_STOP);
@@ -204,8 +194,8 @@ bool CPlayerAIControlRight::IsLineOverPlayer()
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	if (myPos.x < LINE_DISTANCE_OVER)
-	{// 位置が超えていた場合
+	if (myPos.x < playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EAction::ACTION_JUMP)
+	{// 位置が超えていた&&ジャンプしてない場合
 		bOver = true;
 	}
 

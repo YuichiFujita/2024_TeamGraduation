@@ -24,7 +24,7 @@ public:
 	// 定数
 	//=============================
 	static constexpr float COMEBACK_LINE = 100.0f;	// 相手コートから戻ってくるライン
-	static constexpr float UNSTABLE_LINE = 10.0f;	// おっとっとライン
+	static constexpr float UNSTABLE_LINE = 1.0f;	// おっとっとライン
 
 	//=============================
 	// 列挙型
@@ -49,11 +49,17 @@ public:
 	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// 調整
 
 protected:
+
+	//=============================
+	// 定数
+	//=============================
+	static constexpr float RETURN_DISTANCE = 60.0f;	// 戻るための間隔
+
 	//=============================
 	// 純粋仮想関数
 	//=============================
-	virtual bool IsLineOut(CPlayer* pPlayer) = 0;	// ライン越えフラグ取得
-	virtual bool IsUnstable(CPlayer* pPlayer) = 0;	// おっとっとフラグ取得
+	virtual bool IsLineOut(CPlayer* pPlayer) = 0;		// ライン越えフラグ取得
+	virtual bool IsUnstable(CPlayer* pPlayer) = 0;		// おっとっとフラグ取得
 	virtual EInputUnstable IsInputLine(CPlayer* pPlayer) = 0;	// おっとっと時入力フラグ取得
 
 private:

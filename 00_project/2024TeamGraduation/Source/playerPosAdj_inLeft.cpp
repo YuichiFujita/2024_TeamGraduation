@@ -18,7 +18,6 @@
 //==========================================================================
 namespace
 {
-
 }
 
 //==========================================================================
@@ -57,6 +56,9 @@ bool CPlayerPosAdjInLeft::IsUnstable(CPlayer* pPlayer)
 	// ラインを越えている場合フラグONを返す
 	if (pPlayer->GetPosition().x > -UNSTABLE_LINE)
 	{
+		MyLib::Vector3 pos = pPlayer->GetPosition();
+		pos.x = -UNSTABLE_LINE;
+		pPlayer->SetPosition(pos);
 		return true;
 	}
 
@@ -96,11 +98,15 @@ CPlayerPosAdjIn::EInputUnstable CPlayerPosAdjInLeft::IsInputLine(CPlayer* pPlaye
 			*angle != CPlayer::EDashAngle::ANGLE_RIGHTUP &&
 			*angle != CPlayer::EDashAngle::ANGLE_RIGHTDW)
 		{
-			MyLib::Vector3 rot = pPlayer->GetRotation();
-			float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-			rot.y = division * (*angle) + D3DX_PI + Camerarot.y;
-			UtilFunc::Transformation::RotNormalize(rot.y);
-			pPlayer->SetRotation(rot);
+			if (!pPlayer->GetBase()->IsCrab())
+			{// カニ歩き以外は向き強制設定
+
+				MyLib::Vector3 rot = pPlayer->GetRotation();
+				float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+				rot.y = division * (*angle) + D3DX_PI + Camerarot.y;
+				UtilFunc::Transformation::RotNormalize(rot.y);
+				pPlayer->SetRotation(rot);
+			}
 
 			return CPlayerPosAdjIn::EInputUnstable::INPUT_FRIEND;
 		}
