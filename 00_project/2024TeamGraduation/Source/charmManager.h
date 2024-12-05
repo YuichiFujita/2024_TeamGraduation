@@ -69,7 +69,8 @@ private:
 	//=============================
 
 #if _DEBUG
-	CCollisionLine_Box* m_pCourtSizeBox;	// コートサイズのボックス
+	// CCollisionLine_Box* m_pCourtSizeBox;	// コートサイズのボックス
+	CCollisionLine_Box* m_pCourtSizeBox[4];	// コートサイズのボックス
 #endif
 	static CCharmManager* m_pThisPtr;	// 自身のポインタ
 };

@@ -1900,7 +1900,7 @@ namespace UtilFunc	// 便利関数
 		@details 4つの頂点がまだ求められていない場合に使う
 		@param	posSquare	[in]	判定する四角形の中心座標
 		@param	SquareSize	[in]	判定する四角形のサイズ
-		@param	fSquareRot	[in]	判定する四角形のサイズ
+		@param	fSquareRot	[in]	判定する四角形の角度
 		@param	MainPos		[in]	自分の位置
 		@return	中にいるかのbool値
 		*/
