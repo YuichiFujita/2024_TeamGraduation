@@ -270,7 +270,7 @@ void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRat
 {
 	if (IsLineOverPlayer() && GetForcibly() != EMoveForcibly::FORCIBLY_START)
 	{// 線を超えていた&&強制行動：初め以外の場合
-		SetForcibly(EMoveForcibly::FORCIBLY_RETURN);
+		m_eForcibly = EMoveForcibly::FORCIBLY_RETURN;
 		return;
 	}
 
@@ -965,6 +965,7 @@ void CPlayerAIControl::CatchPassSteal()
 	// ボールステート取得
 	CBall::EState stateBall = pBall->GetState();
 	CPlayer* pTarget = pBall->GetTarget();
+	if (!pTarget) return;
 
 	if (stateBall == CBall::EState::STATE_PASS ||
 		stateBall == CBall::EState::STATE_HOM_PASS ||
@@ -1190,6 +1191,17 @@ void CPlayerAIControl::UpdateSee()
 
 		SeeTarget(pTarget->GetPosition());
 	}
+}
+
+//================================================================================
+// キャッチ時の状態
+//================================================================================
+void CPlayerAIControl::CatchState()
+{
+	MyLib::Vector3 posMy = m_pAI->GetPosition();
+
+	// 
+	//float distance
 }
 
 //==========================================================================

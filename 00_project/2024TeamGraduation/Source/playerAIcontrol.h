@@ -132,22 +132,8 @@ public:
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-protected:
-	//=============================
-	// 仮想・純粋関数
-	//=============================
-	virtual bool IsLineOverBall() = 0;				// 線超え判定(ボール)
-	virtual bool IsLineOverPlayer() = 0;			// 線越え判定(プレイヤー)
-	virtual void AttackDash(CPlayer* pTarget) = 0;	// 走り投げ
-
-	//=============================
-	// メンバ関数
-	//=============================
-	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
-	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
-
 	//-----------------------------
-	// 設定。取得
+	// 設定,取得
 	//-----------------------------
 	CPlayer* GetThrowTarget();	// 投げるターゲット
 	CPlayer* GetCatchTarget();	// キャッチターゲット
@@ -163,6 +149,20 @@ protected:
 
 	void SetPlayer(CPlayer* player) { m_pAI = player; }
 	CPlayer* GetPlayer() { return m_pAI; }
+
+protected:
+	//=============================
+	// 仮想・純粋関数
+	//=============================
+	virtual bool IsLineOverBall() = 0;				// 線超え判定(ボール)
+	virtual bool IsLineOverPlayer() = 0;			// 線越え判定(プレイヤー)
+	virtual void AttackDash(CPlayer* pTarget) = 0;	// 走り投げ
+
+	//=============================
+	// メンバ関数
+	//=============================
+	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
+	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
 
 private:
 	//=============================
@@ -267,6 +267,8 @@ private:
 	void UpdateThrowTiming(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げタイミング
 	void UpdateCatch();			// キャッチ
 	void UpdateSee();			// 見る
+
+	void CatchState();
 
 	void PlanThrow();
 	void PlanHeart();		// 心のプラン
