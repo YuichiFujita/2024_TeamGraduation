@@ -18,7 +18,7 @@
 namespace
 {
 	const float TIME_HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
-	const float TIME_EDGE_ESCAPE = 1.0f;			// 端に逃げ続けている(秒数)
+	const float TIME_EDGE_ESCAPE = 3.0f;			// 端に逃げ続けている(秒数)
 }
 
 //==========================================================================
@@ -164,6 +164,11 @@ void CCharmManager::EdgeEscape(CPlayer* pPlayer, const float fDeltaTime, const f
 		// 加算
 		fEscapeTime += fDeltaTime * fSlowRate;
 	}
+	else
+	{// エリア外だったらリセット
+
+		fEscapeTime = 0.0;
+	}
 
 	if (fEscapeTime >= TIME_EDGE_ESCAPE)
 	{// モテダウン
@@ -210,7 +215,7 @@ bool CCharmManager::CheckEdgeEscape(CPlayer* pPlayer)
 
 	MyLib::Vector3 AreaMid = MyLib::Vector3();	// 交点
 	MyLib::Vector2 areaSize = MyLib::Vector2(sizeCourt.x, sizeCourt.z);		// エリアサイズ
-	areaSize.x *= 0.2f;							//z長x短
+	areaSize.x *= 0.8f;							//z長x短
 	float fAngle = D3DX_PI * 0.5f;						//rot
 	int nIdx = 0;
 
