@@ -126,13 +126,21 @@ public:
 	//=============================
 	// 構造体定義
 	//=============================
-	struct SThrow
+	struct SThrow			// 投げ関連
 	{
 		float fTiming;		// タイミングカウント
 		float fTimingRate;	// タイミングの割合
 		float fJumpEnd;		// ジャンプの終了位置
 		bool bTiming;		// タイミングフラグ
 		bool bFoldJump;		// ジャンプの折り返しフラグ
+	};
+
+	struct SDistance		// 距離
+	{
+		float fInPair;		// 内野：相手
+		float fInAlly;		// 内野：味方
+		float fOut;			// 外野
+		float fTarget;		// ターゲット
 	};
 
 public:
@@ -142,7 +150,7 @@ public:
 
 	static CPlayerAIControl* Create(CPlayer* player);
 
-	virtual HRESULT Init() = 0;
+	virtual HRESULT Init();
 	virtual void Uninit();
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
@@ -284,20 +292,21 @@ private:
 	void UpdateCatch();			// キャッチ
 	void UpdateSee();			// 見る
 
-	void CatchState();
+	void CatchState();			// キャッチ状態
 
-
-	void PlanThrow();
-	void PlanHeart();		// 心のプラン
+	void PlanThrow();			// 投げのプラン
+	void PlanHeart();			// 心のプラン
 
 	void DistanceCatch(CPlayer* pTarget);	// 距離：キャッチ状態
-	void DistanceTeam();
+	void DistanceTeam();					// 距離：チーム
+	float GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CGameManager::ETeamSide teamPair);
 
-	bool IsPassTarget();					// パスする相手がいるか判定
-	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
+	bool IsPassTarget();		// パスする相手がいるか判定
+	bool IsWhoPicksUpTheBall();	// ボールを拾う判断
 
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
+
 
 	//=============================
 	// メンバ変数
@@ -321,6 +330,7 @@ private:
 	// 構造体
 	//-----------------------------
 	SThrow m_sThrow;				// 投げ
+	SDistance m_sDistance;
 };
 
 #endif

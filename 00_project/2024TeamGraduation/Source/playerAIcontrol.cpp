@@ -39,8 +39,12 @@ namespace timing
 namespace
 {
 	// キャッチ関連
-	const float CHATCH_LENGTH_IN = 500.0f;		// 内野との距離
-	const float CHATCH_LENGTH_OUT = 700.0f;		// 外野との距離
+	const float CHATCH_LENGTH_IN_PAIR = 700.0f;		// 内野：相手との距離
+	const float CHATCH_LENGTH_IN_ALLY = 200.0f;		// 内野：味方との距離
+
+	const float CHATCH_LENGTH_OUT = 400.0f;		// 外野との距離
+	const float CHATCH_LENGTH_TARGET = 400.0f;	// ターゲットとの距離
+
 	const float CATCH_JUMP_LENGTH = 100.0f;		// ジャンプキャッチの距離
 	const float CATCH_JUMP_HEIGHT = 300.0f;		// ジャンプキャッチする高さ
 
@@ -151,6 +155,10 @@ CPlayerAIControl::CPlayerAIControl()
 	m_eThrow = EThrow::THROW_NONE;
 	m_eThrowTiming = EThrowTiming::TIMING_NONE;
 	m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+
+	// 構造体の初期化
+	ZeroMemory(&m_sThrow, sizeof(m_sThrow));
+	ZeroMemory(&m_sDistance, sizeof(m_sDistance));
 }
 
 //==========================================================================
@@ -193,6 +201,20 @@ CPlayerAIControl* CPlayerAIControl::Create(CPlayer* player)
 	}
 
 	return pObj;
+}
+
+//==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CPlayerAIControl::Init()
+{
+	m_sDistance.fInPair = CHATCH_LENGTH_IN_PAIR;
+	m_sDistance.fInAlly = CHATCH_LENGTH_IN_ALLY;
+	m_sDistance.fOut = CHATCH_LENGTH_OUT;
+	m_sDistance.fTarget = CHATCH_LENGTH_TARGET;
+
+
+	return S_OK;
 }
 
 //==========================================================================
@@ -1131,7 +1153,7 @@ void CPlayerAIControl::DistanceTeam()
 
 	// 自分情報
 	MyLib::Vector3 posMy = m_pAI->GetPosition();			// 位置情報の取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();	// 所属チーム
+	CGameManager::ETeamSide TeamMy = m_pAI->GetTeam();	// 所属チーム
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -1140,23 +1162,25 @@ void CPlayerAIControl::DistanceTeam()
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
+		CPlayer::EFieldArea areaPlayer = pPlayer->GetAreaType();	// エリアタイプ
 
 		// 自分の場合
 		if (pPlayer == m_pAI)continue;
 
-		// 同じチーム && 外野
-		if (typeTeam == pPlayer->GetTeam() && pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) continue;
-
-		//// 違うチーム && 内野
-		//if ((typeTeam != pPlayer->GetTeam()) && (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)) continue;
-
+		// 同じチームの外野
+		if (TeamMy == pPlayer->GetTeam() && areaPlayer == CPlayer::EFieldArea::FIELD_OUT) continue;
 
 		// 敵との距離を求める
 		float fLength = posMy.DistanceXZ(posPlayer);
 
-		if (fLength < LENGTH_OUT)
-		{ // より近い相手プレイヤーがいた場合
-		
+		// 距離：取得
+		float length = GetDistance(areaPlayer, TeamMy, pPlayer->GetTeam());
+
+		// 一番近い奴が優先
+
+
+		if (fLength < length) { // より近い相手プレイヤーがいた場合
+
 			// 近いプレイヤーとの角度
 			float angle = posPlayer.AngleXZ(posMy);
 
@@ -1165,8 +1189,41 @@ void CPlayerAIControl::DistanceTeam()
 
 			// 行動：歩く
 			m_eMove = EMoveType::MOVETYPE_WALK;
+
+			return;
+
+		} else{
+			// 行動：止まる
+			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
+
 	}
+}
+
+//==========================================================================
+// 距離：取得
+//==========================================================================
+float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CGameManager::ETeamSide teamPair)
+{
+	float distance = 0.0f;
+
+	// 体力によって変えたり
+	// 心によって変えたり
+
+	if (area == CPlayer::EFieldArea::FIELD_IN && teamMy == teamPair)
+	{// 内野で同じチーム
+		distance = m_sDistance.fInAlly;
+	}
+	else if(area == CPlayer::EFieldArea::FIELD_IN && teamMy != teamPair)
+	{// 内野で違うチーム
+		distance = m_sDistance.fInPair;
+	}
+	else if (area == CPlayer::EFieldArea::FIELD_OUT)
+	{// 外野
+		distance = m_sDistance.fOut;
+	}
+
+	return distance;
 }
 
 //==========================================================================
