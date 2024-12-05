@@ -2396,10 +2396,14 @@ void CPlayer::Debug()
 	//-----------------------------
 	if (ImGui::TreeNode("Parameter"))
 	{
+		// 拡大率の調整
+		float scale = GetScale();
+		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
+		SetScale(scale);
+
 		// 取得
 		CCharacterStatus* pStatus = GetCharStatus();
 		CCharacterStatus::CharParameter parameter = pStatus->GetParameter();
-		CBallStatus::SBallParameter ballParam = GetBallParameter();
 
 		ImGui::DragFloat("fVelocityNormal", (float*)&parameter.fVelocityNormal, 0.01f, 0.0f, 100.0f, "%.2f");
 		ImGui::DragFloat("fVelocityDash", (float*)&parameter.fVelocityDash, 0.01f, 0.0f, 100.0f, "%.2f");
@@ -2410,20 +2414,30 @@ void CPlayer::Debug()
 		ImGui::DragFloat("fJumpUpdateMove", &parameter.fJumpUpdateMove, 0.0001f, 0.0f, 100.0f, "%.3f");		
 		ImGui::DragFloat3("ballOffset", (float*)&parameter.ballOffset, 0.1f, -2000.0f, 2000.0f, "%.3f");
 
-		ImGui::DragFloat("fKnockbackNormal", &ballParam.fKnockbackNormal, 0.1f, 0.0f, 10000.0f, "%.3f");
-		ImGui::DragFloat("fKnockbackJump", &ballParam.fKnockbackJump, 0.1f, 0.0f, 10000.0f, "%.3f");
-		ImGui::DragFloat("fKnockbackSpecial", &ballParam.fKnockbackSpecial, 0.1f, 0.0f, 10000.0f, "%.3f");
-
 		SetRadius(parameter.fRadius);	// 半径反映
 
 		// パラメーター反映
 		pStatus->SetParameter(parameter);
-		SetBallParameter(ballParam);
 
-		// 拡大率の調整
-		float scale = GetScale();
-		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
-		SetScale(scale);
+		// ボールのパラメータ
+		if (ImGui::TreeNodeEx("Ball Parameter", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			// ボールのパラメータ取得
+			CBallStatus::SBallParameter ballParam = GetBallParameter();
+
+			ImGui::DragFloat("fThrowMoveNormal", &ballParam.fThrowMoveNormal, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fThrowMoveJump", &ballParam.fThrowMoveJump, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fThrowMoveSpecial", &ballParam.fThrowMoveSpecial, 0.01f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackNormal", &ballParam.fKnockbackNormal, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackJump", &ballParam.fKnockbackJump, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fKnockbackSpecial", &ballParam.fKnockbackSpecial, 0.1f, 0.0f, 10000.0f, "%.3f");
+			ImGui::DragFloat("fCatchRange", &ballParam.fCatchRange, 0.01f, 0.0f, 10000.0f, "%.3f");
+
+			// パラメーター反映
+			SetBallParameter(ballParam);
+
+			ImGui::TreePop();
+		}
 
 		ImGui::TreePop();
 	}
