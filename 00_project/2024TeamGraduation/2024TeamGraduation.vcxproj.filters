@@ -728,6 +728,9 @@
     <ClCompile Include="Source\stretcher.cpp">
       <Filter>ingame</Filter>
     </ClCompile>
+    <ClCompile Include="Source\reporter.cpp">
+      <Filter>ingame\buzz</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1326,6 +1329,9 @@
     </ClInclude>
     <ClInclude Include="Source\stretcher.h">
       <Filter>ingame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\reporter.h">
+      <Filter>ingame\buzz</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
