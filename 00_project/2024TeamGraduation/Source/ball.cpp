@@ -283,7 +283,7 @@ HRESULT CBall::Init()
 			GetPosition(),
 			MyLib::Vector3(),
 			MyLib::Vector3(),
-			15.0f);
+			15.0f, false);
 
 	return S_OK;
 }

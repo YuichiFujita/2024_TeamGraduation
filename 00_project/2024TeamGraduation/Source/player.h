@@ -81,6 +81,8 @@ public:
 		MOTION_DROPCATCH_WALK,			// 落ちてるのキャッチ(歩き)
 		MOTION_THROW,					// 投げ
 		MOTION_THROW_RUN,				// 投げ(走り)
+		MOTION_THROW_JUST,				// 投げ(ジャストキャッチ)
+		MOTION_THROW_JUST_JUMP,			// 投げ(ジャストキャッチ)(ジャンプ)
 		MOTION_THROW_JUMP,				// 投げ(ジャンプ)
 		MOTION_THROW_DROP,				// 投げ(ドロップボール)
 		MOTION_THROW_PASS,				// 投げ(パス)
