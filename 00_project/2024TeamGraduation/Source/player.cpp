@@ -1568,6 +1568,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 	if (m_sMotionFrag.bCatchJust && bInput)
 	{
 		bJust = true;
+
+		// 投げの猶予設定
+		GetBase()->GetPlayerControlAction()->SetThrowJust();
 	}
 
 	// スペシャル専用

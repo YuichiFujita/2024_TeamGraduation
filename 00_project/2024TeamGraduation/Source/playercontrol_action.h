@@ -39,7 +39,7 @@ public:
 	virtual CPlayerAIOutControlAction* GetAIOut()	{ return nullptr; }
 	virtual CPlayerUserControlAction* GetUser()		{ return nullptr; }
 
-	void SetThrowDrop();	// 投げ(ドロップボール)設定
+	void SetThrowDrop();								// 投げ(ドロップボール)設定
 	inline bool IsThrowDrop() { return m_bThrowDrop; }	// 投げ(ドロップボール)可能判定取得
 
 	void SetThrowJust();								// 投げ(ジャストキャッチ)設定

@@ -107,13 +107,20 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 void CPlayerControlAction::ThrowSetting(CPlayer* player)
 {
 	// アクションパターン変更
-	if (player->IsJump())
+	if (player->GetBase()->GetPlayerControlAction()->IsThrowJust())
+	{// ジャスト投げ
+		if (player->IsJump())
+		{// ジャストジャンプ
+			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUST_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
+		}
+		else
+		{// ジャスト
+			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUST, CPlayer::EAction::ACTION_THROW);
+		}
+	}
+	else if (player->IsJump())
 	{// ジャンプ投げ
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
-	}
-	else if (player->GetBase()->GetPlayerControlAction()->IsThrowJust())
-	{// ジャスト投げ
-		SetPattern(player, CPlayer::EMotion::MOTION_THROW_DROP, CPlayer::EAction::ACTION_THROW);
 	}
 	else if (player->GetBase()->GetPlayerControlAction()->IsThrowDrop())
 	{// 拾い投げ(クルン)
