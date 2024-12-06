@@ -46,6 +46,9 @@ HRESULT CPlayerSpawn::Init()
 	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
 	if (pManager != nullptr) { pManager->RegistPlayer(this); }			// マネージャーがある場合登録
 
+	// モーション設定
+	GetMotion()->Set(EMotion::MOTION_WALK_SPAWN);
+
 	return S_OK;
 }
 

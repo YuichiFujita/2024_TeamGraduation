@@ -319,7 +319,7 @@ void CPlayerSpawnManager::UpdateWalkAxisZ(const float fDeltaTime, const float fD
 {
 	const MyLib::Vector3 LEFT_POSEND = MyLib::Vector3(POS_LEFT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
 	const MyLib::Vector3 RIGHT_POSEND = MyLib::Vector3(POS_RIGHT.x, 0.0f, -300.0f);	// 終了地点	// TODO：まともな終了地点に
-	const float TIME_END = 4.5f;	// 終了時間
+	const float TIME_END = 7.5f;	// 終了時間
 
 	bool bEndState = false;	// 状態終了フラグ
 
@@ -437,6 +437,32 @@ void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDelt
 
 		// X軸移動状態にする
 		m_state = EState::STATE_WALK_X;
+
+
+		//-----------------------------
+		// 全員まあまあ走る
+		//-----------------------------
+		std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+		while (m_listLeft.ListLoop(itrLeft))
+		{ // 左チームリスト内の要素数分繰り返す
+
+			CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+
+			// 歩きモーション
+			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_WALK);
+		}
+
+		std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+		while (m_listRight.ListLoop(itrRight))
+		{ // 右チームリスト内の要素数分繰り返す
+
+			CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+
+			// 歩きモーション
+			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_WALK);
+		}
+
+
 	}
 }
 
@@ -505,6 +531,30 @@ void CPlayerSpawnManager::UpdateWalkAxisX(const float fDeltaTime, const float fD
 
 		// お辞儀状態にする
 		m_state = EState::STATE_BOW;
+
+		//-----------------------------
+		// 全員礼
+		//-----------------------------
+		std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+		while (m_listLeft.ListLoop(itrLeft))
+		{ // 左チームリスト内の要素数分繰り返す
+
+			CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+
+			// 礼モーション
+			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_BOW);
+		}
+
+		std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+		while (m_listRight.ListLoop(itrRight))
+		{ // 右チームリスト内の要素数分繰り返す
+
+			CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+
+			// 礼モーション
+			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_BOW);
+		}
+
 	}
 }
 
@@ -513,6 +563,8 @@ void CPlayerSpawnManager::UpdateWalkAxisX(const float fDeltaTime, const float fD
 //============================================================
 void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
+#if 0
 	const float TIME_END = 1.0f;	// 終了時間
 
 	// TODO：ここはお辞儀モーションから遷移タイミングを決める
@@ -532,4 +584,22 @@ void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRa
 		// 終了状態にする
 		m_state = EState::STATE_END;
 	}
+#else
+
+	// 先頭取得
+	CPlayer* pFirstPlayer = m_listRight.GetData(0);
+	CMotion* pMotion = pFirstPlayer->GetMotion();
+
+	if (pMotion->GetType() == CPlayer::EMotion::MOTION_BOW &&
+		pMotion->IsFinish())
+	{// 礼 && 終了
+
+		// 待機時間を初期化
+		m_fCurTime = 0.0f;
+
+		// 終了状態にする
+		m_state = EState::STATE_END;
+	}
+
+#endif
 }

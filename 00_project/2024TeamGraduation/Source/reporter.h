@@ -19,6 +19,7 @@
 // 前方宣言
 //==========================================================================
 class CShadow;
+class CReporterSet;
 
 //==========================================================================
 // クラス定義
@@ -72,7 +73,7 @@ public:
 	// 静的関数
 	//=============================
 	// 生成処理
-	static CReporter* Create(const MyLib::Vector3& pos, const CGameManager::ETeamSide& side);
+	static CReporter* Create(const CGameManager::ETeamSide& side);
 
 protected:
 
@@ -121,6 +122,7 @@ private:
 	//-----------------------------
 	CGameManager::ETeamSide m_TeamSide;		// チームサイド
 	CShadow* m_pShadow;						// 影
+	CReporterSet* m_pReporterSet;			// 実況セット
 	static CListManager<CReporter> m_List;	// リスト
 };
 
