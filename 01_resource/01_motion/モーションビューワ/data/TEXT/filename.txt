@@ -14,5 +14,6 @@ SCRIPT			# この行は絶対消さないこと！
 MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_fat.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_gari.txt
+1MOTION_FILENAME = data/TEXT/character/audience/Mii/setup_player.txt
 
 END_SCRIPT		# この行は絶対消さないこと！

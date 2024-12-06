@@ -57,6 +57,7 @@ public:
 		MOTION_DEF_BALL,				// ニュートラルモーション(ボール所持)
 		MOTION_WALK,					// 移動
 		MOTION_WALK_BALL,				// 移動(ボール所持)
+		MOTION_WALK_SPAWN,				// 移動(入場)
 		MOTION_CRAB_FRONT,				// カニ歩き(前)
 		MOTION_CRAB_BACK,				// カニ歩き(後)
 		MOTION_CRAB_LEFT,				// カニ歩き(左)
@@ -96,6 +97,7 @@ public:
 		MOTION_GRIP_DEF,				// デフォグリップ
 		MOTION_GRIP_FRONT,				// 前グリップ
 		MOTION_UNSTABLE,				// おっとっと
+		MOTION_BOW,						// 礼
 		MOTION_MAX
 	};
 
