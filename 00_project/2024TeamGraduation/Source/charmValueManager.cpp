@@ -17,6 +17,8 @@ namespace
 		1.0f,	// ヒット
 		2.0f,	// ジャストキャッチ
 		3.0f,	// カバーキャッチ
+		1.0f,	// ジャストキャッチ直後の投げ
+		1.0f,	// ドロップキャッチ直後の投げ
 		4.0f,	// 回避
 		10.0f,	// スペシャル
 		10.0f,	// スペシャルをキャッチした
@@ -122,4 +124,42 @@ float CCharmValueManager::GetSubValue(ETypeSub type)
 	if (ETypeSub::SUB_MAX <= type) return 0.0f;
 
 	return m_fSubValue[type];
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CCharmValueManager::Debug()
+{
+	if (ImGui::TreeNode("CCharmValueManager"))
+	{// モテ値
+
+		if (ImGui::TreeNode("Add"))
+		{// 加算
+
+			for (int i = 0; i < ETypeAdd::ADD_MAX; i++)
+			{
+				ETypeAdd type = static_cast<ETypeAdd>(i);
+				std::string label = magic_enum::enum_name(type).data();
+				ImGui::DragFloat(label.c_str(), &m_fAddValue[i], 0.01f, 0.0f, 100.0f, "%f");
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Sub"))
+		{// 減算
+
+			for (int i = 0; i < ETypeSub::SUB_MAX; i++)
+			{
+				ETypeSub type = static_cast<ETypeSub>(i);
+				std::string label = magic_enum::enum_name(type).data();
+				ImGui::DragFloat(label.c_str(), &m_fAddValue[i], 0.01f, 0.0f, 100.0f, "%.2f");
+			}
+
+			ImGui::TreePop();
+		}
+
+		ImGui::TreePop();
+	}
 }

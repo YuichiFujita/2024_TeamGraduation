@@ -93,7 +93,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	// リバウンドボールの場合キャッチする
-	
 	if (stateBall == CBall::STATE_REBOUND &&
 		state != CPlayer::EState::STATE_INVADE_RETURN &&
 		state != CPlayer::EState::STATE_DMG)

@@ -88,9 +88,9 @@ namespace
 
 	namespace normal
 	{
-		const float THROW_MOVE = 22.5f;	// 通常投げ移動速度
-		const float REV_HOMING = 0.3f;	// ホーミングの慣性補正係数
-		const float TIME_HOMING = 1.2f;	// ホーミングが切れるまでの時間
+		const float THROW_MOVE = 22.5f;		// 通常投げ移動速度
+		const float REV_HOMING = 0.035f;	// ホーミングの慣性補正係数
+		const float TIME_HOMING = 1.2f;		// ホーミングが切れるまでの時間
 	}
 
 	namespace jump
@@ -115,7 +115,7 @@ namespace
 	namespace move
 	{
 		const float TIME_GRAVITY = 0.8f;		// 重力がかかり始めるまでの時間
-		const float MULTIPLY_INIMOVE = 2.0f;	// 初速の倍率
+		const float MULTIPLY_INIMOVE = 2.8f;	// 初速の倍率
 	}
 
 	namespace rebound
@@ -196,6 +196,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
+	m_fHomingTime	(0.0f),			// ホーミング時間
 	m_bLanding		(false),		// 着地フラグ
 	m_posPassStart	(VEC3_ZERO),	// パス開始位置
 	m_posPassEnd	(VEC3_ZERO),	// パス終了位置
@@ -212,9 +213,9 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 
-	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,       "ERROR : State Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,         "ERROR : Attack Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX,     "ERROR : Special Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,     "ERROR : Attack Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
@@ -282,7 +283,7 @@ HRESULT CBall::Init()
 			GetPosition(),
 			MyLib::Vector3(),
 			MyLib::Vector3(),
-			15.0f);
+			15.0f, false);
 
 	return S_OK;
 }
@@ -865,8 +866,6 @@ void CBall::UpdateCatch(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// TODO：ホーミング移動の変更
-
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 vecMove = GetMove();	// 移動量
@@ -890,7 +889,7 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime;
-	if (m_fStateTime >= normal::TIME_HOMING)	// TODO：ここ上に行きすぎたら落ちてくる処理も必要かも	// TODO：てかここ到達予想時間計算できるようになったら消していいね
+	if (m_fStateTime >= m_fHomingTime)	// TODO：ここ上に行きすぎたら落ちてくる処理も必要かも
 	{
 		// 移動状態にする
 		SetState(STATE_MOVE);
@@ -1724,11 +1723,10 @@ void CBall::UpdateTypeAtk()
 	// 攻撃種類を破棄
 	m_typeAtk = ATK_NONE;
 
-	// ダメージ量をリセット
-	m_nDamage = 0;
-
-	// ノックバックをリセット
-	m_fKnockback = 0;
+	// 情報をリセット
+	m_nDamage = 0;			// ダメージ量
+	m_fKnockback = 0.0f;	// ノックバック
+	m_fHomingTime = 0.0f;	// ホーミング時間
 }
 
 //==========================================================================
@@ -1793,7 +1791,8 @@ MyLib::Vector3 CBall::CalcVecMove(CPlayer* pTarget, CPlayer* pPlayer)
 		fThrowMove								// 移動量
 	);
 
-	// TODO：ここで当たるまでの時間を保存する（通常ホーミングの切れるタイミングに使用）
+	// ホーミング時間の保存
+	m_fHomingTime = info.fHitTime;
 
 	// ボールが当たらなかった場合現在の位置へのベクトルを返す
 	if (!info.bHit) { return pTarget->GetPosition() + pTarget->GetLookOffset() - GetPosition(); }

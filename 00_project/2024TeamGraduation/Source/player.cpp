@@ -974,6 +974,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_THROW:
 	case EMotion::MOTION_THROW_RUN:
 	case EMotion::MOTION_THROW_DROP:
+	case EMotion::MOTION_THROW_JUST:
 
 		if (m_pBall != nullptr)
 		{// 通常投げ
@@ -982,6 +983,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_THROW_JUMP:
+	case EMotion::MOTION_THROW_JUST_JUMP:
 
 		if (m_pBall != nullptr)
 		{// ジャンプ投げ
@@ -1568,6 +1570,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 	if (m_sMotionFrag.bCatchJust && bInput)
 	{
 		bJust = true;
+
+		// 投げの猶予設定
+		GetBase()->GetPlayerControlAction()->SetThrowJust();
 	}
 
 	// スペシャル専用
