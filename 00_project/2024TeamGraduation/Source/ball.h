@@ -128,6 +128,17 @@ public:
 private:
 
 	//=============================
+	// 構造体定義
+	//=============================
+	// ヒットタイミング情報
+	struct SHitTimingInfo
+	{
+		int nHitFrame;	// ヒットまでにかかるフレーム数
+		float fHitTime;	// ヒットまでにかかる時間
+		bool bHit;		// ヒットしたか
+	};
+
+	//=============================
 	// 関数リスト
 	//=============================
 	// 状態関数
@@ -194,6 +205,16 @@ private:
 	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
 	void CalcSetInitialSpeed(const float fMove);				// 初速計算
 
+	MyLib::Vector3 CalcVecMove(CPlayer* pTarget, CPlayer* pPlayer);	// 移動ベクトル計算
+	SHitTimingInfo CalcHitSpeedTime	// ボールが敵に到達するまでの時間計算
+	( // 引数
+		const MyLib::Vector3& rPosTarget,	// ターゲット位置
+		const MyLib::Vector3& rPosBall,		// ボール位置
+		const float fRadiusTarget,			// ターゲット半径
+		const float fInitSpeed,				// 初速
+		const float fMoveSpeed				// 移動量
+	);
+
 	//=============================
 	// 静的メンバ変数
 	//=============================
@@ -211,6 +232,7 @@ private:
 	float m_fMoveSpeed;		// 移動速度
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
+	float m_fHomingTime;	// ホーミング時間
 	bool m_bLanding;		// 着地フラグ
 	MyLib::Vector3 m_posPassStart;	// パス開始位置
 	MyLib::Vector3 m_posPassEnd;	// パス終了位置
@@ -223,7 +245,7 @@ private:
 	int m_nDamage;			// ダメージ
 	float m_fKnockback;		// ノックバック
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
-	CEffekseerObj* m_pAura;	// オーラ
+	CEffekseerObj* m_pAura;			// オーラ
 };
 
 #endif

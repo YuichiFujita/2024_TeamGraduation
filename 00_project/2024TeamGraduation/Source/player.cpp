@@ -90,6 +90,7 @@ namespace
 		}
 	};
 
+	const MyLib::Vector3 LOOK_OFFSET = MyLib::Vector3(0.0f, 60.0f, 0.0f);	// 通常投げで狙う位置のオフセット
 	const float SHADOW_RADIUS = 50.0f;		// 影の半径
 	const float	SHADOW_MIN_ALPHA = 0.18f;	// 影の透明度
 	const float	SHADOW_MAX_ALPHA = 0.48f;	// 影の透明度
@@ -973,6 +974,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_THROW:
 	case EMotion::MOTION_THROW_RUN:
 	case EMotion::MOTION_THROW_DROP:
+	case EMotion::MOTION_THROW_JUST:
 
 		if (m_pBall != nullptr)
 		{// 通常投げ
@@ -981,6 +983,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		break;
 
 	case EMotion::MOTION_THROW_JUMP:
+	case EMotion::MOTION_THROW_JUST_JUMP:
 
 		if (m_pBall != nullptr)
 		{// ジャンプ投げ
@@ -1567,6 +1570,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 	if (m_sMotionFrag.bCatchJust && bInput)
 	{
 		bJust = true;
+
+		// 投げの猶予設定
+		GetBase()->GetPlayerControlAction()->SetThrowJust();
 	}
 
 	// スペシャル専用
@@ -2058,7 +2064,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	MyLib::Vector3 pos = GetPosition();
 
 	// チーム別でラインの位置まで戻す
-	MyLib::Vector3 posDest = m_sKnockback.posStart;
+	MyLib::Vector3 posDest = pos;
 	switch (m_typeTeam)
 	{
 	case CGameManager::SIDE_LEFT:	// 左チーム
@@ -2100,7 +2106,7 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 
 
 	// 戻る方向向く
-	float rotDest = m_sKnockback.posStart.AngleXZ(posDest);
+	float rotDest = pos.AngleXZ(posDest);
 	UtilFunc::Transformation::RotNormalize(rotDest);
 	SetRotDest(rotDest);
 
@@ -2299,6 +2305,38 @@ CPlayer::EBaseType CPlayer::GetBaseType() const
 	// ベース指定なし
 	assert(false);
 	return (EBaseType)-1;
+}
+
+//==========================================================================
+// 未来位置の計算処理
+//==========================================================================
+MyLib::Vector3 CPlayer::CalcFuturePosition(const int nFutureFrame)
+{
+	MyLib::Vector3 posFuture = GetPosition();
+	MyLib::Vector3 moveFuture = GetMove();
+	for (int i = 0; i < nFutureFrame; i++)
+	{
+		// 移動量加算
+		posFuture.y += moveFuture.y;
+
+		// 着地した場合抜ける
+		if (posFuture.y < 0.0f) { posFuture.y = 0.0f; moveFuture.y = 0.0f; break; }
+
+		// 重力処理
+		moveFuture.y -= mylib_const::GRAVITY;
+	}
+
+	// 更新したプレイヤーの位置を返す
+	return posFuture + LOOK_OFFSET;
+}
+
+//==========================================================================
+// 未来位置オフセットの取得処理
+//==========================================================================
+MyLib::Vector3 CPlayer::GetLookOffset() const
+{
+	// 狙う位置オフセットを返す
+	return LOOK_OFFSET;
 }
 
 //==========================================================================

@@ -34,13 +34,13 @@ namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
 	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
-	const float	RADIUS = 14.0f;					// 半径
+	const float	RADIUS = 17.0f;					// 半径
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// 判定用半径
 	const float	RADIUS_SHADOW = 20.0f;			// 影の半径
 	const float	MIN_ALPHA_SHADOW = 0.32f;		// 影の透明度
 	const float	MAX_ALPHA_SHADOW = 0.48f;		// 影の透明度
 	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
-	const float	REV_INIMOVE = 0.29f;	// 初速の補正係数
+	const float	REV_INIMOVE = 0.1f;		// 初速の補正係数
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
@@ -88,9 +88,9 @@ namespace
 
 	namespace normal
 	{
-		const float THROW_MOVE = 22.5f;	// 通常投げ移動速度
-		const float REV_HOMING = 0.3f;	// ホーミングの慣性補正係数
-		const float TIME_HOMING = 1.2f;	// ホーミングが切れるまでの時間
+		const float THROW_MOVE = 22.5f;		// 通常投げ移動速度
+		const float REV_HOMING = 0.035f;	// ホーミングの慣性補正係数
+		const float TIME_HOMING = 1.2f;		// ホーミングが切れるまでの時間
 	}
 
 	namespace jump
@@ -115,7 +115,7 @@ namespace
 	namespace move
 	{
 		const float TIME_GRAVITY = 0.8f;		// 重力がかかり始めるまでの時間
-		const float MULTIPLY_INIMOVE = 3.5f;	// 初速の倍率
+		const float MULTIPLY_INIMOVE = 2.8f;	// 初速の倍率
 	}
 
 	namespace rebound
@@ -196,6 +196,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
+	m_fHomingTime	(0.0f),			// ホーミング時間
 	m_bLanding		(false),		// 着地フラグ
 	m_posPassStart	(VEC3_ZERO),	// パス開始位置
 	m_posPassEnd	(VEC3_ZERO),	// パス終了位置
@@ -212,9 +213,9 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 
-	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,       "ERROR : State Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,         "ERROR : Attack Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX,     "ERROR : Special Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,     "ERROR : Attack Count Mismatch");
+	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
@@ -282,7 +283,7 @@ HRESULT CBall::Init()
 			GetPosition(),
 			MyLib::Vector3(),
 			MyLib::Vector3(),
-			15.0f);
+			15.0f, false);
 
 	return S_OK;
 }
@@ -496,16 +497,22 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 		// 目標向き/向きをボール方向にする
 		m_pPlayer->SetRotDest(fAngleY);
 		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+		// 投げ処理
+		Throw(pPlayer);
+
+		// 移動ベクトルを正規化して再設定
+		SetMove(CalcVecMove(m_pTarget, pPlayer).Normal());
 	}
 	else
 	{ // ターゲットがいない場合
 
+		// 投げ処理
+		Throw(pPlayer);
+
 		// 移動状態にする
 		SetState(STATE_MOVE);
 	}
-
-	// 投げ処理
-	Throw(pPlayer);
 
 #ifdef CHANGE
 	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
@@ -558,16 +565,28 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 		// 目標向き/向きをボール方向にする
 		m_pPlayer->SetRotDest(fAngleY);
 		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+		// 投げ処理
+		Throw(pPlayer);
 	}
 	else
 	{ // ターゲットがいない場合
 
+		// 投げ処理
+		Throw(pPlayer);
+
+		// 移動ベクトルの取得
+		MyLib::Vector3 vecMove = GetMove();
+
+		// 下方向に移動ベクトルを与える
+		vecMove.y = jump::MIN_MOVE_DOWN;
+
+		// 移動ベクトルを正規化して設定
+		SetMove(vecMove.Normal());
+
 		// 移動状態にする
 		SetState(STATE_MOVE);
 	}
-
-	// 投げ処理
-	Throw(pPlayer);
 
 #ifdef CHANGE
 	if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
@@ -868,12 +887,9 @@ void CBall::UpdateHomingNormal(const float fDeltaTime, const float fDeltaRate, c
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
-	// Y座標を慣性補正
-	UtilFunc::Correction::InertiaCorrection(pos.y, DEST_POSY, REV_POSY);
-
 	// 経過時間を加算
 	m_fStateTime += fDeltaTime;
-	if (m_fStateTime >= normal::TIME_HOMING)
+	if (m_fStateTime >= m_fHomingTime)	// TODO：ここ上に行きすぎたら落ちてくる処理も必要かも
 	{
 		// 移動状態にする
 		SetState(STATE_MOVE);
@@ -976,21 +992,11 @@ void CBall::UpdateMove(const float fDeltaTime, const float fDeltaRate, const flo
 	// 位置に移動量を反映
 	UpdateMovePosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
-	// 経過時間を加算
-	m_fStateTime += fDeltaTime;
-	if (m_fStateTime >= move::TIME_GRAVITY)
-	{
-		// 重力の加速
-		UpdateGravity(fDeltaRate, fSlowRate);
+	// 重力の加速
+	UpdateGravity(fDeltaRate, fSlowRate);
 
-		// 位置に重力反映
-		UpdateGravityPosition(&pos, &vecMove, fDeltaRate, fSlowRate);
-	}
-	else
-	{
-		// Y座標を慣性補正
-		UtilFunc::Correction::InertiaCorrection(pos.y, DEST_POSY, REV_POSY);
-	}
+	// 位置に重力反映
+	UpdateGravityPosition(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// 地面の着地
 	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
@@ -1717,11 +1723,10 @@ void CBall::UpdateTypeAtk()
 	// 攻撃種類を破棄
 	m_typeAtk = ATK_NONE;
 
-	// ダメージ量をリセット
-	m_nDamage = 0;
-
-	// ノックバックをリセット
-	m_fKnockback = 0;
+	// 情報をリセット
+	m_nDamage = 0;			// ダメージ量
+	m_fKnockback = 0.0f;	// ノックバック
+	m_fHomingTime = 0.0f;	// ホーミング時間
 }
 
 //==========================================================================
@@ -1767,6 +1772,83 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 {
 	// 初速を与える
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
+}
+
+//==========================================================================
+// 移動ベクトルの計算
+//==========================================================================
+MyLib::Vector3 CBall::CalcVecMove(CPlayer* pTarget, CPlayer* pPlayer)
+{
+	const float fThrowMove = pPlayer->GetBallParameter().fThrowMoveNormal;	// 通常投げ速度
+
+	// ボールが敵に到達するまでの時間計算
+	SHitTimingInfo info = CalcHitSpeedTime
+	( // 引数
+		pTarget->GetPosition(),	// ターゲット位置
+		GetPosition(),			// ボール位置
+		pPlayer->GetRadius(),	// ターゲット半径
+		fThrowMove * move::MULTIPLY_INIMOVE,	// 初速
+		fThrowMove								// 移動量
+	);
+
+	// ホーミング時間の保存
+	m_fHomingTime = info.fHitTime;
+
+	// ボールが当たらなかった場合現在の位置へのベクトルを返す
+	if (!info.bHit) { return pTarget->GetPosition() + pTarget->GetLookOffset() - GetPosition(); }
+
+	// 未来位置へのベクトルを返す
+	return pTarget->CalcFuturePosition(info.nHitFrame) - GetPosition();
+}
+
+//==========================================================================
+// ボールが敵に到達するまでの時間計算
+//==========================================================================
+CBall::SHitTimingInfo CBall::CalcHitSpeedTime
+(
+	const MyLib::Vector3& rPosTarget,	// ターゲット位置
+	const MyLib::Vector3& rPosBall,		// ボール位置
+	const float fRadiusTarget,			// ターゲット半径
+	const float fInitSpeed,				// 初速
+	const float fMoveSpeed				// 移動量
+)
+{
+	// ボール移動ベクトルの作成
+	MyLib::Vector3 vecMove = rPosTarget - rPosBall;
+	vecMove = vecMove.Normal();	// ベクトルの正規化
+
+	const float fFrameTime = 1.0f / (float)GetFPS();	// 想定1F時間
+	float fNextInitSpeed = fInitSpeed;		// 次の初速
+	MyLib::Vector3 nextPosBall = rPosBall;	// 次のボール位置
+
+	int nHitFrame = 0;		// ヒットまでにかかるフレーム数
+	float fHitTime = 0.0f;	// ヒットまでにかかる時間
+	bool bHit = false;		// ヒットフラグ
+	while (fHitTime < normal::TIME_HOMING)
+	{ // ホーミングの切れる最大時間まで繰り返す
+
+		// 位置を移動させる
+		nextPosBall += (vecMove * (fMoveSpeed + fNextInitSpeed));
+
+		// ボールが当たった場合抜ける
+		if (UtilFunc::Collision::CircleRange3D(rPosTarget, nextPosBall, fRadiusTarget, RADIUS)) { bHit = true; break; }
+
+		// 初速を減衰させる
+		fNextInitSpeed += (0.0f - fNextInitSpeed) * REV_INIMOVE;
+
+		// 1F分の時間を進める
+		fHitTime += fFrameTime;
+
+		// フレーム数を進める
+		nHitFrame++;
+	}
+
+	// 当たったタイミングの情報を作成し返す
+	SHitTimingInfo info;
+	info.nHitFrame = nHitFrame;
+	info.fHitTime = fHitTime;
+	info.bHit = bHit;
+	return info;
 }
 
 //==========================================================================

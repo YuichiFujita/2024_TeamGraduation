@@ -65,6 +65,9 @@ CPlayerAIControlRight* CPlayerAIControlRight::Create(CPlayer* player)
 //==========================================================================
 HRESULT CPlayerAIControlRight::Init()
 {
+	// Šî’êƒNƒ‰ƒX‚Ì‰Šúˆ—
+	CPlayerAIControl::Init();
+
 	return S_OK;
 }
 
@@ -171,7 +174,8 @@ void CPlayerAIControlRight::ForciblyReturn()
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	// •à‚­
-	SetMove(EMoveType::MOVETYPE_WALK);
+	SetMove(EMoveType::MOVETYPE_DASH);
+	//SetAction(EAction::ACTION_JUMP);
 
 	// ‹ß‚Ã‚­
 	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))

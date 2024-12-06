@@ -39,8 +39,12 @@ namespace timing
 namespace
 {
 	// キャッチ関連
-	const float CHATCH_LENGTH_IN = 500.0f;		// 内野との距離
-	const float CHATCH_LENGTH_OUT = 700.0f;		// 外野との距離
+	const float CHATCH_LENGTH_IN_PAIR = 700.0f;		// 内野：相手との距離
+	const float CHATCH_LENGTH_IN_ALLY = 100.0f;		// 内野：味方との距離
+
+	const float CHATCH_LENGTH_OUT = 400.0f;		// 外野との距離
+	const float CHATCH_LENGTH_TARGET = 400.0f;	// ターゲットとの距離
+
 	const float CATCH_JUMP_LENGTH = 100.0f;		// ジャンプキャッチの距離
 	const float CATCH_JUMP_HEIGHT = 300.0f;		// ジャンプキャッチする高さ
 
@@ -151,6 +155,10 @@ CPlayerAIControl::CPlayerAIControl()
 	m_eThrow = EThrow::THROW_NONE;
 	m_eThrowTiming = EThrowTiming::TIMING_NONE;
 	m_eCatchType = ECatchType::CATCH_TYPE_NONE;
+
+	// 構造体の初期化
+	ZeroMemory(&m_sThrow, sizeof(m_sThrow));
+	ZeroMemory(&m_sDistance, sizeof(m_sDistance));
 }
 
 //==========================================================================
@@ -196,6 +204,20 @@ CPlayerAIControl* CPlayerAIControl::Create(CPlayer* player)
 }
 
 //==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CPlayerAIControl::Init()
+{
+	m_sDistance.fInPair = CHATCH_LENGTH_IN_PAIR;
+	m_sDistance.fInAlly = CHATCH_LENGTH_IN_ALLY;
+	m_sDistance.fOut = CHATCH_LENGTH_OUT;
+	m_sDistance.fTarget = CHATCH_LENGTH_TARGET;
+
+
+	return S_OK;
+}
+
+//==========================================================================
 // 終了処理
 //==========================================================================
 void CPlayerAIControl::Uninit()
@@ -209,7 +231,7 @@ void CPlayerAIControl::Uninit()
 // 更新処理
 //==========================================================================
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
+ {
 	// モードの更新
 	UpdateMode();
 
@@ -239,7 +261,7 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 	(// デバッグ用エフェクト(ターゲット)
 		m_pAI->GetPosition(),
 		VEC3_ZERO,
-		MyLib::color::Blue(),
+		MyLib::color::Yellow(),
 		20.0f,
 		0.1f,
 		1,
@@ -440,26 +462,31 @@ void CPlayerAIControl::ForciblyStart()
 	if (IsWhoPicksUpTheBall())
 	{// 自分より近いプレイヤーがいた場合
 		m_eMove = EMoveType::MOVETYPE_STOP;
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eAction = EAction::ACTION_NONE;
 		return;
 	}
 
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall)
 	{// ボールがない場合
+		m_eMove = EMoveType::MOVETYPE_STOP;
 		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eAction = EAction::ACTION_NONE;
 		return;
 	}
 
 	CPlayer* pPlayer = pBall->GetPlayer();
 	if (pPlayer)
 	{// 誰かがボールを持った場合
+		m_eMove = EMoveType::MOVETYPE_STOP;
 		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eAction = EAction::ACTION_NONE;
 		return;
 	}
 
 	m_eAction = EAction::ACTION_JUMP;
 	m_eMove = EMoveType::MOVETYPE_WALK;
-
 }
 
 //================================================================================
@@ -911,9 +938,6 @@ void CPlayerAIControl::UpdateCatch()
 		}
 	}
 
-	// 距離
-	DistanceTeam();
-
 	// キャッチ種類更新
 	(this->*(m_CatchFunc[m_eCatchType]))();
 }
@@ -1051,7 +1075,7 @@ void CPlayerAIControl::CatchFindBall()
 	m_eMove = EMoveType::MOVETYPE_WALK;
 
 	// 近づく
-	if (Approatch(pBall->GetPosition(), 5.0f))
+	if (Approatch(pBall->GetPosition(), 50.0f))
 	{
 		m_eMove = EMoveType::MOVETYPE_STOP;
 	}
@@ -1084,39 +1108,6 @@ void CPlayerAIControl::PlanHeart()
 //==========================================================================
 void CPlayerAIControl::DistanceCatch(CPlayer* pTarget)
 {
-	//// AIコントロール情報の取得
-	//CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
-	//CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-	//// ターゲットのエリアの取得
-	//CPlayer::EFieldArea areaTarget = pTarget->GetAreaType();
-
-	//// 自分の位置
-	//MyLib::Vector3 myPos = m_pAI->GetPosition();
-
-	//if (areaTarget == CPlayer::EFieldArea::FIELD_IN)
-	//{// ターゲットが内野
-	//	if (Leave(pTarget->GetPosition(), LENGTH))
-	//	{
-	//		//m_eMove = EMoveType::MOVETYPE_STOP;
-	//		return;
-	//	}
-	//	m_eMove = EMoveType::MOVETYPE_WALK;
-	//}
-	//else if (areaTarget = CPlayer::EFieldArea::FIELD_OUT)
-	//{// ターゲットが外野
-	//	if (Leave(pTarget->GetPosition(), LENGTH))
-	//	{
-	//		//m_eMove = EMoveType::MOVETYPE_STOP;
-	//		return;
-	//	}
-	//	m_eMove = EMoveType::MOVETYPE_WALK;
-	//}
-	//else
-	//{// エリアの取得に失敗
-	//	assert(false);
-	//}
-
 	DistanceTeam();
 }
 
@@ -1129,9 +1120,11 @@ void CPlayerAIControl::DistanceTeam()
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
+	float fMin = 10000000.0f;
+
 	// 自分情報
 	MyLib::Vector3 posMy = m_pAI->GetPosition();			// 位置情報の取得
-	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();	// 所属チーム
+	CGameManager::ETeamSide TeamMy = m_pAI->GetTeam();	// 所属チーム
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -1140,23 +1133,25 @@ void CPlayerAIControl::DistanceTeam()
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
+		CPlayer::EFieldArea areaPlayer = pPlayer->GetAreaType();	// エリアタイプ
 
 		// 自分の場合
-		if (pPlayer == m_pAI)continue;
+		if (pPlayer == m_pAI) continue;
 
-		// 同じチーム && 外野
-		if (typeTeam == pPlayer->GetTeam() && pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) continue;
-
-		//// 違うチーム && 内野
-		//if ((typeTeam != pPlayer->GetTeam()) && (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)) continue;
-
+		// 同じチームの外野
+		if (TeamMy == pPlayer->GetTeam() && areaPlayer == CPlayer::EFieldArea::FIELD_OUT) continue;
 
 		// 敵との距離を求める
 		float fLength = posMy.DistanceXZ(posPlayer);
 
-		if (fLength < LENGTH_OUT)
-		{ // より近い相手プレイヤーがいた場合
+		// 距離：取得
+		float length = GetDistance(areaPlayer, TeamMy, pPlayer->GetTeam());
+
+		if (fLength < length) { // より近い相手プレイヤーがいた場合
 		
+			// 一番近い奴が優先
+			fMin = length;
+
 			// 近いプレイヤーとの角度
 			float angle = posPlayer.AngleXZ(posMy);
 
@@ -1165,8 +1160,41 @@ void CPlayerAIControl::DistanceTeam()
 
 			// 行動：歩く
 			m_eMove = EMoveType::MOVETYPE_WALK;
+
+			return;
+
+		} else{
+			// 行動：止まる
+			m_eMove = EMoveType::MOVETYPE_STOP;
 		}
+
 	}
+}
+
+//==========================================================================
+// 距離：取得
+//==========================================================================
+float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CGameManager::ETeamSide teamPair)
+{
+	float distance = 0.0f;
+
+	// 体力によって変えたり
+	// 心によって変えたり
+
+	if (area == CPlayer::EFieldArea::FIELD_IN && teamMy == teamPair)
+	{// 内野で同じチーム
+		distance = m_sDistance.fInAlly;
+	}
+	else if(area == CPlayer::EFieldArea::FIELD_IN && teamMy != teamPair)
+	{// 内野で違うチーム
+		distance = m_sDistance.fInPair;
+	}
+	else if (area == CPlayer::EFieldArea::FIELD_OUT)
+	{// 外野
+		distance = m_sDistance.fOut;
+	}
+
+	return distance;
 }
 
 //==========================================================================
@@ -1324,6 +1352,9 @@ bool CPlayerAIControl::Leave(MyLib::Vector3 targetPos, float distance)
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
+	// ボール情報の取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+
 	// 自分の位置情報
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
 
@@ -1334,24 +1365,50 @@ bool CPlayerAIControl::Leave(MyLib::Vector3 targetPos, float distance)
 		return true;
 	}
 
+	// ターゲットから自分の角度
 	float direction = targetPos.AngleXZ(myPos);
 
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall && pBall->GetPlayer())
-	{
-		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam() ||
-			pBall->GetPlayer() == m_pAI)
-		{// 違うチームが持っている場合
+	if (pBall)
+	{// ボールが存在しない
+		CPlayer* pPlayerBall = pBall->GetPlayer();
+
+		if (!pPlayerBall) {// プレイヤーがいない
+			// 角度設定
+			m_pAI->SetRotDest(direction);
+			return false;
+
+		} if (pPlayerBall->GetTeam() != m_pAI->GetTeam() &&
+			pPlayerBall != m_pAI) {// 違うチームが持っている && 持ち主が自分以外場合
+
+			if (m_eMove == EMoveType::MOVETYPE_DASH)
+			{// 行動：走る
+				// 角度設定
+				m_pAI->SetRotDest(direction);
+				return false;
+			}
+
 			// カニ進行方向の設定
 			pControlAIMove->SetClabDirection(direction);
-			//m_pAI->SetRotDest(direction);
+			return false;
 		}
 	}
-	else
-	{
-		//pControlAIMove->SetClabDirection(direction);
-		m_pAI->SetRotDest(direction);
-	}
+
+	// 角度設定
+	m_pAI->SetRotDest(direction);
+
+
+#if 1
+	CEffect3D::Create
+	(// デバッグ用エフェクト(ターゲット)
+		targetPos,
+		VEC3_ZERO,
+		MyLib::color::Blue(),
+		20.0f,
+		0.1f,
+		1,
+		CEffect3D::TYPE::TYPE_NORMAL
+	);
+#endif
 
 	return false;
 }
@@ -1364,6 +1421,9 @@ bool CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// ボール情報の取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
 	// 自分の位置情報
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
@@ -1378,22 +1438,38 @@ bool CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	// 自分からターゲットの角度
 	float direction = myPos.AngleXZ(targetPos);
 
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall && pBall->GetPlayer())
-	{
-		if (pBall->GetPlayer()->GetTeam() != m_pAI->GetTeam() ||
-			pBall->GetPlayer() != m_pAI)
-		{// 違うチームが持っている||持ち主が自分場合
+	if (pBall)
+	{// ボールが存在しない
+		CPlayer* pPlayerBall = pBall->GetPlayer();
+
+		if (!pPlayerBall) {// プレイヤーがいない
+		
+			// 角度設定
+			m_pAI->SetRotDest(direction);
+
+			return false;
+
+		} if (pPlayerBall->GetTeam() != m_pAI->GetTeam() &&
+			pPlayerBall != m_pAI) {// 違うチームが持っている && 持ち主が自分以外場合
+
+			if (m_eMove == EMoveType::MOVETYPE_DASH)
+			{// 行動：走る
+				// 角度設定
+				m_pAI->SetRotDest(direction);
+				return false;
+			}
+
 			// カニ進行方向の設定
 			pControlAIMove->SetClabDirection(direction);
+			return false;
 		}
 	}
-	else
-	{
-		m_pAI->SetRotDest(direction);
-	}
 
-#if 0
+	// 角度設定
+	m_pAI->SetRotDest(direction);
+	
+
+#if 1
 	CEffect3D::Create
 	(// デバッグ用エフェクト(ターゲット)
 		targetPos,
@@ -1452,7 +1528,8 @@ bool CPlayerAIControl::IsWhoPicksUpTheBall()
 
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) return false;
+	if (!pBall) return true;
+	if (pBall->GetPlayer()) return true;
 
 	// ボール位置取得
 	MyLib::Vector3 posBall = pBall->GetPosition();
@@ -1465,11 +1542,12 @@ bool CPlayerAIControl::IsWhoPicksUpTheBall()
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
+		if (pPlayer == m_pAI) continue;
+
 		if (
 			(pPlayer->GetTeam() != typeTeam) ||
 			(pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) &&
-			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) &&
-			(pPlayer == m_pAI))
+			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
 		{// 違うチーム||外野&&ユーザー&&自分の場合
 			continue;
 		}

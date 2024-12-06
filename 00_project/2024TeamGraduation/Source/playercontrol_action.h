@@ -39,8 +39,11 @@ public:
 	virtual CPlayerAIOutControlAction* GetAIOut()	{ return nullptr; }
 	virtual CPlayerUserControlAction* GetUser()		{ return nullptr; }
 
-	void SetThrowDrop();	// 投げ(ドロップボール)設定
+	void SetThrowDrop();								// 投げ(ドロップボール)設定
 	inline bool IsThrowDrop() { return m_bThrowDrop; }	// 投げ(ドロップボール)可能判定取得
+
+	void SetThrowJust();								// 投げ(ジャストキャッチ)設定
+	inline bool IsThrowJust() { return m_bThrowJust; }	// 投げ(ジャストキャッチ)可能判定取得
 
 	// ジャンプトリガー
 	void SetEnableJumpTrigger(bool bTrigger)	{ m_bJumpTrigger = bTrigger; }	// ジャンプトリガー
@@ -72,12 +75,15 @@ private:
 
 	// その他
 	void UpdateThrowDrop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ドロップボール)の猶予
+	void UpdateThrowJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ジャストキャッチ)の猶予
 
 	//=============================
 	// メンバ変数
 	//=============================
 	float m_fThrowDropTime;	// 投げ(ドロップボール)の猶予
 	bool m_bThrowDrop;		// 投げ(ドロップボール)可能判定
+	float m_fThrowJustTime;	// 投げ(ジャストキャッチ)の猶予
+	bool m_bThrowJust;		// 投げ(ジャストキャッチ)可能判定
 	bool m_bJumpTrigger;	// ジャンプトリガー
 };
 

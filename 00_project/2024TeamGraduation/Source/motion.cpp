@@ -274,6 +274,9 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	for (int i = 0; i < static_cast<int>(nowKey.aParts.size()); i++)
 	{
+		// ‘”‚ğã‰ñ‚Á‚½‚ç
+		if (i >= m_nNumModel) continue;
+
 		// Œ»İ‚Ìƒp[ƒcî•ñ
 		const Parts& nowParts = nowKey.aParts[i];
 		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];

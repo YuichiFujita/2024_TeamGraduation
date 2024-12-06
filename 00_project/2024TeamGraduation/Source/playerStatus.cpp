@@ -139,6 +139,9 @@ void CPlayerStatus::Kill()
 //==========================================================================
 void CPlayerStatus::LifeDamage(const int nDmg)
 {
+	// ŠO–ì‚Ìê‡”²‚¯‚é
+	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { return; }
+
 	int nLife = m_pPlayer->GetLife();	// ‘Ì—Í
 	int nLifeOrigin = m_pPlayer->GetLifeOrigin();
 
@@ -161,6 +164,9 @@ void CPlayerStatus::LifeDamage(const int nDmg)
 //==========================================================================
 void CPlayerStatus::LifeHeal(const int nHeal)
 {
+	// ŠO–ì‚Ìê‡”²‚¯‚é
+	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { return; }
+
 	int nLife = m_pPlayer->GetLife();	// ‘Ì—Í
 	int nLifeOrigin = m_pPlayer->GetLifeOrigin();
 

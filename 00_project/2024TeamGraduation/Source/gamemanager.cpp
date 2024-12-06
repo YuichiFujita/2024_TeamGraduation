@@ -1055,6 +1055,12 @@ void CGameManager::Debug()
 		}
 	}
 
+	// モテ値マネージャー
+	if (m_pCharmValueManager != nullptr)
+	{
+		m_pCharmValueManager->Debug();
+	}
+
 	// 終了
 	if (ImGui::Button("end"))
 	{

@@ -23,6 +23,7 @@ namespace
 	const float TAPRATE_MIN = 0.7f;		// タップの最小割合
 	const float TAPRATE_MAX = 1.0f;		// タップの最大割合
 	const float TIME_THROWDROP = (10.0f / 60.0f) + TAPTIME;	// 投げ(ドロップボール)の猶予
+	const float TIME_THROWJUST = (10.0f / 60.0f) + TAPTIME;	// 投げ(ジャストキャッチ)の猶予
 }
 
 //==========================================================================
@@ -32,6 +33,8 @@ CPlayerControlAction::CPlayerControlAction()
 {
 	m_fThrowDropTime = 0.0f;	// 投げ(ドロップボール)の猶予
 	m_bThrowDrop = false;		// 投げ(ドロップボール)可能判定
+	m_fThrowJustTime = 0.0f;	// 投げ(ジャスト)の猶予
+	m_bThrowJust = false;		// 投げ(ジャスト)可能判定
 	m_bJumpTrigger = false;		// ジャンプトリガー
 }
 
@@ -65,6 +68,9 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 {
 	// 投げ(ドロップボール)の猶予
 	UpdateThrowDrop(fDeltaTime, fDeltaRate, fSlowRate);
+	
+	// 投げ(ジャストキャッチ)の猶予
+	UpdateThrowJust(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// アクション取得
 	CPlayerAction* pPlayerAction = player->GetActionPattern();
@@ -101,16 +107,27 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 void CPlayerControlAction::ThrowSetting(CPlayer* player)
 {
 	// アクションパターン変更
-	if (player->IsJump())
-	{
+	if (player->GetBase()->GetPlayerControlAction()->IsThrowJust())
+	{// ジャスト投げ
+		if (player->IsJump())
+		{// ジャストジャンプ
+			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUST_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
+		}
+		else
+		{// ジャスト
+			SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUST, CPlayer::EAction::ACTION_THROW);
+		}
+	}
+	else if (player->IsJump())
+	{// ジャンプ投げ
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_JUMP, CPlayer::EAction::ACTION_THROW_JUMP);
 	}
 	else if (player->GetBase()->GetPlayerControlAction()->IsThrowDrop())
-	{
+	{// 拾い投げ(クルン)
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_DROP, CPlayer::EAction::ACTION_THROW);
 	}
 	else if (player->IsDash())
-	{
+	{// 走り投げ
 		SetPattern(player, CPlayer::EMotion::MOTION_THROW_RUN, CPlayer::EAction::ACTION_THROW);
 	}
 	else
@@ -221,4 +238,29 @@ void CPlayerControlAction::UpdateThrowDrop(const float fDeltaTime, const float f
 
 	// 投げの判定
 	m_bThrowDrop = m_fThrowDropTime > 0.0f;
+}
+
+//==========================================================================
+// 投げ(ジャストキャッチ)可能
+//==========================================================================
+void CPlayerControlAction::SetThrowJust()
+{
+	// 投げ(ドロップボール)の猶予設定
+	m_fThrowJustTime = TIME_THROWJUST;
+
+	// 投げの判定
+	m_bThrowJust = true;
+}
+
+//==========================================================================
+// 投げ(ジャストキャッチ)の猶予
+//==========================================================================
+void CPlayerControlAction::UpdateThrowJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 投げ(ドロップボール)の猶予減算
+	m_fThrowJustTime -= fDeltaTime * fDeltaRate * fSlowRate;
+	m_fThrowJustTime = UtilFunc::Transformation::Clamp(m_fThrowJustTime - fDeltaTime * fDeltaRate * fSlowRate, 0.0f, TIME_THROWJUST);
+
+	// 投げの判定
+	m_bThrowJust = m_fThrowJustTime > 0.0f;
 }
