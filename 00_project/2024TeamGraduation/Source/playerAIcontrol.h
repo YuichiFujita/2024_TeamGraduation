@@ -27,7 +27,7 @@ namespace playerAIcontrol
 
 	// 線越え判定(中心(x)からの距離)
 	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
-	const float RETURN_POS = 500.0f;			// 戻る位置
+	const float RETURN_POS = 300.0f;			// 戻る位置
 	const float OK_LENGTH = 10.0f;				// 判定の範囲(目的との距離)
 }
 

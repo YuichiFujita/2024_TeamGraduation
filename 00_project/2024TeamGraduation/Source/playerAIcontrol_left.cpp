@@ -25,6 +25,10 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
+namespace
+{
+
+};
 
 //==========================================================================
 // コンストラクタ
@@ -87,32 +91,6 @@ void CPlayerAIControlLeft::Update(const float fDeltaTime, const float fDeltaRate
 {
 	// 基底クラスの更新
 	CPlayerAIControl::Update(fDeltaTime, fDeltaRate, fSlowRate);
-}
-
-//==========================================================================
-// 戻る
-//==========================================================================
-void CPlayerAIControlLeft::ForciblyReturn()
-{
-	// プレイヤー情報取得
-	CPlayer* pMy = GetPlayer();
-	if (!pMy) return;
-	MyLib::Vector3 myPos = pMy->GetPosition();
-	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
-
-	// AIコントロール情報の取得
-	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
-	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-	// 歩く
-	SetMove(EMoveType::MOVETYPE_WALK);
-
-	// 近づく
-	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
-	{
-		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-		SetMove(EMoveType::MOVETYPE_STOP);
-	}
 }
 
 //==========================================================================
@@ -185,6 +163,36 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 }
 
 //==========================================================================
+// 戻る
+//==========================================================================
+void CPlayerAIControlLeft::ForciblyReturn()
+{
+	// プレイヤー情報取得
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+	MyLib::Vector3 myPos = pMy->GetPosition();
+
+
+	CPlayer::EState state = pMy->GetState();
+	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
+		SetMove(EMoveType::MOVETYPE_STOP);
+		SetAction(EAction::ACTION_NONE);
+		return;
+	}
+
+	// 歩く
+	SetMove(EMoveType::MOVETYPE_DASH);
+	//SetAction(EAction::ACTION_JUMP);
+
+	// 近づく
+	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
+	{
+		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
+		SetMove(EMoveType::MOVETYPE_STOP);
+	}
+}
+
+//==========================================================================
 // プレイヤーは線を超えていますか？
 //==========================================================================
 bool CPlayerAIControlLeft::IsLineOverPlayer()
@@ -197,8 +205,8 @@ bool CPlayerAIControlLeft::IsLineOverPlayer()
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER)
-	{// 位置が超えていた場合
+	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EAction::ACTION_JUMP)
+	{// 位置が超えていた&&ジャンプしてない場合
 		bOver = true;
 	}
 
