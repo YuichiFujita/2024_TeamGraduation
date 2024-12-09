@@ -29,6 +29,7 @@
 #include "charmManager.h"
 #include "charmText.h"
 #include "timerUI.h"
+#include "reporter.h"
 
 #include "resultManager.h"
 
@@ -518,6 +519,10 @@ void CGameManager::SkipSpawn()
 
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create(CScene::MODE::MODE_GAME);
+
+	// 実況生成
+	CReporter::Create(ETeamSide::SIDE_LEFT);
+	CReporter::Create(ETeamSide::SIDE_RIGHT);
 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
@@ -1048,6 +1053,12 @@ void CGameManager::Debug()
 		{
 			m_pTeamStatus[i]->Debug();
 		}
+	}
+
+	// モテ値マネージャー
+	if (m_pCharmValueManager != nullptr)
+	{
+		m_pCharmValueManager->Debug();
 	}
 
 	// 終了

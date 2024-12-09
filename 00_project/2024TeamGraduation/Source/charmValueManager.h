@@ -27,6 +27,8 @@ public:
 		ADD_HIT = 0,		// ヒット
 		ADD_JUSTCATCH,		// ジャストキャッチ
 		ADD_COVERCATCH,		// カバーキャッチ
+		ADD_THROW_JUST,		// ジャストキャッチ直後の投げ
+		ADD_THROW_DROP,		// ドロップキャッチ直後の投げ
 		ADD_DODGE,			// 回避
 		ADD_SPECIAL,		// スペシャル
 		ADD_CATCH_SPECIAL,	// スペシャルをキャッチ
@@ -60,6 +62,7 @@ public:
 	//--------------------------
 	virtual float GetAddValue(ETypeAdd type);	// 加算量取得
 	virtual float GetSubValue(ETypeSub type);	// 減算量取得
+	void Debug();								// デバッグ
 
 	// 静的関数
 	static CCharmValueManager* Create();	// 生成処理

@@ -8,6 +8,7 @@
 #include "player.h"
 #include "playerBase.h"
 #include "playerStatus.h"
+#include "playercontrol_action.h"
 #include "manager.h"
 #include "game.h"
 #include "gamemanager.h"
@@ -553,6 +554,16 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// 跳力を設定
 	m_fBouncy = normal::BOUND_SPEED;
 
+	if (pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_THROW_JUST ||
+		pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_THROW_JUST_JUMP)
+	{// ジャスト投げだったら
+		OutcomeThrowJust();
+	}
+	else if (pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_THROW_DROP)
+	{// ドロップ投げだったら
+		OutcomeThrowDrop();
+	}
+
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
@@ -629,6 +640,11 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 跳力を設定
 	m_fBouncy = jump::BOUND_SPEED;
+
+	if (pPlayer->GetBase()->GetPlayerControlAction()->IsThrowJust())
+	{// ジャスト投げだったら
+		OutcomeThrowJust();
+	}
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_JUMP);
@@ -1793,6 +1809,32 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;
+}
+
+//==========================================================================
+// ジャスト投げ処理
+//==========================================================================
+void CBall::OutcomeThrowJust()
+{
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return;
+
+	// モテ加算
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_THROW_JUST);
+}
+
+//==========================================================================
+// ドロップ投げ処理
+//==========================================================================
+void CBall::OutcomeThrowDrop()
+{
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+	if (pGameMgr == nullptr) return;
+
+	// モテ加算
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_THROW_DROP);
 }
 
 //==========================================================================

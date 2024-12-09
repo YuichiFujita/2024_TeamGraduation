@@ -204,6 +204,12 @@ private:
 	void UpdateTypeSpecial();			// スペシャル種類更新
 	void CalcSetInitialSpeed(const float fMove);	// 初速計算
 	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
+<<<<<<< HEAD
+=======
+	void CalcSetInitialSpeed(const float fMove);				// 初速計算
+	void OutcomeThrowJust();	// ジャスト投げ効果
+	void OutcomeThrowDrop();	// ドロップ投げ効果
+>>>>>>> d69e96aceced43c4c9d3070ba96abe06d34877ea
 
 	MyLib::Vector3 CalcVecMove(CPlayer* pTarget, CPlayer* pPlayer);	// 移動ベクトル計算
 	SHitTimingInfo CalcHitSpeedTime	// ボールが敵に到達するまでの時間計算

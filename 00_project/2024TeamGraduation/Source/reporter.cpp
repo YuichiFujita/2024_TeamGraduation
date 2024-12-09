@@ -11,13 +11,19 @@
 #include "sound.h"
 #include "player.h"
 #include "stretcher.h"
+#include "reporterSet.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE = "data\\TEXT\\character\\nurse\\setup_player.txt";	// キャラクターファイル
+	const std::string CHARAFILE = "data\\TEXT\\character\\reporter\\setup_player.txt";	// キャラクターファイル
+	const MyLib::Vector3 DEFAULTPOS[CGameManager::ETeamSide::SIDE_MAX] =
+	{
+		MyLib::Vector3(-200.0f, 0.0f, 900.0f),	// 左
+		MyLib::Vector3(200.0f, 0.0f, 900.0f),	// 右
+	};
 }
 
 //==========================================================================
@@ -26,7 +32,7 @@ namespace
 CReporter::STATE_FUNC CReporter::m_StateFunc[] =	// 状態関数
 {
 	&CReporter::StateNone,		// なし
-	&CReporter::StateGo,			// 向かう
+	&CReporter::StateGo,		// 向かう
 	&CReporter::StateCollect,	// 回収
 	&CReporter::StateBack,		// 戻る
 };
@@ -62,14 +68,13 @@ CReporter::~CReporter()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CReporter* CReporter::Create(const MyLib::Vector3& pos, const CGameManager::ETeamSide& side)
+CReporter* CReporter::Create(const CGameManager::ETeamSide& side)
 {
 	// メモリの確保
 	CReporter* pObj = DEBUG_NEW CReporter;
 	if (pObj != nullptr)
 	{
 		// 引数情報
-		pObj->SetPosition(pos);		// 位置
 		pObj->m_TeamSide = side;	// チームサイド
 
 		// クラスの初期化
@@ -96,6 +101,9 @@ HRESULT CReporter::Init()
 	// 状態
 	SetState(EState::STATE_NONE);
 
+	// 初期位置
+	SetPosition(DEFAULTPOS[m_TeamSide]);
+
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
 	if (FAILED(hr))
@@ -112,6 +120,9 @@ HRESULT CReporter::Init()
 		m_pShadow = CShadow::Create(this, 50.0f);
 	}
 
+	// 実況セット
+	m_pReporterSet = CReporterSet::Create(GetPosition(), m_TeamSide);
+
 	return S_OK;
 }
 
@@ -120,14 +131,11 @@ HRESULT CReporter::Init()
 //==========================================================================
 void CReporter::Uninit()
 {
-	// 影
-	m_pShadow = nullptr;
+	// リストから削除
+	m_List.Delete(this);
 
 	// 終了処理
 	CObjectChara::Uninit();
-
-	// プレイヤーリストから削除
-	m_List.Delete(this);
 }
 
 //==========================================================================
@@ -137,6 +145,9 @@ void CReporter::Kill()
 {
 	// 影を消す
 	SAFE_UNINIT(m_pShadow);
+
+	// 実況セット
+	SAFE_UNINIT(m_pReporterSet);
 
 	// 終了処理
 	Uninit();

@@ -141,6 +141,9 @@
     <Filter Include="ingame\buzz">
       <UniqueIdentifier>{1b7c632a-77de-4d2c-854e-3abab307d05b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\buzz\reporter">
+      <UniqueIdentifier>{877db654-a2a9-4be0-899c-6a39468847e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -729,7 +732,10 @@
       <Filter>ingame</Filter>
     </ClCompile>
     <ClCompile Include="Source\reporter.cpp">
-      <Filter>ingame\buzz</Filter>
+      <Filter>ingame\buzz\reporter</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\reporterSet.cpp">
+      <Filter>ingame\buzz\reporter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1331,7 +1337,10 @@
       <Filter>ingame</Filter>
     </ClInclude>
     <ClInclude Include="Source\reporter.h">
-      <Filter>ingame\buzz</Filter>
+      <Filter>ingame\buzz\reporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\reporterSet.h">
+      <Filter>ingame\buzz\reporter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
