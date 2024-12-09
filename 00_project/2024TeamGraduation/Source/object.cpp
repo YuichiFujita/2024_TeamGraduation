@@ -93,7 +93,6 @@ void CObject::ReleaseAll()
 					{
 						itr++;
 					}
-
 				}
 			}
 		}

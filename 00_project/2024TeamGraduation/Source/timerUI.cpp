@@ -56,9 +56,6 @@ HRESULT CTimerUI::Init(void)
 		return E_FAIL;
 	}
 
-	// タイマーの自動更新・自動終了をOFFにする
-	m_pTimer->SetType(CObject::TYPE::TYPE_NONE);
-
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
 
@@ -83,6 +80,9 @@ void CTimerUI::Uninit(void)
 //============================================================
 void CTimerUI::Kill()
 {
+	// タイマーの動的削除
+	SAFE_KILL(m_pTimer);
+
 	// 終了処理
 	Uninit();
 }
@@ -92,9 +92,6 @@ void CTimerUI::Kill()
 //============================================================
 void CTimerUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// タイマーの更新
-	m_pTimer->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
 	// 表示時間の設定
 	SetTime(m_pTimer->GetTime());
 
@@ -107,9 +104,6 @@ void CTimerUI::Update(const float fDeltaTime, const float fDeltaRate, const floa
 //============================================================
 void CTimerUI::Draw(void)
 {
-	// タイマーの描画
-	m_pTimer->Draw();
-
 	// タイムUIの描画
 	CTimeUI::Draw();
 }
