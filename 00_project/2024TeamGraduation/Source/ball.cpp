@@ -1785,33 +1785,6 @@ void CBall::UpdateTypeSpecial()
 }
 
 //==========================================================================
-// リバウンド処理
-//==========================================================================
-void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
-{
-	// 移動ベクトルを反転
-	*pMove = pMove->Invert();
-
-	// 上移動量を追加
-	pMove->y = rebound::MOVE_UP;
-
-	// 初速を初期化
-	m_fInitialSpeed = 0.0f;
-
-	// 移動速度を低下
-	m_fMoveSpeed = rebound::MOVE_SPEED;
-
-	// 跳力を設定
-	m_fBouncy = rebound::BOUND_SPEED;
-
-	// リバウンド状態にする
-	SetState(STATE_REBOUND);
-
-	// カバー対象プレイヤーを保存
-	m_pCover = pHitPlayer;
-}
-
-//==========================================================================
 // ジャスト投げ処理
 //==========================================================================
 void CBall::OutcomeThrowJust()
@@ -1844,6 +1817,33 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 {
 	// 初速を与える
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
+}
+
+//==========================================================================
+// リバウンド処理
+//==========================================================================
+void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
+{
+	// 移動ベクトルを反転
+	*pMove = pMove->Invert();
+
+	// 上移動量を追加
+	pMove->y = rebound::MOVE_UP;
+
+	// 初速を初期化
+	m_fInitialSpeed = 0.0f;
+
+	// 移動速度を低下
+	m_fMoveSpeed = rebound::MOVE_SPEED;
+
+	// 跳力を設定
+	m_fBouncy = rebound::BOUND_SPEED;
+
+	// リバウンド状態にする
+	SetState(STATE_REBOUND);
+
+	// カバー対象プレイヤーを保存
+	m_pCover = pHitPlayer;
 }
 
 //==========================================================================
