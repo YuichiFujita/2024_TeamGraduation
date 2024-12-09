@@ -144,6 +144,9 @@
     <Filter Include="ingame\buzz\reporter">
       <UniqueIdentifier>{877db654-a2a9-4be0-899c-6a39468847e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ingame\balloon">
+      <UniqueIdentifier>{ff50d162-9722-441c-9818-77d7b26a32c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -739,6 +742,9 @@
     </ClCompile>
     <ClCompile Include="Source\renderTextureManager.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\thoughtBalloon.cpp">
+      <Filter>ingame\balloon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1347,6 +1353,9 @@
     </ClInclude>
     <ClInclude Include="Source\renderTextureManager.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\thoughtBalloon.h">
+      <Filter>ingame\balloon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

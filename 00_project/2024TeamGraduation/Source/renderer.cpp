@@ -17,6 +17,7 @@
 #include "loadmanager.h"
 #include "Imguimanager.h"
 #include "fog.h"
+#include "renderTexture.h"
 #include "renderTextureManager.h"
 #include "screen.h"
 
@@ -285,7 +286,7 @@ HRESULT CRenderer::CreateRenderTexture()
 	}
 
 	// シーンレンダーテクスチャの生成
-	m_pRenderScene = CRenderTexture::Create(CRenderTextureManager::LAYER_MAIN);
+	m_pRenderScene = CRenderTexture::Create(CRenderTextureManager::LAYER_MAIN, &CObject::DrawAll);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
 
@@ -308,7 +309,7 @@ HRESULT CRenderer::CreateRenderTexture()
 //============================================================
 //	レンダーテクスチャ描画処理
 //============================================================
-void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface)
+void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc)
 {
 	CManager *pManager = GET_MANAGER;			// マネージャー
 	CCamera  *pCamera  = pManager->GetCamera();	// カメラ
@@ -351,7 +352,8 @@ void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface)
 		pCamera->SetCamera();
 
 		// オブジェクトの全描画
-		CObject::DrawAll();
+		assert(pDrawFunc != nullptr);
+		pDrawFunc();
 
 		// ビューポートを元に戻す
 		m_pD3DDevice->SetViewport(&viewportDef);
@@ -381,4 +383,13 @@ bool CRenderer::IsShader() const
 {
 	// シェーダーフラグの取得
 	return m_pDrawScreen->IsShader();
+}
+
+//============================================================
+//	レンダーテクスチャインデックスの取得処理
+//============================================================
+int CRenderer::GetRenderTextureIndex() const
+{
+	// レンダーテクスチャインデックスの取得
+	return m_pRenderScene->GetTextureIndex();
 }

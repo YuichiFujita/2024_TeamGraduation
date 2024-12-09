@@ -82,13 +82,13 @@ public:
 	//=============================
 	virtual HRESULT Init() override;
 	virtual void Uninit() override;
+	virtual void Kill() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void Kill();	// 削除
 	void CatchAttack(CPlayer* pPlayer);	// 攻撃キャッチ
 	void CatchLand(CPlayer* pPlayer);	// 着地キャッチ
 	void Spawn(CPlayer* pPlayer);		// スポーン
@@ -97,7 +97,6 @@ public:
 	void Special(CPlayer* pPlayer);		// スペシャル発動
 	void Pass(CPlayer* pPlayer);		// パス
 	void Toss(CPlayer* pPlayer);		// トス
-
 	MyLib::Vector3 GetPosPassStart() const		{ return m_posPassStart; }	// パス開始位置取得
 	MyLib::Vector3 GetPosPassEnd() const		{ return m_posPassEnd; }	// パス終了位置取得
 	CGameManager::ETeamSide GetTypeTeam() const	{ return m_typeTeam; }		// チームサイド取得
@@ -116,7 +115,7 @@ public:
 	bool IsSpecial() const;			// スペシャルフラグ取得
 
 	//=============================
-	// 静的関数
+	// 静的メンバ関数
 	//=============================
 	/*
 		@brief		生成処理

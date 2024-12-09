@@ -21,6 +21,7 @@
 CRenderTexture::CRenderTexture(const CRenderTextureManager::ELayer layer) :
 	m_layer			(layer),	// レンダーテクスチャレイヤー
 	m_pSurTexture	(nullptr),	// テクスチャサーフェイスへのポインタ
+	m_pDrawFunc		(nullptr),	// オブジェクト描画関数
 	m_nTextureIdx	(0)			// レンダーテクスチャインデックス
 {
 
@@ -43,6 +44,7 @@ HRESULT CRenderTexture::Init()
 
 	// メンバ変数を初期化
 	m_pSurTexture	= nullptr;	// テクスチャサーフェイスへのポインタ
+	m_pDrawFunc		= nullptr;	// オブジェクト描画関数
 	m_nTextureIdx	= 0;		// レンダーテクスチャインデックス
 
 	// 使用フォーマットの指定
@@ -109,13 +111,13 @@ void CRenderTexture::Draw()
 {
 	// レンダーテクスチャへの書き込み
 	CRenderer *pRenderer = GET_RENDERER;	// レンダラーへのポインタ
-	pRenderer->DrawRenderTexture(&m_pSurTexture);
+	pRenderer->DrawRenderTexture(&m_pSurTexture, m_pDrawFunc);
 }
 
 //============================================================
 //	生成処理
 //============================================================
-CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer)
+CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer, CRenderer::ADrawFunc pDrawFunc)
 {
 	// レンダーテクスチャの生成
 	CRenderTexture *pRenderTexture = DEBUG_NEW CRenderTexture(layer);
@@ -135,6 +137,9 @@ CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer
 			SAFE_DELETE(pRenderTexture);
 			return nullptr;
 		}
+
+		// オブジェクト描画関数を設定
+		pRenderTexture->SetDrawFunc(pDrawFunc);
 
 		// 確保したアドレスを返す
 		return pRenderTexture;
