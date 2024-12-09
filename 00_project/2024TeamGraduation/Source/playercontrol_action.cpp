@@ -102,6 +102,22 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 }
 
 //==========================================================================
+// パス設定
+//==========================================================================
+void CPlayerControlAction::PassSetting(CPlayer* player)
+{
+	// アクションパターン変更
+	if (player->IsJump())
+	{// ジャンプパス
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW_JUMP);
+	}
+	else
+	{// パス
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
+	}
+}
+
+//==========================================================================
 // 投げ設定
 //==========================================================================
 void CPlayerControlAction::ThrowSetting(CPlayer* player)

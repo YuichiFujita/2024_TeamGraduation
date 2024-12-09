@@ -53,6 +53,7 @@ protected:
 	//=============================
 	// ƒƒ“ƒoŠÖ”
 	//=============================
+	void PassSetting(CPlayer* player);
 	void ThrowSetting(CPlayer* player);
 	void JumpSetting(CPlayer* player);
 	virtual void JumpFloat(CPlayer* playe, const float fDeltaTime, const float fDeltaRate, const float fSlowRater);	// ƒWƒƒƒ“ƒvã¸

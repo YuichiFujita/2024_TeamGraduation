@@ -228,6 +228,20 @@ void CPlayerAction::ActionCatch(const float fDeltaTime, const float fDeltaRate, 
 }
 
 //==========================================================================
+// ジャンプキャッチ
+//==========================================================================
+void CPlayerAction::ActionCatchJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	//フワッと
+	UniqueJumpUpdate(fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (m_pPlayer->GetMotion()->IsFinish())
+	{// モーションと同時に終了
+		SetAction(CPlayer::EAction::ACTION_NONE);
+	}
+}
+
+//==========================================================================
 // 投げ
 //==========================================================================
 void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -246,20 +260,7 @@ void CPlayerAction::ActionThrow(const float fDeltaTime, const float fDeltaRate, 
 void CPlayerAction::ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	//フワッと
-	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
-	MyLib::Vector3 move = m_pPlayer->GetMove();
-	float fMoveY = param.fJumpUpdateMove;
-
-	//下降中
-	if (move.y < 0.0f)
-	{
-		fMoveY *= JUMPTHROW_DOWN_COR;
-	}
-
-	fMoveY *= fDeltaRate * fSlowRate;
-
-	move.y += fMoveY;
-	m_pPlayer->SetMove(move);
+	UniqueJumpUpdate(fDeltaTime, fDeltaRate, fSlowRate);
 
 	if (m_pPlayer->GetMotion()->IsFinish())
 	{// ジャンプ移行
@@ -276,23 +277,21 @@ void CPlayerAction::ActionSpecial(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
+// [開始] ジャンプキャッチ
+//==========================================================================
+void CPlayerAction::StartCatchJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// ふわっと
+	UniqueJumpStart();
+}
+
+//==========================================================================
 // [開始] ジャンプ投げ
 //==========================================================================
 void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//フワッと
-	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
-	MyLib::Vector3 move = m_pPlayer->GetMove();
-	float fMoveY = param.fJumpStartMove;
-
-	//下降中
-	if (move.y < 0.0f)
-	{
-		fMoveY *= JUMPTHROW_DOWN_COR;
-	}
-
-	move.y = fMoveY;
-	m_pPlayer->SetMove(move);
+	// ふわっと
+	UniqueJumpStart();
 }
 
 //==========================================================================
@@ -379,10 +378,51 @@ void CPlayerAction::SetAction(CPlayer::EAction action)
 }
 
 //==========================================================================
+// ジャンプ系アクションスタート
+//==========================================================================
+void CPlayerAction::UniqueJumpStart()
+{
+	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
+	MyLib::Vector3 move = m_pPlayer->GetMove();
+	float fMoveY = param.fJumpStartMove;
+
+	//下降中
+	if (move.y < 0.0f)
+	{
+		fMoveY *= JUMPTHROW_DOWN_COR;
+	}
+
+	move.y = fMoveY;
+	m_pPlayer->SetMove(move);
+}
+
+//==========================================================================
+// ジャンプ系更新
+//==========================================================================
+void CPlayerAction::UniqueJumpUpdate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	//フワッと
+	CCharacterStatus::CharParameter param = m_pPlayer->GetParameter();
+	MyLib::Vector3 move = m_pPlayer->GetMove();
+	float fMoveY = param.fJumpUpdateMove;
+
+	//下降中
+	if (move.y < 0.0f)
+	{
+		fMoveY *= JUMPTHROW_DOWN_COR;
+	}
+
+	fMoveY *= fDeltaRate * fSlowRate;
+
+	move.y += fMoveY;
+	m_pPlayer->SetMove(move);
+}
+
+//==========================================================================
 // デバッグ
 //==========================================================================
 void CPlayerAction::Debug()
 {
 
 }
-

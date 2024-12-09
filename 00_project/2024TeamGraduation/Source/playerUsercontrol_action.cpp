@@ -82,7 +82,7 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 	if (pKey->GetTrigger(DIK_K) ||
 		tapInfo.bInput)
 	{// タップ範囲はパス
-		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
+		PassSetting(player);
 	}
 
 	if (pKey->GetTrigger(DIK_RETURN) ||
