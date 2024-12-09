@@ -18,7 +18,7 @@ class CFontChar
 {
 public:
 	// コンストラクタ
-	CFontChar(const HFONT hFont, const std::string &rFilePass, const bool bItalic);
+	CFontChar(const HFONT hFont, const std::string &rFilePath, const bool bItalic);
 
 	// デストラクタ
 	~CFontChar();
@@ -50,11 +50,11 @@ public:
 	void Uninit(void);	// フォント文字終了
 	SChar Regist(const wchar_t wcChar);	// フォント文字登録
 	const HFONT GetFont(void)			{ return m_hFont; }		// フォントへのポインタ
-	const std::string GetFilePass(void)	{ return m_sFilePass; }	// フォントパス
+	const std::string GetFilePath(void)	{ return m_sFilePath; }	// フォントパス
 	const bool GetItalic(void)			{ return m_bItalic; }	// イタリック
 
 	// 静的メンバ関数
-	static CFontChar *Create(const HFONT hFont, const std::string &rFilePass, const bool bItalic);	// 生成
+	static CFontChar *Create(const HFONT hFont, const std::string &rFilePath, const bool bItalic);	// 生成
 	static void Release(CFontChar *&pFontChar);	// 破棄
 
 private:
@@ -65,7 +65,7 @@ private:
 	// メンバ変数
 	std::map<wchar_t, SChar> m_mapChar;	// フォント文字連想配列
 	const HFONT m_hFont;				// フォントへのポインタ
-	const std::string m_sFilePass;		// フォントパス
+	const std::string m_sFilePath;		// フォントパス
 	const bool m_bItalic;				// イタリック
 };
 

@@ -419,15 +419,6 @@
     <ClCompile Include="Source\fontChar.cpp">
       <Filter>system</Filter>
     </ClCompile>
-    <ClCompile Include="Source\char2D.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\string2D.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\text2D.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="Source\timer.cpp">
       <Filter>system</Filter>
     </ClCompile>
@@ -746,6 +737,21 @@
     <ClCompile Include="Source\thoughtBalloon.cpp">
       <Filter>ingame\balloon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\char2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scrollString2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scrollText2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\string2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\text2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1029,15 +1035,6 @@
     </ClInclude>
     <ClInclude Include="Source\fontChar.h">
       <Filter>system</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\char2D.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\string2D.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\text2D.h">
-      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="Source\timer.h">
       <Filter>system</Filter>
@@ -1356,6 +1353,21 @@
     </ClInclude>
     <ClInclude Include="Source\thoughtBalloon.h">
       <Filter>ingame\balloon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\char2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\scrollString2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\scrollText2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\string2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\text2D.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

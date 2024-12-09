@@ -31,6 +31,24 @@
 #define PLAY_SOUND(label)	(CSound::GetInstance()->PlaySound((CSound::ELabel)(label)))	// サウンド再生
 #define PLAY_SOUND_IF(label, bStop)	(CSound::GetInstance()->PlaySound((CSound::ELabel)(label), bStop))	// サウンド再生
 
+// 横配置列挙
+enum EAlignX
+{
+	XALIGN_LEFT = 0,	// 左揃え
+	XALIGN_CENTER,		// 中央揃え
+	XALIGN_RIGHT,		// 右揃え
+	XALIGN_MAX,			// この列挙型の総数
+};
+
+// 縦配置列挙
+enum EAlignY
+{
+	YALIGN_TOP = 0,	// 上揃え
+	YALIGN_CENTER,	// 中央揃え
+	YALIGN_BOTTOM,	// 下揃え
+	YALIGN_MAX,		// この列挙型の総数
+};
+
 /*
 	@brief	マイライブラリ
 */

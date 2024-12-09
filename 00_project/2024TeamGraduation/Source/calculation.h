@@ -3627,6 +3627,8 @@ namespace UtilFunc	// 便利関数
 			}
 		}
 
+	// TODO：変換変更したけど大丈夫かな
+#if 0
 		/**
 		@brief	ワイド文字列からマルチバイト文字列に変換する関数
 		@param	wideStr		[in]	ワイド文字列
@@ -3653,6 +3655,77 @@ namespace UtilFunc	// 便利関数
 			WideCharToMultiByte(CP_UTF8, 0, wideStr, wideLength, &multiString[0], multiLength, nullptr, nullptr);
 
 			return multiString;
+		}
+#else
+		/**
+		@brief	ワイド文字列からマルチバイト文字列に変換する関数
+		@param	rSrcStr	[in]	ワイド文字列
+		@return	マルチバイト文字列
+		*/
+		inline std::string WideToMultiByte(const std::wstring& rSrcStr)
+		{
+			int nSrcSize = (int)rSrcStr.size();	// 変換前の文字列のサイズ
+			if (nSrcSize <= 0) { return ""; }	// 文字列がない場合抜ける
+		
+			// 変換後の文字列サイズを取得
+			int nDestSize = WideCharToMultiByte
+			( // 引数
+				CP_ACP,				// 変換コードページ
+				0,					// 変換フラグ
+				&rSrcStr.front(),	// 変換前文字列の先頭アドレス
+				nSrcSize,			// 変換前文字列のサイズ
+				nullptr,			// 変換後文字列の先頭アドレス
+				0,					// 変換後文字列のサイズ
+				nullptr,			// 変換不可時の置換文字
+				nullptr				// 変換不可な文字が存在したか
+			);
+		
+			// 文字列を変換
+			std::string sDest(nDestSize, '\0');	// 変換後の文字列
+			WideCharToMultiByte
+			( // 引数
+				CP_ACP,				// 変換コードページ
+				0,					// 変換フラグ
+				&rSrcStr.front(),	// 変換前文字列の先頭アドレス
+				nSrcSize,			// 変換前文字列のサイズ
+				&sDest.front(),		// 変換後文字列の先頭アドレス
+				(int)sDest.size(),	// 変換後文字列のサイズ
+				nullptr,			// 変換不可時の置換文字
+				nullptr				// 変換不可な文字が存在したか
+			);
+		
+			// 変換後の文字列を返す
+			return sDest;
+		}
+#endif
+
+		/**
+		@brief	マルチバイト文字列からワイド文字列に変換する関数
+		@param	rSrcStr	[in]	マルチバイト文字列
+		@return	ワイド文字列
+		*/
+		inline std::wstring MultiByteToWide(const std::string& rSrcStr)
+		{
+			int nSrcSize = (int)rSrcStr.size();	// 変換前の文字列のサイズ
+			if (nSrcSize <= 0) { return L""; }	// 文字列がない場合抜ける
+		
+			// 文字列を変換
+			std::wstring wsDest(nSrcSize, L'\0');	// 変換後の文字列
+			int nDestSize = MultiByteToWideChar
+			( // 引数
+				CP_ACP,				// 変換コードページ
+				0,					// 変換フラグ
+				&rSrcStr.front(),	// 変換前文字列の先頭アドレス
+				nSrcSize,			// 変換前文字列のサイズ
+				&wsDest.front(),	// 変換後文字列の先頭アドレス
+				(int)wsDest.size()	// 変換後文字列のサイズ
+			);
+		
+			// 文字列サイズを修正
+			wsDest.resize(nDestSize);
+		
+			// 変換後の文字列を返す
+			return wsDest;
 		}
 
 		/**
