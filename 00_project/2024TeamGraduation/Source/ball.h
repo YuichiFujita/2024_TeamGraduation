@@ -177,11 +177,6 @@ private:
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 
 	//--------------------------
-	// エフェクト
-	//--------------------------
-	void UpdateThrowLine();	// 投げた線の更新
-
-	//--------------------------
 	// 汎用関数
 	//--------------------------
 	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
@@ -202,10 +197,10 @@ private:
 	void UpdateTypeTeam();				// チームサイド更新
 	void UpdateTypeAtk();				// 攻撃種類更新
 	void UpdateTypeSpecial();			// スペシャル種類更新
+	void OutcomeThrowJust();			// ジャスト投げ効果
+	void OutcomeThrowDrop();			// ドロップ投げ効果
+	void CalcSetInitialSpeed(const float fMove);	// 初速計算
 	void ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove);	// リバウンド
-	void CalcSetInitialSpeed(const float fMove);				// 初速計算
-	void OutcomeThrowJust();	// ジャスト投げ効果
-	void OutcomeThrowDrop();	// ドロップ投げ効果
 
 	MyLib::Vector3 CalcVecMove(CPlayer* pTarget, CPlayer* pPlayer);	// 移動ベクトル計算
 	SHitTimingInfo CalcHitSpeedTime	// ボールが敵に到達するまでの時間計算
@@ -216,6 +211,11 @@ private:
 		const float fInitSpeed,				// 初速
 		const float fMoveSpeed				// 移動量
 	);
+
+	//--------------------------
+	// エフェクト
+	//--------------------------
+	void UpdateThrowLine();	// 投げた線の更新
 
 	//=============================
 	// 静的メンバ変数
@@ -234,6 +234,7 @@ private:
 	float m_fMoveSpeed;		// 移動速度
 	float m_fInitialSpeed;	// 初速
 	float m_fGravity;		// 重力
+	float m_fBouncy;		// 跳力
 	float m_fHomingTime;	// ホーミング時間
 	bool m_bLanding;		// 着地フラグ
 	MyLib::Vector3 m_posPassStart;	// パス開始位置

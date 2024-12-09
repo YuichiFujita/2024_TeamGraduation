@@ -34,19 +34,89 @@
 namespace
 {
 	const char*	MODEL = "data\\MODEL\\dadgeball\\dodgeball.x";	// ボールモデル
-	const float GRAVITY = mylib_const::GRAVITY * 0.6f;	// ボールにかかる重力
+	const float GRAVITY = mylib_const::GRAVITY * 0.85f;			// ボールにかかる重力
 	const float	RADIUS = 17.0f;					// 半径
 	const float PLUS_RADIUS = RADIUS * 1.8f;	// 判定用半径
 	const float	RADIUS_SHADOW = 20.0f;			// 影の半径
 	const float	MIN_ALPHA_SHADOW = 0.32f;		// 影の透明度
 	const float	MAX_ALPHA_SHADOW = 0.48f;		// 影の透明度
-	const float	REV_MOVE = 0.025f;		// 移動量の補正係数
+	const float	REV_MOVE = 0.02f;		// 移動量の補正係数
 	const float	REV_INIMOVE = 0.1f;		// 初速の補正係数
+	const float	REV_BOUNCY = 0.58f;		// 跳力の補正係数
+	const float	REV_BOUND_MOVE = 0.2f;	// バウンド時の移動量の補正係数
+	const float	LIMIT_REV_MOVE = 0.1f;	// バウンド時の移動量を補正する最小バウンド量
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
-	const float DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
-	const float REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
-	const float MAX_BOUND_MOVE = 0.8f;	// バウンド時の上移動量最大値
+	const float	DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
+	const float	REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
+
+	namespace move
+	{
+		const float MULTIPLY_INIMOVE = 2.8f;	// 初速の倍率
+	}
+
+	namespace normal
+	{
+		const float BOUND_SPEED = 10.0f;	// 通常投げバウンド速度
+		const float REV_HOMING = 0.035f;	// ホーミングの慣性補正係数
+		const float TIME_HOMING = 1.2f;		// ホーミングが切れるまでの時間
+	}
+
+	namespace jump
+	{
+		const float BOUND_SPEED = 16.0f;	// ジャンプ投げバウンド速度
+		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
+		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
+		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
+	}
+
+	namespace special
+	{
+		const int	TIMING_ATK_IDX = 0;		// スペシャルボールの投げるタイミング
+		const float	THROW_MOVE = 20.0f;		// スペシャル投げ移動速度
+		const float BOUND_SPEED = 14.0f;	// スペシャル投げバウンド速度
+	}
+
+	namespace kamehameha
+	{
+		const float REV_HOMING = 0.46f;	// ホーミングの慣性補正係数
+	}
+
+	namespace rebound
+	{
+#if _DEBUG
+		const float MOVE_UP = 2.0f;	// 上移動量
+#else
+		const float MOVE_UP = 2.0f;		// 上移動量
+#endif
+		const float MOVE_SPEED = 5.0f;	// 移動速度
+		const float BOUND_SPEED = 4.0f;	// バウンド速度
+	}
+
+	namespace toss
+	{
+		const float MOVE_UP = 2.5f;		// トス上移動量
+		const float THROW_MOVE = 3.5f;	// トス移動速度
+		const float BOUND_SPEED = 3.0f;	// トスバウンド速度
+	}
+
+	namespace pass
+	{
+		const float MOVE_RATE = 0.02f;			// 移動速度の距離割合
+		const float HOMING_TIMERATE = 0.65f;	// Y座標のホーミングを行う時間割合
+		const float TARGET_PULSY = 50.0f;		// ターゲット対象のY座標加算量
+		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
+		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
+		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
+		const float BOUND_SPEED = 12.0f;		// パスバウンド速度
+	}
+
+	namespace spawn
+	{
+		const float MOVE_UP = 6.5f;		// スポーン上移動量
+		const float THROW_MOVE = 3.5f;	// スポーン移動速度
+		const float BOUND_SPEED = 6.0f;	// スポーンバウンド速度
+	}
 
 	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
 	{
@@ -86,70 +156,6 @@ namespace
 		"[FALSE]",
 		"[TRUE]",
 	};
-
-	namespace normal
-	{
-		const float THROW_MOVE = 22.5f;		// 通常投げ移動速度
-		const float REV_HOMING = 0.035f;	// ホーミングの慣性補正係数
-		const float TIME_HOMING = 1.2f;		// ホーミングが切れるまでの時間
-	}
-
-	namespace jump
-	{
-		const float THROW_MOVE = 27.0f;		// ジャンプ投げ移動速度
-		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
-		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
-		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
-	}
-
-	namespace special
-	{
-		const int	TIMING_ATK_IDX = 0;	// スペシャルボールの投げるタイミング
-		const float	THROW_MOVE = 20.0f;	// スペシャル投げ移動速度
-	}
-
-	namespace kamehameha
-	{
-		const float REV_HOMING = 0.46f;	// ホーミングの慣性補正係数
-	}
-
-	namespace move
-	{
-		const float TIME_GRAVITY = 0.8f;		// 重力がかかり始めるまでの時間
-		const float MULTIPLY_INIMOVE = 2.8f;	// 初速の倍率
-	}
-
-	namespace rebound
-	{
-#if _DEBUG
-		const float MOVE_UP = 2.0f;	// 上移動量
-#else
-		const float MOVE_UP = 2.0f;		// 上移動量
-#endif
-		const float MOVE_SPEED = 5.0f;	// 移動速度
-	}
-
-	namespace toss
-	{
-		const float THROW_MOVE = 3.5f;	// トス移動速度
-		const float MOVE_UP = 2.5f;		// トス上移動量
-	}
-
-	namespace pass
-	{
-		const float MOVE_RATE = 0.015f;			// 移動速度の距離割合
-		const float HOMING_TIMERATE = 0.65f;	// Y座標のホーミングを行う時間割合
-		const float TARGET_PULSY = 50.0f;		// ターゲット対象のY座標加算量
-		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
-		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
-		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
-	}
-
-	namespace spawn
-	{
-		const float THROW_MOVE = 3.5f;	// スポーン移動速度
-		const float MOVE_UP = 6.5f;		// スポーン上移動量
-	}
 }
 
 //==========================================================================
@@ -197,6 +203,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pCover		(nullptr),		// カバー対象プレイヤー情報
 	m_fMoveSpeed	(0.0f),			// 移動速度
 	m_fGravity		(0.0f),			// 重力
+	m_fBouncy		(0.0f),			// 跳力
 	m_fHomingTime	(0.0f),			// ホーミング時間
 	m_bLanding		(false),		// 着地フラグ
 	m_posPassStart	(VEC3_ZERO),	// パス開始位置
@@ -390,6 +397,8 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		ImGui::Text("move : [X : %.2f, Y : %.2f, Z : %.2f]", move.x, move.y, move.z);
 		ImGui::Text("m_fMoveSpeed : [%.2f]", m_fMoveSpeed);
 		ImGui::Text("m_fGravity : [%.2f]", m_fGravity);
+		ImGui::Text("m_fBouncy : [%.2f]", m_fBouncy);
+		ImGui::Text("m_fHomingTime : [%.2f]", m_fHomingTime);
 		ImGui::Text("m_nDamage : [%d]", m_nDamage);
 
 		if (ImGui::Button("Reset"))
@@ -471,6 +480,9 @@ void CBall::Spawn(CPlayer* pPlayer)
 	// 移動量を設定
 	m_fMoveSpeed = spawn::THROW_MOVE;
 
+	// 跳力を設定
+	m_fBouncy = spawn::BOUND_SPEED;
+
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 }
@@ -538,6 +550,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
+
+	// 跳力を設定
+	m_fBouncy = normal::BOUND_SPEED;
 
 	if (pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_THROW_JUST ||
 		pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_THROW_JUST_JUMP)
@@ -622,6 +637,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
+
+	// 跳力を設定
+	m_fBouncy = jump::BOUND_SPEED;
 
 	if (pPlayer->GetBase()->GetPlayerControlAction()->IsThrowJust())
 	{// ジャスト投げだったら
@@ -722,10 +740,13 @@ void CBall::Pass(CPlayer* pPlayer)
 		// パス終了位置を設定
 		m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
 		m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
-
-		// 移動量を設定
-		m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * pass::MOVE_RATE;
 	}
+
+	// 移動量を設定
+	m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * pass::MOVE_RATE;
+
+	// 跳力を設定
+	m_fBouncy = pass::BOUND_SPEED;
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
@@ -749,6 +770,9 @@ void CBall::Toss(CPlayer* pPlayer)
 
 	// 移動量を設定
 	m_fMoveSpeed = toss::THROW_MOVE;
+
+	// 跳力を設定
+	m_fBouncy = toss::BOUND_SPEED;
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
@@ -1364,14 +1388,20 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 		// ボールの位置を補正
 		pPos->y = CGameManager::FIELD_LIMIT + RADIUS;
 
-		// 縦移動量を与える
-		pMove->y = UtilFunc::Transformation::Clamp(m_fMoveSpeed, 0.0f, MAX_BOUND_MOVE);
+		// 重力を初期化
+		m_fGravity = m_fBouncy;
+
+		// 跳力を減衰させる
+		m_fBouncy += (0.0f - m_fBouncy) * (REV_BOUNCY * fDeltaRate * fSlowRate);
+		if (m_fBouncy > LIMIT_REV_MOVE)
+		{ // 跳力が一定以上かかっている場合
+
+			// 移動速度を減衰させる
+			m_fMoveSpeed += (0.0f - m_fMoveSpeed) * (REV_BOUND_MOVE * fDeltaRate * fSlowRate);
+		}
 
 		// 初速を初期化
 		m_fInitialSpeed = 0.0f;
-
-		// 重力を初期化
-		m_fGravity = 0.0f;
 
 		// 着地している状態にする
 		m_bLanding = true;
@@ -1530,12 +1560,6 @@ CPlayer* CBall::CollisionPassTarget()
 		// 自分と同じポジションの場合次へ
 		if (typeArea == pPlayer->GetAreaType()) { continue; }
 
-		// 視界内にいない場合次へ	// TODO
-#if 0
-		bool bHit = UtilFunc::Collision::CollisionViewRange3D(posThrow, posPlayer, rotThrow.y, VIEW_ANGLE);
-		if (!bHit) { continue; }
-#endif
-
 		// プレイヤー視野中心ベクトルからの距離測定
 		MyLib::Vector3 posFront = posThrow + MyLib::Vector3(sinf(rotThrow.y), 0.0f, cosf(rotThrow.y));
 		float fCurDis = fabsf(UtilFunc::Collision::LineOuterProduct(posThrow, posFront, posPlayer));
@@ -1689,6 +1713,9 @@ void CBall::ThrowSpecial()
 
 	// 初速を設定
 	CalcSetInitialSpeed(m_fMoveSpeed);
+
+	// 跳力を設定
+	m_fBouncy = special::BOUND_SPEED;
 }
 
 //==========================================================================
@@ -1758,30 +1785,6 @@ void CBall::UpdateTypeSpecial()
 }
 
 //==========================================================================
-// リバウンド処理
-//==========================================================================
-void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
-{
-	// 移動ベクトルを反転
-	*pMove = pMove->Invert();
-
-	// 上移動量を追加
-	pMove->y = rebound::MOVE_UP;
-
-	// 初速を初期化
-	m_fInitialSpeed = 0.0f;
-
-	// 移動速度を低下
-	m_fMoveSpeed = rebound::MOVE_SPEED;
-
-	// リバウンド状態にする
-	SetState(STATE_REBOUND);
-
-	// カバー対象プレイヤーを保存
-	m_pCover = pHitPlayer;
-}
-
-//==========================================================================
 // ジャスト投げ処理
 //==========================================================================
 void CBall::OutcomeThrowJust()
@@ -1814,6 +1817,33 @@ void CBall::CalcSetInitialSpeed(const float fMove)
 {
 	// 初速を与える
 	m_fInitialSpeed = fMove * move::MULTIPLY_INIMOVE;
+}
+
+//==========================================================================
+// リバウンド処理
+//==========================================================================
+void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
+{
+	// 移動ベクトルを反転
+	*pMove = pMove->Invert();
+
+	// 上移動量を追加
+	pMove->y = rebound::MOVE_UP;
+
+	// 初速を初期化
+	m_fInitialSpeed = 0.0f;
+
+	// 移動速度を低下
+	m_fMoveSpeed = rebound::MOVE_SPEED;
+
+	// 跳力を設定
+	m_fBouncy = rebound::BOUND_SPEED;
+
+	// リバウンド状態にする
+	SetState(STATE_REBOUND);
+
+	// カバー対象プレイヤーを保存
+	m_pCover = pHitPlayer;
 }
 
 //==========================================================================
