@@ -546,6 +546,7 @@ void CGameManager::SkipSpawn()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
+#if 1
 	GET_MANAGER->GetDebugProc()->Print("\n----------------- ŠÏ‹qî•ñ -----------------\n");
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
@@ -557,6 +558,7 @@ void CGameManager::UpdateAudience()
 		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i));
 		GET_MANAGER->GetDebugProc()->Print("yƒ`[ƒ€0%dŠÏ‹qz[%d]\n", i, nNumAudience);
 	}
+#endif	// ŠÏ‹q‚ğo‚³‚È‚¢
 }
 
 //==========================================================================
@@ -787,8 +789,11 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 		break;
 
 	default:
+		return SIDE_NONE;
 		break;
 	}
+
+	return SIDE_NONE;
 }
 
 

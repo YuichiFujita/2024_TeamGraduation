@@ -190,9 +190,6 @@ void CCatchSpecial::StateKamehameSucc(const float fDeltaTime, const float fDelta
 		(this->*(m_MomentumFunc[m_momentumState]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// モーション設定
-	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC);
-
 	if (m_momentumState == EMomentumState::MOMENTUM_END)
 	{// 終了したら(結果時間が終わった)
 		
@@ -216,9 +213,6 @@ void CCatchSpecial::StateKamehameFail(const float fDeltaTime, const float fDelta
 	{
 		(this->*(m_MomentumFunc[m_momentumState]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-	// モーション設定
-	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL);
 
 	if (m_momentumState == EMomentumState::MOMENTUM_END)
 	{// 終了したら
@@ -252,6 +246,7 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 {
 	// モーション設定
 	m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_CAPTURE);
+	CMotion* motion = m_pPlayer->GetMotion();
 
 	// スローかける
 	float fRate = 1.0f;	// 割合
@@ -274,11 +269,11 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 	UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 	GET_MANAGER->SetSlowRate(fRate);
 
-	if (m_fMomentumStateTime > Kamehameha::MOMENTUM_TIME[m_momentumState])
+	if (motion->IsFinish())
 	{// 終了
 
 		// スロー戻す
-
+		GET_MANAGER->SetSlowRate(1.0f);
 
 		SetMomentumState(EMomentumState::MOMENTUM_SLIDE);
 	}
@@ -289,6 +284,8 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 //==========================================================================
 void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// モーションはそのまま
+
 	// ズザザでコート奥まで行く
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();
 	float fBaseTime = Kamehameha::MOMENTUM_TIME[m_momentumState];
@@ -305,8 +302,7 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 
 	pos += move;
 
-	if (m_fMomentumStateTime > fBaseTime ||
-		CGameManager::GetInstance()->SetPosLimit(pos))
+	if (CGameManager::GetInstance()->SetPosLimit(pos))
 	{// 終了or画面端判定
 
 		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
@@ -338,6 +334,17 @@ void CCatchSpecial::MomentumStateBrake(const float fDeltaTime, const float fDelt
 void CCatchSpecial::MomentumStateResult(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CMotion* motion = m_pPlayer->GetMotion();
+
+	// モーション設定
+	if (m_bSuccess)
+	{// 成功
+		m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC);
+	}
+	else
+	{// 失敗
+		m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL);
+	}
+
 	if (motion->IsFinish())
 	{// 終了
 
@@ -376,6 +383,8 @@ void CCatchSpecial::StateStartNone()
 	// 行動可能に
 	m_pPlayer->SetEnableMove(true);
 	m_pPlayer->SetEnableAction(true);
+
+	// 自身を削除
 	m_pPlayer->SetCatchSpecial(nullptr);
 	Uninit();
 }

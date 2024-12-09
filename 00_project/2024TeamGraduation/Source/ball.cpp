@@ -122,11 +122,11 @@ namespace
 	namespace rebound
 	{
 #if _DEBUG
-		const float MOVE_UP = 10.5f;	// ãˆÚ“®—Ê
+		const float MOVE_UP = 2.0f;	// ãˆÚ“®—Ê
 #else
-		const float MOVE_UP = 5.5f;		// ãˆÚ“®—Ê
+		const float MOVE_UP = 2.0f;		// ãˆÚ“®—Ê
 #endif
-		const float MOVE_SPEED = 2.5f;	// ˆÚ“®‘¬“x
+		const float MOVE_SPEED = 5.0f;	// ˆÚ“®‘¬“x
 	}
 
 	namespace toss

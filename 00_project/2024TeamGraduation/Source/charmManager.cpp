@@ -31,11 +31,13 @@ CCharmManager* CCharmManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 CCharmManager::CCharmManager()
 {
+#if _DEBUG
 	//m_pCourtSizeBox = nullptr;
 	for (int i = 0; i < 4; i++)
 	{
 		m_pCourtSizeBox[i] = nullptr;
 	}
+#endif // _DEBUG
 }
 
 //==========================================================================

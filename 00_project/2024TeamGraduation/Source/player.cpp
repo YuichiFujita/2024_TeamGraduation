@@ -1567,7 +1567,11 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// ジャスト判定
 	bool bJust = false;
+#if _DEBUG
+	if (true)
+#else
 	if (m_sMotionFrag.bCatchJust && bInput)
+#endif
 	{
 		bJust = true;
 

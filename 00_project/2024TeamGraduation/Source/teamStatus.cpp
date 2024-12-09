@@ -189,6 +189,7 @@ void CTeamStatus::InitSpecialInfo()
 
 	// è„å¿ê›íË
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
+	SetSpecialValue(Special::VALUE_MAX);
 }
 
 //==========================================================================
