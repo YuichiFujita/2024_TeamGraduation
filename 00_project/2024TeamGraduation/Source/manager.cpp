@@ -27,6 +27,7 @@
 #include "font.h"
 #include "characterAnim.h"
 #include "shader.h"
+#include "renderTextureManager.h"
 
 //==========================================================================
 // 定数定義
@@ -571,6 +572,14 @@ void CManager::Uninit()
 
 	// 全てのオブジェクト破棄
 	CObject::ReleaseAll();
+
+	CRenderTextureManager* pRenderTextureManager = CRenderTextureManager::GetInstance();	// レンダーテクスチャマネージャー
+	if (pRenderTextureManager != nullptr)
+	{ // メモリが確保済みの場合
+
+		// レンダーテクスチャマネージャーの終了
+		pRenderTextureManager->Uninit();
+	}
 
 	// BGMストップ
 	m_pSound->StopSound();

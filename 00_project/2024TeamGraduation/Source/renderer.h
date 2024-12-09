@@ -17,6 +17,7 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CRenderTextureManager;
 class CScreen;
 
 //==========================================================================
@@ -43,11 +44,12 @@ public:
 
 private:
 	// メンバ変数
-	CRenderTexture*		m_pRenderScene;		// シーンレンダーテクスチャ
-	CScreen*			m_pDrawScreen;		// スクリーン描画ポリゴン
-	LPDIRECT3DSURFACE9	m_pDefSurScreen;	// 元の描画サーフェイス保存用
-	LPDIRECT3D9			m_pD3D;				// Direct3Dオブジェクト
-	LPDIRECT3DDEVICE9	m_pD3DDevice;		// Direct3Dデバイス
+	CRenderTextureManager*	m_pRenderTextureManager;	// レンダーテクスチャマネージャー
+	CRenderTexture*			m_pRenderScene;		// シーンレンダーテクスチャ
+	CScreen*				m_pDrawScreen;		// スクリーン描画ポリゴン
+	LPDIRECT3DSURFACE9		m_pDefSurScreen;	// 元の描画サーフェイス保存用
+	LPDIRECT3D9				m_pD3D;				// Direct3Dオブジェクト
+	LPDIRECT3DDEVICE9		m_pD3DDevice;		// Direct3Dデバイス
 };
 
 

@@ -17,12 +17,14 @@
 #include "loadmanager.h"
 #include "Imguimanager.h"
 #include "fog.h"
+#include "renderTextureManager.h"
 #include "screen.h"
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CRenderer::CRenderer() :
+	m_pRenderTextureManager	(nullptr),	// レンダーテクスチャマネージャー
 	m_pRenderScene	(nullptr),	// シーンレンダーテクスチャ
 	m_pDrawScreen	(nullptr),	// スクリーン描画ポリゴン
 	m_pDefSurScreen	(nullptr),	// 元の描画サーフェイス保存用
@@ -64,7 +66,6 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 
 	// デバイスのプレゼンテーションパラメータの設定
 	ZeroMemory(&d3dpp, sizeof(d3dpp));							// パラメータのゼロクリア
-
 	d3dpp.BackBufferWidth = SCREEN_WIDTH;						// ゲーム画面サイズ(幅)
 	d3dpp.BackBufferHeight = SCREEN_HEIGHT;						// ゲーム画面サイズ(高さ)
 	d3dpp.BackBufferFormat = d3ddm.Format;						// バックバッファの形式
@@ -75,7 +76,6 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	d3dpp.Windowed = bWindow;									// ウィンドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;	// リフレッシュレート
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
-
 
 	// Direct3Dデバイスの生成
 	if (FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
@@ -123,6 +123,14 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 
 	// 乱数の種を設定
 	srand((unsigned int)time(0));
+
+	// レンダーテクスチャマネージャーの生成
+	m_pRenderTextureManager = CRenderTextureManager::Create();
+	if (m_pRenderTextureManager == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -173,8 +181,8 @@ void CRenderer::Draw()
 	if (CManager::GetInstance()->IsLoadComplete())
 	{ // ロード済みの場合
 
-		// レンダーテクスチャの作成
-		m_pRenderScene->Draw();
+		// 全レンダーテクスチャの作成
+		m_pRenderTextureManager->Draw();
 	}
 
 	// 塗りつぶしモードを設定
@@ -277,7 +285,7 @@ HRESULT CRenderer::CreateRenderTexture()
 	}
 
 	// シーンレンダーテクスチャの生成
-	m_pRenderScene = CRenderTexture::Create();
+	m_pRenderScene = CRenderTexture::Create(CRenderTextureManager::LAYER_MAIN);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
 

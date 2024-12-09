@@ -737,6 +737,9 @@
     <ClCompile Include="Source\reporterSet.cpp">
       <Filter>ingame\buzz\reporter</Filter>
     </ClCompile>
+    <ClCompile Include="Source\renderTextureManager.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1341,6 +1344,9 @@
     </ClInclude>
     <ClInclude Include="Source\reporterSet.h">
       <Filter>ingame\buzz\reporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\renderTextureManager.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

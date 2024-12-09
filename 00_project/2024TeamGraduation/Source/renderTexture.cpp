@@ -18,7 +18,8 @@
 //============================================================
 //	コンストラクタ
 //============================================================
-CRenderTexture::CRenderTexture() :
+CRenderTexture::CRenderTexture(const CRenderTextureManager::ELayer layer) :
+	m_layer			(layer),	// レンダーテクスチャレイヤー
 	m_pSurTexture	(nullptr),	// テクスチャサーフェイスへのポインタ
 	m_nTextureIdx	(0)			// レンダーテクスチャインデックス
 {
@@ -44,6 +45,9 @@ HRESULT CRenderTexture::Init()
 	m_pSurTexture	= nullptr;	// テクスチャサーフェイスへのポインタ
 	m_nTextureIdx	= 0;		// レンダーテクスチャインデックス
 
+	// 使用フォーマットの指定
+	const D3DFORMAT format = (m_layer == CRenderTextureManager::ELayer::LAYER_MAIN) ? D3DFMT_X8R8G8B8 : D3DFMT_A8R8G8B8;
+
 	// 空のスクリーンテクスチャを生成
 	m_nTextureIdx = pTexture->Regist(CTexture::SInfo
 	( // 引数
@@ -51,7 +55,7 @@ HRESULT CRenderTexture::Init()
 		SCREEN_HEIGHT,			// テクスチャ縦幅
 		0,						// ミップマップレベル
 		D3DUSAGE_RENDERTARGET,	// 性質・確保オプション
-		D3DFMT_X8R8G8B8,		// ピクセルフォーマット
+		format,					// ピクセルフォーマット
 		D3DPOOL_DEFAULT			// 格納メモリ
 	));
 
@@ -69,6 +73,14 @@ HRESULT CRenderTexture::Init()
 		return E_FAIL;
 	}
 
+	CRenderTextureManager* pRenderTextureManager = CRenderTextureManager::GetInstance();	// レンダーテクスチャマネージャー
+	if (pRenderTextureManager != nullptr)
+	{ // メモリが確保済みの場合
+
+		// レンダーテクスチャの登録
+		pRenderTextureManager->RegistRenderTexture(this, m_layer);
+	}
+
 	// 成功を返す
 	return S_OK;
 }
@@ -80,6 +92,14 @@ void CRenderTexture::Uninit()
 {
 	// テクスチャサーフェイスの破棄
 	SAFE_RELEASE(m_pSurTexture);
+
+	CRenderTextureManager* pRenderTextureManager = CRenderTextureManager::GetInstance();	// レンダーテクスチャマネージャー
+	if (pRenderTextureManager != nullptr)
+	{ // メモリが確保済みの場合
+
+		// レンダーテクスチャの削除
+		pRenderTextureManager->DeleteRenderTexture(this);
+	}
 }
 
 //============================================================
@@ -95,10 +115,10 @@ void CRenderTexture::Draw()
 //============================================================
 //	生成処理
 //============================================================
-CRenderTexture *CRenderTexture::Create()
+CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer)
 {
 	// レンダーテクスチャの生成
-	CRenderTexture *pRenderTexture = DEBUG_NEW CRenderTexture;
+	CRenderTexture *pRenderTexture = DEBUG_NEW CRenderTexture(layer);
 	if (pRenderTexture == nullptr)
 	{ // 生成に失敗した場合
 

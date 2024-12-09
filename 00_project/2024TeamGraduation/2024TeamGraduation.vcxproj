@@ -325,6 +325,7 @@
     <ClCompile Include="Source\ranking.cpp" />
     <ClCompile Include="Source\renderer.cpp" />
     <ClCompile Include="Source\renderTexture.cpp" />
+    <ClCompile Include="Source\renderTextureManager.cpp" />
     <ClCompile Include="Source\reporter.cpp" />
     <ClCompile Include="Source\reporterSet.cpp" />
     <ClCompile Include="Source\result.cpp" />
@@ -528,6 +529,7 @@
     <ClInclude Include="Source\ranking.h" />
     <ClInclude Include="Source\renderer.h" />
     <ClInclude Include="Source\renderTexture.h" />
+    <ClInclude Include="Source\renderTextureManager.h" />
     <ClInclude Include="Source\reporter.h" />
     <ClInclude Include="Source\reporterSet.h" />
     <ClInclude Include="Source\result.h" />

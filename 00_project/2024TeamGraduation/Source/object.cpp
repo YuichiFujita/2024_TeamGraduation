@@ -80,7 +80,7 @@ void CObject::ReleaseAll()
 				}
 				else
 				{
-					if (pObj->IsDeath())
+					if (pObj->IsDeath())	// TODO：ここNONEだった時にレイヤーが親オブジェクトより前だったらUninit呼んでも後消しvectorに格納されん
 					{
 						// 終了処理
 						pObj->Uninit();
