@@ -60,11 +60,13 @@ private:
 	void ActionRun(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 走り
 	void ActionJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ジャンプ
 	void ActionCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+	void ActionCatchJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ(ジャンプ)
 	void ActionThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ
 	void ActionThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ(ジャンプ)
 	void ActionSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャル
 
 	// 状態スタート系
+	void StartCatchJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ(ジャンプ)
 	void StartThrowJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 投げ(ジャンプ)
 	void StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 回避
 
@@ -72,7 +74,10 @@ private:
 	void EndDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 回避
 	void EndUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// おっとっと
 
+	// その他
 	void Debug();
+	void UniqueJumpStart();		// ジャンプ系アクションスタート
+	void UniqueJumpUpdate(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ジャンプ系更新
 
 	//=============================
 	// メンバ変数

@@ -134,6 +134,7 @@ public:
 		ACTION_RUN,			// 走り
 		ACTION_JUMP,		// ジャンプ
 		ACTION_CATCH,		// キャッチ
+		ACTION_CATCH_JUMP,	// キャッチ(ジャンプ)
 		ACTION_THROW,		// 投げ
 		ACTION_THROW_JUMP,	// 投げ(ジャンプ)
 		ACTION_SPECIAL,		// スペシャル

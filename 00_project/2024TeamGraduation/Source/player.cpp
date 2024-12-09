@@ -1567,8 +1567,9 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// ジャスト判定
 	bool bJust = false;
-#if _DEBUG
-	if (true)
+
+#if 0	// 常にジャスト
+	if (m_sMotionFrag.bCatchJust && bInput)
 #else
 	if (m_sMotionFrag.bCatchJust && bInput)
 #endif
@@ -1596,6 +1597,12 @@ void CPlayer::CatchSetting(CBall* pBall)
 	{// 通常キャッチ
 
 		CatchSettingLandNormal(atkBall);	// キャッチ時処理(地上・通常)
+	}
+
+	// ジャンプ専用
+	if (atkBall == CBall::ATK_SPECIAL)
+	{
+		GetActionPattern()->SetAction(EAction::ACTION_CATCH_JUMP);
 	}
 
 	// 受けた種類
