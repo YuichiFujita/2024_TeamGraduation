@@ -325,6 +325,7 @@
     <ClCompile Include="Source\ranking.cpp" />
     <ClCompile Include="Source\renderer.cpp" />
     <ClCompile Include="Source\renderTexture.cpp" />
+    <ClCompile Include="Source\renderTextureManager.cpp" />
     <ClCompile Include="Source\reporter.cpp" />
     <ClCompile Include="Source\reporterSet.cpp" />
     <ClCompile Include="Source\result.cpp" />
@@ -351,6 +352,7 @@
     <ClCompile Include="Source\teamStatus.cpp" />
     <ClCompile Include="Source\text2D.cpp" />
     <ClCompile Include="Source\texture.cpp" />
+    <ClCompile Include="Source\thoughtBalloon.cpp" />
     <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\timerUI.cpp" />
     <ClCompile Include="Source\timeUI.cpp" />
@@ -528,6 +530,7 @@
     <ClInclude Include="Source\ranking.h" />
     <ClInclude Include="Source\renderer.h" />
     <ClInclude Include="Source\renderTexture.h" />
+    <ClInclude Include="Source\renderTextureManager.h" />
     <ClInclude Include="Source\reporter.h" />
     <ClInclude Include="Source\reporterSet.h" />
     <ClInclude Include="Source\result.h" />
@@ -554,6 +557,7 @@
     <ClInclude Include="Source\teamStatus.h" />
     <ClInclude Include="Source\text2D.h" />
     <ClInclude Include="Source\texture.h" />
+    <ClInclude Include="Source\thoughtBalloon.h" />
     <ClInclude Include="Source\timer.h" />
     <ClInclude Include="Source\timerUI.h" />
     <ClInclude Include="Source\timeUI.h" />

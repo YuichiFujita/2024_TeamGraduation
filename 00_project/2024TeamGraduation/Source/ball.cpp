@@ -66,7 +66,7 @@ namespace
 	{
 		const float BOUND_SPEED = 16.0f;	// ジャンプ投げバウンド速度
 		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
-		const float MIN_MOVE_DOWN = -0.3f;	// ジャンプ攻撃の最低下移動量
+		const float MIN_MOVE_DOWN = -0.25f;	// ジャンプ攻撃の最低下移動量
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
 	}
 
@@ -309,18 +309,15 @@ void CBall::Uninit()
 }
 
 //==========================================================================
-// 削除
+// 削除処理
 //==========================================================================
 void CBall::Kill()
 {
 	// 影の削除
 	SAFE_KILL(m_pShadow);
 
-	// リストから削除
-	m_list.Delete(this);
-
-	// 親クラスの終了
-	CObjectX::Uninit();
+	// 自身の終了
+	CBall::Uninit();
 }
 
 //==========================================================================
