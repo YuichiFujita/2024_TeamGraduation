@@ -85,11 +85,11 @@ namespace
 	namespace rebound
 	{
 #if _DEBUG
-		const float MOVE_UP = 10.5f;	// 上移動量
+		const float MOVE_UP = 2.0f;	// 上移動量
 #else
-		const float MOVE_UP = 5.5f;		// 上移動量
+		const float MOVE_UP = 2.0f;		// 上移動量
 #endif
-		const float MOVE_SPEED = 2.5f;	// 移動速度
+		const float MOVE_SPEED = 5.0f;	// 移動速度
 		const float BOUND_SPEED = 4.0f;	// バウンド速度
 	}
 
