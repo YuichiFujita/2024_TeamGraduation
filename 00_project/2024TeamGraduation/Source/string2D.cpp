@@ -119,8 +119,13 @@ void CString2D::Draw()
 	for (int i = 0; i < (int)m_wsStr.size(); i++)
 	{ // •¶Žš”•ªŒJ‚è•Ô‚·
 
-		// •¶Žš‚Ì•`‰æ
+		// •¶Žš‚ª‚È‚¢ê‡ƒGƒ‰[
 		assert(m_ppChar[i] != nullptr);
+
+		// Ž©“®•`‰æ‚ªOFF‚Ìê‡ŽŸ‚Ö
+		if (!m_ppChar[i]->IsDisp()) { continue; }
+
+		// •¶Žš‚Ì•`‰æ
 		m_ppChar[i]->Draw();
 	}
 }
