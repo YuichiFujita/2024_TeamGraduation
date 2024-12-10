@@ -10,6 +10,7 @@
 #include "player.h"
 
 // デバッグ用
+#include "debugproc.h"
 #include "collisionLine_Box.h"
 
 //==========================================================================
@@ -17,9 +18,26 @@
 //==========================================================================
 namespace
 {
-	const float TIME_HAVE_LONG = 10.0f;				// 持ち続けている(秒数)
-	const float TIME_EDGE_ESCAPE = 3.0f;			// 端に逃げ続けている(秒数)
+	const float HYPE_TIME[CCharmValueManager::ETypeAdd::ADD_MAX] =	// 加算量
+	{
+		1.0f,	// ヒット
+		2.0f,	// ジャストキャッチ
+		3.0f,	// カバーキャッチ
+		1.0f,	// ジャストキャッチ直後の投げ
+		1.0f,	// ドロップキャッチ直後の投げ
+		4.0f,	// 回避
+		6.0f,	// スペシャル
+		6.0f,	// スペシャルをキャッチした
+	};
+
+	const float TIME_HAVE_LONG = 10.0f;		// 持ち続けている(秒数)
+	const float TIME_EDGE_ESCAPE = 3.0f;	// 端に逃げ続けている(秒数)
 }
+
+//==========================================================================
+// スタティックアサート
+//==========================================================================
+static_assert(NUM_ARRAY(HYPE_TIME) == CCharmValueManager::ETypeAdd::ADD_MAX, "ERROR : Type Count Mismatch");
 
 //==========================================================================
 // 静的メンバ変数
@@ -29,10 +47,10 @@ CCharmManager* CCharmManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CCharmManager::CCharmManager()
+CCharmManager::CCharmManager() :
+	m_fHypeTime	(0.0f)	// 盛り上がり時間
 {
 #if _DEBUG
-	//m_pCourtSizeBox = nullptr;
 	for (int i = 0; i < 4; i++)
 	{
 		m_pCourtSizeBox[i] = nullptr;
@@ -78,13 +96,11 @@ HRESULT CCharmManager::Init()
 
 #if _DEBUG
 	// コートサイズのボックス
-
 	for (int i = 0; i < 4; i++)
 	{
 		SAFE_UNINIT(m_pCourtSizeBox[i]);
 		m_pCourtSizeBox[i] = CCollisionLine_Box::Create(MyLib::AABB(), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	}
-
 #endif
 
 	return S_OK;
@@ -95,17 +111,51 @@ HRESULT CCharmManager::Init()
 //==========================================================================
 void CCharmManager::Uninit()
 {
-#if _DEBUG
-	//SAFE_UNINIT(m_pCourtSizeBox);
-	for (int i = 0; i < 4; i++)
-	{
-		//SAFE_UNINIT(m_pCourtSizeBox[i]);
-	}
-
-#endif
-
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;
+}
+
+//==========================================================================
+// 更新処理
+//==========================================================================
+void CCharmManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fHypeTime > 0.0f)
+	{ // 盛り上がり時間が設定されている場合
+
+		// 盛り上がり時間を減算
+		m_fHypeTime -= fDeltaTime * fSlowRate;
+		if (m_fHypeTime < 0.0f) { m_fHypeTime = 0.0f; }	// 盛り上がり時間補正
+	}
+
+	// カメラ情報のテキスト描画
+	GET_MANAGER->GetDebugProc()->Print
+	(
+		"\n---------------- 盛り上がり情報 ----------------\n"
+		"【盛り上がり時間】[%f]\n",
+		m_fHypeTime
+	);
+}
+
+//==========================================================================
+// プリセット盛り上がり時間の取得処理
+//==========================================================================
+float CCharmManager::GetPrisetHypeTime(const CCharmValueManager::ETypeAdd preset)
+{
+	// 盛り上がり時間のプリセットを返す
+	return HYPE_TIME[preset];
+}
+
+//==========================================================================
+// 盛り上がり時間の設定処理 (プリセット)
+//==========================================================================
+void CCharmManager::SetHypeTime(const CCharmValueManager::ETypeAdd preset)
+{
+	// プリセットが範囲外の場合エラー
+	if (preset <= -1 || preset >= CCharmValueManager::ETypeAdd::ADD_MAX) { assert(false); return; }
+
+	// 盛り上がり時間をプリセットから設定
+	m_fHypeTime = HYPE_TIME[preset];
 }
 
 //==========================================================================

@@ -292,6 +292,12 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 		pManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	if (m_pCharmManager != nullptr)
+	{
+		// モテマネージャー更新
+		m_pCharmManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
 #if _DEBUG	// デバッグ処理
 
 	if (ImGui::TreeNode("GameManager"))
@@ -748,6 +754,14 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
 
+	assert(m_pCharmManager != nullptr);
+	if (m_pCharmManager->GetPrisetHypeTime(charmType) > m_pCharmManager->GetHypeTime())
+	{ // 設定予定の盛り上がり時間が今の盛り上がり時間より長い場合
+
+		// 盛り上がり時間の設定
+		m_pCharmManager->SetHypeTime(charmType);
+	}
+
 	// モテ文字生成
 	CCharmText::Create(side);
 }
@@ -760,6 +774,10 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
+
+	// 盛り上がり時間の初期化
+	assert(m_pCharmManager != nullptr);
+	m_pCharmManager->SetHypeTime(0.0f);
 }
 
 //==========================================================================

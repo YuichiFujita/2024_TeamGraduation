@@ -107,6 +107,7 @@ public:
 	CPlayer* GetTarget() const		{ return m_pTarget; }		// ターゲット取得
 	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
 	int GetDamage() const			{ return m_nDamage; }		// ダメージ取得
+	int GetCoverHeal() const		{ return m_nCoverHeal; }	// カバー回復取得
 	float GetKnockback() const		{ return m_fKnockback; }	// ノックバック取得
 	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
@@ -245,6 +246,7 @@ private:
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態カウンター
 	int m_nDamage;			// ダメージ
+	int m_nCoverHeal;		// カバー回復
 	float m_fKnockback;		// ノックバック
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
 	CEffekseerObj* m_pAura;			// オーラ

@@ -35,6 +35,12 @@ namespace
 }
 
 //==========================================================================
+// スタティックアサート
+//==========================================================================
+static_assert(NUM_ARRAY(ADDVALUE) == CCharmValueManager::ETypeAdd::ADD_MAX, "ERROR : Type Count Mismatch");
+static_assert(NUM_ARRAY(SUBVALUE) == CCharmValueManager::ETypeSub::SUB_MAX, "ERROR : Type Count Mismatch");
+
+//==========================================================================
 // 静的メンバ変数
 //==========================================================================
 CCharmValueManager* CCharmValueManager::m_pThisPtr = nullptr;	// 自身のポインタ
