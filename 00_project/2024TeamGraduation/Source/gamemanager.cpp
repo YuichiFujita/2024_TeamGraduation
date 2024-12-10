@@ -30,7 +30,6 @@
 #include "charmText.h"
 #include "timerUI.h"
 #include "reporter.h"
-
 #include "resultManager.h"
 
 //==========================================================================

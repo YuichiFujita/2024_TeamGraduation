@@ -220,6 +220,7 @@
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
+    <ClCompile Include="Source\gauge2D.cpp" />
     <ClCompile Include="Source\gymDoor.cpp" />
     <ClCompile Include="Source\gymWall.cpp" />
     <ClCompile Include="Source\gymWallManager.cpp" />
@@ -337,6 +338,8 @@
     <ClCompile Include="Source\scene.cpp" />
     <ClCompile Include="Source\schoolnurse.cpp" />
     <ClCompile Include="Source\screen.cpp" />
+    <ClCompile Include="Source\scrollString2D.cpp" />
+    <ClCompile Include="Source\scrollText2D.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
@@ -428,6 +431,7 @@
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gamemanager.h" />
+    <ClInclude Include="Source\gauge2D.h" />
     <ClInclude Include="Source\gymDoor.h" />
     <ClInclude Include="Source\gymWall.h" />
     <ClInclude Include="Source\gymWallManager.h" />
@@ -542,6 +546,8 @@
     <ClInclude Include="Source\scene.h" />
     <ClInclude Include="Source\schoolnurse.h" />
     <ClInclude Include="Source\screen.h" />
+    <ClInclude Include="Source\scrollString2D.h" />
+    <ClInclude Include="Source\scrollText2D.h" />
     <ClInclude Include="Source\shader.h" />
     <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />

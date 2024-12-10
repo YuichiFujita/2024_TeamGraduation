@@ -28,15 +28,6 @@ class CChar2D;		// 文字2Dクラス
 class CString2D : public CObject
 {
 public:
-	// 横配置列挙
-	enum EAlignX
-	{
-		XALIGN_LEFT = 0,	// 左揃え
-		XALIGN_CENTER,		// 中央揃え
-		XALIGN_RIGHT,		// 右揃え
-		XALIGN_MAX,			// この列挙型の総数
-	};
-
 	// コンストラクタ
 	CString2D();
 
@@ -44,58 +35,71 @@ public:
 	~CString2D() override;
 
 	// オーバーライド関数
-	HRESULT Init(void) override;	// 初期化
-	void Uninit(void) override;		// 終了
-	void Kill() override;			// 動的削除処理
+	HRESULT Init() override;	// 初期化
+	void Uninit() override;		// 終了
+	void Kill() override;		// 削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
-	void Draw(void) override;						// 描画
-	void SetType(const TYPE type) override;			// 種類設定
-	void SetEnableDisp(const bool bDraw) override;	// 描画状況設定
+	void Draw() override;		// 描画
+	void SetType(const TYPE type) override;					// 種類設定
+	void SetEnableDisp(const bool bDraw) override;			// 描画状況設定
 	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
 	void SetRotation(const MyLib::Vector3& rot) override;	// 向き設定
 
 	// 静的メンバ関数
-	static CString2D *Create	// 生成
+	static CString2D* Create	// 生成 (マルチバイト文字列)
 	( // 引数
-		const std::string &rFilePass,	// フォントパス
+		const std::string& rFilePath,	// フォントパス
 		const bool bItalic,				// イタリック
-		const std::wstring &rStr,		// 指定文字列
-		const D3DXVECTOR3 &rPos,		// 原点位置
-		const float fHeight = 100.0f,			// 文字縦幅
-		const EAlignX alignX = XALIGN_CENTER,	// 横配置
-		const D3DXVECTOR3& rRot = VEC3_ZERO,	// 原点向き
+		const std::string& rStr,		// 指定文字列
+		const MyLib::Vector3& rPos,		// 原点位置
+		const float fHeight = 100.0f,					// 文字縦幅
+		const EAlignX alignX = XALIGN_CENTER,			// 横配置
+		const MyLib::Vector3& rRot = VEC3_ZERO,			// 原点向き
+		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
+	);
+	static CString2D* Create	// 生成 (ワイド文字列)
+	( // 引数
+		const std::string& rFilePath,	// フォントパス
+		const bool bItalic,				// イタリック
+		const std::wstring& rStr,		// 指定文字列
+		const MyLib::Vector3& rPos,		// 原点位置
+		const float fHeight = 100.0f,					// 文字縦幅
+		const EAlignX alignX = XALIGN_CENTER,			// 横配置
+		const MyLib::Vector3& rRot = VEC3_ZERO,			// 原点向き
 		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
 	);
 
 	// 仮想関数
-	virtual HRESULT SetString(const std::wstring& rStr);	// 文字列の設定
+	virtual HRESULT SetString(const std::string& rStr);		// 文字列の設定 (マルチバイト文字列)
+	virtual HRESULT SetString(const std::wstring& rStr);	// 文字列の設定 (ワイド文字列)
 
 	// メンバ関数
 	void SetFont	// フォントの設定
 	( // 引数
-		const std::string &rFilePass,	// フォントパス
+		const std::string& rFilePath,	// フォントパス
 		const bool bItalic = false		// イタリック
 	);
-	void SetColor(const D3DXCOLOR& rCol);			// 色設定
 	void SetAlpha(const float fAlpha);				// 透明度設定
+	void SetColor(const D3DXCOLOR& rCol);			// 色設定
 	void SetCharHeight(const float fHeight);		// 文字の縦幅設定
 	void SetAlignX(const EAlignX align);			// 横配置設定
-	float GetStrWidth(void) const;					// 文字列の横幅取得
-	CChar2D *GetChar2D(const int nCharID) const;	// 文字の取得
-	D3DXCOLOR GetColor(void) const	{ return m_col; }				// 色取得
-	float GetAlpha(void) const		{ return m_col.a; }				// 透明度取得
-	float GetCharHeight(void) const	{ return m_fCharHeight; }		// 文字の縦幅取得
-	EAlignX GetAlignX(void) const	{ return m_alignX; }			// 横配置取得
-	int GetNumChar(void) const		{ return (int)m_wsStr.size(); }	// 文字数取得
-	std::wstring GetStr(void) const { return m_wsStr; }				// 文字列取得
+	float GetStrWidth() const;						// 文字列の横幅取得
+	CChar2D* GetChar2D(const int nCharIdx) const;	// 文字の取得
+	std::string GetStr() const;						// 文字列取得 (マルチバイト文字列)
+	inline std::wstring GetWideStr() const	{ return m_wsStr; }				// 文字列取得 (ワイド文字列)
+	inline float GetAlpha() const			{ return m_col.a; }				// 透明度取得
+	inline D3DXCOLOR GetColor() const		{ return m_col; }				// 色取得
+	inline float GetCharHeight() const		{ return m_fCharHeight; }		// 文字の縦幅取得
+	inline EAlignX GetAlignX() const		{ return m_alignX; }			// 横配置取得
+	inline int GetNumChar() const			{ return (int)m_wsStr.size(); }	// 文字数取得
 
 private:
 	// メンバ関数
-	void SetPositionRelative(void);	// 相対位置設定
+	void SetPositionRelative();	// 相対位置設定
 
 	// メンバ変数
-	CChar2D **m_ppChar;		// 文字ポリゴンの情報
-	CFontChar *m_pFontChar;	// フォント文字
+	CChar2D** m_ppChar;		// 文字ポリゴンの情報
+	CFontChar* m_pFontChar;	// フォント文字
 	std::wstring m_wsStr;	// 指定文字列
 	D3DXCOLOR m_col;		// 色
 	EAlignX m_alignX;		// 横配置

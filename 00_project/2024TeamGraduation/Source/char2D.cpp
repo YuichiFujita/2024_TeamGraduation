@@ -81,9 +81,9 @@ void CChar2D::Uninit(void)
 }
 
 //============================================================
-//	破棄処理
+//	削除処理
 //============================================================
-void CChar2D::Release(void)
+void CChar2D::Kill(void)
 {
 	// 自身の終了
 	CChar2D::Uninit();
@@ -123,13 +123,13 @@ void CChar2D::SetSize(const D3DXVECTOR2& /*size*/)
 }
 
 //============================================================
-//	生成処理
+//	生成処理 (マルチバイト文字)
 //============================================================
-CChar2D *CChar2D::Create
+CChar2D* CChar2D::Create
 (
-	const std::string &rFilePass,	// フォントパス
+	const std::string& rFilePath,	// フォントパス
 	const bool bItalic,				// イタリック
-	const wchar_t wcChar,			// 指定文字
+	const std::string& rChar,		// 指定文字
 	const D3DXVECTOR3& rPos,		// 位置
 	const float fHeight,			// 縦幅
 	const D3DXVECTOR3& rRot,		// 向き
@@ -137,7 +137,7 @@ CChar2D *CChar2D::Create
 )
 {
 	// 文字2Dの生成
-	CChar2D *pChar2D = new CChar2D;
+	CChar2D* pChar2D = DEBUG_NEW CChar2D;
 	if (pChar2D == nullptr)
 	{ // 生成に失敗した場合
 
@@ -156,7 +156,63 @@ CChar2D *CChar2D::Create
 		}
 
 		// フォントを設定
-		pChar2D->SetFont(rFilePass, bItalic);
+		pChar2D->SetFont(rFilePath, bItalic);
+
+		// 文字を設定
+		pChar2D->SetChar(rChar);
+
+		// 位置を設定
+		pChar2D->SetPosition(rPos);
+
+		// 向きを設定
+		pChar2D->SetRotation(rRot);
+
+		// 文字縦幅を設定
+		pChar2D->SetCharHeight(fHeight);
+
+		// 色を設定
+		pChar2D->SetColor(rCol);
+
+		// 確保したアドレスを返す
+		return pChar2D;
+	}
+}
+
+//============================================================
+//	生成処理 (ワイド文字)
+//============================================================
+CChar2D *CChar2D::Create
+(
+	const std::string &rFilePath,	// フォントパス
+	const bool bItalic,				// イタリック
+	const wchar_t wcChar,			// 指定文字
+	const D3DXVECTOR3& rPos,		// 位置
+	const float fHeight,			// 縦幅
+	const D3DXVECTOR3& rRot,		// 向き
+	const D3DXCOLOR& rCol			// 色
+)
+{
+	// 文字2Dの生成
+	CChar2D *pChar2D = DEBUG_NEW CChar2D;
+	if (pChar2D == nullptr)
+	{ // 生成に失敗した場合
+
+		return nullptr;
+	}
+	else
+	{ // 生成に成功した場合
+
+		// 文字2Dの初期化
+		if (FAILED(pChar2D->Init()))
+		{ // 初期化に失敗した場合
+
+			// 文字2Dの破棄
+			SAFE_DELETE(pChar2D);
+			return nullptr;
+		}
+
+		// フォントを設定
+		pChar2D->SetFont(rFilePath, bItalic);
 
 		// 文字を設定
 		pChar2D->SetChar(wcChar);
@@ -193,6 +249,15 @@ void CChar2D::SetFont
 
 	// 指定文字を再設定
 	SetChar(m_wcChar);
+}
+
+//============================================================
+//	文字の設定処理 (マルチバイト文字)
+//============================================================
+void CChar2D::SetChar(const std::string& rChar)
+{
+	// ワイド変換後の先頭文字を設定
+	SetChar(UtilFunc::Transformation::MultiByteToWide(rChar)[0]);
 }
 
 //============================================================
