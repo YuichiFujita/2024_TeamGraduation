@@ -43,7 +43,7 @@ private:
 	// メンバ関数
 	//=============================
 	// 生成
-	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info) override;	// 左のプレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info) override;		// 左のプレイヤー生成
 	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info) override;	// 右のプレイヤー生成
 };
 
