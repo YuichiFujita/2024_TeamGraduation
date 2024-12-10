@@ -41,6 +41,7 @@ CPlayerAction::ACTION_FUNC CPlayerAction::m_ActionFunc[] =	// 行動関数
 	&CPlayerAction::ActionRun,			// 走り
 	&CPlayerAction::ActionJump,			// ジャンプ
 	&CPlayerAction::ActionCatch,		// キャッチ
+	&CPlayerAction::ActionCatchJump,	// キャッチ(ジャンプ)
 	&CPlayerAction::ActionThrow,		// 投げ
 	&CPlayerAction::ActionThrowJump,	// 投げ(ジャンプ)
 	&CPlayerAction::ActionSpecial,		// スペシャル
@@ -55,6 +56,7 @@ CPlayerAction::START_FUNC CPlayerAction::m_StartFunc[] =	// 行動関数
 	nullptr,								// 走り
 	nullptr,								// ジャンプ
 	nullptr,								// キャッチ
+	&CPlayerAction::StartCatchJump,			// キャッチ(ジャンプ)
 	nullptr,								// 投げ
 	&CPlayerAction::StartThrowJump,			// 投げ(ジャンプ)
 	nullptr,								// スペシャル
@@ -69,6 +71,7 @@ CPlayerAction::END_FUNC CPlayerAction::m_EndFunc[] =	// 行動関数
 	nullptr,								// 走り
 	nullptr,								// ジャンプ
 	nullptr,								// キャッチ
+	nullptr,								// キャッチ(ジャンプ)
 	nullptr,								// 投げ
 	nullptr,								// 投げ(ジャンプ)
 	nullptr,								// スペシャル
@@ -86,6 +89,11 @@ CPlayerAction::CPlayerAction(CPlayer* player)
 
 	m_fSlowStart = DodgeSlow::START;		// スロー倍率(最小)
 	m_fSlowEnd = DodgeSlow::END;			// スロー倍率(最大)
+
+	// スタティックアサート
+	static_assert(NUM_ARRAY(m_ActionFunc) == CPlayer::EAction::ACTION_MAX, "ERROR : Action Count Mismatch");
+	static_assert(NUM_ARRAY(m_StartFunc) == CPlayer::EAction::ACTION_MAX, "ERROR : Action Count Mismatch");
+	static_assert(NUM_ARRAY(m_EndFunc)  == CPlayer::EAction::ACTION_MAX, "ERROR : Action Count Mismatch");
 }
 
 //==========================================================================
