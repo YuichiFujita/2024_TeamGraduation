@@ -87,10 +87,11 @@ namespace
 #if _DEBUG
 		const float MOVE_UP = 2.0f;	// 上移動量
 #else
-		const float MOVE_UP = 2.0f;		// 上移動量
+		const float MOVE_UP = 2.0f;	// 上移動量
 #endif
 		const float MOVE_SPEED = 5.0f;	// 移動速度
 		const float BOUND_SPEED = 4.0f;	// バウンド速度
+		const int HEAL_DMG_RATE = 2;	// カバー回復量のダメージ量から割る量
 	}
 
 	namespace toss
@@ -215,6 +216,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pThrowLine	(nullptr),		// 投げのライン
 	m_pAura			(nullptr),		// オーラ
 	m_nDamage		(0),			// ダメージ
+	m_nCoverHeal	(0),			// カバー回復
 	m_fKnockback	(0.0f)			// ノックバック
 {
 	// スタティックアサート
@@ -370,6 +372,8 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		"【 攻撃状態 】%s\n"
 		"【スペシャル】%s\n"
 		"【着地フラグ】%s\n"
+		"【 ダメージ 】[%d]\n"
+		"【カバー回復】[%d]\n"
 		"【 所有対象 】[%s]\n"
 		"【ターゲット】[%s]\n"
 		"【カバー対象】[%s]\n",
@@ -378,6 +382,8 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		DEBUG_ATK_PRINT[m_typeAtk],
 		DEBUG_SPECIAL_PRINT[m_typeSpecial],
 		DEBUG_BOOL_PRINT[(int)m_bLanding],
+		m_nDamage,
+		m_nCoverHeal,
 		(m_pPlayer == nullptr) ? "nullptr" : "player",
 		(m_pTarget == nullptr) ? "nullptr" : "player",
 		(m_pCover  == nullptr) ? "nullptr" : "player"
@@ -1601,11 +1607,10 @@ void CBall::SetState(const EState state)
 	// 引数の状態にする
 	m_state = state;
 
-	// カウンターを初期化
-	m_fStateTime = 0.0f;
-
-	// カバー対象プレイヤーの初期化
-	m_pCover = nullptr;
+	// 情報の初期化
+	m_fStateTime = 0.0f;	// 状態カウンター
+	m_nCoverHeal = 0;		// カバー回復量
+	m_pCover = nullptr;		// カバー対象プレイヤー
 }
 
 //==========================================================================
@@ -1838,6 +1843,9 @@ void CBall::ReBound(CPlayer* pHitPlayer, MyLib::Vector3* pMove)
 
 	// リバウンド状態にする
 	SetState(STATE_REBOUND);
+
+	// カバー回復量を設定
+	m_nCoverHeal = m_nDamage / rebound::HEAL_DMG_RATE;
 
 	// カバー対象プレイヤーを保存
 	m_pCover = pHitPlayer;

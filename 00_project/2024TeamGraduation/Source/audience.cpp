@@ -6,6 +6,7 @@
 //==========================================================================
 #include "audience.h"
 #include "gameManager.h"
+#include "charmManager.h"
 #include "shadow.h"
 
 // 派生先
@@ -404,6 +405,9 @@ void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespaw
 //==========================================================================
 int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CCharmManager* pCharm = CCharmManager::GetInstance();	// モテマネージャー
+	assert(pCharm != nullptr);
+
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 move = GetMove();	// 移動量
@@ -420,8 +424,7 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate, GRAVITY_RATE))
 	{ // 着地した場合
 
-		// TODO：ここで盛り上がるタイミング化を確認
-		if (true)
+		if (pCharm->IsHype(GetTeam()))
 		{ // 盛り上がっている場合
 
 			// 縦移動量を与える
@@ -442,9 +445,9 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 		// スポーン終了時の設定
 		EndSettingSpawn();
 
-		// TODO：ここで盛り上がるタイミング化を確認
-		if (true)	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
-		else		{ m_state = STATE_NORMAL; }	// それ以外なら通常状態にする
+		// 状態を遷移させる
+		if (pCharm->IsHype(GetTeam()))	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
+		else							{ m_state = STATE_NORMAL; }	// それ以外なら通常状態にする
 	}
 
 	// 情報を反映
@@ -459,12 +462,22 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CCharmManager* pCharm = CCharmManager::GetInstance();	// モテマネージャー
+	assert(pCharm != nullptr);
+
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 move = GetMove();	// 移動量
 
 	// 重力の更新
 	UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (pCharm->IsHype(GetTeam()))
+	{ // 盛り上がっている場合
+
+		// 盛り上がり状態にする
+		m_state = STATE_JUMP;
+	}
 
 	// 情報を反映
 	SetPosition(pos);	// 位置
@@ -478,6 +491,9 @@ int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 int CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	CCharmManager* pCharm = CCharmManager::GetInstance();	// モテマネージャー
+	assert(pCharm != nullptr);
+
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
 	MyLib::Vector3 move = GetMove();	// 移動量
@@ -486,8 +502,18 @@ int CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const 
 	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate))
 	{ // 着地した場合
 
-		// 縦移動量を与える
-		move.y = m_fJumpLevel;
+		if (!pCharm->IsHype(GetTeam()))
+		{ // 盛り上がっていない場合
+
+			// 通常状態にする
+			m_state = STATE_NORMAL;
+		}
+		else
+		{ // 盛り上がっている場合
+
+			// 縦移動量を与える
+			move.y = m_fJumpLevel;
+		}
 	}
 
 	// 情報を反映
