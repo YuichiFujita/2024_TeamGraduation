@@ -10,6 +10,7 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
+#include "gameManager.h"
 #include "charmValueManager.h"
 
 //==========================================================================
@@ -47,11 +48,11 @@ public:
 	//-----------------------------
 	// モテ盛り上げ関数
 	//-----------------------------
-	float GetPrisetHypeTime(const CCharmValueManager::ETypeAdd preset);				// プリセット盛り上がり時間取得
-	void SetHypeTime(const CCharmValueManager::ETypeAdd preset);					// 盛り上がり時間設定 (プリセット)
-	inline void SetHypeTime(const float fTime)	{ m_fHypeTime = fTime; }			// 盛り上がり時間設定 (時間指定)
-	inline float GetHypeTime() const			{ return m_fHypeTime; }				// 盛り上がり時間取得
-	inline bool IsHype() const					{ return (m_fHypeTime > 0.0f); }	// 盛り上がりフラグ取得
+	float GetPrisetHypeTime(const CCharmValueManager::ETypeAdd preset);									// プリセット盛り上がり時間取得
+	void SetHypeTime(const CGameManager::ETeamSide team, const CCharmValueManager::ETypeAdd preset);	// 盛り上がり時間設定 (プリセット)
+	inline void SetHypeTime(const CGameManager::ETeamSide team, const float fTime)	{ m_fHypeTime[team] = fTime; }			// 盛り上がり時間設定 (時間指定)
+	inline float GetHypeTime(const CGameManager::ETeamSide team) const				{ return m_fHypeTime[team]; }			// 盛り上がり時間取得
+	inline bool IsHype(const CGameManager::ETeamSide team) const					{ return (m_fHypeTime[team] > 0.0f); }	// 盛り上がりフラグ取得
 
 	//-----------------------------
 	// 非モテ関数
@@ -84,7 +85,7 @@ private:
 	CCollisionLine_Box* m_pCourtSizeBox[4];	// コートサイズのボックス
 #endif
 	static CCharmManager* m_pThisPtr;	// 自身のポインタ
-	float m_fHypeTime;	// 盛り上がり時間
+	float m_fHypeTime[CGameManager::ETeamSide::SIDE_MAX];	// 盛り上がり時間
 };
 
 #endif

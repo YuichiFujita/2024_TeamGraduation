@@ -424,7 +424,7 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate, GRAVITY_RATE))
 	{ // 着地した場合
 
-		if (pCharm->IsHype())
+		if (pCharm->IsHype(GetTeam()))
 		{ // 盛り上がっている場合
 
 			// 縦移動量を与える
@@ -446,8 +446,8 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 		EndSettingSpawn();
 
 		// 状態を遷移させる
-		if (pCharm->IsHype())	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
-		else					{ m_state = STATE_NORMAL; }	// それ以外なら通常状態にする
+		if (pCharm->IsHype(GetTeam()))	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
+		else							{ m_state = STATE_NORMAL; }	// それ以外なら通常状態にする
 	}
 
 	// 情報を反映
@@ -472,7 +472,7 @@ int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, cons
 	// 重力の更新
 	UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate);
 
-	if (pCharm->IsHype())
+	if (pCharm->IsHype(GetTeam()))
 	{ // 盛り上がっている場合
 
 		// 盛り上がり状態にする
@@ -502,7 +502,7 @@ int CAudience::UpdateJump(const float fDeltaTime, const float fDeltaRate, const 
 	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate))
 	{ // 着地した場合
 
-		if (!pCharm->IsHype())
+		if (!pCharm->IsHype(GetTeam()))
 		{ // 盛り上がっていない場合
 
 			// 通常状態にする

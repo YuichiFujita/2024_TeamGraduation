@@ -47,8 +47,7 @@ CCharmManager* CCharmManager::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CCharmManager::CCharmManager() :
-	m_fHypeTime	(0.0f)	// 盛り上がり時間
+CCharmManager::CCharmManager()
 {
 #if _DEBUG
 	for (int i = 0; i < 4; i++)
@@ -56,6 +55,12 @@ CCharmManager::CCharmManager() :
 		m_pCourtSizeBox[i] = nullptr;
 	}
 #endif // _DEBUG
+
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		m_fHypeTime[i] = 0.0f;	// 盛り上がり時間
+	}
 }
 
 //==========================================================================
@@ -120,20 +125,26 @@ void CCharmManager::Uninit()
 //==========================================================================
 void CCharmManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fHypeTime > 0.0f)
-	{ // 盛り上がり時間が設定されている場合
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
 
-		// 盛り上がり時間を減算
-		m_fHypeTime -= fDeltaTime * fSlowRate;
-		if (m_fHypeTime < 0.0f) { m_fHypeTime = 0.0f; }	// 盛り上がり時間補正
+		if (m_fHypeTime[i] > 0.0f)
+		{ // 盛り上がり時間が設定されている場合
+
+			// 盛り上がり時間を減算
+			m_fHypeTime[i] -= fDeltaTime * fSlowRate;
+			if (m_fHypeTime[i] < 0.0f) { m_fHypeTime[i] = 0.0f; }	// 盛り上がり時間補正
+		}
 	}
 
 	// カメラ情報のテキスト描画
 	GET_MANAGER->GetDebugProc()->Print
 	(
 		"\n---------------- 盛り上がり情報 ----------------\n"
-		"【盛り上がり時間】[%f]\n",
-		m_fHypeTime
+		"【盛り上がり時間：左】[%f]\n"
+		"【盛り上がり時間：右】[%f]\n",
+		m_fHypeTime[CGameManager::ETeamSide::SIDE_LEFT],
+		m_fHypeTime[CGameManager::ETeamSide::SIDE_RIGHT]
 	);
 }
 
@@ -149,13 +160,16 @@ float CCharmManager::GetPrisetHypeTime(const CCharmValueManager::ETypeAdd preset
 //==========================================================================
 // 盛り上がり時間の設定処理 (プリセット)
 //==========================================================================
-void CCharmManager::SetHypeTime(const CCharmValueManager::ETypeAdd preset)
+void CCharmManager::SetHypeTime(const CGameManager::ETeamSide team, const CCharmValueManager::ETypeAdd preset)
 {
+	// チームが範囲外の場合エラー
+	if (team <= CGameManager::ETeamSide::SIDE_NONE || team >= CGameManager::ETeamSide::SIDE_MAX) { assert(false); return; }
+
 	// プリセットが範囲外の場合エラー
 	if (preset <= -1 || preset >= CCharmValueManager::ETypeAdd::ADD_MAX) { assert(false); return; }
 
 	// 盛り上がり時間をプリセットから設定
-	m_fHypeTime = HYPE_TIME[preset];
+	m_fHypeTime[team] = HYPE_TIME[preset];
 }
 
 //==========================================================================
