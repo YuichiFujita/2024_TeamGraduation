@@ -13,7 +13,11 @@
 //************************************************************
 //	インクルードファイル
 //************************************************************
-#include "object.h"
+#include "object2D.h"
+
+//************************************************************
+//　前方宣言
+//************************************************************
 
 //************************************************************
 //	クラス定義
@@ -30,17 +34,8 @@ public:
 		STATE_MAX		// この列挙型の総数
 	};
 
-	// ポリゴン列挙
-	enum EPolygon
-	{
-		POLYGON_BACK = 0,	// 背景
-		POLYGON_FRONT,		// ゲージ
-		POLYGON_FRAME,		// 枠
-		POLYGON_MAX			// この列挙型の総数
-	};
-
 	// コンストラクタ
-	explicit CGauge2D(const int nFrame);
+	explicit CGauge2D(const float nFrame);
 
 	// デストラクタ
 	~CGauge2D() override;
@@ -52,71 +47,58 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw() override;		// 描画
 	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
-	inline MyLib::Vector3 GetPosition() const override { return m_pos; }	// 位置取得
 
 	// 静的メンバ関数
 	static CGauge2D* Create	// 生成
 	( // 引数
-		const int nMax,				// 最大表示値
-		const int nFrame,			// 表示値変動フレーム
-		const MyLib::Vector3& rPos,	// 位置
-		const MyLib::Vector3& rSizeGauge = VEC3_ONE,		// ゲージ大きさ
+		const float fMax,				// 最大表示値
+		const float fFrame,				// 表示値変動フレーム
+		const MyLib::Vector3& rPos,		// 位置
+		const MyLib::Vector2& rSizeGauge = VEC3_ONE,		// ゲージ大きさ
 		const D3DXCOLOR& rColFront = MyLib::color::White(),	// 表ゲージ色
 		const D3DXCOLOR& rColBack = MyLib::color::Black(),	// 裏ゲージ色
 		const bool bDrawFrame = false,						// 枠描画状況
 		const char* pPathTexture = nullptr,					// フレームテクスチャパス
-		const MyLib::Vector3& rSizeFrame = VEC3_ONE,		// 枠大きさ
-		const MyLib::Vector3& rOffsetFrame = VEC3_ONE		// 枠オフセット
+		const MyLib::Vector2& rSizeFrame = VEC3_ONE,		// 枠大きさ
+		const CObject2D::AnchorPoint& anchor = CObject2D::AnchorPoint::CENTER		// 枠オフセット
 	);
 
 	// メンバ関数
-	void BindTexture(const int nPolygonIdx, const int nTextureIdx);		// テクスチャ割当 (インデックス)
-	void BindTexture(const int nPolygonIdx, const char* pTexturePath);	// テクスチャ割当 (パス)
-	int GetTextureIndex(const int nPolygonIdx) const;	// テクスチャインデックス取得
-	void AddNum(const int nAdd);						// ゲージ加算
-	void SetNum(const int nNum);						// ゲージ設定
-	void SetMaxNum(const int nMax);						// ゲージ最大値設定
-	void SetOffsetFrame(const MyLib::Vector3& rOffset);	// 枠オフセット設定
-	void SetSizeGauge(const MyLib::Vector3& rSize);		// ゲージ大きさ設定
-	void SetSizeFrame(const MyLib::Vector3& rSize);		// 背景大きさ設定
-	void SetAlphaFront(const float fAlpha);				// 表ゲージ透明度取得
-	void SetColorFront(const D3DXCOLOR& rCol);			// 表ゲージ色設定
-	void SetAlphaBack(const float fAlpha);				// 裏ゲージ透明度取得
-	void SetColorBack(const D3DXCOLOR& rCol);			// 裏ゲージ色設定
-	void SetEnableDrawFrame(const bool bDraw);			// 枠表示状況設定
-	inline int GetNum() const						{ return m_nNumGauge; }		// ゲージ取得
-	inline int GetMaxNum() const					{ return m_nMaxNumGauge; }	// ゲージ最大値取得
-	inline MyLib::Vector3 GetOffsetFrame() const	{ return m_offsetFrame; }	// 枠オフセット取得
-	inline MyLib::Vector3 GetSizeGauge() const		{ return m_sizeGauge; }		// ゲージ大きさ取得
-	inline MyLib::Vector3 GetSizeFrame() const		{ return m_sizeFrame; }		// 背景大きさ取得
-	inline float GetAlphaFront() const				{ return m_colFront.a; }	// 表ゲージ透明度取得
-	inline D3DXCOLOR GetColorFront() const			{ return m_colFront; }		// 表ゲージ色取得
-	inline float GetAlphaBack() const				{ return m_colBack.a; }		// 裏ゲージ透明度取得
-	inline D3DXCOLOR GetColorBack() const			{ return m_colBack; }		// 裏ゲージ色取得
+	CObject2D* GetBg() { return m_pBg; }				// 背景取得
+	CObject2D* GetBar() { return m_pBar; }				// ゲージ取得
+	CObject2D* GetFrame() { return m_pFrame; }			// フレーム取得
+
+	void BindTexture();									// テクスチャ割当
+	void AddNum(const float fAdd);						// ゲージ加算
+	void SubNum(const float fSub);						// ゲージ加算
+	void SetNum(const float nNum);						// ゲージ設定
+	void SetMaxNum(const float nMax);					// ゲージ最大値設定
+	inline float GetNum() const						{ return m_fNumGauge; }		// ゲージ取得
+	inline float GetMaxNum() const					{ return m_fMaxNumGauge; }	// ゲージ最大値取得
 	inline bool IsEnableDrawFrame() const			{ return m_bDrawFrame; }	// 枠表示状況取得
 
+	void SetAnchorType(const CObject2D::AnchorPoint& type);	// アンカーポイント設定
+	void SetSizeGauge(const MyLib::Vector2& rSize);			// ゲージ大きさ設定
+	void SetSizeFrame(const MyLib::Vector2& rSize);			// 背景大きさ設定
+	void SetColorFront(const D3DXCOLOR& rCol);				// 表ゲージ色設定
+	void SetColorBack(const D3DXCOLOR& rCol);				// 裏ゲージ色設定
+	void SetEnableDrawFrame(const bool bDraw);				// 枠表示状況設定
+
 private:
-	// メンバ関数
-	void SetVtx();	// 頂点情報の設定
 
 	// メンバ変数
-	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// 頂点バッファへのポインタ
-	MyLib::Vector3 m_pos;				// 位置
-	MyLib::Vector3 m_offsetFrame;		// 枠オフセット
-	MyLib::Vector3 m_sizeGauge;			// ゲージ大きさ
-	MyLib::Vector3 m_sizeFrame;			// 枠大きさ
-	D3DXCOLOR m_colFront;				// 表ゲージ色
-	D3DXCOLOR m_colBack;				// 裏ゲージ色
+	CObject2D* m_pBg;					// 背景
+	CObject2D* m_pBar;					// ゲージ
+	CObject2D* m_pFrame;				// フレーム
+
 	EState	m_state;					// 状態
 	bool	m_bDrawFrame;				// 枠表示状況
 	float	m_fChange;					// ゲージ変動量
+	float	m_fStateTime;				// 状態管理カウンター
 	float	m_fCurrentNumGauge;			// 現在表示値
-	float	m_fAddRight;				// 横幅加算量
-	int		m_nCounterState;			// 状態管理カウンター
-	int		m_nNumGauge;				// 表示値
-	int		m_nMaxNumGauge;				// 表示値の最大値
-	int		m_aTextureIdx[POLYGON_MAX];	// テクスチャインデックス
-	const int m_nFrame;					// 表示値の変動フレーム定数
+	float	m_fNumGauge;				// 目標値
+	float	m_fMaxNumGauge;				// 表示値の最大値
+	const float m_fFrame;				// 表示値の変動フレーム定数
 };
 
 #endif	// _GAUGE2D_H_
