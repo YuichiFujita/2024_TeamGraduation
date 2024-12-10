@@ -752,6 +752,9 @@
     <ClCompile Include="Source\text2D.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\gauge2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1367,6 +1370,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="Source\text2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gauge2D.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
