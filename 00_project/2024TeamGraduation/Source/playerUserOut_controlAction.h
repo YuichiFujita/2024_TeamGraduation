@@ -39,8 +39,7 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override	 {}	// スペシャル
-	void UserChange(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override {}	// ユーザー変更
+	void Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override {}	// スペシャル
 };
 
 #endif
