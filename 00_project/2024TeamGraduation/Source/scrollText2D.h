@@ -1,4 +1,3 @@
-#if 0
 //============================================================
 //
 //	文字送りテキスト2Dヘッダー [scrollText2D.h]
@@ -33,9 +32,9 @@ public:
 	// オーバーライド関数
 	HRESULT Init() override;	// 初期化
 	void Uninit() override;		// 終了
-	void Update(const float fDeltaTime) override;	// 更新
-	void Draw(CShader* pShader = nullptr) override;	// 描画
-	void SetEnableDraw(const bool bDraw) override;	// 描画状況設定
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	void Draw() override;		// 描画
+	void SetEnableDisp(const bool bDisp) override;	// 描画状況設定
 	HRESULT PushFrontString(const std::string& rStr) override;	// 文字列の先頭追加 (マルチバイト文字列)
 	HRESULT PushFrontString(const std::wstring& rStr) override;	// 文字列の先頭追加 (ワイド文字列)
 	HRESULT PushBackString(const std::string& rStr) override;	// 文字列の最後尾追加 (マルチバイト文字列)
@@ -48,14 +47,14 @@ public:
 	( // 引数
 		const std::string& rFilePath,			// フォントパス
 		const bool bItalic,						// イタリック
-		const VECTOR3& rPos,					// 原点位置
+		const MyLib::Vector3& rPos,				// 原点位置
 		const float fNextTime = 0.1f,			// 文字表示の待機時間
 		const float fCharHeight = 100.0f,		// 文字縦幅
 		const float fLineHeight = 100.0f,		// 行間縦幅
 		const EAlignX alignX = XALIGN_CENTER,	// 横配置
 		const EAlignY alignY = YALIGN_CENTER,	// 縦配置
-		const VECTOR3& rRot = VEC3_ZERO,		// 原点向き
-		const COLOR& rCol = color::White()		// 色
+		const MyLib::Vector3& rRot = VEC3_ZERO,	// 原点向き
+		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
 	);
 
 	// メンバ関数
@@ -70,8 +69,8 @@ public:
 
 private:
 	// メンバ関数
-	void UpdateScroll(const float fDeltaTime);	// 文字送り更新
-	void PlayScrollSE(CChar2D* pChar2D);		// 文字送り効果音の再生
+	void UpdateScroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 文字送り更新
+	void PlayScrollSE(CChar2D* pChar2D);	// 文字送り効果音の再生
 
 	// メンバ変数
 	std::vector<CChar2D*> m_vecChar;	// 全文字情報
@@ -83,4 +82,3 @@ private:
 };
 
 #endif	// _SCROLL_TEXT2D_H_
-#endif

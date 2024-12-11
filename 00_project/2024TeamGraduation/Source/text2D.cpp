@@ -120,8 +120,13 @@ void CText2D::Draw()
 	for (auto& rList : m_listString)
 	{ // •¶Žš—ñ‚ÌŠi”[”•ªŒJ‚è•Ô‚·
 
-		// •¶Žš—ñ‚Ì•`‰æ
+		// •¶Žš—ñ‚ª‚È‚¢ê‡ƒGƒ‰[
 		assert(rList != nullptr);
+
+		// Ž©“®•`‰æ‚ªOFF‚Ìê‡ŽŸ‚Ö
+		if (!rList->IsDisp()) { continue; }
+
+		// •¶Žš—ñ‚Ì•`‰æ
 		rList->Draw();
 	}
 }

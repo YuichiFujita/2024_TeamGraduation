@@ -127,7 +127,7 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 //==========================================================================
 // 全滅で終了
 //==========================================================================
-void CTeamStatus::CheckAllDead()
+bool CTeamStatus::CheckAllDead()
 {
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -141,12 +141,13 @@ void CTeamStatus::CheckAllDead()
 			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN &&	// 内野
 			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
 		{
-			return;
+			return false;
 		}
 	}
 
 	// 試合終了
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_END);
+	return true;
 }
 
 //==========================================================================

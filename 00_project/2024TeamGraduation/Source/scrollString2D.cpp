@@ -1,4 +1,3 @@
-#if 0
 //============================================================
 //
 //	文字送り文字列2D処理 [scrollString2D.cpp]
@@ -70,39 +69,48 @@ void CScrollString2D::Uninit()
 }
 
 //============================================================
+//	削除処理
+//============================================================
+void CScrollString2D::Kill()
+{
+	// 自身の終了
+	CScrollString2D::Uninit();
+}
+
+//============================================================
 //	更新処理
 //============================================================
-void CScrollString2D::Update(const float fDeltaTime)
+void CScrollString2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 文字送りの更新
-	UpdateScroll(fDeltaTime);
+	UpdateScroll(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 文字列2Dの更新
-	CString2D::Update(fDeltaTime);
+	CString2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================
 //	描画処理
 //============================================================
-void CScrollString2D::Draw(CShader* pShader)
+void CScrollString2D::Draw()
 {
 	// 文字列2Dの描画
-	CString2D::Draw(pShader);
+	CString2D::Draw();
 }
 
 //============================================================
 //	描画状況の設定処理
 //============================================================
-void CScrollString2D::SetEnableDraw(const bool bDraw)
+void CScrollString2D::SetEnableDisp(const bool bDisp)
 {
 	// 次表示する文字インデックスを描画設定に応じて反映
-	m_nNextIdx = (bDraw) ? GetNumChar() - 1 : 0;	// ONなら最後尾、OFFなら先頭
+	m_nNextIdx = (bDisp) ? GetNumChar() - 1 : 0;	// ONなら最後尾、OFFなら先頭
 
 	// 現在の待機時間を初期化
 	m_fCurTime = 0.0f;
 
 	// 描画状況の設定
-	CString2D::SetEnableDraw(bDraw);
+	CString2D::SetEnableDisp(bDisp);
 }
 
 //============================================================
@@ -110,8 +118,8 @@ void CScrollString2D::SetEnableDraw(const bool bDraw)
 //============================================================
 HRESULT CScrollString2D::SetString(const std::string& rStr)
 {
-	// 文字列をワイド変換
-	std::wstring wsStr = useful::MultiByteToWide(rStr);
+	// ワイド文字列変換
+	std::wstring wsStr = UtilFunc::Transformation::MultiByteToWide(rStr);
 
 	// 文字列を設定
 	if (FAILED(SetString(wsStr)))
@@ -138,7 +146,7 @@ HRESULT CScrollString2D::SetString(const std::wstring& rStr)
 	}
 
 	// 設定した文字列の自動描画をOFFにする
-	SetEnableDraw(false);
+	SetEnableDisp(false);
 
 	return S_OK;
 }
@@ -151,66 +159,30 @@ CScrollString2D* CScrollString2D::Create
 	const std::string& rFilePath,	// フォントパス
 	const bool bItalic,				// イタリック
 	const std::string& rStr,		// 指定文字列
-	const VECTOR3& rPos,			// 原点位置
+	const MyLib::Vector3& rPos,		// 原点位置
 	const float fNextTime,			// 文字表示の待機時間
 	const float fHeight,			// 文字縦幅
 	const EAlignX alignX,			// 横配置
-	const VECTOR3& rRot,			// 原点向き
-	const COLOR& rCol				// 色
+	const MyLib::Vector3& rRot,		// 原点向き
+	const D3DXCOLOR& rCol			// 色
 )
 {
+	// ワイド文字列変換
+	std::wstring wsStr = UtilFunc::Transformation::MultiByteToWide(rStr);
+
 	// 文字送り文字列2Dの生成
-	CScrollString2D* pScrollString2D = new CScrollString2D;
-	if (pScrollString2D == nullptr)
-	{ // 生成に失敗した場合
-
-		return nullptr;
-	}
-	else
-	{ // 生成に成功した場合
-
-		// 文字送り文字列2Dの初期化
-		if (FAILED(pScrollString2D->Init()))
-		{ // 初期化に失敗した場合
-
-			// 文字送り文字列2Dの破棄
-			SAFE_DELETE(pScrollString2D);
-			return nullptr;
-		}
-
-		// フォントを設定
-		pScrollString2D->SetFont(rFilePath, bItalic);
-
-		// 文字列を設定
-		if (FAILED(pScrollString2D->SetString(rStr)))
-		{ // 設定に失敗した場合
-
-			// 文字送り文字列2Dの破棄
-			SAFE_DELETE(pScrollString2D);
-			return nullptr;
-		}
-
-		// 原点位置を設定
-		pScrollString2D->SetVec3Position(rPos);
-
-		// 原点向きを設定
-		pScrollString2D->SetVec3Rotation(rRot);
-
-		// 色を設定
-		pScrollString2D->SetColor(rCol);
-
-		// 文字表示の待機時間を設定
-		pScrollString2D->SetNextTime(fNextTime);
-
-		// 文字縦幅を設定
-		pScrollString2D->SetCharHeight(fHeight);
-
-		// 横配置を設定
-		pScrollString2D->SetAlignX(alignX);
-
-		// 確保したアドレスを返す
-		return pScrollString2D;
-	}
+	return CScrollString2D::Create
+	( // 引数
+		rFilePath,	// フォントパス
+		bItalic,	// イタリック
+		wsStr,		// 指定文字列
+		rPos,		// 原点位置
+		fNextTime,	// 文字表示の待機時間
+		fHeight,	// 文字縦幅
+		alignX,		// 横配置
+		rRot,		// 原点向き
+		rCol		// 色
+	);
 }
 
 //============================================================
@@ -221,16 +193,16 @@ CScrollString2D* CScrollString2D::Create
 	const std::string& rFilePath,	// フォントパス
 	const bool bItalic,				// イタリック
 	const std::wstring& rStr,		// 指定文字列
-	const VECTOR3& rPos,			// 原点位置
+	const MyLib::Vector3& rPos,		// 原点位置
 	const float fNextTime,			// 文字表示の待機時間
 	const float fHeight,			// 文字縦幅
 	const EAlignX alignX,			// 横配置
-	const VECTOR3& rRot,			// 原点向き
-	const COLOR& rCol				// 色
+	const MyLib::Vector3& rRot,		// 原点向き
+	const D3DXCOLOR& rCol			// 色
 )
 {
 	// 文字送り文字列2Dの生成
-	CScrollString2D* pScrollString2D = new CScrollString2D;
+	CScrollString2D* pScrollString2D = DEBUG_NEW CScrollString2D;
 	if (pScrollString2D == nullptr)
 	{ // 生成に失敗した場合
 
@@ -261,10 +233,10 @@ CScrollString2D* CScrollString2D::Create
 		}
 
 		// 原点位置を設定
-		pScrollString2D->SetVec3Position(rPos);
+		pScrollString2D->SetPosition(rPos);
 
 		// 原点向きを設定
-		pScrollString2D->SetVec3Rotation(rRot);
+		pScrollString2D->SetRotation(rRot);
 
 		// 色を設定
 		pScrollString2D->SetColor(rCol);
@@ -286,7 +258,7 @@ CScrollString2D* CScrollString2D::Create
 //============================================================
 //	文字送りの更新処理
 //============================================================
-void CScrollString2D::UpdateScroll(const float fDeltaTime)
+void CScrollString2D::UpdateScroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 文字送りがOFFなら抜ける
 	if (!m_bScroll) { return; }
@@ -295,7 +267,7 @@ void CScrollString2D::UpdateScroll(const float fDeltaTime)
 	if (GetNumChar() <= 0) { m_bScroll = false; return; }
 
 	// 現在の待機時間を加算
-	m_fCurTime += fDeltaTime;
+	m_fCurTime += fDeltaTime * fSlowRate;
 	while (m_fCurTime >= m_fNextTime)
 	{ // 待機し終わった場合
 
@@ -303,7 +275,7 @@ void CScrollString2D::UpdateScroll(const float fDeltaTime)
 
 		// 文字の自動描画をONにする
 		assert(pChar != nullptr);
-		pChar->SetEnableDraw(true);
+		pChar->SetEnableDisp(true);
 
 		// 現在の待機時間から待機時間を減算
 		m_fCurTime -= m_fNextTime;
@@ -314,7 +286,7 @@ void CScrollString2D::UpdateScroll(const float fDeltaTime)
 		// 次の文字インデックスに移行
 		m_nNextIdx++;
 
-		if (useful::LimitMaxNum(m_nNextIdx, GetNumChar() - 1))
+		if (UtilFunc::Transformation::ValueNormalize(m_nNextIdx, GetNumChar(), 0))
 		{ // 最後の文字に到達した場合
 
 			// 現在の待機時間を初期化
@@ -342,4 +314,3 @@ void CScrollString2D::PlayScrollSE(CChar2D* pChar2D)
 	// 指定ラベルのSEを再生
 	PLAY_SOUND(m_labelSE);
 }
-#endif

@@ -1624,7 +1624,7 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (!pCoverPlayer->GetMotionFrag().bDead &&
 		m_typeTeam == pCoverPlayer->m_typeTeam)
 	{
-		pCoverPlayer->GetStatus()->LifeHeal(10);
+		pCoverPlayer->GetStatus()->LifeHeal(pBall->GetCoverHeal());
 	}
 
 	// 演出

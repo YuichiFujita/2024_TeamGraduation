@@ -30,7 +30,6 @@
 #include "charmText.h"
 #include "timerUI.h"
 #include "reporter.h"
-
 #include "resultManager.h"
 
 //==========================================================================
@@ -38,8 +37,10 @@
 //==========================================================================
 namespace
 {
-	const std::string TOP_LINE = "#==============================================================================";	// テキストのライン
+	const std::string TOP_LINE  = "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// テキストのライン
+
+	const float END_HYPE_TIME[] = { 9999.0f, 0.0f };	// 勝利チーム決定時の盛り上がり時間
 
 	// ドッジボールコート情報
 	namespace Gym
@@ -291,6 +292,12 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 		// プレイヤーマネージャー更新
 		pManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	if (m_pCharmManager != nullptr)
+	{
+		// モテマネージャー更新
+		m_pCharmManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 #if _DEBUG	// デバッグ処理
@@ -574,6 +581,7 @@ void CGameManager::UpdateSpecial()
 //==========================================================================
 void CGameManager::UpdateTeamStatus()
 {
+	bool bAllDead[ETeamSide::SIDE_MAX] = { false, false };	// 敗北フラグ
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] == nullptr) continue;
@@ -588,7 +596,19 @@ void CGameManager::UpdateTeamStatus()
 #endif
 
 		// 全滅判定
-		m_pTeamStatus[i]->CheckAllDead();
+		bAllDead[i] = m_pTeamStatus[i]->CheckAllDead();
+	}
+
+	if (bAllDead[ETeamSide::SIDE_LEFT] != bAllDead[ETeamSide::SIDE_RIGHT])
+	{ // どちらかが全滅した場合
+
+		for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+		{ // チーム数分繰り返す
+
+			// 盛り上がり時間の設定
+			int nDead = (int)bAllDead[i];	// 整数変換した死亡フラグ
+			m_pCharmManager->SetHypeTime((ETeamSide)i, END_HYPE_TIME[i]);
+		}
 	}
 }
 
@@ -749,6 +769,14 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
 
+	assert(m_pCharmManager != nullptr);
+	if (m_pCharmManager->GetPrisetHypeTime(charmType) > m_pCharmManager->GetHypeTime(side))
+	{ // 設定予定の盛り上がり時間が今の盛り上がり時間より長い場合
+
+		// 盛り上がり時間の設定
+		m_pCharmManager->SetHypeTime(side, charmType);
+	}
+
 	// モテ文字生成
 	CCharmText::Create(side);
 }
@@ -761,6 +789,10 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
+
+	// 盛り上がり時間の初期化
+	assert(m_pCharmManager != nullptr);
+	m_pCharmManager->SetHypeTime(side, 0.0f);
 }
 
 //==========================================================================

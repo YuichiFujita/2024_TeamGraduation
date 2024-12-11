@@ -57,8 +57,8 @@ public:
 	//=============================
 	void SetTeam(const CGameManager::ETeamSide team) { m_typeTeam = team; }		// チームサイド設定
 	CGameManager::ETeamSide GetTeam() { return m_typeTeam; }					// チームサイド取得
-	void TeamSetting(const CGameManager::ETeamSide team);	// チームサイドからなる設定
-	void CheckAllDead();	// 全滅で終了
+	void TeamSetting(const CGameManager::ETeamSide team);						// チームサイドからなる設定
+	bool CheckAllDead();	// 全滅で終了
 
 	//-----------------------------
 	// モテ情報

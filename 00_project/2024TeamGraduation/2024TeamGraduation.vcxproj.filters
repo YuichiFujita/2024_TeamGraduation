@@ -752,6 +752,12 @@
     <ClCompile Include="Source\text2D.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\gauge2D.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerUserOut_controlAction.cpp">
+      <Filter>player\playerUser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1368,6 +1374,12 @@
     </ClInclude>
     <ClInclude Include="Source\text2D.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gauge2D.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerUserOut_controlAction.h">
+      <Filter>player\playerUser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,3 @@
-#if 0
 //============================================================
 //
 //	文字送りテキスト2D処理 [scrollText2D.cpp]
@@ -79,37 +78,37 @@ void CScrollText2D::Uninit()
 //============================================================
 //	更新処理
 //============================================================
-void CScrollText2D::Update(const float fDeltaTime)
+void CScrollText2D::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 文字送りの更新
-	UpdateScroll(fDeltaTime);
+	UpdateScroll(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// テキスト2Dの更新
-	CText2D::Update(fDeltaTime);
+	CText2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================
 //	描画処理
 //============================================================
-void CScrollText2D::Draw(CShader* pShader)
+void CScrollText2D::Draw()
 {
 	// テキスト2Dの描画
-	CText2D::Draw(pShader);
+	CText2D::Draw();
 }
 
 //============================================================
 //	描画状況の設定処理
 //============================================================
-void CScrollText2D::SetEnableDraw(const bool bDraw)
+void CScrollText2D::SetEnableDisp(const bool bDisp)
 {
 	// 次表示する文字インデックスを描画設定に応じて反映
-	m_nNextIdx = (bDraw) ? (int)m_vecChar.size() - 1 : 0;	// ONなら最後尾、OFFなら先頭
+	m_nNextIdx = (bDisp) ? (int)m_vecChar.size() - 1 : 0;	// ONなら最後尾、OFFなら先頭
 
 	// 現在の待機時間を初期化
 	m_fCurTime = 0.0f;
 
 	// 描画状況の設定
-	CText2D::SetEnableDraw(bDraw);
+	CText2D::SetEnableDisp(bDisp);
 }
 
 //============================================================
@@ -117,8 +116,8 @@ void CScrollText2D::SetEnableDraw(const bool bDraw)
 //============================================================
 HRESULT CScrollText2D::PushFrontString(const std::string& rStr)
 {
-	// 文字列をワイド変換
-	std::wstring wsStr = useful::MultiByteToWide(rStr);
+	// ワイド文字列変換
+	std::wstring wsStr = UtilFunc::Transformation::MultiByteToWide(rStr);
 
 	// 文字列を先頭に追加
 	if (FAILED(PushFrontString(wsStr)))
@@ -146,7 +145,7 @@ HRESULT CScrollText2D::PushFrontString(const std::wstring& rStr)
 	std::vector<CChar2D*> vecAdd;
 
 	// 先頭文字列の自動描画をOFFにする
-	pHeadStr->SetEnableDraw(false);
+	pHeadStr->SetEnableDisp(false);
 
 	// 文字列内の文字を配列に追加
 	int nNumChar = pHeadStr->GetNumChar();	// 文字数
@@ -169,8 +168,8 @@ HRESULT CScrollText2D::PushFrontString(const std::wstring& rStr)
 //============================================================
 HRESULT CScrollText2D::PushBackString(const std::string& rStr)
 {
-	// 文字列をワイド変換
-	std::wstring wsStr = useful::MultiByteToWide(rStr);
+	// ワイド文字列変換
+	std::wstring wsStr = UtilFunc::Transformation::MultiByteToWide(rStr);
 
 	// 文字列を最後尾に追加
 	if (FAILED(PushBackString(wsStr)))
@@ -198,7 +197,7 @@ HRESULT CScrollText2D::PushBackString(const std::wstring& rStr)
 	CString2D* pTailStr = GetString2D(nTailStrIdx);	// 最後尾の文字列情報
 
 	// 最後尾文字列の自動描画をOFFにする
-	pTailStr->SetEnableDraw(false);
+	pTailStr->SetEnableDisp(false);
 
 	// 文字列内の文字を配列に追加
 	int nNumChar = pTailStr->GetNumChar();	// 文字数
@@ -240,7 +239,7 @@ void CScrollText2D::DeleteString(const int nStrIdx)
 	CText2D::DeleteString(nStrIdx);
 
 	// 文字インデックスを制限する
-	useful::LimitMaxNum(m_nNextIdx, (int)m_vecChar.size());
+	UtilFunc::Transformation::ValueNormalize(m_nNextIdx, (int)m_vecChar.size(), 0);
 }
 
 //============================================================
@@ -265,14 +264,14 @@ CScrollText2D* CScrollText2D::Create
 (
 	const std::string& rFilePath,	// フォントパス
 	const bool bItalic,				// イタリック
-	const VECTOR3& rPos,			// 原点位置
+	const MyLib::Vector3& rPos,		// 原点位置
 	const float fNextTime,			// 文字表示の待機時間
 	const float fCharHeight,		// 文字縦幅
 	const float fLineHeight,		// 行間縦幅
 	const EAlignX alignX,			// 横配置
 	const EAlignY alignY,			// 縦配置
-	const VECTOR3& rRot,			// 原点向き
-	const COLOR& rCol				// 色
+	const MyLib::Vector3& rRot,		// 原点向き
+	const D3DXCOLOR& rCol			// 色
 )
 {
 	// 文字送りテキスト2Dの生成
@@ -298,10 +297,10 @@ CScrollText2D* CScrollText2D::Create
 		pScrollText2D->SetFont(rFilePath, bItalic);
 
 		// 原点位置を設定
-		pScrollText2D->SetVec3Position(rPos);
+		pScrollText2D->SetPosition(rPos);
 
 		// 原点向きを設定
-		pScrollText2D->SetVec3Rotation(rRot);
+		pScrollText2D->SetRotation(rRot);
 
 		// 色を設定
 		pScrollText2D->SetColor(rCol);
@@ -329,7 +328,7 @@ CScrollText2D* CScrollText2D::Create
 //============================================================
 //	文字送りの更新処理
 //============================================================
-void CScrollText2D::UpdateScroll(const float fDeltaTime)
+void CScrollText2D::UpdateScroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 文字送りがOFFなら抜ける
 	if (!m_bScroll) { return; }
@@ -338,13 +337,13 @@ void CScrollText2D::UpdateScroll(const float fDeltaTime)
 	if (m_vecChar.empty()) { m_bScroll = false; return; }
 
 	// 現在の待機時間を加算
-	m_fCurTime += fDeltaTime;
+	m_fCurTime += fDeltaTime * fSlowRate;
 	while (m_fCurTime >= m_fNextTime)
 	{ // 待機し終わった場合
 
 		// 文字の自動描画をONにする
 		assert(m_vecChar[m_nNextIdx] != nullptr);
-		m_vecChar[m_nNextIdx]->SetEnableDraw(true);
+		m_vecChar[m_nNextIdx]->SetEnableDisp(true);
 
 		// 現在の待機時間から待機時間を減算
 		m_fCurTime -= m_fNextTime;
@@ -355,7 +354,7 @@ void CScrollText2D::UpdateScroll(const float fDeltaTime)
 		// 次の文字インデックスに移行
 		m_nNextIdx++;
 
-		if (useful::LimitMaxNum(m_nNextIdx, (int)m_vecChar.size() - 1))
+		if (UtilFunc::Transformation::ValueNormalize(m_nNextIdx, (int)m_vecChar.size(), 0))
 		{ // 最後の文字に到達した場合
 
 			// 現在の待機時間を初期化
@@ -383,4 +382,3 @@ void CScrollText2D::PlayScrollSE(CChar2D* pChar2D)
 	// 指定ラベルのSEを再生
 	PLAY_SOUND(m_labelSE);
 }
-#endif

@@ -51,7 +51,7 @@ namespace UtilFunc
 {
 	namespace Transformation
 	{
-		template<class T> void ValueNormalize(T& Value, T MaxValue, T MinValue);	// 値の正規化処理
+		template<class T> bool ValueNormalize(T& Value, T MaxValue, T MinValue);	// 値の正規化処理
 		template<class T> float ValueToRate(const T num, const T min, const T max);	// 値の割合変換
 		template<class T> const T Clamp(T Value, T MinValue, T MaxValue);			
 		MyLib::Vector3 RotationChangeToForwardVector(float rot);
@@ -3118,18 +3118,22 @@ namespace UtilFunc	// 便利関数
 		@param	MinValue	[in]	最小値
 		@return	void
 		*/
-		template<class T>inline void ValueNormalize(T& Value, T MaxValue, T MinValue)
+		template<class T>inline bool ValueNormalize(T& Value, T MaxValue, T MinValue)
 		{
 			if (Value >= MaxValue)
 			{
 				// 最大値に補正
 				Value = MaxValue;
+				return true;
 			}
 			else if (Value <= MinValue)
 			{
 				// 最小値に補正
 				Value = MinValue;
+				return true;
 			}
+
+			return false;
 		}
 
 		/**
