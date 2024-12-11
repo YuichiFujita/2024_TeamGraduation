@@ -7,6 +7,7 @@
 #include "teamStatus.h"
 #include "player.h"
 #include "playerStatus.h"
+#include "gauge2D.h"
 
 //==========================================================================
 // 定数定義
@@ -19,6 +20,7 @@ namespace Charm
 namespace Special
 {
 	const float VALUE_MAX = 100.0f;												// 最大値
+	const float VALUE_FRAMERATE = 100.0f;										// 値の伸びる速度
 	const MyLib::Vector2 GAUGE_SIZE = MyLib::Vector2(250.0f, 30.0f);			// ゲージサイズ
 	const MyLib::Vector3 GAUGE_POS = MyLib::Vector3(30.0f, 50.0f, 0.0f);		// ゲージ位置
 }
@@ -185,7 +187,11 @@ void CTeamStatus::InitSpecialInfo()
 	}
 
 	//ゲージ生成
-	m_sSpecialInfo.pGauge = CObject2D::Create();
+	m_sSpecialInfo.pGauge = CGauge2D::Create(Special::VALUE_MAX, 0.1f, Special::GAUGE_POS, Special::GAUGE_SIZE);
+	m_sSpecialInfo.pGauge->SetColorFront(MyLib::color::White());
+	m_sSpecialInfo.pGauge->SetColorBack(MyLib::color::Black());
+
+	// 値の初期化
 	ZeroSpecialValue();
 
 	// 上限設定
@@ -204,10 +210,8 @@ void CTeamStatus::SetSpecialValue(float fValue)
 		MyLib::Vector2 size = Special::GAUGE_SIZE;
 		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
 
-		size.x *= fRad;
-
 		// サイズ設定
-		m_sSpecialInfo.pGauge->SetSize(size);
+		m_sSpecialInfo.pGauge->SetSizeGaugeRadius(fRad);
 	}
 }
 

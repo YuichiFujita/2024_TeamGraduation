@@ -25,6 +25,7 @@ public:
 	enum ETypeAdd
 	{
 		ADD_HIT = 0,		// ヒット
+		ADD_CATCH,			// キャッチ
 		ADD_JUSTCATCH,		// ジャストキャッチ
 		ADD_COVERCATCH,		// カバーキャッチ
 		ADD_THROW_JUST,		// ジャストキャッチ直後の投げ
