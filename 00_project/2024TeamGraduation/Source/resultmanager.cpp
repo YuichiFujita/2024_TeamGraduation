@@ -177,6 +177,10 @@ HRESULT CResultManager::Init()
 //==========================================================================
 void CResultManager::Uninit()
 {
+	// プレイヤーマネージャー
+	CPlayerManager* pManager = CPlayerManager::GetInstance();
+	SAFE_UNINIT(pManager);
+
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;

@@ -46,7 +46,6 @@ public:
 	void Kill() override;		// 削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw() override;		// 描画
-	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
 
 	// 静的メンバ関数
 	static CGauge2D* Create	// 生成
@@ -57,10 +56,7 @@ public:
 		const MyLib::Vector2& rSizeGauge = VEC3_ONE,		// ゲージ大きさ
 		const D3DXCOLOR& rColFront = MyLib::color::White(),	// 表ゲージ色
 		const D3DXCOLOR& rColBack = MyLib::color::Black(),	// 裏ゲージ色
-		const bool bDrawFrame = false,						// 枠描画状況
-		const char* pPathTexture = nullptr,					// フレームテクスチャパス
-		const MyLib::Vector2& rSizeFrame = VEC3_ONE,		// 枠大きさ
-		const CObject2D::AnchorPoint& anchor = CObject2D::AnchorPoint::CENTER		// 枠オフセット
+		const bool bDrawFrame = false						// 枠描画状況
 	);
 
 	// メンバ関数
@@ -77,14 +73,22 @@ public:
 	inline float GetMaxNum() const					{ return m_fMaxNumGauge; }	// ゲージ最大値取得
 	inline bool IsEnableDrawFrame() const			{ return m_bDrawFrame; }	// 枠表示状況取得
 
+	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
+	void SetSize(const MyLib::Vector2& rSize);				// 全ての大きさ設定
+
 	void SetAnchorType(const CObject2D::AnchorPoint& type);	// アンカーポイント設定
+	void SetSizeGaugeRadius(const float fRadius);			// 割合からゲージ大きさ設定
 	void SetSizeGauge(const MyLib::Vector2& rSize);			// ゲージ大きさ設定
-	void SetSizeFrame(const MyLib::Vector2& rSize);			// 背景大きさ設定
-	void SetColorFront(const D3DXCOLOR& rCol);				// 表ゲージ色設定
-	void SetColorBack(const D3DXCOLOR& rCol);				// 裏ゲージ色設定
+	void SetSizeFrame(const MyLib::Vector2& rSize);			// 枠大きさ設定
+	void SetSizeBg(const MyLib::Vector2& rSize);			// 背景大きさ設定
+	void SetColorFront(const D3DXCOLOR& rCol);				// ゲージ色設定
+	void SetColorBack(const D3DXCOLOR& rCol);				// 背景ゲージ色設定
 	void SetEnableDrawFrame(const bool bDraw);				// 枠表示状況設定
 
 private:
+
+	// メンバ関数
+	void InitSize();					// 初期サイズ設定
 
 	// メンバ変数
 	CObject2D* m_pBg;					// 背景

@@ -119,7 +119,7 @@ private:
 	float m_fLength;							// 対角線の長さ
 	float m_fAngle;								// 対角線の向き
 	int m_nTexIdx;								// テクスチャのインデックス番号
-	std::vector<D3DXVECTOR2> m_vecUV;		// テクスチャ座標
+	std::vector<D3DXVECTOR2> m_vecUV;			// テクスチャ座標
 	std::vector<MyLib::Vector3> m_vecVtxPos;	// 頂点座標
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファ
 };
