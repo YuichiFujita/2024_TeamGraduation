@@ -175,10 +175,9 @@ void CPlayerAIControlRight::ForciblyReturn()
 
 	// •à‚­
 	SetMove(EMoveFlag::MOVEFLAG_DASH);
-	//SetAction(EActionFlag::ACTION_JUMP);
 
 	// ‹ß‚Ã‚­
-	//if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
+	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
 		SetMove(EMoveFlag::MOVEFLAG_STOP);

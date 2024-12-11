@@ -46,6 +46,7 @@ public:
 		HEART_NORMAL,			// 通常
 		HEART_STRONG,			// 強気
 		HEART_TIMID,			// 弱気
+		HEART_CRAYZY,			// 狂人
 		HEART_MAX
 	};
 
@@ -91,7 +92,7 @@ public:
 		CATCH_TYPE_MAX
 	};
 
-	enum EMoveType
+	enum EMoveTypeChatch
 	{
 		MOVETYPE_NONE = 0,		// なし
 		MOVETYPE_DISTANCE,		// 距離を取る
@@ -132,6 +133,7 @@ public:
 	{
 		MOVEFLAG_STOP = 0,		// 止まる
 		MOVEFLAG_WALK,			// 歩く
+		MOVEFLAG_BLINK,			// ブリンク
 		MOVEFLAG_DASH,			// 走る
 		MOVEFLAG_MAX
 	};
@@ -265,6 +267,7 @@ private:
 	// 行動
 	void MoveFlagStop();			// なし
 	void MoveFlagWalk();			// 歩く
+	void MoveFlagBlink();			// ブリンク
 	void MoveFlagDash();			// 走る
 
 	// 行動タイプ
@@ -319,14 +322,14 @@ private:
 	// メンバ関数
 	//=============================
 	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void UpdateMode();			// モード
+	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モード
 	void UpdateForcibly();		// 強制行動
-	void UpdateMove(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 行動
+	void UpdateMoveFlag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 行動
 	void UpdateMoveType(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 行動
-	void UpdateAction();		// アクション
+	void UpdateActionFlag();		// アクション
 	void UpdateThrowType();		// 投げ種類
 	void UpdateThrowMove();		// 投げ行動
-	void UpdateThrow();			// 投げ
+	void UpdateThrowFlag();			// 投げ
 	void UpdateThrowTiming(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げタイミング
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
 	void UpdateSee();			// 見る
@@ -357,7 +360,7 @@ private:
 	EMode m_eMode;					// モード
 	EMoveForcibly m_eForcibly;		// 強制行動
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
-	EMoveType m_eMoveType;			// 行動タイプ
+	EMoveTypeChatch m_eMoveType;			// 行動タイプ
 	EHeart m_eHeart;				// 心
 	EActionFlag m_eActionFlag;		// アクションフラグ
 	EThrowType m_eThrowType;		// 投げ種類
