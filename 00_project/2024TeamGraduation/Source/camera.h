@@ -99,11 +99,11 @@ public:
 		float r;	// 右
 	};
 
-	// 追従ポイント情報
-	struct SFollowPoint
+	// カメラポイント情報
+	struct SCameraPoint
 	{
 		// デフォルトコンストラクタ
-		SFollowPoint() :
+		SCameraPoint() :
 			posR		(VEC3_ZERO),	// 注視点
 			posV		(VEC3_ZERO),	// 視点
 			rot			(VEC3_ZERO),	// 向き
@@ -111,7 +111,7 @@ public:
 		{}
 
 		// デストラクタ
-		~SFollowPoint() {}
+		~SCameraPoint() {}
 
 		// メンバ変数
 		MyLib::Vector3 posR;	// 注視点
@@ -215,9 +215,11 @@ public:
 	inline D3DXMATRIX* GetMtxProjectionPtr()	{ return &m_mtxProjection; }	// プロジェクションマトリックスポインタ取得
 
 	//-----------------------------
-	// 追従
+	// ゲームカメラ
 	//-----------------------------
-	SFollowPoint FollowPoint();	// 現在の追従ポイント取得
+	SCameraPoint CameraPoint(const STATE state = STATE::STATE_NONE);	// 現在のカメラポイント取得
+	SCameraPoint FollowPoint();		// 現在の追従ポイント取得
+	SCameraPoint OutFieldPoint();	// 現在の外野ポイント取得
 
 private:
 
@@ -248,7 +250,7 @@ private:
 	// ゲームカメラ関数
 	void UpdateFollow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従カメラの更新
 	void UpdateOutField(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 外野カメラの更新
-	bool UpdateTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// カメラ状態遷移の更新
+	bool UpdateTrans(const STATE state);	// カメラ状態遷移の更新
 	bool IsPlayerOutWithBall();	// 外野がボールを持っているか
 	SSide GetPlayerMaxSide();	// プレイヤー最大左右座標取得
 	float CalcDistanceRate(const SSide& rSide);		// 左右間の距離割合計算
@@ -291,8 +293,7 @@ private:
 	bool m_bMotion;						// モーション中判定
 	bool m_bOldWithBall;				// 前回の外野ボール所持フラグ
 	float m_fTransTime;					// ゲームカメラ状態遷移時間
-	SFollowPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
-	SFollowPoint m_transEndPoint;		// ゲームカメラ状態遷移の終了ポイント
+	SCameraPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
 };
 
 #endif
