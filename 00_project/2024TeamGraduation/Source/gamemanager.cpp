@@ -37,7 +37,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TOP_LINE  = "#==============================================================================";	// テキストのライン
+	const std::string TOP_LINE = "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE = "#------------------------------------------------------------------------------";	// テキストのライン
 
 	const float END_HYPE_TIME[] = { 9999.0f, 0.0f };	// 勝利チーム決定時の盛り上がり時間
@@ -197,7 +197,7 @@ HRESULT CGameManager::Init()
 	SetSceneType(ESceneType::SCENE_START);
 
 	// プレイヤーマネージャーの生成
-	CPlayerManager::Create();
+	CPlayerManager::Create(CScene::MODE_GAME);
 
 	// 追従カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
