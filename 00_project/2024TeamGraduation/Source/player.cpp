@@ -1310,6 +1310,12 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_PUSH);
 
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	// モテ加算
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_CATCH);
+
 	// キャッチ状態
 	SetState(EState::STATE_CATCH_NORMAL);
 }
@@ -1349,6 +1355,7 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	// ジャストキャッチ状態
 	SetState(EState::STATE_CATCH_JUST);
 
+	// ゲームマネージャ取得
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 	
 	// モテ加算

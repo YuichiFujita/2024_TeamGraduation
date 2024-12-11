@@ -18,6 +18,8 @@ namespace
 {
 	const int MAX_VERTEX = 12;	// 頂点数
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
+	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar.png";		// パス(ゲージ)
+	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";	// パス(枠)
 }
 
 //************************************************************
@@ -155,7 +157,7 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 	}
 
 	// 引数の位置を設定
-	SetPosition(rPos);
+	CObject::SetPosition(rPos);
 
 	// TODO: ずらせ
 	m_pBg->SetPosition(rPos);
@@ -174,10 +176,7 @@ CGauge2D* CGauge2D::Create
 	const MyLib::Vector2& rSizeGauge,	// ゲージ大きさ
 	const D3DXCOLOR& rColFront,			// 表ゲージ色
 	const D3DXCOLOR& rColBack,			// 裏ゲージ色
-	const bool bDrawFrame,				// 枠描画状況
-	const char* pPathTexture,			// フレームテクスチャパス
-	const MyLib::Vector2& rSizeFrame,	// 枠大きさ
-	const CObject2D::AnchorPoint& anchor	// 枠オフセット
+	const bool bDrawFrame				// 枠描画状況
 )
 {
 	// ゲージ2Dの生成
@@ -208,12 +207,9 @@ CGauge2D* CGauge2D::Create
 		// 位置を設定
 		pGauge2D->SetPosition(rPos);
 
-		// オフセットを設定
-		pGauge2D->SetAnchorType(anchor);
-
 		// 大きさを設定
-		pGauge2D->SetSizeGauge(rSizeGauge);	// ゲージ大きさ
-		pGauge2D->SetSizeFrame(rSizeFrame);	// 枠大きさ
+		pGauge2D->SetSize(rSizeGauge);		// 全部大きさ
+		pGauge2D->InitSize();				// 初期大きさ設定
 
 		// 色を設定
 		pGauge2D->SetColorFront(rColFront);	// 表ゲージ色
@@ -235,9 +231,19 @@ void CGauge2D::BindTexture()
 	CTexture* pTex = CTexture::GetInstance();
 
 	// テクスチャ割り当て
-	m_pBg->BindTexture(pTex->Regist("1"));
-	m_pBar->BindTexture(pTex->Regist("1"));
-	m_pFrame->BindTexture(pTex->Regist("1"));
+	m_pBg->BindTexture(pTex->Regist(""));
+	m_pBar->BindTexture(pTex->Regist(PASS_BAR));
+	m_pFrame->BindTexture(pTex->Regist(PASS_FRAME));
+}
+
+//============================================================
+// 初期サイズ設定
+//============================================================
+void CGauge2D::InitSize()
+{
+	m_pBg->SetSizeOrigin(m_pFrame->GetSize());
+	m_pBar->SetSizeOrigin(m_pFrame->GetSize());
+	m_pFrame->SetSizeOrigin(m_pFrame->GetSize());
 }
 
 //============================================================
@@ -316,6 +322,16 @@ void CGauge2D::SetAnchorType(const CObject2D::AnchorPoint& type)
 //============================================================
 //	ゲージ大きさの設定処理
 //============================================================
+void CGauge2D::SetSize(const MyLib::Vector2& rSize)
+{
+	m_pBg->SetSize(rSize);
+	m_pBar->SetSize(rSize);
+	m_pFrame->SetSize(rSize);
+}
+
+//============================================================
+//	ゲージ大きさの設定処理
+//============================================================
 void CGauge2D::SetSizeGauge(const MyLib::Vector2& rSize)
 {
 	// サイズ
@@ -323,12 +339,33 @@ void CGauge2D::SetSizeGauge(const MyLib::Vector2& rSize)
 }
 
 //============================================================
-//	背景大きさの設定処理
+//	ゲージ大きさの設定処理
+//============================================================
+void CGauge2D::SetSizeGaugeRadius(const float fRadius)
+{
+	// サイズ
+	MyLib::Vector2 size = m_pBar->GetSizeOrigin();
+	size.x *= fRadius;
+
+	m_pBar->SetSize(size);
+}
+
+//============================================================
+//	枠大きさの設定処理
 //============================================================
 void CGauge2D::SetSizeFrame(const MyLib::Vector2& rSize)
 {
 	// サイズ
 	m_pFrame->SetSize(rSize);
+}
+
+//============================================================
+//	背景大きさの設定処理
+//============================================================
+void CGauge2D::SetSizeBg(const MyLib::Vector2& rSize)
+{
+	// サイズ
+	m_pBg->SetSize(rSize);
 }
 
 //============================================================

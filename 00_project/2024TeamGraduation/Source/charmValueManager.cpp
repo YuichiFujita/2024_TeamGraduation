@@ -15,6 +15,7 @@ namespace
 	const float ADDVALUE[CCharmValueManager::ETypeAdd::ADD_MAX] =	// 加算量
 	{
 		1.0f,	// ヒット
+		0.6f,	// キャッチ
 		2.0f,	// ジャストキャッチ
 		3.0f,	// カバーキャッチ
 		1.0f,	// ジャストキャッチ直後の投げ
