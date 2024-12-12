@@ -20,13 +20,15 @@ namespace
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
 	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.jpg";		// パス(ゲージ)
 	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";		// パス(枠)
+	const float FRAME_RAT = 1.1f;	// 枠の大きさ倍率(ゲージの〇倍)
 }
 
+// max時発光
 namespace Bright
 {
 	const MyLib::PosGrid3 END = MyLib::PosGrid3(250, 100, 100);		// 終了色
-	const MyLib::PosGrid3 START = MyLib::PosGrid3(200, 20, 100);		// 開始色
-	const float END_TIME = 1.0f;									// 終了時間
+	const MyLib::PosGrid3 START = MyLib::PosGrid3(200, 40, 100);	// 開始色
+	const float END_TIME = 0.5f;									// 終了時間
 }
 
 //************************************************************
@@ -205,7 +207,6 @@ void CGauge2D::SetTexUV(const std::vector<D3DXVECTOR2>& uv)
 		MyAssert::CustomAssert(false, "Gauge2D: なんで無いん？");
 	}
 
-	// TODO: ずらせ
 	m_pBg->SetTexUV(uv);
 	m_pBar->SetTexUV(uv);
 	m_pFrame->SetTexUV(uv);
@@ -397,7 +398,7 @@ void CGauge2D::SetSize(const MyLib::Vector2& rSize)
 {
 	m_pBg->SetSize(rSize);
 	m_pBar->SetSize(rSize);
-	m_pFrame->SetSize(rSize);
+	m_pFrame->SetSize(rSize * FRAME_RAT);
 }
 
 //============================================================
