@@ -170,8 +170,8 @@ private:
 
 	struct SParameter
 	{
-		EHeartMain eHeatMain;	// 心
-		//EHeartSub eHea
+		EHeartMain eHeartMain;	// 心(メイン)
+		//EHeartSub eHearDSub;	// 心(サブ)
 		float fMove;			// 行動
 	};
 
@@ -370,7 +370,6 @@ private:
 	EMoveForcibly m_eForcibly;		// 強制行動
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
 	EMoveTypeChatch m_eMoveType;	// 行動タイプ
-	EHeartMain m_eHeartMain;		// 心
 	EActionFlag m_eActionFlag;		// アクションフラグ
 	EThrowType m_eThrowType;		// 投げ種類
 	EThrowFlag m_eThrow;			// 投げ
@@ -384,6 +383,7 @@ private:
 	SThrow m_sThrow;				// 投げ
 	SMove m_sMove;					// 行動
 	SDistance m_sDistance;			// 距離
+	SParameter m_sParameter;		// パラメータ	
 };
 
 #endif

@@ -79,7 +79,6 @@ CManager::CManager()
 	m_pFade = nullptr;				// フェード
 	m_pInstantFade = nullptr;		// 遷移なしフェード
 	m_pPause = nullptr;				// ポーズ
-	m_pResultManager = nullptr;		// リザルトマネージャ
 	m_pRankingManager = nullptr;	// ランキングマネージャ
 	m_pMyEffekseer = nullptr;		// エフェクシア
 	m_bWireframe = false;			// ワイヤーフレーム
@@ -1162,14 +1161,6 @@ CInstantFade *CManager::GetInstantFade()
 CPause *CManager::GetPause()
 {
 	return m_pPause;
-}
-
-//==========================================================================
-// リザルトマネージャ取得
-//==========================================================================
-CResultManager *CManager::GetResultManager()
-{
-	return m_pResultManager;
 }
 
 //==========================================================================
