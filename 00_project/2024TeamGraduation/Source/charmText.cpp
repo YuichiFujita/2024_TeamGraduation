@@ -8,6 +8,7 @@
 #include "player.h"
 #include "object2D.h"
 #include "charmManager.h"
+#include "thoughtBalloon.h"
 
 // 派生先
 #include "charmText_Left.h"
@@ -150,7 +151,7 @@ HRESULT CCharmText::CreateFace()
 HRESULT CCharmText::CreateText()
 {
 	// 生成処理
-	m_pText = CObjectBillboard::Create(GetPriority());
+	m_pText = CThoughtBalloon::Create();
 	if (m_pText == nullptr) return E_FAIL;
 
 	// 左端をアンカーポイントにする
@@ -159,13 +160,8 @@ HRESULT CCharmText::CreateText()
 	// オブジェクトの種類設定
 	m_pText->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
-	// テクスチャ設定
-	CTexture* pTexture = CTexture::GetInstance();
-	int texID = CTexture::GetInstance()->Regist(TEXTURE_TEXT);
-	m_pText->BindTexture(texID);
-
 	// サイズ設定
-	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
+	MyLib::Vector2 size = MyLib::Vector2(80.0f, 40.0f);
 
 	// 縦幅を元にサイズ設定
 	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_SPEECH);

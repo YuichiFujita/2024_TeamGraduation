@@ -8,6 +8,7 @@
 #include "player.h"
 #include "object2D.h"
 #include "charmManager.h"
+#include "thoughtBalloon.h"
 
 //==========================================================================
 // ’è”’è‹`
