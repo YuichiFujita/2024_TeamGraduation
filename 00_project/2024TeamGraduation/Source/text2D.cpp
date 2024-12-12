@@ -521,6 +521,31 @@ CString2D* CText2D::GetString2D(const int nStrIdx) const
 }
 
 //============================================================
+//	テキストの横幅取得処理
+//============================================================
+float CText2D::GetTextWidth() const
+{
+	// 文字列がない場合抜ける
+	if ((int)m_listString.size() <= 0) { assert(false); return 0.0f; }
+
+	float fMaxWidth = 0.0f;	// 文字列の最大横幅
+	for (const auto& rList : m_listString)
+	{ // 要素数分繰り返す
+
+		float fWidth = rList->GetStrWidth();	// 文字列の横幅
+		if (fWidth > fMaxWidth)
+		{ // より大きい横幅の場合
+
+			// 最大横幅の再設定
+			fMaxWidth = fWidth;
+		}
+	}
+
+	// 文字列の最大横幅を返す
+	return fMaxWidth;
+}
+
+//============================================================
 //	テキストの縦幅取得処理
 //============================================================
 float CText2D::GetTextHeight() const

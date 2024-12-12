@@ -79,6 +79,7 @@ public:
 	void SetLineHeight(const float fHeight);			// 行間の縦幅設定
 	void SetAlignX(const EAlignX align);				// 横配置設定
 	void SetAlignY(const EAlignY align);				// 縦配置設定
+	float GetTextWidth() const;							// テキストの横幅取得
 	float GetTextHeight() const;						// テキストの縦幅取得
 	CString2D* GetString2D(const int nStrIdx) const;	// 文字列の取得
 	inline float GetAlpha() const		{ return m_col.a; }			// 透明度取得
