@@ -144,35 +144,31 @@ private:
 	//=============================
 	// 構造体定義
 	//=============================
-	struct SThrow			// 投げ関連
-	{
-		float fTiming;		// タイミングカウント
-		float fTimingRate;	// タイミングの割合
-		float fJumpEnd;		// ジャンプの終了位置
-		bool bTiming;		// タイミングフラグ
-		bool bFoldJump;		// ジャンプの折り返しフラグ
+	struct SThrow {				// 投げ関連
+		float fTiming;			// タイミングカウント
+		float fTimingRate;		// タイミングの割合
+		float fJumpEnd;			// ジャンプの終了位置
+		bool bTiming;			// タイミングフラグ
+		bool bFoldJump;			// ジャンプの折り返しフラグ
 	};
 
-	struct SMove
-	{
-		float fTimer;		// 行動タイマー
-		bool bReturn;		// 切り替えし
-		bool bSet;			// 設定完了いてるか
+	struct SMove {
+		float fTimer;			// 行動タイマー
+		bool bReturn;			// 切り替えし
+		bool bSet;				// 設定完了いてるか
 	};
 
-	struct SDistance		// 距離
-	{
-		float fInEnemy;		// 内野：相手
-		float fInFriend;		// 内野：味方
-		float fOut;			// 外野
-		float fTarget;		// ターゲット
+	struct SDistance {			// 距離
+		float fTarget;			// ターゲット
+		float fInFriend;		// 味方
+		float fOut;				// 外野
 	};
 
-	struct SParameter
-	{
+	struct SParameter {			// パラメータ
 		EHeartMain eHeartMain;	// 心(メイン)
-		//EHeartSub eHearDSub;	// 心(サブ)
+		EHeartMain eHearDSub;	// 心(サブ)
 		float fMove;			// 行動
+		bool bSet;				// 設定ON/OFF
 	};
 
 public:
@@ -180,6 +176,7 @@ public:
 	// コンストラクタ
 	CPlayerAIControl();
 
+	// 生成
 	static CPlayerAIControl* Create(CPlayer* player);
 
 	virtual HRESULT Init();
@@ -337,20 +334,19 @@ private:
 	void MoveDown();		// 後
 
 	void PlanThrow();			// 投げのプラン
-	void PlanHeart();			// 心のプラン
-	void InitHeart();			// 心の初期化
 
 	bool IsDistanceBall();					// 距離：ボール
 	bool IsPassTarget();					// パスする相手がいるか判定
 	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
-	float GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CGameManager::ETeamSide teamPair);
+	float GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CPlayer* pPlayer);
 	float GetDistanceBallowner();
 
 	void SetMoveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	void Parameter();
+	void InitHeart();			// 心の初期化
+	void UpdateParameter();
 
 	//-----------------------------
 	// 設定,取得

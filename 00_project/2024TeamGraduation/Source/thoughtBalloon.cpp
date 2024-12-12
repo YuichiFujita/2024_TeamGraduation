@@ -13,7 +13,6 @@
 //==========================================================================
 namespace
 {
-#if 0
 	namespace text
 	{
 		const char*	FONT = "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
@@ -25,7 +24,6 @@ namespace
 		const EAlignX ALIGN_X	= XALIGN_LEFT;	// 横配置
 		const EAlignY ALIGN_Y	= YALIGN_TOP;	// 縦配置
 	}
-#endif
 }
 
 //==========================================================================
@@ -110,6 +108,9 @@ void CThoughtBalloon::Uninit()
 	// レンダーテクスチャの破棄
 	SAFE_REF_RELEASE(m_pRenderScene);
 
+	// テキストの終了
+	SAFE_UNINIT(m_pText);
+
 	// オブジェクトビルボードの終了
 	CObjectBillboard::Uninit();
 }
@@ -119,6 +120,9 @@ void CThoughtBalloon::Uninit()
 //==========================================================================
 void CThoughtBalloon::Kill()
 {
+	// テキストの削除
+	SAFE_KILL(m_pText);
+
 	// 自身の終了
 	CThoughtBalloon::Uninit();
 }
@@ -128,6 +132,10 @@ void CThoughtBalloon::Kill()
 //==========================================================================
 void CThoughtBalloon::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// テキストの更新
+	assert(m_pText != nullptr);
+	m_pText->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// オブジェクトビルボードの更新
 	CObjectBillboard::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -167,7 +175,6 @@ HRESULT CThoughtBalloon::CreateRenderTexture()
 //==========================================================================
 HRESULT CThoughtBalloon::CreateTextureObject()
 {
-#if 0
 	// テキストの生成
 	m_pText = CScrollText2D::Create
 	( // 引数
@@ -186,7 +193,17 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 		assert(false);
 		return E_FAIL;
 	}
-#endif
+
+	// 自動破棄/更新/描画をしない種類に変更
+	m_pText->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 文字列を最後尾に追加
+	m_pText->PushBackString("あいうえお");
+	m_pText->PushBackString("あいうえお");
+	m_pText->PushBackString("あいうえお");
+
+	// 文字送りを開始する
+	m_pText->SetEnableScroll(true);
 
 	return S_OK;
 }
@@ -196,5 +213,7 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 //==========================================================================
 void CThoughtBalloon::CreateTexture()
 {
-
+	// テキストの描画
+	assert(m_pText != nullptr);
+	m_pText->Draw();
 }

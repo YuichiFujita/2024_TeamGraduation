@@ -8,7 +8,6 @@
 #include "player.h"
 #include "object2D.h"
 #include "charmManager.h"
-#include "thoughtBalloon.h"
 
 // 派生先
 #include "charmText_Left.h"
@@ -19,7 +18,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";			// 顔アイコンのテクスチャ
+	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";	// 顔アイコンのテクスチャ
 	const std::string TEXTURE_TEXT = "data\\TEXTURE\\speech\\sample.png";	// テキストのテクスチャ
 
 	const float SIZE_FACE = 40.0f;	// 顔アイコンのサイズ
