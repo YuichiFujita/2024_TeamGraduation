@@ -419,7 +419,7 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 	MyLib::Vector3 rot	= pCamera->GetRotation();	// 向き
 	float fDis			= pCamera->GetDistance();	// 距離
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-	CCamera::SCameraData key = pCamera->FollowPoint();			// 追従目標情報
+	CCamera::SCameraPoint key = pCamera->CameraPoint();			// 追従目標情報
 	CCameraMotion::MotionKey keyEnd = pCameraMotion->GetKeyData((CCameraMotion::MOTION)pCameraMotion->GetNowMotionIdx(), pCameraMotion->GetNowKeyMax() - 1);	// 終端キー情報
 
 	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ

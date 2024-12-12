@@ -49,7 +49,7 @@ void CPlayerAIControlMove::Blink(CPlayer* player, const float fDeltaTime, const 
 {
 	// 入力フラグ
 	bool bInput = false;
-	// 走るフラグ取得
+	// ダッシュフラグ取得
 	bool bBlink = IsBlink();
 
 	// カメラ情報取得

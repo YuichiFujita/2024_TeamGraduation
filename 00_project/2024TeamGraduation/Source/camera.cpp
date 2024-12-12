@@ -33,6 +33,8 @@
 //==========================================================================
 namespace
 {
+	const MyLib::Vector3 INIT_VECU = MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル初期値
+	const CCamera::SSide INIT_SIDE = CCamera::SSide(0.0f, 0.0f);		// 左右最大位置初期値
 	const float MIN_NEAR	= 10.0f;		// 手前の描画制限
 	const float MAX_FAR		= 1500000.0f;	// 奥の描画制限
 	const float MIN_DIS		= 50.0f;		// 最少距離
@@ -61,6 +63,8 @@ namespace
 		const float POSRZ_START	= -1600.0f;	// カメラZ注視点の開始座標
 		const float POSRZ_END	= -100.0f;	// カメラZ注視点の終了座標
 	}
+
+	const float TIME = 1.2f;	// TODO
 }
 
 //==========================================================================
@@ -71,6 +75,7 @@ CCamera::STATE_FUNC CCamera::m_StateFuncList[] =
 {
 	&CCamera::UpdateNoneState,		// 通常カメラ更新
 	&CCamera::UpdateFollowState,	// 追従カメラ更新
+	&CCamera::UpdateOutFieldState,	// 外野カメラ更新
 };
 
 // リセット関数
@@ -78,6 +83,7 @@ CCamera::RESET_FUNC CCamera::m_ResetFuncList[] =
 {
 	&CCamera::ResetNoneState,		// 通常カメラリセット
 	&CCamera::ResetFollowState,		// 追従カメラリセット
+	&CCamera::ResetOutFieldState,	// 外野カメラリセット
 };
 
 //==========================================================================
@@ -85,25 +91,31 @@ CCamera::RESET_FUNC CCamera::m_ResetFuncList[] =
 //==========================================================================
 CCamera::CCamera()
 {
-	m_pDebugControll	= nullptr;		// デバッグ情報
-	m_pCameraMotion		= nullptr;		// カメラモーション情報
-	m_pLight			= nullptr;		// ディレクショナルライト情報
-	m_posV				= VEC3_ZERO;	// 視点
-	m_posVDest			= VEC3_ZERO;	// 目標視点
-	m_posR				= VEC3_ZERO;	// 注視点
-	m_posRDest			= VEC3_ZERO;	// 目標注視点
-	m_posROrigin		= VEC3_ZERO;	// 原点注視点
-	m_vecU				= MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル
-	m_rot				= VEC3_ZERO;	// 向き
-	m_rotDest			= VEC3_ZERO;	// 目標向き
-	m_rotOrigin			= VEC3_ZERO;	// 原点向き
-	m_fDistance			= 0.0f;			// 距離
-	m_fDestDistance		= 0.0f;			// 目標距離
-	m_fOriginDistance	= 0.0f;			// 原点距離
-	m_fViewAngle		= 0.0f;			// 視野角
-	m_fDestViewAngle	= 0.0f;			// 目標視野角
-	m_bMotion			= false;		// モーション中判定
-	m_state				= STATE_NONE;	// 状態
+	// 基本情報のクリア
+	m_pDebugControll	= nullptr;			// デバッグ情報
+	m_pCameraMotion		= nullptr;			// カメラモーション情報
+	m_pLight			= nullptr;			// ディレクショナルライト情報
+	m_posV				= VEC3_ZERO;		// 視点
+	m_posVDest			= VEC3_ZERO;		// 目標視点
+	m_posR				= VEC3_ZERO;		// 注視点
+	m_posRDest			= VEC3_ZERO;		// 目標注視点
+	m_posROrigin		= VEC3_ZERO;		// 原点注視点
+	m_vecU				= INIT_VECU;		// 上方向ベクトル
+	m_rot				= VEC3_ZERO;		// 向き
+	m_rotDest			= VEC3_ZERO;		// 目標向き
+	m_rotOrigin			= VEC3_ZERO;		// 原点向き
+	m_fDistance			= 0.0f;				// 距離
+	m_fDestDistance		= 0.0f;				// 目標距離
+	m_fOriginDistance	= 0.0f;				// 原点距離
+	m_fViewAngle		= 0.0f;				// 視野角
+	m_fDestViewAngle	= 0.0f;				// 目標視野角
+	m_side				= INIT_SIDE;		// 左右最大位置
+	m_sideDest			= INIT_SIDE;		// 目標左右最大位置
+	m_state				= STATE_NONE;		// 状態
+	m_bMotion			= false;			// モーション中判定
+	m_bOldWithBall		= false;			// 前回の外野ボール所持フラグ
+	m_fTransTime		= 0.0f;				// ゲームカメラ状態遷移時間
+	m_transStartPoint	= SCameraPoint();	// ゲームカメラ状態遷移の開始ポイント
 
 	// マトリックス情報のクリア
 	D3DXMatrixIdentity(&m_mtxProjection);	// プロジェクションマトリックス
@@ -118,11 +130,15 @@ CCamera::CCamera()
 	m_viewport.MaxZ		= 0.0f;
 
 	// カメラ揺れ情報のクリア
-	m_swing.shiftPos		= VEC3_ZERO;	// 位置ずれ量
-	m_swing.fShiftAngle		= 0.0f;			// 位置をずらす角度
-	m_swing.fShiftLength	= 0.0f;			// 位置をずらす距離
-	m_swing.fSubAngle		= 0.0f;			// ずらす角度の減算量
-	m_swing.fSubLength		= 0.0f;			// ずらす距離の減算量
+	m_swing.shiftPos	 = VEC3_ZERO;	// 位置ずれ量
+	m_swing.fShiftAngle	 = 0.0f;		// 位置をずらす角度
+	m_swing.fShiftLength = 0.0f;		// 位置をずらす距離
+	m_swing.fSubAngle	 = 0.0f;		// ずらす角度の減算量
+	m_swing.fSubLength	 = 0.0f;		// ずらす距離の減算量
+
+	// スタティックアサート
+	static_assert(NUM_ARRAY(m_StateFuncList) == STATE::STATE_MAX, "ERROR : State Count Mismatch");
+	static_assert(NUM_ARRAY(m_ResetFuncList) == STATE::STATE_MAX, "ERROR : State Count Mismatch");
 }
 
 //==========================================================================
@@ -432,13 +448,225 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 	// ゲームモード以外では使用できない
 	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
 
+	// 現在の外野ボール所持フラグを取得
+	bool bCurWithBall = IsPlayerOutWithBall();
+	if (bCurWithBall && !m_bOldWithBall)
+	{ // 外野がボールを持った瞬間の場合
+
+		// 現在のカメラポイントを開始ポイントとして保存
+		m_transStartPoint.posR = m_posR;
+		m_transStartPoint.posV = m_posV;
+		m_transStartPoint.rot = m_rot;
+		m_transStartPoint.fDistance = m_fDistance;
+	}
+
+	if (bCurWithBall)
+	{ // 外野がボールを持っていた場合
+
+		// 状態遷移の経過時間を加算
+		m_fTransTime += fDeltaTime * fSlowRate;
+
+		// カメラ状態遷移の更新
+		if (UpdateTrans(STATE::STATE_OUTFIELD))
+		{ // 遷移しきった場合
+
+			// 外野状態にする
+			SetState(STATE::STATE_OUTFIELD);
+
+			// 状態遷移の経過時間を初期化
+			m_fTransTime = 0.0f;
+		}
+	}
+	else
+	{ // 外野がボールを持っていない場合
+
+		if (m_fTransTime > 0.0f)
+		{ // 状態が遷移しかけていた場合
+
+			// 状態遷移の経過時間を減算
+			m_fTransTime -= fDeltaTime * fSlowRate;
+
+			// カメラ状態遷移の更新
+			UpdateTrans(STATE::STATE_OUTFIELD);
+		}
+		else
+		{ // 状態が遷移済みの場合
+
+			// 追従カメラの更新
+			UpdateFollow(fDeltaTime, fDeltaRate, fSlowRate);
+		}
+	}
+
+	// 現在の外野ボール所持フラグを保存
+	m_bOldWithBall = bCurWithBall;
+}
+
+//==========================================================================
+// 外野状態の更新処理
+//==========================================================================
+void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+
+	// 現在の外野ボール所持フラグを取得
+	bool bCurWithBall = IsPlayerOutWithBall();
+	if (!bCurWithBall && m_bOldWithBall)
+	{ // 外野がボールを投げた瞬間の場合
+
+		// 現在のカメラポイントを開始ポイントとして保存
+		m_transStartPoint.posR = m_posR;
+		m_transStartPoint.posV = m_posV;
+		m_transStartPoint.rot = m_rot;
+		m_transStartPoint.fDistance = m_fDistance;
+	}
+
+	if (!bCurWithBall)
+	{ // 外野がボールを持っていない場合
+
+		// 状態遷移の経過時間を加算
+		m_fTransTime += fDeltaTime * fSlowRate;
+
+		// カメラ状態遷移の更新
+		if (UpdateTrans(STATE::STATE_FOLLOW))
+		{ // 遷移しきった場合
+
+			// 追従状態にする
+			SetState(STATE::STATE_FOLLOW);
+
+			// 状態遷移の経過時間を初期化
+			m_fTransTime = 0.0f;
+		}
+	}
+	else
+	{ // 外野がボールを持っていた場合
+
+		if (m_fTransTime > 0.0f)
+		{ // 状態が遷移しかけていた場合
+
+			// 状態遷移の経過時間を減算
+			m_fTransTime -= fDeltaTime * fSlowRate;
+
+			// カメラ状態遷移の更新
+			UpdateTrans(STATE::STATE_FOLLOW);
+		}
+		else
+		{ // 状態が遷移済みの場合
+
+			// 外野カメラの更新
+			UpdateOutField(fDeltaTime, fDeltaRate, fSlowRate);
+		}
+	}
+
+	// 現在の外野ボール所持フラグを保存
+	m_bOldWithBall = bCurWithBall;
+}
+
+//==========================================================================
+// 通常状態のリセット
+//==========================================================================
+void CCamera::ResetNoneState()
+{
+	// 注視点の設定
+	m_posR = m_posRDest = m_posROrigin = none::INIT_POSR;
+
+	// 距離の設定
+	m_fDistance = m_fDestDistance = m_fOriginDistance = none::INIT_DISTANCE;
+
+	// 視野角の設定
+	m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE;
+
+	// 原点向きの設定
+	m_rotOrigin = none::INIT_ROT;
+
+	// 原点向きの正規化
+	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+
+	// 向きの設定
+	m_rot = m_rotDest = m_rotOrigin;
+
+	// 球面座標変換による目標視点の相対位置取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posROrigin, m_rotOrigin, -m_fOriginDistance);
+}
+
+//==========================================================================
+// 追従状態のリセット
+//==========================================================================
+void CCamera::ResetFollowState()
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+
+	// プレイヤー左右最大位置を計算
+	m_side = m_sideDest = GetPlayerMaxSide();
+
 	// 左右間の距離割合を計算
-	const float fDisRate = CalcDistanceRate();
+	const float fDisRate = CalcDistanceRate(m_sideDest);
+
+	// 注視点を計算
+	m_posR = m_posRDest = m_posROrigin = CalcFollowPositionR(m_sideDest, fDisRate);
+
+	// 距離を計算
+	m_fDistance = m_fDestDistance = m_fOriginDistance = CalcFollowDistance(fDisRate);
+
+	// 向きを設定
+	m_rot = m_rotDest = m_rotOrigin = follow::INIT_ROT;
+
+	// 視野角を設定
+	if (m_bMotion)	{ m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else			{ m_fViewAngle = m_fDestViewAngle = follow::INIT_VIEWANGLE; }
+
+	// 球面座標変換による目標視点の相対位置取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posROrigin, m_rotOrigin, -m_fOriginDistance);
+}
+
+//==========================================================================
+// 外野状態のリセット
+//==========================================================================
+void CCamera::ResetOutFieldState()
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+
+	// 注視点を設定
+	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数化
+
+	// 距離を設定
+	m_fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数化
+
+	// 向きを設定
+	m_rot = m_rotDest = follow::INIT_ROT;
+
+	// 目標視野角を設定
+	if (m_bMotion)	{ m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else			{ m_fDestViewAngle = follow::INIT_VIEWANGLE; }
+
+	// 現在視野角を慣性補正
+	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, follow::REV_VIEWANGLE);
+
+	// 球面座標変換による相対位置の取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
+}
+
+//==========================================================================
+// 追従カメラの更新
+//==========================================================================
+void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// プレイヤー左右最大位置を計算
+	m_sideDest = GetPlayerMaxSide();
+
+	// 慣性補正
+	UtilFunc::Correction::InertiaCorrection(m_side.l, m_sideDest.l, 0.35f);	// TODO：定数化
+	UtilFunc::Correction::InertiaCorrection(m_side.r, m_sideDest.r, 0.35f);
+
+	// 左右間の距離割合を計算
+	const float fDisRate = CalcDistanceRate(m_side);
 
 	// 目標注視点を計算
-	MyLib::Vector3 posCurDest = CalcFollowPositionR(fDisRate);
+	MyLib::Vector3 posCurDest = CalcFollowPositionR(m_side, fDisRate);
 
-	// 注視点を補正
+	// 目標注視点を補正
 	if (m_posRDest.x + follow::DEST_POSR_BOXSIZE < posCurDest.x)
 	{ // 目標注視点を動かさない範囲より右側の場合
 
@@ -490,58 +718,91 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 }
 
 //==========================================================================
-// 通常状態のリセット
+// 外野カメラの更新
 //==========================================================================
-void CCamera::ResetNoneState()
+void CCamera::UpdateOutField(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 注視点の設定
-	m_posR = m_posRDest = m_posROrigin = none::INIT_POSR;
+	// 注視点を設定
+	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数化
 
-	// 距離の設定
-	m_fDistance = m_fDestDistance = m_fOriginDistance = none::INIT_DISTANCE;
+	// 距離を設定
+	m_fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数化
 
-	// 視野角の設定
-	m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE;
+	// 向きを設定
+	m_rot = m_rotDest = follow::INIT_ROT;
 
-	// 原点向きの設定
-	m_rotOrigin = none::INIT_ROT;
+	// 目標視野角を設定
+	if (m_bMotion)	{ m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else			{ m_fDestViewAngle = follow::INIT_VIEWANGLE; }
 
-	// 原点向きの正規化
-	UtilFunc::Transformation::RotNormalize(m_rotOrigin);
+	// 現在視野角を慣性補正
+	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, follow::REV_VIEWANGLE);
 
-	// 向きの設定
-	m_rot = m_rotDest = m_rotOrigin;
-
-	// 球面座標変換による目標視点の相対位置取得
-	m_posV = m_posVDest = CalcSpherePosition(m_posROrigin, m_rotOrigin, -m_fOriginDistance);
+	// 球面座標変換による相対位置の取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
 }
 
 //==========================================================================
-// 追従状態のリセット
+// カメラ状態遷移の更新
 //==========================================================================
-void CCamera::ResetFollowState()
+bool CCamera::UpdateTrans(const STATE state)
 {
-	// ゲームモード以外では使用できない
-	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+	// 状態遷移の経過時間を補正
+	bool bRev = UtilFunc::Transformation::ValueNormalize(m_fTransTime, TIME, 0.0f);
 
-	// 左右間の距離割合を計算
-	const float fDisRate = CalcDistanceRate();
+	// ゲームカメラ状態遷移の終了ポイントを取得
+	SCameraPoint transEndPoint = CameraPoint(state);
 
-	// 注視点を計算
-	m_posR = m_posRDest = m_posROrigin = CalcFollowPositionR(fDisRate);
+	// 注視点を設定
+	m_posR = m_posRDest = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.posR, transEndPoint.posR, 0.0f, TIME, m_fTransTime);
 
-	// 距離を計算
-	m_fDistance = m_fDestDistance = m_fOriginDistance = CalcFollowDistance(fDisRate);
+	// 距離を設定
+	m_fDistance = m_fDestDistance = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.fDistance, transEndPoint.fDistance, 0.0f, TIME, m_fTransTime);
 
 	// 向きを設定
-	m_rot = m_rotDest = m_rotOrigin = follow::INIT_ROT;
+	m_rot = m_rotDest = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.rot, transEndPoint.rot, 0.0f, TIME, m_fTransTime);
 
-	// 視野角を設定
-	if (m_bMotion)	{ m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE; }
-	else			{ m_fViewAngle = m_fDestViewAngle = follow::INIT_VIEWANGLE; }
+	// 球面座標変換による相対位置の取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
 
-	// 球面座標変換による目標視点の相対位置取得
-	m_posV = m_posVDest = CalcSpherePosition(m_posROrigin, m_rotOrigin, -m_fOriginDistance);
+	// 経過時間が補正されたかを返す
+	return bRev;
+}
+
+//==========================================================================
+// 外野がボールを持っているか
+//==========================================================================
+bool CCamera::IsPlayerOutWithBall()
+{
+	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャー
+	assert(pGameManager != nullptr);		// ゲームマネージャーがない場合エラー
+	CBall* pBall = pGameManager->GetBall();	// ボール情報
+	assert(pBall != nullptr);				// ボールがない場合エラー
+	CPlayer* pTarget = pBall->GetTarget();	// ボール標的プレイヤー情報
+
+	if (pTarget != nullptr
+	&&  pTarget->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+	{ // ボールのターゲットが外野の場合
+
+		return true;
+	}
+
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤー内部リスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// プレイヤーイテレーター
+	while (list.ListLoop(itr))
+	{ // 要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT
+		&&  pPlayer->GetBall() != nullptr)
+		{ // ボールを持った外野がいた場合
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //==========================================================================
@@ -549,14 +810,9 @@ void CCamera::ResetFollowState()
 //==========================================================================
 CCamera::SSide CCamera::GetPlayerMaxSide()
 {
+	SSide pos;	// 左右座標
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤー内部リスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// プレイヤーイテレーター
-	SSide pos;	// 左右座標
-
-	// 先頭プレイヤーの横座標を仮設定
-	CPlayer* pPlayerFront = *list.GetBegin();
-	pos = pPlayerFront->GetPosition().x;
-
 	while (list.ListLoop(itr))
 	{ // 要素数分繰り返す
 
@@ -564,7 +820,10 @@ CCamera::SSide CCamera::GetPlayerMaxSide()
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
 		// 外野の場合次へ
-		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { continue; }	// TODO：外野がカメラに映らないのはどうにかしたい
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { continue; }
+
+		// 死後運搬状態の場合次へ
+		if (pPlayer->GetState() == CPlayer::EState::STATE_DEAD_CARRY) { continue; }
 
 		// 左の更新
 		if (posPlayer.x < pos.l) { pos.l = posPlayer.x; }
@@ -580,12 +839,11 @@ CCamera::SSide CCamera::GetPlayerMaxSide()
 //==========================================================================
 // 左右間の距離割合の計算
 //==========================================================================
-float CCamera::CalcDistanceRate()
+float CCamera::CalcDistanceRate(const SSide& rSide)
 {
 	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
-	const SSide posSide = GetPlayerMaxSide();		// プレイヤー左右最大位置
-	const float fCurDis = posSide.r - posSide.l;	// 左右間の距離
-	const float fMaxDis = sizeCourt.x * 2.0f;		// 左右間の最大距離
+	const float fCurDis = rSide.r - rSide.l;	// 左右間の距離
+	const float fMaxDis = sizeCourt.x * 2.0f;	// 左右間の最大距離
 
 	// 左右間の距離割合を返す
 	return fCurDis / fMaxDis;
@@ -603,13 +861,12 @@ float CCamera::CalcFollowDistance(const float fDisRate)
 //==========================================================================
 // 追従カメラの注視点計算
 //==========================================================================
-MyLib::Vector3 CCamera::CalcFollowPositionR(const float fDisRate)
+MyLib::Vector3 CCamera::CalcFollowPositionR(const SSide& rSide, const float fDisRate)
 {
 	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
-	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
 
 	// 左右座標の平均からX注視点を計算
-	float fTargetX = (posSide.l + posSide.r) * 0.5f;
+	float fTargetX = (rSide.l + rSide.r) * 0.5f;
 
 	// X注視点の範囲補正
 	RevFollowPositionR(&fTargetX, fDisRate);
@@ -628,7 +885,6 @@ MyLib::Vector3 CCamera::CalcFollowPositionR(const float fDisRate)
 void CCamera::RevFollowPositionR(float* pTargetX, const float fDisRate)
 {
 	const MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize();	// コートサイズ
-	const SSide posSide = GetPlayerMaxSide();	// プレイヤー左右最大位置
 
 	// X注視点の補正
 	float fCourtHalfSize = sizeCourt.x * 0.5f;		// コートの半分の大きさ
@@ -774,18 +1030,63 @@ MyLib::Vector3 CCamera::GetScreenPos(const MyLib::Vector3& pos)
 }
 
 //==========================================================================
-// 現在の追従カメラ情報取得処理
+// 現在の追従ポイント取得処理
 //==========================================================================
-CCamera::SCameraData CCamera::FollowPoint()
+CCamera::SCameraPoint CCamera::CameraPoint(const STATE state)
 {
-	// ゲームモード以外では使用できない
-	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return {}; }
+	if (state == STATE::STATE_NONE)
+	{ // 状態の指定がなかった場合
 
-	const float fDisRate = CalcDistanceRate();	// 左右間の距離割合
-	SCameraData data;	// カメラ情報
+		if (IsPlayerOutWithBall())
+		{ // 外野がボールを持っていた場合
+
+			// 現在の追従ポイントを返す
+			return FollowPoint();
+		}
+		else
+		{ // 外野がボールを持っていない場合
+
+			// 現在の外野ポイントを返す
+			return OutFieldPoint();
+		}
+	}
+
+	switch (state)
+	{ // 状態ごとの処理
+	case STATE::STATE_FOLLOW:
+
+		// 現在の追従ポイントを返す
+		return FollowPoint();
+
+	case STATE::STATE_OUTFIELD:
+
+		// 現在の外野ポイントを返す
+		return OutFieldPoint();
+
+	default:
+		assert(false);
+		break;
+	}
+
+	assert(false);
+	return {};
+}
+
+//==========================================================================
+// 現在の追従ポイント取得処理
+//==========================================================================
+CCamera::SCameraPoint CCamera::FollowPoint()
+{
+	SCameraPoint data;	// カメラ情報
+
+	// プレイヤー左右最大位置を計算
+	const SSide posSide = GetPlayerMaxSide();
+
+	// 左右間の距離割合を計算
+	const float fDisRate = CalcDistanceRate(posSide);
 
 	// 注視点を計算
-	data.posR = CalcFollowPositionR(fDisRate);
+	data.posR = CalcFollowPositionR(posSide, fDisRate);
 
 	// 距離を計算
 	data.fDistance = CalcFollowDistance(fDisRate);
@@ -796,6 +1097,29 @@ CCamera::SCameraData CCamera::FollowPoint()
 	// 球面座標変換による目標視点の相対位置取得
 	data.posV = CalcSpherePosition(data.posR, data.rot, -data.fDistance);
 
-	// カメラ情報を返す
+	// 追従カメラ情報を返す
+	return data;
+}
+
+//==========================================================================
+// 現在の外野ポイント取得処理
+//==========================================================================
+CCamera::SCameraPoint CCamera::OutFieldPoint()
+{
+	SCameraPoint data;	// カメラ情報
+
+	// 注視点を計算
+	data.posR = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数
+
+	// 距離を計算
+	data.fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数
+
+	// 向きを設定
+	data.rot = follow::INIT_ROT;
+
+	// 球面座標変換による目標視点の相対位置取得
+	data.posV = CalcSpherePosition(data.posR, data.rot, -data.fDistance);
+
+	// 外野カメラ情報を返す
 	return data;
 }

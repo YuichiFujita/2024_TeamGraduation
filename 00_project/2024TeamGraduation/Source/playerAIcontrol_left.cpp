@@ -133,13 +133,13 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
 
 		// 走る
-		SetMove(EMoveType::MOVETYPE_DASH);
+		SetMove(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
 		if (Approatch(posTarget, JUMP_LENGTH_LINE))
 		{// 範囲内の場合
 			SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
-			SetMove(EMoveType::MOVETYPE_STOP);			// 行動：止まる
+			SetMove(EMoveFlag::MOVEFLAG_STOP);			// 行動：止まる
 		}
 
 		return;
@@ -147,18 +147,18 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 
 	if (distanceTarget > JUMP_LENGTH_TARGET)
 	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
-		SetAction(EAction::ACTION_JUMP);	// アクション：跳ぶ
+		SetAction(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 	}
 	else
 	{
-		SetMove(EMoveType::MOVETYPE_STOP);	// 行動：止まる
-		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
+		SetMove(EMoveFlag::MOVEFLAG_STOP);	// 行動：止まる
+		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 
 	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
-		SetMove(EMoveType::MOVETYPE_STOP);	// 行動：止まる
-		SetThrow(EThrow::THROW_NORMAL);		// 投げ：投げる
+		SetMove(EMoveFlag::MOVEFLAG_STOP);	// 行動：止まる
+		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 }
 
@@ -175,20 +175,20 @@ void CPlayerAIControlLeft::ForciblyReturn()
 
 	CPlayer::EState state = pMy->GetState();
 	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
-		SetMove(EMoveType::MOVETYPE_STOP);
-		SetAction(EAction::ACTION_NONE);
+		SetMove(EMoveFlag::MOVEFLAG_STOP);
+		SetAction(EActionFlag::ACTION_NONE);
 		return;
 	}
 
 	// 歩く
-	SetMove(EMoveType::MOVETYPE_DASH);
-	//SetAction(EAction::ACTION_JUMP);
+	SetMove(EMoveFlag::MOVEFLAG_DASH);
+	//SetAction(EActionFlag::ACTION_JUMP);
 
 	// 近づく
 	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-		SetMove(EMoveType::MOVETYPE_STOP);
+		SetMove(EMoveFlag::MOVEFLAG_STOP);
 	}
 }
 
@@ -205,7 +205,7 @@ bool CPlayerAIControlLeft::IsLineOverPlayer()
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EAction::ACTION_JUMP)
+	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EActionFlag::ACTION_JUMP)
 	{// 位置が超えていた&&ジャンプしてない場合
 		bOver = true;
 	}

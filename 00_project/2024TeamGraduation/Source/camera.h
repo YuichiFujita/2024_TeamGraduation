@@ -34,14 +34,8 @@ public:
 	{
 		STATE_NONE = 0,	// 通常
 		STATE_FOLLOW,	// 追従
+		STATE_OUTFIELD,	// 外野
 		STATE_MAX
-	};
-
-	// 注視点の状態列挙
-	enum PosRState
-	{
-		POSR_STATE_NORMAL = 0,
-		POSR_STATE_MAX
 	};
 
 	// カメラ揺れ構造体
@@ -105,11 +99,11 @@ public:
 		float r;	// 右
 	};
 
-	// カメラ情報
-	struct SCameraData
+	// カメラポイント情報
+	struct SCameraPoint
 	{
 		// デフォルトコンストラクタ
-		SCameraData() :
+		SCameraPoint() :
 			posR		(VEC3_ZERO),	// 注視点
 			posV		(VEC3_ZERO),	// 視点
 			rot			(VEC3_ZERO),	// 向き
@@ -117,7 +111,7 @@ public:
 		{}
 
 		// デストラクタ
-		~SCameraData() {}
+		~SCameraPoint() {}
 
 		// メンバ変数
 		MyLib::Vector3 posR;	// 注視点
@@ -221,9 +215,11 @@ public:
 	inline D3DXMATRIX* GetMtxProjectionPtr()	{ return &m_mtxProjection; }	// プロジェクションマトリックスポインタ取得
 
 	//-----------------------------
-	// 追従
+	// ゲームカメラ
 	//-----------------------------
-	SCameraData FollowPoint();	// 現在の追従カメラ情報
+	SCameraPoint CameraPoint(const STATE state = STATE::STATE_NONE);	// 現在のカメラポイント取得
+	SCameraPoint FollowPoint();		// 現在の追従ポイント取得
+	SCameraPoint OutFieldPoint();	// 現在の外野ポイント取得
 
 private:
 
@@ -242,19 +238,25 @@ private:
 	// メンバ関数
 	//-----------------------------
 	// 状態関数
-	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 通常状態の更新
-	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従状態の更新
+	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常状態の更新
+	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 追従状態の更新
+	void UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 外野状態の更新
 
 	// リセット関数
 	void ResetNoneState();		// 通常状態リセット
 	void ResetFollowState();	// 追従状態リセット
+	void ResetOutFieldState();	// 外野状態リセット
 
-	// 追従関数
+	// ゲームカメラ関数
+	void UpdateFollow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従カメラの更新
+	void UpdateOutField(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 外野カメラの更新
+	bool UpdateTrans(const STATE state);	// カメラ状態遷移の更新
+	bool IsPlayerOutWithBall();	// 外野がボールを持っているか
 	SSide GetPlayerMaxSide();	// プレイヤー最大左右座標取得
-	float CalcDistanceRate();	// 左右間の距離割合計算
-	float CalcFollowDistance(const float fDisRate);					// 追従カメラの距離計算
-	MyLib::Vector3 CalcFollowPositionR(const float fDisRate);		// 追従カメラの注視点計算
-	void RevFollowPositionR(float* pTargetX, const float fDisRate);	// X注視点の範囲補正
+	float CalcDistanceRate(const SSide& rSide);		// 左右間の距離割合計算
+	float CalcFollowDistance(const float fDisRate);	// 追従カメラの距離計算
+	MyLib::Vector3 CalcFollowPositionR(const SSide& rSide, const float fDisRate);	// 追従カメラの注視点計算
+	void RevFollowPositionR(float* pTargetX, const float fDisRate);					// X注視点の範囲補正
 
 	// 汎用関数
 	MyLib::Vector3 CalcSpherePosition(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot, const float fDis);	// 球面座標変換による相対位置取得
@@ -285,8 +287,13 @@ private:
 	float m_fOriginDistance;			// 原点距離
 	float m_fViewAngle;					// 視野角
 	float m_fDestViewAngle;				// 目標視野角
-	bool m_bMotion;						// モーション中判定
+	SSide m_side;						// 左右最大位置
+	SSide m_sideDest;					// 目標左右最大位置
 	STATE m_state;						// 状態
+	bool m_bMotion;						// モーション中判定
+	bool m_bOldWithBall;				// 前回の外野ボール所持フラグ
+	float m_fTransTime;					// ゲームカメラ状態遷移時間
+	SCameraPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
 };
 
 #endif
