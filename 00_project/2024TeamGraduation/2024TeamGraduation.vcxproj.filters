@@ -734,9 +734,6 @@
     <ClCompile Include="Source\renderTextureManager.cpp">
       <Filter>system</Filter>
     </ClCompile>
-    <ClCompile Include="Source\thoughtBalloon.cpp">
-      <Filter>ingame\balloon</Filter>
-    </ClCompile>
     <ClCompile Include="Source\char2D.cpp">
       <Filter>ui</Filter>
     </ClCompile>
@@ -757,6 +754,9 @@
     </ClCompile>
     <ClCompile Include="Source\playerUserOut_controlAction.cpp">
       <Filter>player\playerUser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\thoughtBalloon.cpp">
+      <Filter>ingame\balloon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1357,9 +1357,6 @@
     <ClInclude Include="Source\renderTextureManager.h">
       <Filter>system</Filter>
     </ClInclude>
-    <ClInclude Include="Source\thoughtBalloon.h">
-      <Filter>ingame\balloon</Filter>
-    </ClInclude>
     <ClInclude Include="Source\char2D.h">
       <Filter>ui</Filter>
     </ClInclude>
@@ -1380,6 +1377,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerUserOut_controlAction.h">
       <Filter>player\playerUser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\thoughtBalloon.h">
+      <Filter>ingame\balloon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

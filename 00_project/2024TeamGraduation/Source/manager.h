@@ -89,7 +89,6 @@ public:
 	CFade *GetFade();
 	CInstantFade *GetInstantFade();	// 遷移なしフェード取得
 	CPause *GetPause();
-	CResultManager *GetResultManager();		// リザルトマネージャ取得
 	CRankingManager *GetRankingManager();	// ランキングマネージャ取得
 	CScene *GetScene();	// シーン取得
 
@@ -166,7 +165,6 @@ private:
 	CFade *m_pFade;						// フェード
 	CInstantFade *m_pInstantFade;		// 遷移なしフェード
 	CPause *m_pPause;					// ポーズ
-	CResultManager *m_pResultManager;	// リザルトマネージャ
 	CRankingManager *m_pRankingManager;	// ランキングマネージャ
 	CMyEffekseer* m_pMyEffekseer;		// エフェクシア
 

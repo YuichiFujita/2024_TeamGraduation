@@ -18,7 +18,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";			// 顔アイコンのテクスチャ
+	const std::string TEXTURE_FACE = "data\\TEXTURE\\faceicon\\000.png";	// 顔アイコンのテクスチャ
 	const std::string TEXTURE_TEXT = "data\\TEXTURE\\speech\\sample.png";	// テキストのテクスチャ
 
 	const float SIZE_FACE = 40.0f;	// 顔アイコンのサイズ
@@ -150,7 +150,7 @@ HRESULT CCharmText::CreateFace()
 HRESULT CCharmText::CreateText()
 {
 	// 生成処理
-	m_pText = CObjectBillboard::Create(GetPriority());
+	m_pText = CThoughtBalloon::Create();
 	if (m_pText == nullptr) return E_FAIL;
 
 	// 左端をアンカーポイントにする
@@ -159,13 +159,8 @@ HRESULT CCharmText::CreateText()
 	// オブジェクトの種類設定
 	m_pText->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
-	// テクスチャ設定
-	CTexture* pTexture = CTexture::GetInstance();
-	int texID = CTexture::GetInstance()->Regist(TEXTURE_TEXT);
-	m_pText->BindTexture(texID);
-
 	// サイズ設定
-	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
+	MyLib::Vector2 size = MyLib::Vector2(80.0f, 40.0f);
 
 	// 縦幅を元にサイズ設定
 	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_SPEECH);

@@ -8,6 +8,7 @@
 #include "player.h"
 #include "object2D.h"
 #include "charmManager.h"
+#include "thoughtBalloon.h"
 
 //==========================================================================
 // 定数定義
@@ -65,6 +66,14 @@ HRESULT CCharmText_Right::Init()
 	{
 		m_pText->SetAnchorType(CObjectBillboard::EAnchorPoint::RIGHT);
 		m_pText->SetPosition(Position::START - m_pFace->GetSize().x);
+	}
+
+	const int nNumAll = m_List.GetNumAll();	// リスト内要素数
+	if (nNumAll > 0)
+	{// リスト内に要素がある場合
+
+		// 現在の最後尾テキストの文字送りを終了
+		m_List.GetData(nNumAll - 1)->SetEnableTextDisp(true);
 	}
 
 	// 既に存在しているものを上げる

@@ -12,6 +12,7 @@
 // インクルードファイル
 //==========================================================================
 #include "objectBillboard.h"
+#include "scrollText2D.h"
 
 //==========================================================================
 // クラス定義
@@ -50,6 +51,11 @@ public:
 	//=============================
 	static CThoughtBalloon *Create();	// 生成
 
+	//=============================
+	// メンバ関数
+	//=============================
+	inline void SetEnableTextDisp(bool bDisp) { m_pText->SetEnableDisp(bDisp); }	// テキスト表示設定
+
 private:
 
 	//=============================
@@ -80,6 +86,7 @@ private:
 	//=============================
 	// テクスチャ関連
 	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
+	CScrollText2D* m_pText;			// テキスト情報
 
 	// 状態系
 	EState m_state;		// 状態
