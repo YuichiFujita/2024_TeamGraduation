@@ -1,7 +1,7 @@
 //============================================================
 //
 //	ゲージ2D処理 [gauge2D.cpp]
-//	Author：藤田勇一
+//	Author：Kai Takada
 //
 //============================================================
 //************************************************************
@@ -18,9 +18,22 @@ namespace
 {
 	const int MAX_VERTEX = 12;	// 頂点数
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
-	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar.png";		// パス(ゲージ)
-	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";	// パス(枠)
+	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.png";		// パス(ゲージ)
+	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";		// パス(枠)
 }
+
+namespace Bright
+{
+	const MyLib::PosGrid3 END = MyLib::PosGrid3(32, 100, 100);		// 終了色
+	const MyLib::PosGrid3 START = MyLib::PosGrid3(64, 20, 100);		// 開始色
+	const float END_TIME = 1.0f;									// 終了時間
+}
+
+//************************************************************
+//	静的関数
+//************************************************************
+float CGauge2D::m_fBrightTime = 0.0f;						// maxの時光る色
+float CGauge2D::m_fBrightTimeEnd = Bright::END_TIME;		// maxの時光る色終了時間
 
 //************************************************************
 //	子クラス [CGauge2D] のメンバ関数
@@ -30,7 +43,6 @@ namespace
 //============================================================
 CGauge2D::CGauge2D(const float nFrame) : CObject(PRIORITY, CObject::LAYER::LAYER_2D),
 	m_fFrame			(nFrame),					// 表示値の変動フレーム定数
-	m_fBrightTime		(0.0f),						// maxの時光る色
 	m_state				(STATE_NONE),				// 状態
 	m_fNumGauge			(0),						// 表示値
 	m_fChange			(0.0f),						// ゲージ変動量
@@ -135,20 +147,19 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 			// 通常状態にする
 			m_state = STATE_NONE;
 		}
+	}
 
-		if (m_fCurrentNumGauge == m_fMaxNumGauge)
-		{// ゲージMAX時
+	if (m_fCurrentNumGauge == m_fMaxNumGauge)
+	{// ゲージMAX時
 
-			// 時間加算
-			m_fBrightTime += fDeltaTime * fSlowRate;
-			if (m_fBrightTime >= 1.0f)
-			{
-				m_fBrightTime = 0.0f;
-			}
+		// バーを発光させる
+		BrightBar();
+	}
+	else
+	{// それ以外
 
-			// バーを発光させる
-			BrightBar();
-		}
+		// 色設定
+		m_pBar->SetColor(m_pBar->GetOriginColor());
 	}
 }
 
@@ -268,22 +279,17 @@ void CGauge2D::InitSize()
 //============================================================
 void CGauge2D::BrightBar()
 {
-	const MyLib::PosGrid3 END	 = MyLib::PosGrid3(360, 100, 100);		// 終了色
-	const MyLib::PosGrid3 START	 = MyLib::PosGrid3(360, 30, 100);		// 開始色
-	const float endTime = 0.0f;											// 終了時間
-	const float startTime = 0.0f;										// 開始時間
-	MyLib::Vector3 end = END;
-	MyLib::Vector3 start = START;
-
+	MyLib::Vector3 end = Bright::END;
+	MyLib::Vector3 start = Bright::START;
 	MyLib::Vector3 easing = MyLib::Vector3();
 
-	if (m_fBrightTime >= endTime * 0.5f)
+	if (m_fBrightTime >= m_fBrightTimeEnd * 0.5f)
 	{// 半分を超えたら
-		easing = UtilFunc::Correction::EasingLinear(end, start, endTime * 0.5f, endTime, m_fBrightTime);
+		easing = UtilFunc::Correction::EasingLinear(end, start, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
 	}
 	else
 	{
-		easing = UtilFunc::Correction::EasingLinear(start, end, startTime, endTime * 0.5f, m_fBrightTime);
+		easing = UtilFunc::Correction::EasingLinear(start, end, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
 	}
 
 	// イージングした値をColor型に変換

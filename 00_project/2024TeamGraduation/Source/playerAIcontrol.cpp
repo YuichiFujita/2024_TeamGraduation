@@ -39,33 +39,20 @@ namespace timing
 namespace
 {
 	// キャッチ関連
-	const float CHATCH_LENGTH_IN_PAIR = 700.0f;		// 内野：相手との距離
-	const float CHATCH_LENGTH_IN_ALLY = 100.0f;		// 内野：味方との距離
-
-	const float CHATCH_LENGTH_OUT = 400.0f;		// 外野との距離
-	const float CHATCH_LENGTH_TARGET = 400.0f;	// ターゲットとの距離
-
 	const float CATCH_JUMP_LENGTH = 100.0f;		// ジャンプキャッチの距離
 	const float CATCH_JUMP_HEIGHT = 300.0f;		// ジャンプキャッチする高さ
 
 	// 行動タイプ
-	const int MOVETYPE_WAIT_MODE_MAX	= 10;		// 待機に入る確率幅 (最低は0固定)
-	const int MOVETYPE_WAIT_MODE_IN		= 6;		// 待機に入る確率(この数値以下の場合、待機状態)
-	const int MOVETYPE_WAIT_TIME_MAX	= 20;		// 最大：待機時間
-	const int MOVETYPE_WAIT_TIME_MIN	= 10;		// 最低：
-	const int MOVETYPE_ATYAKOTYA_TIME_MAX = 10;		// 最大：あっちゃこっちゃ時間
-	const int MOVETYPE_ATYAKOTYA_TIME_MIN = 5;		// 最低：
-	const int MOVETYPE_LEFTRIGHT_TIME_MAX = 10;		// 最大：左右移動時間
-	const int MOVETYPE_LEFTRIGHT_TIME_MIN = 5;		// 最低：
-	const int MOVETYPE_UPDOWN_TIME_MAX = 10;		// 最大：上下移動時間
-	const int MOVETYPE_UPDOWN_TIME_MIN = 5;			// 最低：
-
-	// 距離間(デフォルト)
-	const float LENGTH = 500.0f;				// 内野
-	const float LENGTH_SPACE = 10.0f;			// 
-	const float LENGTH_OUT = 200.0f;			// 外野
-	const float LENGTH_LINE = 100.0f;			// 線
-	const float BALL_DISTANCE = 300.0f;
+	const int MOVETYPE_WAIT_MODE_MAX		= 10;		// 待機に入る確率幅 (最低は0固定)
+	const int MOVETYPE_WAIT_MODE_IN			= 6;		// 待機に入る確率(この数値以下の場合、待機状態)
+	const int MOVETYPE_WAIT_TIME_MAX		= 20;		// 最大：待機時間
+	const int MOVETYPE_WAIT_TIME_MIN		= 10;		// 最低：
+	const int MOVETYPE_ATYAKOTYA_TIME_MAX	= 10;		// 最大：あっちゃこっちゃ時間
+	const int MOVETYPE_ATYAKOTYA_TIME_MIN	= 5;		// 最低：
+	const int MOVETYPE_LEFTRIGHT_TIME_MAX	= 10;		// 最大：左右移動時間
+	const int MOVETYPE_LEFTRIGHT_TIME_MIN	= 5;		// 最低：
+	const int MOVETYPE_UPDOWN_TIME_MAX		= 10;		// 最大：上下移動時間
+	const int MOVETYPE_UPDOWN_TIME_MIN		= 5;			// 最低：
 
 	// パス
 	const float STEAL_CANCEL_LENGTH = 100.0f;	// あきらめる距離
@@ -73,6 +60,12 @@ namespace
 	// ステータス関連
 	const float JUMP_RATE = 1.0f;				// ジャンプの割合(高さ)
 
+	// 距離間(デフォルト)
+	const float LENGTH_TARGET	= 400.0f;			// ターゲットとの距離(デフォルト)
+	const float LENGTH_FRIEND	= 100.0f;		// 内野：味方との距離(デフォルト)
+	const float LENGTH_OUT		= 100.0f;		// 外野との距離(デフォルト)
+
+	const float BALL_DISTANCE = 300.0f;				// 
 }
 
 //==========================================================================
@@ -231,11 +224,7 @@ CPlayerAIControl* CPlayerAIControl::Create(CPlayer* player)
 //==========================================================================
 HRESULT CPlayerAIControl::Init()
 {
-	m_sDistance.fInEnemy = CHATCH_LENGTH_IN_PAIR;
-	m_sDistance.fInFriend = CHATCH_LENGTH_IN_ALLY;
-	m_sDistance.fOut = CHATCH_LENGTH_OUT;
-	m_sDistance.fTarget = CHATCH_LENGTH_TARGET;
-
+	// 値の初期化
 	m_eForcibly = EMoveForcibly::FORCIBLY_START;
 	m_eMoveType = EMoveTypeChatch::MOVETYPE_DISTANCE;
 	m_eSee = ESee::SEE_NONE;
@@ -262,7 +251,7 @@ void CPlayerAIControl::Uninit()
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// パラメータ更新
-	Parameter();
+	UpdateParameter();
 
 	// 管理：モード
 	ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
@@ -279,6 +268,60 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 		// 更新：投げ
 		UpdateThrowFlag();
 	}
+
+#ifdef _DEBUG
+
+	MyLib::Vector3 pos = m_pAI->GetPosition();
+
+	// 心ごとにパラメータの割り当て
+	switch (m_sParameter.eHeartMain)
+	{
+	case EHeartMain::HEART_MAIN_NORMAL:	// 通常
+		CEffect3D::Create
+		(// デバッグ用エフェクト(ターゲット)
+			{ pos.x, pos.y + 90.0f, pos.z },
+			VEC3_ZERO,
+			MyLib::color::White(),
+			10.0f,
+			0.1f,
+			1,
+			CEffect3D::TYPE::TYPE_NORMAL
+		);	//
+		break;
+
+	case EHeartMain::HEART_MAIN_STRONG:	// 強気
+		CEffect3D::Create
+		(// デバッグ用エフェクト(ターゲット)
+			{ pos.x, pos.y + 90.0f, pos.z },
+			VEC3_ZERO,
+			MyLib::color::Red(),
+			10.0f,
+			0.1f,
+			1,
+			CEffect3D::TYPE::TYPE_NORMAL
+		);	//
+		break;
+
+	case EHeartMain::HEART_MAIN_TIMID:	// 弱気
+		CEffect3D::Create
+		(// デバッグ用エフェクト(ターゲット)
+			{ pos.x, pos.y + 90.0f, pos.z },
+			VEC3_ZERO,
+			MyLib::color::Blue(),
+			10.0f,
+			0.1f,
+			1,
+			CEffect3D::TYPE::TYPE_NORMAL
+		);	//
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+#endif
+
+
 }
 
 //==========================================================================
@@ -570,8 +613,14 @@ void CPlayerAIControl::UpdateMoveType(const float fDeltaTime, const float fDelta
 {
 	if (m_eMoveType == EMoveTypeChatch::MOVETYPE_NONE) return;
 
-	// 行動タイプ更新
-	(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
+	if (!m_sMove.bSet)
+	{
+		// 行動タイプ更新
+		(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// タイマーセット
+	SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //--------------------------------------------------------------------------
@@ -586,7 +635,7 @@ void CPlayerAIControl::MoveTypeDistance(const float fDeltaTime, const float fDel
 	float fMin = 10000000.0f;
 
 	// 自分情報
-	MyLib::Vector3 posMy = m_pAI->GetPosition();			// 位置情報の取得
+	MyLib::Vector3 posMy = m_pAI->GetPosition();		// 位置情報の取得
 	CGameManager::ETeamSide TeamMy = m_pAI->GetTeam();	// 所属チーム
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
@@ -608,7 +657,7 @@ void CPlayerAIControl::MoveTypeDistance(const float fDeltaTime, const float fDel
 		float fLength = posMy.DistanceXZ(posPlayer);
 
 		// 距離：取得
-		float length = GetDistance(areaPlayer, TeamMy, pPlayer->GetTeam());
+		float length = GetDistance(areaPlayer, TeamMy, pPlayer);
 
 		if (fLength < length) 
 		{// 指定した距離より近い場合
@@ -632,6 +681,48 @@ void CPlayerAIControl::MoveTypeDistance(const float fDeltaTime, const float fDel
 
 	}
 }
+
+//==========================================================================
+// 距離：取得
+//==========================================================================
+float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CPlayer* pPlayer)
+{
+	float distance = 0.0f;
+
+	CGameManager::ETeamSide teamEnemy = pPlayer->GetTeam();
+
+
+	if (area == CPlayer::EFieldArea::FIELD_IN && teamMy == teamEnemy)
+	{// 味方
+		distance = m_sDistance.fInFriend;
+		return distance;
+	}
+	else if (area == CPlayer::EFieldArea::FIELD_IN && teamMy != teamEnemy)
+	{// 敵
+		distance = m_sDistance.fTarget;
+		return distance;
+	}
+	else if (area == CPlayer::EFieldArea::FIELD_OUT)
+	{// 外野
+		if (pPlayer == GetBallOwner())
+		{
+			distance = m_sDistance.fInFriend;
+			return distance;
+		}
+
+		distance = m_sDistance.fOut;
+	}
+
+#if 0
+	// テキスト表示
+	ImGui::Text("distance:%f", distance);
+	ImGui::DragFloat("rateFriend", &m_sDistance.fInFriend, 1.0f, 0.0f, 0.0f, "%.2f");
+	ImGui::DragFloat("rateEnemy", &m_sDistance.fInEnemy, 1.0f, 0.0f, 0.0f, "%.2f");
+	ImGui::DragFloat("rateOut", &m_sDistance.fOut, 1.0f, 0.0f, 0.0f, "%.2f");
+#endif
+	return distance;
+}
+
 
 //--------------------------------------------------------------------------
 // 行動：あっちゃこっちゃ
@@ -1080,12 +1171,14 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	// ボール持ち主との距離
 	float distance = GetDistanceBallowner();
 
-	if (distance < CHATCH_LENGTH_TARGET)
+	if (distance < m_sDistance.fTarget)
 	{// 持ち主と距離が近い場合
 		m_eMoveType = EMoveTypeChatch::MOVETYPE_DISTANCE;
 	}
-
-	//m_eMoveType = EMoveTypeChatch::MOVETYPE_RANDOM;
+	else
+	{
+		m_eMoveType = EMoveTypeChatch::MOVETYPE_RANDOM;
+	}
 
 	// 行動タイプの更新
 	UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
@@ -1219,36 +1312,6 @@ void CPlayerAIControl::CatchFindBall(const float fDeltaTime, const float fDeltaR
 		// 行動：止まる
 		m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
 	}
-}
-
-//==========================================================================
-// 距離：取得
-//==========================================================================
-float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CGameManager::ETeamSide teamPair)
-{
-	float distance = 0.0f;
-
-	if (area == CPlayer::EFieldArea::FIELD_IN && teamMy == teamPair)
-	{// 内野で同じチーム
-		distance = m_sDistance.fInFriend;
-	}
-	else if (area == CPlayer::EFieldArea::FIELD_IN && teamMy != teamPair)
-	{// 内野で違うチーム
-		distance = m_sDistance.fInEnemy;
-	}
-	else if (area == CPlayer::EFieldArea::FIELD_OUT)
-	{// 外野
-		distance = m_sDistance.fOut;
-	}
-
-#if 0
-	// テキスト表示
-	ImGui::Text("distance:%f", distance);
-	ImGui::DragFloat("rateFriend", &m_sDistance.fInFriend, 1.0f, 0.0f, 0.0f, "%.2f");
-	ImGui::DragFloat("rateEnemy", &m_sDistance.fInEnemy, 1.0f, 0.0f, 0.0f, "%.2f");
-	ImGui::DragFloat("rateOut", &m_sDistance.fOut, 1.0f, 0.0f, 0.0f, "%.2f");
-#endif
-	return distance;
 }
 
 //==========================================================================
@@ -1629,41 +1692,48 @@ bool CPlayerAIControl::IsDistanceBall()
 }
 
 
-
-//==========================================================================
-// 心
-//==========================================================================
-void CPlayerAIControl::PlanHeart()
-{
-	// 体力の取得
-	int nLifeMax = m_pAI->GetLifeOrigin();
-	int nLife = m_pAI->GetLife();
-
-	float n = (float)nLifeMax / (float)nLife;
-
-	// 残り体力で心持を決める
-	if ((nLifeMax / nLife) > 8)
-	{
-		//m_eHeartMain = EHeartMain::HEART_NORMAL;
-	}
-}
-
 //==========================================================================
 // 心の初期化
 //==========================================================================
 void CPlayerAIControl::InitHeart()
 {
 	// ランダム
-	int fRand = UtilFunc::Transformation::Random(EHeartMain::HEART_MAIN_NORMAL, EHeartMain::HEART_MAIN_MAX);
+	int fRand = UtilFunc::Transformation::Random(EHeartMain::HEART_MAIN_NORMAL, EHeartMain::HEART_MAIN_MAX - 1);
 
 	// 心の割り当て
 	m_sParameter.eHeartMain = (EHeartMain)fRand;
+
+	// 心ごとにパラメータの割り当て
+	switch (m_sParameter.eHeartMain)
+	{
+	case EHeartMain::HEART_MAIN_NORMAL:	// 通常
+		m_sDistance.fInFriend	= LENGTH_FRIEND;
+		m_sDistance.fOut		= LENGTH_OUT;
+		m_sDistance.fTarget		= LENGTH_TARGET;
+		break;
+
+	case EHeartMain::HEART_MAIN_STRONG:	// 強気
+		m_sDistance.fInFriend	= LENGTH_FRIEND - 250.0f;
+		m_sDistance.fOut		= LENGTH_OUT - 50.0f;
+		m_sDistance.fTarget		= LENGTH_TARGET - 100.0f;
+		break;
+
+	case EHeartMain::HEART_MAIN_TIMID:	// 弱気
+		m_sDistance.fInFriend	= LENGTH_FRIEND + 150.0f;
+		m_sDistance.fOut		= LENGTH_OUT + 100.0f;
+		m_sDistance.fTarget		= LENGTH_TARGET + 150.0f;
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //==========================================================================
-// パラメーター
+// パラメーター更新
 //==========================================================================
-void CPlayerAIControl::Parameter()
+void CPlayerAIControl::UpdateParameter()
 {
 	// 最終はここでせってが全部出来るように
 	// 割合の上下でやる
@@ -1680,11 +1750,44 @@ void CPlayerAIControl::Parameter()
 
 	// 体力によって変えたり
 	// 心によって変えたり
-	m_sDistance.fInFriend;
-	m_sDistance.fInEnemy;
-	m_sDistance.fOut;
-	m_sDistance.fTarget;
 
+	// 体力の取得
+	//int nLifeMax = m_pAI->GetLifeOrigin();
+	//int nLife = m_pAI->GetLife();
+
+	//float n = (float)nLifeMax / (float)nLife;
+
+	// 残り体力で心持を決める
+	//if ((nLifeMax / nLife) > 8)
+	//{
+	//	//m_eHeartMain = EHeartMain::HEART_NORMAL;
+	//}
+
+	switch (m_sParameter.eHeartMain)
+	{
+	case EHeartMain::HEART_MAIN_NORMAL:
+		m_sDistance.fInFriend;
+		m_sDistance.fOut;
+		m_sDistance.fTarget;
+		break;
+
+	case EHeartMain::HEART_MAIN_STRONG:
+		m_sDistance.fInFriend;
+		m_sDistance.fOut;
+		m_sDistance.fTarget;
+		break;
+
+	case EHeartMain::HEART_MAIN_TIMID:
+		m_sDistance.fInFriend;
+		m_sDistance.fOut;
+		m_sDistance.fTarget;
+		break;
+
+	default:
+		assert(false);
+		break;
+
+	}
 }
 
 //==========================================================================
@@ -1712,9 +1815,7 @@ void CPlayerAIControl::SetMoveTimer(const float fDeltaTime, const float fDeltaRa
 
 		return;
 	}
-	else 
-	{// 設定が完了していない && 行動：距離 以外の時
-
+	else {// 設定が完了していない
 		// 行動時間の設定
 		float fRand = (float)UtilFunc::Transformation::Random(MOVETYPE_LEFTRIGHT_TIME_MIN, MOVETYPE_LEFTRIGHT_TIME_MAX);
 		m_sMove.fTimer = fRand * 0.1f;

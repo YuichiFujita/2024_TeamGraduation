@@ -54,7 +54,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetEnableTextDisp(bool bDisp)					{ m_pText->SetEnableTextDisp(bDisp); }	// テキスト表示設定
+	void SetEnableTextDisp(bool bDisp)					{ m_pThoughtBalloon->SetEnableTextDisp(bDisp); }	// テキスト表示設定
 	void SetCountUP(int nCnt)							{ m_nCntUp = nCnt; }					// 上昇カウント設定
 	void AddCountUP(int nCnt)							{ m_nCntUp += nCnt; }					// 上昇カウント加算
 	void SetEnablePossibleChain(bool bChain)			{ m_bPossibleChain = bChain; }			// チェイン可能フラグ設定
@@ -118,8 +118,8 @@ protected:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObjectBillboard* m_pFace;		// 顔アイコン
-	CThoughtBalloon* m_pText;		// 文字
+	CObjectBillboard* m_pFace;			// 顔アイコン
+	CThoughtBalloon* m_pThoughtBalloon;	// 実況吹き出し
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 	int m_nCntUp;			// 上昇カウント

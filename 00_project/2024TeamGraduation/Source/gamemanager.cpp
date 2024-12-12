@@ -31,6 +31,7 @@
 #include "timerUI.h"
 #include "reporter.h"
 #include "resultManager.h"
+#include "gauge2D.h"
 
 //==========================================================================
 // 定数定義
@@ -582,6 +583,18 @@ void CGameManager::UpdateSpecial()
 void CGameManager::UpdateTeamStatus()
 {
 	bool bAllDead[ETeamSide::SIDE_MAX] = { false, false };	// 敗北フラグ
+
+	// スペシャルゲージの時間更新
+	float fBrightTime = CGauge2D::GetBrightTime();
+	fBrightTime += GET_MANAGER->GetDeltaTime() * GET_MANAGER->GetSlowRate();
+
+	if (fBrightTime >= CGauge2D::GetBrightTimeEnd())
+	{// ループ
+		fBrightTime = 0.0f;
+	}
+	CGauge2D::SetBrightTime(fBrightTime);
+
+	// 各チーム情報
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
 		if (m_pTeamStatus[i] == nullptr) continue;
