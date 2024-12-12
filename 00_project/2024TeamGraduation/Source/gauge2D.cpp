@@ -18,8 +18,8 @@ namespace
 {
 	const int MAX_VERTEX = 12;	// 頂点数
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
-	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar.png";		// パス(ゲージ)
-	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";	// パス(枠)
+	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.png";		// パス(ゲージ)
+	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";		// パス(枠)
 }
 
 namespace Bright
