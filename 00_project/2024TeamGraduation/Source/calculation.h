@@ -3550,6 +3550,9 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline D3DXCOLOR HSVtoRGB(float H, float S, float V)
 		{
+			S *= 0.01f;
+			V *= 0.01f;
+
 			if (H > 360.0f)
 			{
 				H -= 360.0f;

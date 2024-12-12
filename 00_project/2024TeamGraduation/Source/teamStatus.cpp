@@ -206,6 +206,11 @@ void CTeamStatus::SetSpecialValue(float fValue)
 	m_sSpecialInfo.fValue =	UtilFunc::Transformation::Clamp(fValue, 0.0f, m_sSpecialInfo.fValueMax);
 
 	if (m_sSpecialInfo.pGauge != nullptr)
+	{// ゲージに値設定
+		m_sSpecialInfo.pGauge->SetNum(m_sSpecialInfo.fValue);
+	}
+
+	if (m_sSpecialInfo.pGauge != nullptr)
 	{
 		MyLib::Vector2 size = Special::GAUGE_SIZE;
 		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
@@ -238,5 +243,17 @@ void CTeamStatus::SubSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::Debug()
 {
+	if (ImGui::TreeNode("TeamStatus"))
+	{
+		if (m_sSpecialInfo.pGauge != nullptr)
+		{// ゲージのmax時間
 
+			D3DXCOLOR col = m_sSpecialInfo.pGauge->GetBar()->GetColor();
+
+			ImGui::Text("BrightTime: [%.2f]", m_sSpecialInfo.pGauge->GetBrightTime());
+			ImGui::Text("BrightTime: [r: %.2f] [g: %.2f] [b: %.2f] [a: %.2f]", col.r, col.g, col.b, col.a);
+		}
+
+		ImGui::TreePop();
+	}
 }
