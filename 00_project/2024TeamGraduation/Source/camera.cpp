@@ -64,7 +64,8 @@ namespace
 		const float POSRZ_END	= -100.0f;	// カメラZ注視点の終了座標
 	}
 
-	const float TIME = 1.2f;	// TODO
+	const float TIME = 1.4f;		// TODO
+	const float MIN_TIME = 0.5f;	// TODO
 }
 
 //==========================================================================
@@ -114,8 +115,10 @@ CCamera::CCamera()
 	m_state				= STATE_NONE;		// 状態
 	m_bMotion			= false;			// モーション中判定
 	m_bOldWithBall		= false;			// 前回の外野ボール所持フラグ
-	m_fTransTime		= 0.0f;				// ゲームカメラ状態遷移時間
+	m_fTransTime		= 0.0f;				// ゲームカメラ状態遷移の時間
+	m_fEndTime			= 0.0f;				// ゲームカメラ状態遷移の終了時間
 	m_transStartPoint	= SCameraPoint();	// ゲームカメラ状態遷移の開始ポイント
+	b = false;
 
 	// マトリックス情報のクリア
 	D3DXMatrixIdentity(&m_mtxProjection);	// プロジェクションマトリックス
@@ -237,6 +240,10 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pDebugControll->Update();
 	}
 
+	// ポーズ中の場合抜ける
+	CManager* pManager = GET_MANAGER;	// マネージャー
+	if (pManager->GetPause()->IsPause()) { return; }
+
 	if (m_StateFuncList[m_state] != nullptr && !m_bMotion)
 	{ // 状態更新関数がある且つモーション中ではない場合
 
@@ -280,13 +287,26 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"【距離】[%f]\n"
 		"【視点】[X：%f Y：%f Z：%f]\n"
 		"【注視点】[X：%f Y：%f Z：%f]\n"
-		"【交差点】[X：%f Y：%f Z：%f]\n",
+		"【交差点】[X：%f Y：%f Z：%f]\n"
+		"【経過時間】[%f]\n"
+		"【終了時間】[%f]\n"
+		"【 フラグ 】[%s]\n",
 		m_rot.x, m_rot.y, m_rot.z,
 		m_fDistance,
 		m_posV.x, m_posV.y, m_posV.z,
 		m_posR.x, m_posR.y, m_posR.z,
-		posScreen.x, posScreen.y, posScreen.z
+		posScreen.x, posScreen.y, posScreen.z,
+		m_fTransTime,
+		m_fEndTime,
+		b ? "TRUE" : "FALSE"
 	);
+
+	// TODO
+#if 0
+	SCameraPoint transDestStart = CameraPoint(STATE::STATE_FOLLOW);
+	CEffect3D::Create(transDestStart.posR, VEC3_ZERO, MyLib::color::Red(), 20.0f, 2.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+	CEffect3D::Create(m_posR, VEC3_ZERO, MyLib::color::Blue(), 40.0f, 2.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
+#endif
 #endif
 }
 
@@ -458,6 +478,14 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 		m_transStartPoint.posV = m_posV;
 		m_transStartPoint.rot = m_rot;
 		m_transStartPoint.fDistance = m_fDistance;
+
+		// 状態遷移の経過時間を初期化
+		m_fTransTime = 0.0f;
+
+		// 遷移の終了時間を保存
+		m_fEndTime = TIME;
+
+		b = false;
 	}
 
 	if (bCurWithBall)
@@ -475,25 +503,87 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 
 			// 状態遷移の経過時間を初期化
 			m_fTransTime = 0.0f;
+
+			// 遷移の終了時間を初期化
+			m_fEndTime = 0.0f;
 		}
 	}
 	else
 	{ // 外野がボールを持っていない場合
 
-		if (m_fTransTime > 0.0f)
+		if (m_fEndTime > 0.0f)
 		{ // 状態が遷移しかけていた場合
 
-			// 状態遷移の経過時間を減算
-			m_fTransTime -= fDeltaTime * fSlowRate;
+			// 終了時間を設定
+			if (!b)
+			{
+				// 現在のカメラポイントを開始ポイントとして保存
+				m_transStartPoint.posR = m_posR;
+				m_transStartPoint.posV = m_posV;
+				m_transStartPoint.rot = m_rot;
+				m_transStartPoint.fDistance = m_fDistance;
+
+				// 
+				m_fEndTime = m_fTransTime;
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, TIME, MIN_TIME);
+				m_fTransTime = 0.0f;
+				b = true;
+			}
+
+			// 状態遷移の経過時間を加算
+			m_fTransTime += fDeltaTime * fSlowRate;
+
+			// TODO
+#if 0
+			// 
+			SCameraPoint transDestStart = CameraPoint(STATE::STATE_FOLLOW);
+			SCameraPoint transDiffStart;
+
+			// 
+			transDiffStart.posR			= transDestStart.posR - m_transStartPoint.posR;
+			transDiffStart.posV			= transDestStart.posV - m_transStartPoint.posV;
+			transDiffStart.rot			= transDestStart.rot  - m_transStartPoint.rot;
+			transDiffStart.fDistance	= transDestStart.fDistance - m_transStartPoint.fDistance;
+
+			// 
+			m_transStartPoint.posR		+= transDiffStart.posR * 0.2f;
+			m_transStartPoint.posV		+= transDiffStart.posV * 0.2f;
+			m_transStartPoint.rot		+= transDiffStart.rot  * 0.2f;
+			m_transStartPoint.fDistance	+= transDiffStart.fDistance * 0.2f;
+#endif
+
+			// TODO
+#if 0
+			m_transStartPoint = CameraPoint(STATE::STATE_FOLLOW);
+#endif
 
 			// カメラ状態遷移の更新
-			UpdateTrans(STATE::STATE_OUTFIELD);
+			if (UpdateTrans(STATE::STATE_FOLLOW))
+			{ // 遷移しきった場合
+
+				// 状態遷移の経過時間を初期化
+				m_fTransTime = 0.0f;
+
+				// 遷移の終了時間を初期化
+				m_fEndTime = 0.0f;
+
+				Reset();
+				b = false;
+			}
 		}
 		else
 		{ // 状態が遷移済みの場合
 
 			// 追従カメラの更新
 			UpdateFollow(fDeltaTime, fDeltaRate, fSlowRate);
+
+			// 状態遷移の経過時間を初期化
+			m_fTransTime = 0.0f;
+
+			// 遷移の終了時間を初期化
+			m_fEndTime = 0.0f;
+
+			b = false;
 		}
 	}
 
@@ -519,6 +609,14 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 		m_transStartPoint.posV = m_posV;
 		m_transStartPoint.rot = m_rot;
 		m_transStartPoint.fDistance = m_fDistance;
+
+		// 状態遷移の経過時間を初期化
+		m_fTransTime = 0.0f;
+
+		// 遷移の終了時間を保存
+		m_fEndTime = TIME;
+
+		b = false;
 	}
 
 	if (!bCurWithBall)
@@ -536,25 +634,63 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 
 			// 状態遷移の経過時間を初期化
 			m_fTransTime = 0.0f;
+
+			// 遷移の終了時間を初期化
+			m_fEndTime = 0.0f;
 		}
 	}
 	else
 	{ // 外野がボールを持っていた場合
 
-		if (m_fTransTime > 0.0f)
+		if (m_fEndTime > 0.0f)
 		{ // 状態が遷移しかけていた場合
 
-			// 状態遷移の経過時間を減算
-			m_fTransTime -= fDeltaTime * fSlowRate;
+			// 終了時間を設定
+			if (!b)
+			{
+				// 現在のカメラポイントを開始ポイントとして保存
+				m_transStartPoint.posR = m_posR;
+				m_transStartPoint.posV = m_posV;
+				m_transStartPoint.rot = m_rot;
+				m_transStartPoint.fDistance = m_fDistance;
+
+				// 
+				m_fEndTime = m_fTransTime;
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, TIME, MIN_TIME);
+				m_fTransTime = 0.0f;
+				b = true;
+			}
+
+			// 状態遷移の経過時間を加算
+			m_fTransTime += fDeltaTime * fSlowRate;
 
 			// カメラ状態遷移の更新
-			UpdateTrans(STATE::STATE_FOLLOW);
+			if (UpdateTrans(STATE::STATE_OUTFIELD))
+			{ // 遷移しきった場合
+
+				// 状態遷移の経過時間を初期化
+				m_fTransTime = 0.0f;
+
+				// 遷移の終了時間を初期化
+				m_fEndTime = 0.0f;
+
+				Reset();
+				b = false;
+			}
 		}
 		else
 		{ // 状態が遷移済みの場合
 
 			// 外野カメラの更新
 			UpdateOutField(fDeltaTime, fDeltaRate, fSlowRate);
+
+			// 状態遷移の経過時間を初期化
+			m_fTransTime = 0.0f;
+
+			// 遷移の終了時間を初期化
+			m_fEndTime = 0.0f;
+
+			b = false;
 		}
 	}
 
@@ -663,6 +799,8 @@ void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const
 	// 左右間の距離割合を計算
 	const float fDisRate = CalcDistanceRate(m_side);
 
+	// TODO
+#if 1
 	// 目標注視点を計算
 	MyLib::Vector3 posCurDest = CalcFollowPositionR(m_side, fDisRate);
 
@@ -697,8 +835,11 @@ void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const
 	UtilFunc::Correction::InertiaCorrection(m_posR, m_posRDest, follow::REV_POSR);
 
 	// 現在注視点のY/Z座標は目標座標にし続ける
-	m_posR.y = posCurDest.y;
-	m_posR.z = posCurDest.z;
+	m_posR.y = m_posRDest.y = posCurDest.y;
+	m_posR.z = m_posRDest.z = posCurDest.z;
+#else
+	m_posRDest = CalcFollowPositionR(m_side, fDisRate);
+#endif
 
 	// 距離を計算
 	m_fDistance = m_fDestDistance = CalcFollowDistance(fDisRate);
@@ -748,19 +889,19 @@ void CCamera::UpdateOutField(const float fDeltaTime, const float fDeltaRate, con
 bool CCamera::UpdateTrans(const STATE state)
 {
 	// 状態遷移の経過時間を補正
-	bool bRev = UtilFunc::Transformation::ValueNormalize(m_fTransTime, TIME, 0.0f);
+	bool bRev = UtilFunc::Transformation::ValueNormalize(m_fTransTime, m_fEndTime, 0.0f);
 
 	// ゲームカメラ状態遷移の終了ポイントを取得
 	SCameraPoint transEndPoint = CameraPoint(state);
 
 	// 注視点を設定
-	m_posR = m_posRDest = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.posR, transEndPoint.posR, 0.0f, TIME, m_fTransTime);
+	m_posR = m_posRDest = UtilFunc::Correction::EasingQuintOut(m_transStartPoint.posR, transEndPoint.posR, 0.0f, m_fEndTime, m_fTransTime);
 
 	// 距離を設定
-	m_fDistance = m_fDestDistance = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.fDistance, transEndPoint.fDistance, 0.0f, TIME, m_fTransTime);
+	m_fDistance = m_fDestDistance = UtilFunc::Correction::EasingQuintOut(m_transStartPoint.fDistance, transEndPoint.fDistance, 0.0f, m_fEndTime, m_fTransTime);
 
 	// 向きを設定
-	m_rot = m_rotDest = UtilFunc::Correction::EasingEaseIn(m_transStartPoint.rot, transEndPoint.rot, 0.0f, TIME, m_fTransTime);
+	m_rot = m_rotDest = UtilFunc::Correction::EasingQuintOut(m_transStartPoint.rot, transEndPoint.rot, 0.0f, m_fEndTime, m_fTransTime);
 
 	// 球面座標変換による相対位置の取得
 	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
@@ -1079,6 +1220,7 @@ CCamera::SCameraPoint CCamera::FollowPoint()
 {
 	SCameraPoint data;	// カメラ情報
 
+#if 1
 	// プレイヤー左右最大位置を計算
 	const SSide posSide = GetPlayerMaxSide();
 
@@ -1090,6 +1232,54 @@ CCamera::SCameraPoint CCamera::FollowPoint()
 
 	// 距離を計算
 	data.fDistance = CalcFollowDistance(fDisRate);
+#else
+	// プレイヤー左右最大位置を計算
+	SSide sideDest = GetPlayerMaxSide();
+	SSide side = m_side;
+
+	// 慣性補正
+	UtilFunc::Correction::InertiaCorrection(side.l, sideDest.l, 0.35f);	// TODO：定数化
+	UtilFunc::Correction::InertiaCorrection(side.r, sideDest.r, 0.35f);
+
+	// 左右間の距離割合を計算
+	const float fDisRate = CalcDistanceRate(side);
+
+	// 目標注視点を計算
+	MyLib::Vector3 posCurDestR = CalcFollowPositionR(side, fDisRate);
+
+	// 目標注視点を補正
+	MyLib::Vector3 posDestR = m_posRDest;
+	data.posR = m_posR;
+	if (posDestR.x + follow::DEST_POSR_BOXSIZE < posCurDestR.x)
+	{ // 目標注視点を動かさない範囲より右側の場合
+
+		// 注視点を右端に補正
+		posDestR.x = posCurDestR.x - follow::DEST_POSR_BOXSIZE;
+	}
+	else if (posDestR.x - follow::DEST_POSR_BOXSIZE > posCurDestR.x)
+	{ // 目標注視点を動かさない範囲より左側の場合
+
+		// 注視点を左端に補正
+		posDestR.x = posCurDestR.x + follow::DEST_POSR_BOXSIZE;
+	}
+
+	// X注視点の範囲補正
+	RevFollowPositionR(&posDestR.x, fDisRate);
+
+	// 現在注視点を慣性補正
+	UtilFunc::Correction::InertiaCorrection(data.posR, posDestR, follow::REV_POSR);
+
+	// 現在注視点のY/Z座標は目標座標にし続ける
+	data.posR.y = posDestR.y = posCurDestR.y;
+	data.posR.z = posDestR.z = posCurDestR.z;
+
+	// 距離を計算
+	float fDestDistance = CalcFollowDistance(fDisRate);
+	data.fDistance = m_fDistance;
+
+	// 距離を慣性補正
+	UtilFunc::Correction::InertiaCorrection(data.fDistance, fDestDistance, follow::REV_DIS);
+#endif
 
 	// 向きを設定
 	data.rot = follow::INIT_ROT;

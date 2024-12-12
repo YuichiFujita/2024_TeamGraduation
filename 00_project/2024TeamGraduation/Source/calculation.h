@@ -936,7 +936,7 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingQuintIn(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingQuintIn(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			if (endTime == startTime)
 			{// 開始値を返す
@@ -960,7 +960,7 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingQuintOut(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingQuintOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			if (endTime == startTime)
 			{// 開始値を返す
@@ -979,7 +979,7 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingQuintInOut(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingQuintInOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::InOutQuint(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
@@ -992,7 +992,7 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingElasticIn(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingElasticIn(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::InElastic(currentTime, startTime, endTime);
 			return start + (end - start) * ratio;
@@ -1004,32 +1004,49 @@ namespace UtilFunc	// 便利関数
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingElasticOut(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingElasticOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::OutElastic(currentTime, startTime, endTime);
 			return start + (end - start) * ratio;
 		}
 
-		// Cubic
-		inline float EasingCubicIn(const float start, float end, float startTime, float endTime, float currentTime)
+		inline float EasingCubicIn(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::InCubic(currentTime, startTime, endTime);
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingCubicOut(const float start, float end, float startTime, float endTime, float currentTime)
+		inline MyLib::Vector3 EasingCubicIn(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InCubic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingCubicOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::OutCubic(currentTime, startTime, endTime);
 			return start + (end - start) * ratio;
 		}
 
-		inline float EasingCubicInOut(const float start, float end, float startTime, float endTime, float currentTime)
+		inline MyLib::Vector3 EasingCubicOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::OutCubic(currentTime, startTime, endTime);
+			return start + (end - start) * ratio;
+		}
+
+		inline float EasingCubicInOut(float start, float end, float startTime, float endTime, float currentTime)
 		{
 			float ratio = UtilFunc::Correction::easing::InOutCubic(currentTime, startTime, endTime);
 			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
 			return start + (end - start) * ratio;
 		}
 
+		inline MyLib::Vector3 EasingCubicInOut(const MyLib::Vector3& start, const MyLib::Vector3& end, float startTime, float endTime, float currentTime)
+		{
+			float ratio = UtilFunc::Correction::easing::InOutCubic(currentTime, startTime, endTime);
+			UtilFunc::Transformation::ValueNormalize(ratio, 1.0f, 0.0f);
+			return start + (end - start) * ratio;
+		}
 
 		/**
 		@brief	Catmull-Rom Spline補間(全ての点を通る線形補間)
