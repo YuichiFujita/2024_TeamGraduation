@@ -241,7 +241,7 @@ HRESULT CPlayerAIControl::Init()
 	m_eSee = ESee::SEE_NONE;
 
 	// 心の初期化
-	InitHeart();
+	//InitHeart();
 
 	return S_OK;
 }
@@ -1088,7 +1088,7 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	//m_eMoveType = EMoveTypeChatch::MOVETYPE_RANDOM;
 
 	// 行動タイプの更新
-	UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);	
+	//UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //--------------------------------------------------------------------------

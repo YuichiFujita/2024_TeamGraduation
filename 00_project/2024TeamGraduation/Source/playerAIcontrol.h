@@ -170,9 +170,9 @@ private:
 
 	struct SParameter
 	{
-		float fHeat;	// 心
-		float fMove;	// 行動
-
+		EHeartMain eHeatMain;	// 心
+		//EHeartSub eHea
+		float fMove;			// 行動
 	};
 
 public:
@@ -369,8 +369,8 @@ private:
 	EMode m_eMode;					// モード
 	EMoveForcibly m_eForcibly;		// 強制行動
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
-	EMoveTypeChatch m_eMoveType;			// 行動タイプ
-	EHeartMain m_eHeartMain;				// 心
+	EMoveTypeChatch m_eMoveType;	// 行動タイプ
+	EHeartMain m_eHeartMain;		// 心
 	EActionFlag m_eActionFlag;		// アクションフラグ
 	EThrowType m_eThrowType;		// 投げ種類
 	EThrowFlag m_eThrow;			// 投げ
