@@ -14,6 +14,7 @@
 //	インクルードファイル
 //************************************************************
 #include "object2D.h"
+#include "gamemanager.h"
 
 //************************************************************
 //　前方宣言
@@ -85,6 +86,9 @@ public:
 	void SetColorFront(const D3DXCOLOR& rCol);				// ゲージ色設定
 	void SetColorBack(const D3DXCOLOR& rCol);				// 背景ゲージ色設定
 	void SetEnableDrawFrame(const bool bDraw);				// 枠表示状況設定
+	
+	void SetTeam(CGameManager::ETeamSide team) { m_team = team; }				// チーム設定
+	CGameManager::ETeamSide	GetTeam() { return m_team; }						// チーム取得
 
 	// 静的関数
 	static void		SetBrightTime(float time) { m_fBrightTime = time; }			// maxの時光るカウンター設定
@@ -102,7 +106,9 @@ private:
 	CObject2D* m_pBg;					// 背景
 	CObject2D* m_pBar;					// ゲージ
 	CObject2D* m_pFrame;				// フレーム
+	CObject2D* m_pAssist;				// ボタンアシスト
 
+	CGameManager::ETeamSide	m_team;		// チーム
 	EState	m_state;					// 状態
 	bool	m_bDrawFrame;				// 枠表示状況
 	float	m_fChange;					// ゲージ変動量

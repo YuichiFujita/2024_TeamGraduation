@@ -10,6 +10,8 @@
 #include "gauge2D.h"
 #include "manager.h"
 #include "texture.h"
+#include "ball.h"
+#include "player.h"
 
 //************************************************************
 //	定数宣言
@@ -20,15 +22,23 @@ namespace
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
 	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.jpg";		// パス(ゲージ)
 	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";		// パス(枠)
+	const char* PASS_ASSIST = "data\\TEXTURE\\gauge\\assist.png";	// アシスト(ボタン)
 	const float FRAME_RAT = 1.1f;	// 枠の大きさ倍率(ゲージの〇倍)
 }
 
 // max時発光
 namespace Bright
 {
-	const MyLib::PosGrid3 END = MyLib::PosGrid3(250, 100, 100);		// 終了色
-	const MyLib::PosGrid3 START = MyLib::PosGrid3(200, 40, 100);	// 開始色
+	const MyLib::PosGrid3 END = MyLib::PosGrid3(318, 80, 100);		// 終了色
+	const MyLib::PosGrid3 START = MyLib::PosGrid3(350, 20, 100);	// 開始色
 	const float END_TIME = 0.5f;									// 終了時間
+}
+
+// max時発光
+namespace Assist
+{
+	const MyLib::PosGrid3 END = MyLib::PosGrid3(45, 80, 100);		// 終了色
+	const MyLib::PosGrid3 START = MyLib::PosGrid3(60, 20, 100);		// 開始色
 }
 
 //************************************************************
@@ -44,17 +54,19 @@ float CGauge2D::m_fBrightTimeEnd = Bright::END_TIME;		// maxの時光る色終了時間
 //	コンストラクタ
 //============================================================
 CGauge2D::CGauge2D(const float nFrame) : CObject(PRIORITY, CObject::LAYER::LAYER_2D),
-	m_fFrame			(nFrame),					// 表示値の変動フレーム定数
-	m_state				(STATE_NONE),				// 状態
-	m_fNumGauge			(0),						// 表示値
-	m_fChange			(0.0f),						// ゲージ変動量
-	m_fStateTime		(0),						// 状態管理カウンター
-	m_fMaxNumGauge		(0),						// 表示値の最大値
-	m_fCurrentNumGauge	(0.0f),						// 現在表示値
-	m_bDrawFrame		(false),					// 枠表示状況
-	m_pBg				(nullptr),					// 背景
-	m_pBar				(nullptr),					// ゲージ
-	m_pFrame			(nullptr)					// フレーム
+	m_fFrame			(nFrame),									// 表示値の変動フレーム定数
+	m_team				(CGameManager::ETeamSide::SIDE_NONE),		// チーム
+	m_state				(STATE_NONE),								// 状態
+	m_fNumGauge			(0),										// 表示値
+	m_fChange			(0.0f),										// ゲージ変動量
+	m_fStateTime		(0),										// 状態管理カウンター
+	m_fMaxNumGauge		(0),										// 表示値の最大値
+	m_fCurrentNumGauge	(0.0f),										// 現在表示値
+	m_bDrawFrame		(false),									// 枠表示状況
+	m_pBg				(nullptr),									// 背景
+	m_pBar				(nullptr),									// ゲージ
+	m_pFrame			(nullptr),									// フレーム
+	m_pAssist			(nullptr)									// ボタンアシスト
 {
 
 }
@@ -86,10 +98,7 @@ HRESULT CGauge2D::Init()
 	m_pBg = CObject2D::Create(PRIORITY);					// 背景
 	m_pBar = CObject2D::Create(PRIORITY);					// ゲージ
 	m_pFrame = CObject2D::Create(PRIORITY);					// フレーム
-
-	m_pBg = CObject2D::Create(PRIORITY);					// 背景
-	m_pBar = CObject2D::Create(PRIORITY);					// ゲージ
-	m_pFrame = CObject2D::Create(PRIORITY);					// フレーム
+	m_pAssist = CObject2D::Create(PRIORITY);				// ボタンアシスト
 
 	SetType(CObject::TYPE::TYPE_UI);
 	
@@ -105,6 +114,7 @@ void CGauge2D::Uninit()
 	SAFE_UNINIT(m_pBg);
 	SAFE_UNINIT(m_pBar);
 	SAFE_UNINIT(m_pFrame);
+	SAFE_UNINIT(m_pAssist);
 
 	// オブジェクトを破棄
 	Release();
@@ -181,7 +191,8 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 {
 	if (m_pBg == nullptr ||
 		m_pBar == nullptr ||
-		m_pFrame == nullptr)
+		m_pFrame == nullptr||
+		m_pAssist == nullptr)
 	{// １つでもなかったら
 		MyAssert::CustomAssert(false, "Gauge2D: なんで無いん？");
 	}
@@ -193,6 +204,7 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 	m_pBg->SetPosition(rPos);
 	m_pBar->SetPosition(rPos);
 	m_pFrame->SetPosition(rPos);
+	m_pAssist->SetPosition(rPos);
 }
 
 //============================================================
@@ -210,6 +222,7 @@ void CGauge2D::SetTexUV(const std::vector<D3DXVECTOR2>& uv)
 	m_pBg->SetTexUV(uv);
 	m_pBar->SetTexUV(uv);
 	m_pFrame->SetTexUV(uv);
+	m_pAssist->SetTexUV(uv);
 }
 
 //============================================================
@@ -281,6 +294,7 @@ void CGauge2D::BindTexture()
 	m_pBg->BindTexture(pTex->Regist(""));
 	m_pBar->BindTexture(pTex->Regist(PASS_BAR));
 	m_pFrame->BindTexture(pTex->Regist(PASS_FRAME));
+	m_pAssist->BindTexture(pTex->Regist(PASS_ASSIST));
 }
 
 //============================================================
@@ -288,9 +302,10 @@ void CGauge2D::BindTexture()
 //============================================================
 void CGauge2D::InitSize()
 {
-	m_pBg->SetSizeOrigin(m_pFrame->GetSize());
-	m_pBar->SetSizeOrigin(m_pFrame->GetSize());
+	m_pBg->SetSizeOrigin(m_pBg->GetSize());
+	m_pBar->SetSizeOrigin(m_pBar->GetSize());
 	m_pFrame->SetSizeOrigin(m_pFrame->GetSize());
+	m_pAssist->SetSizeOrigin(m_pAssist->GetSize());
 }
 
 //============================================================
@@ -298,24 +313,45 @@ void CGauge2D::InitSize()
 //============================================================
 void CGauge2D::BrightBar()
 {
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	CPlayer* pPlayer = pBall->GetPlayer();
+
 	MyLib::Vector3 end = Bright::END;
 	MyLib::Vector3 start = Bright::START;
-	MyLib::Vector3 easing = MyLib::Vector3();
+	MyLib::Vector3 easingBar = MyLib::Vector3();
+	MyLib::Vector3 easingAssist = MyLib::Vector3();
 
 	if (m_fBrightTime >= m_fBrightTimeEnd * 0.5f)
 	{// 半分を超えたら
-		easing = UtilFunc::Correction::EasingLinear(end, start, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+
+		easingBar = UtilFunc::Correction::EasingLinear(end, start, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN ||
+			pPlayer->GetTeam() == m_team)
+		{// ボールを自陣内野が持っているとき
+
+			easingAssist = UtilFunc::Correction::EasingLinear(Assist::END, Assist::START, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+		}
 	}
 	else
 	{
-		easing = UtilFunc::Correction::EasingLinear(start, end, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+		easingBar = UtilFunc::Correction::EasingLinear(start, end, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+	
+		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN ||
+			pPlayer->GetTeam() == m_team)
+		{// ボールを自陣内野が持っているとき
+
+			easingAssist = UtilFunc::Correction::EasingLinear(Assist::START, Assist::END, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+		}
 	}
 
 	// イージングした値をColor型に変換
-	MyLib::Color col = UtilFunc::Transformation::HSVtoRGB(easing.x, easing.y, easing.z);
+	MyLib::Color colBar = UtilFunc::Transformation::HSVtoRGB(easingBar.x, easingBar.y, easingBar.z);
+	MyLib::Color colAssist = UtilFunc::Transformation::HSVtoRGB(easingAssist.x, easingAssist.y, easingAssist.z);
 
 	// 色設定
-	m_pBar->SetColor(col);
+	m_pBar->SetColor(colBar);
+	m_pAssist->SetColor(colAssist);
 }
 
 //============================================================
@@ -389,6 +425,7 @@ void CGauge2D::SetAnchorType(const CObject2D::AnchorPoint& type)
 	m_pBg->SetAnchorType(type);
 	m_pBar->SetAnchorType(type);
 	m_pFrame->SetAnchorType(type);
+	m_pAssist->SetAnchorType(type);
 }
 
 //============================================================
@@ -396,9 +433,14 @@ void CGauge2D::SetAnchorType(const CObject2D::AnchorPoint& type)
 //============================================================
 void CGauge2D::SetSize(const MyLib::Vector2& rSize)
 {
+	MyLib::Vector2 sizeFrame = rSize * FRAME_RAT;
+	MyLib::Vector2 sizeAssist = rSize;
+	sizeAssist.x *= 0.2f;
+
 	m_pBg->SetSize(rSize);
 	m_pBar->SetSize(rSize);
-	m_pFrame->SetSize(rSize * FRAME_RAT);
+	m_pFrame->SetSize(sizeFrame);
+	m_pAssist->SetSize(sizeAssist);
 }
 
 //============================================================

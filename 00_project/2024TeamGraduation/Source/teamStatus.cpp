@@ -133,9 +133,10 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 		break;
 	}
 
+	m_sSpecialInfo.pGauge->SetTeam(team);
 	m_sSpecialInfo.pGauge->SetAnchorType(anchor);
 	m_sSpecialInfo.pGauge->SetPosition(pos);
-	m_sSpecialInfo.pGauge->SetTexUV(uv);
+	m_sSpecialInfo.pGauge->GetBar()->SetTexUV(uv);
 }
 
 //==========================================================================
