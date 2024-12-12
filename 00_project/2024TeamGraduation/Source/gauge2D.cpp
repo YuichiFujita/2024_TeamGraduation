@@ -30,18 +30,19 @@ namespace
 //============================================================
 CGauge2D::CGauge2D(const float nFrame) : CObject(PRIORITY, CObject::LAYER::LAYER_2D),
 	m_fFrame			(nFrame),					// 表示値の変動フレーム定数
+	m_fBrightTime		(0.0f),						// maxの時光る色
 	m_state				(STATE_NONE),				// 状態
 	m_fNumGauge			(0),						// 表示値
 	m_fChange			(0.0f),						// ゲージ変動量
 	m_fStateTime		(0),						// 状態管理カウンター
 	m_fMaxNumGauge		(0),						// 表示値の最大値
 	m_fCurrentNumGauge	(0.0f),						// 現在表示値
-	m_bDrawFrame		(false)						// 枠表示状況
+	m_bDrawFrame		(false),					// 枠表示状況
+	m_pBg				(nullptr),					// 背景
+	m_pBar				(nullptr),					// ゲージ
+	m_pFrame			(nullptr)					// フレーム
 {
-	// メンバ変数をクリア
-	m_pBg = nullptr;					// 背景
-	m_pBar = nullptr;					// ゲージ
-	m_pFrame = nullptr;					// フレーム
+
 }
 
 //============================================================
@@ -76,6 +77,8 @@ HRESULT CGauge2D::Init()
 	m_pBar = CObject2D::Create(PRIORITY);					// ゲージ
 	m_pFrame = CObject2D::Create(PRIORITY);					// フレーム
 
+	SetType(CObject::TYPE::TYPE_UI);
+	
 	return S_OK;
 }
 
@@ -121,7 +124,7 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 		m_fCurrentNumGauge += m_fChange;
 
 		// 現在の表示値を補正
-		UtilFunc::Transformation::ValueNormalize(m_fCurrentNumGauge, (float)m_fMaxNumGauge, 0.0f);
+		UtilFunc::Transformation::ValueNormalize(m_fCurrentNumGauge, m_fMaxNumGauge, 0.0f);
 
 		// 頂点情報の設定
 		m_pBar->SetSize(size);
@@ -131,6 +134,20 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 
 			// 通常状態にする
 			m_state = STATE_NONE;
+		}
+
+		if (m_fCurrentNumGauge == m_fMaxNumGauge)
+		{// ゲージMAX時
+
+			// 時間加算
+			m_fBrightTime += fDeltaTime * fSlowRate;
+			if (m_fBrightTime >= 1.0f)
+			{
+				m_fBrightTime = 0.0f;
+			}
+
+			// バーを発光させる
+			BrightBar();
 		}
 	}
 }
@@ -244,6 +261,36 @@ void CGauge2D::InitSize()
 	m_pBg->SetSizeOrigin(m_pFrame->GetSize());
 	m_pBar->SetSizeOrigin(m_pFrame->GetSize());
 	m_pFrame->SetSizeOrigin(m_pFrame->GetSize());
+}
+
+//============================================================
+// ゲージ発光
+//============================================================
+void CGauge2D::BrightBar()
+{
+	const MyLib::PosGrid3 END	 = MyLib::PosGrid3(360, 100, 100);		// 終了色
+	const MyLib::PosGrid3 START	 = MyLib::PosGrid3(360, 30, 100);		// 開始色
+	const float endTime = 0.0f;											// 終了時間
+	const float startTime = 0.0f;										// 開始時間
+	MyLib::Vector3 end = END;
+	MyLib::Vector3 start = START;
+
+	MyLib::Vector3 easing = MyLib::Vector3();
+
+	if (m_fBrightTime >= endTime * 0.5f)
+	{// 半分を超えたら
+		easing = UtilFunc::Correction::EasingLinear(end, start, endTime * 0.5f, endTime, m_fBrightTime);
+	}
+	else
+	{
+		easing = UtilFunc::Correction::EasingLinear(start, end, startTime, endTime * 0.5f, m_fBrightTime);
+	}
+
+	// イージングした値をColor型に変換
+	MyLib::Color col = UtilFunc::Transformation::HSVtoRGB(easing.x, easing.y, easing.z);
+
+	// 色設定
+	m_pBar->SetColor(col);
 }
 
 //============================================================
@@ -375,6 +422,7 @@ void CGauge2D::SetColorFront(const D3DXCOLOR& rCol)
 {
 	// 引数のゲージ色を代入
 	m_pBar->SetColor(rCol);
+	m_pBar->SetOriginColor(rCol);
 }
 
 //============================================================
@@ -384,6 +432,7 @@ void CGauge2D::SetColorBack(const D3DXCOLOR& rCol)
 {
 	// 引数の背景色を代入
 	m_pBg->SetColor(rCol);
+	m_pBg->SetOriginColor(rCol);
 }
 
 //============================================================

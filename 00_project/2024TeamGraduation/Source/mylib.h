@@ -54,6 +54,280 @@ enum EAlignY
 */
 namespace MyLib
 {
+	/*
+		@brief	PosGrid2【2次元の整数情報】
+	*/
+	struct PosGrid2
+	{
+		// デフォルトコンストラクタ
+		PosGrid2() : x(0), y(0) {}
+	
+		// 引数付きコンストラクタ
+		PosGrid2(const int XY) : x(XY), y(XY) {}
+		PosGrid2(const int X, const int Y) : x(X), y(Y) {}
+	
+		// デストラクタ
+		~PosGrid2() {}
+	
+		// メンバ変数
+		int x;	// 方眼座標 (x)
+		int y;	// 方眼座標 (y)
+	
+		//********************************************************
+		//	演算子オーバーロード
+		//********************************************************
+		// 加算
+		inline PosGrid2 operator+(const PosGrid2& grid) const	{ return PosGrid2(x + grid.x, y + grid.y); }
+		inline PosGrid2 operator+(const int nVal) const			{ return PosGrid2(x + nVal, y + nVal); }
+	
+		// 減算
+		inline PosGrid2 operator-(const PosGrid2& grid) const	{ return PosGrid2(x - grid.x, y - grid.y); }
+		inline PosGrid2 operator-(const int nVal) const			{ return PosGrid2(x - nVal, y - nVal); }
+		inline PosGrid2 operator-(void) const					{ return PosGrid2(-x, -y); }
+	
+		// 乗算
+		inline PosGrid2 operator*(const int nVal) const	{ return PosGrid2(x * nVal, y * nVal); }
+	
+		// 除算
+		inline PosGrid2 operator/(const int nVal) const	{ return PosGrid2(x / nVal, y / nVal); }
+	
+		// 加算代入
+		inline PosGrid2& operator+=(const int nVal)
+		{
+			x += nVal;
+			y += nVal;
+			return *this;
+		}
+		inline PosGrid2& operator+=(const PosGrid2& grid)
+		{
+			x += grid.x;
+			y += grid.y;
+			return *this;
+		}
+	
+		// 減算代入
+		inline PosGrid2& operator-=(const int nVal)
+		{
+			x -= nVal;
+			y -= nVal;
+			return *this;
+		}
+		inline PosGrid2& operator-=(const PosGrid2& grid)
+		{
+			x -= grid.x;
+			y -= grid.y;
+			return *this;
+		}
+	
+		// 乗算代入
+		inline PosGrid2& operator*=(const int nVal)
+		{
+			x *= nVal;
+			y *= nVal;
+			return *this;
+		}
+		inline PosGrid2& operator*=(const PosGrid2& grid)
+		{
+			x *= grid.x;
+			y *= grid.y;
+			return *this;
+		}
+	
+		// 除算代入
+		inline PosGrid2& operator/=(const int nVal)
+		{
+			x /= nVal;
+			y /= nVal;
+			return *this;
+		}
+		inline PosGrid2& operator/=(const PosGrid2& grid)
+		{
+			x /= grid.x;
+			y /= grid.y;
+			return *this;
+		}
+	
+		//********************************************************
+		//	メンバ関数
+		//********************************************************
+		/*
+			@brief	座標が一致するかの検証
+			@return	判定結果
+		*/
+		inline bool operator==(const PosGrid2& grid) const
+		{
+			if (grid.x == x && grid.y == y) { return true; }
+			return false;
+		}
+	
+		/*
+			@brief	座標が一致しないかの検証
+			@return	判定結果
+		*/
+		inline bool operator!=(const PosGrid2& grid) const
+		{
+			if (grid.x != x || grid.y != y) { return true; }
+			return false;
+		}
+	
+		/*
+			@brief	方眼座標の反転
+			@return	反転された方眼座標
+		*/
+		inline PosGrid2 Invert() { return PosGrid2(-x, -y); }
+	
+		/*
+			@brief	要素がすべてゼロか
+			@return	判定結果
+		*/
+		inline bool IsZero() const
+		{
+			if (x == 0 && y == 0) { return true; }
+			return false;
+		}
+	};
+	
+	/*
+		@brief	PosGrid3【3次元の整数情報】
+	*/
+	struct PosGrid3
+	{
+		// デフォルトコンストラクタ
+		PosGrid3() : x(0), y(0), z(0) {}
+	
+		// 引数付きコンストラクタ
+		PosGrid3(const int XYZ) : x(XYZ), y(XYZ), z(XYZ) {}
+		PosGrid3(const int X, const int Y, const int Z) : x(X), y(Y), z(Z) {}
+	
+		// デストラクタ
+		~PosGrid3() {}
+	
+		// メンバ変数
+		int x;	// 方眼座標 (x)
+		int y;	// 方眼座標 (y)
+		int z;	// 方眼座標 (z)
+	
+		//********************************************************
+		//	演算子オーバーロード
+		//********************************************************
+		// 加算
+		inline PosGrid3 operator+(const PosGrid3& grid) const	{ return PosGrid3(x + grid.x, y + grid.y, z + grid.z); }
+		inline PosGrid3 operator+(const int nVal) const			{ return PosGrid3(x + nVal, y + nVal, z + nVal); }
+	
+		// 減算
+		inline PosGrid3 operator-(const PosGrid3& grid) const	{ return PosGrid3(x - grid.x, y - grid.y, z - grid.z); }
+		inline PosGrid3 operator-(const int nVal) const			{ return PosGrid3(x - nVal, y - nVal, z - nVal); }
+		inline PosGrid3 operator-(void) const					{ return PosGrid3(-x, -y, -z); }
+	
+		// 乗算
+		inline PosGrid3 operator*(const int nVal) const	{ return PosGrid3(x * nVal, y * nVal, z * nVal); }
+	
+		// 除算
+		inline PosGrid3 operator/(const int nVal) const	{ return PosGrid3(x / nVal, y / nVal, z / nVal); }
+	
+		// 加算代入
+		inline PosGrid3& operator+=(const int nVal)
+		{
+			x += nVal;
+			y += nVal;
+			z += nVal;
+			return *this;
+		}
+		inline PosGrid3& operator+=(const PosGrid3& grid)
+		{
+			x += grid.x;
+			y += grid.y;
+			z += grid.z;
+			return *this;
+		}
+	
+		// 減算代入
+		inline PosGrid3& operator-=(const int nVal)
+		{
+			x -= nVal;
+			y -= nVal;
+			z -= nVal;
+			return *this;
+		}
+		inline PosGrid3& operator-=(const PosGrid3& grid)
+		{
+			x -= grid.x;
+			y -= grid.y;
+			z -= grid.z;
+			return *this;
+		}
+	
+		// 乗算代入
+		inline PosGrid3& operator*=(const int nVal)
+		{
+			x *= nVal;
+			y *= nVal;
+			z *= nVal;
+			return *this;
+		}
+		inline PosGrid3& operator*=(const PosGrid3& grid)
+		{
+			x *= grid.x;
+			y *= grid.y;
+			z *= grid.z;
+			return *this;
+		}
+	
+		// 除算代入
+		inline PosGrid3& operator/=(const int nVal)
+		{
+			x /= nVal;
+			y /= nVal;
+			z /= nVal;
+			return *this;
+		}
+		inline PosGrid3& operator/=(const PosGrid3& grid)
+		{
+			x /= grid.x;
+			y /= grid.y;
+			z /= grid.z;
+			return *this;
+		}
+	
+		//********************************************************
+		//	メンバ関数
+		//********************************************************
+		/*
+			@brief	座標が一致するかの検証
+			@return	判定結果
+		*/
+		inline bool operator==(const PosGrid3& grid) const
+		{
+			if (grid.x == x && grid.y == y && grid.z == z) { return true; }
+			return false;
+		}
+	
+		/*
+			@brief	座標が一致しないかの検証
+			@return	判定結果
+		*/
+		inline bool operator!=(const PosGrid3& grid) const
+		{
+			if (grid.x != x || grid.y != y || grid.z != z) { return true; }
+			return false;
+		}
+	
+		/*
+			@brief	方眼座標の反転
+			@return	反転された方眼座標
+		*/
+		inline PosGrid3 Invert() { return PosGrid3(-x, -y, -z); }
+	
+		/*
+			@brief	要素がすべてゼロか
+			@return	判定結果
+		*/
+		inline bool IsZero() const
+		{
+			if (x == 0 && y == 0 && z == 0) { return true; }
+			return false;
+		}
+	};
 
 	/*
 		@brief	Vector3 【3次元情報】
@@ -70,6 +344,7 @@ namespace MyLib
 		Vector3(float x, float y, float z) : D3DXVECTOR3(x, y, z) {}
 		Vector3(const D3DXVECTOR3& vec3) : D3DXVECTOR3(vec3.x, vec3.y, vec3.z) {}
 		Vector3(const D3DXVECTOR2& vec2) : D3DXVECTOR3(vec2.x, vec2.y, 0.0f) {}
+		Vector3(const PosGrid3& grid3) : D3DXVECTOR3(static_cast<float>(grid3.x), static_cast<float>(grid3.y), static_cast<float>(grid3.z)) {}
 
 		// JSONからの読み込み
 		void from_json(const nlohmann::json& j)
@@ -471,6 +746,7 @@ namespace MyLib
 		Vector2(float x, float y) : D3DXVECTOR2(x, y) {}
 		Vector2(const D3DXVECTOR2& vec2) : D3DXVECTOR2(vec2.x, vec2.y) {}
 		Vector2(const D3DXVECTOR3& vec3) : D3DXVECTOR2(vec3.x, vec3.y) {}
+		Vector2(const PosGrid2& grid2) : D3DXVECTOR2(static_cast<float>(grid2.x), static_cast<float>(grid2.y)) {}
 
 		//--------------------------
 		// 加算
@@ -1171,281 +1447,6 @@ namespace MyLib
 				}
 			}
 			return mtx;
-		}
-	};
-
-	/*
-		@brief	PosGrid2【2次元の整数情報】
-	*/
-	struct PosGrid2
-	{
-		// デフォルトコンストラクタ
-		PosGrid2() : x(0), y(0) {}
-	
-		// 引数付きコンストラクタ
-		PosGrid2(const int XY) : x(XY), y(XY) {}
-		PosGrid2(const int X, const int Y) : x(X), y(Y) {}
-	
-		// デストラクタ
-		~PosGrid2() {}
-	
-		// メンバ変数
-		int x;	// 方眼座標 (x)
-		int y;	// 方眼座標 (y)
-	
-		//********************************************************
-		//	演算子オーバーロード
-		//********************************************************
-		// 加算
-		inline PosGrid2 operator+(const PosGrid2& grid) const	{ return PosGrid2(x + grid.x, y + grid.y); }
-		inline PosGrid2 operator+(const int nVal) const			{ return PosGrid2(x + nVal, y + nVal); }
-	
-		// 減算
-		inline PosGrid2 operator-(const PosGrid2& grid) const	{ return PosGrid2(x - grid.x, y - grid.y); }
-		inline PosGrid2 operator-(const int nVal) const			{ return PosGrid2(x - nVal, y - nVal); }
-		inline PosGrid2 operator-(void) const					{ return PosGrid2(-x, -y); }
-	
-		// 乗算
-		inline PosGrid2 operator*(const int nVal) const	{ return PosGrid2(x * nVal, y * nVal); }
-	
-		// 除算
-		inline PosGrid2 operator/(const int nVal) const	{ return PosGrid2(x / nVal, y / nVal); }
-	
-		// 加算代入
-		inline PosGrid2& operator+=(const int nVal)
-		{
-			x += nVal;
-			y += nVal;
-			return *this;
-		}
-		inline PosGrid2& operator+=(const PosGrid2& grid)
-		{
-			x += grid.x;
-			y += grid.y;
-			return *this;
-		}
-	
-		// 減算代入
-		inline PosGrid2& operator-=(const int nVal)
-		{
-			x -= nVal;
-			y -= nVal;
-			return *this;
-		}
-		inline PosGrid2& operator-=(const PosGrid2& grid)
-		{
-			x -= grid.x;
-			y -= grid.y;
-			return *this;
-		}
-	
-		// 乗算代入
-		inline PosGrid2& operator*=(const int nVal)
-		{
-			x *= nVal;
-			y *= nVal;
-			return *this;
-		}
-		inline PosGrid2& operator*=(const PosGrid2& grid)
-		{
-			x *= grid.x;
-			y *= grid.y;
-			return *this;
-		}
-	
-		// 除算代入
-		inline PosGrid2& operator/=(const int nVal)
-		{
-			x /= nVal;
-			y /= nVal;
-			return *this;
-		}
-		inline PosGrid2& operator/=(const PosGrid2& grid)
-		{
-			x /= grid.x;
-			y /= grid.y;
-			return *this;
-		}
-	
-		//********************************************************
-		//	メンバ関数
-		//********************************************************
-		/*
-			@brief	座標が一致するかの検証
-			@return	判定結果
-		*/
-		inline bool operator==(const PosGrid2& grid) const
-		{
-			if (grid.x == x && grid.y == y) { return true; }
-			return false;
-		}
-	
-		/*
-			@brief	座標が一致しないかの検証
-			@return	判定結果
-		*/
-		inline bool operator!=(const PosGrid2& grid) const
-		{
-			if (grid.x != x || grid.y != y) { return true; }
-			return false;
-		}
-	
-		/*
-			@brief	方眼座標の反転
-			@return	反転された方眼座標
-		*/
-		inline PosGrid2 Invert() { return PosGrid2(-x, -y); }
-	
-		/*
-			@brief	要素がすべてゼロか
-			@return	判定結果
-		*/
-		inline bool IsZero() const
-		{
-			if (x == 0 && y == 0) { return true; }
-			return false;
-		}
-	};
-	
-	/*
-		@brief	PosGrid3【3次元の整数情報】
-	*/
-	struct PosGrid3
-	{
-		// デフォルトコンストラクタ
-		PosGrid3() : x(0), y(0), z(0) {}
-	
-		// 引数付きコンストラクタ
-		PosGrid3(const int XYZ) : x(XYZ), y(XYZ), z(XYZ) {}
-		PosGrid3(const int X, const int Y, const int Z) : x(X), y(Y), z(Z) {}
-	
-		// デストラクタ
-		~PosGrid3() {}
-	
-		// メンバ変数
-		int x;	// 方眼座標 (x)
-		int y;	// 方眼座標 (y)
-		int z;	// 方眼座標 (z)
-	
-		//********************************************************
-		//	演算子オーバーロード
-		//********************************************************
-		// 加算
-		inline PosGrid3 operator+(const PosGrid3& grid) const	{ return PosGrid3(x + grid.x, y + grid.y, z + grid.z); }
-		inline PosGrid3 operator+(const int nVal) const			{ return PosGrid3(x + nVal, y + nVal, z + nVal); }
-	
-		// 減算
-		inline PosGrid3 operator-(const PosGrid3& grid) const	{ return PosGrid3(x - grid.x, y - grid.y, z - grid.z); }
-		inline PosGrid3 operator-(const int nVal) const			{ return PosGrid3(x - nVal, y - nVal, z - nVal); }
-		inline PosGrid3 operator-(void) const					{ return PosGrid3(-x, -y, -z); }
-	
-		// 乗算
-		inline PosGrid3 operator*(const int nVal) const	{ return PosGrid3(x * nVal, y * nVal, z * nVal); }
-	
-		// 除算
-		inline PosGrid3 operator/(const int nVal) const	{ return PosGrid3(x / nVal, y / nVal, z / nVal); }
-	
-		// 加算代入
-		inline PosGrid3& operator+=(const int nVal)
-		{
-			x += nVal;
-			y += nVal;
-			z += nVal;
-			return *this;
-		}
-		inline PosGrid3& operator+=(const PosGrid3& grid)
-		{
-			x += grid.x;
-			y += grid.y;
-			z += grid.z;
-			return *this;
-		}
-	
-		// 減算代入
-		inline PosGrid3& operator-=(const int nVal)
-		{
-			x -= nVal;
-			y -= nVal;
-			z -= nVal;
-			return *this;
-		}
-		inline PosGrid3& operator-=(const PosGrid3& grid)
-		{
-			x -= grid.x;
-			y -= grid.y;
-			z -= grid.z;
-			return *this;
-		}
-	
-		// 乗算代入
-		inline PosGrid3& operator*=(const int nVal)
-		{
-			x *= nVal;
-			y *= nVal;
-			z *= nVal;
-			return *this;
-		}
-		inline PosGrid3& operator*=(const PosGrid3& grid)
-		{
-			x *= grid.x;
-			y *= grid.y;
-			z *= grid.z;
-			return *this;
-		}
-	
-		// 除算代入
-		inline PosGrid3& operator/=(const int nVal)
-		{
-			x /= nVal;
-			y /= nVal;
-			z /= nVal;
-			return *this;
-		}
-		inline PosGrid3& operator/=(const PosGrid3& grid)
-		{
-			x /= grid.x;
-			y /= grid.y;
-			z /= grid.z;
-			return *this;
-		}
-	
-		//********************************************************
-		//	メンバ関数
-		//********************************************************
-		/*
-			@brief	座標が一致するかの検証
-			@return	判定結果
-		*/
-		inline bool operator==(const PosGrid3& grid) const
-		{
-			if (grid.x == x && grid.y == y && grid.z == z) { return true; }
-			return false;
-		}
-	
-		/*
-			@brief	座標が一致しないかの検証
-			@return	判定結果
-		*/
-		inline bool operator!=(const PosGrid3& grid) const
-		{
-			if (grid.x != x || grid.y != y || grid.z != z) { return true; }
-			return false;
-		}
-	
-		/*
-			@brief	方眼座標の反転
-			@return	反転された方眼座標
-		*/
-		inline PosGrid3 Invert() { return PosGrid3(-x, -y, -z); }
-	
-		/*
-			@brief	要素がすべてゼロか
-			@return	判定結果
-		*/
-		inline bool IsZero() const
-		{
-			if (x == 0 && y == 0 && z == 0) { return true; }
-			return false;
 		}
 	};
 

@@ -34,6 +34,17 @@ public:
 		STATE_MAX		// この列挙型の総数
 	};
 
+	// HSV値
+	struct SHSV
+	{
+		int h;	// 色相 (Hue)
+		int s;	// 彩度 (Saturation, Chroma)
+		int v;	// 明度 (Value, Brightness)
+	
+		SHSV() : h(0), s(0), v(0) {}
+		SHSV(int _h, int _s, int _v) : h(_h), s(_s), v(_v) {}
+	};
+
 	// コンストラクタ
 	explicit CGauge2D(const float nFrame);
 
@@ -89,12 +100,14 @@ private:
 
 	// メンバ関数
 	void InitSize();					// 初期サイズ設定
+	void BrightBar();					// ゲージ発光
 
 	// メンバ変数
 	CObject2D* m_pBg;					// 背景
 	CObject2D* m_pBar;					// ゲージ
 	CObject2D* m_pFrame;				// フレーム
 
+	float	m_fBrightTime;				// maxの時光るカウンター
 	EState	m_state;					// 状態
 	bool	m_bDrawFrame;				// 枠表示状況
 	float	m_fChange;					// ゲージ変動量
