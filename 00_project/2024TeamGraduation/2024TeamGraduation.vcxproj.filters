@@ -758,6 +758,9 @@
     <ClCompile Include="Source\thoughtBalloon.cpp">
       <Filter>ingame\balloon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\balloonFrame.cpp">
+      <Filter>ingame\balloon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1379,6 +1382,9 @@
       <Filter>player\playerUser</Filter>
     </ClInclude>
     <ClInclude Include="Source\thoughtBalloon.h">
+      <Filter>ingame\balloon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\balloonFrame.h">
       <Filter>ingame\balloon</Filter>
     </ClInclude>
   </ItemGroup>

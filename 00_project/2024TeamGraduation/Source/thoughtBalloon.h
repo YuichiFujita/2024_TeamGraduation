@@ -48,7 +48,8 @@ public:
 	//=============================
 	// Ã“Iƒƒ“ƒoŠÖ”
 	//=============================
-	static CThoughtBalloon *Create();	// ¶¬
+	// TODO : ˆø”‚É•¶š or í—Ş‚ğˆµ‚¤—ñ‹“
+	static CThoughtBalloon* Create();	// ¶¬
 
 private:
 

@@ -1,6 +1,6 @@
 //==========================================================================
 // 
-//  モテ文字処理 [charmText.cpp]
+//  モテ実況吹き出し処理 [charmText.cpp]
 //  Author : 相馬靜雅
 // 
 //==========================================================================
@@ -102,7 +102,7 @@ HRESULT CCharmText::Init()
 	// オブジェクトの種類設定
 	CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
 
-	// 文字生成
+	// 実況吹き出し生成
 	if (FAILED(CreateText()))
 	{
 		return E_FAIL;
@@ -146,27 +146,27 @@ HRESULT CCharmText::CreateFace()
 }
 
 //==========================================================================
-// 文字生成
+// 実況吹き出し生成
 //==========================================================================
 HRESULT CCharmText::CreateText()
 {
 	// 生成処理
-	m_pText = CThoughtBalloon::Create();
-	if (m_pText == nullptr) return E_FAIL;
+	m_pThoughtBalloon = CThoughtBalloon::Create();
+	if (m_pThoughtBalloon == nullptr) return E_FAIL;
 
 	// 左端をアンカーポイントにする
-	m_pText->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
+	m_pThoughtBalloon->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
 
 	// オブジェクトの種類設定
-	m_pText->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
+	m_pThoughtBalloon->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
 
 	// サイズ設定
 	MyLib::Vector2 size = MyLib::Vector2(80.0f, 40.0f);
 
 	// 縦幅を元にサイズ設定
 	size = UtilFunc::Transformation::AdjustSizeByHeight(size, SIZE_SPEECH);
-	m_pText->SetSize(MyLib::Vector2());
-	m_pText->SetSizeOrigin(size);
+	m_pThoughtBalloon->SetSize(MyLib::Vector2());
+	m_pThoughtBalloon->SetSizeOrigin(size);
 
 	return S_OK;
 }
@@ -192,11 +192,11 @@ void CCharmText::Kill()
 		m_pFace = nullptr;
 	}
 
-	// 文字
-	if (m_pText != nullptr)
+	// 実況吹き出し
+	if (m_pThoughtBalloon != nullptr)
 	{
-		m_pText->Kill();
-		m_pText = nullptr;
+		m_pThoughtBalloon->Kill();
+		m_pThoughtBalloon = nullptr;
 	}
 
 	// 自身の終了
@@ -239,10 +239,10 @@ void CCharmText::StateFadeIn()
 		m_pFace->SetSize(size);
 	}
 	{// テキスト
-		sizeOrigin = m_pText->GetSizeOrigin();
+		sizeOrigin = m_pThoughtBalloon->GetSizeOrigin();
 		size.x = UtilFunc::Correction::EasingQuintOut(sizeOrigin.x * 0.0f, sizeOrigin.x, 0.0f, STATETIME_FADEIN, m_fStateTime);
 		size.y = UtilFunc::Correction::EasingQuintOut(sizeOrigin.y * 0.0f, sizeOrigin.y, 0.0f, STATETIME_FADEIN, m_fStateTime);
-		m_pText->SetSize(size);
+		m_pThoughtBalloon->SetSize(size);
 	}
 
 	if (m_fStateTime >= STATETIME_FADEIN)
@@ -312,7 +312,7 @@ void CCharmText::SetEnableDisp(bool bDisp)
 
 	// 描画状況設定
 	m_pFace->SetEnableDisp(bDisp);
-	m_pText->SetEnableDisp(bDisp);
+	m_pThoughtBalloon->SetEnableDisp(bDisp);
 }
 
 //==========================================================================

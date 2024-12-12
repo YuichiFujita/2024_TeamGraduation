@@ -121,8 +121,8 @@ protected:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObjectBillboard* m_pFace;		// 顔アイコン
-	CThoughtBalloon* m_pText;		// 文字
+	CObjectBillboard* m_pFace;			// 顔アイコン
+	CThoughtBalloon* m_pThoughtBalloon;	// 実況吹き出し
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 	int m_nCntUp;			// 上昇カウント
