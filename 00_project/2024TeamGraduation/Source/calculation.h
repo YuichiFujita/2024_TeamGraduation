@@ -1422,6 +1422,18 @@ namespace UtilFunc	// 便利関数
 			}
 		}
 
+		/**
+		@brief	入れ替え処理
+		@param	value0		[inout]	入れ替える値
+		@param	value1		[inout]	入れ替える値
+		@return	void
+		*/
+		template<class T> inline void SwapValue(T& value0, T& value1)
+		{
+			T value = value0;
+			value0 = value1;
+			value1 = value;
+		}
 
 		/**
 		@brief	スプライント曲線補間
