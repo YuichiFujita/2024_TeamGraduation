@@ -171,7 +171,6 @@ CPlayerAIControl::CPlayerAIControl()
 	m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
 	m_eMoveType = EMoveTypeChatch::MOVETYPE_NONE;
-	m_eHeartMain = EHeartMain::HEART_MAIN_NORMAL;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
 	m_eThrowType = EThrowType::THROWTYPE_NONE;
 	m_eThrow = EThrowFlag::THROW_NONE;
@@ -182,6 +181,7 @@ CPlayerAIControl::CPlayerAIControl()
 	ZeroMemory(&m_sThrow, sizeof(m_sThrow));
 	ZeroMemory(&m_sMove, sizeof(m_sMove));
 	ZeroMemory(&m_sDistance, sizeof(m_sDistance));
+	ZeroMemory(&m_sParameter, sizeof(m_sParameter));
 }
 
 //==========================================================================
@@ -241,7 +241,7 @@ HRESULT CPlayerAIControl::Init()
 	m_eSee = ESee::SEE_NONE;
 
 	// 心の初期化
-	//InitHeart();
+	InitHeart();
 
 	return S_OK;
 }
@@ -1088,7 +1088,7 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	//m_eMoveType = EMoveTypeChatch::MOVETYPE_RANDOM;
 
 	// 行動タイプの更新
-	//UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
+	UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //--------------------------------------------------------------------------
@@ -1656,26 +1656,9 @@ void CPlayerAIControl::InitHeart()
 	// ランダム
 	int fRand = UtilFunc::Transformation::Random(EHeartMain::HEART_MAIN_NORMAL, EHeartMain::HEART_MAIN_MAX);
 
-	switch (fRand)
-	{
-	case EHeartMain::HEART_MAIN_NORMAL:	// 通常
-		m_eHeartMain = EHeartMain::HEART_MAIN_NORMAL;
-		break;
-
-	case EHeartMain::HEART_MAIN_STRONG:	// 強気
-		m_eHeartMain = EHeartMain::HEART_MAIN_STRONG;
-		break;
-
-	case EHeartMain::HEART_MAIN_TIMID:	// 弱気
-		m_eHeartMain = EHeartMain::HEART_MAIN_TIMID;
-		break;
-
-	default:
-		assert(false);
-		break;
-	}
+	// 心の割り当て
+	m_sParameter.eHeartMain = (EHeartMain)fRand;
 }
-
 
 //==========================================================================
 // パラメーター
