@@ -98,6 +98,13 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 	CObject2D::AnchorPoint anchor = CObject2D::AnchorPoint::CENTER;
 	MyLib::Vector3 pos = MyLib::Vector3();
 	MyLib::Vector3 dest = Special::GAUGE_POS;
+	//std::vector<D3DXVECTOR2> uv =
+	//{// テクスチャ座標
+	//	uv[0] = D3DXVECTOR2(0.0f, 0.0f),
+	//	uv[1] = D3DXVECTOR2(1.0f, 0.0f),
+	//	uv[2] = D3DXVECTOR2(0.0f, 1.0f),
+	//	uv[3] = D3DXVECTOR2(1.0f, 1.0f),
+	//};
 
 	// チームサイド設定
 	SetTeam(team);
@@ -124,6 +131,7 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 
 	m_sSpecialInfo.pGauge->SetAnchorType(anchor);
 	m_sSpecialInfo.pGauge->SetPosition(pos);
+	//m_sSpecialInfo.pGauge->SetTexUV(uv);
 }
 
 //==========================================================================

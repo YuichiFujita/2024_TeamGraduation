@@ -75,6 +75,7 @@ public:
 
 	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
 	void SetSize(const MyLib::Vector2& rSize);				// 全ての大きさ設定
+	void SetTexUV(const std::vector<D3DXVECTOR2>& uv);		// テクスチャ座標の設定
 
 	void SetAnchorType(const CObject2D::AnchorPoint& type);	// アンカーポイント設定
 	void SetSizeGaugeRadius(const float fRadius);			// 割合からゲージ大きさ設定

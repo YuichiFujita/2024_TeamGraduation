@@ -18,14 +18,14 @@ namespace
 {
 	const int MAX_VERTEX = 12;	// 頂点数
 	const int PRIORITY	 = 5;	// ゲージ2Dの優先順位
-	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.png";		// パス(ゲージ)
+	const char* PASS_BAR = "data\\TEXTURE\\gauge\\bar_01.jpg";		// パス(ゲージ)
 	const char* PASS_FRAME = "data\\TEXTURE\\gauge\\frame.png";		// パス(枠)
 }
 
 namespace Bright
 {
-	const MyLib::PosGrid3 END = MyLib::PosGrid3(32, 100, 100);		// 終了色
-	const MyLib::PosGrid3 START = MyLib::PosGrid3(64, 20, 100);		// 開始色
+	const MyLib::PosGrid3 END = MyLib::PosGrid3(250, 100, 100);		// 終了色
+	const MyLib::PosGrid3 START = MyLib::PosGrid3(200, 20, 100);		// 開始色
 	const float END_TIME = 1.0f;									// 終了時間
 }
 
@@ -191,6 +191,24 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 	m_pBg->SetPosition(rPos);
 	m_pBar->SetPosition(rPos);
 	m_pFrame->SetPosition(rPos);
+}
+
+//============================================================
+//	テクスチャ座標の設定
+//============================================================
+void CGauge2D::SetTexUV(const std::vector<D3DXVECTOR2>& uv)
+{
+	if (m_pBg == nullptr ||
+		m_pBar == nullptr ||
+		m_pFrame == nullptr)
+	{// １つでもなかったら
+		MyAssert::CustomAssert(false, "Gauge2D: なんで無いん？");
+	}
+
+	// TODO: ずらせ
+	m_pBg->SetTexUV(uv);
+	m_pBar->SetTexUV(uv);
+	m_pFrame->SetTexUV(uv);
 }
 
 //============================================================
