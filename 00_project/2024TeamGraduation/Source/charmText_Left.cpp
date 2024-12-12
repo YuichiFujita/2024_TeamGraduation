@@ -8,6 +8,7 @@
 #include "player.h"
 #include "object2D.h"
 #include "charmManager.h"
+#include "thoughtBalloon.h"
 
 //==========================================================================
 // 定数定義
@@ -61,15 +62,23 @@ HRESULT CCharmText_Left::Init()
 	}
 
 	// テキストの位置
-	if (m_pText != nullptr)
+	if (m_pThoughtBalloon != nullptr)
 	{
-		m_pText->SetPosition(Position::START + MyLib::Vector3(m_pFace->GetSize().x, 0.0f, 0.0f));
-		m_pText->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
+		m_pThoughtBalloon->SetPosition(Position::START + MyLib::Vector3(m_pFace->GetSize().x, 0.0f, 0.0f));
+		m_pThoughtBalloon->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
 	}
 
 
 	// 自分のチェインインデックス
 	m_nMyChainIdx = 0;
+
+	const int nNumAll = m_List.GetNumAll();	// リスト内要素数
+	if (nNumAll > 0)
+	{// リスト内に要素がある場合
+
+		// 現在の最後尾テキストの文字送りを終了
+		m_List.GetData(nNumAll - 1)->SetEnableTextDisp(true);
+	}
 
 	// 既に存在しているものを上げる
 	CListManager<CCharmText_Left>::Iterator itr = m_List.GetEnd();
@@ -159,9 +168,9 @@ void CCharmText_Left::Update(const float fDeltaTime, const float fDeltaRate, con
 	pos.z += DISTANCE_XZ * m_nCntUp;
 	pos.y += DISTANCE_UP * m_nCntUp;
 
-	MyLib::Vector2 size = m_pText->GetSize() * 0.5f;
+	MyLib::Vector2 size = m_pThoughtBalloon->GetSize() * 0.5f;
 	m_pFace->SetPosition(pos + MyLib::Vector3(size.x, -size.y, -50.0f));
-	m_pText->SetPosition(pos);
+	m_pThoughtBalloon->SetPosition(pos);
 }
 
 //==========================================================================
@@ -178,7 +187,7 @@ void CCharmText_Left::StateFadeIn()
 
 	// 不透明度更新
 	m_pFace->SetAlpha(ratio);
-	m_pText->SetAlpha(ratio);
+	m_pThoughtBalloon->SetAlpha(ratio);
 
 	// フェードイン
 	CCharmText::StateFadeIn();
@@ -207,7 +216,7 @@ void CCharmText_Left::StateFadeOut()
 
 	// 不透明度更新
 	m_pFace->SetAlpha(1.0f - ratio);
-	m_pText->SetAlpha(1.0f - ratio);
+	m_pThoughtBalloon->SetAlpha(1.0f - ratio);
 
 	// フェードアウト
 	CCharmText::StateFadeOut();

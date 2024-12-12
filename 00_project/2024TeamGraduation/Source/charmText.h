@@ -14,10 +14,7 @@
 #include "object.h"
 #include "gameManager.h"
 #include "charmManager.h"
-
-//==========================================================================
-// 前方宣言
-//==========================================================================
+#include "thoughtBalloon.h"
 
 //==========================================================================
 // クラス定義
@@ -57,14 +54,15 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetCountUP(int nCnt)							{ m_nCntUp = nCnt; }			// 上昇カウント設定
-	void AddCountUP(int nCnt)							{ m_nCntUp += nCnt; }			// 上昇カウント加算
-	void SetEnablePossibleChain(bool bChain)			{ m_bPossibleChain = bChain; }	// チェイン可能フラグ設定
-	bool IsPossibleChain()								{ return m_bPossibleChain; }	// チェイン可能フラグ取得
-	void SetMyChainIdx(int idx)							{ m_nMyChainIdx = idx; }		// 自分のチェインインデックス
-	int GetMyChainIdx()									{ return m_nMyChainIdx; }		// 自分のチェインインデックス
-	void SetChainIdx(const std::vector<int>& vecIdx)	{ m_nVecChainIdx = vecIdx; }	// チェインしているインデックス番号設定
-	std::vector<int> GetChainIdx()						{ return m_nVecChainIdx; }		// チェインしているインデックス番号取得
+	void SetEnableTextDisp(bool bDisp)					{ m_pText->SetEnableTextDisp(bDisp); }	// テキスト表示設定
+	void SetCountUP(int nCnt)							{ m_nCntUp = nCnt; }					// 上昇カウント設定
+	void AddCountUP(int nCnt)							{ m_nCntUp += nCnt; }					// 上昇カウント加算
+	void SetEnablePossibleChain(bool bChain)			{ m_bPossibleChain = bChain; }			// チェイン可能フラグ設定
+	bool IsPossibleChain()								{ return m_bPossibleChain; }			// チェイン可能フラグ取得
+	void SetMyChainIdx(int idx)							{ m_nMyChainIdx = idx; }				// 自分のチェインインデックス
+	int GetMyChainIdx()									{ return m_nMyChainIdx; }				// 自分のチェインインデックス
+	void SetChainIdx(const std::vector<int>& vecIdx)	{ m_nVecChainIdx = vecIdx; }			// チェインしているインデックス番号設定
+	std::vector<int> GetChainIdx()						{ return m_nVecChainIdx; }				// チェインしているインデックス番号取得
 	void SetState(EState state);			// 状態設定
 	EState GetState() { return m_state; }	// 状態取得
 
@@ -120,8 +118,8 @@ protected:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObjectBillboard* m_pFace;		// 顔アイコン
-	CObjectBillboard* m_pText;		// 文字
+	CObjectBillboard* m_pFace;			// 顔アイコン
+	CThoughtBalloon* m_pThoughtBalloon;	// 実況吹き出し
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー
 	int m_nCntUp;			// 上昇カウント
