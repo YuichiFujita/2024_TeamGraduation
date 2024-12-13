@@ -39,6 +39,8 @@ namespace Assist
 {
 	const MyLib::PosGrid3 END = MyLib::PosGrid3(45, 80, 100);		// 終了色
 	const MyLib::PosGrid3 START = MyLib::PosGrid3(60, 20, 100);		// 開始色
+	const float END_ALPHA = 0.7f;									// 終了色(透明度)
+	const float START_ALPHA = 0.2f;									// 開始色(透明度)
 }
 
 //************************************************************
@@ -172,6 +174,7 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 
 		// 色設定
 		m_pBar->SetColor(m_pBar->GetOriginColor());
+		m_pAssist->SetAlpha(0.0f);
 	}
 }
 
@@ -200,11 +203,17 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 	// 引数の位置を設定
 	CObject::SetPosition(rPos);
 
+	MyLib::Vector3 posFrame = rPos;
+	posFrame.x *= FRAME_RAT;
+	
+	MyLib::Vector3 posAssist = rPos;
+	posAssist.y -= 50.0f;
+
 	// TODO: ずらせ
 	m_pBg->SetPosition(rPos);
 	m_pBar->SetPosition(rPos);
 	m_pFrame->SetPosition(rPos);
-	m_pAssist->SetPosition(rPos);
+	m_pAssist->SetPosition(posAssist);
 }
 
 //============================================================
@@ -320,34 +329,44 @@ void CGauge2D::BrightBar()
 	MyLib::Vector3 start = Bright::START;
 	MyLib::Vector3 easingBar = MyLib::Vector3();
 	MyLib::Vector3 easingAssist = MyLib::Vector3();
+	float fAlphaAssist = 0.0f;
 
 	if (m_fBrightTime >= m_fBrightTimeEnd * 0.5f)
 	{// 半分を超えたら
 
 		easingBar = UtilFunc::Correction::EasingLinear(end, start, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
 
-		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN ||
-			pPlayer->GetTeam() == m_team)
-		{// ボールを自陣内野が持っているとき
+		if (pPlayer != nullptr)
+		{
+			if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN &&
+				pPlayer->GetTeam() == m_team)
+			{// ボールを自陣内野が持っているとき
 
-			easingAssist = UtilFunc::Correction::EasingLinear(Assist::END, Assist::START, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+				easingAssist = UtilFunc::Correction::EasingLinear(Assist::END, Assist::START, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+				fAlphaAssist = UtilFunc::Correction::EasingLinear(Assist::END_ALPHA, Assist::START_ALPHA, m_fBrightTimeEnd * 0.5f, m_fBrightTimeEnd, m_fBrightTime);
+			}
 		}
 	}
 	else
 	{
 		easingBar = UtilFunc::Correction::EasingLinear(start, end, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
-	
-		if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN ||
-			pPlayer->GetTeam() == m_team)
-		{// ボールを自陣内野が持っているとき
 
-			easingAssist = UtilFunc::Correction::EasingLinear(Assist::START, Assist::END, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+		if (pPlayer != nullptr)
+		{
+			if (pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN &&
+				pPlayer->GetTeam() == m_team)
+			{// ボールを自陣内野が持っているとき
+
+				easingAssist = UtilFunc::Correction::EasingLinear(Assist::START, Assist::END, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+				fAlphaAssist = UtilFunc::Correction::EasingLinear(Assist::START_ALPHA, Assist::END_ALPHA, 0.0f, m_fBrightTimeEnd * 0.5f, m_fBrightTime);
+			}
 		}
 	}
 
 	// イージングした値をColor型に変換
 	MyLib::Color colBar = UtilFunc::Transformation::HSVtoRGB(easingBar.x, easingBar.y, easingBar.z);
 	MyLib::Color colAssist = UtilFunc::Transformation::HSVtoRGB(easingAssist.x, easingAssist.y, easingAssist.z);
+	colAssist.a = fAlphaAssist;
 
 	// 色設定
 	m_pBar->SetColor(colBar);
