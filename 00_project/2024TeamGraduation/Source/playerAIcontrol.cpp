@@ -134,6 +134,7 @@ CPlayerAIControl::MOVETYPE_FUNC CPlayerAIControl::m_MoveTypeFunc[] =	// 行動関数
 	&CPlayerAIControl::MoveTypeNone,			// なし
 	&CPlayerAIControl::MoveTypeDistance,		// 距離
 	&CPlayerAIControl::MoveTypeAtyakotya,		// あちゃこっちゃ
+	&CPlayerAIControl::MoveTypeLeftRight,		// 左右
 };
 
 
@@ -613,14 +614,15 @@ void CPlayerAIControl::UpdateMoveType(const float fDeltaTime, const float fDelta
 {
 	if (m_eMoveType == EMoveTypeChatch::MOVETYPE_NONE) return;
 
-	if (!m_sMove.bSet)
+
+	if (m_sMove.bSetMove && m_eMoveType != EMoveTypeChatch::MOVETYPE_DISTANCE)
 	{
-		// 行動タイプ更新
-		(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
+		// タイマーセット
+		SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// タイマーセット
-	SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
+	// 行動タイプ更新
+	(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //--------------------------------------------------------------------------
@@ -706,7 +708,7 @@ float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETea
 	{// 外野
 		if (pPlayer == GetBallOwner())
 		{
-			distance = m_sDistance.fInFriend;
+			distance = m_sDistance.fTarget;
 			return distance;
 		}
 
@@ -729,6 +731,8 @@ float CPlayerAIControl::GetDistance(CPlayer::EFieldArea area, CGameManager::ETea
 //--------------------------------------------------------------------------
 void CPlayerAIControl::MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (m_sMove.bSetMove) return;
+
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
 	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
@@ -748,7 +752,33 @@ void CPlayerAIControl::MoveTypeAtyakotya(const float fDeltaTime, const float fDe
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
 
 	// 設定しましたー！
-	m_sMove.bSet = true;
+	m_sMove.bSetMove = true;
+}
+
+//--------------------------------------------------------------------------
+// 行動：左右
+//--------------------------------------------------------------------------
+void CPlayerAIControl::MoveTypeLeftRight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// タイマーセット
+	SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
+
+	if (!m_sMove.bSetTimer)
+	{
+		// ランダム
+		m_sMove.nRand = UtilFunc::Transformation::Random(0, 2);
+	}
+
+	if (m_sMove.nRand == 0)
+	{
+		// 移動：左
+		MoveLeft();
+	}
+	else
+	{
+		// 移動右
+		MoveRight();
+	}
 }
 
 //================================================================================
@@ -1145,6 +1175,13 @@ void CPlayerAIControl::UpdateCatch(const float fDeltaTime, const float fDeltaRat
 			// キャッチ：通常
 			m_eCatchType = ECatchType::CATCH_TYPE_NORMAL;
 		}
+		else if (pBall->GetTarget() == m_pAI &&
+				stateBall == CBall::EState::STATE_HOM_NOR ||
+				stateBall == CBall::EState::STATE_HOM_JUMP)
+		{// ターゲットが自分&&ボールが投げ状態
+
+			m_eCatchType = CATCH_TYPE_JUST;
+		}
 		else 
 		{
 			// キャッチ：取りに行く
@@ -1177,7 +1214,7 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 	}
 	else
 	{
-		m_eMoveType = EMoveTypeChatch::MOVETYPE_RANDOM;
+		m_eMoveType = EMoveTypeChatch::MOVETYPE_LEFTRIGHT;
 	}
 
 	// 行動タイプの更新
@@ -1189,7 +1226,7 @@ void CPlayerAIControl::CatchNormal(const float fDeltaTime, const float fDeltaRat
 //--------------------------------------------------------------------------
 void CPlayerAIControl::CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
 }
 
 //--------------------------------------------------------------------------
@@ -1713,13 +1750,13 @@ void CPlayerAIControl::InitHeart()
 		break;
 
 	case EHeartMain::HEART_MAIN_STRONG:	// 強気
-		m_sDistance.fInFriend	= LENGTH_FRIEND - 250.0f;
+		m_sDistance.fInFriend	= LENGTH_FRIEND;
 		m_sDistance.fOut		= LENGTH_OUT - 50.0f;
 		m_sDistance.fTarget		= LENGTH_TARGET - 100.0f;
 		break;
 
 	case EHeartMain::HEART_MAIN_TIMID:	// 弱気
-		m_sDistance.fInFriend	= LENGTH_FRIEND + 150.0f;
+		m_sDistance.fInFriend	= LENGTH_FRIEND;
 		m_sDistance.fOut		= LENGTH_OUT + 100.0f;
 		m_sDistance.fTarget		= LENGTH_TARGET + 150.0f;
 		break;
@@ -1748,39 +1785,30 @@ void CPlayerAIControl::UpdateParameter()
 	// スペシャル
 
 
-	// 体力によって変えたり
-	// 心によって変えたり
+	//// 体力の取得
+	//int nLifeMax = m_pAI->GetLifeOrigin() * 10;
+	//int nLife = m_pAI->GetLife() * 10;
 
-	// 体力の取得
-	//int nLifeMax = m_pAI->GetLifeOrigin();
-	//int nLife = m_pAI->GetLife();
+	//// 割合を求める
+	//float rate = 0.0f;
+	//rate = (float)nLife / (float)nLifeMax;
 
-	//float n = (float)nLifeMax / (float)nLife;
+	// 値の設定
+	float value = 0.0f;
 
-	// 残り体力で心持を決める
-	//if ((nLifeMax / nLife) > 8)
-	//{
-	//	//m_eHeartMain = EHeartMain::HEART_NORMAL;
-	//}
-
+	// ターゲットとの距離
 	switch (m_sParameter.eHeartMain)
 	{
 	case EHeartMain::HEART_MAIN_NORMAL:
-		m_sDistance.fInFriend;
-		m_sDistance.fOut;
-		m_sDistance.fTarget;
+		m_sDistance.fTarget = m_sDistance.fTarget + (value);
 		break;
 
 	case EHeartMain::HEART_MAIN_STRONG:
-		m_sDistance.fInFriend;
-		m_sDistance.fOut;
-		m_sDistance.fTarget;
+		m_sDistance.fTarget = m_sDistance.fTarget + (value );
 		break;
 
 	case EHeartMain::HEART_MAIN_TIMID:
-		m_sDistance.fInFriend;
-		m_sDistance.fOut;
-		m_sDistance.fTarget;
+		m_sDistance.fTarget = m_sDistance.fTarget + (value );
 		break;
 
 	default:
@@ -1796,7 +1824,7 @@ void CPlayerAIControl::UpdateParameter()
 void CPlayerAIControl::SetMoveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 角度の設定
-	if (m_sMove.bSet)
+	if (m_sMove.bSetMove)
 	{
 		// タイマーのカウントダウン
 		m_sMove.fTimer -= fDeltaTime * fDeltaRate * fSlowRate;
@@ -1819,25 +1847,10 @@ void CPlayerAIControl::SetMoveTimer(const float fDeltaTime, const float fDeltaRa
 		// 行動時間の設定
 		float fRand = (float)UtilFunc::Transformation::Random(MOVETYPE_LEFTRIGHT_TIME_MIN, MOVETYPE_LEFTRIGHT_TIME_MAX);
 		m_sMove.fTimer = fRand * 0.1f;
+
+		// 時間設定完了
+		m_sMove.bSetTimer = true;
 	}
-}
-
-//==========================================================================
-// 左右
-//==========================================================================
-void CPlayerAIControl::MoveLeftRigft(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	// 位置取得
-	MyLib::Vector3 posMy = m_pAI->GetPosition();
-
-
-	SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 移動：左
-	MoveLeft();
-
-	// 移動右
-	MoveRight();
 }
 
 //--------------------------------------------------------------------------

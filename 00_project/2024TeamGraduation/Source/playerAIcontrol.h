@@ -95,6 +95,7 @@ public:
 		MOVETYPE_NONE = 0,		// なし
 		MOVETYPE_DISTANCE,		// 距離を取る
 		MOVETYPE_RANDOM,		// ランダム
+		MOVETYPE_LEFTRIGHT,		// 左右
 		MOVETYPE_MAX
 	};
 
@@ -154,8 +155,10 @@ private:
 
 	struct SMove {
 		float fTimer;			// 行動タイマー
+		int nRand;				// 
 		bool bReturn;			// 切り替えし
-		bool bSet;				// 設定完了いてるか
+		bool bSetTimer;			// 時間設定ON/OFF
+		bool bSetMove;			// 設定完了いてるか
 	};
 
 	struct SDistance {			// 距離
@@ -271,6 +274,7 @@ private:
 	void MoveTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};	// なし
 	void MoveTypeDistance(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離を取る
 	void MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// あっちゃこっちゃ
+	void MoveTypeLeftRight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 左右
 
 	// アクション
 	void ActionNone();			// なし

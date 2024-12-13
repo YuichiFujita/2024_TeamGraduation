@@ -48,12 +48,19 @@ namespace
 		const float INIT_VIEWANGLE	= D3DXToRadian(45.0f);	// 視野角の初期値
 	}
 
+	namespace game
+	{
+		const float TIME = 1.4f;		// ゲームカメラ状態遷移の時間
+		const float MIN_TIME = 0.5f;	// ゲームカメラ状態遷移の最小時間
+	}
+
 	namespace follow
 	{
 		const MyLib::Vector3 INIT_ROT	= MyLib::Vector3(0.0f, 0.0f, -0.32f);	// 向きの初期値
 		const float INIT_VIEWANGLE		= D3DXToRadian(30.0f);	// 視野角の初期値
 		const float DEST_POSR_BOXSIZE	= 50.0f;	// 目標注視点を動かさない範囲
 
+		const float REV_SIDE		= 0.35f;		// 最大左右座標の補正係数
 		const float REV_POSR		= 0.05f;		// 注視点の補正係数
 		const float REV_VIEWANGLE	= 0.1f;			// 視野角の補正係数
 		const float MAX_DIS	= 2500.0f - MIN_DIS;	// 追従カメラの最大距離
@@ -64,8 +71,13 @@ namespace
 		const float POSRZ_END	= -100.0f;	// カメラZ注視点の終了座標
 	}
 
-	const float TIME = 1.4f;		// TODO
-	const float MIN_TIME = 0.5f;	// TODO
+	namespace out
+	{
+		const MyLib::Vector3 ROT = follow::INIT_ROT;	// カメラの向き
+		const float POSRY = follow::POSRY_END;			// カメラY注視点の座標
+		const float POSRZ = follow::POSRZ_END - 160.0f;	// カメラZ注視点の座標
+		const float DIS = follow::MAX_DIS + 160.0f;		// カメラの距離
+	}
 }
 
 //==========================================================================
@@ -287,26 +299,13 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		"【距離】[%f]\n"
 		"【視点】[X：%f Y：%f Z：%f]\n"
 		"【注視点】[X：%f Y：%f Z：%f]\n"
-		"【交差点】[X：%f Y：%f Z：%f]\n"
-		"【経過時間】[%f]\n"
-		"【終了時間】[%f]\n"
-		"【 フラグ 】[%s]\n",
+		"【交差点】[X：%f Y：%f Z：%f]\n",
 		m_rot.x, m_rot.y, m_rot.z,
 		m_fDistance,
 		m_posV.x, m_posV.y, m_posV.z,
 		m_posR.x, m_posR.y, m_posR.z,
-		posScreen.x, posScreen.y, posScreen.z,
-		m_fTransTime,
-		m_fEndTime,
-		b ? "TRUE" : "FALSE"
+		posScreen.x, posScreen.y, posScreen.z
 	);
-
-	// TODO
-#if 0
-	SCameraPoint transDestStart = CameraPoint(STATE::STATE_FOLLOW);
-	CEffect3D::Create(transDestStart.posR, VEC3_ZERO, MyLib::color::Red(), 20.0f, 2.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
-	CEffect3D::Create(m_posR, VEC3_ZERO, MyLib::color::Blue(), 40.0f, 2.1f, 1, CEffect3D::TYPE::TYPE_NORMAL);
-#endif
 #endif
 }
 
@@ -483,7 +482,7 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 		m_fTransTime = 0.0f;
 
 		// 遷移の終了時間を保存
-		m_fEndTime = TIME;
+		m_fEndTime = game::TIME;
 
 		b = false;
 	}
@@ -525,7 +524,7 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 
 				// 
 				m_fEndTime = m_fTransTime;
-				UtilFunc::Transformation::ValueNormalize(m_fEndTime, TIME, MIN_TIME);
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::TIME, game::MIN_TIME);
 				m_fTransTime = 0.0f;
 				b = true;
 			}
@@ -614,7 +613,7 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 		m_fTransTime = 0.0f;
 
 		// 遷移の終了時間を保存
-		m_fEndTime = TIME;
+		m_fEndTime = game::TIME;
 
 		b = false;
 	}
@@ -656,7 +655,7 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 
 				// 
 				m_fEndTime = m_fTransTime;
-				UtilFunc::Transformation::ValueNormalize(m_fEndTime, TIME, MIN_TIME);
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::TIME, game::MIN_TIME);
 				m_fTransTime = 0.0f;
 				b = true;
 			}
@@ -765,13 +764,13 @@ void CCamera::ResetOutFieldState()
 	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
 
 	// 注視点を設定
-	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数化
+	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, out::POSRY, out::POSRZ);
 
 	// 距離を設定
-	m_fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数化
+	m_fDistance = m_fDestDistance = out::DIS;
 
 	// 向きを設定
-	m_rot = m_rotDest = follow::INIT_ROT;
+	m_rot = m_rotDest = out::ROT;
 
 	// 目標視野角を設定
 	if (m_bMotion)	{ m_fDestViewAngle = none::INIT_VIEWANGLE; }
@@ -793,14 +792,12 @@ void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const
 	m_sideDest = GetPlayerMaxSide();
 
 	// 慣性補正
-	UtilFunc::Correction::InertiaCorrection(m_side.l, m_sideDest.l, 0.35f);	// TODO：定数化
-	UtilFunc::Correction::InertiaCorrection(m_side.r, m_sideDest.r, 0.35f);
+	UtilFunc::Correction::InertiaCorrection(m_side.l, m_sideDest.l, follow::REV_SIDE);
+	UtilFunc::Correction::InertiaCorrection(m_side.r, m_sideDest.r, follow::REV_SIDE);
 
 	// 左右間の距離割合を計算
 	const float fDisRate = CalcDistanceRate(m_side);
 
-	// TODO
-#if 1
 	// 目標注視点を計算
 	MyLib::Vector3 posCurDest = CalcFollowPositionR(m_side, fDisRate);
 
@@ -837,9 +834,6 @@ void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const
 	// 現在注視点のY/Z座標は目標座標にし続ける
 	m_posR.y = m_posRDest.y = posCurDest.y;
 	m_posR.z = m_posRDest.z = posCurDest.z;
-#else
-	m_posRDest = CalcFollowPositionR(m_side, fDisRate);
-#endif
 
 	// 距離を計算
 	m_fDistance = m_fDestDistance = CalcFollowDistance(fDisRate);
@@ -864,13 +858,13 @@ void CCamera::UpdateFollow(const float fDeltaTime, const float fDeltaRate, const
 void CCamera::UpdateOutField(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 注視点を設定
-	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数化
+	m_posR = m_posRDest = MyLib::Vector3(CGameManager::CENTER_LINE, out::POSRY, out::POSRZ);
 
 	// 距離を設定
-	m_fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数化
+	m_fDistance = m_fDestDistance = out::DIS;
 
 	// 向きを設定
-	m_rot = m_rotDest = follow::INIT_ROT;
+	m_rot = m_rotDest = out::ROT;
 
 	// 目標視野角を設定
 	if (m_bMotion)	{ m_fDestViewAngle = none::INIT_VIEWANGLE; }
@@ -1220,7 +1214,6 @@ CCamera::SCameraPoint CCamera::FollowPoint()
 {
 	SCameraPoint data;	// カメラ情報
 
-#if 1
 	// プレイヤー左右最大位置を計算
 	const SSide posSide = GetPlayerMaxSide();
 
@@ -1232,54 +1225,6 @@ CCamera::SCameraPoint CCamera::FollowPoint()
 
 	// 距離を計算
 	data.fDistance = CalcFollowDistance(fDisRate);
-#else
-	// プレイヤー左右最大位置を計算
-	SSide sideDest = GetPlayerMaxSide();
-	SSide side = m_side;
-
-	// 慣性補正
-	UtilFunc::Correction::InertiaCorrection(side.l, sideDest.l, 0.35f);	// TODO：定数化
-	UtilFunc::Correction::InertiaCorrection(side.r, sideDest.r, 0.35f);
-
-	// 左右間の距離割合を計算
-	const float fDisRate = CalcDistanceRate(side);
-
-	// 目標注視点を計算
-	MyLib::Vector3 posCurDestR = CalcFollowPositionR(side, fDisRate);
-
-	// 目標注視点を補正
-	MyLib::Vector3 posDestR = m_posRDest;
-	data.posR = m_posR;
-	if (posDestR.x + follow::DEST_POSR_BOXSIZE < posCurDestR.x)
-	{ // 目標注視点を動かさない範囲より右側の場合
-
-		// 注視点を右端に補正
-		posDestR.x = posCurDestR.x - follow::DEST_POSR_BOXSIZE;
-	}
-	else if (posDestR.x - follow::DEST_POSR_BOXSIZE > posCurDestR.x)
-	{ // 目標注視点を動かさない範囲より左側の場合
-
-		// 注視点を左端に補正
-		posDestR.x = posCurDestR.x + follow::DEST_POSR_BOXSIZE;
-	}
-
-	// X注視点の範囲補正
-	RevFollowPositionR(&posDestR.x, fDisRate);
-
-	// 現在注視点を慣性補正
-	UtilFunc::Correction::InertiaCorrection(data.posR, posDestR, follow::REV_POSR);
-
-	// 現在注視点のY/Z座標は目標座標にし続ける
-	data.posR.y = posDestR.y = posCurDestR.y;
-	data.posR.z = posDestR.z = posCurDestR.z;
-
-	// 距離を計算
-	float fDestDistance = CalcFollowDistance(fDisRate);
-	data.fDistance = m_fDistance;
-
-	// 距離を慣性補正
-	UtilFunc::Correction::InertiaCorrection(data.fDistance, fDestDistance, follow::REV_DIS);
-#endif
 
 	// 向きを設定
 	data.rot = follow::INIT_ROT;
@@ -1299,13 +1244,13 @@ CCamera::SCameraPoint CCamera::OutFieldPoint()
 	SCameraPoint data;	// カメラ情報
 
 	// 注視点を計算
-	data.posR = MyLib::Vector3(CGameManager::CENTER_LINE, follow::POSRY_END, follow::POSRZ_END - 160.0f);	// TODO：定数
+	data.posR = MyLib::Vector3(CGameManager::CENTER_LINE, out::POSRY, out::POSRZ);
 
 	// 距離を計算
-	data.fDistance = m_fDestDistance = follow::MAX_DIS + 160.0f;	// TODO：定数
+	data.fDistance = m_fDestDistance = out::DIS;
 
 	// 向きを設定
-	data.rot = follow::INIT_ROT;
+	data.rot = out::ROT;
 
 	// 球面座標変換による目標視点の相対位置取得
 	data.posV = CalcSpherePosition(data.posR, data.rot, -data.fDistance);
