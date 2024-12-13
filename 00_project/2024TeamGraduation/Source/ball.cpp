@@ -389,7 +389,6 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		(m_pCover  == nullptr) ? "nullptr" : "player"
 	);
 
-
 #if _DEBUG
 	// デバッグ出力
 	if (ImGui::TreeNode("Ball Info"))
@@ -414,7 +413,6 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 		ImGui::TreePop();
 	}
-
 #endif
 }
 

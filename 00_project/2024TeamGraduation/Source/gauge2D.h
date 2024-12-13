@@ -1,7 +1,7 @@
 //============================================================
 //
 //	ゲージ2Dヘッダー [gauge2D.h]
-//	Author：藤田勇一
+//	Author：Kai Takada
 //
 //============================================================
 //************************************************************
@@ -14,6 +14,7 @@
 //	インクルードファイル
 //************************************************************
 #include "object2D.h"
+#include "gamemanager.h"
 
 //************************************************************
 //　前方宣言
@@ -32,17 +33,6 @@ public:
 		STATE_NONE = 0,	// 通常状態
 		STATE_CHANGE,	// ゲージ変動状態
 		STATE_MAX		// この列挙型の総数
-	};
-
-	// HSV値
-	struct SHSV
-	{
-		int h;	// 色相 (Hue)
-		int s;	// 彩度 (Saturation, Chroma)
-		int v;	// 明度 (Value, Brightness)
-	
-		SHSV() : h(0), s(0), v(0) {}
-		SHSV(int _h, int _s, int _v) : h(_h), s(_s), v(_v) {}
 	};
 
 	// コンストラクタ
@@ -86,6 +76,7 @@ public:
 
 	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
 	void SetSize(const MyLib::Vector2& rSize);				// 全ての大きさ設定
+	void SetTexUV(const std::vector<D3DXVECTOR2>& uv);		// テクスチャ座標の設定
 
 	void SetAnchorType(const CObject2D::AnchorPoint& type);	// アンカーポイント設定
 	void SetSizeGaugeRadius(const float fRadius);			// 割合からゲージ大きさ設定
@@ -95,6 +86,15 @@ public:
 	void SetColorFront(const D3DXCOLOR& rCol);				// ゲージ色設定
 	void SetColorBack(const D3DXCOLOR& rCol);				// 背景ゲージ色設定
 	void SetEnableDrawFrame(const bool bDraw);				// 枠表示状況設定
+	
+	void SetTeam(CGameManager::ETeamSide team) { m_team = team; }				// チーム設定
+	CGameManager::ETeamSide	GetTeam() { return m_team; }						// チーム取得
+
+	// 静的関数
+	static void		SetBrightTime(float time) { m_fBrightTime = time; }			// maxの時光るカウンター設定
+	static float	GetBrightTime() { return m_fBrightTime; }					// maxの時光るカウンター取得
+	static void		SetBrightTimeEnd(float time) { m_fBrightTimeEnd = time; }	// maxの時光る終了タイミング設定
+	static float	GetBrightTimeEnd() { return m_fBrightTimeEnd; }				// maxの時光る終了タイミング取得
 
 private:
 
@@ -106,8 +106,9 @@ private:
 	CObject2D* m_pBg;					// 背景
 	CObject2D* m_pBar;					// ゲージ
 	CObject2D* m_pFrame;				// フレーム
+	CObject2D* m_pAssist;				// ボタンアシスト
 
-	float	m_fBrightTime;				// maxの時光るカウンター
+	CGameManager::ETeamSide	m_team;		// チーム
 	EState	m_state;					// 状態
 	bool	m_bDrawFrame;				// 枠表示状況
 	float	m_fChange;					// ゲージ変動量
@@ -116,6 +117,8 @@ private:
 	float	m_fNumGauge;				// 目標値
 	float	m_fMaxNumGauge;				// 表示値の最大値
 	const float m_fFrame;				// 表示値の変動フレーム定数
+	static float	m_fBrightTime;		// maxの時光るカウンター
+	static float	m_fBrightTimeEnd;	// maxの時光るカウンター
 };
 
 #endif	// _GAUGE2D_H_

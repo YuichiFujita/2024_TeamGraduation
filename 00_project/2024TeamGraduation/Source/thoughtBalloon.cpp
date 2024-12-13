@@ -6,6 +6,7 @@
 //=============================================================================
 #include "thoughtBalloon.h"
 #include "renderTexture.h"
+#include "balloonFrame.h"
 
 //==========================================================================
 // 定数定義
@@ -29,7 +30,9 @@ namespace
 // コンストラクタ
 //==========================================================================
 CThoughtBalloon::CThoughtBalloon(int nPriority) : CObjectBillboard(nPriority),
-	m_pRenderScene	(nullptr)	// シーンレンダーテクスチャ
+	m_pRenderScene	(nullptr),	// シーンレンダーテクスチャ
+	m_pText			(nullptr),	// テキスト情報
+	m_pFrame		(nullptr)	// フレーム
 {
 
 }
@@ -90,6 +93,10 @@ HRESULT CThoughtBalloon::Init()
 		return E_FAIL;
 	}
 
+	// 枠
+	m_pFrame = CBalloonFrame::Create(MyLib::Vector2(120.0f, 40.0f));
+	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
+
 	// テクスチャインデックスの設定
 	BindTexture(m_pRenderScene->GetTextureIndex());
 
@@ -110,6 +117,9 @@ void CThoughtBalloon::Uninit()
 	// テキストの終了
 	SAFE_UNINIT(m_pText);
 
+	// 枠の終了
+	SAFE_UNINIT(m_pFrame);
+
 	// オブジェクトビルボードの終了
 	CObjectBillboard::Uninit();
 }
@@ -121,6 +131,9 @@ void CThoughtBalloon::Kill()
 {
 	// テキストの削除
 	SAFE_KILL(m_pText);
+
+	// 枠の削除
+	SAFE_KILL(m_pFrame);
 
 	// 自身の終了
 	CThoughtBalloon::Uninit();
@@ -212,6 +225,10 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 //==========================================================================
 void CThoughtBalloon::CreateTexture()
 {
+	// 枠の描画
+	assert(m_pFrame != nullptr);
+	m_pFrame->Draw();
+
 	// テキストの描画
 	assert(m_pText != nullptr);
 	m_pText->Draw();
