@@ -256,17 +256,5 @@ void CTeamStatus::SubSpecialValue(float fValue)
 //==========================================================================
 void CTeamStatus::Debug()
 {
-	if (ImGui::TreeNode("TeamStatus"))
-	{
-		if (m_sSpecialInfo.pGauge != nullptr)
-		{// ƒQ[ƒW‚ÌmaxŽžŠÔ
 
-			D3DXCOLOR col = m_sSpecialInfo.pGauge->GetBar()->GetColor();
-
-			ImGui::Text("BrightTime: [%.2f]", m_sSpecialInfo.pGauge->GetBrightTime());
-			ImGui::Text("BrightTime: [r: %.2f] [g: %.2f] [b: %.2f] [a: %.2f]", col.r, col.g, col.b, col.a);
-		}
-
-		ImGui::TreePop();
-	}
 }

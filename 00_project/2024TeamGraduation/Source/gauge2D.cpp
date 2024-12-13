@@ -102,6 +102,13 @@ HRESULT CGauge2D::Init()
 	m_pFrame = CObject2D::Create(PRIORITY);					// フレーム
 	m_pAssist = CObject2D::Create(PRIORITY);				// ボタンアシスト
 
+	// 世界停止中でも動く！
+	SetEnablePosibleMove_WorldPause(true);
+	m_pBg->SetEnablePosibleMove_WorldPause(true);
+	m_pBar->SetEnablePosibleMove_WorldPause(true);
+	m_pFrame->SetEnablePosibleMove_WorldPause(true);
+	m_pAssist->SetEnablePosibleMove_WorldPause(true);
+
 	SetType(CObject::TYPE::TYPE_UI);
 	
 	return S_OK;
@@ -138,6 +145,8 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 {
 	if (m_pBar == nullptr) return;
 	MyLib::Vector2 size = m_pBar->GetSize();
+
+	ImGui::Text("GaugeUpdate");
 
 	// ゲージの設定
 	if (m_state == STATE_CHANGE)
