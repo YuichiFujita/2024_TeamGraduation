@@ -1093,15 +1093,16 @@ void CGameManager::Debug()
 
 			ImGui::DragFloat("GaugeValue", (float*)&fValue, 1.0f, 0.0f, m_pTeamStatus[i]->GetSpecialInfo().fValueMax, "%.2f");
 
+			m_pTeamStatus[i]->SetSpecialValue(fValue);
+
 			// ˆÊ’uÝ’è
 			ImGui::TreePop();
-
-			m_pTeamStatus[i]->SetSpecialValue(fValue);
 		}
 
 		if (m_pTeamStatus[i] != nullptr)
 		{
 			m_pTeamStatus[i]->Debug();
+			m_pTeamStatus[i]->GetSpecialInfo().pGauge->Debug();
 		}
 	}
 
