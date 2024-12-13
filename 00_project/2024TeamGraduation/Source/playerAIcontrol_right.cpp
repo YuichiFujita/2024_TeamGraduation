@@ -184,6 +184,11 @@ void CPlayerAIControlRight::ForciblyReturn()
 	}
 }
 
+void CPlayerAIControlRight::MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
 //==========================================================================
 // プレイヤーは線を超えていますか？
 //==========================================================================
