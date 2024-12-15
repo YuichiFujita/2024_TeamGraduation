@@ -35,6 +35,7 @@
 #include "gymWallManager.h"
 #include "charmText.h"
 #include "objectBillboard.h"
+#include "balloonFrame.h"
 
 namespace
 {

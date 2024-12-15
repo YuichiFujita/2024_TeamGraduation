@@ -125,6 +125,7 @@ protected:
 	int m_nCntUp;			// 上昇カウント
 	bool m_bPossibleChain;	// チェイン可能フラグ
 	int m_nMyChainIdx;		// 自分のチェインインデックス
+	CGameManager::ETeamSide m_TeamSide;		// チームサイド
 	std::vector<int> m_nVecChainIdx;	// チェインしているインデックス番号
 };
 

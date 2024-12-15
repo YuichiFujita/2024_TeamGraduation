@@ -82,6 +82,9 @@ CCharmText* CCharmText::Create(CGameManager::ETeamSide side)
 
 	if (pMarker != nullptr)
 	{
+		// 引数情報設定
+		pMarker->m_TeamSide = side;	// チームサイド
+
 		// クラスの初期化
 		if (FAILED(pMarker->Init()))
 		{ // 初期化に失敗した場合
@@ -150,7 +153,7 @@ HRESULT CCharmText::CreateFace()
 HRESULT CCharmText::CreateText()
 {
 	// 生成処理
-	m_pThoughtBalloon = CThoughtBalloon::Create();
+	m_pThoughtBalloon = CThoughtBalloon::Create(m_TeamSide);
 	if (m_pThoughtBalloon == nullptr) return E_FAIL;
 
 	// 左端をアンカーポイントにする
