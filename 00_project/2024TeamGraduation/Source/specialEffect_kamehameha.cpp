@@ -141,9 +141,12 @@ void CSpecialEffect_Kamehame::UpdateWind(const float fDeltaTime, const float fDe
 void CSpecialEffect_Kamehame::Trigger_Brust(CMotion::AttackInfo ATKInfo)
 {
 	// ‚©‚ß‚Í‚ß”g‚ÌƒGƒlƒ‹ƒM[•”•ªíœ
-	m_pEnergy->SetTrigger(0);
-	m_pEnergy->Uninit();
-	m_pEnergy = nullptr;
+	if (m_pEnergy != nullptr)
+	{
+		m_pEnergy->SetTrigger(0);
+		m_pEnergy->Uninit();
+		m_pEnergy = nullptr;
+	}
 
 	// TODO : ”­ŽË
 	CPlayer* pPlayer = GetPlayer();

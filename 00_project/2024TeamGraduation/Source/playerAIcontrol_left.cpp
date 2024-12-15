@@ -193,6 +193,14 @@ void CPlayerAIControlLeft::ForciblyReturn()
 }
 
 //==========================================================================
+// 行動：狂う
+//==========================================================================
+void CPlayerAIControlLeft::MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
 // プレイヤーは線を超えていますか？
 //==========================================================================
 bool CPlayerAIControlLeft::IsLineOverPlayer()

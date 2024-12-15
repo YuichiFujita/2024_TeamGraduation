@@ -169,6 +169,28 @@ CPlayer::STATE_FUNC CPlayer::m_StateFunc[] =	// 状態関数
 };
 
 //==========================================================================
+// 関数ポインタ
+//==========================================================================
+CPlayer::STATE_END_FUNC CPlayer::m_StateEndFunc[] =	// 状態終了関数
+{
+	nullptr,							// なし
+	&CPlayer::StateEndInvincible,		// 無敵
+	&CPlayer::StateEndDamage,			// ダメージ
+	&CPlayer::StateEndDead,				// 死亡
+	&CPlayer::StateEndDeadAfter,		// 死亡後
+	nullptr,							// 死後運搬
+	nullptr,							// 回避
+	nullptr,							// 通常キャッチ
+	nullptr,							// ジャストキャッチ
+	nullptr,							// スペシャルキャッチ
+	nullptr,							// スペシャル
+	nullptr,							// コート越え
+	nullptr,							// コートに戻る
+	nullptr,							// 相手コートに侵入トス
+	&CPlayer::StateEndInvade_Return,	// 相手コート侵入から戻る
+};
+
+//==========================================================================
 // 静的メンバ変数
 //==========================================================================
 CListManager<CPlayer> CPlayer::m_List = {};	// リスト
@@ -2144,6 +2166,62 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 }
 
 //==========================================================================
+// [終了] 無敵状態
+//==========================================================================
+void CPlayer::StateEndInvincible()
+{
+	m_mMatcol.a = 1.0f;
+	m_sDamageInfo.fReceiveTime = 0.0f;
+	m_sDamageInfo.bReceived = true;
+}
+
+//==========================================================================
+// [終了] ダメージ状態
+//==========================================================================
+void CPlayer::StateEndDamage()
+{
+	CMotion* pMotion = GetMotion();
+
+	// 移動可能
+	SetEnableMove(true);
+	pMotion->ToggleFinish(true);
+}
+
+//==========================================================================
+// [終了] 死亡状態
+//==========================================================================
+void CPlayer::StateEndDead()
+{
+	// 死亡状態をキャンセル不能にする
+	SetEnableMove(false);
+
+	SetMotion(MOTION_DEAD_AFTER);
+}
+
+//==========================================================================
+// [終了] 死亡後状態
+//==========================================================================
+void CPlayer::StateEndDeadAfter()
+{
+	// 死亡状態をキャンセル不能にする
+	SetEnableMove(false);
+
+	// 担架生成
+	CStretcher::Create(this);
+}
+
+//==========================================================================
+// [終了] 相手コート侵入から戻る
+//==========================================================================
+void CPlayer::StateEndInvade_Return()
+{
+	// フラグ解除解除
+	m_bAutoMotionSet = true;
+	m_bPossibleMove = true;
+	m_bPossibleAction = true;
+}
+
+//==========================================================================
 // プレイヤー位置補正の変更
 //==========================================================================
 void CPlayer::ChangePosAdjuster(EBaseType base, CGameManager::ETeamSide team, EFieldArea area)
@@ -2229,6 +2307,12 @@ void CPlayer::Draw()
 //==========================================================================
 void CPlayer::SetState(EState state)
 {
+	// 状態更新
+	if (m_StateEndFunc[m_state] != nullptr)
+	{
+		(this->*(m_StateEndFunc[m_state]))();
+	}
+
 	m_state = state;
 	m_fStateTime = 0.0f;
 }
@@ -2524,7 +2608,8 @@ void CPlayer::Debug()
 		ImGui::Text("bDash : [%d]", m_bDash);
 		ImGui::Text("bBrake : [%d]", m_bBrake);
 		ImGui::Text("EscapeTime : [%.2f]", m_fEscapeTime);
-		
+		ImGui::Text("bDead : [%s]", (m_sMotionFrag.bDead ? "true" : "false"));
+
 		ImGui::Text("typeBase : [%s]", magic_enum::enum_name(GetBaseType()));
 		ImGui::Text("typeTeam : [%s]", magic_enum::enum_name(m_typeTeam));
 		ImGui::Text("typeArea : [%s]", magic_enum::enum_name(m_typeArea));

@@ -14,6 +14,7 @@
 //	インクルードファイル
 //************************************************************
 #include "object2D.h"
+#include "gamemanager.h"
 
 //************************************************************
 //　前方宣言
@@ -75,6 +76,7 @@ public:
 
 	void SetPosition(const MyLib::Vector3& rPos) override;	// 位置設定
 	void SetSize(const MyLib::Vector2& rSize);				// 全ての大きさ設定
+	void SetTexUV(const std::vector<D3DXVECTOR2>& uv);		// テクスチャ座標の設定
 
 	void SetAnchorType(const CObject2D::AnchorPoint& type);	// アンカーポイント設定
 	void SetSizeGaugeRadius(const float fRadius);			// 割合からゲージ大きさ設定
@@ -84,6 +86,11 @@ public:
 	void SetColorFront(const D3DXCOLOR& rCol);				// ゲージ色設定
 	void SetColorBack(const D3DXCOLOR& rCol);				// 背景ゲージ色設定
 	void SetEnableDrawFrame(const bool bDraw);				// 枠表示状況設定
+	
+	void SetTeam(CGameManager::ETeamSide team) { m_team = team; }				// チーム設定
+	CGameManager::ETeamSide	GetTeam() { return m_team; }						// チーム取得
+	
+	void Debug();	// デバッグ
 
 	// 静的関数
 	static void		SetBrightTime(float time) { m_fBrightTime = time; }			// maxの時光るカウンター設定
@@ -95,13 +102,16 @@ private:
 
 	// メンバ関数
 	void InitSize();					// 初期サイズ設定
+	void InitPosition();				// 初期位置設定
 	void BrightBar();					// ゲージ発光
 
 	// メンバ変数
 	CObject2D* m_pBg;					// 背景
 	CObject2D* m_pBar;					// ゲージ
 	CObject2D* m_pFrame;				// フレーム
+	CObject2D* m_pAssist;				// ボタンアシスト
 
+	CGameManager::ETeamSide	m_team;		// チーム
 	EState	m_state;					// 状態
 	bool	m_bDrawFrame;				// 枠表示状況
 	float	m_fChange;					// ゲージ変動量
@@ -112,6 +122,9 @@ private:
 	const float m_fFrame;				// 表示値の変動フレーム定数
 	static float	m_fBrightTime;		// maxの時光るカウンター
 	static float	m_fBrightTimeEnd;	// maxの時光るカウンター
+
+	// デバッグ
+	float	m_fSizeFrame;	// 枠大きさ倍率
 };
 
 #endif	// _GAUGE2D_H_

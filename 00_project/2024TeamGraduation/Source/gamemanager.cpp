@@ -301,6 +301,9 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 		m_pCharmManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
+	// ゲージ時間更新
+	UpdateGaugeTime();
+
 #if _DEBUG	// デバッグ処理
 
 	if (ImGui::TreeNode("GameManager"))
@@ -584,16 +587,6 @@ void CGameManager::UpdateTeamStatus()
 {
 	bool bAllDead[ETeamSide::SIDE_MAX] = { false, false };	// 敗北フラグ
 
-	// スペシャルゲージの時間更新
-	float fBrightTime = CGauge2D::GetBrightTime();
-	fBrightTime += GET_MANAGER->GetDeltaTime() * GET_MANAGER->GetSlowRate();
-
-	if (fBrightTime >= CGauge2D::GetBrightTimeEnd())
-	{// ループ
-		fBrightTime = 0.0f;
-	}
-	CGauge2D::SetBrightTime(fBrightTime);
-
 	// 各チーム情報
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
@@ -623,6 +616,23 @@ void CGameManager::UpdateTeamStatus()
 			m_pCharmManager->SetHypeTime((ETeamSide)i, END_HYPE_TIME[i]);
 		}
 	}
+}
+
+//==========================================================================
+// ゲージ時間更新
+//==========================================================================
+void CGameManager::UpdateGaugeTime()
+{
+	// スペシャルゲージの時間更新
+	float fBrightTime = CGauge2D::GetBrightTime();
+	fBrightTime += GET_MANAGER->GetDeltaTime() * GET_MANAGER->GetSlowRate();
+
+	if (fBrightTime >= CGauge2D::GetBrightTimeEnd())
+	{// ループ
+		fBrightTime = 0.0f;
+	}
+	CGauge2D::SetBrightTime(fBrightTime);
+	ImGui::Text("fBrightTime : % .2f", fBrightTime);
 }
 
 //==========================================================================
@@ -1093,10 +1103,10 @@ void CGameManager::Debug()
 
 			ImGui::DragFloat("GaugeValue", (float*)&fValue, 1.0f, 0.0f, m_pTeamStatus[i]->GetSpecialInfo().fValueMax, "%.2f");
 
+			m_pTeamStatus[i]->SetSpecialValue(fValue);
+
 			// 位置設定
 			ImGui::TreePop();
-
-			m_pTeamStatus[i]->SetSpecialValue(fValue);
 		}
 
 		if (m_pTeamStatus[i] != nullptr)
@@ -1104,6 +1114,21 @@ void CGameManager::Debug()
 			m_pTeamStatus[i]->Debug();
 		}
 	}
+
+	// ゲージのmax時間
+	if (ImGui::TreeNode("GaugeBright"))
+	{
+		float fBright = CGauge2D::GetBrightTime();
+		float fBrightEnd = CGauge2D::GetBrightTimeEnd();
+
+		ImGui::Text("BrightTime: [%.2f]", fBright);
+		ImGui::DragFloat("fBrightEnd", &fBrightEnd, 0.01f, 0.0f, 10.0f, "%.2f");
+
+		CGauge2D::SetBrightTimeEnd(fBrightEnd);
+
+		ImGui::TreePop();
+	}
+
 
 	// モテ値マネージャー
 	if (m_pCharmValueManager != nullptr)

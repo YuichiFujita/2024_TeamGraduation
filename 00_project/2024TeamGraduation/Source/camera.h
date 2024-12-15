@@ -292,7 +292,9 @@ private:
 	STATE m_state;						// 状態
 	bool m_bMotion;						// モーション中判定
 	bool m_bOldWithBall;				// 前回の外野ボール所持フラグ
-	float m_fTransTime;					// ゲームカメラ状態遷移時間
+	float m_fTransTime;					// ゲームカメラ状態遷移の時間
+	float m_fEndTime;					// ゲームカメラ状態遷移の終了時間
+	bool b;
 	SCameraPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
 };
 

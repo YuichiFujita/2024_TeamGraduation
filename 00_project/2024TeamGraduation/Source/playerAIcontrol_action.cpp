@@ -49,18 +49,19 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (player->GetBall() != nullptr) return;
-
-	CMotion* pMotion = player->GetMotion();
+	if (!m_sFlag.bCatch) return;
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetTeam()) return;
 
-	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
+	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 200.0f))
 	{
 		// アクションパターン変更
 		SetPattern(player, CPlayer::EMotion::MOTION_CATCH_STANCE, CPlayer::EAction::ACTION_CATCH);
 	}
+
+	m_sFlag.bCatch = false;
 }
 
 //==========================================================================
