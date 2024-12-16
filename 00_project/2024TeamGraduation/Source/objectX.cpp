@@ -119,6 +119,7 @@ CObjectX* CObjectX::Create(const std::string& file, const MyLib::Vector3& pos, c
 
 		// ˆÊ’uEŒü‚«
 		pObjectX->SetPosition(pos);
+		pObjectX->SetOriginPosition(pos);
 		pObjectX->SetRotation(rot);
 		pObjectX->m_bShadow = bShadow;
 

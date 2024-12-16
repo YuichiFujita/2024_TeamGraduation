@@ -328,7 +328,6 @@ HRESULT MyMap::ReadText(const char *pTextFile)
 		break;
 
 	case CScene::MODE_GAME:
-	case CScene::MODE::MODE_GAMETUTORIAL:
 		FileName = pTextFile;
 		break;
 

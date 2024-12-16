@@ -14,7 +14,7 @@
 #include "particle.h"
 #include "MyEffekseer.h"
 #include "titleLogo.h"
-
+#include "titlestudent.h"
 #include "camera.h"
 
 //==========================================================================
@@ -24,6 +24,8 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
+	const int TITLEPLAYER_MIN = 7;	// プレイヤー最少人数
+	const int TITLEPLAYER_MAX = 12;	// プレイヤー最大人数
 }
 
 namespace STARTCAMERA
@@ -116,6 +118,14 @@ HRESULT CTitle::Init()
 	// ロゴの生成
 	CTitleLogo::Create();
 
+	// プレイヤー生成
+	int num = UtilFunc::Transformation::Random(TITLEPLAYER_MIN, TITLEPLAYER_MAX);
+	for (int i = 0; i < num; i++)
+	{
+		// タイトルの生徒生成
+		CTitleStudent::Create();
+	}
+
 	// 成功
 	return S_OK;
 }
@@ -155,6 +165,23 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		// 遷移
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
 	}
+
+
+#if _DEBUG
+
+	// 生成
+	if (ImGui::TreeNode("Create"))
+	{
+		if (ImGui::Button("TitleStudent"))
+		{
+			// タイトルの生徒生成
+			CTitleStudent::Create();
+		}
+
+		// ツリー終端
+		ImGui::TreePop();
+	}
+#endif
 }
 
 //==========================================================================
