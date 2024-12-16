@@ -34,14 +34,13 @@ namespace
 	
 	const char* MAP_TEXT[] =
 	{
-		"data\\TEXT\\map\\info.txt",	// なし
-		"data\\TEXT\\map\\info.txt",	// タイトル
-		"data\\TEXT\\map\\info.txt",	// エントリー
-		"data\\TEXT\\map\\info.txt",	// チュートリアル
-		"data\\TEXT\\map\\info.txt",	// ゲーム
-		"data\\TEXT\\map\\info.txt",	// ゲーム
+		"data\\TEXT\\map\\info.txt",		// なし
+		"data\\TEXT\\map\\info_title.txt",	// タイトル
+		"data\\TEXT\\map\\info.txt",		// エントリー
+		"data\\TEXT\\map\\info.txt",		// チュートリアル
+		"data\\TEXT\\map\\info.txt",		// ゲーム
 		"data\\TEXT\\map\\map_result.txt",	// リザルト
-		"data\\TEXT\\map\\info.txt",	// ランキング
+		"data\\TEXT\\map\\info.txt",		// ランキング
 	};
 	
 	const char* ELEVATION_TEXT = "data\\TEXT\\elevation\\field_ingame.txt";
@@ -93,7 +92,6 @@ CScene* CScene::Create(CScene::MODE mode)
 		break;
 
 	case CScene::MODE_GAME:
-	case CScene::MODE::MODE_GAMETUTORIAL:
 		pScene = CGame::Create(mode);
 		break;
 

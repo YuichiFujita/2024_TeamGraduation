@@ -78,6 +78,42 @@ namespace
 		const float POSRZ = follow::POSRZ_END - 160.0f;	// カメラZ注視点の座標
 		const float DIS = follow::MAX_DIS + 160.0f;		// カメラの距離
 	}
+
+	namespace Reset
+	{
+		const MyLib::Vector3 POSITION[CScene::MODE::MODE_MAX] = // 位置
+		{
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// NONE
+			MyLib::Vector3(0.0f, 50.0f, 0.0f),	// タイトル
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// エントリー
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// チュートリアル
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ゲーム
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// リザルト
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ランキング
+		};
+
+		const MyLib::Vector3 ROTATION[CScene::MODE::MODE_MAX] = // 向き
+		{
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// NONE
+			MyLib::Vector3(0.0f, 0.0f, -0.15f),	// タイトル
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// エントリー
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// チュートリアル
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ゲーム
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// リザルト
+			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ランキング
+		};
+
+		const float DISTANCE[CScene::MODE::MODE_MAX] = // 向き
+		{
+			0.0f,	// NONE
+			800.0f,	// タイトル
+			800.0f,	// エントリー
+			800.0f,	// チュートリアル
+			800.0f,	// ゲーム
+			800.0f,	// リザルト
+			800.0f,	// ランキング
+		};
+	}
 }
 
 //==========================================================================
@@ -386,6 +422,19 @@ void CCamera::Reset()
 
 	// ビューマトリックスの初期化
 	D3DXMatrixLookAtLH(&m_mtxView, &m_posV, &m_posR, &m_vecU);
+}
+
+//==========================================================================
+// モード別リセット
+//==========================================================================
+void CCamera::ResetByMode(CScene::MODE mode)
+{
+	m_posR = Reset::POSITION[mode];			// 注視点
+	m_rot = Reset::ROTATION[mode];			// 向き
+	m_fDistance = Reset::DISTANCE[mode];	// 距離
+
+	// カメラワープ
+	SetWarp(m_posR);
 }
 
 //==========================================================================
