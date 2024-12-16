@@ -24,6 +24,8 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
+	const int TITLEPLAYER_MIN = 7;	// プレイヤー最少人数
+	const int TITLEPLAYER_MAX = 12;	// プレイヤー最大人数
 }
 
 namespace STARTCAMERA
@@ -115,6 +117,14 @@ HRESULT CTitle::Init()
 
 	// ロゴの生成
 	CTitleLogo::Create();
+
+	// プレイヤー生成
+	int num = UtilFunc::Transformation::Random(TITLEPLAYER_MIN, TITLEPLAYER_MAX);
+	for (int i = 0; i < num; i++)
+	{
+		// タイトルの生徒生成
+		CTitleStudent::Create();
+	}
 
 	// 成功
 	return S_OK;

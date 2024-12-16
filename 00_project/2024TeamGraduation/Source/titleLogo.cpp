@@ -21,7 +21,7 @@ namespace
 
 namespace StateTime
 {
-	const float SPAWN = 5.0f;	// 登場
+	const float SPAWN = 1.0f;	// 登場
 	const float LOOP_ROTATION = 6.0f;	// ループ周期
 	const float LOOP = 1.0f;	// ループ周期
 	const float START = 1.0f;	// 開始
@@ -207,7 +207,7 @@ void CTitleLogo::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置更新
-	MyLib::Vector3 pos = UtilFunc::Correction::EasingLinear(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::START, m_fStateTime);
+	MyLib::Vector3 pos = UtilFunc::Correction::EasingLinear(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime);
 	m_pMain->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)
