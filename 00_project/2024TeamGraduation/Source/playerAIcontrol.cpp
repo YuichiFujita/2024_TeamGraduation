@@ -75,8 +75,9 @@ namespace
 CPlayerAIControl::MODE_FUNC CPlayerAIControl::m_ModeFunc[] =	// モード関数
 {
 	&CPlayerAIControl::ModeNone,				// なし
-	&CPlayerAIControl::ModeThrowManager,		// 投げ
-	&CPlayerAIControl::ModeCatchManager,		// キャッチ
+	&CPlayerAIControl::ModeIdle,				// 待機
+	&CPlayerAIControl::ModeThrow,				// 投げ
+	&CPlayerAIControl::ModeCatch,				// キャッチ
 };
 
 CPlayerAIControl::THROWTYPE_FUNC CPlayerAIControl::m_ThrowTypeFunc[] =	// 投げタイプ関数
@@ -85,14 +86,6 @@ CPlayerAIControl::THROWTYPE_FUNC CPlayerAIControl::m_ThrowTypeFunc[] =	// 投げタ
 	&CPlayerAIControl::ThrowTypeNormal,			// 通常
 	&CPlayerAIControl::ThrowTypeJump,			// ジャンプ
 	&CPlayerAIControl::ThrowTypeSpecial,		// スペシャル
-};
-
-CPlayerAIControl::THROW_FUNC CPlayerAIControl::m_ThrowFlagFunc[] =	// 投げ関数
-{
-	&CPlayerAIControl::ThrowFlagNone,				// なし
-	&CPlayerAIControl::ThrowFlag,					// 投げ
-	&CPlayerAIControl::ThrowFlagPass,				// パス
-	&CPlayerAIControl::ThrowFlagSpecial,			// スペシャル
 };
 
 CPlayerAIControl::THROWMOVE_FUNC CPlayerAIControl::m_ThrowMoveFunc[] =	// 投げ行動関数
@@ -113,7 +106,16 @@ CPlayerAIControl::THROWTIMING_FUNC CPlayerAIControl::m_ThrowTimingFunc[] =	// 投
 	&CPlayerAIControl::ThrowTimingJumpDelay,	// ジャンプ遅
 };
 
-CPlayerAIControl::MOVEFORCIBLY_FUNC CPlayerAIControl::m_MoveForciblyFunc[] =	// 行動関数
+CPlayerAIControl::CATCH_FUNC CPlayerAIControl::m_CatchFunc[] =	// キャッチ関数
+{
+	&CPlayerAIControl::CatchNone,				// なし
+	&CPlayerAIControl::CatchNormal,				// 通常
+	&CPlayerAIControl::CatchPassGive,			// パス貰う
+	&CPlayerAIControl::CatchPassSteal,			// パス奪う
+	&CPlayerAIControl::CatchFindBall,			// 見つける
+};
+
+CPlayerAIControl::MOVEFORCIBLY_FUNC CPlayerAIControl::m_MoveForciblyFunc[] =	// 強制行動関数
 {
 	&CPlayerAIControl::ForciblyNone,			// なし
 	&CPlayerAIControl::ForciblyStop,			// 止まる
@@ -121,15 +123,7 @@ CPlayerAIControl::MOVEFORCIBLY_FUNC CPlayerAIControl::m_MoveForciblyFunc[] =	// 
 	&CPlayerAIControl::ForciblyStart,			// 初め
 };
 
-CPlayerAIControl::MOVEFLAG_FUNC CPlayerAIControl::m_MoveFlagFunc[] =	// 行動関数
-{
-	&CPlayerAIControl::MoveFlagStop,			// 止まる
-	&CPlayerAIControl::MoveFlagWalk,			// 歩く
-	&CPlayerAIControl::MoveFlagBlink,			// 歩く
-	&CPlayerAIControl::MoveFlagDash,			// 走る
-};
-
-CPlayerAIControl::MOVETYPE_FUNC CPlayerAIControl::m_MoveTypeFunc[] =	// 行動関数
+CPlayerAIControl::MOVETYPE_FUNC CPlayerAIControl::m_MoveTypeFunc[] =	// 行動タイプ関数
 {
 	&CPlayerAIControl::MoveTypeNone,			// なし
 	&CPlayerAIControl::MoveTypeDistance,		// 距離
@@ -138,20 +132,26 @@ CPlayerAIControl::MOVETYPE_FUNC CPlayerAIControl::m_MoveTypeFunc[] =	// 行動関数
 	&CPlayerAIControl::MoveTypeCrazy,			// 狂う
 };
 
-
-CPlayerAIControl::ACTION_FUNC CPlayerAIControl::m_ActionFlagFunc[] =	// 行動関数
+CPlayerAIControl::MOVEFLAG_FUNC CPlayerAIControl::m_MoveFlagFunc[] =	// 行動フラグ関数
 {
-	&CPlayerAIControl::ActionFlagNone,				// なし
-	&CPlayerAIControl::ActionFlagJump,				// ジャンプ
+	&CPlayerAIControl::MoveFlagStop,			// 止まる
+	&CPlayerAIControl::MoveFlagWalk,			// 歩く
+	&CPlayerAIControl::MoveFlagBlink,			// 歩く
+	&CPlayerAIControl::MoveFlagDash,			// 走る
 };
 
-CPlayerAIControl::CATCH_FUNC CPlayerAIControl::m_CatchFunc[] =	// キャッチ関数
+CPlayerAIControl::THROW_FUNC CPlayerAIControl::m_ThrowFlagFunc[] =	// 投げフラグ関数
 {
-	&CPlayerAIControl::CatchNone,				// なし
-	&CPlayerAIControl::CatchNormal,				// 通常
-	&CPlayerAIControl::CatchPassGive,			// パス貰う
-	&CPlayerAIControl::CatchPassSteal,			// パス奪う
-	&CPlayerAIControl::CatchFindBall,			// 見つける
+	&CPlayerAIControl::ThrowFlagNone,			// なし
+	&CPlayerAIControl::ThrowFlag,				// 投げ
+	&CPlayerAIControl::ThrowFlagPass,			// パス
+	&CPlayerAIControl::ThrowFlagSpecial,		// スペシャル
+};
+
+CPlayerAIControl::ACTION_FUNC CPlayerAIControl::m_ActionFlagFunc[] =	// アクションフラグ関数
+{
+	&CPlayerAIControl::ActionFlagNone,			// なし
+	&CPlayerAIControl::ActionFlagJump,			// ジャンプ
 };
 
 //==========================================================================
@@ -322,8 +322,6 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 		break;
 	}
 #endif
-
-
 }
 
 //==========================================================================
@@ -338,15 +336,19 @@ void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRat
 		return;
 	}
 
-	if (pBall->GetPlayer() == nullptr || pBall->GetTypeTeam() != m_pAI->GetTeam())
-	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
-		m_eMode = EMode::MODE_CATCH;
-	}
-	else if (pBall->GetPlayer() == m_pAI)
+	if (pBall->GetPlayer() == m_pAI)
 	{// ボールを持っているのが自分だった場合
-		m_eMode = EMode::MODE_THROW;
+		m_eMode = EMode::MODE_THROW;	// 投げ
 	}
-	
+	else if (pBall->GetPlayer() == nullptr && pBall->GetTypeTeam() != m_pAI->GetTeam())
+	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
+		m_eMode = EMode::MODE_CATCH;	// キャッチ
+	}
+	else if (pBall->GetPlayer() == nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())
+	{// ボールが取得されていない場合||自分とボールを持っているチームが同じ場合
+		m_eMode = EMode::MODE_IDLE;	// 待機
+	}
+
 	// モードの更新
 	UpdateMode(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -367,9 +369,21 @@ void CPlayerAIControl::UpdateMode(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
-// 投げの管理
+// モード：待機
 //==========================================================================
-void CPlayerAIControl::ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControl::ModeIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 行動：止まる
+	m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+
+	// 行動タイプの更新
+	//UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// モード：投げ
+//==========================================================================
+void CPlayerAIControl::ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 投げの流れ
 	PlanThrow();
@@ -939,7 +953,7 @@ void CPlayerAIControl::ThrowTimingJumpDelay(const float fDeltaTime, const float 
 //==========================================================================
 // キャッチの管理
 //==========================================================================
-void CPlayerAIControl::ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControl::ModeCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// キャッチの更新
 	UpdateCatch(fDeltaTime, fDeltaRate, fSlowRate);

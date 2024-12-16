@@ -51,6 +51,7 @@ public:
 	enum EMode					// モード
 	{
 		MODE_NONE = 0,			// なし
+		MODE_IDLE,				// 待機
 		MODE_THROW,				// 投げ
 		MODE_CATCH,				// キャッチ
 		MODE_MAX
@@ -116,9 +117,9 @@ public:
 
 	enum ESee
 	{
-		SEE_NONE = 0,
-		SEE_BALL,
-		SEE_TARGET,
+		SEE_NONE = 0,			// なし
+		SEE_BALL,				// ボール
+		SEE_TARGET,				// ターゲット
 		SEE_MAX
 	};
 
@@ -270,9 +271,10 @@ private:
 	// 状態関数
 	//-----------------------------
 	// モード
-	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
-	void ModeThrowManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 投げ統括
-	void ModeCatchManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// キャッチ統括
+	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// な
+	void ModeIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 待機
+	void ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 投げ統括
+	void ModeCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// キャッチ統括
 
 	// 強制行動
 	void ForciblyNone() {};				// なし
@@ -281,11 +283,11 @@ private:
 	void ForciblyStart();				// 初め
 
 	// 行動タイプ
-	void MoveTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};	// なし
-	void MoveTypeDistance(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離を取る
-	void MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// あっちゃこっちゃ
-	void MoveTypeAvoid(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回避
-	virtual void MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 回避
+	void MoveTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};				// なし
+	void MoveTypeDistance(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 距離を取る
+	void MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// あっちゃこっちゃ
+	void MoveTypeAvoid(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);					// 回避
+	virtual void MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 狂う
 
 	// 投げタイプ
 	void ThrowTypeNone() {};	// なし
