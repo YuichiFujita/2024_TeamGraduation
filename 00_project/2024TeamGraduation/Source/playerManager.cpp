@@ -198,7 +198,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser二世生成(右)
-#if 0
+#if 1
 	CPlayer* pUser2 = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser2 == nullptr)
 	{
@@ -209,7 +209,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 1
+#if 0
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -217,22 +217,6 @@ HRESULT CPlayerManager::Init()
 	}
 	pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
 	pAI->SetRotDest(HALF_PI);
-
-	//pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, -200.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
-	//if (pAI == nullptr)
-	//{
-	//	return E_FAIL;
-	//}
-	//pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-	//pAI->SetRotDest(HALF_PI);
-
-	//pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 200.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
-	//if (pAI == nullptr)
-	//{
-	//	return E_FAIL;
-	//}
-	//pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-	//pAI->SetRotDest(HALF_PI);
 #endif
 
 	// プレイヤーAI一人生成(左)
@@ -244,22 +228,6 @@ HRESULT CPlayerManager::Init()
 	}
 	pAI2->SetRotation(MyLib::Vector3(0.0f, -HALF_PI, 0.0f));
 	pAI2->SetRotDest(-HALF_PI);
-#endif
-
-	// プレイヤーAI四人生成(右)
-#if 0
-	for (int i = 0; i < 3; i++)
-	{
-		MyLib::Vector3 pos = MyLib::Vector3(200.0f, 0.0f, 0.0f) + MyLib::Vector3(0.0f, 0.0f, -150.0f);
-		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, 100.0f * (float)i);
-		CPlayer* pAI = CPlayer::Create(pos + offset, CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
-		if (pAI == nullptr)
-		{
-			return E_FAIL;
-		}
-		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
-		pAI->SetRotDest(HALF_PI);
-	}
 #endif
 
 #endif // ENTRY
@@ -568,7 +536,7 @@ void CPlayerManager::ChangeUserToAI(CPlayer* pPlayer)
 
 		// 元のAIの操作権インデックスを保存
 		int nOldUserIdx = pChange->GetMyPlayerIdx();
-		assert(nOldUserIdx == -1);
+		assert(nOldUserIdx == -1);	// TODO：ここでえらーでたよ！？俺！？
 
 		// 元のAIと自身の操作権を交換
 		pChange->SetMyPlayerIdx(pPlayer->GetMyPlayerIdx());	// 元のAIの操作権を自身の操作権に変更

@@ -40,6 +40,13 @@ namespace
 	const float MIN_DIS		= 50.0f;		// 最少距離
 	const float REV_SWING	= 0.001f;		// カメラ揺れ時のカメラ距離補正係数
 
+	namespace special
+	{
+		const MyLib::Vector3 POSV = MyLib::Vector3(0.0f, 0.0f, -1.0f);	// 視点
+		const MyLib::Vector3 POSR = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 注視点
+		const MyLib::Vector3 VECU = INIT_VECU;							// 上方向ベクトル
+	}
+
 	namespace none
 	{
 		const MyLib::Vector3 INIT_POSR	= VEC3_ZERO;		// 注視点の初期値
@@ -50,7 +57,7 @@ namespace
 
 	namespace game
 	{
-		const float TIME = 1.4f;		// ゲームカメラ状態遷移の時間
+		const float END_TIME = 1.4f;	// ゲームカメラ状態遷移の時間
 		const float MIN_TIME = 0.5f;	// ゲームカメラ状態遷移の最小時間
 	}
 
@@ -353,6 +360,49 @@ void CCamera::SetCamera()
 }
 
 //==========================================================================
+// スペシャルカメラ設定の設定処理
+//==========================================================================
+void CCamera::SetSpecialCamera()
+{
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// ビューポートの設定
+	pDevice->SetViewport(&m_viewport);
+
+	// プロジェクションマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxProjection);
+
+	// プロジェクションマトリックスの作成
+	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
+	D3DXMatrixPerspectiveFovLH
+	(
+		&m_mtxProjection,	// プロジェクションマトリックス
+		m_fViewAngle,		// 視野角
+		fAspect,			// アスペクト比
+		MIN_NEAR,			// 手前の描画制限
+		MAX_FAR				// 奥の描画制限
+	);
+
+	// プロジェクションマトリックスの設定
+	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
+
+	// ビューマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxView);
+
+	// ビューマトリックスの作成
+	D3DXMatrixLookAtLH
+	(
+		&m_mtxView,		// ビューマトリックス
+		&special::POSV,	// 視点
+		&special::POSR,	// 注視点
+		&special::VECU	// 上方向ベクトル
+	);
+
+	// ビューマトリックスの設定
+	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+}
+
+//==========================================================================
 // カメラリセット
 //==========================================================================
 void CCamera::Reset()
@@ -482,7 +532,7 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 		m_fTransTime = 0.0f;
 
 		// 遷移の終了時間を保存
-		m_fEndTime = game::TIME;
+		m_fEndTime = game::END_TIME;
 
 		b = false;
 	}
@@ -524,7 +574,7 @@ void CCamera::UpdateFollowState(const float fDeltaTime, const float fDeltaRate, 
 
 				// 
 				m_fEndTime = m_fTransTime;
-				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::TIME, game::MIN_TIME);
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::END_TIME, game::MIN_TIME);
 				m_fTransTime = 0.0f;
 				b = true;
 			}
@@ -613,7 +663,7 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 		m_fTransTime = 0.0f;
 
 		// 遷移の終了時間を保存
-		m_fEndTime = game::TIME;
+		m_fEndTime = game::END_TIME;
 
 		b = false;
 	}
@@ -655,7 +705,7 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 
 				// 
 				m_fEndTime = m_fTransTime;
-				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::TIME, game::MIN_TIME);
+				UtilFunc::Transformation::ValueNormalize(m_fEndTime, game::END_TIME, game::MIN_TIME);
 				m_fTransTime = 0.0f;
 				b = true;
 			}

@@ -132,7 +132,8 @@ public:
 	HRESULT Init();		// 初期化
 	void Uninit();		// 終了
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-	void SetCamera();	// カメラ設定
+	void SetCamera();			// カメラ設定
+	void SetSpecialCamera();	// スペシャルカメラ設定
 	void Reset();		// カメラリセット
 	void ResetSwing();	// カメラ揺れリセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
