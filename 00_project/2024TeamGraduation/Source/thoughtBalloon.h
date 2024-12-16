@@ -13,6 +13,7 @@
 //==========================================================================
 #include "objectBillboard.h"
 #include "scrollText2D.h"
+#include "gameManager.h"
 
 //==========================================================================
 // 前方宣言
@@ -55,7 +56,7 @@ public:
 	// 静的メンバ関数
 	//=============================
 	// TODO : 引数に文字 or 種類を扱う列挙
-	static CThoughtBalloon* Create();	// 生成
+	static CThoughtBalloon* Create(CGameManager::ETeamSide side);	// 生成
 
 	//=============================
 	// メンバ関数
@@ -100,6 +101,7 @@ private:
 	float m_fStateTime;	// 状態カウンター
 
 	// その他変数
+	CGameManager::ETeamSide m_TeamSide;		// チームサイド
 
 };
 

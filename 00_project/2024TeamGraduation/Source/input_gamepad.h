@@ -94,6 +94,10 @@ public:
 	bool GetRepeat(BUTTON nKey, int nCntPlayer);
 	bool GetRelease(BUTTON nKey, int nCntPlayer);
 	STapInfo GetTap(BUTTON nKey, int nCntPlayer, float tapTime);
+	bool GetAllPress(BUTTON nKey);
+	bool GetAllTrigger(BUTTON nKey);
+	bool GetAllRepeat(BUTTON nKey);
+	bool GetAllRelease(BUTTON nKey);
 
 	//--------------------------
 	// ÉgÉäÉKÅ[ån

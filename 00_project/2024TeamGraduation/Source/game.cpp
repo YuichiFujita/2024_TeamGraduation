@@ -35,6 +35,8 @@
 #include "gymWallManager.h"
 #include "charmText.h"
 #include "objectBillboard.h"
+#include "cutin.h"
+#include "balloonFrame.h"
 
 namespace
 {
@@ -219,7 +221,11 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 
-
+		if (ImGui::Button("CutIn"))
+		{
+			// オーディエンス生成
+			CCutIn::Create();
+		}
 
 #endif
 

@@ -7,6 +7,7 @@
 #include "thoughtBalloon.h"
 #include "renderTexture.h"
 #include "balloonFrame.h"
+#include "camera.h"
 
 //==========================================================================
 // 定数定義
@@ -48,12 +49,15 @@ CThoughtBalloon::~CThoughtBalloon()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CThoughtBalloon* CThoughtBalloon::Create()
+CThoughtBalloon* CThoughtBalloon::Create(CGameManager::ETeamSide side)
 {
 	// メモリの確保
 	CThoughtBalloon* pObj = DEBUG_NEW CThoughtBalloon;
 	if (pObj != nullptr)
 	{
+		// 引数情報設定
+		pObj->m_TeamSide = side;	// チームサイド
+
 		// クラスの初期化
 		if (FAILED(pObj->Init()))
 		{ // 初期化に失敗した場合
@@ -92,10 +96,6 @@ HRESULT CThoughtBalloon::Init()
 
 		return E_FAIL;
 	}
-
-	// 枠
-	m_pFrame = CBalloonFrame::Create(MyLib::Vector2(120.0f, 40.0f));
-	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
 
 	// テクスチャインデックスの設定
 	BindTexture(m_pRenderScene->GetTextureIndex());
@@ -144,6 +144,11 @@ void CThoughtBalloon::Kill()
 //==========================================================================
 void CThoughtBalloon::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
+	// 枠の更新
+	assert(m_pFrame != nullptr);
+	m_pFrame->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// テキストの更新
 	assert(m_pText != nullptr);
 	m_pText->Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -169,8 +174,9 @@ HRESULT CThoughtBalloon::CreateRenderTexture()
 	// シーンレンダーテクスチャの生成
 	m_pRenderScene = CRenderTexture::Create
 	( // 引数
-		CRenderTextureManager::LAYER_BALLOON,				// 描画順レイヤー
-		std::bind(&CThoughtBalloon::CreateTexture, this)	// テクスチャ作成関数ポインタ
+		CRenderTextureManager::LAYER_BALLOON,						// 描画順レイヤー
+		std::bind(&CThoughtBalloon::CreateTexture, this),			// テクスチャ作成関数ポインタ
+		std::bind(&CCamera::SetCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
 	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
@@ -216,6 +222,11 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 
 	// 文字送りを開始する
 	m_pText->SetEnableScroll(true);
+
+
+	// 枠の生成
+	m_pFrame = CBalloonFrame::Create(MyLib::Vector2(300.0f, 140.0f), m_TeamSide);
+	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
 
 	return S_OK;
 }

@@ -135,7 +135,7 @@ public:
 	//--------------------------
 	void SetEnableDeath(bool bDeath) { m_bDeath = bDeath; }				// 死亡フラグ設定
 	bool IsDeath() { return m_bDeath; }									// 死亡フラグ取得
-	TYPE GetType() const { return m_type; }								// 種類取得
+	TYPE GetType() { return m_type; }								// 種類取得
 	virtual inline void SetType(const TYPE type) { m_type = type; }		// 種類設定
 	static const int GetNumAll() { return m_nNumAll; }					// 総数取得
 	static std::map<LAYER, std::map<int, std::vector<CObject*>>> GetTop() { return m_pObj; }	// 先頭取得

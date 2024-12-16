@@ -338,6 +338,7 @@ void CEffect2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 不透明度の更新
 	col.a = m_colOrigin.a * (m_fLife / m_fMaxLife);
+	SetAlpha(col.a);
 
 	// サイズ設定
 	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));

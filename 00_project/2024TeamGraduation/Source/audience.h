@@ -95,7 +95,7 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CAudience* Create(EObjType type, CGameManager::ETeamSide team);					// 生成
+	static CAudience* Create(EObjType type, CGameManager::ETeamSide team, CScene::MODE mode = CScene::MODE::MODE_NONE);			// 生成
 	static HRESULT SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team);			// 観戦中の人数設定
 	static int GetNumWatchAll(CGameManager::ETeamSide team);								// 全観戦中の人数取得
 	static void SetEnableJumpAll(const bool bJump, CGameManager::ETeamSide team);			// 全盛り上がり設定

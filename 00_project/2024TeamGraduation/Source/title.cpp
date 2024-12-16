@@ -14,7 +14,8 @@
 #include "particle.h"
 #include "MyEffekseer.h"
 #include "titleLogo.h"
-
+#include "titlestudent.h"
+#include "titlescene.h"
 #include "camera.h"
 
 //==========================================================================
@@ -24,6 +25,8 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
+	const int TITLEPLAYER_MIN = 7;	// プレイヤー最少人数
+	const int TITLEPLAYER_MAX = 12;	// プレイヤー最大人数
 }
 
 namespace STARTCAMERA
@@ -55,13 +58,10 @@ CTitle::SCENE_FUNC CTitle::m_SceneFunc[] =
 CTitle::CTitle()
 {
 	// 値のクリア
-	m_SceneType = SCENETYPE::SCENETYPE_NONE;	// シーンの種類
+	m_SceneType = ESceneType::SCENETYPE_NONE;	// シーンの種類
 	m_fSceneTime = 0.0f;						// シーンカウンター
 	m_pLogo = nullptr;		// ロゴのポインタ
-	m_pPressEnter = nullptr;	// プレスエンター
-	m_pConfigSetting = nullptr;
-	m_pSpawn_Leaf = nullptr;		// 降る葉生成
-	m_pPeopleManager = nullptr;	// 人マネージャ
+	m_pTitleScene = nullptr;		// タイトルシーン
 }
 
 //==========================================================================
@@ -111,10 +111,18 @@ HRESULT CTitle::Init()
 	}
 
 	// シーンの種類
-	m_SceneType = SCENETYPE::SCENETYPE_NONE;
+	ChangeScene(ESceneType::SCENETYPE_SUSURU);
 
 	// ロゴの生成
 	CTitleLogo::Create();
+
+	// プレイヤー生成
+	int num = UtilFunc::Transformation::Random(TITLEPLAYER_MIN, TITLEPLAYER_MAX);
+	for (int i = 0; i < num; i++)
+	{
+		// タイトルの生徒生成
+		CTitleStudent::Create();
+	}
 
 	// 成功
 	return S_OK;
@@ -141,9 +149,11 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		return;
 	}
 
-	// 状態別更新処理
-	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
-
+	// シーンの更新
+	if (m_pTitleScene != nullptr)
+	{
+		m_pTitleScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -155,6 +165,35 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		// 遷移
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
 	}
+
+
+#if _DEBUG
+
+	// 生成
+	if (ImGui::TreeNode("Create"))
+	{
+		if (ImGui::Button("TitleStudent"))
+		{
+			// タイトルの生徒生成
+			CTitleStudent::Create();
+		}
+
+		// ツリー終端
+		ImGui::TreePop();
+	}
+#endif
+}
+
+//==========================================================================
+// シーンの更新処理
+//==========================================================================
+void CTitle::UpdateScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// シーンカウンター加算
+	m_fSceneTime += fDeltaTime * fSlowRate;
+
+	// 状態別更新処理
+	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -178,18 +217,23 @@ void CTitle::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// シーンカウンター減算
-	m_fSceneTime -= fDeltaTime * fSlowRate;
+	
+}
 
-	// 不透明度更新
-	float alpha = m_fSceneTime / TIME_FADELOGO;
+//==========================================================================
+// シーン切り替え
+//==========================================================================
+void CTitle::ChangeScene(ESceneType type)
+{
+	// 終了処理
+	SAFE_UNINIT(m_pTitleScene);
+	
 
-	if (m_fSceneTime <= 0.0f)
-	{
-		m_fSceneTime = 0.0f;
-		m_SceneType = SCENETYPE_NONE;
-		return;
-	}
+	// 生成
+	m_pTitleScene = CTitleScene::Create(type);
+
+	// シーン設定
+	m_SceneType = type;
 }
 
 //==========================================================================

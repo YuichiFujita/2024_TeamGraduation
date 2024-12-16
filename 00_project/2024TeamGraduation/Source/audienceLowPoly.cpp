@@ -5,7 +5,6 @@
 // 
 //==========================================================================
 #include "audienceLowPoly.h"
-#include "gameManager.h"
 #include "manager.h"
 #include "renderer.h"
 #include "objectX.h"

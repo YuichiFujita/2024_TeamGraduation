@@ -68,7 +68,7 @@ CPause* CPause::Create(CScene::MODE mode)
 		pFade = DEBUG_NEW CPause_Game;
 		break;
 
-	case CScene::MODE_GAMETUTORIAL:
+	case CScene::MODE::MODE_TUTORIAL:
 		pFade = DEBUG_NEW CPause_Tutorial;
 		break;
 

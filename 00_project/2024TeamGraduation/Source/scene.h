@@ -32,7 +32,6 @@ public:
 		MODE_ENTRY,			// エントリー
 		MODE_TUTORIAL,		// チュートリアル
 		MODE_GAME,			// ゲーム
-		MODE_GAMETUTORIAL,	// ゲーム
 		MODE_RESULT,		// リザルト
 		MODE_RANKING,		// ランキング
 		MODE_MAX

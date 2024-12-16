@@ -19,10 +19,11 @@
 //	コンストラクタ
 //============================================================
 CRenderTexture::CRenderTexture(const CRenderTextureManager::ELayer layer) :
-	m_layer			(layer),	// レンダーテクスチャレイヤー
-	m_pSurTexture	(nullptr),	// テクスチャサーフェイスへのポインタ
-	m_pDrawFunc		(nullptr),	// オブジェクト描画関数
-	m_nTextureIdx	(0)			// レンダーテクスチャインデックス
+	m_layer			 (layer),	// レンダーテクスチャレイヤー
+	m_pSetCameraFunc (nullptr),	// カメラ設定関数
+	m_pDrawFunc		 (nullptr),	// オブジェクト描画関数
+	m_pSurTexture	 (nullptr),	// テクスチャサーフェイスへのポインタ
+	m_nTextureIdx	 (0)		// レンダーテクスチャインデックス
 {
 
 }
@@ -43,9 +44,10 @@ HRESULT CRenderTexture::Init()
 	CTexture *pTexture = CTexture::GetInstance();	// テクスチャへのポインタ
 
 	// メンバ変数を初期化
-	m_pSurTexture	= nullptr;	// テクスチャサーフェイスへのポインタ
-	m_pDrawFunc		= nullptr;	// オブジェクト描画関数
-	m_nTextureIdx	= 0;		// レンダーテクスチャインデックス
+	m_pSetCameraFunc = nullptr;	// カメラ設定関数
+	m_pDrawFunc		 = nullptr;	// オブジェクト描画関数
+	m_pSurTexture	 = nullptr;	// テクスチャサーフェイスへのポインタ
+	m_nTextureIdx	 = 0;		// レンダーテクスチャインデックス
 
 	// 使用フォーマットの指定
 	const D3DFORMAT format = (m_layer == CRenderTextureManager::ELayer::LAYER_MAIN) ? D3DFMT_X8R8G8B8 : D3DFMT_A8R8G8B8;
@@ -111,13 +113,18 @@ void CRenderTexture::Draw()
 {
 	// レンダーテクスチャへの書き込み
 	CRenderer *pRenderer = GET_RENDERER;	// レンダラーへのポインタ
-	pRenderer->DrawRenderTexture(&m_pSurTexture, m_pDrawFunc);
+	pRenderer->DrawRenderTexture(&m_pSurTexture, m_pDrawFunc, m_pSetCameraFunc);
 }
 
 //============================================================
 //	生成処理
 //============================================================
-CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer, CRenderer::ADrawFunc pDrawFunc)
+CRenderTexture *CRenderTexture::Create
+(
+	const CRenderTextureManager::ELayer layer,	// レイヤー
+	CRenderer::ADrawFunc pDrawFunc,				// 描画関数
+	CRenderer::ACameraFunc pSetCameraFunc		// カメラ設定関数
+)
 {
 	// レンダーテクスチャの生成
 	CRenderTexture *pRenderTexture = DEBUG_NEW CRenderTexture(layer);
@@ -140,6 +147,9 @@ CRenderTexture *CRenderTexture::Create(const CRenderTextureManager::ELayer layer
 
 		// オブジェクト描画関数を設定
 		pRenderTexture->SetDrawFunc(pDrawFunc);
+
+		// カメラ設定関数を設定
+		pRenderTexture->SetCameraFunc(pSetCameraFunc);
 
 		// 確保したアドレスを返す
 		return pRenderTexture;
