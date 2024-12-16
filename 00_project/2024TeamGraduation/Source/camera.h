@@ -132,10 +132,12 @@ public:
 	HRESULT Init();			// 初期化
 	void Uninit();			// 終了
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-
-	void SetSpecialCamera();	// スペシャルカメラ設定
+	void SetCamera();		// カメラ設定
+	void Reset();			// カメラリセット
 	void ResetByMode(CScene::MODE mode);		// モード別リセット
+	void SetSpecialCamera();	// スペシャルカメラ設定
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
+	void ResetSwing();							// カメラ揺れリセット
 	void SetWarp(const MyLib::Vector3& pos);	// カメラワープ設定
 	STATE GetState() const { return m_state; }	// 状態取得
 	void SetState(const STATE state, const bool bReset = true);	// 状態設定
