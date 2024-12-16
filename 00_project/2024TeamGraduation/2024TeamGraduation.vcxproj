@@ -366,7 +366,9 @@
     <ClCompile Include="Source\timeUI.cpp" />
     <ClCompile Include="Source\title.cpp" />
     <ClCompile Include="Source\titleLogo.cpp" />
+    <ClCompile Include="Source\titlescene.cpp" />
     <ClCompile Include="Source\titlestudent.cpp" />
+    <ClCompile Include="Source\title_susuru.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
@@ -580,7 +582,9 @@
     <ClInclude Include="Source\timeUI.h" />
     <ClInclude Include="Source\title.h" />
     <ClInclude Include="Source\titleLogo.h" />
+    <ClInclude Include="Source\titlescene.h" />
     <ClInclude Include="Source\titlestudent.h" />
+    <ClInclude Include="Source\title_susuru.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
     <ClInclude Include="Source\Xload.h" />

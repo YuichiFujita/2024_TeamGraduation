@@ -207,7 +207,7 @@ void CTitleLogo::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ˆÊ’uXV
-	MyLib::Vector3 pos = UtilFunc::Correction::EasingLinear(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime);
+	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime);
 	m_pMain->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)

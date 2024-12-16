@@ -15,6 +15,7 @@
 #include "MyEffekseer.h"
 #include "titleLogo.h"
 #include "titlestudent.h"
+#include "titlescene.h"
 #include "camera.h"
 
 //==========================================================================
@@ -57,13 +58,10 @@ CTitle::SCENE_FUNC CTitle::m_SceneFunc[] =
 CTitle::CTitle()
 {
 	// 値のクリア
-	m_SceneType = SCENETYPE::SCENETYPE_NONE;	// シーンの種類
+	m_SceneType = ESceneType::SCENETYPE_NONE;	// シーンの種類
 	m_fSceneTime = 0.0f;						// シーンカウンター
 	m_pLogo = nullptr;		// ロゴのポインタ
-	m_pPressEnter = nullptr;	// プレスエンター
-	m_pConfigSetting = nullptr;
-	m_pSpawn_Leaf = nullptr;		// 降る葉生成
-	m_pPeopleManager = nullptr;	// 人マネージャ
+	m_pTitleScene = nullptr;		// タイトルシーン
 }
 
 //==========================================================================
@@ -113,7 +111,7 @@ HRESULT CTitle::Init()
 	}
 
 	// シーンの種類
-	m_SceneType = SCENETYPE::SCENETYPE_NONE;
+	ChangeScene(ESceneType::SCENETYPE_SUSURU);
 
 	// ロゴの生成
 	CTitleLogo::Create();
@@ -151,9 +149,11 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		return;
 	}
 
-	// 状態別更新処理
-	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
-
+	// シーンの更新
+	if (m_pTitleScene != nullptr)
+	{
+		m_pTitleScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -185,6 +185,18 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 }
 
 //==========================================================================
+// シーンの更新処理
+//==========================================================================
+void CTitle::UpdateScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// シーンカウンター加算
+	m_fSceneTime += fDeltaTime * fSlowRate;
+
+	// 状態別更新処理
+	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
 // なにもなし
 //==========================================================================
 void CTitle::SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -205,18 +217,23 @@ void CTitle::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// シーンカウンター減算
-	m_fSceneTime -= fDeltaTime * fSlowRate;
+	
+}
 
-	// 不透明度更新
-	float alpha = m_fSceneTime / TIME_FADELOGO;
+//==========================================================================
+// シーン切り替え
+//==========================================================================
+void CTitle::ChangeScene(ESceneType type)
+{
+	// 終了処理
+	SAFE_UNINIT(m_pTitleScene);
+	
 
-	if (m_fSceneTime <= 0.0f)
-	{
-		m_fSceneTime = 0.0f;
-		m_SceneType = SCENETYPE_NONE;
-		return;
-	}
+	// 生成
+	m_pTitleScene = CTitleScene::Create(type);
+
+	// シーン設定
+	m_SceneType = type;
 }
 
 //==========================================================================
