@@ -172,8 +172,11 @@
     <ClCompile Include="Source\3D_effect.cpp" />
     <ClCompile Include="Source\audience.cpp" />
     <ClCompile Include="Source\audienceAnim.cpp" />
+    <ClCompile Include="Source\audienceAnim_result.cpp" />
     <ClCompile Include="Source\audienceHighPoly.cpp" />
+    <ClCompile Include="Source\audienceHighPoly_result.cpp" />
     <ClCompile Include="Source\audienceLowPoly.cpp" />
+    <ClCompile Include="Source\audienceLowPoly_result.cpp" />
     <ClCompile Include="Source\ball.cpp" />
     <ClCompile Include="Source\ballHolderMarker.cpp" />
     <ClCompile Include="Source\ballLandingMarker.cpp" />
@@ -382,8 +385,11 @@
     <ClInclude Include="Source\3D_effect.h" />
     <ClInclude Include="Source\audience.h" />
     <ClInclude Include="Source\audienceAnim.h" />
+    <ClInclude Include="Source\audienceAnim_result.h" />
     <ClInclude Include="Source\audienceHighPoly.h" />
+    <ClInclude Include="Source\audienceHighPoly_result.h" />
     <ClInclude Include="Source\audienceLowPoly.h" />
+    <ClInclude Include="Source\audienceLowPoly_result.h" />
     <ClInclude Include="Source\ball.h" />
     <ClInclude Include="Source\ballHolderMarker.h" />
     <ClInclude Include="Source\ballLandingMarker.h" />

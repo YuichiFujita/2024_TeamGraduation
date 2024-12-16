@@ -95,6 +95,13 @@ CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =	// 状態関数
 	& CResultManager::StateCharmContest,		// モテ勝敗
 };
 
+CResultManager::STATE_START_FUNC CResultManager::m_StateStartFunc[] =	// 状態関数
+{
+	nullptr,										// なし
+	&CResultManager::StateStartPrelude,				// 前座勝敗
+	&CResultManager::StateStartCharmContest,		// モテ勝敗
+};
+
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
@@ -162,12 +169,6 @@ HRESULT CResultManager::Init()
 
 	// 観客生成
 	CreateAudience();
-
-	// 前座勝敗ポリゴン生成
-	CreatePrelude();
-
-	// モテ勝敗ポリゴン生成
-	CreateCharmContest();
 
 	return S_OK;
 }
@@ -260,7 +261,7 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 //==========================================================================
 // 前座勝敗生成
 //==========================================================================
-void CResultManager::CreatePrelude()
+void CResultManager::StateStartPrelude()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
@@ -296,7 +297,7 @@ void CResultManager::CreatePrelude()
 //==========================================================================
 // モテ勝敗生成
 //==========================================================================
-void CResultManager::CreateCharmContest()
+void CResultManager::StateStartCharmContest()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
@@ -479,6 +480,12 @@ void CResultManager::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+
+	// 状態更新
+	if (m_StateStartFunc[m_state] != nullptr)
+	{
+		(this->*(m_StateStartFunc[m_state]))();
+	}
 }
 
 //==========================================================================
@@ -492,9 +499,20 @@ void CResultManager::Debug()
 	{
 		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 		{
+			std::string lavel = "MoteValue";
+			lavel += i;
+
+			// チームのモテ値増減
+			ImGui::DragFloat(lavel.c_str(), &m_fCharmValue[i], 0.1f, 0.0f, 100.0f, "%.2f");	// モテ値の変動操作
+			float fMoteRate = m_fCharmValue[i] / 100.0f;					// モテ割合	//TODO: マジックナンバー
+			int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);		// 現在の観客数
+
+			// 観客数を設定
+			CAudience::SetNumWatch(nNumAudience, static_cast<CGameManager::ETeamSide>(i));
+
 			// 観客数を設定
 			int num = CAudience::GetNumWatchAll(static_cast<CGameManager::ETeamSide>(i));
-	
+
 			ImGui::Text("NumWatch%d: %d", i, num);
 		}
 
