@@ -764,6 +764,12 @@
     <ClCompile Include="Source\titlestudent.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
+    <ClCompile Include="Source\titlescene.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\title_susuru.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1391,6 +1397,12 @@
       <Filter>ingame\balloon</Filter>
     </ClInclude>
     <ClInclude Include="Source\titlestudent.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\titlescene.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\title_susuru.h">
       <Filter>mode\title</Filter>
     </ClInclude>
   </ItemGroup>
