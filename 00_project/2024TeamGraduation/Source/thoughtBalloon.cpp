@@ -7,6 +7,7 @@
 #include "thoughtBalloon.h"
 #include "renderTexture.h"
 #include "balloonFrame.h"
+#include "camera.h"
 
 //==========================================================================
 // 定数定義
@@ -173,8 +174,9 @@ HRESULT CThoughtBalloon::CreateRenderTexture()
 	// シーンレンダーテクスチャの生成
 	m_pRenderScene = CRenderTexture::Create
 	( // 引数
-		CRenderTextureManager::LAYER_BALLOON,				// 描画順レイヤー
-		std::bind(&CThoughtBalloon::CreateTexture, this)	// テクスチャ作成関数ポインタ
+		CRenderTextureManager::LAYER_BALLOON,						// 描画順レイヤー
+		std::bind(&CThoughtBalloon::CreateTexture, this),			// テクスチャ作成関数ポインタ
+		std::bind(&CCamera::SetCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
 	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合

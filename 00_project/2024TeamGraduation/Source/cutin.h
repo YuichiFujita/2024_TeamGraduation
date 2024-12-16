@@ -32,7 +32,7 @@ public:
 		STATE_MAX
 	};
 
-	CCutIn(int nPriority = 7);
+	CCutIn();
 	~CCutIn();
 
 	//=============================
@@ -52,27 +52,34 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	bool IsEnd() const { return (m_state == STATE_END); }	// 終了フラグ取得
+	bool IsEnd() const;	// 終了フラグ取得
 
 private:
 
 	//=============================
-	// 関数リスト
-	//=============================
-	typedef void(CCutIn::*STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_StateFuncList[];	// 関数リスト
-
-	//=============================
 	// メンバ関数
 	//=============================
-	// 状態関数
-	void UpdateTime(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 時間経過状態の更新
+	// 生成関連
+	HRESULT CreateRenderTexture();	// レンダーテクスチャ生成
+	HRESULT CreateTextureObject();	// テクスチャ用オブジェクト生成
+	HRESULT CreateObject2D();		// プレイヤーテクスチャ貼付ポリゴン/輝き生成
+
+	// テクスチャ関連
+	void CreateTexture();	// テクスチャ作成
+
+	// その他関数
+	void UpdateBlinkColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 背景色の更新
 
 	//=============================
 	// メンバ変数
 	//=============================
-	float m_fStateTime;	// 状態カウンター
-	EState m_state;		// 状態
+	// テクスチャ関連
+	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
+
+	// その他変数
+	CObject2D* m_pBlink;	// 輝き情報
+	CObject2D* m_pPlayer2D;	// プレイヤーテクスチャ情報
+	float m_fBlinkTime;		// 背景輝きカウンター
 };
 
 

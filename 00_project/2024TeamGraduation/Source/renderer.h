@@ -27,13 +27,14 @@ public:
 	~CRenderer();
 
 	// エイリアス定義
+	using ACameraFunc = std::function<void()>;	// カメラ設定関数型
 	using ADrawFunc = std::function<void()>;	// 描画関数型
 
 	HRESULT Init(HWND hWnd, BOOL bWindow);
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
-	void DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc);	// レンダーテクスチャ描画
+	void DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc, ACameraFunc pSetCameraFunc);	// レンダーテクスチャ描画
 	HRESULT CreateRenderTexture();				// レンダーテクスチャー生成
 	void SetEnableShader(const bool bShader);	// スクリーンシェーダーフラグ設定
 	bool IsShader() const;						// スクリーンシェーダーフラグ取得

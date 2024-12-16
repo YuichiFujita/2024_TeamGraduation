@@ -286,7 +286,12 @@ HRESULT CRenderer::CreateRenderTexture()
 	}
 
 	// シーンレンダーテクスチャの生成
-	m_pRenderScene = CRenderTexture::Create(CRenderTextureManager::LAYER_MAIN, &CObject::DrawAll);
+	m_pRenderScene = CRenderTexture::Create
+	( // 引数
+		CRenderTextureManager::LAYER_MAIN,	// 描画順レイヤー
+		&CObject::DrawAll,					// テクスチャ作成関数ポインタ
+		std::bind(&CCamera::SetCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
+	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
 
@@ -309,7 +314,7 @@ HRESULT CRenderer::CreateRenderTexture()
 //============================================================
 //	レンダーテクスチャ描画処理
 //============================================================
-void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc)
+void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc, ACameraFunc pSetCameraFunc)
 {
 	CManager *pManager = GET_MANAGER;			// マネージャー
 	CCamera  *pCamera  = pManager->GetCamera();	// カメラ
@@ -348,8 +353,8 @@ void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawF
 		m_pD3DDevice->GetViewport(&viewportDef);
 
 		// カメラの設定
-		assert(pCamera != nullptr);
-		pCamera->SetCamera();
+		assert(pSetCameraFunc != nullptr);
+		pSetCameraFunc();
 
 		// オブジェクトの全描画
 		assert(pDrawFunc != nullptr);
