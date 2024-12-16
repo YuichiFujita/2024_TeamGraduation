@@ -70,7 +70,7 @@ CGauge2D::CGauge2D(const float nFrame) : CObject(PRIORITY, CObject::LAYER::LAYER
 	m_pFrame			(nullptr),									// フレーム
 	m_pAssist			(nullptr)									// ボタンアシスト
 {
-
+	m_fSizeFrame = FRAME_RAT;
 }
 
 //============================================================
@@ -101,6 +101,13 @@ HRESULT CGauge2D::Init()
 	m_pBar = CObject2D::Create(PRIORITY);					// ゲージ
 	m_pFrame = CObject2D::Create(PRIORITY);					// フレーム
 	m_pAssist = CObject2D::Create(PRIORITY);				// ボタンアシスト
+
+	// 世界停止中でも動く！
+	SetEnablePosibleMove_WorldPause(true);
+	m_pBg->SetEnablePosibleMove_WorldPause(true);
+	m_pBar->SetEnablePosibleMove_WorldPause(true);
+	m_pFrame->SetEnablePosibleMove_WorldPause(true);
+	m_pAssist->SetEnablePosibleMove_WorldPause(true);
 
 	SetType(CObject::TYPE::TYPE_UI);
 	
@@ -138,6 +145,8 @@ void CGauge2D::Update(const float fDeltaTime, const float fDeltaRate, const floa
 {
 	if (m_pBar == nullptr) return;
 	MyLib::Vector2 size = m_pBar->GetSize();
+
+	ImGui::Text("GaugeUpdate");
 
 	// ゲージの設定
 	if (m_state == STATE_CHANGE)
@@ -217,6 +226,17 @@ void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
 }
 
 //============================================================
+// 初期位置設定
+//============================================================
+void CGauge2D::InitPosition()
+{
+	m_pBg->SetOriginPosition(m_pBg->GetPosition());
+	m_pBar->SetOriginPosition(m_pBar->GetPosition());
+	m_pFrame->SetOriginPosition(m_pFrame->GetPosition());
+	m_pAssist->SetOriginPosition(m_pAssist->GetPosition());
+}
+
+//============================================================
 //	テクスチャ座標の設定
 //============================================================
 void CGauge2D::SetTexUV(const std::vector<D3DXVECTOR2>& uv)
@@ -275,6 +295,7 @@ CGauge2D* CGauge2D::Create
 
 		// 位置を設定
 		pGauge2D->SetPosition(rPos);
+		pGauge2D->InitPosition();
 
 		// 大きさを設定
 		pGauge2D->SetSize(rSizeGauge);		// 全部大きさ
@@ -540,4 +561,27 @@ void CGauge2D::SetEnableDrawFrame(const bool bDraw)
 {
 	// 引数の枠の表示状況を設定
 	m_bDrawFrame = bDraw;
+
+	m_pFrame->SetEnableDisp(bDraw);
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CGauge2D::Debug()
+{
+	if (ImGui::TreeNode("Gauge2D"))
+	{
+		ImGui::DragFloat("m_fSizeFrame", &m_fSizeFrame, 0.01f, 0.0f, 0.0f, "%.2f");
+
+		SetSizeFrame(m_pFrame->GetSizeOrigin() * m_fSizeFrame);
+
+		MyLib::Vector3 pos = MyLib::Vector3(30.0f, 670.0f, 0.0f);
+		if (m_team == CGameManager::ETeamSide::SIDE_RIGHT) pos.x = 1250.0f;
+
+		pos.x *= m_fSizeFrame;
+		m_pFrame->SetPosition(pos);
+
+		ImGui::TreePop();
+	}
 }

@@ -36,6 +36,7 @@
 #include "charmText.h"
 #include "objectBillboard.h"
 #include "cutin.h"
+#include "balloonFrame.h"
 
 namespace
 {

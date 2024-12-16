@@ -439,6 +439,9 @@ private:
 	typedef void(CPlayer::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];							// 状態関数
 
+	typedef void(CPlayer::* STATE_END_FUNC)();
+	static STATE_END_FUNC m_StateEndFunc[];						// 状態終了関数
+
 	typedef void(CPlayer::*ACTION_FUNC)();
 	static ACTION_FUNC m_ActionFunc[];							// 行動関数
 
@@ -464,6 +467,14 @@ private:
 	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
 	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
+	//-----------------------------
+	// 状態関数
+	//-----------------------------
+	void StateEndInvincible();			// 無敵
+	void StateEndDamage();				// ダメージ
+	void StateEndDead();				// 死亡
+	void StateEndDeadAfter();			// 死亡後
+	void StateEndInvade_Return();		// 相手コート侵入から戻る
 
 	//-----------------------------
 	// スペシャルキャッチ状態関数

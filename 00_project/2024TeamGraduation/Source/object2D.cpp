@@ -31,6 +31,7 @@ CObject2D::CObject2D(int nPriority, const LAYER layer) : CObject(nPriority, laye
 	m_fLength = 0.0f;						// 対角線の長さ
 	m_fAngle = 0.0f;						// 対角線の向き
 	m_nTexIdx = 0;							// テクスチャのインデックス番号
+	m_nNumVertex = DEF_VTXNUM;				// 頂点数
 	m_pVtxBuff = nullptr;					// 頂点バッファ
 	m_vecUV.clear();						// テクスチャ座標
 	m_vecVtxPos.clear();					// 頂点座標
@@ -94,6 +95,51 @@ HRESULT CObject2D::Init()
 	if (m_pVtxBuff != nullptr) return E_FAIL;
 
 	HRESULT hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * DEF_VTXNUM,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&m_pVtxBuff,
+		nullptr);
+
+	if (FAILED(hr)) return E_FAIL;	// 失敗
+
+	// 頂点情報設定
+	SetVtx();
+
+	return S_OK;
+}
+
+//==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CObject2D::Init(int nNumVertex)
+{
+	// 頂点数
+	m_nNumVertex = nNumVertex;
+
+	// 種類設定
+	SetType(CObject::TYPE::TYPE_OBJECT2D);
+
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
+	if (m_vecVtxPos.empty()) { m_vecVtxPos.resize(nNumVertex); }
+	if (m_vecUV.empty()) { m_vecUV.resize(nNumVertex); }
+
+	if ((int)m_vecUV.size() >= nNumVertex)
+	{// リサイズ済み
+
+		// テクスチャ座標
+		m_vecUV[0] = D3DXVECTOR2(0.0f, 0.0f);
+		m_vecUV[1] = D3DXVECTOR2(1.0f, 0.0f);
+		m_vecUV[2] = D3DXVECTOR2(0.0f, 1.0f);
+		m_vecUV[3] = D3DXVECTOR2(1.0f, 1.0f);
+	}
+
+	// 頂点バッファの生成
+	if (m_pVtxBuff != nullptr) return E_FAIL;
+
+	HRESULT hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * nNumVertex,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -173,40 +219,7 @@ void CObject2D::Draw()
 	pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nTexIdx));
 
 	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-}
-
-//==========================================================================
-// 描画処理
-//==========================================================================
-void CObject2D::Draw(int nNumVertex)
-{
-	// マネージャのインスタンス取得
-	CManager* pMgr = CManager::GetInstance();
-
-#if _DEBUG
-
-	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
-		(!GetType() == CObject::TYPE::TYPE_UI || !GetType() == CObject::TYPE::TYPE_NONE))
-	{
-		return;
-	}
-#endif
-
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
-
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	// テクスチャの設定
-	pDevice->SetTexture(0, CTexture::GetInstance()->GetAdress(m_nTexIdx));
-
-	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 1);
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, m_nNumVertex - 2);
 }
 
 //==========================================================================

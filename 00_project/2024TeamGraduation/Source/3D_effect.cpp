@@ -339,7 +339,7 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	SetAlpha(1.0f);
 
 	// éıñΩÇÃçXêV
-	m_fLife -= fDeltaTime * fSlowRate * fDeltaRate;
+	m_fLife -= fDeltaTime * fSlowRate;
 
 	if (m_fLife <= 0.0f)
 	{// éıñΩÇ™êsÇ´ÇΩÇÁ

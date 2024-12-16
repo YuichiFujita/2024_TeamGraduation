@@ -160,6 +160,7 @@ private:
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成
 	void Save();				// チームステータス保存
+	void UpdateGaugeTime();		// ゲージ時間更新
 
 	//=============================
 	// メンバ変数

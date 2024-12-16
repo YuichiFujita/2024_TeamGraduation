@@ -82,12 +82,17 @@ public:
 	{
 		CATCH_TYPE_NONE = 0,	// なし
 		CATCH_TYPE_NORMAL,		// 通常
-		CATCH_TYPE_JUST,		// ジャスト
-		CATCH_TYPE_DASH,		// ダッシュ
 		CATCH_TYPE_PASS_GIVE,	// パスを貰う
 		CATCH_TYPE_PASS_STEAL,	// パスを奪う
 		CATCH_TYPE_FIND,		// 取りに行く
 		CATCH_TYPE_MAX
+	};
+
+	enum EMoveState
+	{
+		MOVESTATE_IDLE = 0,		// 待機
+		MOVESTATE_MOVE,			// 移動
+		MOVESTATE_EVADE,		// 回避の為の行動
 	};
 
 	enum EMoveTypeChatch
@@ -95,7 +100,8 @@ public:
 		MOVETYPE_NONE = 0,		// なし
 		MOVETYPE_DISTANCE,		// 距離を取る
 		MOVETYPE_RANDOM,		// ランダム
-		MOVETYPE_LEFTRIGHT,		// 左右
+		MOVETYPE_AVOID,			// 回避
+		MOVETYPE_CRAZY,			// 狂ってる
 		MOVETYPE_MAX
 	};
 
@@ -153,12 +159,18 @@ private:
 		bool bFoldJump;			// ジャンプの折り返しフラグ
 	};
 
-	struct SMove {
+	struct SMoveType {
 		float fTimer;			// 行動タイマー
 		int nRand;				// 
 		bool bReturn;			// 切り替えし
 		bool bSetTimer;			// 時間設定ON/OFF
 		bool bSetMove;			// 設定完了いてるか
+	};
+
+	struct sMoveCount
+	{
+		float fTimer;
+		bool bSet;
 	};
 
 	struct SDistance {			// 距離
@@ -170,6 +182,7 @@ private:
 	struct SParameter {			// パラメータ
 		EHeartMain eHeartMain;	// 心(メイン)
 		EHeartMain eHearDSub;	// 心(サブ)
+		float fMotivation;		// モチベーション
 		float fMove;			// 行動
 		bool bSet;				// 設定ON/OFF
 	};
@@ -226,14 +239,8 @@ private:
 	typedef void(CPlayerAIControl::* MOVEFORCIBLY_FUNC)();
 	static MOVEFORCIBLY_FUNC m_MoveForciblyFunc[];	// 強制行動関数
 
-	typedef void(CPlayerAIControl::* MOVEFLAG_FUNC)();
-	static MOVEFLAG_FUNC m_MoveFlagFunc[];				// 行動関数
-
 	typedef void(CPlayerAIControl::* MOVETYPE_FUNC)(const float, const float, const float);
 	static MOVETYPE_FUNC m_MoveTypeFunc[];				// 行動関数
-
-	typedef void(CPlayerAIControl::* ACTION_FUNC)();
-	static ACTION_FUNC m_ActionFunc[];				// アクション関数
 
 	typedef void(CPlayerAIControl::* THROWTYPE_FUNC)();
 	static THROWTYPE_FUNC m_ThrowTypeFunc[];		// 投げるタイプ関数
@@ -241,14 +248,23 @@ private:
 	typedef void(CPlayerAIControl::* THROWMOVE_FUNC)();
 	static THROWMOVE_FUNC m_ThrowMoveFunc[];		// 投げるまでの行動関数
 
-	typedef void(CPlayerAIControl::* THROW_FUNC)();
-	static THROW_FUNC m_ThrowFunc[];				// 投げタイミング関数
-
 	typedef void(CPlayerAIControl::* THROWTIMING_FUNC)(const float, const float, const float);
 	static THROWTIMING_FUNC m_ThrowTimingFunc[];	// 投げタイミング関数
 
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];				// キャッチ関数
+
+	typedef void(CPlayerAIControl::* MOVESTATE_FUNC)(const float, const float, const float);
+	static MOVESTATE_FUNC m_MoveStateFunc[];				// キャッチ関数
+
+	typedef void(CPlayerAIControl::* ACTION_FUNC)();
+	static ACTION_FUNC m_ActionFlagFunc[];				// アクションフラグ関数
+
+	typedef void(CPlayerAIControl::* THROW_FUNC)();
+	static THROW_FUNC m_ThrowFlagFunc[];				// 投げフラグ関数
+
+	typedef void(CPlayerAIControl::* MOVEFLAG_FUNC)();
+	static MOVEFLAG_FUNC m_MoveFlagFunc[];				// 行動フラグ関数
 
 	//-----------------------------
 	// 状態関数
@@ -264,33 +280,18 @@ private:
 	virtual void ForciblyReturn() = 0;	// 戻る
 	void ForciblyStart();				// 初め
 
-	// 行動
-	void MoveFlagStop();			// なし
-	void MoveFlagWalk();			// 歩く
-	void MoveFlagBlink();			// ブリンク
-	void MoveFlagDash();			// 走る
-
 	// 行動タイプ
 	void MoveTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};	// なし
 	void MoveTypeDistance(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 距離を取る
 	void MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// あっちゃこっちゃ
-	void MoveTypeLeftRight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 左右
-
-	// アクション
-	void ActionNone();			// なし
-	void ActionJump();			// ジャンプ
+	void MoveTypeAvoid(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 回避
+	virtual void MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 回避
 
 	// 投げタイプ
 	void ThrowTypeNone() {};	// なし
 	void ThrowTypeNormal();		// 通常
 	void ThrowTypeJump();		// ジャンプ
 	void ThrowTypeSpecial();	// スペシャル
-
-	// 投げ
-	void ThrowNone() {};		// なし
-	void Throw();				// 投げ
-	void ThrowPass();			// パス
-	void ThrowSpecial();		// スペシャル
 
 	// 投げるまでの行動
 	void ThrowMoveNone();		// なし
@@ -309,11 +310,30 @@ private:
 	// キャッチ
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
 	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void CatchJust(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void CatchDash(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchPassGive(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchPassSteal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	void MoveStateIdle();
+	void MoveStateMove();
+	void MoveStateEvade();
+
+	// 行動フラグ
+	void MoveFlagStop();			// なし
+	void MoveFlagWalk();			// 歩く
+	void MoveFlagBlink();			// ブリンク
+	void MoveFlagDash();			// 走る
+
+	// アクションフラグ
+	void ActionFlagNone();			// なし
+	void ActionFlagJump();			// ジャンプ
+
+	// 投げフラグ
+	void ThrowFlagNone() {};		// なし
+	void ThrowFlag();				// 投げ
+	void ThrowFlagPass();			// パス
+	void ThrowFlagSpecial();		// スペシャル
+
 
 	//=============================
 	// メンバ関数
@@ -331,11 +351,11 @@ private:
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
 	void UpdateSee();			// 見る
 
-	void MoveLeftRigft(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void MoveLeft();		// 左
-	void MoveRight();		// 右
-	void MoveFront();			// 前
-	void MoveDown();		// 後
+	void MoveDistance();
+	void MoveLeft(CPlayer* pPlayer);		// 左
+	void MoveRight(CPlayer* pPlayer);		// 右
+	void MoveFront(CPlayer* pPlayer);			// 前
+	void MoveDown(CPlayer* pPlayer);		// 後
 
 	void PlanThrow();			// 投げのプラン
 
@@ -381,7 +401,8 @@ private:
 	// 構造体
 	//-----------------------------
 	SThrow m_sThrow;				// 投げ
-	SMove m_sMove;					// 行動
+	SMoveType m_sMove;				// 行動
+	sMoveCount m_sMoveCount;		// 行動カウント
 	SDistance m_sDistance;			// 距離
 	SParameter m_sParameter;		// パラメータ	
 };

@@ -89,6 +89,8 @@ public:
 	
 	void SetTeam(CGameManager::ETeamSide team) { m_team = team; }				// チーム設定
 	CGameManager::ETeamSide	GetTeam() { return m_team; }						// チーム取得
+	
+	void Debug();	// デバッグ
 
 	// 静的関数
 	static void		SetBrightTime(float time) { m_fBrightTime = time; }			// maxの時光るカウンター設定
@@ -100,6 +102,7 @@ private:
 
 	// メンバ関数
 	void InitSize();					// 初期サイズ設定
+	void InitPosition();				// 初期位置設定
 	void BrightBar();					// ゲージ発光
 
 	// メンバ変数
@@ -119,6 +122,9 @@ private:
 	const float m_fFrame;				// 表示値の変動フレーム定数
 	static float	m_fBrightTime;		// maxの時光るカウンター
 	static float	m_fBrightTimeEnd;	// maxの時光るカウンター
+
+	// デバッグ
+	float	m_fSizeFrame;	// 枠大きさ倍率
 };
 
 #endif	// _GAUGE2D_H_

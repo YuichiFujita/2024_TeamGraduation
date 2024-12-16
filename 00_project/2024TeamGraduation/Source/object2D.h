@@ -40,10 +40,10 @@ public:
 
 	// オーバーライドされた関数
 	HRESULT Init() override;
+	HRESULT Init(int nNumVertex);
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
-	void Draw(int nNumVertex);
 	virtual void Kill() override;	// 動的削除処理
 
 
@@ -89,6 +89,7 @@ public:
 	void SetVecVtxPos(const std::vector<MyLib::Vector3>& vecpos) { m_vecVtxPos = vecpos; }	// 頂点座標設定
 	MyLib::Vector3* GetVtxPos() { return &m_vecVtxPos[0]; }									// 頂点座標のポインタ取得
 	std::vector<MyLib::Vector3> GetVecVtxPos() { return m_vecVtxPos; }						// 頂点座標取得
+	int GetNumVertex() { return m_nNumVertex; }							// 頂点数
 
 	// 頂点バッファ
 	LPDIRECT3DVERTEXBUFFER9 GetVtxBuff() const { return m_pVtxBuff; }	// 頂点バッファ取得
@@ -119,6 +120,7 @@ private:
 	float m_fLength;							// 対角線の長さ
 	float m_fAngle;								// 対角線の向き
 	int m_nTexIdx;								// テクスチャのインデックス番号
+	int m_nNumVertex;							// 頂点数
 	std::vector<D3DXVECTOR2> m_vecUV;			// テクスチャ座標
 	std::vector<MyLib::Vector3> m_vecVtxPos;	// 頂点座標
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファ

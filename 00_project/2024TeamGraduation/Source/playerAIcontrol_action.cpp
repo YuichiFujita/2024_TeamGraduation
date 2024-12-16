@@ -49,7 +49,7 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (player->GetBall() != nullptr) return;
-	//if (!m_sFlag.bCatch) return;
+	if (!m_sFlag.bCatch) return;
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
@@ -60,6 +60,8 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 		// アクションパターン変更
 		SetPattern(player, CPlayer::EMotion::MOTION_CATCH_STANCE, CPlayer::EAction::ACTION_CATCH);
 	}
+
+	m_sFlag.bCatch = false;
 }
 
 //==========================================================================
