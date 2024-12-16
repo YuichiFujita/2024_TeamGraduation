@@ -761,6 +761,9 @@
     <ClCompile Include="Source\balloonFrame.cpp">
       <Filter>ingame\balloon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\titlestudent.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1386,6 +1389,9 @@
     </ClInclude>
     <ClInclude Include="Source\balloonFrame.h">
       <Filter>ingame\balloon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\titlestudent.h">
+      <Filter>mode\title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

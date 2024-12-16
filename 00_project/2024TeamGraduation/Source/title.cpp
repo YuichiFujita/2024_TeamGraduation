@@ -14,7 +14,7 @@
 #include "particle.h"
 #include "MyEffekseer.h"
 #include "titleLogo.h"
-
+#include "titlestudent.h"
 #include "camera.h"
 
 //==========================================================================
@@ -155,6 +155,23 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		// 遷移
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
 	}
+
+
+#if _DEBUG
+
+	// 生成
+	if (ImGui::TreeNode("Create"))
+	{
+		if (ImGui::Button("TitleStudent"))
+		{
+			// タイトルの生徒生成
+			CTitleStudent::Create();
+		}
+
+		// ツリー終端
+		ImGui::TreePop();
+	}
+#endif
 }
 
 //==========================================================================

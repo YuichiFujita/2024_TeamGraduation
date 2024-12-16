@@ -7,6 +7,8 @@
 #include "titleLogo.h"
 #include "object2D.h"
 #include "objectX.h"
+#include "manager.h"
+#include "camera.h"
 
 //==========================================================================
 // 定数定義
@@ -20,7 +22,7 @@ namespace
 namespace StateTime
 {
 	const float SPAWN = 5.0f;	// 登場
-	const float LOOP_ROTATION = 3.0f;	// ループ周期
+	const float LOOP_ROTATION = 6.0f;	// ループ周期
 	const float LOOP = 1.0f;	// ループ周期
 	const float START = 1.0f;	// 開始
 }
@@ -28,9 +30,9 @@ namespace StateTime
 namespace Logo
 {
 	const MyLib::Vector3 POS_ORIGIN = MyLib::Vector3(0.0f, 600.0f, 600.0f);				// 初期位置
-	const MyLib::Vector3 POS_DEFAULT = MyLib::Vector3(0.0f, 100.0f, 0.0f);				// 通常位置
+	const MyLib::Vector3 POS_DEFAULT = MyLib::Vector3(0.0f, 250.0f, 0.0f);				// 通常位置
 	const MyLib::Vector3 VALUE_ROTATION = MyLib::Vector3(0.0f, D3DX_PI * 0.05f, 0.0f);	// 向き
-	const float VALUE_FLOAT = 20.0f;													// 浮上値
+	const float VALUE_FLOAT = 10.0f;													// 浮上値
 }
 
 //==========================================================================
@@ -232,6 +234,16 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 	// 回転
 	MyLib::Vector3 rot = sinf(D3DX_PI * m_fStateTime / StateTime::LOOP_ROTATION) * Logo::VALUE_ROTATION;
 	m_pMain->SetRotation(rot);
+
+
+
+	// カメラ取得
+	CCamera* pCamera = GET_MANAGER->GetCamera();
+
+	// カメラの向き同期
+	MyLib::Vector3 cameraRot = pCamera->GetRotation();
+	cameraRot.y = rot.y;
+	pCamera->SetRotation(cameraRot);
 
 }
 
