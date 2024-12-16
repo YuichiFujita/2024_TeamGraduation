@@ -5,7 +5,6 @@
 // 
 //==========================================================================
 #include "audience.h"
-#include "gameManager.h"
 #include "charmManager.h"
 #include "shadow.h"
 #include "manager.h"
@@ -14,6 +13,9 @@
 #include "audienceAnim.h"
 #include "audienceLowPoly.h"
 #include "audienceHighPoly.h"
+#include "audienceAnim_result.h"
+#include "audienceLowPoly_result.h"
+#include "audienceHighPoly_result.h"
 
 //==========================================================================
 // 定数定義
@@ -89,22 +91,43 @@ CAudience::~CAudience()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team)
+CAudience* CAudience::Create(EObjType type, CGameManager::ETeamSide team, CScene::MODE mode)
 {
 	// メモリの確保
 	CAudience* pAudience = nullptr;
 	switch (type)
 	{ // オブジェクト種類ごとの処理
 	case CAudience::OBJTYPE_ANIM:
-		pAudience = DEBUG_NEW CAudienceAnim(type, team);
+		if (mode == CScene::MODE::MODE_RESULT)
+		{
+			pAudience = DEBUG_NEW CAudienceAnimResult(type, team);
+		}
+		else
+		{
+			pAudience = DEBUG_NEW CAudienceAnim(type, team);
+		}
 		break;
 
 	case CAudience::OBJTYPE_LOWPOLY:
-		pAudience = DEBUG_NEW CAudienceLowPoly(type, team);
+		if (mode == CScene::MODE::MODE_RESULT)
+		{
+			pAudience = DEBUG_NEW CAudienceLowPolyResult(type, team);
+		}
+		else
+		{
+			pAudience = DEBUG_NEW CAudienceLowPoly(type, team);
+		}
 		break;
 
 	case CAudience::EObjType::OBJTYPE_HIGHPOLY:
-		pAudience = DEBUG_NEW CAudienceHighPoly(type, team);
+		if (mode == CScene::MODE::MODE_RESULT)
+		{
+			pAudience = DEBUG_NEW CAudienceHighPolyResult(type, team);
+		}
+		else
+		{
+			pAudience = DEBUG_NEW CAudienceHighPoly(type, team);
+		}
 		break;
 
 	default:
@@ -285,8 +308,11 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team
 			else if	(m_aNumWatchAll[team] < (int)(MAX_WATCH * (RATE_HIGH + RATE_LOW)))	{ type = OBJTYPE_LOWPOLY; 	}	// ローポリ
 			else																		{ type = OBJTYPE_ANIM; }		// アニメーション
 
+			// リザルト = リザルト用生成
+			CScene::MODE mode = GET_MANAGER->GetMode();
+
 			// 観客を生成
-			if (FAILED(CAudience::Create(type, team)))
+			if (FAILED(CAudience::Create(type, team, mode)))
 			{ // 生成に失敗した場合
 
 				return E_FAIL;

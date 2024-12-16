@@ -87,6 +87,9 @@ protected:
 	// ゲッター/セッター
 	void SetMotion(const int nMotion) override;	// モーション設定
 	void EndSettingSpawn() override {}			// スポーン終了時の設定
+	void SetIdolMotion(const EMotion motion) { m_idolMotion = motion; }		// 待機モーション
+	void SetJumpMotion(const EMotion motion) { m_jumpMotion = motion; }		// ジャンプモーション
+	void SetMoveMotion(const EMotion motion) { m_moveMotion = motion; }		// 移動モーション
 
 private:
 
@@ -102,9 +105,9 @@ private:
 	//=============================
 	HRESULT CreateAnimCharacter(const MyLib::Vector3& rPos);	// キャラクター生成
 	HRESULT CreatePenLight();		// ペンライト生成
-	void CalcWatchPositionFar();	// 観戦位置計算 (奥)
-	void CalcWatchPositionUp();		// 観戦位置計算 (上)
-	void CalcWatchPositionNear();	// 観戦位置計算 (手前)
+	virtual void CalcWatchPositionFar();	// 観戦位置計算 (奥)
+	virtual void CalcWatchPositionUp();		// 観戦位置計算 (上)
+	virtual void CalcWatchPositionNear();	// 観戦位置計算 (手前)
 
 	//=============================
 	// メンバ変数

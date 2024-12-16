@@ -102,9 +102,9 @@ private:
 	//=============================
 	HRESULT CreateCharacter(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot);	// キャラクター生成
 	HRESULT CreatePenLight();		// ペンライト生成
-	void CalcWatchPositionFar();	// 観戦位置計算 (奥)
-	void CalcWatchPositionSide();	// 観戦位置計算 (横)
-	void CalcWatchPositionNear();	// 観戦位置計算 (手前)
+	virtual void CalcWatchPositionFar();	// 観戦位置計算 (奥)
+	virtual void CalcWatchPositionSide();	// 観戦位置計算 (横)
+	virtual void CalcWatchPositionNear();	// 観戦位置計算 (手前)
 
 	//=============================
 	// メンバ変数

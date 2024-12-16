@@ -10,15 +10,11 @@
 
 #include "manager.h"
 
-class CTitleLogo;
-class CTitle_PressEnter;
-class CKeyConfigSetting;
-class CPeopleManager;
-
 //==========================================================================
 // 前方宣言
 //==========================================================================
-class CSpawnEnvironment;
+class CTitleLogo;
+class CTitleScene;
 
 //==========================================================================
 // クラス定義
@@ -31,13 +27,11 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum SCENETYPE
+	enum ESceneType
 	{
 		SCENETYPE_NONE = 0,			// なにもなし
-		SCENETYPE_FADEIN,			// フェードイン
-		SCENETYPE_FADEOUT_LOGO,		// ロゴフェードアウト
-		SCENETYPE_SOUNDSETTING,		// サウンド設定
-		SCENETYPE_OTHERSETTING,		// その他設定
+		SCENETYPE_CONTROLLWAIT,		// 操作待ち
+		SCENETYPE_SUSURU,			// SUSURU
 		SCENETYPE_MAX
 	};
 
@@ -51,13 +45,9 @@ public:
 	void Draw() override;
 
 	// シーンの種類
-	void SetSceneType(SCENETYPE type) { m_SceneType = type; }
-	SCENETYPE GetSceneType() { return m_SceneType; }
+	ESceneType GetSceneType() { return m_SceneType; }
+	void ChangeScene(ESceneType type);	// シーン切り替え
 
-	// その他
-	CTitle_PressEnter* GetTitlePressEnter() { return m_pPressEnter; }
-	CKeyConfigSetting* GetSetting() { return m_pConfigSetting; }
-	void SetSetting(CKeyConfigSetting* pSetting) { m_pConfigSetting = pSetting; }
 
 	// 静的関数
 	static CTitle* GetInstance();	// インスタンス取得
@@ -74,6 +64,7 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
+	void UpdateScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// シーンの更新処理
 	void SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なにもなし
 	void SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードイン
 	void SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードアウト
@@ -81,14 +72,10 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	ESceneType m_SceneType;		// シーンの種類
 	float m_fSceneTime;			// シーンカウンター
-	SCENETYPE m_SceneType;		// シーンの種類
 	CTitleLogo* m_pLogo;		// ロゴのポインタ
-	CKeyConfigSetting* m_pConfigSetting;
-	CTitle_PressEnter* m_pPressEnter;	// プレスエンター
-	CSpawnEnvironment* m_pSpawn_Leaf;	// 降る葉生成
-	CPeopleManager* m_pPeopleManager;	// 人マネージャ
-
+	CTitleScene* m_pTitleScene;		// タイトルシーン
 	static CTitle* m_pThisPtr;	// 自身のポインタ
 };
 

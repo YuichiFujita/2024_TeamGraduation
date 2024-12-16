@@ -42,9 +42,9 @@ namespace
 
 #if _DEBUG
 #ifdef ENTRYSTART
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_ENTRY;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_RESULT;
 #else
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_TITLE;
 #endif
 #else	// TODO: ENTRYâÊñ äÆê¨ÇµÇΩÇÁTITLEÇ…Ç∑ÇÈ
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
@@ -500,6 +500,7 @@ void CManager::Reset(CScene::MODE mode)
 	if (m_pCamera != nullptr)
 	{
 		m_pCamera->Reset();
+		m_pCamera->ResetByMode(mode);
 	}
 }
 
@@ -1064,7 +1065,6 @@ void CManager::ChangePauseMode(CScene::MODE mode)
 	switch (mode)
 	{
 	case CScene::MODE::MODE_GAME:
-	case CScene::MODE::MODE_GAMETUTORIAL:
 
 		// çÌèú
 		if (m_pPause!= nullptr)
