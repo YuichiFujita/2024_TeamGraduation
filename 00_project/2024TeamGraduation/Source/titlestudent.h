@@ -37,6 +37,8 @@ public:
 	enum EMotion
 	{
 		MOTION_DEF = 0,				// ニュートラルモーション
+		MOTION_SUSURU,				// SUSURU
+		MOTION_WAIT,				// 待機
 		MOTION_WALK,				// 移動
 		MOTION_WARMUP_01,			// 準備体操01
 		MOTION_WARMUP_02,			// 準備体操02

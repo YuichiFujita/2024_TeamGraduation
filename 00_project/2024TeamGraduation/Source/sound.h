@@ -33,6 +33,7 @@ public:
 	{
 		LABEL_NONE = -1,		// 指定なし
 		LABEL_BGM_TITLE,		// タイトル
+		LABEL_BGM_TITLE_SUSURU,	// タイトル(SUSURU)
 		LABEL_BGM_ENTRY,		// エントリー
 		LABEL_BGM_GAME,			// ゲーム
 		LABEL_BGM_SPAWN,		// 登場時

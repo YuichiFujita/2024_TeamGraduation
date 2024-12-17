@@ -88,18 +88,25 @@ namespace Player
 //==========================================================================
 // ŠÖ”ƒ|ƒCƒ“ƒ^
 //==========================================================================
-CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =	// ó‘ÔŠÖ”
+CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =				// ó‘ÔŠÖ”
 {
 	& CResultManager::StateNone,				// ‚È‚µ
 	& CResultManager::StatePrelude,				// ‘OÀŸ”s
 	& CResultManager::StateCharmContest,		// ƒ‚ƒeŸ”s
 };
 
-CResultManager::STATE_START_FUNC CResultManager::m_StateStartFunc[] =	// ó‘ÔŠÖ”
+CResultManager::STATE_START_FUNC CResultManager::m_StateStartFunc[] =	// ó‘ÔŠJn
 {
-	nullptr,										// ‚È‚µ
-	&CResultManager::StateStartPrelude,				// ‘OÀŸ”s
-	&CResultManager::StateStartCharmContest,		// ƒ‚ƒeŸ”s
+	nullptr,									// ‚È‚µ
+	&CResultManager::StateStartPrelude,			// ‘OÀŸ”s
+	&CResultManager::StateStartCharmContest,	// ƒ‚ƒeŸ”s
+};
+
+CResultManager::STATE_END_FUNC CResultManager::m_StateEndFunc[] =		// ó‘ÔI—¹
+{
+	nullptr,									// ‚È‚µ
+	&CResultManager::StateEndPrelude,			// ‘OÀŸ”s
+	&CResultManager::StateEndCharmContest,		// ƒ‚ƒeŸ”s
 };
 
 //==========================================================================
@@ -259,12 +266,16 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 }
 
 //==========================================================================
-// ‘OÀŸ”s¶¬
+// [ŠJn]‘OÀŸ”s
 //==========================================================================
 void CResultManager::StateStartPrelude()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
+	// ŠÏ‹q·‚èã‚°
+	CAudience::SetEnableJumpAll(true, m_teamPreludeWin);
+
+	// ƒ|ƒŠƒSƒ“¶¬(ˆø‚«•ª‚¯)
 	if (m_teamPreludeWin == CGameManager::ETeamSide::SIDE_NONE)
 	{// ˆø‚«•ª‚¯‚¾‚Á‚½‚ç
 		CObject2D* pObj = CObject2D::Create();
@@ -275,9 +286,9 @@ void CResultManager::StateStartPrelude()
 		return;
 	}
 
-	// ƒ|ƒŠƒSƒ“¶¬
+	// ƒ|ƒŠƒSƒ“¶¬(Ÿ”s)
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
-	{
+	{// Ÿ”s•ª
 		CObject2D* pObj = CObject2D::Create();
 	
 		pObj->SetPosition(Prelude::POS_POLY[i]);
@@ -295,12 +306,19 @@ void CResultManager::StateStartPrelude()
 }
 
 //==========================================================================
-// ƒ‚ƒeŸ”s¶¬
+// [ŠJn]ƒ‚ƒeŸ”s
 //==========================================================================
 void CResultManager::StateStartCharmContest()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
+	// ŠÏ‹qNTR
+	CAudience::SetNTRAll(CGameManager::GetInstance()->RivalTeam(m_teamContestWin));
+
+	// ŠÏ‹q·‚èã‚°
+	CAudience::SetEnableJumpAll(true, m_teamContestWin);
+
+	// ƒ|ƒŠƒSƒ“¶¬(ˆø‚«•ª‚¯)
 	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
 	{// ˆø‚«•ª‚¯‚¾‚Á‚½‚ç
 		CObject2D* pObj = CObject2D::Create();
@@ -312,7 +330,7 @@ void CResultManager::StateStartCharmContest()
 	}
 
 	//TAKADA: ƒ‚ƒe’lo‚·H
-	// ƒ|ƒŠƒSƒ“¶¬
+	// ƒ|ƒŠƒSƒ“¶¬(Ÿ”s)
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
 		CObject2D* pObj = CObject2D::Create();
@@ -328,6 +346,30 @@ void CResultManager::StateStartCharmContest()
 		{
 			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
 		}
+	}
+}
+
+//==========================================================================
+// [I—¹]‘OÀŸ”s
+//==========================================================================
+void CResultManager::StateEndPrelude()
+{
+	// ‘SŠÏ‹q’¾–Ù
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CAudience::SetEnableJumpAll(false, static_cast<CGameManager::ETeamSide>(i));
+	}
+}
+
+//==========================================================================
+// [I—¹]ƒ‚ƒeŸ”s
+//==========================================================================
+void CResultManager::StateEndCharmContest()
+{
+	// ‘SŠÏ‹q’¾–Ù
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CAudience::SetEnableJumpAll(false, static_cast<CGameManager::ETeamSide>(i));
 	}
 }
 

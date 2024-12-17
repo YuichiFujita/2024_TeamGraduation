@@ -9,6 +9,7 @@
 #include "objectX.h"
 #include "manager.h"
 #include "camera.h"
+#include "instantfade.h"
 
 //==========================================================================
 // 定数定義
@@ -21,7 +22,7 @@ namespace
 
 namespace StateTime
 {
-	const float SPAWN = 1.0f;	// 登場
+	const float SPAWN = 1.2f;	// 登場
 	const float LOOP_ROTATION = 6.0f;	// ループ周期
 	const float LOOP = 1.0f;	// ループ周期
 	const float START = 1.0f;	// 開始
@@ -109,6 +110,15 @@ HRESULT CTitleLogo::Init()
 	// 状態設定
 	SetState(EState::STATE_SPAWN);
 
+
+	// カメラ取得
+	CCamera* pCamera = GET_MANAGER->GetCamera();
+
+	// カメラの向き同期
+	MyLib::Vector3 cameraRot = pCamera->GetRotation();
+	cameraRot.y = 0.0f;
+	pCamera->SetRotation(cameraRot);
+
 	return S_OK;
 }
 
@@ -172,6 +182,12 @@ void CTitleLogo::Uninit()
 //==========================================================================
 void CTitleLogo::Kill()
 {
+	// ロゴ部分
+	SAFE_KILL(m_pMain);
+
+	// 副
+	SAFE_KILL(m_pSub);
+
 	// 自身の終了
 	Uninit();
 }
@@ -181,6 +197,11 @@ void CTitleLogo::Kill()
 //==========================================================================
 void CTitleLogo::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (GET_MANAGER->GetInstantFade()->GetState() == CInstantFade::EState::STATE_FADEIN)
+	{// フェードINは抜ける
+		return;
+	}
+
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 
@@ -207,7 +228,7 @@ void CTitleLogo::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置更新
-	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime);
+	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime, 3.0f);
 	m_pMain->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)

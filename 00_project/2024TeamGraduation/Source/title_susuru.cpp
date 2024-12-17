@@ -8,9 +8,9 @@
 #include "manager.h"
 #include "game.h"
 #include "input.h"
-#include "entry_setupTeam.h"
 #include "dressup.h"
 #include "playerManager.h"
+#include "titlestudent.h"
 
 //==========================================================================
 // 定数定義
@@ -23,7 +23,7 @@ namespace
 
 namespace StateTime
 {
-	const float WAIT = 0.2;		// 待機
+	const float WAIT = 0.2f;		// 待機
 	const float SCROLL = 1.0f;	// 送り
 }
 
@@ -44,6 +44,11 @@ CTitle_SUSURU::CTitle_SUSURU() : CTitleScene()
 	// 状態
 	m_state = EState::STATE_WAIT;		// 状態
 	m_fStateTime = 0.0f;				// 状態時間
+
+	// その他
+	m_nIdxScroll = 0;		// 送る文字インデックス
+	memset(&m_apText, 0, sizeof(m_apText));	// 文字
+	m_pSUSURU = nullptr;	// SUSURUさん
 }
 
 //==========================================================================
@@ -59,13 +64,36 @@ CTitle_SUSURU::~CTitle_SUSURU()
 //==========================================================================
 HRESULT CTitle_SUSURU::Init()
 {
-	
+	// 初期化処理
+	if(FAILED(CTitleScene::Init())) return E_FAIL;
+
+	// テキスト生成
+	if (FAILED(CreateText())) return E_FAIL;
+
+	// SUSURUさん生成
+	if (FAILED(CreateSUSURU())) return E_FAIL;
+
+	// 送る文字インデックス
+	m_nIdxScroll = 0;
+
+	// BGM再生
+	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_TITLE_SUSURU);
+
+	return S_OK;
+}
+
+//==========================================================================
+// テキスト生成
+//==========================================================================
+HRESULT CTitle_SUSURU::CreateText()
+{
 	// 文字
 	float u = (1.0f / NUM_TEXT);
 	for (int i = 0; i < NUM_TEXT; i++)
 	{
 		// 生成
 		m_apText[i] = CObject2D::Create(4);
+		if (m_apText[i] == nullptr) return E_FAIL;
 
 		// 種類設定
 		m_apText[i]->SetType(CObject::TYPE::TYPE_OBJECT2D);
@@ -88,9 +116,14 @@ HRESULT CTitle_SUSURU::Init()
 		pTex[0].x = pTex[2].x = 1.0f - u * i;
 		pTex[1].x = pTex[3].x = 1.0f - (u * i) + u;
 	}
+	return S_OK;
+}
 
-	// 送る文字インデックス
-	m_nIdxScroll = 0;
+//==========================================================================
+// SUSURUさん生成
+//==========================================================================
+HRESULT CTitle_SUSURU::CreateSUSURU()
+{
 
 	return S_OK;
 }
@@ -104,15 +137,49 @@ void CTitle_SUSURU::Uninit()
 }
 
 //==========================================================================
+// 削除処理
+//==========================================================================
+void CTitle_SUSURU::Kill()
+{
+	// テキスト
+	for (int i = 0; i < CTitle_SUSURU::NUM_TEXT; i++)
+	{
+		SAFE_KILL(m_apText[i]);
+	}
+
+	// SUSURU
+	SAFE_KILL(m_pSUSURU);
+
+	// 終了処理
+	Uninit();
+}
+
+//==========================================================================
 // 更新処理
 //==========================================================================
 void CTitle_SUSURU::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (GET_MANAGER->GetInstantFade()->GetState() == CInstantFade::EState::STATE_FADEIN)
+	{// フェードINは抜ける
+		return;
+	}
+
 	// 親の更新
 	CTitleScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// インプット情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		pKey->GetTrigger(DIK_RETURN))
+	{
+		// シーン切り替え
+		CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_CONTROLLWAIT);
+	}
 }
 
 //==========================================================================
@@ -159,13 +226,10 @@ void CTitle_SUSURU::StateScroll(const float fDeltaTime, const float fDeltaRate, 
 	size.y = UtilFunc::Correction::EasingLinear(0.0f, TEXTSIZE.y, 0.0f, StateTime::SCROLL, m_fStateTime);
 	m_apText[m_nIdxScroll]->SetSize(size);
 
-	
 
-		// 生成
-		D3DXVECTOR2* pTex = m_apText[m_nIdxScroll]->GetTex();
-
-		// UVをサイズに合わせる
-		pTex[2].y = pTex[3].y = m_apText[m_nIdxScroll]->GetSize().y / m_apText[m_nIdxScroll]->GetSizeOrigin().y;
+	// UVをサイズに合わせる
+	D3DXVECTOR2* pTex = m_apText[m_nIdxScroll]->GetTex();
+	pTex[2].y = pTex[3].y = m_apText[m_nIdxScroll]->GetSize().y / m_apText[m_nIdxScroll]->GetSizeOrigin().y;
 
 	if (m_fStateTime >= StateTime::SCROLL)
 	{

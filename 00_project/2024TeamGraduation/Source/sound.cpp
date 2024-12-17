@@ -14,6 +14,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 {
 	// モード別BGM
 	{ TYPE_BGM,"data/BGM/title.wav", -1 },			// タイトル
+	{ TYPE_BGM,"data/BGM/SUSURU.wav", -1 },			// タイトル(SUSURU)
 	{ TYPE_BGM,"data/BGM/entry.wav", -1 },			// エントリー
 	{ TYPE_BGM,"data/BGM/game01.wav", -1 },			// ゲーム
 	{ TYPE_BGM,"data/BGM/spawn.wav", -1 },			// 登場時

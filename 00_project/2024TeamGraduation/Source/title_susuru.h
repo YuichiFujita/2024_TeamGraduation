@@ -4,8 +4,8 @@
 // Author : 相馬靜雅
 //
 //=============================================================================
-#ifndef _ENTRY_DRESSUP_H_		// このマクロ定義がされていなかったら
-#define _ENTRY_DRESSUP_H_		// 二重インクルード防止のマクロを定義する
+#ifndef _TITLE_SUSURU_H_		// このマクロ定義がされていなかったら
+#define _TITLE_SUSURU_H_		// 二重インクルード防止のマクロを定義する
 
 //==========================================================================
 // インクルードファイル
@@ -17,6 +17,7 @@
 // 前方宣言
 //==========================================================================
 class CDressup;
+class CTitleStudent;	// タイトルの生徒
 
 //==========================================================================
 // クラス定義
@@ -41,14 +42,18 @@ public:
 		STATE_MAX
 	};
 
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CTitle_SUSURU();
 	~CTitle_SUSURU();
 
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual HRESULT Init() override;		// 初期化
+	virtual HRESULT Init() override;	// 初期化
 	virtual void Uninit() override;		// 終了
+	virtual void Kill() override;		// 削除
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 
 	//--------------------------
@@ -67,25 +72,32 @@ private:
 	// メンバ関数
 	//=============================
 	// 状態関数
-	//-----------------------------
+	//--------------------------
 	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 待機
 	void StateScroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 文字送り
 
+	//--------------------------
+	// その他
+	//--------------------------
+	HRESULT CreateText();	// テキスト生成
+	HRESULT CreateSUSURU();	// SUSURUさん生成
+
 	//=============================
 	// メンバ変数
 	//=============================
-	//-----------------------------
+	//--------------------------
 	// 状態
-	//-----------------------------
+	//--------------------------
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態時間
 
-	//-----------------------------
+	//--------------------------
 	// その他
-	//-----------------------------
+	//--------------------------
 	int m_nIdxScroll;	// 送る文字インデックス
 	CObject2D* m_apText[NUM_TEXT];	// 文字
+	CTitleStudent* m_pSUSURU;	// SUSURUさん
 };
 
 #endif

@@ -369,6 +369,7 @@
     <ClCompile Include="Source\titleLogo.cpp" />
     <ClCompile Include="Source\titlescene.cpp" />
     <ClCompile Include="Source\titlestudent.cpp" />
+    <ClCompile Include="Source\title_controllwait.cpp" />
     <ClCompile Include="Source\title_susuru.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
@@ -586,6 +587,7 @@
     <ClInclude Include="Source\titleLogo.h" />
     <ClInclude Include="Source\titlescene.h" />
     <ClInclude Include="Source\titlestudent.h" />
+    <ClInclude Include="Source\title_controllwait.h" />
     <ClInclude Include="Source\title_susuru.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />

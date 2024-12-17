@@ -42,9 +42,11 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceHighPolyResult::CAudienceHighPolyResult(CAudienceHighPoly::EObjType type, CGameManager::ETeamSide team) : CAudienceHighPoly(type, team)
+CAudienceHighPolyResult::CAudienceHighPolyResult(CAudienceHighPoly::EObjType type, CGameManager::ETeamSide team) : CAudienceHighPoly(type, team),
+	m_side(EAreaSide::SIDE_NONE),						// 観戦サイド
+	m_teamNTR(CGameManager::ETeamSide::SIDE_NONE)		// NTR後のチーム
 {
-	m_side = EAreaSide::SIDE_NONE;		// 観戦サイド
+
 }
 
 //==========================================================================
@@ -94,12 +96,36 @@ void CAudienceHighPolyResult::Draw()
 }
 
 //==========================================================================
+// NTRの設定処理
+//==========================================================================
+bool CAudienceHighPolyResult::SetNTR()
+{
+	// もう設定していたらはじく
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
+
+	// NTR
+	m_teamNTR = CGameManager::GetInstance()->RivalTeam(GetTeam());
+
+	// 親クラスの設定
+	CAudienceHighPoly::SetNTR();
+
+	return true;
+}
+
+//==========================================================================
 // 観戦位置の計算処理 (奥)
 //==========================================================================
 void CAudienceHighPolyResult::CalcWatchPositionFar()
 {
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Far::LEFT_LINE[nIdxTeam], Far::RIGHT_LINE[nIdxTeam]);
 	posWatch.y = CGameManager::FIELD_LIMIT;
@@ -115,8 +141,15 @@ void CAudienceHighPolyResult::CalcWatchPositionSide()
 	// ランダムで左右決定
 	int nLR = UtilFunc::Transformation::Random(0, 1);
 
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	if (nLR == 0)
 	{// 端側
@@ -139,8 +172,15 @@ void CAudienceHighPolyResult::CalcWatchPositionSide()
 //==========================================================================
 void CAudienceHighPolyResult::CalcWatchPositionNear()
 {
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Down::LEFT_LINE[nIdxTeam], Down::RIGHT_LINE[nIdxTeam]);
 	posWatch.y = CGameManager::FIELD_LIMIT;
