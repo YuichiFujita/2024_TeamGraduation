@@ -50,6 +50,8 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
 
+	bool SetNTR() override;		// NTR設定
+
 protected:
 
 private:
@@ -66,6 +68,7 @@ private:
 	// メンバ変数
 	//=============================
 	EAreaSide m_side;		// 観戦サイド
+	CGameManager::ETeamSide m_teamNTR;		// NTR後のチーム
 };
 
 #endif

@@ -44,7 +44,7 @@ namespace
 #ifdef ENTRYSTART
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_RESULT;
 #else
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_TITLE;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_RESULT;
 #endif
 #else	// TODO: ENTRYâÊñ äÆê¨ÇµÇΩÇÁTITLEÇ…Ç∑ÇÈ
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;

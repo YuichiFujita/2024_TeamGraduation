@@ -78,6 +78,9 @@ private:
 	typedef void(CResultManager::* STATE_START_FUNC)();
 	static STATE_START_FUNC m_StateStartFunc[];	// 状態開始関数
 
+	typedef void(CResultManager::* STATE_END_FUNC)();
+	static STATE_END_FUNC m_StateEndFunc[];	// 状態終了関数
+
 	//=============================
 	// メンバ関数
 	//=============================
@@ -90,8 +93,15 @@ private:
 	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗
 	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗
 
-	void StateStartPrelude();				// 前座勝敗生成
-	void StateStartCharmContest();			// モテ勝敗生成
+	void StateStartPrelude();				// [開始]前座勝敗
+	void StateStartCharmContest();			// [開始]モテ勝敗
+
+	void StateEndPrelude();				// [終了]前座勝敗
+	void StateEndCharmContest();			// [終了]モテ勝敗
+
+	//-----------------------------
+	// その他
+	//-----------------------------
 	void CreateAudience();					// 観客生成
 
 	void Debug();		// デバッグ

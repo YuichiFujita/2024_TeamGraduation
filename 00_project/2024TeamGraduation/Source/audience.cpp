@@ -428,6 +428,32 @@ void CAudience::SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespaw
 }
 
 //==========================================================================
+// 全NTRの設定処理
+//==========================================================================
+void CAudience::SetNTRAll(CGameManager::ETeamSide team)
+{
+	// チームが設定されていない場合抜ける
+	if (team != CGameManager::ETeamSide::SIDE_LEFT && team != CGameManager::ETeamSide::SIDE_RIGHT) { return; }
+
+	CAudience::EObjType type = OBJTYPE_NONE;	// オブジェクト種類
+
+	int nCurDespawn = 0;	// 現在の退場人数
+	std::list<CAudience*>::iterator itr = m_list.GetEnd();
+	while (m_list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CAudience* pAudience = (*itr);	// 観客情報
+
+		// 指定チームではない場合次へ
+		if (pAudience->m_team != team) { continue; }
+
+		// NTR設定
+		if (!pAudience->SetNTR()) { continue; }	// 既に退場中の場合は次へ
+
+	}
+}
+
+//==========================================================================
 // 入場状態の更新処理
 //==========================================================================
 int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
