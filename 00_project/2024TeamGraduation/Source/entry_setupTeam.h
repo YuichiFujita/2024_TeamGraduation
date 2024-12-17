@@ -91,6 +91,15 @@ private:
 	bool SelectTeam();		// チーム選択
 	void ChangeMaxPlayer();	// プレイヤー最大数変更
 	void TransDressUp(const bool bAllReady);	// 着せ替え遷移
+	void DeleteEntry(int* pEntryIdx);			// エントリー解除
+	void DeleteReady(int* pEntryIdx);			// 準備完了解除
+
+	//-----------------------------
+	// プレイヤーフラグ
+	//-----------------------------
+	bool IsUserReady(const int nUserIdx, std::vector<int>::iterator* pItr = nullptr);	// 準備完了フラグ取得
+	bool IsUserTeamSelect(const int nUserIdx);	// チーム選択中フラグ取得
+	bool IsUserMaxChange(const int nUserIdx);	// 最大数変更フラグ取得
 
 	//-----------------------------
 	// 外部ファイル操作
