@@ -107,7 +107,7 @@ CEntry_SetUpTeam::~CEntry_SetUpTeam()
 //==========================================================================
 HRESULT CEntry_SetUpTeam::Init()
 {
-	// 読み込み
+	// 前回のセットアップ読込 // TODO：初期情報の書き出しをCManager破棄時に呼び出し（このままだと前回の誰かの設定がそのままになる）
 	Load();
 
 	// 準備完了表示の生成
@@ -131,7 +131,7 @@ HRESULT CEntry_SetUpTeam::Init()
 		return E_FAIL;
 	}
 
-	// 追加されたインデックスリセット TODO : 毎回リセットしちゃうから要検討
+	// 追加されたインデックスリセット // TODO：毎回リセットしちゃうから要検討
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
@@ -475,25 +475,23 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 //==========================================================================
 bool CEntry_SetUpTeam::SelectTeam()
 {
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	int nNumEntry = 0;	// エントリー人数
 	int nNumReady = 0;	// 準備完了人数
-
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド認識の最大数分繰り返す
 
 		//--------------------------
-		// 参加
+		// エントリー操作
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i))
-		{// エントリー、コントローラー生成
+		{ // エントリー操作が行われた場合
 
-			// インデックス格納
 			for (int j = 0; j < mylib_const::MAX_PLAYER; j++)
 			{ // パッド認識の最大数分繰り返す
 
-				// もうエントリーされてるのは使わない
-				if (m_nEntryIdx[j] >= 0 && m_nEntryIdx[j] != i) continue;
+				// 既にエントリーされている場合次へ
+				if (m_nEntryIdx[j] >= 0 && m_nEntryIdx[j] != i) { continue; }
 
 				// 今回のプレイヤーインデックスを追加
 				m_nEntryIdx[j] = i;
@@ -504,138 +502,90 @@ bool CEntry_SetUpTeam::SelectTeam()
 			}
 		}
 
-		// 今回のインデックス
-		int nowIdx = m_nEntryIdx[i];
-		if (nowIdx < 0) continue;	// 未エントリーは抜ける
+		// 未エントリーの場合次へ
+		const int nUserIdx = m_nEntryIdx[i];	// ユーザーインデックス
+		if (nUserIdx <= -1) { continue; }
 
 		// エントリー人数を加算
 		nNumEntry++;
 
 		//--------------------------
-		// 離脱
+		// 離脱操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nowIdx))
-		{// エントリー、コントローラー生成
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nUserIdx))
+		{ // 離脱操作が行われた場合
 
-			if (m_TeamSide[nowIdx] == CGameManager::ETeamSide::SIDE_NONE)
-			{
-				if (m_nMaxChangeIdx[m_TeamSide[nowIdx]] == nowIdx)
-				{ // 最大数変更の操作権が自身の場合
+			std::vector<int>::iterator itr;	// 準備完了配列イテレーター
+			if (IsUserReady(nUserIdx, &itr))
+			{ // 準備完了している場合
 
-					// 最大数変更の操作権を初期化
-					m_nMaxChangeIdx[m_TeamSide[nowIdx]] = -1;
-				}
-
-				// コントローラーUIの自動描画をOFFにする
-				m_apPadUI[nowIdx]->SetEnableDisp(false);
-
-				// チームを初期化
-				m_TeamSide[nowIdx] = CGameManager::ETeamSide::SIDE_NONE;
-
-				// エントリーインデックスを初期化
-				m_nEntryIdx[i] = -1;
-				break;
-			}
-
-			int side = m_TeamSide[nowIdx];
-			const auto& itr = std::find(m_vecAddIdx[side].begin(), m_vecAddIdx[side].end(), nowIdx);
-			bool bUnAdd = itr == m_vecAddIdx[side].end();
-			if (bUnAdd)
-			{ // 準備完了していない場合
-
-				if (m_nMaxChangeIdx[m_TeamSide[nowIdx]] == nowIdx)
-				{ // 最大数変更の操作権が自身の場合
-
-					// 最大数変更の操作権を初期化
-					m_nMaxChangeIdx[m_TeamSide[nowIdx]] = -1;
-				}
-
-				// コントローラーUIの自動描画をOFFにする
-				m_apPadUI[nowIdx]->SetEnableDisp(false);
-
-				// チームを初期化
-				m_TeamSide[nowIdx] = CGameManager::ETeamSide::SIDE_NONE;
-
-				// エントリーインデックスを初期化
-				m_nEntryIdx[i] = -1;
+				// 準備完了配列からイテレーターを削除
+				m_vecAddIdx[m_TeamSide[nUserIdx]].erase(itr);
 				break;
 			}
 			else
-			{ // 準備完了している場合
+			{ // 準備完了していない場合
 
-				// イテレーターを削除
-				m_vecAddIdx[side].erase(itr);
+				// エントリーを解除
+				DeleteEntry(&m_nEntryIdx[i]);
 				break;
 			}
 		}
 
-		//--------------------------
-		// 準備済み判定
-		//--------------------------
-		if (m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_NONE)
-		{
-			int side = m_TeamSide[nowIdx];
-
-			const auto& itr = std::find(m_vecAddIdx[side].begin(), m_vecAddIdx[side].end(), nowIdx);
-			bool bUnAdd = itr == m_vecAddIdx[side].end();
-
-			// 既に準備完了済みの場合次へ
-			if (!bUnAdd) { nNumReady++; continue; }	// 準備完了人数を加算
-		}
+		// 既に準備完了済みの場合次へ
+		if (IsUserReady(nUserIdx)) { nNumReady++; continue; }	// 準備完了人数を加算
 
 		//--------------------------
 		// チーム替え
 		//--------------------------
-		if (m_TeamSide[nowIdx] == CGameManager::ETeamSide::SIDE_NONE ||
-			m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_NONE && m_nMaxChangeIdx[m_TeamSide[nowIdx]] != nowIdx)
-		{
-			if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nowIdx) &&
-				m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_LEFT)
-			{// 左移動(左端じゃない時)
+		if (!IsUserMaxChange(nUserIdx))
+		{ // 最大数変更の操作権を持っていない場合
+
+			if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx)
+			&&  m_TeamSide[nUserIdx] != CGameManager::ETeamSide::SIDE_LEFT)
+			{ // 左端じゃない時に左移動操作が行われた場合
 
 				// 左に移動
-				m_TeamSide[nowIdx] = (m_TeamSide[nowIdx] == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
+				m_TeamSide[nUserIdx] = (m_TeamSide[nUserIdx] == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
 			}
-			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nowIdx) &&
-				m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_RIGHT)
-			{// 右移動(右端じゃない時)
+			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
+				 &&  m_TeamSide[nUserIdx] != CGameManager::ETeamSide::SIDE_RIGHT)
+			{ // 右端じゃない時に右移動操作が行われた場合
 
 				// 右に移動
-				m_TeamSide[nowIdx] = (m_TeamSide[nowIdx] == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
+				m_TeamSide[nUserIdx] = (m_TeamSide[nUserIdx] == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
 			}
 		}
+
+		// 選択チームを保存
+		const int nSide = m_TeamSide[nUserIdx];
 
 		//--------------------------
 		// チーム内人数変え
 		//--------------------------
-		// 変更するインデックス決める
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nowIdx) &&
-			m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_NONE &&
-			m_nMaxChangeIdx[m_TeamSide[nowIdx]] < 0)
-		{// 上移動(NONEじゃない時)
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nUserIdx)
+		&&  IsUserTeamSelect(nUserIdx)		// チーム選択中
+		&&  m_nMaxChangeIdx[nSide] <= -1)	// 最大数変更の操作権を誰も持っていない
+		{ // 上移動操作が行われた場合
 
 			// 自分のサイドを変更する用インデックス保持
-			int side = m_TeamSide[nowIdx];
-			m_nMaxChangeIdx[side] = nowIdx;
+			m_nMaxChangeIdx[nSide] = nUserIdx;
 		}
 
 		//--------------------------
-		// 決定!
+		// 準備完了操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, nowIdx) &&
-			m_TeamSide[nowIdx] != CGameManager::ETeamSide::SIDE_NONE &&
-			m_nMaxChangeIdx[m_TeamSide[nowIdx]] != nowIdx)
-		{// チーム決定 && 左右どちらかに合わせてるとき
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, nUserIdx)
+		&&  IsUserTeamSelect(nUserIdx)	// チーム選択中
+		&&  !IsUserMaxChange(nUserIdx))	// 最大数変更を自分がしていない
+		{ // 準備完了操作が行われた場合
 
-			int side = m_TeamSide[nowIdx];
-			
-			// 既にある場合は追加しない
-			const auto& itr = std::find(m_vecAddIdx[side].begin(), m_vecAddIdx[side].end(), nowIdx);
-			bool bUnAdd = itr == m_vecAddIdx[side].end();
+			const int nCurInTeam = static_cast<int>(m_vecAddIdx[nSide].size());	// 現在のチーム人数
+			if (!IsUserReady(nUserIdx) && m_nPlayerNum[nSide] > nCurInTeam)
+			{ // 準備未完了且つ、最大チーム人数未満の場合
 
-			if (bUnAdd && m_nPlayerNum[side] > static_cast<int>(m_vecAddIdx[side].size()))
-			{// 存在しない && 人数上限
-				m_vecAddIdx[side].push_back(nowIdx);
+				// 準備完了配列に追加
+				m_vecAddIdx[nSide].push_back(nUserIdx);
 			}
 		}
 	}
@@ -650,31 +600,40 @@ bool CEntry_SetUpTeam::SelectTeam()
 void CEntry_SetUpTeam::ChangeMaxPlayer()
 {
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	for (int side = 0; side < CGameManager::ETeamSide::SIDE_MAX; side++)
+	for (int nSide = 0; nSide < CGameManager::ETeamSide::SIDE_MAX; nSide++)
 	{ // チーム数分繰り返す
 
-		// 今回変更するコントローラー番号
-		int changeIdx = m_nMaxChangeIdx[side];
-		if (changeIdx < 0) continue;
+		// 操作権を持っていない場合次へ
+		const int nUserIdx = m_nMaxChangeIdx[nSide];	// ユーザーインデックス
+		if (nUserIdx <= -1) { continue; }
 
 		//--------------------------
-		// 最大数変更
+		// 最大数変更操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, changeIdx))
-		{// 減らす
-			m_nPlayerNum[side]--;	// プレイヤーの数
-		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, changeIdx))
-		{// 増やす
-			m_nPlayerNum[side]++;	// プレイヤーの数
-		}
-		m_nPlayerNum[side] = UtilFunc::Transformation::Clamp(m_nPlayerNum[side], 1, CGameManager::MAX_SIDEPLAYER);
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx))
+		{ // 減算操作が行われた場合
 
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, changeIdx))
-		{// 下移動(最大数変更解除)
+			// チーム人数を減算
+			m_nPlayerNum[nSide]--;
+		}
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx))
+		{ // 加算操作が行われた場合
 
-			// 自分のサイドを変更する用インデックス解除
-			m_nMaxChangeIdx[side] = -1;
+			// チーム人数を加算
+			m_nPlayerNum[nSide]++;
+		}
+
+		// チーム人数を補正
+		m_nPlayerNum[nSide] = UtilFunc::Transformation::Clamp(m_nPlayerNum[nSide], 1, CGameManager::MAX_SIDEPLAYER);
+
+		//--------------------------
+		// 最大数変更解除
+		//--------------------------
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nUserIdx))
+		{ // 下移動操作が行われた場合
+
+			// 変更操作権を初期化
+			m_nMaxChangeIdx[nSide] = -1;
 		}
 	}
 }
@@ -697,6 +656,77 @@ void CEntry_SetUpTeam::TransDressUp(const bool bAllReady)
 		// 着せ替えシーンへ遷移
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
 	}
+}
+
+//==========================================================================
+// エントリー解除
+//==========================================================================
+void CEntry_SetUpTeam::DeleteEntry(int* pEntryIdx)
+{
+	if (m_nMaxChangeIdx[m_TeamSide[*pEntryIdx]] == *pEntryIdx)
+	{ // 最大数変更の操作権が自身の場合
+
+		// 最大数変更の操作権を初期化
+		m_nMaxChangeIdx[m_TeamSide[*pEntryIdx]] = -1;
+	}
+
+	// コントローラーUIの自動描画をOFFにする
+	m_apPadUI[*pEntryIdx]->SetEnableDisp(false);
+
+	// チームを初期化
+	m_TeamSide[*pEntryIdx] = CGameManager::ETeamSide::SIDE_NONE;
+
+	// エントリーインデックスを初期化
+	*pEntryIdx = -1;
+}
+
+//==========================================================================
+// 準備完了解除
+//==========================================================================
+void CEntry_SetUpTeam::DeleteReady(int* pEntryIdx)
+{
+
+}
+
+//==========================================================================
+// 準備完了フラグ取得
+//==========================================================================
+bool CEntry_SetUpTeam::IsUserReady(const int nUserIdx, std::vector<int>::iterator* pItr)
+{
+	// チームが未選択の場合抜ける
+	const int nSide = m_TeamSide[nUserIdx];	// 選択チーム
+	if (nSide == CGameManager::ETeamSide::SIDE_NONE) { return false; }
+
+	// ユーザーインデックスを検索 (準備完了している場合は配列内にインデックスが格納されている)
+	std::vector<int>::iterator itr = std::find(m_vecAddIdx[nSide].begin(), m_vecAddIdx[nSide].end(), nUserIdx);
+
+	// 保存用ポインタが指定されている場合イテレーターを保存
+	if (pItr != nullptr) { *pItr = itr; }
+
+	// 準備完了状況を返す
+	return (itr != m_vecAddIdx[nSide].end());
+}
+
+//==========================================================================
+// チーム選択中フラグ取得
+//==========================================================================
+bool CEntry_SetUpTeam::IsUserTeamSelect(const int nUserIdx)
+{
+	// 選択中チームの指定があるかを返す
+	return (m_TeamSide[nUserIdx] != CGameManager::ETeamSide::SIDE_NONE);
+}
+
+//==========================================================================
+// 最大数変更フラグ取得
+//==========================================================================
+bool CEntry_SetUpTeam::IsUserMaxChange(const int nUserIdx)
+{
+	// チームが未選択の場合抜ける
+	const int nSide = m_TeamSide[nUserIdx];	// 選択チーム
+	if (nSide == CGameManager::ETeamSide::SIDE_NONE) { return false; }
+
+	// 最大数変更の操作権インデックスが引数ユーザーかを返す
+	return (m_nMaxChangeIdx[nSide] == nUserIdx);
 }
 
 //==========================================================================

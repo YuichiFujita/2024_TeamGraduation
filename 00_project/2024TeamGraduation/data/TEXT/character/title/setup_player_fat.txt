@@ -275,6 +275,8 @@ DEFAULT_ID = 0
 # モーションファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/title/motion_def.txt			# デフォルト
+MOTION_FILENAME = data/TEXT/character/title/motion_SUSURU.txt		# SUSURU
+MOTION_FILENAME = data/TEXT/character/title/motion_wait.txt			# 待機
 MOTION_FILENAME = data/TEXT/character/title/motion_walk.txt			# 歩き
 MOTION_FILENAME = data/TEXT/character/title/motion_warmup_01.txt	# 準備体操01
 MOTION_FILENAME = data/TEXT/character/title/motion_warmup_02.txt	# 準備体操02

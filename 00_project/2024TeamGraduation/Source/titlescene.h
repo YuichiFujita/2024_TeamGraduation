@@ -25,22 +25,27 @@ class CTitleScene
 {
 public:
 
-
-
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CTitleScene();
 	~CTitleScene();
 
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual HRESULT Init() = 0;		// 初期化
+	virtual HRESULT Init();			// 初期化
 	virtual void Uninit() = 0;		// 終了
+	virtual void Kill() = 0;		// 削除
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
 	//--------------------------
 	// その他
 	//--------------------------
 
+	//=============================
+	// 静的関数
+	//=============================
 	static CTitleScene* Create(CTitle::ESceneType sceneType);	// 生成
 private:
 
