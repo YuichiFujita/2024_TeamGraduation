@@ -1,11 +1,13 @@
-//=============================================================================
-//
-// ドレスアップ設定処理 [entry_dressup.h]
-// Author : 相馬靜雅
-//
-//=============================================================================
-#ifndef _ENTRY_DRESSUP_H_		// このマクロ定義がされていなかったら
-#define _ENTRY_DRESSUP_H_		// 二重インクルード防止のマクロを定義する
+//==========================================================================
+// 
+//  ドレスアップ設定処理 [entry_dressup.h]
+//  Author : 相馬靜雅
+//  Adder  : 藤田勇一
+// 
+//==========================================================================
+
+#ifndef _ENTRY_DRESSUP_H_
+#define _ENTRY_DRESSUP_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -64,19 +66,22 @@ public:
 		SEntryDressup() : pPlayer(nullptr), pHair(nullptr), pAccessory(nullptr), pFace(nullptr), editType(EEditType::EDIT_PROCESS), changeType(EChangeType::TYPE_HAIR) {}
 	};
 
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CEntry_Dressup();
 	~CEntry_Dressup();
 
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual HRESULT Init() override;		// 初期化
+	virtual HRESULT Init() override;	// 初期化
 	virtual void Uninit() override;		// 終了
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 
-	//--------------------------
+	//-----------------------------
 	// その他
-	//--------------------------
+	//-----------------------------
 	virtual void Debug() override;
 
 private:
@@ -84,20 +89,18 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void Save();					// セーブ
-	void Load();					// ロード
-	void ChangeEditType(int nLoop, int nControllIdx);		// エディットする種類変更
+	void ChangeEditType(int nLoop, int nControllIdx);	// エディットする種類変更
 	void ChangeChangeType(int nLoop, int nControllIdx);	// 変更する箇所の種類変更
-
-	void ChangeBodyType(int nLoop, int nControllIdx);		// 体型変更
+	void ChangeBodyType(int nLoop, int nControllIdx);	// 体型変更
 	void ChangeHandedness(int nLoop, int nControllIdx);	// 利き手変更
-	void ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body);		// プレイヤー再生成
+	void ReCreatePlayer(int i, CPlayer::EHandedness handedness, CPlayer::EBody body);	// プレイヤー再生成
+	void Save();	// セーブ
+	void Load();	// ロード
 
 	//=============================
 	// メンバ変数
 	//=============================
-	int m_nPlayerNum[CGameManager::ETeamSide::SIDE_MAX];	// プレイヤーの数
-	std::vector<SEntryDressup> m_vecDressupInfo;			// 着せ替え情報
+	std::vector<SEntryDressup> m_vecDressupInfo;	// 着せ替え情報
 };
 
 #endif
