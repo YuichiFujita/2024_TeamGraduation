@@ -134,7 +134,7 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 		// 相手の位置に近づく
 		if (Approatch(posTarget, JUMP_LENGTH_LINE))
 		{// 範囲内の場合
-			SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
+			//SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
 			SetMove(EMoveFlag::MOVEFLAG_STOP);			// 行動：止まる
 		}
 
@@ -161,31 +161,38 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 //==========================================================================
 // 戻る
 //==========================================================================
-void CPlayerAIControlRight::ForciblyReturn()
-{
-	// プレイヤー情報取得
-	CPlayer* pMy = GetPlayer();
-	if (!pMy) return;
-	MyLib::Vector3 myPos = pMy->GetPosition();
-	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
+//void CPlayerAIControlRight::ForciblyReturn()
+//{
+//	// プレイヤー情報取得
+//	CPlayer* pMy = GetPlayer();
+//	if (!pMy) return;
+//
+//	MyLib::Vector3 myPos = pMy->GetPosition();
+//	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
+//
+//	// AIコントロール情報の取得
+//	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
+//	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+//
+//	// 歩く
+//	SetMove(EMoveFlag::MOVEFLAG_DASH);
+//
+//	// 近づく
+//	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
+//	{
+//		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
+//		SetMove(EMoveFlag::MOVEFLAG_STOP);
+//	}
+//}
 
-	// AIコントロール情報の取得
-	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
-	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-
-	// 歩く
-	SetMove(EMoveFlag::MOVEFLAG_DASH);
-
-	// 近づく
-	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
-	{
-		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-		SetMove(EMoveFlag::MOVEFLAG_STOP);
-	}
-}
-
+//==========================================================================
+// 狂う
+//==========================================================================
 void CPlayerAIControlRight::MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	MyLib::Vector3 posRand = {};
+	// x:960 z:560
+
 
 }
 
