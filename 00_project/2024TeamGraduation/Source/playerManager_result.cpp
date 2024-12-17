@@ -63,12 +63,8 @@ CPlayerManager_Result::~CPlayerManager_Result()
 //==========================================================================
 HRESULT CPlayerManager_Result::Init()
 {
-#ifdef ENTRYSTART
 	// ‰Šú‰»ˆ—
 	CPlayerManager::Init();
-#else
-
-#endif
 
 	return S_OK;
 }

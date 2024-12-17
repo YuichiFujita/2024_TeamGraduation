@@ -58,12 +58,6 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	//=============================
-	// 関数リスト
-	//=============================
-	typedef void(CResultManager::* STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_StateFunc[];	// 状態関数
-
-	//=============================
 	// メンバ関数
 	//=============================
 	EState GetState() { return m_state; }		// 状態取得
@@ -74,6 +68,15 @@ public:
 	static CResultManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 private:
+
+	//=============================
+	// 関数リスト
+	//=============================
+	typedef void(CResultManager::* STATE_FUNC)(const float, const float, const float);
+	static STATE_FUNC m_StateFunc[];	// 状態関数
+
+	typedef void(CResultManager::* STATE_START_FUNC)();
+	static STATE_START_FUNC m_StateStartFunc[];	// 状態開始関数
 
 	//=============================
 	// メンバ関数
@@ -87,9 +90,9 @@ private:
 	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗
 	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗
 
-	void CreatePrelude();				// 前座勝敗生成
-	void CreateCharmContest();			// モテ勝敗生成
-	void CreateAudience();				// 観客生成
+	void StateStartPrelude();				// 前座勝敗生成
+	void StateStartCharmContest();			// モテ勝敗生成
+	void CreateAudience();					// 観客生成
 
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み

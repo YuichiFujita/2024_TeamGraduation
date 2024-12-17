@@ -761,6 +761,15 @@
     <ClCompile Include="Source\balloonFrame.cpp">
       <Filter>ingame\balloon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\audienceAnim_result.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audienceHighPoly_result.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audienceLowPoly_result.cpp">
+      <Filter>ingame\audience</Filter>
+    </ClCompile>
     <ClCompile Include="Source\titlestudent.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
@@ -1398,6 +1407,15 @@
     </ClInclude>
     <ClInclude Include="Source\balloonFrame.h">
       <Filter>ingame\balloon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceAnim_result.h">
+      <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceHighPoly_result.h">
+      <Filter>ingame\audience</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audienceLowPoly_result.h">
+      <Filter>ingame\audience</Filter>
     </ClInclude>
     <ClInclude Include="Source\titlestudent.h">
       <Filter>mode\title</Filter>
