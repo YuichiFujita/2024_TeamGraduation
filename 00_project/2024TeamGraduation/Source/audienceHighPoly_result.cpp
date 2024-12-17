@@ -196,6 +196,8 @@ void CAudienceHighPolyResult::EndSettingSpawn()
 	// 親クラス
 	CAudienceHighPoly::EndSettingSpawn();
 
+	// TODO: エリア定数を整理し、その中心点を向く感じ
+
 	// サイドが逆なら逆向きに
 	if (GetArea() == EArea::AREA_SIDE &&
 		m_side == EAreaSide::SIDE_REVERSE)

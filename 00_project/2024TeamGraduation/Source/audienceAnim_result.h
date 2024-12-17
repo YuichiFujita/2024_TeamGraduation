@@ -38,14 +38,24 @@ public:
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
+	
+	bool SetNTR() override;									// NTR設定
 
 protected:
 
 private:
 
-	void CalcWatchPositionFar() override;	// 観戦位置計算 (奥)
+	//=============================
+	// メンバ関数
+	//=============================
+	void CalcWatchPositionFar() override;		// 観戦位置計算 (奥)
 	void CalcWatchPositionUp() override;		// 観戦位置計算 (上)
-	void CalcWatchPositionNear() override;	// 観戦位置計算 (手前)
+	void CalcWatchPositionNear() override;		// 観戦位置計算 (手前)
+
+	//=============================
+	// メンバ変数
+	//=============================
+	CGameManager::ETeamSide m_teamNTR;		// NTR後のチーム
 };
 
 #endif
