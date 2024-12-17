@@ -8,6 +8,7 @@
 #include "manager.h"
 
 // シーン
+#include "title_controllwait.h"
 #include "title_susuru.h"
 
 //==========================================================================
@@ -36,6 +37,10 @@ CTitleScene* CTitleScene::Create(CTitle::ESceneType sceneType)
 
 	switch (sceneType)
 	{
+	case CTitle::ESceneType::SCENETYPE_CONTROLLWAIT:	// 操作待機
+		pScene = DEBUG_NEW CTitle_ControllWait;
+		break;
+
 	case CTitle::ESceneType::SCENETYPE_SUSURU:	// SUSURUシーン
 		pScene = DEBUG_NEW CTitle_SUSURU;
 		break;
@@ -55,6 +60,16 @@ CTitleScene* CTitleScene::Create(CTitle::ESceneType sceneType)
 	}
 
 	return pScene;
+}
+
+//==========================================================================
+// 初期化
+//==========================================================================
+HRESULT CTitleScene::Init()
+{
+	// サウンド停止
+	CSound::GetInstance()->StopSound();
+	return S_OK;
 }
 
 //==========================================================================

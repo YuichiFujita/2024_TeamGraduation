@@ -35,10 +35,22 @@ public:
 		SCENETYPE_MAX
 	};
 
+	enum EState
+	{
+		STATE_NONE = 0,		// NONE
+		STATE_CHANGESCENE,	// シーン切り替え中
+		STATE_MAX
+	};
+
+	//=============================
+	// コンストラクタ/デストラクタ
+	//=============================
 	CTitle();
 	~CTitle();
 
+	//=============================
 	// オーバーライドされた関数
+	//=============================
 	HRESULT Init() override;
 	void Uninit() override;
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
@@ -49,7 +61,9 @@ public:
 	void ChangeScene(ESceneType type);	// シーン切り替え
 
 
+	//=============================
 	// 静的関数
+	//=============================
 	static CTitle* GetInstance();	// インスタンス取得
 	static CTitle* Create();		// 生成処理
 
@@ -58,20 +72,20 @@ private:
 	//=============================
 	// 関数ポインタ
 	//=============================
-	typedef void(CTitle::* SCENE_FUNC)(const float, const float, const float);
-	static SCENE_FUNC m_SceneFunc[];
+	typedef void(CTitle::* STATE_FUNC)(const float, const float, const float);
+	static STATE_FUNC m_StateFunc[];
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void UpdateScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// シーンの更新処理
-	void SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なにもなし
-	void SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードイン
-	void SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードアウト
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 状態更新処理
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なにもなし
+	void StateChangeScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// シーン切り替え
 
 	//=============================
 	// メンバ変数
 	//=============================
+	EState m_state;				// 状態
 	ESceneType m_SceneType;		// シーンの種類
 	float m_fSceneTime;			// シーンカウンター
 	CTitleLogo* m_pLogo;		// ロゴのポインタ

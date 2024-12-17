@@ -10,15 +10,6 @@
 #include "object2D.h"
 
 //==========================================================================
-// マクロ定義
-//==========================================================================
-#define ALPHAMOVE	(0.025f)
-
-//==========================================================================
-// 静的メンバ変数宣言
-//==========================================================================
-
-//==========================================================================
 // コンストラクタ
 //==========================================================================
 CInstantFade::CInstantFade()
@@ -41,36 +32,22 @@ CInstantFade::~CInstantFade()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CInstantFade *CInstantFade::Create()
+CInstantFade* CInstantFade::Create()
 {
-	// 生成用のオブジェクト
-	CInstantFade *pFade = nullptr;
+	// メモリの確保
+	CInstantFade* pFade = DEBUG_NEW CInstantFade;
 
-	if (pFade == nullptr)
-	{// nullptrだったら
+	if (pFade != nullptr)
+	{// メモリの確保が出来ていたら
 
-		// メモリの確保
-		pFade = DEBUG_NEW CInstantFade;
-
-		if (pFade != nullptr)
-		{// メモリの確保が出来ていたら
-
-			// 初期化処理
-			if (FAILED(pFade->Init()))
-			{// 失敗していたら
-				return nullptr;
-			}
+		// 初期化処理
+		if (FAILED(pFade->Init()))
+		{// 失敗していたら
+			return nullptr;
 		}
-		else
-		{
-			delete pFade;
-			pFade = nullptr;
-		}
-
-		return pFade;
 	}
 
-	return nullptr;
+	return pFade;
 }
 
 //==========================================================================
@@ -80,12 +57,12 @@ HRESULT CInstantFade::Init()
 {
 	// 生成処理
 	m_aObject2D = CObject2D::Create(8);
-	m_aObject2D->SetType(CObject::TYPE::TYPE_NONE);
-
 	if (m_aObject2D == nullptr)
 	{// 失敗していたら
 		return E_FAIL;
 	}
+
+	m_aObject2D->SetType(CObject::TYPE::TYPE_NONE);
 
 	m_state = STATE_NONE;			// 状態
 	m_aObject2D->SetSize(D3DXVECTOR2(640.0f, 360.0f));	// サイズ
@@ -100,10 +77,9 @@ HRESULT CInstantFade::Init()
 //==========================================================================
 void CInstantFade::Uninit()
 {
+	// 終了処理
 	if (m_aObject2D != nullptr)
-	{// nullptrじゃなかったら
-
-		// 終了処理
+	{
 		m_aObject2D->Uninit();
 		delete m_aObject2D;
 		m_aObject2D = nullptr;
@@ -115,8 +91,13 @@ void CInstantFade::Uninit()
 //==========================================================================
 void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (m_aObject2D == nullptr) return;
+
 	// 色取得
-	D3DXCOLOR col = m_aObject2D->GetColor();
+	float alpha = m_aObject2D->GetAlpha();
+
+	// 時間加算
+	m_fTimerMove += fDeltaTime;
 
 	switch (m_state)
 	{
@@ -125,15 +106,12 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	case STATE_FADEOUT:
 
-		// 経過時間を加算
-		m_fTimerMove += fDeltaTime;
-
 		// 不透明度増加
-		col.a = UtilFunc::Correction::EasingLinear(0.0f, 1.0f, 0.0f, m_fDuration, m_fTimerMove);
+		alpha = UtilFunc::Correction::EasingLinear(0.0f, 1.0f, 0.0f, m_fDuration, m_fTimerMove);
 
 		if (m_fTimerMove >= m_fDuration)
 		{// 目標まで行ったら
-			col.a = 1.0f;
+			alpha = 1.0f;
 			m_fTimerMove = 0.0f;
 			m_state = STATE_FADECOMPLETION;
 		}
@@ -141,15 +119,12 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	case STATE_FADEIN:
 
-		// 経過時間を加算
-		m_fTimerMove += fDeltaTime;
-
 		// 不透明度減少
-		col.a = UtilFunc::Correction::EasingLinear(1.0f, 0.0f, 0.0f, m_fDuration, m_fTimerMove);
+		alpha = UtilFunc::Correction::EasingLinear(1.0f, 0.0f, 0.0f, m_fDuration, m_fTimerMove);
 
 		if (m_fTimerMove >= m_fDuration)
 		{// 透明になったら
-			col.a = 0.0f;
+			alpha = 0.0f;
 			m_fTimerMove = 0.0f;
 			m_state = STATE_NONE;
 		}
@@ -157,12 +132,12 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	case STATE_FADECOMPLETION:
 		m_state = STATE_FADEIN;
-		col.a = 1.0f;
+		alpha = 1.0f;
 		break;
 	}
 
 	// 色設定
-	m_aObject2D->SetColor(col);
+	m_aObject2D->SetAlpha(alpha);
 
 	// 頂点座標更新
 	m_aObject2D->SetVtx();
@@ -174,13 +149,16 @@ void CInstantFade::Update(const float fDeltaTime, const float fDeltaRate, const 
 void CInstantFade::Draw()
 {
 	// 描画処理
-	m_aObject2D->Draw();
+	if (m_aObject2D != nullptr)
+	{
+		m_aObject2D->Draw();
+	}
 }
 
 //==========================================================================
 // フェード設定
 //==========================================================================
-void CInstantFade::SetFade(D3DXCOLOR FadeColor, float fDuration)
+void CInstantFade::SetFade(const D3DXCOLOR& FadeColor, float fDuration)
 {
 	if (m_state == STATE_NONE)
 	{// 何もしていないとき
@@ -192,20 +170,4 @@ void CInstantFade::SetFade(D3DXCOLOR FadeColor, float fDuration)
 		// 色設定
 		m_aObject2D->SetColor(D3DXCOLOR(FadeColor.r, FadeColor.g, FadeColor.b, 0.0f));
 	}
-}
-
-//==========================================================================
-// 状態取得
-//==========================================================================
-CInstantFade::STATE CInstantFade::GetState()
-{
-	return m_state;
-}
-
-//==========================================================================
-// オブジェクト2Dオブジェクトの取得
-//==========================================================================
-CObject2D *CInstantFade::GetMyObject()
-{
-	return m_aObject2D;
 }

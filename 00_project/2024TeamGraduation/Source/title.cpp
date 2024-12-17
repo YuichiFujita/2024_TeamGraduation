@@ -13,8 +13,7 @@
 #include "sound.h"
 #include "particle.h"
 #include "MyEffekseer.h"
-#include "titleLogo.h"
-#include "titlestudent.h"
+
 #include "titlescene.h"
 #include "camera.h"
 
@@ -25,8 +24,7 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
-	const int TITLEPLAYER_MIN = 7;	// プレイヤー最少人数
-	const int TITLEPLAYER_MAX = 12;	// プレイヤー最大人数
+	
 }
 
 namespace STARTCAMERA
@@ -45,11 +43,10 @@ CTitle* CTitle::m_pThisPtr = nullptr;	// 自身のポインタ
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CTitle::SCENE_FUNC CTitle::m_SceneFunc[] =
+CTitle::STATE_FUNC CTitle::m_StateFunc[] =
 {
-	&CTitle::SceneNone,			// なにもなし
-	&CTitle::SceneFadeInLogo,	// ロゴフェードイン
-	&CTitle::SceneFadeOutLoGo,	// ロゴフェードアウト
+	&CTitle::StateNone,			// なにもなし
+	&CTitle::StateChangeScene,	// シーン切り替え
 };
 
 //==========================================================================
@@ -58,6 +55,7 @@ CTitle::SCENE_FUNC CTitle::m_SceneFunc[] =
 CTitle::CTitle()
 {
 	// 値のクリア
+	m_state = EState::STATE_NONE;				// 状態
 	m_SceneType = ESceneType::SCENETYPE_NONE;	// シーンの種類
 	m_fSceneTime = 0.0f;						// シーンカウンター
 	m_pLogo = nullptr;		// ロゴのポインタ
@@ -100,7 +98,6 @@ CTitle* CTitle::GetInstance()
 //==========================================================================
 HRESULT CTitle::Init()
 {
-
 	// BGM再生
 	CSound::GetInstance()->PlaySound(CSound::LABEL_BGM_TITLE);
 
@@ -110,19 +107,11 @@ HRESULT CTitle::Init()
 		return E_FAIL;
 	}
 
-	// シーンの種類
-	ChangeScene(ESceneType::SCENETYPE_SUSURU);
+	// シーン生成
+	m_pTitleScene = CTitleScene::Create(ESceneType::SCENETYPE_CONTROLLWAIT);
 
-	// ロゴの生成
-	CTitleLogo::Create();
-
-	// プレイヤー生成
-	int num = UtilFunc::Transformation::Random(TITLEPLAYER_MIN, TITLEPLAYER_MAX);
-	for (int i = 0; i < num; i++)
-	{
-		// タイトルの生徒生成
-		CTitleStudent::Create();
-	}
+	// シーン設定
+	m_SceneType = ESceneType::SCENETYPE_CONTROLLWAIT;
 
 	// 成功
 	return S_OK;
@@ -134,6 +123,9 @@ HRESULT CTitle::Init()
 void CTitle::Uninit()
 {
 	m_pThisPtr = nullptr;
+
+	// シーン終了
+	SAFE_UNINIT(m_pTitleScene);
 
 	// 終了処理
 	CScene::Uninit();
@@ -149,75 +141,54 @@ void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float 
 		return;
 	}
 
-	// シーンの更新
-	if (m_pTitleScene != nullptr)
-	{
-		m_pTitleScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
-		pKey->GetTrigger(DIK_RETURN))
-	{
-		// 遷移
-		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
-	}
-
-
-#if _DEBUG
-
-	// 生成
-	if (ImGui::TreeNode("Create"))
-	{
-		if (ImGui::Button("TitleStudent"))
-		{
-			// タイトルの生徒生成
-			CTitleStudent::Create();
-		}
-
-		// ツリー終端
-		ImGui::TreePop();
-	}
-#endif
+	// 状態更新処理
+	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
-// シーンの更新処理
+// 状態更新処理
 //==========================================================================
-void CTitle::UpdateScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CTitle::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// シーンカウンター加算
 	m_fSceneTime += fDeltaTime * fSlowRate;
 
 	// 状態別更新処理
-	(this->*(m_SceneFunc[m_SceneType]))(fDeltaTime, fDeltaRate, fSlowRate);
+	(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
 // なにもなし
 //==========================================================================
-void CTitle::SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CTitle::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
+	// シーンの更新
+	if (m_pTitleScene != nullptr)
+	{
+		m_pTitleScene->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
 
 //==========================================================================
-// ロゴフェードイン
+// シーン切り替え
 //==========================================================================
-void CTitle::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CTitle::StateChangeScene(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// フェード完了したらシーン切り替え
+	if (GET_MANAGER->GetInstantFade()->IsCompletion())
+	{
+		// 削除処理
+		SAFE_KILL(m_pTitleScene);
 
-}
+		// シーン生成
+		m_pTitleScene = CTitleScene::Create(m_SceneType);
 
-//==========================================================================
-// ロゴフェードアウト
-//==========================================================================
-void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	
+		// カメラリセット
+		GET_MANAGER->GetCamera()->ResetByMode(CScene::MODE::MODE_TITLE);
+
+		// NONE状態
+		m_state = EState::STATE_NONE;
+	}
 }
 
 //==========================================================================
@@ -225,15 +196,14 @@ void CTitle::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CTitle::ChangeScene(ESceneType type)
 {
-	// 終了処理
-	SAFE_UNINIT(m_pTitleScene);
-	
-
-	// 生成
-	m_pTitleScene = CTitleScene::Create(type);
-
 	// シーン設定
 	m_SceneType = type;
+
+	// フェード設定
+	GET_MANAGER->GetInstantFade()->SetFade();
+
+	// シーン切り替え状態
+	m_state = EState::STATE_CHANGESCENE;
 }
 
 //==========================================================================
