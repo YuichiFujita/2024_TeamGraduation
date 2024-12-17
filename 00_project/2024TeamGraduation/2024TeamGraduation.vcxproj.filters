@@ -779,6 +779,9 @@
     <ClCompile Include="Source\title_susuru.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressupUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1422,6 +1425,9 @@
     </ClInclude>
     <ClInclude Include="Source\title_susuru.h">
       <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressupUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
