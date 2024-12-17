@@ -436,6 +436,8 @@ void CCamera::SetSpecialCamera()
 
 	// ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+
+	// TODO：なんでこれでうまくいかん？
 }
 
 //==========================================================================

@@ -37,7 +37,8 @@ public:
 	//--------------------------
 	// アニメーション関連
 	//--------------------------
-	void SetPatternAnim(int nPattern) { m_nPatternAnim = nPattern; }	// アニメーションのパターン
+	void SetPatternAnim(int nPattern)	{ m_nPatternAnim = nPattern; }	// アニメーションパターン設定
+	int GetPatternAnim() const			{ return m_nPatternAnim; }		// アニメーションパターン取得
 
 	//--------------------------
 	// その他

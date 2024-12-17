@@ -779,6 +779,9 @@
     <ClCompile Include="Source\title_susuru.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
+    <ClCompile Include="Source\title_controllwait.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1421,6 +1424,9 @@
       <Filter>mode\title</Filter>
     </ClInclude>
     <ClInclude Include="Source\title_susuru.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\title_controllwait.h">
       <Filter>mode\title</Filter>
     </ClInclude>
   </ItemGroup>
