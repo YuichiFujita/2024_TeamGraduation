@@ -161,29 +161,29 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 //==========================================================================
 // 戻る
 //==========================================================================
-//void CPlayerAIControlRight::ForciblyReturn()
-//{
-//	// プレイヤー情報取得
-//	CPlayer* pMy = GetPlayer();
-//	if (!pMy) return;
-//
-//	MyLib::Vector3 myPos = pMy->GetPosition();
-//	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
-//
-//	// AIコントロール情報の取得
-//	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
-//	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
-//
-//	// 歩く
-//	SetMove(EMoveFlag::MOVEFLAG_DASH);
-//
-//	// 近づく
-//	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
-//	{
-//		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-//		SetMove(EMoveFlag::MOVEFLAG_STOP);
-//	}
-//}
+void CPlayerAIControlRight::ForciblyReturn()
+{
+	// プレイヤー情報取得
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+
+	MyLib::Vector3 myPos = pMy->GetPosition();
+	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
+
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// 歩く
+	SetMove(EMoveFlag::MOVEFLAG_DASH);
+
+	// 近づく
+	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
+	{
+		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
+		SetMove(EMoveFlag::MOVEFLAG_STOP);
+	}
+}
 
 //==========================================================================
 // 狂う

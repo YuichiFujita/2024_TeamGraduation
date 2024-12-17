@@ -165,32 +165,32 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 //==========================================================================
 // 戻る
 //==========================================================================
-//void CPlayerAIControlLeft::ForciblyReturn()
-//{
-//	// プレイヤー情報取得
-//	CPlayer* pMy = GetPlayer();
-//	if (!pMy) return;
-//	MyLib::Vector3 myPos = pMy->GetPosition();
-//
-//
-//	CPlayer::EState state = pMy->GetState();
-//	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
-//		SetMove(EMoveFlag::MOVEFLAG_STOP);
-//		SetAction(EActionFlag::ACTION_NONE);
-//		return;
-//	}
-//
-//	// 歩く
-//	SetMove(EMoveFlag::MOVEFLAG_DASH);
-//	//SetAction(EActionFlag::ACTION_JUMP);
-//
-//	// 近づく
-//	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
-//	{
-//		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-//		SetMove(EMoveFlag::MOVEFLAG_STOP);
-//	}
-//}
+void CPlayerAIControlLeft::ForciblyReturn()
+{
+	// プレイヤー情報取得
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+	MyLib::Vector3 myPos = pMy->GetPosition();
+
+
+	CPlayer::EState state = pMy->GetState();
+	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
+		SetMove(EMoveFlag::MOVEFLAG_STOP);
+		SetAction(EActionFlag::ACTION_NONE);
+		return;
+	}
+
+	// 歩く
+	SetMove(EMoveFlag::MOVEFLAG_DASH);
+	//SetAction(EActionFlag::ACTION_JUMP);
+
+	// 近づく
+	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
+	{
+		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
+		SetMove(EMoveFlag::MOVEFLAG_STOP);
+	}
+}
 
 //==========================================================================
 // 行動：狂う

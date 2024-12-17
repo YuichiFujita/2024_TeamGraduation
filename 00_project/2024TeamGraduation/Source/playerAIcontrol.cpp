@@ -80,6 +80,22 @@ CPlayerAIControl::MODE_FUNC CPlayerAIControl::m_ModeFunc[] =	// モード関数
 	&CPlayerAIControl::ModeCatch,				// キャッチ
 };
 
+CPlayerAIControl::MOVEFORCIBLY_FUNC CPlayerAIControl::m_MoveForciblyFunc[] =	// 強制行動関数
+{
+	&CPlayerAIControl::ForciblyNone,			// なし
+	&CPlayerAIControl::ForciblyStop,			// 止まる
+	&CPlayerAIControl::ForciblyReturn,			// 戻る
+	&CPlayerAIControl::ForciblyStart,			// 初め
+};
+
+CPlayerAIControl::THROWTYPE_FUNC CPlayerAIControl::m_ThrowTypeFunc[] =	// 投げタイプ関数
+{
+	&CPlayerAIControl::ThrowTypeNone,			// なし
+	&CPlayerAIControl::ThrowTypeNormal,			// 通常
+	&CPlayerAIControl::ThrowTypeJump,			// ジャンプ
+	&CPlayerAIControl::ThrowTypeSpecial,		// スペシャル
+};
+
 CPlayerAIControl::CATCH_FUNC CPlayerAIControl::m_CatchFunc[] =	// キャッチ関数
 {
 	&CPlayerAIControl::CatchNone,				// なし
@@ -131,7 +147,8 @@ CPlayerAIControl::CPlayerAIControl()
 {
 	// 列挙の初期化
 	m_eMode = EMode::MODE_NONE;
-	//m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+	m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
 	m_eMoveType = EMoveTypeChatch::MOVETYPE_NONE;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
@@ -226,7 +243,7 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 	ModeManager(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 更新：強制行動
-	//UpdateForcibly();
+	UpdateForcibly();
 	
 	{// フラグの更新
 
@@ -307,11 +324,11 @@ void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRat
 	{// ボールを持っているのが自分だった場合
 		m_eMode = EMode::MODE_THROW;	// 投げ
 	}
-	else if (pBall->GetPlayer() == nullptr && pBall->GetTypeTeam() != m_pAI->GetTeam())
+	else if (pBall->GetPlayer() == nullptr || pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() != m_pAI->GetTeam())
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		m_eMode = EMode::MODE_CATCH;	// キャッチ
 	}
-	else if (pBall->GetPlayer() == nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())
+	else if (pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())
 	{// ボールが取得されていない場合||自分とボールを持っているチームが同じ場合
 		m_eMode = EMode::MODE_IDLE;	// 待機
 	}
@@ -325,24 +342,98 @@ void CPlayerAIControl::ModeManager(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAIControl::UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//if (IsLineOverPlayer() && m_eForcibly != EMoveForcibly::FORCIBLY_START)
-	//{// 線を超えていた&&強制行動：初め以外の場合
-	//	m_eForcibly = EMoveForcibly::FORCIBLY_RETURN;
-	//	return;
-	//}
+	if (IsLineOverPlayer() && m_eForcibly != EMoveForcibly::FORCIBLY_START)
+	{// 線を超えていた&&強制行動：初め以外の場合
+		m_eForcibly = EMoveForcibly::FORCIBLY_RETURN;
+		return;
+	}
 
 	// モード更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
-//==========================================================================
-// モード：投げ
-//==========================================================================
-void CPlayerAIControl::ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+//================================================================================
+// 強制行動の更新処理
+//================================================================================
+void CPlayerAIControl::UpdateForcibly()
 {
-
+	// 強制行動更新
+	(this->*(m_MoveForciblyFunc[m_eForcibly]))();
 }
 
+//--------------------------------------------------------------------------
+// 強制：止まる
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ForciblyStop()
+{
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// 歩く
+	m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+}
+
+#if 0
+//--------------------------------------------------------------------------
+// 強制：戻る
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ForciblyReturn()
+{
+	// プレイヤー情報取得
+	MyLib::Vector3 myPos = m_pAI->GetPosition();
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
+
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = m_pAI->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
+
+	// 歩く
+	m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
+
+	// 近づく
+	if (Approatch({ RETURN_POS, myPos.y, myPos.z }, OK_LENGTH))
+	{
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+	}
+}
+#endif
+
+//--------------------------------------------------------------------------
+// 強制：初めのダッシュ
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ForciblyStart()
+{
+	if (IsWhoPicksUpTheBall())
+	{// 自分より近いプレイヤーがいた場合
+		m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eActionFlag = EActionFlag::ACTION_NONE;
+		return;
+	}
+
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall)
+	{// ボールがない場合
+		m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eActionFlag = EActionFlag::ACTION_NONE;
+		return;
+	}
+
+	CPlayer* pPlayer = pBall->GetPlayer();
+	if (pPlayer)
+	{// 誰かがボールを持った場合
+		m_eMoveFlag = EMoveFlag::MOVEFLAG_STOP;
+		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+		m_eActionFlag = EActionFlag::ACTION_NONE;
+		return;
+	}
+
+	m_eActionFlag = EActionFlag::ACTION_JUMP;
+	m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
+}
 
 //==========================================================================
 // モード：待機
@@ -356,6 +447,95 @@ void CPlayerAIControl::ModeIdle(const float fDeltaTime, const float fDeltaRate, 
 	UpdateMoveType(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
+//==========================================================================
+// モード：投げ
+//==========================================================================
+void CPlayerAIControl::ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 取得
+	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャ
+	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(m_pAI->GetTeam());	// 自分のチーム情報
+
+	if (m_eThrowType == EThrowType::THROWTYPE_NONE)
+	{
+		if (pTeamStatus->IsMaxSpecial())
+		{// ゲージが溜まっていたら
+			// スペシャル投げ
+			m_eThrowType = EThrowType::THROWTYPE_SPECIAL;
+		}
+		else
+		{// 投げろフラグがオンだったら
+			int n = 1;
+			// 今はランダムで決定
+			//int n = rand() % 2;
+
+			switch (n)
+			{
+			case 0:	// 通常
+				m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+				break;
+
+			case 1:	// ジャンプ
+				m_eThrowType = EThrowType::THROWTYPE_JUMP;
+				break;
+
+			default:
+				assert(false);
+				break;
+			}
+		}
+	}
+
+	// 投げの更新
+	UpdateThrowType();
+}
+
+//================================================================================
+// 投げタイプ
+//================================================================================
+void CPlayerAIControl::UpdateThrowType()
+{
+	// 投げ種類の更新
+	(this->*(m_ThrowTypeFunc[m_eThrowType]))();
+}
+
+//--------------------------------------------------------------------------
+// 通常投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ThrowTypeNormal()
+{
+	//// その場なのか歩くのか走るのか
+	//m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
+
+	//// 投げるまでの行動の更新
+	//(this->*(m_ThrowMoveFunc[m_eMoveFlag]))(pTarget, fDeltaTime, fDeltaRate, fSlowRate);
+
+	m_eThrow = EThrowFlag::THROW_NORMAL;
+}
+
+//--------------------------------------------------------------------------
+// ジャンプ投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ThrowTypeJump()
+{
+	// その場なのか歩くのか走るのか
+	//m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
+
+	CPlayer* pTartget = GetThrowTarget();
+
+	// 走り投げ
+	AttackDash(pTartget);
+}
+
+//--------------------------------------------------------------------------
+// スペシャル投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControl::ThrowTypeSpecial()
+{
+	m_eThrow = EThrowFlag::THROW_SPECIAL;
+}
+
+
 //================================================================================
 // 行動タイプ
 //================================================================================
@@ -367,7 +547,7 @@ void CPlayerAIControl::UpdateMoveType(const float fDeltaTime, const float fDelta
 	//SetMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 	
 	// 行動タイプ更新
-	//(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
+	(this->*(m_MoveTypeFunc[m_eMoveType]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //--------------------------------------------------------------------------

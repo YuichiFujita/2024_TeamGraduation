@@ -43,7 +43,7 @@ private:
 	bool IsLineOverBall() override;				// 線超え判定(ボール)
 	bool IsLineOverPlayer() override;			// 線越え判定(プレイヤー)
 	void AttackDash(CPlayer* pTarget) override;	// 走り投げ
-	//void ForciblyReturn() override;
+	void ForciblyReturn() override;
 	virtual void MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 
 

@@ -57,6 +57,25 @@ public:
 		MODE_MAX
 	};
 
+	enum EMoveForcibly			// 強制行動
+	{
+		FORCIBLY_NONE = 0,		// なし
+		FORCIBLY_STOP,			// 止まる
+		FORCIBLY_RETURN,		// 戻る
+		FORCIBLY_START,			// 初め
+		FORCIBLY_MAX,
+	};
+
+	enum  EThrowType			// 投げタイプ
+	{
+		THROWTYPE_NONE = 0,		// なし
+		THROWTYPE_NORMAL,		// 通常
+		THROWTYPE_JUMP,			// ジャンプ
+		THROWTYPE_SPECIAL,		// スペシャル
+		//THROWTYPE_PASS,			// パス
+		THROWTYPE_MAX
+	};
+
 	enum ECatchType				// キャッチ種類
 	{
 		CATCH_TYPE_NONE = 0,	// なし
@@ -160,8 +179,8 @@ public:
 	//-----------------------------
 	void SetMode(EMode mode) { m_eMode = mode; }							// モード設定
 	EMode GetMode() { return m_eMode; }										// 取得
-	//void SetForcibly(EMoveForcibly forcibly) { m_eForcibly = forcibly; }	// 強制行動設定
-	//EMoveForcibly GetForcibly() { return m_eForcibly; }						// 取得
+	void SetForcibly(EMoveForcibly forcibly) { m_eForcibly = forcibly; }	// 強制行動設定
+	EMoveForcibly GetForcibly() { return m_eForcibly; }						// 取得
 	void SetMove(EMoveFlag move) { m_eMoveFlag = move; }					// 行動設定
 	EMoveFlag GetMove() { return m_eMoveFlag; }								// 取得
 	void SetAction(EActionFlag action) { m_eActionFlag = action; }			// アクション設定
@@ -192,11 +211,17 @@ private:
 	typedef void(CPlayerAIControl::* MODE_FUNC)(const float, const float, const float);
 	static MODE_FUNC m_ModeFunc[];					// モード関数
 
-	typedef void(CPlayerAIControl::* MOVETYPE_FUNC)(const float, const float, const float);
-	static MOVETYPE_FUNC m_MoveTypeFunc[];				// 行動関数
+	typedef void(CPlayerAIControl::* MOVEFORCIBLY_FUNC)();
+	static MOVEFORCIBLY_FUNC m_MoveForciblyFunc[];	// 強制行動関数
+
+	typedef void(CPlayerAIControl::* THROWTYPE_FUNC)();
+	static THROWTYPE_FUNC m_ThrowTypeFunc[];		// 投げるタイプ関数
 
 	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
 	static CATCH_FUNC m_CatchFunc[];				// キャッチ関数
+
+	typedef void(CPlayerAIControl::* MOVETYPE_FUNC)(const float, const float, const float);
+	static MOVETYPE_FUNC m_MoveTypeFunc[];			// 行動関数
 
 	typedef void(CPlayerAIControl::* MOVESTATE_FUNC)(const float, const float, const float);
 	static MOVESTATE_FUNC m_MoveStateFunc[];				// キャッチ関数
@@ -219,6 +244,18 @@ private:
 	void ModeIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 待機
 	void ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 投げ統括
 	void ModeCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// キャッチ統括
+
+	// 強制行動
+	void ForciblyNone() {};				// なし
+	void ForciblyStop();				// 止まる
+	virtual void ForciblyReturn() = 0;	// 戻る
+	void ForciblyStart();				// 初め
+
+	// 投げタイプ
+	void ThrowTypeNone() {};	// なし
+	void ThrowTypeNormal();		// 通常
+	void ThrowTypeJump();		// ジャンプ
+	void ThrowTypeSpecial();	// スペシャル
 
 	// キャッチ
 	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
@@ -257,6 +294,8 @@ private:
 	//=============================
 	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モード
+	void UpdateForcibly();																			// 強制行動
+	void UpdateThrowType();																			// 投げ種類
 	void UpdateMoveType(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 行動
 	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
 
@@ -265,6 +304,7 @@ private:
 	void UpdateActionFlag();		// アクション
 	void UpdateThrowFlag();			// 投げフラグ
 
+	// 行動
 	void MoveDistance();
 	void MoveFront(CPlayer* pPlayer);			// 前
 	void MoveDown(CPlayer* pPlayer);			// 後
@@ -272,7 +312,7 @@ private:
 	void MoveRight(CPlayer* pPlayer);			// 右
 	void MoveFrontAndLeft(CPlayer* pPlayer);	// 前左
 	void MoveFrontAndRight(CPlayer* pPlayer);	// 前右
-	void MoveDownAndLeft(CPlayer* pPlayer);	// 後左
+	void MoveDownAndLeft(CPlayer* pPlayer);		// 後左
 	void MoveDownAndRight(CPlayer* pPlayer);	// 後右
 
 	bool IsDistanceBall();					// 距離：ボール
@@ -303,7 +343,8 @@ private:
 	// 列挙
 	//-----------------------------
 	EMode m_eMode;					// モード
-	//EMoveForcibly m_eForcibly;		// 強制行動
+	EMoveForcibly m_eForcibly;		// 強制行動
+	EThrowType m_eThrowType;		// 投げ種類
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
 	EMoveTypeChatch m_eMoveType;	// 行動タイプ
 	EActionFlag m_eActionFlag;		// アクションフラグ
