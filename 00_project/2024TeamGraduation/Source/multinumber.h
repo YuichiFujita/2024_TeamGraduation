@@ -116,7 +116,8 @@ public:
 	//--------------------------
 	virtual void BindTexture(int nIdxTexture);	// テクスチャ割り当て
 	void SetEnableDigitDraw(bool bDraw) { m_bDigitDraw = bDraw; }			// 桁数描画判定設定
-	void SetAlignmentType(EAlignmentType type) { m_AlignmentType = type; }	// 寄せ種類設定
+	void SetAlignmentType(EAlignmentType type);								// 寄せ種類設定
+	std::vector<CNumber*> GetNumberObj() { return m_vecNumber; }			// 数字のオブジェクト取得
 
 private:
 
@@ -136,7 +137,8 @@ private:
 	D3DXCOLOR m_col;			// 色
 	D3DXCOLOR m_colOrigin;		// 元の色
 	int m_nNum;							// 数字
-	int m_nMaxDigit;					// 桁数
+	int m_nDigit;						// 桁数
+	int m_nMaxDigit;					// 最大桁数
 	int m_nIdxTexture;					// テクスチャのインデックス
 	bool m_bDigitDraw;					// 桁数描画フラグ
 	EObjType m_objType;					// オブジェクトの種類

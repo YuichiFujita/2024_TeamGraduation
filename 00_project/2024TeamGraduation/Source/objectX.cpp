@@ -38,7 +38,7 @@ CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, lay
 	m_AABB = MyLib::AABB();						// AABB情報
 	m_OriginAABB = MyLib::AABB();				// 元のAABB情報
 	m_state = STATE::STATE_NONE;				// 状態
-	m_nIdxTexure = 0;							// テクスチャのインデックス番号
+	m_pIdxTexure = nullptr;						// テクスチャのインデックス番号
 	m_nIdxXFile = 0;							// Xファイルのインデックス番号
 	m_pShadow = nullptr;						// 影の情報
 	m_bShadow = false;							// 影を使っているかどうか
@@ -59,7 +59,7 @@ CObjectX::~CObjectX()
 void CObjectX::BindTexture(int *nIdx)
 {
 	// 割り当てる
-	m_nIdxTexure = *nIdx;
+	m_pIdxTexure = nIdx;
 }
 
 //==========================================================================
@@ -194,6 +194,9 @@ HRESULT CObjectX::Init()
 	// 元のAABB情報
 	m_OriginAABB = m_AABB;
 
+	// テクスチャインデックス割り当て
+	BindTexture(pXData->nIdxTexture);
+
 	return S_OK;
 }
 
@@ -234,6 +237,9 @@ HRESULT CObjectX::Init(const std::string& file)
 	// 元のAABB情報
 	m_OriginAABB = m_AABB;
 
+	// テクスチャインデックス割り当て
+	BindTexture(pXData->nIdxTexture);
+
 	return S_OK;
 }
 
@@ -262,6 +268,9 @@ HRESULT CObjectX::Init(int nIdxXFile)
 
 	// 元のAABB情報
 	m_OriginAABB = m_AABB;
+
+	// テクスチャインデックス割り当て
+	BindTexture(pXData->nIdxTexture);
 
 	return S_OK;
 }
@@ -500,7 +509,7 @@ void CObjectX::DrawOnly()
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, pTex->GetAdress(pXData->nIdxTexture[nCntMat]));
+		pDevice->SetTexture(0, pTex->GetAdress(m_pIdxTexure[nCntMat]));
 
 		if (m_scale != MyLib::Vector3(1.0f, 1.0f, 1.0f))
 		{// 少しでも違う場合
@@ -585,7 +594,7 @@ void CObjectX::Draw(const D3DXCOLOR& col)
 		pDevice->SetMaterial(&matNow.MatD3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, pTex->GetAdress(pXData->nIdxTexture[nCntMat]));
+		pDevice->SetTexture(0, pTex->GetAdress(m_pIdxTexure[nCntMat]));
 
 		if (m_scale != MyLib::Vector3(1.0f, 1.0f, 1.0f))
 		{// 少しでも違う場合

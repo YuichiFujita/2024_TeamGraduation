@@ -81,6 +81,7 @@ public:
 	//--------------------------
 	virtual void BindTexture(int nIdxTexture) override { m_pObj2D->BindTexture(nIdxTexture); }						// テクスチャ割り当て
 	void SetVtx();	// 頂点情報設定処理
+	virtual void SetType(const TYPE type) override;		// 種類設定
 
 private:
 
