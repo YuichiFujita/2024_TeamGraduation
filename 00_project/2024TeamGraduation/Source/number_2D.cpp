@@ -30,15 +30,14 @@ CNumber2D::~CNumber2D()
 //==========================================================================
 HRESULT CNumber2D::Init()
 {
-	// ‰Šú‰»ˆ—
-	CNumber::Init();
-
 	// ¶¬ˆ—
 	m_pObj2D = CObject2D_Anim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
 	
 	// Ž©“®Ä¶’âŽ~
 	m_pObj2D->SetEnableAutoPlay(false);
 
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
 	return S_OK;
 }
 
@@ -81,7 +80,7 @@ void CNumber2D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 void CNumber2D::Draw()
 {
-	
+	m_pObj2D->Draw();
 }
 
 //==========================================================================
@@ -90,4 +89,14 @@ void CNumber2D::Draw()
 void CNumber2D::SetVtx()
 {
 	m_pObj2D->SetVtx();
+}
+
+//==========================================================================
+// Ží—ÞÝ’è
+//==========================================================================
+void CNumber2D::SetType(const TYPE type)
+{
+	// Ží—ÞÝ’è
+	CObject::SetType(type);
+	m_pObj2D->CObject::SetType(type);
 }

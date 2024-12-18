@@ -30,7 +30,7 @@ CMultiNumber::CMultiNumber(int nPriority) : CObject(nPriority)
 {
 	// 値のクリア
 	m_nNum = 0;				// 数字
-	
+	m_AlignmentType = EAlignmentType::ALIGNMENT_CENTER;
 }
 
 //==========================================================================
@@ -56,13 +56,14 @@ CMultiNumber* CMultiNumber::Create(const int nNum, const int texIdx, const MyLib
 		pNumber->m_nNum = nNum;				// 数字
 		pNumber->m_nIdxTexture = texIdx;	// テクスチャのインデックス
 		pNumber->m_objType = objtype;		// オブジェクトの種類
-		pNumber->SetPosition(pos);			// 位置
 		pNumber->m_size = size;				// サイズ
 		pNumber->m_nMaxDigit = nMaxDigit;	// 桁数
 		pNumber->m_bDigitDraw = bDigitDraw;	// 桁数描画
 
 		// 初期化処理
 		pNumber->Init();
+
+		pNumber->SetPosition(pos);			// 位置
 	}
 
 	return pNumber;
@@ -83,7 +84,7 @@ HRESULT CMultiNumber::Init()
 
 	// 数字生成
 	CNumber* pNumber = nullptr;
-	for (int i = 0; i < m_nNum; i++)
+	for (int i = 0; i < m_nMaxDigit; i++)
 	{
 		// 生成処理
 		pNumber = CNumber::Create(m_objType, nPriority);
@@ -105,6 +106,12 @@ HRESULT CMultiNumber::Init()
 		// コンテナへ追加
 		m_vecNumber.push_back(pNumber);
 	}
+
+	// 値設定
+	SetNum(m_nNum);
+
+	// 桁数
+	m_nDigit = UtilFunc::Calculation::GetDigit(m_nNum);
 
 	return S_OK;
 }
@@ -147,7 +154,20 @@ void CMultiNumber::Kill()
 //==========================================================================
 void CMultiNumber::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 桁数
+	m_nDigit = UtilFunc::Calculation::GetDigit(m_nNum);
 
+	for (const auto& number : m_vecNumber)
+	{
+		if (number == nullptr ||
+			number->GetType() != CObject::TYPE::TYPE_NONE)
+		{
+			continue;
+		}
+
+		// 更新
+		number->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
 
 //==========================================================================
@@ -155,7 +175,26 @@ void CMultiNumber::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CMultiNumber::Draw()
 {
-	
+	int i = 1;
+	for (const auto& number : m_vecNumber)
+	{
+		if (number == nullptr ||
+			number->GetType() != CObject::TYPE::TYPE_NONE)
+		{
+			continue;
+		}
+
+		if (m_bDigitDraw && m_nMaxDigit - m_nDigit >= i)
+		{// 桁数描画 && 表示桁数より大きい
+			i++;
+			continue;
+		}
+
+		// 描画処理
+		number->Draw();
+
+		i++;
+	}
 }
 
 //==========================================================================
@@ -172,6 +211,7 @@ void CMultiNumber::SetNum(int nNum)
 
 		// 今回の桁のパターン割り出し
 		int nTexU = m_nNum % (int)std::pow(10, m_nMaxDigit + 1 - i) / ((int)std::pow(10, m_nMaxDigit - i) / 10);
+		UtilFunc::Calculation::GetDigit(m_nNum);
 		m_vecNumber[i]->SetNum(nTexU);
 	}
 }
@@ -235,7 +275,7 @@ void CMultiNumber::AdjustRight()
 		number->SetPosition(setpos);
 
 		// 移動していく
-		setpos.x -= m_size.x * 2.0f;
+		setpos.x += m_size.x * 2.0f;
 	}
 }
 
@@ -417,4 +457,13 @@ void CMultiNumber::BindTexture(int nIdxTexture)
 		// 位置設定
 		number->BindTexture(nIdxTexture);
 	}
+}
+
+//==========================================================================
+// 寄せ種類設定
+//==========================================================================
+void CMultiNumber::SetAlignmentType(EAlignmentType type)
+{
+	m_AlignmentType = type;
+	SetPosition(GetPosition());
 }

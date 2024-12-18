@@ -33,6 +33,7 @@ public:
 	enum ELayer
 	{
 		LAYER_BALLOON = 0,	// ‚«o‚µ
+		LAYER_BBS,			// ŒfŽ¦”Â
 		LAYER_MAIN,			// ƒƒCƒ“‰æ–Ê
 		LAYER_MAX			// ‚±‚Ì—ñ‹“Œ^‚Ì‘”
 	};
