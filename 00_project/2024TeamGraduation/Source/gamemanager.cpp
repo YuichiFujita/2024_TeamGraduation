@@ -847,8 +847,6 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 		return SIDE_NONE;
 		break;
 	}
-
-	return SIDE_NONE;
 }
 
 

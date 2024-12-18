@@ -264,4 +264,25 @@ void CCamera_Debug::UpdateGUI()
 		// 向き設定
 		m_pCamera->SetRotation(rot);
 	}
+
+	//--------------------------
+	// 距離操作
+	//--------------------------
+	{
+		// 向き取得
+		float distance = m_pCamera->GetDistance();
+
+		ImGui::PushID(1); // ウィジェットごとに異なるIDを割り当てる
+		if (ImGui::Button("Reset"))
+		{// リセット
+			distance = m_pCamera->GetDistanceOrigin();
+		}
+		ImGui::PopID();
+		ImGui::SameLine();
+
+		ImGui::DragFloat("distance", &distance, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		// 向き設定
+		m_pCamera->SetDistance(distance);
+	}
 }

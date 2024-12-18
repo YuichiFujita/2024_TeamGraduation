@@ -87,6 +87,7 @@ protected:
 	void SetMotion(const int nMotion) override;	// モーション設定
 	void EndSettingSpawn() override;			// スポーン終了時の設定
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE) override;	// 退場設定
+	virtual bool SetNTR() override;									// NTR設定
 
 private:
 

@@ -286,6 +286,23 @@ bool CAudienceHighPoly::SetDespawn(EObjType type)
 }
 
 //==========================================================================
+// NTRの設定処理
+//==========================================================================
+bool CAudienceHighPoly::SetNTR()
+{
+	// 入場状態にする
+	CAudience::SetNTR();
+
+	// 入場開始位置を保存
+	SetSpawnPosition(GetPosition());	// 現在の位置
+
+	// 観戦位置を設定し、生成情報を取得
+	(this->*(m_CalcWatchPositionFunc[GetArea()]))();
+
+	return true;
+}
+
+//==========================================================================
 // モーションの設定処理
 //==========================================================================
 void CAudienceHighPoly::SetMotion(const int nMotion)

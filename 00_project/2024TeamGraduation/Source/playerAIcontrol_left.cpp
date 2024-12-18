@@ -138,7 +138,7 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 		// 相手の位置に近づく
 		if (Approatch(posTarget, JUMP_LENGTH_LINE))
 		{// 範囲内の場合
-			SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
+			//SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
 			SetMove(EMoveFlag::MOVEFLAG_STOP);			// 行動：止まる
 		}
 

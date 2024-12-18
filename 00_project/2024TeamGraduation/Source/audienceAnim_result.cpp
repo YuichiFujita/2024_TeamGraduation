@@ -40,7 +40,9 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team)
+CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team),
+	m_teamNTR(CGameManager::ETeamSide::SIDE_NONE)		// NTR後のチーム
+
 {
 
 }
@@ -89,6 +91,23 @@ void CAudienceAnimResult::Draw()
 {
 	// 親クラスの描画
 	CAudienceAnim::Draw();
+}
+
+//==========================================================================
+// NTRの設定処理
+//==========================================================================
+bool CAudienceAnimResult::SetNTR()
+{
+	// もう設定していたらはじく
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
+
+	// NTR
+	m_teamNTR = CGameManager::GetInstance()->RivalTeam(GetTeam());
+
+	// 親クラスの設定
+	CAudienceAnim::SetNTR();
+
+	return true;
 }
 
 //==========================================================================

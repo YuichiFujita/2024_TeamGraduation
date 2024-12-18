@@ -119,7 +119,7 @@ public:
 	void SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType);			// モテ減算
 	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);		// スペシャル加算
 	
-	ETeamSide RivalTeam(ETeamSide team);
+	ETeamSide RivalTeam(ETeamSide team);	// 敵チームを取得
 
 	//-----------------------------
 	// モード毎の設定処理
