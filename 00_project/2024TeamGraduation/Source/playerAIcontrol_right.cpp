@@ -135,7 +135,7 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 		if (Approatch(posTarget, JUMP_LENGTH_LINE))
 		{// 範囲内の場合
 			//SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
-			SetMove(EMoveFlag::MOVEFLAG_STOP);			// 行動：止まる
+			SetMove(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
 		}
 
 		return;
@@ -147,13 +147,13 @@ void CPlayerAIControlRight::AttackDash(CPlayer* pTarget)
 	}
 	else
 	{
-		SetMove(EMoveFlag::MOVEFLAG_STOP);		// 行動：止まる
+		SetMove(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 
 	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
-		SetMove(EMoveFlag::MOVEFLAG_STOP);		// 行動：止まる
+		SetMove(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 }
@@ -181,19 +181,8 @@ void CPlayerAIControlRight::ForciblyReturn()
 	if (Approatch({ playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-		SetMove(EMoveFlag::MOVEFLAG_STOP);
+		SetMove(EMoveFlag::MOVEFLAG_IDLE);
 	}
-}
-
-//==========================================================================
-// 狂う
-//==========================================================================
-void CPlayerAIControlRight::MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	MyLib::Vector3 posRand = {};
-	// x:960 z:560
-
-
 }
 
 //==========================================================================
