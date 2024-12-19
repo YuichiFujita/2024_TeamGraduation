@@ -12,6 +12,8 @@
 #include "audience.h"
 #include "camera.h"
 
+#include "gamemanager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -21,6 +23,13 @@ namespace
 
 	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);
 	const float DISTANCE_CAMERA = 1940.0f;
+
+	const float POSR_HEIGHT = 100.0f;	// カメラの注視点の高さ
+	const MyLib::Vector3 POS_COURT[CGameManager::ETeamSide::SIDE_MAX] =	// 位置
+	{
+		MyLib::Vector3(-475.0f, 0.0f, 0.0f),	// 左
+		MyLib::Vector3(475.0f, 0.0f, 0.0f),		// 右
+	};
 }
 
 // 状態時間
@@ -48,8 +57,18 @@ namespace Prelude
 		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f, 0.0f),
 	};
 
-	const MyLib::Vector3 POSR_CAMERA = MyLib::Vector3(314.0f, 0.0f, 0.0f);
-	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.17f, -0.36f);
+	const MyLib::Vector3 POSR_CAMERA[] =
+	{
+		MyLib::Vector3(150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[0],
+		MyLib::Vector3(-150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[1],
+	};
+
+	const MyLib::Vector3 ROT_CAMERA[] =
+	{
+		MyLib::Vector3(0.0f, -0.17f, -0.36f),
+		MyLib::Vector3(0.0f, 0.17f, -0.36f),
+	};
+
 	const float DISTANCE_CAMERA = 1940.0f;
 }
 
@@ -64,9 +83,19 @@ namespace Contest
 		MyLib::Vector3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.6f, 0.0f),
 	};
 
-	const MyLib::Vector3 POSR_CAMERA = MyLib::Vector3(900.0f, 0.0f, 240.0f);
-	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, -0.32f, -0.36f);
-	const float DISTANCE_CAMERA = 150.0f;
+	const MyLib::Vector3 POSR_CAMERA[] =
+	{
+		MyLib::Vector3(-400.0f, 0.0f, 240.0f) + POS_COURT[0],
+		MyLib::Vector3(400.0f, 0.0f, 240.0f) + POS_COURT[1],
+	};
+
+		const MyLib::Vector3 ROT_CAMERA[] =
+	{
+		MyLib::Vector3(0.0f, 0.32f, -0.36f),
+		MyLib::Vector3(0.0f, -0.32f, -0.36f),
+	};
+
+	const float DISTANCE_CAMERA = 1500.0f;
 }
 
 // プレイヤー
@@ -266,20 +295,22 @@ void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// カメラ補正
-	CCamera* pCamera = GET_MANAGER->GetCamera();
 	const float START = 0.0f;
 	const float END = 1.0f;
+
+	// カメラ補正
+	CCamera* pCamera = GET_MANAGER->GetCamera();
+
 	float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Prelude::DISTANCE_CAMERA, START, END, m_fStateTime);
-	MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Prelude::ROT_CAMERA, START, END, m_fStateTime);
-	MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Prelude::POSR_CAMERA, START, END, m_fStateTime);
+	MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Prelude::ROT_CAMERA[m_teamPreludeWin], START, END, m_fStateTime);
+	MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Prelude::POSR_CAMERA[m_teamPreludeWin], START, END, m_fStateTime);
 
 	pCamera->SetDistance(fDistance);
 	pCamera->SetRotation(rot);
 	pCamera->SetPositionR(posR);
 
 	// 無意味かも
-	pCamera->SetDestRotation(Prelude::ROT_CAMERA);
+	pCamera->SetDestRotation(Prelude::ROT_CAMERA[m_teamPreludeWin]);
 
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::PRELUDE)
@@ -293,8 +324,22 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 //==========================================================================
 void CResultManager::StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// タイマーリセット
-	m_fStateTime = 0.0f;
+	const float START = 0.0f;
+	const float END = 1.0f;
+
+	// カメラ補正
+	CCamera* pCamera = GET_MANAGER->GetCamera();
+
+	float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Contest::DISTANCE_CAMERA, START, END, m_fStateTime);
+	MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Contest::ROT_CAMERA[m_teamContestWin], START, END, m_fStateTime);
+	MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Contest::POSR_CAMERA[m_teamContestWin], START, END, m_fStateTime);
+
+	pCamera->SetDistance(fDistance);
+	pCamera->SetRotation(rot);
+	pCamera->SetPositionR(posR);
+
+	// 無意味かも
+	pCamera->SetDestRotation(Contest::ROT_CAMERA[m_teamContestWin]);
 }
 
 //==========================================================================
@@ -307,32 +352,34 @@ void CResultManager::StateStartPrelude()
 	// 観客盛り上げ
 	CAudience::SetEnableJumpAll(true, m_teamPreludeWin);
 
-	// ポリゴン生成(引き分け)
+	// ポリゴン生成
 	if (m_teamPreludeWin == CGameManager::ETeamSide::SIDE_NONE)
-	{// 引き分けだったら
+	{
+		// ポリゴン生成(引き分け)
 		CObject2D* pObj = CObject2D::Create();
 
 		pObj->SetPosition(Draw::POS_PRELUDE);
 		pObj->SetSize(SIZE_POLY);
 		pObj->BindTexture(pTexture->Regist(Draw::TEXFILE));
-		return;
 	}
+	else
+	{
+		// ポリゴン生成(勝敗)
+		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+		{// 勝敗分
+			CObject2D* pObj = CObject2D::Create();
 
-	// ポリゴン生成(勝敗)
-	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
-	{// 勝敗分
-		CObject2D* pObj = CObject2D::Create();
-	
-		pObj->SetPosition(Prelude::POS_POLY[i]);
-		pObj->SetSize(SIZE_POLY);
+			pObj->SetPosition(Prelude::POS_POLY[i]);
+			pObj->SetSize(SIZE_POLY);
 
-		if (m_teamPreludeWin == static_cast<CGameManager::ETeamSide>(i))
-		{// 勝利チームの場合
-			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_WIN));
-		}
-		else
-		{
-			pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_LOSE));
+			if (m_teamPreludeWin == static_cast<CGameManager::ETeamSide>(i))
+			{// 勝利チームの場合
+				pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_WIN));
+			}
+			else
+			{
+				pObj->BindTexture(pTexture->Regist(Prelude::TEXFILE_LOSE));
+			}
 		}
 	}
 
@@ -344,8 +391,8 @@ void CResultManager::StateStartPrelude()
 	pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 	pCamera->SetDistanceDest(Prelude::DISTANCE_CAMERA);
-	pCamera->SetDestRotation(Prelude::ROT_CAMERA);
-	pCamera->SetPositionRDest(Prelude::POSR_CAMERA);
+	pCamera->SetDestRotation(Prelude::ROT_CAMERA[m_teamPreludeWin]);
+	pCamera->SetPositionRDest(Prelude::POSR_CAMERA[m_teamPreludeWin]);
 }
 
 //==========================================================================
@@ -354,48 +401,56 @@ void CResultManager::StateStartPrelude()
 void CResultManager::StateStartCharmContest()
 {
 	CTexture* pTexture = CTexture::GetInstance();
+	
+	//TAKADA: モテ値出す？
 
 	// 観客NTR
-	CAudience::SetNTRAll(CGameManager::GetInstance()->RivalTeam(m_teamContestWin));
+	CAudience::SetNTRAll(m_teamContestWin);
 
 	// 観客盛り上げ
 	CAudience::SetEnableJumpAll(true, m_teamContestWin);
 
-	// ポリゴン生成(引き分け)
+	// ポリゴン生成
 	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
-	{// 引き分けだったら
+	{
+		// ポリゴン生成(引き分け)
 		CObject2D* pObj = CObject2D::Create();
 
 		pObj->SetPosition(Draw::POS_CONTEST);
 		pObj->SetSize(SIZE_POLY);
 		pObj->BindTexture(pTexture->Regist(Draw::TEXFILE));
-		return;
 	}
-
-	//TAKADA: モテ値出す？
-	// ポリゴン生成(勝敗)
-	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	else
 	{
-		CObject2D* pObj = CObject2D::Create();
-
-		pObj->SetPosition(Contest::POS_POLY[i]);
-		pObj->SetSize(SIZE_POLY);
-
-		if (m_teamContestWin == static_cast<CGameManager::ETeamSide>(i))
-		{// 勝利チームの場合
-			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_WIN));
-		}
-		else
+		// ポリゴン生成(勝敗)
+		for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 		{
-			pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
+			CObject2D* pObj = CObject2D::Create();
+
+			pObj->SetPosition(Contest::POS_POLY[i]);
+			pObj->SetSize(SIZE_POLY);
+
+			if (m_teamContestWin == static_cast<CGameManager::ETeamSide>(i))
+			{// 勝利チームの場合
+				pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_WIN));
+			}
+			else
+			{
+				pObj->BindTexture(pTexture->Regist(Contest::TEXFILE_LOSE));
+			}
 		}
 	}
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
+
+	pCamera->SetDistanceOrigin(pCamera->GetDistance());
+	pCamera->SetOriginRotation(pCamera->GetRotation());
+	pCamera->SetPositionROrigin(pCamera->GetPositionR());
+
 	pCamera->SetDistanceDest(Contest::DISTANCE_CAMERA);
-	pCamera->SetDestRotation(Contest::ROT_CAMERA);
-	pCamera->SetPositionRDest(Contest::POSR_CAMERA);
+	pCamera->SetDestRotation(Contest::ROT_CAMERA[m_teamContestWin]);
+	pCamera->SetPositionRDest(Contest::POSR_CAMERA[m_teamContestWin]);
 }
 
 //==========================================================================
@@ -569,6 +624,12 @@ void CResultManager::LoadTeam(std::ifstream* File, std::string line, int nTeam)
 //==========================================================================
 void CResultManager::SetState(EState state)
 {
+	// 状態更新
+	if (m_StateEndFunc[state] != nullptr)
+	{
+		(this->*(m_StateEndFunc[state]))();
+	}
+
 	m_state = state;
 	m_fStateTime = 0.0f;
 
@@ -616,10 +677,25 @@ void CResultManager::Debug()
 		CCamera* pCamera = GET_MANAGER->GetCamera();
 		float fDistance = pCamera->GetDistance();
 
-		ImGui::DragFloat("Distance", &fDistance, 0.01f, -D3DX_PI, D3DX_PI, "%.2f");
+		if (ImGui::Button("Frag:prelude"))
+		{
+			m_teamPreludeWin = CGameManager::GetInstance()->RivalTeam(m_teamPreludeWin);
+		}
 
-		pCamera->SetDistance(fDistance);
+		if (ImGui::Button("Frag:contest"))
+		{
+			m_teamContestWin = CGameManager::GetInstance()->RivalTeam(m_teamContestWin);
+		}
 
+		if (ImGui::Button("prelude"))
+		{
+			SetState(EState::STATE_PRELUDE);
+		}
+
+		if (ImGui::Button("contest"))
+		{
+			SetState(EState::STATE_CONTEST);
+		}
 
 		// 位置設定
 		ImGui::TreePop();

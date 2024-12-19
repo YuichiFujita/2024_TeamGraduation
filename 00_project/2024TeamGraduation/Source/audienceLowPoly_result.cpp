@@ -98,16 +98,16 @@ void CAudienceLowPolyResult::Draw()
 //==========================================================================
 // NTR‚Ìİ’èˆ—
 //==========================================================================
-bool CAudienceLowPolyResult::SetNTR()
+bool CAudienceLowPolyResult::SetNTR(CGameManager::ETeamSide team)
 {
 	// ‚à‚¤İ’è‚µ‚Ä‚¢‚½‚ç‚Í‚¶‚­
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
+	//if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
 
 	// NTR
-	m_teamNTR = CGameManager::GetInstance()->RivalTeam(GetTeam());
+	m_teamNTR = team;
 
 	// eƒNƒ‰ƒX‚Ìİ’è
-	CAudienceLowPoly::SetNTR();
+	CAudienceLowPoly::SetNTR(team);
 
 	return true;
 }

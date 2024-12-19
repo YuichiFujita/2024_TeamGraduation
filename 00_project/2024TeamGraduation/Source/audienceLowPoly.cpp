@@ -292,10 +292,10 @@ bool CAudienceLowPoly::SetDespawn(EObjType type)
 //==========================================================================
 // NTRの設定処理
 //==========================================================================
-bool CAudienceLowPoly::SetNTR()
+bool CAudienceLowPoly::SetNTR(CGameManager::ETeamSide team)
 {
 	// 入場状態にする
-	CAudience::SetNTR();
+	CAudience::SetNTR(team);
 
 	// 入場開始位置を保存
 	SetSpawnPosition(GetPosition());	// 現在の位置
