@@ -30,14 +30,14 @@ CNumberBillboard::~CNumberBillboard()
 //==========================================================================
 HRESULT CNumberBillboard::Init()
 {
-	// ‰Šú‰»ˆ—
-	CNumber::Init();
-
 	// ¶¬ˆ—
 	m_pObjBillboard = CObjectBillboardAnim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
 	
 	// Ž©“®Ä¶’âŽ~
 	m_pObjBillboard->SetEnableAutoPlay(false);
+
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
 
 	return S_OK;
 }
@@ -90,4 +90,14 @@ void CNumberBillboard::Draw()
 void CNumberBillboard::SetVtx()
 {
 	m_pObjBillboard->SetVtx();
+}
+
+//==========================================================================
+// Ží—ÞÝ’è
+//==========================================================================
+void CNumberBillboard::SetType(const TYPE type)
+{
+	// Ží—ÞÝ’è
+	CObject::SetType(type);
+	m_pObjBillboard->CObject::SetType(type);
 }

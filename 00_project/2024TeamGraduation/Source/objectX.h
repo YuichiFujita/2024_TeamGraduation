@@ -57,6 +57,7 @@ public:
 	// 要素
 	//--------------------------
 	void BindTexture(int *nIdx);								// テクスチャ割り当て
+	int* GetIdxTexture() { return m_pIdxTexure; }				// テクスチャインデックス取得
 	void BindXData(int nIdxXFile) { m_nIdxXFile = nIdxXFile; }	// Xファイルデータ割り当て
 	int GetIdxXFile() const { return m_nIdxXFile; }				// Xファイルのインデックス取得
 	std::string GetFileName() const { return m_fileName; }		// Xファイルのファイル名取得
@@ -140,7 +141,7 @@ private:
 	MyLib::AABB m_AABB;			// AABB情報
 	MyLib::AABB m_OriginAABB;	// 元のAABB情報
 	STATE m_state;				// 状態
-	int m_nIdxTexure;			// テクスチャのインデックス番号
+	int* m_pIdxTexure;			// テクスチャのインデックス番号
 	int m_nIdxXFile;			// Xファイルのインデックス番号
 	std::string m_fileName;		// ファイル名
 	CShadow *m_pShadow;			// 影の情報

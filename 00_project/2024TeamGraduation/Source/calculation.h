@@ -3200,7 +3200,7 @@ namespace UtilFunc	// 便利関数
 			if (fDiv == 0.0f) { return 0.0f; }	// 0除算対策
 		
 			// 割合変換した値を返す
-			return (static_cast<float>(num) - static_cast<float>(min)) / fDiv;
+			return UtilFunc::Transformation::Clamp((static_cast<float>(num) - static_cast<float>(min)) / fDiv, 0.0f, 1.0f);
 		}
 
 		/**

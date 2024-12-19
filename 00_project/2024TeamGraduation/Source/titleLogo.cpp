@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "camera.h"
 #include "instantfade.h"
+#include "option_BBS.h"
 
 //==========================================================================
 // ’è”’è‹`
@@ -118,6 +119,10 @@ HRESULT CTitleLogo::Init()
 	MyLib::Vector3 cameraRot = pCamera->GetRotation();
 	cameraRot.y = 0.0f;
 	pCamera->SetRotation(cameraRot);
+
+
+
+	COption_BBS::Create();
 
 	return S_OK;
 }
