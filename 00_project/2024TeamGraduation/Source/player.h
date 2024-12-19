@@ -412,14 +412,16 @@ public:
 		@param	typeHuman [in]	人種類
 		@param	typeBody  [in]	標準/デブ/ガリ
 		@param	typeHand  [in]	右利き/左利き
+		@param	typeArea  [in]	内野/外野
 	*/
 	static CPlayer* Create
 	(
-		const MyLib::Vector3& rPos,			// 位置
-		CGameManager::ETeamSide typeTeam,	// チームサイド
-		EHuman typeHuman,					// 人
-		EBody typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness typeHand = EHandedness::HAND_R	// 利き手
+		const MyLib::Vector3& rPos,						// 位置
+		CGameManager::ETeamSide typeTeam,				// チームサイド
+		EHuman typeHuman,								// 人
+		EBody typeBody = EBody::BODY_NORMAL,			// 体型
+		EHandedness typeHand = EHandedness::HAND_R,		// 利き手
+		EFieldArea	typeArea = EFieldArea::FIELD_IN		// ポジション
 	);
 
 protected:

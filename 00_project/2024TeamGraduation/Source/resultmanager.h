@@ -29,6 +29,7 @@ namespace ResultManager
 // 前方宣言
 //==========================================================================
 class CTeamStatus;
+class CObject3D;
 
 //==========================================================================
 // クラス定義
@@ -60,6 +61,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
+	MyLib::Vector3 GetPosMid(CGameManager::ETeamSide team);		// コートの中心位置取得
 	EState GetState() { return m_state; }		// 状態取得
 	CGameManager::ETeamSide GetTeamPreludeWin() { return m_teamPreludeWin; }		// 勝利チーム(前座)
 	CGameManager::ETeamSide GetTeamContestWin() { return m_teamContestWin; }		// 勝利チーム(モテ)
@@ -73,13 +75,13 @@ private:
 	// 関数リスト
 	//=============================
 	typedef void(CResultManager::* STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_StateFunc[];	// 状態関数
+	static STATE_FUNC m_StateFunc[];			// 状態関数
 
 	typedef void(CResultManager::* STATE_START_FUNC)();
 	static STATE_START_FUNC m_StateStartFunc[];	// 状態開始関数
 
 	typedef void(CResultManager::* STATE_END_FUNC)();
-	static STATE_END_FUNC m_StateEndFunc[];	// 状態終了関数
+	static STATE_END_FUNC m_StateEndFunc[];		// 状態終了関数
 
 	//=============================
 	// メンバ関数
@@ -93,20 +95,20 @@ private:
 	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗
 	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗
 
-	void StateStartPrelude();				// [開始]前座勝敗
-	void StateStartCharmContest();			// [開始]モテ勝敗
+	void StateStartPrelude();			// [開始]前座勝敗
+	void StateStartCharmContest();		// [開始]モテ勝敗
 
 	void StateEndPrelude();				// [終了]前座勝敗
-	void StateEndCharmContest();			// [終了]モテ勝敗
+	void StateEndCharmContest();		// [終了]モテ勝敗
 
 	//-----------------------------
 	// その他
 	//-----------------------------
-	void CreateAudience();					// 観客生成
+	void CreateAudience();				// 観客生成
 
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み
-	void LoadTeam(std::ifstream* File, std::string line, int nTeam);						// チーム情報読み込み
+	void LoadTeam(std::ifstream* File, std::string line, int nTeam);		// チーム情報読み込み
 
 	//=============================
 	// メンバ変数
@@ -115,6 +117,7 @@ private:
 	CGameManager::ETeamSide m_teamPreludeWin;					// 勝利チーム(前座)
 	CGameManager::ETeamSide m_teamContestWin;					// 勝利チーム(モテ)
 	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
+	CObject3D* m_pCrown;	// 勝利チーム用3Dポリゴン
 
 	//-----------------------------
 	// 状態

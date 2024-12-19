@@ -41,6 +41,7 @@ CPlayerResult::VICTORY_FUNC CPlayerResult::m_VictoryFunc[] =	// 状態関数
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
+CListManager<CPlayerResult> CPlayerResult::m_List;		// リスト
 
 //==========================================================================
 // コンストラクタ
@@ -84,6 +85,10 @@ HRESULT CPlayerResult::Init()
 
 	// ドレスアップ生成
 	CreateDressUp();
+
+	// プレイヤーリストに割当
+	m_List.Regist(this);
+
 	return S_OK;
 }
 
@@ -94,6 +99,9 @@ void CPlayerResult::Uninit()
 {
 	// 終了処理
 	CPlayer::Uninit();
+
+	// プレイヤーリストに割当
+	m_List.Delete(this);
 }
 
 //==========================================================================
