@@ -214,7 +214,7 @@ HRESULT CCutIn::CreateRenderTexture()
 	( // 引数
 		CRenderTextureManager::LAYER_BALLOON,		// 描画順レイヤー
 		std::bind(&CCutIn::CreateTexture, this),	// テクスチャ作成関数ポインタ
-		std::bind(&CCamera::SetSpecialCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
+		std::bind(&CCamera::SetCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
 	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合

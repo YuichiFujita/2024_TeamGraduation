@@ -50,7 +50,7 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Draw() override;
 
-	bool SetNTR() override;		// NTRê›íË
+	bool SetNTR(CGameManager::ETeamSide team) override;		// NTRê›íË
 
 protected:
 

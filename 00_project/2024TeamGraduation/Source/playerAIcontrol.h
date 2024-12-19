@@ -40,20 +40,19 @@ public:
 	//=============================
 	// 列挙型定義
 	//=============================
-	enum EHeartMain					// 心
+	enum EHeartMain				// 心
 	{
-		HEART_MAIN_NORMAL = 0,		// 通常
-		HEART_MAIN_STRONG,			// 強気
-		HEART_MAIN_TIMID,			// 弱気
+		HEART_MAIN_NORMAL = 0,	// 通常
+		HEART_MAIN_STRONG,		// 強気
+		HEART_MAIN_TIMID,		// 弱気
 		HEART_MAIN_MAX
 	};
 
 	enum EMode					// モード
 	{
-		MODE_NONE = 0,			// なし
-		MODE_IDLE,				// 待機
-		MODE_THROW,				// 投げ
-		MODE_CATCH,				// キャッチ
+		MODE_IDLE = 0,			// 待機
+		MODE_ATTACK,			// 攻め
+		MODE_DEFENSE,			// 守り
 		MODE_MAX
 	};
 
@@ -76,24 +75,23 @@ public:
 		THROWTYPE_MAX
 	};
 
-	enum ECatchType				// キャッチ種類
+	enum EAction				// アクション
 	{
-		CATCH_TYPE_NONE = 0,	// なし
-		CATCH_TYPE_NORMAL,		// 通常
-		CATCH_TYPE_PASS_GIVE,	// パスを貰う
-		CATCH_TYPE_PASS_STEAL,	// パスを奪う
-		CATCH_TYPE_FIND,		// 取りに行く
-		CATCH_TYPE_MAX
+		IDLE,					// 何もしない
+		DODGE,					// 回避行動
+		SUPPORT,				// 味方をサポート
+		CHASE_BALL,				// ボールを追いかける
+		RETREAT,				// 後退（安全地帯に移動）
+		RNDOM,					// ランダム
+		MAX
 	};
 
-	enum EMoveTypeChatch
+	enum ESupport
 	{
-		MOVETYPE_NONE = 0,		// なし
-		MOVETYPE_DISTANCE,		// 距離を取る
-		MOVETYPE_LEFTRIGHT,		// 左右
-		MOVETYPE_RANDOM,		// ランダム
-		MOVETYPE_AVOID,			// 回避
-		MOVETYPE_MAX
+		SUPPORT_NONE = 0,		// 
+		SUPPORT_REBOUND,		// 
+		SUPPORT_COVER,			// 
+		SUPPORT_
 	};
 
 	// フラグ関連
@@ -107,7 +105,7 @@ public:
 
 	enum EMoveFlag				// 行動フラグ
 	{
-		MOVEFLAG_STOP = 0,		// 止まる
+		MOVEFLAG_IDLE = 0,		// 止まる
 		MOVEFLAG_WALK,			// 歩く
 		MOVEFLAG_BLINK,			// ブリンク
 		MOVEFLAG_DASH,			// 走る
@@ -134,24 +132,12 @@ private:
 		bool bFoldJump;			// ジャンプの折り返しフラグ
 	};
 
-	struct SMoveType {
-		float fTimer;			// 行動タイマー
-		int nRand;				// 
-		bool bReturn;			// 切り替えし
-		bool bSetTimer;			// 時間設定ON/OFF
-		bool bSetMove;			// 設定完了いてるか
-	};
-
-	struct sMoveCount
-	{
-		float fTimer;
-		bool bSet;
-	};
-
-	struct SDistance {			// 距離
-		float fTarget;			// ターゲット
-		float fInFriend;		// 味方
-		float fOut;				// 外野
+	struct SMove {
+		CPlayer* pDefenseTarget;	// 守る対象
+		MyLib::Vector3 pos;			// 位置
+		float fTimer;				// タイマー
+		bool bSet;					// 設定フラグ
+		bool bCancel;				// キャンセル
 	};
 
 	struct SParameter {			// パラメータ
@@ -177,18 +163,22 @@ public:
 	//-----------------------------
 	// 設定,取得
 	//-----------------------------
+	void SetPlayer(CPlayer* player) { m_pAI = player; }						// 自分の設定
+	CPlayer* GetPlayer() { return m_pAI; }									// 取得
+	void SetAction(EAction action) { m_eAction = action; }
+	EAction GetAction() { return m_eAction; }
+
 	void SetMode(EMode mode) { m_eMode = mode; }							// モード設定
 	EMode GetMode() { return m_eMode; }										// 取得
 	void SetForcibly(EMoveForcibly forcibly) { m_eForcibly = forcibly; }	// 強制行動設定
 	EMoveForcibly GetForcibly() { return m_eForcibly; }						// 取得
-	void SetMove(EMoveFlag move) { m_eMoveFlag = move; }					// 行動設定
-	EMoveFlag GetMove() { return m_eMoveFlag; }								// 取得
-	void SetAction(EActionFlag action) { m_eActionFlag = action; }			// アクション設定
-	EActionFlag GetAction() { return m_eActionFlag; }						// 取得
-	void SetThrow(EThrowFlag Throw) { m_eThrow = Throw; }					// 投げ設定
-	EThrowFlag GetThrow() { return m_eThrow; }								// 取得
-	void SetPlayer(CPlayer* player) { m_pAI = player; }						// 自分の設定
-	CPlayer* GetPlayer() { return m_pAI; }									// 取得
+
+	void SetMoveFlag(EMoveFlag move) { m_eMoveFlag = move; }				// 行動設定
+	EMoveFlag GetMoveFlag() { return m_eMoveFlag; }							// 取得
+	void SetActionFlag(EActionFlag action) { m_eActionFlag = action; }		// アクション設定
+	EActionFlag GetActionFlag() { return m_eActionFlag; }					// 取得
+	void SetThrowFlag(EThrowFlag Throw) { m_eThrowFlag = Throw; }			// 投げ設定
+	EThrowFlag GetThrowFlag() { return m_eThrowFlag; }						// 取得
 
 protected:
 	//=============================
@@ -204,6 +194,21 @@ protected:
 	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
 	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
 
+	// 行動
+	void MoveIdle();		// 何もしない
+	void MoveUp();			// 上移動
+	void MoveDown();		// 下移動
+	void MoveLeft();		// 左移動
+	void MoveRight();		// 右移動
+
+
+	//-----------------------------
+	// 設定関数
+	//-----------------------------
+	CPlayer* GetThrowTarget();				// 投げるターゲット
+	CPlayer* GetBallOwner();				// ボール持ち主
+	float GetDistance() { return m_fDistance; }
+
 private:
 	//=============================
 	// 関数リスト
@@ -217,21 +222,26 @@ private:
 	typedef void(CPlayerAIControl::* THROWTYPE_FUNC)();
 	static THROWTYPE_FUNC m_ThrowTypeFunc[];		// 投げるタイプ関数
 
-	typedef void(CPlayerAIControl::* CATCH_FUNC)(const float, const float, const float);
-	static CATCH_FUNC m_CatchFunc[];				// キャッチ関数
-
 	typedef void(CPlayerAIControl::* MOVETYPE_FUNC)(const float, const float, const float);
 	static MOVETYPE_FUNC m_MoveTypeFunc[];			// 行動関数
 
 	typedef void(CPlayerAIControl::* MOVESTATE_FUNC)(const float, const float, const float);
 	static MOVESTATE_FUNC m_MoveStateFunc[];				// キャッチ関数
 
-	// フラグ関連の関数
-	typedef void(CPlayerAIControl::* ACTION_FUNC)();
-	static ACTION_FUNC m_ActionFlagFunc[];				// アクションフラグ関数
 
-	typedef void(CPlayerAIControl::* THROW_FUNC)();
-	static THROW_FUNC m_ThrowFlagFunc[];				// 投げフラグ関数
+
+	typedef void(CPlayerAIControl::* ACTION_FUNC)();
+	static ACTION_FUNC m_ActionFunc[];				// アクション関数
+
+
+
+
+	// フラグ関連の関数
+	typedef void(CPlayerAIControl::* ACTIONFLAG_FUNC)();
+	static ACTIONFLAG_FUNC m_ActionFlagFunc[];				// アクションフラグ関数
+
+	typedef void(CPlayerAIControl::* THROWFLAG_FUNC)();
+	static THROWFLAG_FUNC m_ThrowFlagFunc[];				// 投げフラグ関数
 
 	typedef void(CPlayerAIControl::* MOVEFLAG_FUNC)();
 	static MOVEFLAG_FUNC m_MoveFlagFunc[];				// 行動フラグ関数
@@ -240,10 +250,9 @@ private:
 	// 状態関数
 	//-----------------------------
 	// モード
-	void ModeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// な
 	void ModeIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 待機
-	void ModeThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 投げ統括
-	void ModeCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// キャッチ統括
+	void ModeAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 攻め
+	void ModeDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
 
 	// 強制行動
 	void ForciblyNone() {};				// なし
@@ -252,25 +261,17 @@ private:
 	void ForciblyStart();				// 初め
 
 	// 投げタイプ
-	void ThrowTypeNone() {};	// なし
-	void ThrowTypeNormal();		// 通常
-	void ThrowTypeJump();		// ジャンプ
-	void ThrowTypeSpecial();	// スペシャル
+	void ThrowTypeNone() {};		// なし
+	void ThrowTypeNormal();			// 通常
+	void ThrowTypeJump();			// ジャンプ
+	void ThrowTypeSpecial();		// スペシャル
 
-	// キャッチ
-	void CatchNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
-	void CatchNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void CatchPassGive(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void CatchPassSteal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void CatchFindBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-
-	// 行動タイプ
-	void MoveTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};				// なし
-	void MoveTypeDistance(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 距離を取る
-	void MoveTypeLeftRight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 距離を取る
-	void MoveTypeAtyakotya(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// あっちゃこっちゃ
-	void MoveTypeAvoid(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);					// 回避
-	virtual void MoveTypeCrazy(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;		// 狂う
+	// アクション
+	void MoveDodge();				// 回避
+	void MoveSupport();				// サポート
+	void MoveChaseBall();			// ボールを追いかける
+	virtual void MoveRetreat() = 0;				// 後退
+	void MoveRandom();				// ランダム
 
 	// 行動フラグ
 	void MoveFlagStop();			// なし
@@ -288,56 +289,53 @@ private:
 	void ThrowFlagPass();			// パス
 	void ThrowFlagSpecial();		// スペシャル
 
-
 	//=============================
 	// メンバ関数
 	//=============================
-	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モード
+	void ModeManager(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モード管理
+	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モード更新
 	void UpdateForcibly();																			// 強制行動
 	void UpdateThrowType();																			// 投げ種類
-	void UpdateMoveType(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 行動
-	void UpdateCatch(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+
+	void MoveCover(CPlayer* pPlayer);
 
 	// フラグ更新
-	void UpdateMoveFlag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 行動
+	void UpdateMoveFlag();			// 行動
 	void UpdateActionFlag();		// アクション
 	void UpdateThrowFlag();			// 投げフラグ
 
-	// 行動
-	void MoveDistance();
-	void MoveFront(CPlayer* pPlayer);			// 前
-	void MoveDown(CPlayer* pPlayer);			// 後
-	void MoveLeft(CPlayer* pPlayer);			// 左
-	void MoveRight(CPlayer* pPlayer);			// 右
-	void MoveFrontAndLeft(CPlayer* pPlayer);	// 前左
-	void MoveFrontAndRight(CPlayer* pPlayer);	// 前右
-	void MoveDownAndLeft(CPlayer* pPlayer);		// 後左
-	void MoveDownAndRight(CPlayer* pPlayer);	// 後右
+	void BallSteal();		// ボールを奪う
+	void BallChase();		// ぼるを追う
 
-	bool IsDistanceBall();					// 距離：ボール
-	bool IsPassTarget();					// パスする相手がいるか判定
-	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
-	float GetDistance(CPlayer::EFieldArea area, CGameManager::ETeamSide teamMy, CPlayer* pPlayer);
-	float GetDistanceBallowner();
 
-	void SetMoveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-
-	void InitHeart();			// 心の初期化
-	void UpdateParameter();
+	void InitHeart();		// 心の初期化
+	void UpdateParameter();	// パラメータ
 
 	//-----------------------------
 	// 設定,取得
 	//-----------------------------
-	CPlayer* GetThrowTarget();		// 投げるターゲット取得
-	CPlayer* GetBallOwner();		// ボール持ち主取得
+	void SetMoveTimer(int nMin, int nMax);
+	void UpdateMoveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+
+	float GetDistanceBall();				// ボールとの距離
+	float GetDistanceEnemy();				// 敵との距離
+	float GetDistanceBallowner();			// ボール持ち主との距離
+
+	//-----------------------------
+	// 判定
+	//-----------------------------
+	bool IsDistanceBall();					// 距離：ボール
+	bool IsPassTarget();					// パスする相手がいるか判定
+	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
 
 	//=============================
 	// メンバ変数
 	//=============================
 	CPlayer* m_pAI;					// 自分情報
+	float m_fDistance;				// 相手との距離
 
 	//-----------------------------
 	// 列挙
@@ -345,19 +343,17 @@ private:
 	EMode m_eMode;					// モード
 	EMoveForcibly m_eForcibly;		// 強制行動
 	EThrowType m_eThrowType;		// 投げ種類
+	EAction m_eAction;				// アクション
+
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
-	EMoveTypeChatch m_eMoveType;	// 行動タイプ
 	EActionFlag m_eActionFlag;		// アクションフラグ
-	EThrowFlag m_eThrow;			// 投げ
-	ECatchType m_eCatchType;		// キャッチ
+	EThrowFlag m_eThrowFlag;		// 投げフラグ
 
 	//-----------------------------
 	// 構造体
 	//-----------------------------
 	SThrow m_sThrow;				// 投げ
-	SMoveType m_sMove;				// 行動
-	sMoveCount m_sMoveCount;		// 行動カウント
-	SDistance m_sDistance;			// 距離
+	SMove m_sMove;					// 行動
 	SParameter m_sParameter;		// パラメータ	
 };
 

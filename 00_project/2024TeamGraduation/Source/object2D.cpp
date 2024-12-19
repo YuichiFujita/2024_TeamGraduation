@@ -422,6 +422,16 @@ void CObject2D::SetSize(const D3DXVECTOR2& size)
 {
 	m_size = size;		// サイズ
 	SetLength(sqrtf(m_size.x * m_size.x + m_size.y * m_size.y));	// 対角線の長さ
-	SetAngle(atan2f(m_size.x, m_size.y));								// 対角線の向き
+	SetAngle(atan2f(m_size.x, m_size.y));							// 対角線の向き
 }
 
+//==========================================================================
+// テクスチャ座標の設定
+//==========================================================================
+void CObject2D::SetTexUV(const std::vector<D3DXVECTOR2>& uv)
+{
+	m_vecUV = uv;
+
+	// 頂点情報設定
+	SetVtx();
+}

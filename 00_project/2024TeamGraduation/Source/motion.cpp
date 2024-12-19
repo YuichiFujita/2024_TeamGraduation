@@ -689,7 +689,7 @@ void CMotion::UpdateVisualPosition(
 //==========================================================================
 // モーションの設定処理
 //==========================================================================
-void CMotion::Set(int nType, int nStartKey, bool bBlend)
+void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 {
 	// デバッグ用処理
 	if (nType >= m_nNumMotion)
@@ -706,7 +706,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 	m_nOldType = m_nType;		// 前回のモーションの種類
 	m_nType = nType;			// 種類設定
 	m_nPatternKey = nStartKey;	// 何個目のキーか
-	m_fCntFrame = 0.0f;			// フレームのカウント
+	m_fCntFrame = fCntFrame;	// フレームのカウント
 	m_fAllFrame = 0.0f;			// 全てのカウント
 	m_fMaxAllFrame = 0.0f;		// 全てのカウントの最大値
 	m_bFinish = false;			// 終了したかどうか
@@ -812,8 +812,71 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend)
 
 		}
 	}
-}
 
+
+
+
+
+
+
+	// 再生中のキー
+	const Key& nowKey = nowInfo.aKey[m_nPatternKey];
+
+	// 再生フレーム保存
+	int nMaxFrame = nowKey.nFrame;
+
+	// デフォルトモーション判定
+	bool bDefault = std::find(m_vecDefaultIdx.begin(), m_vecDefaultIdx.end(), m_nType) != m_vecDefaultIdx.end();
+
+	if (bDefault && m_nOldType != 0 && m_nPatternKey == 0)
+	{// ニュートラルで0個の時
+		nMaxFrame = 10;
+	}
+
+	// 次のキー
+	int nNextKey = (m_nPatternKey + 1) % nowInfo.nNumKey;
+
+	if (nNextKey == 0 && nowInfo.nLoop == LOOP_OFF)
+	{// ループしないとき
+
+		// 最後で固定
+		nNextKey = nowInfo.nNumKey - 1;
+	}
+
+	//--------------------------
+	// 再生フレームとの割合
+	//--------------------------
+	float ratio = m_fCntFrame / static_cast<float>(nMaxFrame);
+	ratio = UtilFunc::Transformation::Clamp(ratio, 0.0f, 1.0f);
+
+	for (int i = 0; i < static_cast<int>(nowKey.aParts.size()); i++)
+	{
+		// 総数を上回ったら
+		if (i >= m_nNumModel) continue;
+
+		// 現在のパーツ情報
+		const Parts& nowParts = nowKey.aParts[i];
+		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
+
+		// モデルがなかったら戻る
+		if (m_ppModel[i] == nullptr) continue;
+
+		//--------------------------
+		// 向き更新
+		//--------------------------
+		UpdateRotation(i, nowParts, nextParts, ratio);
+
+		//--------------------------
+		// スケール更新
+		//--------------------------
+		UpdateScale(i, nowParts, nextParts, ratio);
+
+		//--------------------------
+		// 位置反映
+		//--------------------------
+		UpdatePosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, 1.0f, 1.0f, 1.0f);
+	}
+}
 
 //==========================================================================
 // 指定した情報が衝撃カウントか

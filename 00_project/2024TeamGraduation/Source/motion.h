@@ -152,8 +152,8 @@ public:
 	//--------------------------
 	// 設定
 	//--------------------------
-	void Set(int nType, int nStartKey = 0, bool bBlend = true);		// モーションの設定処理
-	void ResetPose(int nType);					// ポーズのリセット
+	void Set(int nType, int nStartKey = 0, bool bBlend = true, float fCntFrame = 0.0f);	// モーションの設定処理
+	void ResetPose(int nType);	// ポーズのリセット
 
 	MyLib::Vector3 GetAttackPosition(CModel** ppModel, AttackInfo attackInfo);	// 攻撃の位置取得
 	MyLib::Vector3 GetAttackPosition(CModel* pModel, AttackInfo attackInfo);	// 攻撃の位置取得

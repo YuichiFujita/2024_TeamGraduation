@@ -275,7 +275,7 @@ CScrollText2D* CScrollText2D::Create
 )
 {
 	// 文字送りテキスト2Dの生成
-	CScrollText2D* pScrollText2D = new CScrollText2D;
+	CScrollText2D* pScrollText2D = DEBUG_NEW CScrollText2D;
 	if (pScrollText2D == nullptr)
 	{ // 生成に失敗した場合
 
