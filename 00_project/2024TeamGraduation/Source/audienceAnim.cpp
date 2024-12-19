@@ -440,6 +440,23 @@ HRESULT CAudienceAnim::CreatePenLight()
 }
 
 //==========================================================================
+// NTRの設定処理
+//==========================================================================
+bool CAudienceAnim::SetNTR(CGameManager::ETeamSide team)
+{
+	// 入場状態にする
+	CAudience::SetNTR(team);
+
+	// 入場開始位置を保存
+	SetSpawnPosition(GetPosition());	// 現在の位置
+
+	// 観戦位置を設定し、生成情報を取得
+	(this->*(m_CalcWatchPositionFunc[GetArea()]))();
+
+	return true;
+}
+
+//==========================================================================
 // 観戦位置の計算処理 (奥)
 //==========================================================================
 void CAudienceAnim::CalcWatchPositionFar()

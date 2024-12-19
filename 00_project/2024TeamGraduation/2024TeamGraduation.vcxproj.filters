@@ -147,6 +147,9 @@
     <Filter Include="ingame\balloon">
       <UniqueIdentifier>{ff50d162-9722-441c-9818-77d7b26a32c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mode\title\option">
+      <UniqueIdentifier>{9dc519a8-e6bb-43d8-92c4-9b7f2d744ae6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -787,6 +790,12 @@
     </ClCompile>
     <ClCompile Include="Source\cameraUI.cpp">
       <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\option_BBS.cpp">
+      <Filter>mode\title\option</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\optionMenu.cpp">
+      <Filter>mode\title\option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1440,6 +1449,12 @@
     </ClInclude>
     <ClInclude Include="Source\cameraUI.h">
       <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\option_BBS.h">
+      <Filter>mode\title\option</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\optionMenu.h">
+      <Filter>mode\title\option</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

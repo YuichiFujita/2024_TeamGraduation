@@ -158,7 +158,7 @@ void CTitle_ControllWait::StateWait(const float fDeltaTime, const float fDeltaRa
 	if (m_fStateTime >= StateTime::WAIT)
 	{
 		// ƒV[ƒ“Ø‚è‘Ö‚¦
-		CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_SUSURU);
+		//CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_SUSURU);
 	}
 }
 

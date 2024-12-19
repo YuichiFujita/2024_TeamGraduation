@@ -30,15 +30,15 @@ CNumber3D::~CNumber3D()
 //==========================================================================
 HRESULT CNumber3D::Init()
 {
-	// ‰Šú‰»ˆ—
-	CNumber::Init();
-
+	
 	// ¶¬ˆ—
 	m_pObj3D = CObject3DAnim::Create(MyLib::PosGrid2(10, 1), GetPosition(), 1.0f, false, GetPriority());
 	
 	// Ž©“®Ä¶’âŽ~
 	m_pObj3D->SetEnableStop(true);
 
+	// ‰Šú‰»ˆ—
+	CNumber::Init();
 	return S_OK;
 }
 
@@ -90,4 +90,14 @@ void CNumber3D::Draw()
 void CNumber3D::SetVtx()
 {
 	m_pObj3D->SetVtx();
+}
+
+//==========================================================================
+// Ží—ÞÝ’è
+//==========================================================================
+void CNumber3D::SetType(const TYPE type)
+{
+	// Ží—ÞÝ’è
+	CObject::SetType(type);
+	m_pObj3D->CObject::SetType(type);
 }

@@ -40,7 +40,9 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team)
+CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team),
+	m_teamNTR(CGameManager::ETeamSide::SIDE_NONE)		// NTR後のチーム
+
 {
 
 }
@@ -92,12 +94,36 @@ void CAudienceAnimResult::Draw()
 }
 
 //==========================================================================
+// NTRの設定処理
+//==========================================================================
+bool CAudienceAnimResult::SetNTR(CGameManager::ETeamSide team)
+{
+	// もう設定していたらはじく
+	//if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
+
+	// NTR
+	m_teamNTR = team;
+
+	// 親クラスの設定
+	CAudienceAnim::SetNTR(team);
+
+	return true;
+}
+
+//==========================================================================
 // 観戦位置の計算処理 (奥)
 //==========================================================================
 void CAudienceAnimResult::CalcWatchPositionFar()
 {
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Far::LEFT_LINE[nIdxTeam], Far::RIGHT_LINE[nIdxTeam]);
 	posWatch.y = GetLandY();
@@ -117,8 +143,15 @@ void CAudienceAnimResult::CalcWatchPositionUp()
 	// 着地Y座標の設定
 	SetLandY(Up::LANDY);
 
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Up::LEFT_LINE[nIdxTeam], Up::RIGHT_LINE[nIdxTeam]);
 	posWatch.y = GetLandY();
@@ -135,8 +168,15 @@ void CAudienceAnimResult::CalcWatchPositionUp()
 //==========================================================================
 void CAudienceAnimResult::CalcWatchPositionNear()
 {
-	// ランダムに観戦位置を設定
+	// チーム取得
 	int nIdxTeam = GetTeam();
+
+	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
+	{// 設定されていたら
+		nIdxTeam = m_teamNTR;
+	}
+
+	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Down::LEFT_LINE[nIdxTeam], Down::RIGHT_LINE[nIdxTeam]);
 	posWatch.y = GetLandY();

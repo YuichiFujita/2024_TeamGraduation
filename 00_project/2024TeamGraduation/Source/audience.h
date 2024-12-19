@@ -91,7 +91,7 @@ public:
 	void SetEnableJump(const bool bJump);							// 盛り上がり設定
 	void SetSpecial();												// スペシャル設定
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE);			// 退場設定
-	virtual bool SetNTR() { m_state = STATE_SPAWN; return true; }	// NTR設定
+	virtual bool SetNTR(CGameManager::ETeamSide team) { m_state = STATE_SPAWN; return true; }	// NTR設定
 
 	//=============================
 	// 静的メンバ関数

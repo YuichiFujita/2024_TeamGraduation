@@ -90,6 +90,7 @@ protected:
 	void SetIdolMotion(const EMotion motion) { m_idolMotion = motion; }		// 待機モーション
 	void SetJumpMotion(const EMotion motion) { m_jumpMotion = motion; }		// ジャンプモーション
 	void SetMoveMotion(const EMotion motion) { m_moveMotion = motion; }		// 移動モーション
+	virtual bool SetNTR(CGameManager::ETeamSide team) override;									// NTR設定
 
 private:
 

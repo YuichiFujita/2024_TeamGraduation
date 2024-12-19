@@ -98,16 +98,16 @@ void CAudienceHighPolyResult::Draw()
 //==========================================================================
 // NTRの設定処理
 //==========================================================================
-bool CAudienceHighPolyResult::SetNTR()
+bool CAudienceHighPolyResult::SetNTR(CGameManager::ETeamSide team)
 {
 	// もう設定していたらはじく
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
+	//if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
 
 	// NTR
-	m_teamNTR = CGameManager::GetInstance()->RivalTeam(GetTeam());
+	m_teamNTR = team;
 
 	// 親クラスの設定
-	CAudienceHighPoly::SetNTR();
+	CAudienceHighPoly::SetNTR(team);
 
 	return true;
 }
@@ -195,6 +195,8 @@ void CAudienceHighPolyResult::EndSettingSpawn()
 {
 	// 親クラス
 	CAudienceHighPoly::EndSettingSpawn();
+
+	// TODO: エリア定数を整理し、その中心点を向く感じ
 
 	// サイドが逆なら逆向きに
 	if (GetArea() == EArea::AREA_SIDE &&
