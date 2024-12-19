@@ -34,6 +34,7 @@ public:
 	{
 		LAYER_BALLOON = 0,	// 吹き出し
 		LAYER_BBS,			// 掲示板
+		LAYER_PLAYER,		// プレイヤー
 		LAYER_MAIN,			// メイン画面
 		LAYER_MAX			// この列挙型の総数
 	};

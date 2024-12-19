@@ -81,7 +81,7 @@ public:
 	//--------------------------
 	// UV
 	void SetTex(D3DXVECTOR2* tex) { memcpy(&m_vecUV[0], tex, sizeof(m_vecUV)); }	// テクスチャ座標の設定
-	void SetTexUV(const std::vector<D3DXVECTOR2>& uv) { m_vecUV = uv; }				// テクスチャ座標の設定
+	void SetTexUV(const std::vector<D3DXVECTOR2>& uv);								// テクスチャ座標の設定
 	D3DXVECTOR2* GetTex() { return &m_vecUV[0]; }									// テクスチャ座標のポインタ取得
 	std::vector<D3DXVECTOR2> GetVecTexUV() { return m_vecUV; }						// テクスチャ座標の取得
 	

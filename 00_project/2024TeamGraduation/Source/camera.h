@@ -124,23 +124,27 @@ public:
 	// コンストラクタ/デストラクタ
 	//-----------------------------
 	CCamera();
-	~CCamera();
+	virtual ~CCamera();
+
+	//-----------------------------
+	// 仮想関数
+	//-----------------------------
+	virtual HRESULT Init();	// 初期化
+	virtual void Uninit();	// 終了
+	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
+	virtual void Reset();	// カメラリセット
 
 	//-----------------------------
 	// メンバ関数
 	//-----------------------------
-	HRESULT Init();			// 初期化
-	void Uninit();			// 終了
-	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
-	void SetCamera();		// カメラ設定
-	void Reset();			// カメラリセット
+	void SetCamera();							// カメラ設定 (通常)
+	void SetCameraDressup();					// カメラ設定 (着せ替え)
 	void ResetByMode(CScene::MODE mode);		// モード別リセット
-	void SetSpecialCamera();	// スペシャルカメラ設定
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void ResetSwing();							// カメラ揺れリセット
 	void SetWarp(const MyLib::Vector3& pos);	// カメラワープ設定
-	STATE GetState() const { return m_state; }	// 状態取得
 	void SetState(const STATE state, const bool bReset = true);	// 状態設定
+	inline STATE GetState() const { return m_state; }			// 状態取得
 
 	//-----------------------------
 	// スクリーン
@@ -223,6 +227,12 @@ public:
 	SCameraPoint FollowPoint();		// 現在の追従ポイント取得
 	SCameraPoint OutFieldPoint();	// 現在の外野ポイント取得
 
+protected:
+	//-----------------------------
+	// メンバ関数
+	//-----------------------------
+	void UpdateSwing();	// カメラ揺れの更新
+
 private:
 
 	//-----------------------------
@@ -262,8 +272,7 @@ private:
 
 	// 汎用関数
 	MyLib::Vector3 CalcSpherePosition(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot, const float fDis);	// 球面座標変換による相対位置取得
-	void UpdateSwing();			// カメラ揺れの更新
-	void UpdateSpotLightVec();	// ライトベクトルの更新
+	void UpdateSpotLightVec(const MyLib::Vector3& rPosR, const MyLib::Vector3& rPosV);	// ライトベクトルの更新
 
 	//-----------------------------
 	// メンバ変数

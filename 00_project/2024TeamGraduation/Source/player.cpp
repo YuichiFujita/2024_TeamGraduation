@@ -402,59 +402,63 @@ HRESULT CPlayer::Init()
 		return E_FAIL;
 	}
 
-	// 影の生成
-	if (FAILED(CreateShadow()))
-	{ // 生成に失敗した場合
+	if (m_typeArea != FIELD_NONE)
+	{ // ゲームプレイヤーじゃない場合はもろもろの生成しないように
 
-		return E_FAIL;
-	}
+		// 影の生成
+		if (FAILED(CreateShadow()))
+		{ // 生成に失敗した場合
 
-	// マーカーの情報
-	m_pMarker = CPlayerMarker::Create(this);
-	if (m_pMarker == nullptr)
-	{ // 生成に失敗した場合
+			return E_FAIL;
+		}
 
-		return E_FAIL;
-	}
+		// マーカーの情報
+		m_pMarker = CPlayerMarker::Create(this);
+		if (m_pMarker == nullptr)
+		{ // 生成に失敗した場合
 
-	// アクションパターン
-	if (m_pActionPattern == nullptr)
-	{
-		m_pActionPattern = DEBUG_NEW CPlayerAction(this);
-	}
+			return E_FAIL;
+		}
 
-	// ステータス
-	if (m_pStatus == nullptr)
-	{
-		m_pStatus = DEBUG_NEW CPlayerStatus(this);
-		m_pStatus->Init();
-	}
+		// アクションパターン
+		if (m_pActionPattern == nullptr)
+		{
+			m_pActionPattern = DEBUG_NEW CPlayerAction(this);
+		}
 
-	// スぺシャルエフェクト
-	if (m_pSpecialEffect == nullptr)
-	{
-		m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
-	}
+		// ステータス
+		if (m_pStatus == nullptr)
+		{
+			m_pStatus = DEBUG_NEW CPlayerStatus(this);
+			m_pStatus->Init();
+		}
 
-	if (GetBaseType() == EBaseType::TYPE_USER)
-	{ // ユーザーベースの場合
+		// スぺシャルエフェクト
+		if (m_pSpecialEffect == nullptr)
+		{
+			m_pSpecialEffect = CSpecialEffect::Create(this, CSpecialEffect::EType::TYPE_KAMEHAMEHA);
+		}
 
-		// プレイヤーインデックス番号を設定
-		m_nMyPlayerIdx = GetNumUser();
-	}
-	else
-	{ // AIベースの場合
+		if (GetBaseType() == EBaseType::TYPE_USER)
+		{ // ユーザーベースの場合
 
-		// プレイヤーインデックス番号を初期化
-		m_nMyPlayerIdx = -1;
-	}
+			// プレイヤーインデックス番号を設定
+			m_nMyPlayerIdx = GetNumUser();
+		}
+		else
+		{ // AIベースの場合
 
-	if (m_typeArea != EFieldArea::FIELD_NONE)
-	{ // ポジションの指定がある場合
+			// プレイヤーインデックス番号を初期化
+			m_nMyPlayerIdx = -1;
+		}
 
-		// プレイヤーマネージャーに割当
-		CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
-		if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+		if (m_typeArea != EFieldArea::FIELD_NONE)
+		{ // ポジションの指定がある場合
+
+			// プレイヤーマネージャーに割当
+			CPlayerManager* pManager = CPlayerManager::GetInstance();				// プレイヤーマネージャー
+			if (pManager != nullptr) { m_nPosIdx = pManager->RegistPlayer(this); }	// マネージャーがある場合登録
+		}
 	}
 
 	// ドレスアップ生成

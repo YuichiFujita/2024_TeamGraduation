@@ -9,7 +9,6 @@
 #include "balloonFrame.h"
 #include "camera.h"
 #include "objectX.h"
-#include "optionMenu.h"
 
 #if 0
 #define EDIT()	// 2Dでエディット
@@ -21,7 +20,7 @@
 namespace
 {
 	const std::string MODEL = "data\\MODEL\\title\\BBS.x";			// 掲示板のモデル
-	const MyLib::Vector3 DEFAULT_POSITION = MyLib::Vector3(0.0f, 80.0f, 0.0f);	// 初期位置
+	const MyLib::Vector3 DEFAULT_POSITION = MyLib::Vector3(1000.0f, 80.0f, 2350.0f);	// 初期位置
 }
 
 //==========================================================================
@@ -122,9 +121,14 @@ void COption_BBS::Uninit()
 //==========================================================================
 void COption_BBS::Kill()
 {
-	
+	// オプションメニュー
+	SAFE_KILL(m_pOptionMenu);
+
 	// オブジェクトXの終了
 	CObjectX::Kill();
+
+	// 終了処理
+	Uninit();
 }
 
 //==========================================================================
@@ -165,7 +169,6 @@ HRESULT COption_BBS::CreateRenderTexture()
 	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
-
 		assert(false);
 		return E_FAIL;
 	}
