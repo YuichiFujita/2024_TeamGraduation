@@ -99,6 +99,7 @@ COptionMenu::COptionMenu(int nPriority, const LAYER layer) : CObject(nPriority, 
 	m_state			(EState::STATE_NONE),	// 状態
 	m_fStateTime	(0.0f),					// 状態タイマー
 	m_select		(ESelect::SELECT_MASTERVOLUME),		// 選択肢
+	m_bBack			(false),				// 戻るフラグ
 	m_fMarkerTime	(0.0f),					// マーカーのタイマー
 	m_pBoard		(nullptr),				// ボード
 	m_pPaper		(nullptr),				// 紙
@@ -215,8 +216,12 @@ HRESULT COptionMenu::Init()
 		return E_FAIL;
 	}
 
-	// 状態設定
-	SetState(EState::STATE_SELECT);
+	// 選択肢更新
+	UpdateSelect(0.0f, 0.0f, 0.0f);
+
+	// 色更新
+	m_fMarkerTime = MARKERTIME;
+	UpdateColor(0.0f, 0.0f, 0.0f);
 
 	return S_OK;
 }
@@ -692,6 +697,9 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		if (old != m_select)
 		{
 			m_oldSelect = old;
+
+			// マーカータイマーリセット
+			m_fMarkerTime = 0.0f;
 		}
 
 		// マーカータイマーリセット
@@ -708,21 +716,30 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		if (old != m_select)
 		{
 			m_oldSelect = old;
-		}
 
-		// マーカータイマーリセット
-		m_fMarkerTime = 0.0f;
+			// マーカータイマーリセット
+			m_fMarkerTime = 0.0f;
+		}
 	}
 
 	// マーカー
 	m_pSelectMarker->SetPosition(OFFSET_MARKER + m_pSelectUI[m_select]->GetPosition());
 
+	// 戻るフラグリセット
+	m_bBack = false;
+
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
-		pKey->GetTrigger(DIK_SPACE))
+		pKey->GetTrigger(DIK_RETURN))
 	{// 決定
 
-		// 編集状態設定
-		SetState(EState::STATE_EDIT);
+		// 戻るフラグ設定
+		m_bBack = m_select == ESelect::SELECT_BACK;
+
+		if (!m_bBack)
+		{
+			// 編集状態設定
+			SetState(EState::STATE_EDIT);
+		}
 	}
 
 }
@@ -1135,4 +1152,13 @@ void COptionMenu::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+}
+
+//==========================================================================
+// 選択肢設定
+//==========================================================================
+void COptionMenu::SetSelect(ESelect select)
+{
+	m_oldSelect = m_select;
+	m_select = select;
 }

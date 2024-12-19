@@ -52,6 +52,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 
 	// その他
 	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル
+	{ TYPE_SE,"data/SE/AI_yomiage.wav",0},			// AI
 
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
