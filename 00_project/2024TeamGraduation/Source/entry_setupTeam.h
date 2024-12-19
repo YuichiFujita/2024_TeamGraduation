@@ -31,6 +31,16 @@ class CEntry_SetUpTeam : public CEntryScene
 public:
 
 	//=============================
+	// 構造体定義
+	//=============================
+	// チーム保存構造体
+	struct STeam
+	{
+		CGameManager::ETeamSide team;	// チームサイド
+		int nPadIdx;	// 操作権インデックス
+	};
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
 	CEntry_SetUpTeam();
@@ -49,11 +59,12 @@ public:
 	//-----------------------------
 	// チーム情報
 	//-----------------------------
-	int GetEntryIdx(int i);	// エントリーのインデックス
+	int GetEntryIdx(int nPadIdx);	// エントリーのインデックス
+	CGameManager::ETeamSide GetTeamSideUser(int nEntryIdx);	// チームサイド取得 (ユーザー)
+	CGameManager::ETeamSide GetTeamSideAI(int nOccurIdx);	// チームサイド取得 (AI)
 	inline int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得
 	inline int GetPlayerNum(CGameManager::ETeamSide side)				{ return m_nPlayerNum[side]; }	// プレイヤーの数取得
 	inline std::vector<int> GetIdxByTeam(CGameManager::ETeamSide side)	{ m_vecAddIdx[side]; }			// チームごとの追加されたインデックス取得
-	inline CGameManager::ETeamSide GetTeamSide(int i)					{ return m_TeamSide[i]; }		// チームサイド
 
 	//-----------------------------
 	// その他
@@ -121,7 +132,7 @@ private:
 	// セットアップ情報
 	//-----------------------------
 	std::vector<int> m_vecAddIdx[CGameManager::ETeamSide::SIDE_MAX];	// 追加されたインデックス
-	CGameManager::ETeamSide m_TeamSide[CGameManager::MAX_PLAYER];		// チームサイド
+	STeam m_TeamSide[CGameManager::MAX_PLAYER];				// チームサイド
 	int m_nMaxChangeIdx[CGameManager::ETeamSide::SIDE_MAX];	// 最大数変更するインデックス
 	int m_nPlayerNum[CGameManager::ETeamSide::SIDE_MAX];	// プレイヤーの数
 	int m_nEntryIdx[mylib_const::MAX_PLAYER];				// エントリーのインデックス
