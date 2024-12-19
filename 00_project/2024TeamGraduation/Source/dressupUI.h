@@ -14,11 +14,15 @@
 //	インクルードファイル
 //************************************************************
 #include "object.h"
+#include "player.h"
+#include "gamemanager.h"
 
 //************************************************************
-//	前方宣言
+// 前方宣言
 //************************************************************
-class CObject2D;	// オブジェクト2Dクラス
+class CDressup;			// 着せ替えクラス
+class CObject2D;		// オブジェクト2Dクラス
+class CObject2D_Anim;	// オブジェクト2Dアニメクラス
 
 //************************************************************
 //	クラス定義
@@ -27,8 +31,27 @@ class CObject2D;	// オブジェクト2Dクラス
 class CDressupUI : public CObject
 {
 public:
+	// エディットする種類
+	enum EEditType
+	{
+		EDIT_PROCESS = 0,	// 実際の変更
+		EDIT_CHANGETYPE,	// 変更する種類
+		EDIT_MAX
+	};
+
+	// 変更する種類
+	enum EChangeType
+	{
+		TYPE_HAIR = 0,		// 髪
+		TYPE_ACCESSORY,		// アクセサリー
+		TYPE_FACE,			// 顔
+		TYPE_BODY,			// 体型
+		TYPE_HANDEDNESS,	// 利き手
+		TYPE_MAX
+	};
+
 	// コンストラクタ
-	CDressupUI();
+	CDressupUI(const int nPlayerIdx);
 
 	// デストラクタ
 	~CDressupUI() override;
@@ -42,23 +65,56 @@ public:
 	void SetType(const TYPE type) override;					// 種類設定
 	void SetEnableDisp(const bool bDraw) override;			// 描画状況設定
 	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
-	void SetRotation(const MyLib::Vector3& rot) override;	// 向き設定
 
 	// 静的メンバ関数
 	static CDressupUI* Create	// 生成
 	( // 引数
+		const int nPlayerIdx,		// プレイヤーインデックス
 		const MyLib::Vector3& rPos	// 原点位置
 	);
 
 	// メンバ関数
-
+	int GetMyPlayerIdx() const;					// 操作権インデックス取得
+	CGameManager::ETeamSide GetTeam() const;	// チームサイド取得
+	int GetHairNowIdx() const;					// 髪のインデックス番号取得
+	int GetAccessoryNowIdx() const;				// アクセのインデックス番号取得
+	int GetFaceNowIdx() const;					// 顔のインデックス番号取得
+	CPlayer::EBody GetBodyType() const;			// 体型取得
+	CPlayer::EHandedness GetHandedness() const;	// 利き手取得
+	inline EEditType GetTypeEdit() const		{ return m_typeEdit; }		// エディット種類取得
+	inline EChangeType GetTypeChange() const	{ return m_typeChange; }	// 変更種類取得
 
 private:
 	// メンバ関数
-	void SetPositionRelative();	// 相対位置設定
+	HRESULT CreateUI();					// UI生成
+	HRESULT CreateChangeIcon();			// 変更種類アイコン生成
+	HRESULT CreatePlayerFrame();		// プレイヤーフレーム生成
+	HRESULT CreateSetup();				// セットアップ生成
+	void SetPositionRelative();			// 相対位置設定
+	void UpdateUI();					// UI更新
+	void ChangeEditType(int nPadIdx);	// エディットする種類変更
+	void ChangeChangeType(int nPadIdx);	// 変更する箇所の種類変更
+	void ChangeBodyType(int nPadIdx);	// 体型変更
+	void ChangeHandedness(int nPadIdx);	// 利き手変更
+	HRESULT ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBody body);	// プレイヤー再生成
+
+	// 静的メンバ変数
+	static int m_nNumAI;	// AI総数
 
 	// メンバ変数
-	
+	// UI情報
+	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
+	CObject2D* m_pPlayerFrame;		// プレイヤーフレーム情報
+
+	// セットアップ情報
+	const int m_nPlayerIdx;		// プレイヤーインデックス
+	int m_nOrdinalAI;			// 自身が生成された順番 (AIのみ)
+	CPlayer* m_pPlayer;			// プレイヤー
+	CDressup* m_pHair;			// 髪着せ替え
+	CDressup* m_pAccessory;		// アクセ着せ替え
+	CDressup* m_pFace;			// 顔着せ替え
+	EEditType m_typeEdit;		// エディットする種類
+	EChangeType m_typeChange;	// 変更する種類
 };
 
 #endif	// _DRESSUP_UI_H_

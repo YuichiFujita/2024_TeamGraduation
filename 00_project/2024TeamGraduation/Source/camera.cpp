@@ -40,11 +40,12 @@ namespace
 	const float MIN_DIS		= 50.0f;		// 最少距離
 	const float REV_SWING	= 0.001f;		// カメラ揺れ時のカメラ距離補正係数
 
-	namespace special
+	namespace ui
 	{
 		const MyLib::Vector3 POSV = MyLib::Vector3(0.0f, 0.0f, -1.0f);	// 視点
 		const MyLib::Vector3 POSR = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 注視点
-		const MyLib::Vector3 VECU = INIT_VECU;							// 上方向ベクトル
+		const MyLib::Vector3 VECU = MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル
+		const float VIEW_ANGLE    = D3DXToRadian(45.0f);				// 視野角
 	}
 
 	namespace none
@@ -215,7 +216,7 @@ HRESULT CCamera::Init()
 	// ビューポートの設定
 	SetViewPort(MyLib::Vector3(0.0f, 0.0f, 0.0f), D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
-	// カメラリセット
+	// カメラのリセット
 	Reset();
 
 	// ディレクショナルライトの生成
@@ -309,9 +310,6 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 	// カメラ揺れの更新
 	UpdateSwing();
 
-	// スポットライトベクトルの更新
-	UpdateSpotLightVec();
-
 	if (m_pLight != nullptr)
 	{
 		// ライトの更新
@@ -393,12 +391,15 @@ void CCamera::SetCamera()
 
 	// ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+
+	// スポットライトベクトルの更新
+	UpdateSpotLightVec(m_posR, m_posV);
 }
 
 //==========================================================================
-// スペシャルカメラ設定の設定処理
+// カメラUIの設定処理
 //==========================================================================
-void CCamera::SetSpecialCamera()
+void CCamera::SetCameraUI()
 {
 	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 
@@ -413,7 +414,7 @@ void CCamera::SetSpecialCamera()
 	D3DXMatrixPerspectiveFovLH
 	(
 		&m_mtxProjection,	// プロジェクションマトリックス
-		m_fViewAngle,		// 視野角
+		ui::VIEW_ANGLE,		// 視野角
 		fAspect,			// アスペクト比
 		MIN_NEAR,			// 手前の描画制限
 		MAX_FAR				// 奥の描画制限
@@ -428,16 +429,17 @@ void CCamera::SetSpecialCamera()
 	// ビューマトリックスの作成
 	D3DXMatrixLookAtLH
 	(
-		&m_mtxView,		// ビューマトリックス
-		&special::POSV,	// 視点
-		&special::POSR,	// 注視点
-		&special::VECU	// 上方向ベクトル
+		&m_mtxView,	// ビューマトリックス
+		&ui::POSV,	// 視点
+		&ui::POSR,	// 注視点
+		&ui::VECU	// 上方向ベクトル
 	);
 
 	// ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
 
-	// TODO：なんでこれでうまくいかん？
+	// スポットライトベクトルの更新
+	UpdateSpotLightVec(ui::POSR, ui::POSV);
 }
 
 //==========================================================================
@@ -1196,10 +1198,10 @@ void CCamera::UpdateSwing()
 //==========================================================================
 // スポットライトのベクトル更新
 //==========================================================================
-void CCamera::UpdateSpotLightVec()
+void CCamera::UpdateSpotLightVec(const MyLib::Vector3& rPosR, const MyLib::Vector3& rPosV)
 {
 	// 視点から注視点へのベクトルを計算
-	MyLib::Vector3 vec = m_posR - m_posV;
+	MyLib::Vector3 vec = rPosR - rPosV;
 
 	// スポットライトの方向設定
 	m_pLight->SetDirection(vec);

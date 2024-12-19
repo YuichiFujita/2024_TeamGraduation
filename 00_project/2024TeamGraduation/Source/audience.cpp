@@ -445,10 +445,10 @@ void CAudience::SetNTRAll(CGameManager::ETeamSide team)
 		CAudience* pAudience = (*itr);	// ŠÏ‹qî•ñ
 
 		// w’èƒ`[ƒ€‚Å‚Í‚È‚¢ê‡Ÿ‚Ö
-		if (pAudience->m_team != team) { continue; }
+		//if (pAudience->m_team != team) { continue; }
 
 		// NTRİ’è
-		if (!pAudience->SetNTR()) { continue; }	// Šù‚É‘Şê’†‚Ìê‡‚ÍŸ‚Ö
+		if (!pAudience->SetNTR(team)) { continue; }	// Šù‚É‘Şê’†‚Ìê‡‚ÍŸ‚Ö
 
 	}
 }
