@@ -10,8 +10,10 @@
 #include "dressupUI.h"
 #include "dressup.h"
 #include "manager.h"
-#include "game.h"
+#include "camera.h"
 #include "input.h"
+#include "game.h"
+#include "renderTexture.h"
 #include "entry_setupTeam.h"
 #include "object2D.h"
 #include "object2D_Anim.h"
@@ -32,12 +34,25 @@ namespace
 		const float WIDTH = 60.0f;	// 横幅
 	}
 
-	namespace frame
+	namespace player
 	{
-		namespace player
+		namespace frame
 		{
 			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame000.png";	// 変更種類アイコンテクスチャ
 			const float WIDTH = 100.0f;	// 横幅
+		}
+
+		namespace ui
+		{
+			namespace body
+			{
+				const float WIDTH = 350.0f;	// 横幅
+			}
+
+			namespace face
+			{
+				const float WIDTH = 620.0f;	// 横幅
+			}
 		}
 	}
 }
@@ -54,7 +69,10 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 //	コンストラクタ
 //============================================================
 CDressupUI::CDressupUI(const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
+	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
 	m_pChangeIcon	(nullptr),		// 変更種類アイコン情報
+	m_pPlayerFrame	(nullptr),		// プレイヤーフレーム情報
+	m_pPlayerUI		(nullptr),		// プレイヤーUI情報
 	m_nPlayerIdx	(nPlayerIdx),	// プレイヤーインデックス
 	m_nOrdinalAI	(-1),			// 自身が生成された順番 (AIのみ)
 	m_pPlayer		(nullptr),		// プレイヤー
@@ -87,6 +105,13 @@ HRESULT CDressupUI::Init()
 		return E_FAIL;
 	}
 
+	// レンダーテクスチャの生成
+	if (FAILED(CreateRenderTexture()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// UIの生成
 	if (FAILED(CreateUI()))
 	{ // 生成に失敗した場合
@@ -109,6 +134,12 @@ void CDressupUI::Uninit()
 	// 破棄したプレイヤーがAIの場合はAI総数を減算
 	if (pSetupTeam->GetEntryIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
 
+	// レンダーテクスチャの破棄
+	SAFE_REF_RELEASE(m_pRenderScene);
+
+	// プレイヤーの終了
+	SAFE_UNINIT(m_pPlayer);
+
 	// 髪着せ替えの終了
 	SAFE_UNINIT(m_pHair);
 
@@ -127,6 +158,9 @@ void CDressupUI::Uninit()
 //============================================================
 void CDressupUI::Kill()
 {
+	// プレイヤーの削除
+	SAFE_KILL(m_pPlayer);
+
 	// 自身の終了
 	CDressupUI::Uninit();
 }
@@ -200,6 +234,9 @@ void CDressupUI::Update(const float fDeltaTime, const float fDeltaRate, const fl
 		assert(false);
 		break;
 	}
+
+	// プレイヤーの更新
+	m_pPlayer->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// UIの更新
 	UpdateUI();
@@ -364,6 +401,13 @@ HRESULT CDressupUI::CreateUI()
 		return E_FAIL;
 	}
 
+	// プレイヤーUIの生成
+	if (FAILED(CreatePlayerUI()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// 相対位置の設定
 	SetPositionRelative();
 
@@ -424,14 +468,39 @@ HRESULT CDressupUI::CreatePlayerFrame()
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
-	int nTexID = CTexture::GetInstance()->Regist(frame::player::TEXTURE);
+	int nTexID = CTexture::GetInstance()->Regist(player::frame::TEXTURE);
 	m_pPlayerFrame->BindTexture(nTexID);
 
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, frame::player::WIDTH);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::frame::WIDTH);
 	m_pPlayerFrame->SetSize(size);
 	m_pPlayerFrame->SetSizeOrigin(m_pPlayerFrame->GetSize());
+
+	return S_OK;
+}
+
+//============================================================
+// プレイヤーUIの生成処理
+//============================================================
+HRESULT CDressupUI::CreatePlayerUI()
+{
+	// プレイヤーUIの生成
+	m_pPlayerUI = CObject2D::Create(PRIORITY);
+	if (m_pPlayerUI == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// テクスチャの割当
+	m_pPlayerUI->BindTexture(m_pRenderScene->GetTextureIndex());
+
+	// プレイヤーUIの更新
+	UpdatePlayerUI();
+
+	// 元の大きさを設定
+	m_pPlayerUI->SetSizeOrigin(m_pPlayerUI->GetSize());
 
 	return S_OK;
 }
@@ -468,12 +537,10 @@ HRESULT CDressupUI::CreateSetup()
 	}
 
 	// プレイヤー生成
-	MyLib::Vector3 pos = MyLib::Vector3(-400.0f, 0.0f, 0.0f);
-	MyLib::Vector3 offset = MyLib::Vector3(200.0f * m_nPlayerIdx, 0.0f, 0.0f);
 	m_pPlayer = CPlayer::Create
 	( // 引数
-		pos + offset, 					// 位置
-		side,							// チームサイド
+		VEC3_ZERO,	// 位置
+		side,		// チームサイド
 		CPlayer::EHuman::HUMAN_ENTRY,	// ポジション
 		CPlayer::EBody::BODY_NORMAL,	// 体系
 		CPlayer::EHandedness::HAND_R	// 利き手
@@ -484,8 +551,11 @@ HRESULT CDressupUI::CreateSetup()
 		return E_FAIL;
 	}
 
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
+
 	// 元の位置設定
-	m_pPlayer->CObject::SetOriginPosition(pos + offset);
+	m_pPlayer->CObject::SetOriginPosition(VEC3_ZERO);
 
 	// インデックスの上書き
 	m_pPlayer->SetMyPlayerIdx(nEntryIdx);
@@ -538,6 +608,38 @@ HRESULT CDressupUI::CreateSetup()
 }
 
 //============================================================
+// レンダーテクスチャ生成処理
+//============================================================
+HRESULT CDressupUI::CreateRenderTexture()
+{
+	// シーンレンダーテクスチャの生成
+	m_pRenderScene = CRenderTexture::Create
+	( // 引数
+		CRenderTextureManager::LAYER_PLAYER,			// 描画順レイヤー
+		std::bind(&CDressupUI::CreateTexture, this),	// テクスチャ作成関数ポインタ
+		std::bind(&CCamera::SetCameraDressup, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
+	);
+	if (m_pRenderScene == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+//============================================================
+// テクスチャ作成処理
+//============================================================
+void CDressupUI::CreateTexture()
+{
+	// プレイヤーの描画
+	assert(m_pPlayer != nullptr);
+	m_pPlayer->Draw();
+}
+
+//============================================================
 //	相対位置の設定処理
 //============================================================
 void CDressupUI::SetPositionRelative()
@@ -550,6 +652,9 @@ void CDressupUI::SetPositionRelative()
 
 	// プレイヤーフレームの位置設定
 	m_pPlayerFrame->SetPosition(posThis);
+
+	// プレイヤーUIの位置設定
+	m_pPlayerUI->SetPosition(posThis);
 }
 
 //============================================================
@@ -573,6 +678,9 @@ void CDressupUI::UpdateUI()
 
 		// プレイヤーフレームの色を白にする
 		m_pPlayerFrame->SetColor(COL_CHOICE);
+
+		// プレイヤーUIの色を白にする
+		m_pPlayerUI->SetColor(COL_CHOICE);
 		break;
 	}
 	case EEditType::EDIT_CHANGETYPE:
@@ -582,6 +690,64 @@ void CDressupUI::UpdateUI()
 
 		// プレイヤーフレームの色をグレーにする
 		m_pPlayerFrame->SetColor(COL_DEFAULT);
+
+		// プレイヤーUIの色をグレーにする
+		m_pPlayerUI->SetColor(COL_DEFAULT);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
+}
+
+//============================================================
+// プレイヤーUIの更新処理
+//============================================================
+void CDressupUI::UpdatePlayerUI()
+{
+	CTexture* pTexture = CTexture::GetInstance();			// テクスチャ情報
+	int nTexID = m_pPlayerUI->GetIdxTexture();				// テクスチャインデックス
+	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);	// テクスチャサイズ
+	switch (m_typeChange)
+	{ // 変更種類ごとの処理
+	case EChangeType::TYPE_HAIR:
+	case EChangeType::TYPE_ACCESSORY:
+	case EChangeType::TYPE_FACE:
+	{ // 顔周りの着せ替えの場合
+
+		// テクスチャ座標の更新
+		std::vector<D3DXVECTOR2> vecTex = m_pPlayerUI->GetVecTexUV();
+		vecTex[0] = D3DXVECTOR2(0.3f, 0.0f);
+		vecTex[1] = D3DXVECTOR2(0.7f, 0.0f);
+		vecTex[2] = D3DXVECTOR2(0.3f, 0.42f);
+		vecTex[3] = D3DXVECTOR2(0.7f, 0.42f);
+		m_pPlayerUI->SetTexUV(vecTex);
+
+		// テクスチャ大きさからの差分を計算
+		D3DXVECTOR2 diff = D3DXVECTOR2(vecTex[1].x - vecTex[0].x, vecTex[2].y - vecTex[0].y);
+		D3DXVECTOR2 rate = D3DXVECTOR2(diff.x / 1.0f, diff.y / 1.0f);
+
+		// 横幅を元に大きさを設定
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::ui::face::WIDTH);
+		m_pPlayerUI->SetSize(D3DXVECTOR2(size.x * rate.x, size.y * rate.y));
+		break;
+	}
+	case EChangeType::TYPE_BODY:
+	case EChangeType::TYPE_HANDEDNESS:
+	{ // 体周りの着せ替えの場合
+
+		// テクスチャ座標の更新
+		std::vector<D3DXVECTOR2> vecTex = m_pPlayerUI->GetVecTexUV();
+		vecTex[0] = D3DXVECTOR2(0.0f, 0.0f);
+		vecTex[1] = D3DXVECTOR2(1.0f, 0.0f);
+		vecTex[2] = D3DXVECTOR2(0.0f, 1.0f);
+		vecTex[3] = D3DXVECTOR2(1.0f, 1.0f);
+		m_pPlayerUI->SetTexUV(vecTex);
+
+		// 横幅を元に大きさを設定
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::ui::body::WIDTH);
+		m_pPlayerUI->SetSize(size);
 		break;
 	}
 	default:
@@ -626,6 +792,9 @@ void CDressupUI::ChangeChangeType(int nPadIdx)
 		// 次へ変更
 		int changeType = (m_typeChange + 1) % EChangeType::TYPE_MAX;
 		m_typeChange = static_cast<EChangeType>(changeType);
+
+		// プレイヤーUIの更新
+		UpdatePlayerUI();
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx))
 	{// 逆ループ
@@ -633,6 +802,9 @@ void CDressupUI::ChangeChangeType(int nPadIdx)
 		// 前へ変更
 		int changeType = (m_typeChange + (EChangeType::TYPE_MAX - 1)) % EChangeType::TYPE_MAX;
 		m_typeChange = static_cast<EChangeType>(changeType);
+
+		// プレイヤーUIの更新
+		UpdatePlayerUI();
 	}
 }
 
@@ -753,6 +925,9 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 
 		return E_FAIL;
 	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
 
 	// インデックスの上書き
 	m_pPlayer->SetMyPlayerIdx(nEntryIdx);

@@ -40,12 +40,12 @@ namespace
 	const float MIN_DIS		= 50.0f;		// 最少距離
 	const float REV_SWING	= 0.001f;		// カメラ揺れ時のカメラ距離補正係数
 
-	namespace ui
+	namespace dressup
 	{
-		const MyLib::Vector3 POSV = MyLib::Vector3(0.0f, 0.0f, -1.0f);	// 視点
-		const MyLib::Vector3 POSR = MyLib::Vector3(0.0f, 0.0f, 0.0f);	// 注視点
-		const MyLib::Vector3 VECU = MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル
-		const float VIEW_ANGLE    = D3DXToRadian(45.0f);				// 視野角
+		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 70.0f, -280.0f);	// 視点
+		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 70.0f, 0.0f);	// 注視点
+		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
+		const float VIEW_ANGLE		= D3DXToRadian(45.0f);					// 視野角
 	}
 
 	namespace none
@@ -351,7 +351,7 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 }
 
 //==========================================================================
-// カメラの設定処理
+// カメラの設定処理 (通常)
 //==========================================================================
 void CCamera::SetCamera()
 {
@@ -397,9 +397,9 @@ void CCamera::SetCamera()
 }
 
 //==========================================================================
-// カメラUIの設定処理
+// カメラの設定処理 (着せ替え)
 //==========================================================================
-void CCamera::SetCameraUI()
+void CCamera::SetCameraDressup()
 {
 	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 
@@ -413,11 +413,11 @@ void CCamera::SetCameraUI()
 	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
 	D3DXMatrixPerspectiveFovLH
 	(
-		&m_mtxProjection,	// プロジェクションマトリックス
-		ui::VIEW_ANGLE,		// 視野角
-		fAspect,			// アスペクト比
-		MIN_NEAR,			// 手前の描画制限
-		MAX_FAR				// 奥の描画制限
+		&m_mtxProjection,		// プロジェクションマトリックス
+		dressup::VIEW_ANGLE,	// 視野角
+		fAspect,	// アスペクト比
+		MIN_NEAR,	// 手前の描画制限
+		MAX_FAR		// 奥の描画制限
 	);
 
 	// プロジェクションマトリックスの設定
@@ -429,17 +429,17 @@ void CCamera::SetCameraUI()
 	// ビューマトリックスの作成
 	D3DXMatrixLookAtLH
 	(
-		&m_mtxView,	// ビューマトリックス
-		&ui::POSV,	// 視点
-		&ui::POSR,	// 注視点
-		&ui::VECU	// 上方向ベクトル
+		&m_mtxView,		// ビューマトリックス
+		&dressup::POSV,	// 視点
+		&dressup::POSR,	// 注視点
+		&dressup::VECU	// 上方向ベクトル
 	);
 
 	// ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
 
 	// スポットライトベクトルの更新
-	UpdateSpotLightVec(ui::POSR, ui::POSV);
+	UpdateSpotLightVec(dressup::POSR, dressup::POSV);
 }
 
 //==========================================================================

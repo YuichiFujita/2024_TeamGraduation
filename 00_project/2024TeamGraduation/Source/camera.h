@@ -137,8 +137,8 @@ public:
 	//-----------------------------
 	// メンバ関数
 	//-----------------------------
-	void SetCamera();							// カメラ設定
-	void SetCameraUI();							// カメラUI設定
+	void SetCamera();							// カメラ設定 (通常)
+	void SetCameraDressup();					// カメラ設定 (着せ替え)
 	void ResetByMode(CScene::MODE mode);		// モード別リセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void ResetSwing();							// カメラ揺れリセット
