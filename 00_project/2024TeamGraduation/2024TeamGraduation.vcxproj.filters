@@ -788,9 +788,6 @@
     <ClCompile Include="Source\title_controllwait.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cameraUI.cpp">
-      <Filter>camera</Filter>
-    </ClCompile>
     <ClCompile Include="Source\option_BBS.cpp">
       <Filter>mode\title\option</Filter>
     </ClCompile>
@@ -1446,9 +1443,6 @@
     </ClInclude>
     <ClInclude Include="Source\title_controllwait.h">
       <Filter>mode\title</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cameraUI.h">
-      <Filter>camera</Filter>
     </ClInclude>
     <ClInclude Include="Source\option_BBS.h">
       <Filter>mode\title\option</Filter>
