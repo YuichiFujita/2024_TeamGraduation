@@ -47,38 +47,68 @@ namespace StateTime
 namespace Draw
 {// 引き分け
 	const MyLib::Vector3 POS = MyLib::Vector3(0.0f, 100.0f, 0.0f);
+
+	const float DISTANCE_CAMERA = 1700.0f;
 }
 
 namespace Prelude
 {
-	const MyLib::Vector3 POSR_CAMERA[] =
+	//const MyLib::Vector3 POSR_CAMERA[] =
+	//{
+	//	MyLib::Vector3(150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[0],
+	//	MyLib::Vector3(-150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[1],
+	//};
+
+	const std::map<CGameManager::ETeamSide, MyLib::Vector3> POSR_CAMERA =
 	{
-		MyLib::Vector3(150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[0],
-		MyLib::Vector3(-150.0f, POSR_HEIGHT, 0.0f)	+ POS_COURT[1],
+		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, POSR_HEIGHT, 0.0f)},						// コート不明
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(150.0f, POSR_HEIGHT, 0.0f) + POS_COURT[0]},		// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(150.0f, POSR_HEIGHT, 0.0f) + POS_COURT[1]},		// 右コート
 	};
 
-	const MyLib::Vector3 ROT_CAMERA[] =
+	const std::map<CGameManager::ETeamSide, MyLib::Vector3> ROT_CAMERA =
 	{
-		MyLib::Vector3(0.0f, -0.17f, -0.36f),
-		MyLib::Vector3(0.0f, 0.17f, -0.36f),
+		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, 0.0f, -0.36f)},		// コート不明
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(0.0f, -0.17f, -0.36f)},		// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(0.0f, 0.17f, -0.36f)},		// 右コート
 	};
+
+	//const MyLib::Vector3 ROT_CAMERA[] =
+	//{
+	//	MyLib::Vector3(0.0f, -0.17f, -0.36f),
+	//	MyLib::Vector3(0.0f, 0.17f, -0.36f),
+	//};
 
 	const float DISTANCE_CAMERA = 1940.0f;
 }
 
 namespace Contest
 {
-	const MyLib::Vector3 POSR_CAMERA[] =
+	//const MyLib::Vector3 POSR_CAMERA[] =
+	//{
+	//	MyLib::Vector3(-400.0f, 0.0f, 240.0f)	+ POS_COURT[0],
+	//	MyLib::Vector3(400.0f, 0.0f, 240.0f)	+ POS_COURT[1],
+	//};
+
+	const std::map<CGameManager::ETeamSide, MyLib::Vector3> POSR_CAMERA =
 	{
-		MyLib::Vector3(-400.0f, 0.0f, 240.0f)	+ POS_COURT[0],
-		MyLib::Vector3(400.0f, 0.0f, 240.0f)	+ POS_COURT[1],
+		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, POSR_HEIGHT, 0.0f)},						// コート不明
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(-400.0f, POSR_HEIGHT, 240.0f) + POS_COURT[0]},	// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(+400.0f, POSR_HEIGHT, 240.0f) + POS_COURT[1]},	// 右コート
 	};
 
-		const MyLib::Vector3 ROT_CAMERA[] =
+	const std::map<CGameManager::ETeamSide, MyLib::Vector3> ROT_CAMERA =
 	{
-		MyLib::Vector3(0.0f, 0.32f, -0.36f),
-		MyLib::Vector3(0.0f, -0.32f, -0.36f),
+		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, 0.0f, -0.36f)},		// コート不明
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(0.0f, -0.32f, -0.36f)},		// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(0.0f, +0.32f, -0.36f)},		// 右コート
 	};
+
+	//	const MyLib::Vector3 ROT_CAMERA[] =
+	//{
+	//	MyLib::Vector3(0.0f, 0.32f, -0.36f),
+	//	MyLib::Vector3(0.0f, -0.32f, -0.36f),
+	//};
 
 	const float DISTANCE_CAMERA = 1500.0f;
 }
@@ -267,15 +297,15 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 	if (pCamera->GetState() == CCamera::STATE::STATE_FOLLOW)
 	{
 		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Prelude::DISTANCE_CAMERA, START, END, m_fStateTime);
-		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Prelude::ROT_CAMERA[m_teamPreludeWin], START, END, m_fStateTime);
-		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Prelude::POSR_CAMERA[m_teamPreludeWin], START, END, m_fStateTime);
+		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Prelude::ROT_CAMERA.at(m_teamPreludeWin), START, END, m_fStateTime);
+		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Prelude::POSR_CAMERA.at(m_teamPreludeWin), START, END, m_fStateTime);
 
 		pCamera->SetDistance(fDistance);
 		pCamera->SetRotation(rot);
 		pCamera->SetPositionR(posR);
 
 		// 無意味かも
-		pCamera->SetDestRotation(Prelude::ROT_CAMERA[m_teamPreludeWin]);
+		pCamera->SetDestRotation(Prelude::ROT_CAMERA.at(m_teamPreludeWin));
 	}
 
 	// 指定時間を過ぎたら
@@ -299,15 +329,15 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 	if (pCamera->GetState() == CCamera::STATE::STATE_FOLLOW)
 	{
 		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Contest::DISTANCE_CAMERA, START, END, m_fStateTime);
-		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Contest::ROT_CAMERA[m_teamContestWin], START, END, m_fStateTime);
-		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Contest::POSR_CAMERA[m_teamContestWin], START, END, m_fStateTime);
+		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Contest::ROT_CAMERA.at(m_teamContestWin), START, END, m_fStateTime);
+		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Contest::POSR_CAMERA.at(m_teamContestWin), START, END, m_fStateTime);
 
 		pCamera->SetDistance(fDistance);
 		pCamera->SetRotation(rot);
 		pCamera->SetPositionR(posR);
 
 		// 無意味かも
-		pCamera->SetDestRotation(Contest::ROT_CAMERA[m_teamContestWin]);
+		pCamera->SetDestRotation(Contest::ROT_CAMERA.at(m_teamContestWin));
 	}
 }
 
@@ -354,8 +384,8 @@ void CResultManager::StateStartPrelude()
 	pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 	pCamera->SetDistanceDest(Prelude::DISTANCE_CAMERA);
-	pCamera->SetDestRotation(Prelude::ROT_CAMERA[m_teamPreludeWin]);
-	pCamera->SetPositionRDest(Prelude::POSR_CAMERA[m_teamPreludeWin]);
+	pCamera->SetDestRotation(Prelude::ROT_CAMERA.at(m_teamPreludeWin));
+	pCamera->SetPositionRDest(Prelude::POSR_CAMERA.at(m_teamPreludeWin));
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
 }
@@ -406,8 +436,8 @@ void CResultManager::StateStartCharmContest()
 	pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 	pCamera->SetDistanceDest(Contest::DISTANCE_CAMERA);
-	pCamera->SetDestRotation(Contest::ROT_CAMERA[m_teamContestWin]);
-	pCamera->SetPositionRDest(Contest::POSR_CAMERA[m_teamContestWin]);
+	pCamera->SetDestRotation(Contest::ROT_CAMERA.at(m_teamContestWin));
+	pCamera->SetPositionRDest(Contest::POSR_CAMERA.at(m_teamContestWin));
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
 }
