@@ -68,6 +68,8 @@ public:
 	//=============================
 	void SetState(EState state);			// 状態設定
 	EState GetState() { return m_state; }	// 状態取得
+	bool IsBack() { return m_bBack; }		// 戻るフラグ
+	void SetSelect(ESelect select);			// 選択肢設定
 
 	void Debug();	// デバッグ処理
 
@@ -123,6 +125,7 @@ private:
 	// 選択肢
 	ESelect m_select;		// 選択肢
 	ESelect m_oldSelect;	// 前回の選択肢
+	bool m_bBack;			// 戻る
 
 	// その他
 	CObject2D* m_pBoard;	// ボード

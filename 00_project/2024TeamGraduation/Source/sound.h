@@ -57,6 +57,7 @@ public:
 		LABEL_SE_HIT_NORMAL,	// ヒット(通常)
 		LABEL_SE_HIT_JUMP,		// ヒット(ジャンプ)
 		LABEL_SE_WHISTLE,		// ホイッスル
+		LABEL_SE_AI,			// AI読みあげ
 		LABEL_MAX
 	};
 

@@ -243,7 +243,7 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 	}
 
 	// 更新：行動時間
-	UpdateMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
+	//UpdateMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
 #ifdef _DEBUG
 
@@ -685,47 +685,47 @@ void CPlayerAIControl::MoveSupport()
 		return;
 	}
 
-	// 体力の少ない味方をカバー
-	int nLife = m_pAI->GetLife();
+	//// 体力の少ない味方をカバー
+	//int nLife = m_pAI->GetLife();
 
-	if (!m_sMove.pDefenseTarget)
-	{
-		int nMinLife = 100000000;
+	//if (!m_sMove.pDefenseTarget)
+	//{
+	//	int nMinLife = 100000000;
 
-		// 自分情報
-		MyLib::Vector3 posMy = m_pAI->GetPosition();		// 位置情報の取得
-		CGameManager::ETeamSide TeamMy = m_pAI->GetTeam();	// 所属チーム
+	//	// 自分情報
+	//	MyLib::Vector3 posMy = m_pAI->GetPosition();		// 位置情報の取得
+	//	CGameManager::ETeamSide TeamMy = m_pAI->GetTeam();	// 所属チーム
 
-		CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
-		std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
-		while (list.ListLoop(itr))
-		{ // リスト内の要素数分繰り返す
+	//	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	//	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	//	while (list.ListLoop(itr))
+	//	{ // リスト内の要素数分繰り返す
 
-			CPlayer* pPlayer = (*itr);	// プレイヤー情報
+	//		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
-			// 内野以外&&同じチームじゃない
-			if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN &&
-				pPlayer->GetTeam() != m_pAI->GetTeam()) continue;
+	//		// 内野以外&&同じチームじゃない
+	//		if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN &&
+	//			pPlayer->GetTeam() != m_pAI->GetTeam()) continue;
 
-			// 自分
-			if (pPlayer == m_pAI) continue;
+	//		// 自分
+	//		if (pPlayer == m_pAI) continue;
 
-			// 他人の体力
-			int nLifeOther = pPlayer->GetLife();
+	//		// 他人の体力
+	//		int nLifeOther = pPlayer->GetLife();
 
-			if (nLifeOther < nLife && nLifeOther < nMinLife)
-			{// 自分の体力より少ない&&チームの中で一番体力が少ない場合
+	//		if (nLifeOther < nLife && nLifeOther < nMinLife)
+	//		{// 自分の体力より少ない&&チームの中で一番体力が少ない場合
 
-				// 最小体力の更新
-				nMinLife = nLifeOther;
+	//			// 最小体力の更新
+	//			nMinLife = nLifeOther;
 
-				// 守備対象の設定
-				m_sMove.pDefenseTarget = pPlayer;
-			}
-		}
+	//			// 守備対象の設定
+	//			m_sMove.pDefenseTarget = pPlayer;
+	//		}
+	//	}
 
-		return;
-	}
+	//	return;
+	//}
 
 
 	// 味方との距離を取る(標的を分散)
@@ -1423,8 +1423,6 @@ void CPlayerAIControl::UpdateMoveTimer(const float fDeltaTime, const float fDelt
 {
 	if (m_sMove.bCancel)
 	{
-
-
 		// 行動の構造体初期化
 		ZeroMemory(&m_sMove, sizeof(m_sMove));
 	}
@@ -1444,6 +1442,9 @@ void CPlayerAIControl::UpdateMoveTimer(const float fDeltaTime, const float fDelt
 
 			// 行動：止まる
 			m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
+
+			// 設定OFF
+			m_sMove.bSet = false;
 		}
 	}
 }
