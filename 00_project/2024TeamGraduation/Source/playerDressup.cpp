@@ -80,11 +80,11 @@ void CPlayerDressUP::Kill()
 //==========================================================================
 void CPlayerDressUP::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 過去の位置保存
-	SetOldPosition(GetPosition());
-
 	// 親の更新処理
 	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 位置の補正
+	SetPosition(VEC3_ZERO);
 }
 
 //==========================================================================

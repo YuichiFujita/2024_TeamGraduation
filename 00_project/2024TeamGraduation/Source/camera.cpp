@@ -42,7 +42,7 @@ namespace
 
 	namespace dressup
 	{
-		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 70.0f, -280.0f);	// 視点
+		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 70.0f, -284.0f);	// 視点
 		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 70.0f, 0.0f);	// 注視点
 		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
 		const float VIEW_ANGLE		= D3DXToRadian(45.0f);					// 視野角

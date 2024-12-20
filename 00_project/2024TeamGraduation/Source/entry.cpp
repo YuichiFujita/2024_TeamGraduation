@@ -202,6 +202,7 @@ void CEntry::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CEntry::Draw()
 {
+
 }
 
 //==========================================================================

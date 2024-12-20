@@ -692,14 +692,6 @@ void CEntry_SetUpTeam::DeleteEntry(int* pEntryIdx)
 }
 
 //==========================================================================
-// 準備完了解除
-//==========================================================================
-void CEntry_SetUpTeam::DeleteReady(int* pEntryIdx)
-{
-
-}
-
-//==========================================================================
 // 準備完了フラグ取得
 //==========================================================================
 bool CEntry_SetUpTeam::IsUserReady(const int nUserIdx, std::vector<int>::iterator* pItr)
@@ -999,20 +991,30 @@ void CEntry_SetUpTeam::Debug()
 }
 
 //==========================================================================
-// エントリーのインデックス
+// パッドインデックスのエントリーインデックス変換
 //==========================================================================
-int CEntry_SetUpTeam::GetEntryIdx(int nPadIdx)
+int CEntry_SetUpTeam::PadIdxToEntryIdx(int nPadIdx)
 {
 	if (nPadIdx >= mylib_const::MAX_PLAYER) return -1;
 	return m_nEntryIdx[nPadIdx];
 }
 
 //==========================================================================
-// チームサイド取得 (ユーザー)
+// エントリーインデックス取得
 //==========================================================================
-CGameManager::ETeamSide CEntry_SetUpTeam::GetTeamSideUser(int nEntryIdx)
+int CEntry_SetUpTeam::GetEntryIdx(int nPlayerIdx)
 {
-	return m_TeamSide[nEntryIdx].team;
+	if (nPlayerIdx >= CGameManager::MAX_PLAYER) return -1;
+	return m_TeamSide[nPlayerIdx].nPadIdx;
+}
+
+//==========================================================================
+// チームサイド取得
+//==========================================================================
+CGameManager::ETeamSide CEntry_SetUpTeam::GetTeamSide(int nPlayerIdx)
+{
+	if (nPlayerIdx >= CGameManager::MAX_PLAYER) return CGameManager::ETeamSide::SIDE_NONE;
+	return m_TeamSide[nPlayerIdx].team;
 }
 
 //==========================================================================
