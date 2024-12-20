@@ -72,6 +72,11 @@ public:
 	//=============================
 	void SetState(EState state);		// 状態設定
 
+	//=============================
+	// 静的関数
+	//=============================
+	static CListManager<CPlayerResult> GetList() { return m_List; }	// リスト取得
+
 private:
 
 	//=============================
@@ -112,6 +117,7 @@ private:
 	//-----------------------------
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
+	static CListManager<CPlayerResult> m_List;		// リスト
 };
 
 #endif

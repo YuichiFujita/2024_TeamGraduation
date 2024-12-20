@@ -5,6 +5,8 @@
 // 
 //==========================================================================
 #include "playerManager_result.h"
+#include "resultmanager.h"
+#include "playerResult.h"
 
 //==========================================================================
 // 定数定義
@@ -63,8 +65,11 @@ CPlayerManager_Result::~CPlayerManager_Result()
 //==========================================================================
 HRESULT CPlayerManager_Result::Init()
 {
-	// 初期化処理
+	// 親クラスの初期化処理
 	CPlayerManager::Init();
+
+	//プレイヤー初期化
+	InitPlayer();
 
 	return S_OK;
 }
@@ -75,8 +80,9 @@ HRESULT CPlayerManager_Result::Init()
 HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
 {
 	// 位置
-	MyLib::Vector3 pos = Player::POS_OUT[CGameManager::ETeamSide::SIDE_LEFT];
-	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_LEFT] * i);
+	MyLib::Vector3 pos = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_LEFT);
+	pos += Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT];
+	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_LEFT] * static_cast<float>(i));
 
 	// プレイヤー生成
 	CPlayer* pPlayer = CPlayer::Create(
@@ -101,8 +107,9 @@ HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
 HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 {
 	// 位置
-	MyLib::Vector3 pos = Player::POS_OUT[CGameManager::ETeamSide::SIDE_RIGHT];
-	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_RIGHT] * i);
+	MyLib::Vector3 pos = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_RIGHT);
+	pos += Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT];
+	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_RIGHT] * static_cast<float>(i));
 
 	// プレイヤー生成
 	CPlayer* pPlayer = CPlayer::Create(
@@ -119,6 +126,105 @@ HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
+}
+
+//==========================================================================
+// プレイヤー初期化
+//==========================================================================
+void CPlayerManager_Result::InitPlayer()
+{
+	//----------------------------------------------------------------------
+	// プレイヤー外野生成
+	//----------------------------------------------------------------------
+	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
+
+	// プレイヤー外野生成 (右サイド)
+#if 1
+	for (int i = 0; i < nHalfMax; i++)
+	{ // チームごとの外野人数分繰り返す
+
+		// 右チームの外野プレイヤー生成
+		CPlayer* pOutRight= CPlayer::Create
+		(
+			VEC3_ZERO,
+			CGameManager::ETeamSide::SIDE_RIGHT,
+			CPlayer::EHuman::HUMAN_RESULT,
+			CPlayer::BODY_NORMAL,
+			CPlayer::HAND_R,
+			CPlayer::EFieldArea::FIELD_OUT
+		);
+		if (pOutRight == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+		}
+	}
+
+	// プレイヤー外野生成 (左サイド)
+	for (int i = 0; i < nHalfMax; i++)
+	{ // チームごとの外野人数分繰り返す
+
+		// 左チームの外野プレイヤー生成
+		CPlayer* pOutLeft = CPlayer::Create
+		(
+			VEC3_ZERO,
+			CGameManager::ETeamSide::SIDE_LEFT,
+			CPlayer::EHuman::HUMAN_RESULT,
+			CPlayer::BODY_NORMAL,
+			CPlayer::HAND_R,
+			CPlayer::EFieldArea::FIELD_OUT
+		);
+		if (pOutLeft == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+		}
+	}
+#endif
+
+	// 位置
+	MyLib::Vector3 pos = VEC3_ZERO;
+
+	// 位置設定
+	int nNumRight = 0, nNumLeft = 0;
+	CListManager<CPlayerResult> sampleList = CPlayerResult::GetList();
+	std::list<CPlayerResult*>::iterator itr = sampleList.GetEnd();
+	CPlayerResult* pObj = nullptr;
+
+	while (sampleList.ListLoop(itr))
+	{
+		pObj = (*itr);
+		// pObjか(*itr)を使って処理
+	
+		// 内野排除
+		if (pObj->GetAreaType() == CPlayer::EFieldArea::FIELD_IN) continue;
+
+		CGameManager::ETeamSide team = pObj->GetTeam();
+		pos = CResultManager::GetInstance()->GetPosMid(team);
+		pos += Player::POS_OUT[team];
+
+		// カウンター
+		switch (team)
+		{
+		case CGameManager::ETeamSide::SIDE_LEFT:
+
+			pos += (Player::POS_SHIFT[team] * static_cast<float>(nNumLeft));
+			nNumLeft++;
+			break;
+		
+		case CGameManager::ETeamSide::SIDE_RIGHT:
+
+			pos += (Player::POS_SHIFT[team] * static_cast<float>(nNumRight));
+			nNumRight++;
+			break;
+	
+		default:
+			MyAssert::CustomAssert(false, "playerManager_result: どっちチームだよ");
+			break;
+		}
+
+		pObj->SetPosition(pos);
+	}
 }
 
 //==========================================================================

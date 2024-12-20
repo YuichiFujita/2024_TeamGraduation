@@ -324,7 +324,8 @@ CPlayer* CPlayer::Create
 	CGameManager::ETeamSide typeTeam,	// チームサイド
 	EHuman typeHuman,					// 人
 	EBody typeBody,						// 体型
-	EHandedness typeHand				// 利き手
+	EHandedness typeHand,				// 利き手
+	EFieldArea	typeArea				// ポジション
 )
 {
 	// メモリの確保
@@ -344,7 +345,7 @@ CPlayer* CPlayer::Create
 		break;
 
 	case EHuman::HUMAN_RESULT:
-		pPlayer = DEBUG_NEW CPlayerResult(typeTeam);
+		pPlayer = DEBUG_NEW CPlayerResult(typeTeam, typeArea);
 		break;
 
 	default:
