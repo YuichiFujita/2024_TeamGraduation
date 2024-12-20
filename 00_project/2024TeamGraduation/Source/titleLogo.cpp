@@ -10,7 +10,6 @@
 #include "manager.h"
 #include "camera.h"
 #include "instantfade.h"
-#include "option_BBS.h"
 
 //==========================================================================
 // 定数定義
@@ -27,6 +26,12 @@ namespace StateTime
 	const float LOOP_ROTATION = 6.0f;	// ループ周期
 	const float LOOP = 1.0f;	// ループ周期
 	const float START = 1.0f;	// 開始
+}
+
+namespace Rotate
+{
+	const float INTERVAL = 5.0f;	// 間隔
+	const float TIME = 2.0f;	// 回転する時間
 }
 
 namespace Logo
@@ -46,17 +51,21 @@ CTitleLogo::STATE_FUNC CTitleLogo::m_StateFunc[] =	// 状態関数
 	&CTitleLogo::StateSpawn,	// 登場
 	&CTitleLogo::StateLoop,		// ループ
 	&CTitleLogo::StateStart,	// 開始
+	&CTitleLogo::StateWait,		// 待機
 };
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CTitleLogo::CTitleLogo(int nPriority, const LAYER layer) : CObject(nPriority, layer),
-	m_state			(EState::STATE_NONE),	// 状態
-	m_fStateTime	(0.0f),					// 状態タイマー
-	m_fTime			(0.0f)					// 副のタイマー
+	m_state				(EState::STATE_NONE),	// 状態
+	m_fStateTime		(0.0f),					// 状態タイマー
+	m_fRotationTime		(0.0f),					// 回転タイマー
+	m_fIntervalRotate	(0.0f),					// 回転までの間隔
+	m_fRotationY		(0.0f),					// Y軸回転量
+	m_fTime				(0.0f)					// 副のタイマー
 {
-
+	
 }
 
 //==========================================================================
@@ -119,10 +128,6 @@ HRESULT CTitleLogo::Init()
 	MyLib::Vector3 cameraRot = pCamera->GetRotation();
 	cameraRot.y = 0.0f;
 	pCamera->SetRotation(cameraRot);
-
-
-
-	COption_BBS::Create();
 
 	return S_OK;
 }
@@ -247,6 +252,25 @@ void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 回転タイマー加算
+	m_fRotationTime += fDeltaTime * fSlowRate;
+	if (m_fIntervalRotate <= m_fRotationTime)
+	{
+		// 2回転
+		m_fRotationY = UtilFunc::Correction::EasingCubicInOut(0.0f, D3DX_PI * 2.0f, m_fIntervalRotate, m_fIntervalRotate + Rotate::TIME, m_fRotationTime);
+
+		if (m_fRotationTime >= m_fIntervalRotate + Rotate::TIME)
+		{// 終了
+
+			// 間隔計算
+			m_fIntervalRotate = Rotate::INTERVAL;
+			m_fIntervalRotate += UtilFunc::Transformation::Random(0, 50) * 0.1f;
+
+			// タイマーリセット
+			m_fRotationTime = 0.0f;
+		}
+	}
+
 	// 割合
 	float ratio = m_fStateTime / StateTime::LOOP;
 
@@ -259,7 +283,8 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 
 	// 回転
 	MyLib::Vector3 rot = sinf(D3DX_PI * m_fStateTime / StateTime::LOOP_ROTATION) * Logo::VALUE_ROTATION;
-	m_pMain->SetRotation(rot);
+	MyLib::Vector3 setrot = rot + MyLib::Vector3(0.0f, m_fRotationY, 0.0f);
+	m_pMain->SetRotation(setrot);
 
 
 
@@ -277,6 +302,14 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 // 開始
 //==========================================================================
 void CTitleLogo::StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+
+}
+
+//==========================================================================
+// 待機
+//==========================================================================
+void CTitleLogo::StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }

@@ -34,6 +34,7 @@ public:
 		STATE_SPAWN,	// 登場
 		STATE_LOOP,		// ループ
 		STATE_START,	// 開始
+		STATE_WAIT,		// 待機
 		STATE_MAX
 	};
 
@@ -82,6 +83,7 @@ private:
 	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 登場
 	void StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ループ
 	void StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 開始
+	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 待機
 	
 	// 生成
 	HRESULT CreateMain();	// 主生成
@@ -97,6 +99,11 @@ private:
 	// 状態
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態タイマー
+
+	// 回転
+	float m_fRotationTime;	// 回転タイマー
+	float m_fIntervalRotate;	// 回転までの間隔
+	float m_fRotationY;			// Y軸回転量
 
 	// その他
 	CObjectX* m_pMain;		// メインロゴ

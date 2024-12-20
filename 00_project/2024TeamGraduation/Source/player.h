@@ -346,32 +346,32 @@ public:
 	//=============================
 	// その他
 	//=============================
-	SHitInfo Hit(CBall* pBall);													// ヒット処理
-	void SetSpecialAttack();													// スペシャル攻撃設定
-	void SetState(EState state);												// 状態設定
-	void ChangeBase(EBaseType type);											// ベース変更
-	EBaseType GetBaseType() const;												// ベース取得
-	EFieldArea GetAreaType() const { return m_typeArea; }						// ポジション取得
-	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }				// チームサイド取得
-	EState GetState() { return m_state; }										// 状態取得
-	EBody GetBodyType() { return m_BodyType; }									// 体型取得
-	EHandedness GetHandedness() { return m_Handedness; }						// 利き手取得
-	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }						// 自分のインデックス設定
-	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }						// 自分のインデックス取得
-	int GetPositionIdx() const { return m_nPosIdx; }							// 自分のポジション別インデックス取得
-	void SetBall(CBall* pBall) { m_pBall = pBall; }								// ボール情報設定
-	CBall* GetBall() const { return m_pBall; }									// ボール情報取得
-	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);			// 死亡設定
-	void DamageSetting(CBall* pBall);											// ダメージ発生時設定
-	void CatchSetting(CBall* pBall);											// キャッチ時処理
-	void CoverCatchSetting(CBall* pBall);										// カバーキャッチ時処理
-	void OutCourtSetting();														// コート越え処理
-	void SetHaveTime(float time) { m_fHaveTime = time; }						// ボール所持タイマー
-	float GetHaveTime() { return m_fHaveTime; }									// ボール所持タイマー
-	void SetEscapeTime(float time) { m_fEscapeTime = time; }					// 端逃げタイマー
-	float GetEscapeTime() { return m_fEscapeTime; }								// 端逃げタイマー
-	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);					// 未来位置計算
-	MyLib::Vector3 GetLookOffset() const;										// 未来位置オフセット取得
+	SHitInfo Hit(CBall* pBall);											// ヒット処理
+	void SetSpecialAttack();											// スペシャル攻撃設定
+	void SetState(EState state);										// 状態設定
+	void ChangeBase(EBaseType type);									// ベース変更
+	EBaseType GetBaseType() const;										// ベース取得
+	EFieldArea GetAreaType() const { return m_typeArea; }				// ポジション取得
+	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }		// チームサイド取得
+	EState GetState() { return m_state; }								// 状態取得
+	EBody GetBodyType() { return m_BodyType; }							// 体型取得
+	EHandedness GetHandedness() { return m_Handedness; }				// 利き手取得
+	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }				// 自分のインデックス設定
+	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }				// 自分のインデックス取得
+	int GetPositionIdx() const { return m_nPosIdx; }					// 自分のポジション別インデックス取得
+	void SetBall(CBall* pBall) { m_pBall = pBall; }						// ボール情報設定
+	CBall* GetBall() const { return m_pBall; }							// ボール情報取得
+	void DeadSetting(MyLib::HitResult_Character* result, CBall* pBall);	// 死亡設定
+	void DamageSetting(CBall* pBall);									// ダメージ発生時設定
+	void CatchSetting(CBall* pBall);									// キャッチ時処理
+	void CoverCatchSetting(CBall* pBall);								// カバーキャッチ時処理
+	void OutCourtSetting();												// コート越え処理
+	void SetHaveTime(float time) { m_fHaveTime = time; }				// ボール所持タイマー
+	float GetHaveTime() { return m_fHaveTime; }							// ボール所持タイマー
+	void SetEscapeTime(float time) { m_fEscapeTime = time; }			// 端逃げタイマー
+	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
+	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);			// 未来位置計算
+	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
 
 	//=============================
 	// 静的メンバ関数
@@ -412,14 +412,16 @@ public:
 		@param	typeHuman [in]	人種類
 		@param	typeBody  [in]	標準/デブ/ガリ
 		@param	typeHand  [in]	右利き/左利き
+		@param	typeArea  [in]	内野/外野
 	*/
 	static CPlayer* Create
 	(
-		const MyLib::Vector3& rPos,			// 位置
-		CGameManager::ETeamSide typeTeam,	// チームサイド
-		EHuman typeHuman,					// 人
-		EBody typeBody = EBody::BODY_NORMAL,		// 体型
-		EHandedness typeHand = EHandedness::HAND_R	// 利き手
+		const MyLib::Vector3& rPos,						// 位置
+		CGameManager::ETeamSide typeTeam,				// チームサイド
+		EHuman typeHuman,								// 人
+		EBody typeBody = EBody::BODY_NORMAL,			// 体型
+		EHandedness typeHand = EHandedness::HAND_R,		// 利き手
+		EFieldArea	typeArea = EFieldArea::FIELD_IN		// ポジション
 	);
 
 protected:
@@ -433,17 +435,18 @@ protected:
 	void CreateDressUp();	// ドレスアップ生成
 
 private:
+
 	//=============================
 	// 関数リスト
 	//=============================
 	typedef void(CPlayer::* STATE_FUNC)(const float, const float, const float);
-	static STATE_FUNC m_StateFunc[];							// 状態関数
+	static STATE_FUNC m_StateFunc[];	// 状態関数
 
 	typedef void(CPlayer::* STATE_END_FUNC)();
-	static STATE_END_FUNC m_StateEndFunc[];						// 状態終了関数
+	static STATE_END_FUNC m_StateEndFunc[];	// 状態終了関数
 
 	typedef void(CPlayer::*ACTION_FUNC)();
-	static ACTION_FUNC m_ActionFunc[];							// 行動関数
+	static ACTION_FUNC m_ActionFunc[];	// 行動関数
 
 	//=============================
 	// メンバ関数
@@ -451,7 +454,7 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
+	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
 	void StateInvincible(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 無敵
 	void StateDamage(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ダメージ
@@ -470,11 +473,11 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
-	void StateEndInvincible();			// 無敵
-	void StateEndDamage();				// ダメージ
-	void StateEndDead();				// 死亡
-	void StateEndDeadAfter();			// 死亡後
-	void StateEndInvade_Return();		// 相手コート侵入から戻る
+	void StateEndInvincible();		// 無敵
+	void StateEndDamage();			// ダメージ
+	void StateEndDead();			// 死亡
+	void StateEndDeadAfter();		// 死亡後
+	void StateEndInvade_Return();	// 相手コート侵入から戻る
 
 	//-----------------------------
 	// スペシャルキャッチ状態関数
@@ -499,7 +502,7 @@ private:
 	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
-	void CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);					// キャッチ時処理(スペシャル)
+	void CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);	// キャッチ時処理(スペシャル)
 
 	void CatchSettingLandNormal(CBall::EAttack atkBall);	// キャッチ時処理(地上・通常)
 	void CatchSettingLandJust(CBall::EAttack atkBall);		// キャッチ時処理(地上・ジャスト)
@@ -521,9 +524,9 @@ private:
 	//-----------------------------
 	// 状態
 	//-----------------------------
-	EState m_Oldstate;							// 前回の状態
-	EState m_state;								// 状態
-	float m_fStateTime;							// 状態時間
+	EState m_Oldstate;	// 前回の状態
+	EState m_state;		// 状態
+	float m_fStateTime;	// 状態時間
 
 	//-----------------------------
 	// オブジェクトのパラメータ

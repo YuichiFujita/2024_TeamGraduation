@@ -204,6 +204,11 @@ void CTitle_SUSURU::StateWait(const float fDeltaTime, const float fDeltaRate, co
 		m_fStateTime = 0.0f;
 		m_state = EState::STATE_SCROLL;
 
+		if (m_nIdxScroll == 0)
+		{// AI読み上げ開始
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_AI);
+		}
+
 		// 送る文字更新
 		m_nIdxScroll++;
 

@@ -133,13 +133,13 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
 
 		// 走る
-		SetMove(EMoveFlag::MOVEFLAG_DASH);
+		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
 		if (Approatch(posTarget, JUMP_LENGTH_LINE))
 		{// 範囲内の場合
 			//SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
-			SetMove(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
+			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
 		}
 
 		return;
@@ -147,18 +147,18 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 
 	if (distanceTarget > JUMP_LENGTH_TARGET)
 	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
-		SetAction(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
+		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 	}
 	else
 	{
-		SetMove(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
-		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
+		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 
 	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
-		SetMove(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
-		SetThrow(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
+		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 }
 
@@ -175,21 +175,48 @@ void CPlayerAIControlLeft::ForciblyReturn()
 
 	CPlayer::EState state = pMy->GetState();
 	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
-		SetMove(EMoveFlag::MOVEFLAG_IDLE);
-		SetAction(EActionFlag::ACTION_NONE);
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+		SetActionFlag(EActionFlag::ACTION_NONE);
 		return;
 	}
 
 	// 歩く
-	SetMove(EMoveFlag::MOVEFLAG_DASH);
+	SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 	//SetAction(EActionFlag::ACTION_JUMP);
 
 	// 近づく
 	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
 	{
 		SetForcibly(EMoveForcibly::FORCIBLY_NONE);
-		SetMove(EMoveFlag::MOVEFLAG_IDLE);
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 	}
+}
+
+//==========================================================================
+// 安全地帯へ
+//==========================================================================
+void CPlayerAIControlLeft::MoveRetreat()
+{
+	CPlayer* pPlayer = GetPlayer();
+	if (!pPlayer) return;
+
+	// 自分の位置
+	MyLib::Vector3 posMy = pPlayer->GetPosition();
+
+	// 安全地帯
+	float posSafeX = -(GetDistance() + 300.0f);
+
+	if (posMy.x > posSafeX) {// 移動タイプ：無
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+		SetAction(EAction::IDLE);
+		return;
+	}
+
+	// 行動フラグ：歩く
+	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+
+	// 左移動
+	MoveLeft();
 }
 
 //==========================================================================
