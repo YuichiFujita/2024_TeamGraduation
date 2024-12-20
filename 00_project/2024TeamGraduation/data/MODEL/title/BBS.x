@@ -258,7 +258,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\êßçÏóp\\2024_TeamGraduation\\00_project\\2024TeamGraduation\\data\\TEXTURE\\title\\maple.jpg";
+    "data\\TEXTURE\\title\\maple.jpg";
    }
   }
   Material {
@@ -267,7 +267,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\êßçÏóp\\2024_TeamGraduation\\00_project\\2024TeamGraduation\\data\\TEXTURE\\title\\maple.jpg";
+    "data\\TEXTURE\\title\\maple.jpg";
    }
   }
   Material {
@@ -276,7 +276,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\êßçÏóp\\2024_TeamGraduation\\00_project\\2024TeamGraduation\\data\\TEXTURE\\title\\maple.jpg";
+    "data\\TEXTURE\\title\\maple.jpg";
    }
   }
  }
