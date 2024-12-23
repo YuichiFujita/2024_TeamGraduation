@@ -83,17 +83,20 @@ public:
 	CPlayer::EHandedness GetHandedness() const;	// 利き手取得
 	inline EEditType GetTypeEdit() const		{ return m_typeEdit; }		// エディット種類取得
 	inline EChangeType GetTypeChange() const	{ return m_typeChange; }	// 変更種類取得
+	inline bool IsReady() const					{ return m_bReady; }		// 準備完了フラグ取得
 
 private:
 	// メンバ関数
 	HRESULT CreateUI();					// UI生成
 	HRESULT CreateChangeIcon();			// 変更種類アイコン生成
+	HRESULT CreateReadyCheck();			// 準備完了チェック生成
 	HRESULT CreatePlayerFrame();		// プレイヤーフレーム生成
 	HRESULT CreatePlayerUI();			// プレイヤーUI生成
 	HRESULT CreateSetup();				// セットアップ生成
 	HRESULT CreateRenderTexture();		// レンダーテクスチャ生成
 	void CreateTexture();				// テクスチャ作成
 	void SetPositionRelative();			// 相対位置設定
+	void UpdateControl(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作更新
 	void UpdateUI();					// UI更新
 	void UpdatePlayerUI();				// プレイヤーUI更新
 	void ChangeEditType(int nPadIdx);	// エディットする種類変更
@@ -108,10 +111,13 @@ private:
 	// メンバ変数
 	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
 	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
+	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報
 	CObject2D* m_pPlayerFrame;		// プレイヤーフレーム情報
 	CObject2D* m_pPlayerUI;			// プレイヤーUI情報
 	const int m_nPlayerIdx;			// プレイヤーインデックス
 	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)
+	int m_nPadIdx;					// 操作権インデックス
+	bool m_bReady;					// 準備完了フラグ
 	CPlayer* m_pPlayer;				// プレイヤー
 	CDressup* m_pHair;				// 髪着せ替え
 	CDressup* m_pAccessory;			// アクセ着せ替え

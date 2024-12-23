@@ -31,14 +31,14 @@ namespace
 	{
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(CDressupUI::EChangeType::TYPE_MAX, 1);	// テクスチャ分割数
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\ChangeType000.png";	// 変更種類アイコンテクスチャ
-		const float WIDTH = 60.0f;	// 横幅
+		const float WIDTH = 300.0f;	// 横幅
 	}
 
 	namespace player
 	{
 		namespace frame
 		{
-			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame000.png";	// 変更種類アイコンテクスチャ
+			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame000.png";	// プレイヤーフレームアイコンテクスチャ
 			const float WIDTH = 100.0f;	// 横幅
 		}
 
@@ -54,6 +54,13 @@ namespace
 				const float WIDTH = 620.0f;	// 横幅
 			}
 		}
+	}
+
+	namespace ready
+	{
+		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(1, 2);	// テクスチャ分割数
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\ReadyCheck000.png";	// 準備完了チェックテクスチャ
+		const float WIDTH = 100.0f;	// 横幅
 	}
 }
 
@@ -71,10 +78,13 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 CDressupUI::CDressupUI(const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
 	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
 	m_pChangeIcon	(nullptr),		// 変更種類アイコン情報
+	m_pReadyCheck	(nullptr),		// 準備完了チェック情報
 	m_pPlayerFrame	(nullptr),		// プレイヤーフレーム情報
 	m_pPlayerUI		(nullptr),		// プレイヤーUI情報
 	m_nPlayerIdx	(nPlayerIdx),	// プレイヤーインデックス
 	m_nOrdinalAI	(-1),			// 自身が生成された順番 (AIのみ)
+	m_nPadIdx		(-1),			// 操作権インデックス
+	m_bReady		(false),		// 準備完了フラグ
 	m_pPlayer		(nullptr),		// プレイヤー
 	m_pHair			(nullptr),		// 髪着せ替え
 	m_pAccessory	(nullptr),		// アクセ着せ替え
@@ -119,6 +129,9 @@ HRESULT CDressupUI::Init()
 		return E_FAIL;
 	}
 
+	// 種類をオブジェクト2Dにする
+	SetType(CObject::TYPE::TYPE_OBJECT2D);
+
 	return S_OK;
 }
 
@@ -139,6 +152,18 @@ void CDressupUI::Uninit()
 
 	// プレイヤーの終了
 	SAFE_UNINIT(m_pPlayer);
+
+	// 変更種類アイコンの終了
+	SAFE_UNINIT(m_pChangeIcon);
+
+	// 準備完了チェックの終了
+	SAFE_UNINIT(m_pReadyCheck);
+
+	// プレイヤーフレームの終了
+	SAFE_UNINIT(m_pPlayerFrame);
+
+	// プレイヤーUIの終了
+	SAFE_UNINIT(m_pPlayerUI);
 
 	// 髪着せ替えの終了
 	SAFE_UNINIT(m_pHair);
@@ -170,79 +195,29 @@ void CDressupUI::Kill()
 //============================================================
 void CDressupUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// チームセットアップ情報の取得
-	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
-	if (pSetupTeam == nullptr) { return; }
-
-	// エントリーインデックスを取得
-	const int nEntryIdx = pSetupTeam->GetEntryIdx(m_nPlayerIdx);
-	if (nEntryIdx < 0) { return; }
-	if (nEntryIdx >= mylib_const::MAX_PLAYER) { return; }
-
-	// エディットする種類変更
-	ChangeEditType(nEntryIdx);
-
-	switch (m_typeEdit)
-	{
-	case EEditType::EDIT_PROCESS:
-
-		switch (m_typeChange)
-		{
-		case EChangeType::TYPE_HAIR:
-
-			// 髪更新
-			m_pHair->Update(fDeltaTime, fDeltaRate, fSlowRate);
-			break;
-
-		case EChangeType::TYPE_ACCESSORY:
-
-			// アクセ更新
-			m_pAccessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
-			break;
-
-		case EChangeType::TYPE_FACE:
-
-			// 顔更新
-			m_pFace->Update(fDeltaTime, fDeltaRate, fSlowRate);
-			break;
-
-		case EChangeType::TYPE_BODY:
-
-			// 体型変更
-			ChangeBodyType(nEntryIdx);
-			break;
-
-		case EChangeType::TYPE_HANDEDNESS:
-
-			// 利き手変更
-			ChangeHandedness(nEntryIdx);
-			break;
-
-		default:
-			assert(false);
-			break;
-		}
-		break;
-
-	case EEditType::EDIT_CHANGETYPE:
-
-		// 変更する箇所の種類変更
-		ChangeChangeType(nEntryIdx);
-		break;
-
-	default:
-		assert(false);
-		break;
-	}
-
-	// プレイヤーの更新
-	m_pPlayer->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	// 操作の更新
+	UpdateControl(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// UIの更新
 	UpdateUI();
 
 	// 相対位置の設定
 	SetPositionRelative();
+
+	// 変更種類アイコンの更新
+	m_pChangeIcon->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 準備完了チェックの更新
+	m_pReadyCheck->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// プレイヤーフレームの更新
+	m_pPlayerFrame->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// プレイヤーUIの更新
+	m_pPlayerUI->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// プレイヤーの更新
+	m_pPlayer->Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //============================================================
@@ -250,7 +225,17 @@ void CDressupUI::Update(const float fDeltaTime, const float fDeltaRate, const fl
 //============================================================
 void CDressupUI::Draw()
 {
+	// 変更種類アイコンの描画
+	m_pChangeIcon->Draw();
 
+	// 準備完了チェックの描画
+	m_pReadyCheck->Draw();
+
+	// プレイヤーフレームの描画
+	m_pPlayerFrame->Draw();
+
+	// プレイヤーUIの描画
+	m_pPlayerUI->Draw();
 }
 
 //============================================================
@@ -394,6 +379,13 @@ HRESULT CDressupUI::CreateUI()
 		return E_FAIL;
 	}
 
+	// 準備完了チェックの生成
+	if (FAILED(CreateReadyCheck()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// プレイヤーフレームの生成
 	if (FAILED(CreatePlayerFrame()))
 	{ // 生成に失敗した場合
@@ -435,6 +427,9 @@ HRESULT CDressupUI::CreateChangeIcon()
 		return E_FAIL;
 	}
 
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pChangeIcon->SetType(CObject::TYPE::TYPE_NONE);
+
 	// 自動再生をOFFにする
 	m_pChangeIcon->SetEnableAutoPlay(false);
 
@@ -445,10 +440,55 @@ HRESULT CDressupUI::CreateChangeIcon()
 
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, change::WIDTH * (float)change::PTRN.x);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, change::WIDTH);
 	size.x /= (float)change::PTRN.x;
 	m_pChangeIcon->SetSize(size);
 	m_pChangeIcon->SetSizeOrigin(m_pChangeIcon->GetSize());
+
+	return S_OK;
+}
+
+//============================================================
+// 準備完了チェックの生成処理
+//============================================================
+HRESULT CDressupUI::CreateReadyCheck()
+{
+	// 準備完了チェックの生成
+	m_pReadyCheck = CObject2D_Anim::Create
+	( // 引数
+		VEC3_ZERO,		// 位置
+		ready::PTRN.x,	// テクスチャ横分割数
+		ready::PTRN.y,	// テクスチャ縦分割数
+		0.0f,			// 再生時間
+		false,			// 自動破棄
+		PRIORITY		// 優先順位
+	);
+	if (m_pReadyCheck == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pReadyCheck->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 自動再生をOFFにする
+	m_pReadyCheck->SetEnableAutoPlay(false);
+
+	// テクスチャパターンの初期化
+	m_pReadyCheck->SetPatternAnim((int)m_bReady);
+
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = CTexture::GetInstance()->Regist(ready::TEXTURE);
+	m_pReadyCheck->BindTexture(nTexID);
+
+	// 横幅を元にサイズを設定
+	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, ready::WIDTH);
+	size.y /= (float)ready::PTRN.y;
+	m_pReadyCheck->SetSize(size);
+	m_pReadyCheck->SetSizeOrigin(m_pReadyCheck->GetSize());
 
 	return S_OK;
 }
@@ -465,6 +505,9 @@ HRESULT CDressupUI::CreatePlayerFrame()
 
 		return E_FAIL;
 	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayerFrame->SetType(CObject::TYPE::TYPE_NONE);
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
@@ -492,6 +535,9 @@ HRESULT CDressupUI::CreatePlayerUI()
 
 		return E_FAIL;
 	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayerUI->SetType(CObject::TYPE::TYPE_NONE);
 
 	// テクスチャの割当
 	m_pPlayerUI->BindTexture(m_pRenderScene->GetTextureIndex());
@@ -521,7 +567,10 @@ HRESULT CDressupUI::CreateSetup()
 	{ // ユーザーの場合
 
 		// エントリーインデックスからチームサイドを取得
-		side = pSetupTeam->GetTeamSideUser(nEntryIdx);
+		side = pSetupTeam->GetTeamSide(nEntryIdx);
+
+		// 操作権インデックスを保存
+		m_nPadIdx = nEntryIdx;
 	}
 	else
 	{ // AIの場合
@@ -531,6 +580,9 @@ HRESULT CDressupUI::CreateSetup()
 
 		// AI生成順からチームサイドを取得
 		side = pSetupTeam->GetTeamSideAI(m_nOrdinalAI);
+
+		// 準備完了済みにする
+		m_bReady = true;
 
 		// AI生成数を加算
 		m_nNumAI++;
@@ -558,7 +610,7 @@ HRESULT CDressupUI::CreateSetup()
 	m_pPlayer->CObject::SetOriginPosition(VEC3_ZERO);
 
 	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(nEntryIdx);
+	m_pPlayer->SetMyPlayerIdx(m_nPadIdx);
 
 	// 髪着せ替え生成
 	m_pHair = CDressup::Create
@@ -599,10 +651,10 @@ HRESULT CDressupUI::CreateSetup()
 		return E_FAIL;
 	}
 
-	// 操作するインデックス設定
-	m_pHair->SetControllIdx(nEntryIdx);
-	m_pAccessory->SetControllIdx(nEntryIdx);
-	m_pFace->SetControllIdx(nEntryIdx);
+	// 操作権インデックス設定
+	m_pHair->SetControllIdx(m_nPadIdx);
+	m_pAccessory->SetControllIdx(m_nPadIdx);
+	m_pFace->SetControllIdx(m_nPadIdx);
 
 	return S_OK;
 }
@@ -650,11 +702,113 @@ void CDressupUI::SetPositionRelative()
 	// 変更種類アイコンの位置設定
 	m_pChangeIcon->SetPosition(posThis + MyLib::Vector3(0.0f, -220.0f, 0.0f));
 
+	// 準備完了チェックの位置設定
+	m_pReadyCheck->SetPosition(posThis + MyLib::Vector3(0.0f, 200.0f, 0.0f));
+
 	// プレイヤーフレームの位置設定
 	m_pPlayerFrame->SetPosition(posThis);
 
 	// プレイヤーUIの位置設定
 	m_pPlayerUI->SetPosition(posThis);
+}
+
+//============================================================
+// 操作の更新処理
+//============================================================
+void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// チームセットアップ情報の取得
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
+	if (pSetupTeam == nullptr) { return; }
+
+	// 操作権インデックスが範囲外の場合抜ける
+	if (m_nPadIdx <= -1 || m_nPadIdx >= mylib_const::MAX_PLAYER) { return; }
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nPadIdx))
+	{
+		// 準備完了状態にする
+		m_bReady = true;
+
+		// エディット種類を実際の変更にする
+		m_typeEdit = EEditType::EDIT_PROCESS;
+
+		// 変更種類を体型の変更にする
+		m_typeChange = EChangeType::TYPE_BODY;
+
+		// プレイヤーUIの更新
+		UpdatePlayerUI();
+
+		// テクスチャパターンの更新
+		m_pReadyCheck->SetPatternAnim((int)m_bReady);
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
+	{
+		// 準備未完了状態にする
+		m_bReady = false;
+
+		// テクスチャパターンの更新
+		m_pReadyCheck->SetPatternAnim((int)m_bReady);
+	}
+
+	// 準備完了している場合抜ける
+	if (m_bReady) { return; }
+
+	// エディット種類の変更
+	ChangeEditType(m_nPadIdx);
+
+	switch (m_typeEdit)
+	{ // エディット種類ごとの処理
+	case EEditType::EDIT_PROCESS:
+
+		switch (m_typeChange)
+		{ // 変更種類ごとの処理
+		case EChangeType::TYPE_HAIR:
+
+			// 髪の更新
+			m_pHair->Update(fDeltaTime, fDeltaRate, fSlowRate);
+			break;
+
+		case EChangeType::TYPE_ACCESSORY:
+
+			// アクセの更新
+			m_pAccessory->Update(fDeltaTime, fDeltaRate, fSlowRate);
+			break;
+
+		case EChangeType::TYPE_FACE:
+
+			// 顔の更新
+			m_pFace->Update(fDeltaTime, fDeltaRate, fSlowRate);
+			break;
+
+		case EChangeType::TYPE_BODY:
+
+			// 体型の変更
+			ChangeBodyType(m_nPadIdx);
+			break;
+
+		case EChangeType::TYPE_HANDEDNESS:
+
+			// 利き手の変更
+			ChangeHandedness(m_nPadIdx);
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
+		break;
+
+	case EEditType::EDIT_CHANGETYPE:
+
+		// 変更する箇所の種類変更
+		ChangeChangeType(m_nPadIdx);
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //============================================================
@@ -889,20 +1043,16 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
-	// プレイヤー位置の保存
-	MyLib::Vector3 posPlayer = m_pPlayer->CObject::GetOriginPosition();
-
 	// プレイヤーの削除
 	SAFE_KILL(m_pPlayer);
 
 	// エントリーインデックスを取得
-	int nEntryIdx = pSetupTeam->GetEntryIdx(m_nPlayerIdx);
 	CGameManager::ETeamSide side;
-	if (nEntryIdx > -1)
+	if (m_nPadIdx > -1)
 	{ // ユーザーの場合
 
 		// エントリーインデックスからチームサイドを取得
-		side = pSetupTeam->GetTeamSideUser(nEntryIdx);
+		side = pSetupTeam->GetTeamSide(m_nPadIdx);
 	}
 	else
 	{ // AIの場合
@@ -914,7 +1064,7 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	// 再生成
 	m_pPlayer = CPlayer::Create
 	( // 引数
-		posPlayer, 						// 位置
+		VEC3_ZERO, 						// 位置
 		side,							// チームサイド
 		CPlayer::EHuman::HUMAN_ENTRY,	// ポジション
 		body,							// 体系
@@ -930,11 +1080,7 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
 
 	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(nEntryIdx);
-
-	// 元の位置設定
-	m_pPlayer->CObject::SetPosition(posPlayer);
-	m_pPlayer->CObject::SetOriginPosition(posPlayer);
+	m_pPlayer->SetMyPlayerIdx(m_nPadIdx);
 
 	// ドレスアップに再割当
 	m_pHair->BindObjectCharacter(m_pPlayer);

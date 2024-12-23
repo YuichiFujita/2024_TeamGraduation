@@ -19,8 +19,8 @@
 //************************************************************
 namespace
 {
-	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\number000.png";		// 数字テクスチャ
-	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";	// 区切りテクスチャ
+	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\number000.png";	// 数字テクスチャ
+	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";		// 区切りテクスチャ
 	const int PRIORITY = 6;	// タイムUIの優先順位
 }
 
@@ -413,6 +413,19 @@ void CTimeUI::SetColor(const D3DXCOLOR& rCol)
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetColor(rCol);
 	}
+}
+
+//============================================================
+//	透明度の設定処理
+//============================================================
+void CTimeUI::SetAlpha(const float fAlpha)
+{
+	// 透明度を設定
+	D3DXCOLOR col = GetColor();	// 色
+	col.a = fAlpha;
+
+	// 色の設定
+	SetColor(col);
 }
 
 //============================================================

@@ -18,12 +18,27 @@ namespace
 	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
+
+	namespace ui
+	{
+		namespace left
+		{
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y, 0.0f);	// 左中心位置
+			const float OFFSET_X = 210.0f;	// X座標オフセット
+		}
+
+		namespace right
+		{
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y, 0.0f);	// 右中心位置
+			const float OFFSET_X = 210.0f;	// X座標オフセット
+		}
+	}
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CEntry_Dressup::CEntry_Dressup() : CEntryScene()
+CEntry_Dressup::CEntry_Dressup() : CEntryScene(), m_state(STATE_DRESSUP)
 {
 	
 }
@@ -48,17 +63,53 @@ HRESULT CEntry_Dressup::Init()
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
-	int nNumPlayer = pSetupTeam->GetAllPlayerNum();	// プレイヤー人数
-	for (int i = 0; i < nNumPlayer; i++)
+	int nCurLeft = 0;	// 現在の左プレイヤー数
+	int nCurRight = 0;	// 現在の右プレイヤー数
+	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
+	int nMaxRight = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_RIGHT);	// 右プレイヤー総数
+	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
 	{ // プレイヤー人数分繰り返す
 
-		// TODO
-		MyLib::Vector3 pos = MyLib::Vector3(160.0f, 450.0f, 0.0f);
-		MyLib::Vector3 offset = MyLib::Vector3(320.0f * (float)i, 0.0f, 0.0f);
+		// チーム指定がない場合次へ
+		CGameManager::ETeamSide team = pSetupTeam->GetTeamSide(i);	// チームサイド
+		if (team == CGameManager::ETeamSide::SIDE_NONE) { continue; }
+
+		CDressupUI* pDressup = nullptr;	// ドレスアップUI情報
+		MyLib::Vector3 posUI;	// UI位置
+		switch (team)
+		{ // チームごとの処理
+		case CGameManager::ETeamSide::SIDE_LEFT:
+		{
+			// UIの位置を計算
+			posUI = ui::left::POS;
+			posUI.x = ui::left::POS.x - (ui::left::OFFSET_X * (float)(nMaxLeft - 1)) * 0.5f + (ui::left::OFFSET_X * (float)nCurLeft);
+
+			// チームメンバー数を加算
+			nCurLeft++;
+			break;
+		}
+		case CGameManager::ETeamSide::SIDE_RIGHT:
+		{
+			// UIの位置を計算
+			posUI = ui::right::POS;
+			posUI.x = ui::right::POS.x - (ui::right::OFFSET_X * (float)(nMaxRight - 1)) * 0.5f + (ui::right::OFFSET_X * (float)nCurRight);
+
+			// チームメンバー数を加算
+			nCurRight++;
+			break;
+		}
+		default:
+			assert(false);
+			break;
+		}
 
 		// ドレスアップUIの生成
-		CDressupUI* pDressup = CDressupUI::Create(i, pos + offset);
-		if (pDressup == nullptr) { return E_FAIL; }
+		pDressup = CDressupUI::Create(i, posUI);
+		if (pDressup == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
 
 		// ドレスアップUIの追加
 		m_vecDressInfo.push_back(pDressup);
@@ -72,12 +123,6 @@ HRESULT CEntry_Dressup::Init()
 //==========================================================================
 void CEntry_Dressup::Uninit()
 {
-	for (auto& info : m_vecDressInfo)
-	{
-		// ドレスアップUIの終了
-		SAFE_UNINIT(info);
-	}
-
 	delete this;
 }
 
@@ -86,32 +131,71 @@ void CEntry_Dressup::Uninit()
 //==========================================================================
 void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 親の更新
-	CEntryScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// チーム等設定
-	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
-	if (pSetupTeam == nullptr) return;
-
-	// 今回のサイズ
-	for (auto& info : m_vecDressInfo)
+	switch (m_state)
 	{
-		// ドレスアップUIの更新
-		info->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	case EState::STATE_DRESSUP:
+
+		// ゲーム設定遷移
+		TransSetting();
+		break;
+
+	case EState::STATE_SETTING:
+
+
+		break;
+
+	default:
+		assert(false);
+		break;
 	}
 
-	// インプット情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	// 親の更新
+	CEntryScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
 
-	// 一旦シーン切り替え TODO : 全員チェックしてたらとかにする
+//==========================================================================
+// ゲーム設定遷移
+//==========================================================================
+void CEntry_Dressup::TransSetting()
+{
+	// 準備完了できていない場合抜ける
+	if (!IsAllReady()) { return; }
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X))
 	{
 		// セーブ処理
 		Save();
 
-		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_GAMESETTING);
+		for (auto& rInfo : m_vecDressInfo)
+		{ // 要素数分繰り返す
+
+			// ドレスアップUIの終了
+			SAFE_UNINIT(rInfo);
+		}
+
+		// ゲーム設定状態に遷移
+		m_state = EState::STATE_SETTING;
 	}
+}
+
+//==========================================================================
+// 準備全完了フラグの取得処理
+//==========================================================================
+bool CEntry_Dressup::IsAllReady()
+{
+	for (auto& rInfo : m_vecDressInfo)
+	{ // 要素数分繰り返す
+
+		// 準備が終わっている場合次へ
+		if (rInfo->IsReady()) { continue; }
+
+		// 準備未完了を返す
+		return false;
+	}
+
+	// 準備全完了を返す
+	return true;
 }
 
 //==========================================================================

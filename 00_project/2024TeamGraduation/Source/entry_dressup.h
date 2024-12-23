@@ -49,15 +49,28 @@ public:
 private:
 
 	//=============================
+	// 列挙型定義
+	//=============================
+	enum EState
+	{
+		STATE_DRESSUP = 0,	// 着せ替え状態
+		STATE_SETTING,		// ゲーム設定状態
+		STATE_MAX			// この列挙型の総数
+	};
+
+	//=============================
 	// メンバ関数
 	//=============================
-	void Save();	// セーブ
-	void Load();	// ロード
+	void TransSetting();	// 着せ替え遷移
+	bool IsAllReady();		// 準備全完了フラグ取得
+	void Save();			// セーブ
+	void Load();			// ロード
 
 	//=============================
 	// メンバ変数
 	//=============================
 	std::vector<CDressupUI*> m_vecDressInfo;	// 着せ替え情報
+	EState m_state;	// 状態
 };
 
 #endif
