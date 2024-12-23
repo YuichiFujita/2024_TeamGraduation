@@ -157,12 +157,14 @@ void CCutIn::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	// ”wŒiF‚ÌXV
 	UpdateBlinkColor(fDeltaTime, fDeltaRate, fSlowRate);
 
+#if 0
 	// TODO
 	if (IsEnd())
 	{
 		Uninit();
 		return;
 	}
+#endif
 
 	// ‹P‚«‚ÌXV
 	m_pBlink->Update(fDeltaTime, fDeltaRate, fSlowRate);
