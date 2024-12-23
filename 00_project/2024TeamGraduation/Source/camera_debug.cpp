@@ -285,4 +285,24 @@ void CCamera_Debug::UpdateGUI()
 		// Œü‚«Ý’è
 		m_pCamera->SetDistance(distance);
 	}
+
+	//--------------------------
+	// •\Ž¦
+	//--------------------------
+	{	
+		MyLib::Vector3 rotDest = m_pCamera->GetDestRotation();
+		MyLib::Vector3 rotOrigin= m_pCamera->GetOriginRotation();
+		MyLib::Vector3 posRDest = m_pCamera->GetPositionRDest();
+		MyLib::Vector3 posROrigin = m_pCamera->GetPositionROrigin();
+		float distanceDest = m_pCamera->GetDistanceDest();
+		float distanceOrigin = m_pCamera->GetDistanceOrigin();
+		
+		ImGui::Text("[rot] Origin: %.2f %.2f %.2f", rotOrigin.x, rotOrigin.y, rotOrigin.z);
+		ImGui::Text("[rot] Dest: %.2f %.2f %.2f", rotDest.x, rotDest.y, rotDest.z);
+		ImGui::Text("[posR] Origin: %.2f %.2f %.2f", posROrigin.x, posROrigin.y, posROrigin.z);
+		ImGui::Text("[posR] Dest: %.2f %.2f %.2f", posRDest.x, posRDest.y, posRDest.z);
+		ImGui::Text("[distance] Origin: %.2f", distanceOrigin);
+		ImGui::Text("[distance] Dest: %.2f", distanceDest);
+
+	}
 }
