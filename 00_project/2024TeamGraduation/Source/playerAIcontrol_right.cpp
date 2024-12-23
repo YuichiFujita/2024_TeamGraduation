@@ -197,19 +197,57 @@ void CPlayerAIControlRight::MoveRetreat()
 	MyLib::Vector3 posMy = pPlayer->GetPosition();
 
 	// 安全地帯
-	float posSafeX = GetDistance() + 300.0f;
+	float posSafeX = GetDistance();
 
 	if (posMy.x > posSafeX) {// 移動タイプ：無
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		SetAction(EAction::IDLE);
+		SetIsDistance(true);
 		return;
 	}
+
+	SetIsDistance(false);
 
 	// 行動フラグ：歩く
 	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 
 	// 右移動
 	MoveRight();
+}
+
+//==========================================================================
+// ランダム移動
+//==========================================================================
+void CPlayerAIControlRight::MoveRandom()
+{
+	// x950 z560
+	MyLib::Vector3 posSafeMax = { 950.0f, 0.0f, 560.0f };
+	MyLib::Vector3 posSafeMin = { GetDistance(), 0.0f, -560.0f };
+
+	SMove move = GetMoveInfo();
+
+	if (!move.bSet) {
+		// 位置の設定
+		// x座標
+		float fRand = (float)UtilFunc::Transformation::Random(posSafeMin.x, posSafeMax.x);
+		move.pos.x = fRand;
+		// z座標
+		fRand = (float)UtilFunc::Transformation::Random(posSafeMin.z, posSafeMax.z);
+		move.pos.z = fRand;
+
+		move.bSet = true;
+	}
+
+	// 行動：歩き
+	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+
+	// 近づく
+	if (Approatch(move.pos, 10.0f)) {
+		move.bSet = false;
+	}
+
+	// 行動情報の設定
+	SetMoveInfo(move);
 }
 
 //==========================================================================

@@ -55,7 +55,7 @@ public:
 	//=============================
 	void SetIsThrow(bool bThrow) { m_sFlag.bThrow = bThrow; }				// 投げるか設定
 	void SetIsPass(bool bPass) { m_sFlag.bPass = bPass; }					// パスするか設定
-	void SetIsCatch(bool bCatch) {}
+	void SetIsCatch(bool bCatch) { m_sFlag.bCatch = bCatch; }				// キャッチするか設定
 	void SetIsJump(bool bJump) { m_sFlag.bJump = bJump; }					// ジャンプするか設定
 	void SetIsJumpFloat(bool passFloat) { m_sFlag.bJumpFloat = passFloat; }	// じゃんぷを継続するか設定
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }		// スペシャル撃つか設定
