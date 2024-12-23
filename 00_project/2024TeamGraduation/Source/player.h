@@ -597,8 +597,14 @@ private:
 	static CListManager<CPlayer> m_List;		// リスト
 
 #if  _DEBUG
+public:
+
+	bool IsDebugMove() { return m_bDebugMove; }
+
+private:
 	static int m_nDebugID;	// デバッグ用ID
 	int m_nThisDebugID;		// 自分のID
+	bool m_bDebugMove;		// 移動
 #endif //  _DEBUG
 
 

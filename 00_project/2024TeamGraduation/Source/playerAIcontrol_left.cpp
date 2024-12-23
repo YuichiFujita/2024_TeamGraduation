@@ -25,10 +25,6 @@
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace
-{
-
-};
 
 //==========================================================================
 // コンストラクタ
@@ -129,8 +125,8 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 		return;
 	}
 
-	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine < JUMP_LENGTH_LINE)
-	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
+	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
+	{// 自分とターゲットの距離が500.0f以上&&中央線との距離が範囲以上の場合
 
 		// 走る
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
@@ -151,13 +147,13 @@ void CPlayerAIControlLeft::AttackDash(CPlayer* pTarget)
 	}
 	else
 	{
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 
 	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
 	{
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);	// 行動：止まる
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 }
@@ -170,19 +166,16 @@ void CPlayerAIControlLeft::ForciblyReturn()
 	// プレイヤー情報取得
 	CPlayer* pMy = GetPlayer();
 	if (!pMy) return;
+
 	MyLib::Vector3 myPos = pMy->GetPosition();
+	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
 
-
-	CPlayer::EState state = pMy->GetState();
-	if (state == CPlayer::EState::STATE_INVADE_RETURN) {
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
-		SetActionFlag(EActionFlag::ACTION_NONE);
-		return;
-	}
+	// AIコントロール情報の取得
+	CPlayerControlMove* pControlMove = pMy->GetBase()->GetPlayerControlMove();
+	CPlayerAIControlMove* pControlAIMove = pControlMove->GetAI();
 
 	// 歩く
 	SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
-	//SetAction(EActionFlag::ACTION_JUMP);
 
 	// 近づく
 	if (Approatch({ -playerAIcontrol::RETURN_POS, myPos.y, myPos.z }, playerAIcontrol::OK_LENGTH))
@@ -204,19 +197,57 @@ void CPlayerAIControlLeft::MoveRetreat()
 	MyLib::Vector3 posMy = pPlayer->GetPosition();
 
 	// 安全地帯
-	float posSafeX = -(GetDistance() + 300.0f);
+	float posSafeX = GetDistance();
 
-	if (posMy.x > posSafeX) {// 移動タイプ：無
+	if (posMy.x < -posSafeX) {// 移動タイプ：無
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		SetAction(EAction::IDLE);
+		SetIsDistance(true);
 		return;
 	}
+
+	SetIsDistance(false);
 
 	// 行動フラグ：歩く
 	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 
 	// 左移動
 	MoveLeft();
+}
+
+//==========================================================================
+// ランダム移動
+//==========================================================================
+void CPlayerAIControlLeft::MoveRandom()
+{
+	// x950 z560
+	MyLib::Vector3 posSafeMax = { -950.0f, 0.0f, 560.0f };
+	MyLib::Vector3 posSafeMin = { -GetDistance(), 0.0f, -560.0f };
+
+	SMove move = GetMoveInfo();
+
+	if (!move.bSet) {
+		// 位置の設定
+		// x座標
+		float fRand = (float)UtilFunc::Transformation::Random(posSafeMax.x, posSafeMin.x);
+		move.pos.x = fRand;
+		// z座標
+		fRand = (float)UtilFunc::Transformation::Random(posSafeMin.z, posSafeMax.z);
+		move.pos.z = fRand;
+
+		move.bSet = true;
+	}
+
+	// 行動：歩き
+	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+
+	// 近づく
+	if (Approatch(move.pos, 10.0f)) {
+		move.bSet = false;
+	}
+
+	// 行動情報の設定
+	SetMoveInfo(move);
 }
 
 //==========================================================================

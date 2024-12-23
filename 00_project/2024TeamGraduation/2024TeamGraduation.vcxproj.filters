@@ -150,9 +150,6 @@
     <Filter Include="mode\title\option">
       <UniqueIdentifier>{9dc519a8-e6bb-43d8-92c4-9b7f2d744ae6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mode\title\scene">
-      <UniqueIdentifier>{80704ae0-8715-4bd2-a459-29bbbc51f8ae}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -704,9 +701,6 @@
     <ClCompile Include="Source\startText.cpp">
       <Filter>ingame\visual</Filter>
     </ClCompile>
-    <ClCompile Include="Source\entry_gameSetting.cpp">
-      <Filter>mode\entry</Filter>
-    </ClCompile>
     <ClCompile Include="Source\catchSpecial.cpp">
       <Filter>player\catch</Filter>
     </ClCompile>
@@ -782,8 +776,14 @@
     <ClCompile Include="Source\titlescene.cpp">
       <Filter>mode\title</Filter>
     </ClCompile>
+    <ClCompile Include="Source\title_susuru.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
     <ClCompile Include="Source\dressupUI.cpp">
       <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\title_controllwait.cpp">
+      <Filter>mode\title</Filter>
     </ClCompile>
     <ClCompile Include="Source\option_BBS.cpp">
       <Filter>mode\title\option</Filter>
@@ -791,11 +791,8 @@
     <ClCompile Include="Source\optionMenu.cpp">
       <Filter>mode\title\option</Filter>
     </ClCompile>
-    <ClCompile Include="Source\title_controllwait.cpp">
-      <Filter>mode\title\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\title_susuru.cpp">
-      <Filter>mode\title\scene</Filter>
+    <ClCompile Include="Source\entryRuleManager.cpp">
+      <Filter>mode\entry</Filter>
     </ClCompile>
     <ClCompile Include="Source\resultCrown.cpp">
       <Filter>mode\result</Filter>
@@ -1363,9 +1360,6 @@
     <ClInclude Include="Source\startText.h">
       <Filter>ingame\visual</Filter>
     </ClInclude>
-    <ClInclude Include="Source\entry_gameSetting.h">
-      <Filter>mode\entry</Filter>
-    </ClInclude>
     <ClInclude Include="Source\catchSpecial.h">
       <Filter>player\catch</Filter>
     </ClInclude>
@@ -1441,8 +1435,14 @@
     <ClInclude Include="Source\titlescene.h">
       <Filter>mode\title</Filter>
     </ClInclude>
+    <ClInclude Include="Source\title_susuru.h">
+      <Filter>mode\title</Filter>
+    </ClInclude>
     <ClInclude Include="Source\dressupUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\title_controllwait.h">
+      <Filter>mode\title</Filter>
     </ClInclude>
     <ClInclude Include="Source\option_BBS.h">
       <Filter>mode\title\option</Filter>
@@ -1450,11 +1450,8 @@
     <ClInclude Include="Source\optionMenu.h">
       <Filter>mode\title\option</Filter>
     </ClInclude>
-    <ClInclude Include="Source\title_controllwait.h">
-      <Filter>mode\title\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\title_susuru.h">
-      <Filter>mode\title\scene</Filter>
+    <ClInclude Include="Source\entryRuleManager.h">
+      <Filter>mode\entry</Filter>
     </ClInclude>
     <ClInclude Include="Source\resultCrown.h">
       <Filter>mode\result</Filter>

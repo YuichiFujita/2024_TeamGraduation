@@ -215,9 +215,9 @@
     <ClCompile Include="Source\edit_map.cpp" />
     <ClCompile Include="Source\EffekseerObj.cpp" />
     <ClCompile Include="Source\entry.cpp" />
+    <ClCompile Include="Source\entryRuleManager.cpp" />
     <ClCompile Include="Source\entryscene.cpp" />
     <ClCompile Include="Source\entry_dressup.cpp" />
-    <ClCompile Include="Source\entry_gameSetting.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
@@ -439,9 +439,9 @@
     <ClInclude Include="Source\edit_map.h" />
     <ClInclude Include="Source\EffekseerObj.h" />
     <ClInclude Include="Source\entry.h" />
+    <ClInclude Include="Source\entryRuleManager.h" />
     <ClInclude Include="Source\entryscene.h" />
     <ClInclude Include="Source\entry_dressup.h" />
-    <ClInclude Include="Source\entry_gameSetting.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />

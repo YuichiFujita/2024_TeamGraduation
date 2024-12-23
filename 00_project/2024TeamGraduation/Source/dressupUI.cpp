@@ -15,6 +15,7 @@
 #include "game.h"
 #include "renderTexture.h"
 #include "entry_setupTeam.h"
+#include "entry_dressup.h"
 #include "object2D.h"
 #include "object2D_Anim.h"
 
@@ -75,7 +76,8 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 //============================================================
 //	コンストラクタ
 //============================================================
-CDressupUI::CDressupUI(const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
+CDressupUI::CDressupUI(CEntry_Dressup* pParent, const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
+	m_pParent		(pParent),		// 親クラス情報
 	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
 	m_pChangeIcon	(nullptr),		// 変更種類アイコン情報
 	m_pReadyCheck	(nullptr),		// 準備完了チェック情報
@@ -140,12 +142,24 @@ HRESULT CDressupUI::Init()
 //============================================================
 void CDressupUI::Uninit()
 {
-	// チームセットアップ情報の取得
-	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
-	assert(pSetupTeam != nullptr);
+	// 既に破棄済みの場合抜ける
+	if (IsDeath()) { return; }
 
-	// 破棄したプレイヤーがAIの場合はAI総数を減算
-	if (pSetupTeam->GetEntryIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
+	// チームセットアップ情報の取得
+	assert(m_pParent != nullptr);
+	CEntry_SetUpTeam* pSetupTeam = m_pParent->GetSetupTeam();
+	if (pSetupTeam == nullptr)
+	{ // チームセットアップ情報が破棄されている場合
+
+		// AIの総数を初期化
+		m_nNumAI = 0;
+	}
+	else
+	{ // チームセットアップ情報が破棄されていない場合
+
+		// 破棄したプレイヤーがAIの場合はAI総数を減算
+		if (pSetupTeam->GetEntryIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
+	}
 
 	// レンダーテクスチャの破棄
 	SAFE_REF_RELEASE(m_pRenderScene);
@@ -273,12 +287,13 @@ void CDressupUI::SetPosition(const MyLib::Vector3& pos)
 //============================================================
 CDressupUI *CDressupUI::Create
 (
+	CEntry_Dressup* pParent,	// 親クラス情報
 	const int nPlayerIdx,		// プレイヤーインデックス
 	const MyLib::Vector3 &rPos	// 原点位置
 )
 {
 	// ドレスアップUIの生成
-	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(nPlayerIdx);
+	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, nPlayerIdx);
 	if (pDressupUI == nullptr)
 	{ // 生成に失敗した場合
 
@@ -717,6 +732,9 @@ void CDressupUI::SetPositionRelative()
 //============================================================
 void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 着せ替え状態ではない場合抜ける
+	if (m_pParent->GetState() != CEntry_Dressup::EState::STATE_DRESSUP) { return; }
+
 	// チームセットアップ情報の取得
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return; }

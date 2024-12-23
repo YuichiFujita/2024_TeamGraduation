@@ -45,6 +45,7 @@ private:
 	void AttackDash(CPlayer* pTarget) override;	// ‘–‚è“Š‚°
 	void ForciblyReturn() override;				// 
 	virtual void MoveRetreat() override;		// 
+	void MoveRandom() override;					// ƒ‰ƒ“ƒ_ƒ€ˆÚ“®
 
 	//=============================
 	// ƒƒ“ƒo•Ï”

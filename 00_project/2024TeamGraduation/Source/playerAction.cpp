@@ -357,6 +357,7 @@ void CPlayerAction::EndDodge(const float fDeltaTime, const float fDeltaRate, con
 void CPlayerAction::EndUnstable(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_pPlayer->SetEnableBrake(false);
+	m_pPlayer->SetEnableMove(true);
 }
 
 //==========================================================================
