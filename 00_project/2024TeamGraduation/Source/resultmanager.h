@@ -45,9 +45,11 @@ public:
 	// 状態
 	enum EState
 	{
-		STATE_NONE = 0,		// なにもない
-		STATE_PRELUDE,		// 前座勝敗
-		STATE_CONTEST,		// モテ勝敗
+		STATE_NONE = 0,				// なにもない
+		STATE_PRELUDE_READY,		// 前座勝敗準備
+		STATE_PRELUDE,				// 前座勝敗
+		STATE_CONTEST_READY,		// モテ勝敗準備
+		STATE_CONTEST,				// モテ勝敗
 		STATE_MAX
 	};
 
@@ -90,12 +92,16 @@ private:
 	// 状態関数
 	//-----------------------------
 	void SetState(EState state);		// 状態設定
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
-	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
-	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗
-	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗
-
+	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 状態更新
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);					// なし
+	void StatePreludeReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗準備
+	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 前座勝敗
+	void StateCharmContestReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗準備
+	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モテ勝敗
+	
+	void StateStartPreludeReady();		// [開始]前座勝敗準備
 	void StateStartPrelude();			// [開始]前座勝敗
+	void StateStartCharmContestReady();	// [開始]モテ勝敗準備
 	void StateStartCharmContest();		// [開始]モテ勝敗
 
 	void StateEndPrelude();				// [終了]前座勝敗
@@ -124,6 +130,7 @@ private:
 	//-----------------------------
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
+	bool m_bStateTrans;	// 状態遷移可能フラグ(t:不可/f:可)
 
 	static CResultManager* m_pThisPtr;							// 自身のポインタ
 };
