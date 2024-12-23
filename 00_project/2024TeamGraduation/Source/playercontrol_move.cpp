@@ -49,6 +49,11 @@ CPlayerControlMove::~CPlayerControlMove()
 //==========================================================================
 void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
+#if _DEBUG
+	if (!player->IsDebugMove()) return;
+#endif
+
 	// ƒ‚[ƒVƒ‡ƒ“î•ñŽæ“¾
 	CMotion* pMotion = player->GetMotion();
 	int nMotionType = pMotion->GetType();

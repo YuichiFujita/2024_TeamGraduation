@@ -2517,6 +2517,9 @@ void CPlayer::Debug()
 {
 #if _DEBUG
 
+	// 
+	ImGui::Checkbox("bMove", &m_bDebugMove);
+
 	//-----------------------------
 	// 位置
 	//-----------------------------
