@@ -70,7 +70,7 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 	if (!pPlayer->GetDamageInfo().bReceived) { return hitInfo; }
 
 	// ダメージを与える
-	//pStatus->LifeDamage(pBall->GetDamage());
+	pStatus->LifeDamage(pBall->GetDamage());
 
 	// ヒットエフェクト生成
 	switch (pBall->GetTypeAtk())
