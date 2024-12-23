@@ -25,7 +25,6 @@ namespace timeUI
 	const int MAX_SEC	= 2;	// タイマーの秒の桁数
 	const int MAX_MSEC	= 3;	// タイマーのミリ秒の桁数
 	const int MAX_PART	= 2;	// 区切りの最大数
-
 	const int MAX_DIGIT = (MAX_MIN + MAX_SEC + MAX_MSEC);	// タイマーの桁数 (分・秒・ミリ秒)
 }
 
@@ -103,6 +102,7 @@ public:
 	void SetSpaceValue(const D3DXVECTOR2& rSpace);	// 区切りの空白設定
 	void SetSpacePart(const D3DXVECTOR2& rSpace);	// 数字の空白設定
 	void SetColor(const D3DXCOLOR& rCol);			// 色の設定
+	void SetAlpha(const float fAlpha);				// 透明度の設定
 	void SetAlignX(const EAlignX align);			// 横配置設定
 	void SetAlignY(const EAlignY align);			// 縦配置設定
 	float GetTimeWidth(void) const;					// タイム全体の横幅取得
@@ -113,6 +113,7 @@ public:
 	D3DXVECTOR2 GetSpaceValue(void) const	{ return m_spaceValue; }	// 区切りの空白取得
 	D3DXVECTOR2 GetSpacePart(void) const	{ return m_spacePart; }		// 数字の空白取得
 	D3DXCOLOR GetColor(void) const			{ return m_col;}			// 色の設定
+	float GetAlpha(void) const				{ return m_col.a; }			// 透明度の設定
 	EAlignX GetAlignX(void) const			{ return m_alignX; }		// 横配置取得
 	EAlignY GetAlignY(void) const			{ return m_alignY; }		// 縦配置取得
 

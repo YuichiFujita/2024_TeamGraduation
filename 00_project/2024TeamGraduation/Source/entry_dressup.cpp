@@ -38,7 +38,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CEntry_Dressup::CEntry_Dressup() : CEntryScene()
+CEntry_Dressup::CEntry_Dressup() : CEntryScene(), m_state(STATE_DRESSUP)
 {
 	
 }
@@ -131,11 +131,26 @@ void CEntry_Dressup::Uninit()
 //==========================================================================
 void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	switch (m_state)
+	{
+	case EState::STATE_DRESSUP:
+
+		// ゲーム設定遷移
+		TransSetting();
+		break;
+
+	case EState::STATE_SETTING:
+
+
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+
 	// 親の更新
 	CEntryScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// ゲーム設定遷移
-	TransSetting();
 }
 
 //==========================================================================
@@ -159,8 +174,8 @@ void CEntry_Dressup::TransSetting()
 			SAFE_UNINIT(rInfo);
 		}
 
-		// ゲーム設定シーンへ遷移
-		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_GAMESETTING);
+		// ゲーム設定状態に遷移
+		m_state = EState::STATE_SETTING;
 	}
 }
 
