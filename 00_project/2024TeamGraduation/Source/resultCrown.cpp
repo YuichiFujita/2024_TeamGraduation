@@ -1,10 +1,10 @@
 //==========================================================================
 // 
-//  タイトルロゴ処理 [titleLogo.cpp]
+//  リザルト王冠処理 [resultCrown.cpp]
 //  Author : Kai Takada
 // 
 //==========================================================================
-#include "titleLogo.h"
+#include "resultCrown.h"
 #include "object2D.h"
 #include "objectX.h"
 #include "manager.h"
@@ -16,7 +16,11 @@
 //==========================================================================
 namespace
 {
-	const std::string MODEL_LOGO = "data\\MODEL\\title\\logo.x";			// ロゴのモデル
+	const std::string MODEL[] =	// モデル
+	{
+		"data\\MODEL\\result\\crown.x",
+		"data\\MODEL\\result\\draw.x",
+	};
 }
 
 namespace StateTime
@@ -44,25 +48,26 @@ namespace Logo
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CTitleLogo::STATE_FUNC CTitleLogo::m_StateFunc[] =	// 状態関数
+CResultCrown::STATE_FUNC CResultCrown::m_StateFunc[] =	// 状態関数
 {
-	&CTitleLogo::StateNone,		// なし
-	&CTitleLogo::StateSpawn,	// 登場
-	&CTitleLogo::StateLoop,		// ループ
-	&CTitleLogo::StateStart,	// 開始
-	&CTitleLogo::StateWait,		// 待機
+	&CResultCrown::StateNone,		// なし
+	&CResultCrown::StateSpawn,	// 登場
+	&CResultCrown::StateLoop,		// ループ
+	&CResultCrown::StateStart,	// 開始
+	&CResultCrown::StateWait,		// 待機
 };
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CTitleLogo::CTitleLogo(int nPriority, const LAYER layer) : CObject(nPriority, layer),
+CResultCrown::CResultCrown(int nPriority, const LAYER layer) : CObject(nPriority, layer),
 	m_state				(EState::STATE_NONE),	// 状態
 	m_fStateTime		(0.0f),					// 状態タイマー
 	m_fRotationTime		(0.0f),					// 回転タイマー
 	m_fIntervalRotate	(0.0f),					// 回転までの間隔
 	m_fRotationY		(0.0f),					// Y軸回転量
-	m_fTime				(0.0f)					// 副のタイマー
+	m_fTime				(0.0f),					// 副のタイマー
+	m_result			(EResult::RESULT_WIN)	// 結果
 {
 	
 }
@@ -70,7 +75,7 @@ CTitleLogo::CTitleLogo(int nPriority, const LAYER layer) : CObject(nPriority, la
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CTitleLogo::~CTitleLogo()
+CResultCrown::~CResultCrown()
 {
 
 }
@@ -78,15 +83,15 @@ CTitleLogo::~CTitleLogo()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CTitleLogo* CTitleLogo::Create()
+CResultCrown* CResultCrown::Create(EResult result)
 {
 	// メモリの確保
-	CTitleLogo* pLogo = DEBUG_NEW CTitleLogo;
+	CResultCrown* pLogo = DEBUG_NEW CResultCrown;
 
 	if (pLogo != nullptr)
 	{
 		// クラスの初期化
-		if (FAILED(pLogo->Init()))
+		if (FAILED(pLogo->Init(result)))
 		{ // 初期化に失敗した場合
 			SAFE_UNINIT(pLogo);
 			return nullptr;
@@ -99,7 +104,7 @@ CTitleLogo* CTitleLogo::Create()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CTitleLogo::Init()
+HRESULT CResultCrown::Init()
 {
 	// オブジェクトの種類設定
 	CObject::SetType(CObject::TYPE::TYPE_OBJECT2D);
@@ -113,7 +118,6 @@ HRESULT CTitleLogo::Init()
 	// 状態設定
 	SetState(EState::STATE_SPAWN);
 
-
 	// カメラ取得
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -126,12 +130,22 @@ HRESULT CTitleLogo::Init()
 }
 
 //==========================================================================
+// 初期化処理
+//==========================================================================
+HRESULT CResultCrown::Init(EResult result)
+{
+	SetResult(result);
+
+	return Init();
+}
+
+//==========================================================================
 // 主生成
 //==========================================================================
-HRESULT CTitleLogo::CreateMain()
+HRESULT CResultCrown::CreateMain()
 {
 	// 生成処理
-	m_pMain = CObjectX::Create(MODEL_LOGO, Logo::POS_ORIGIN);
+	m_pMain = CObjectX::Create(MODEL[m_result], Logo::POS_ORIGIN);
 	if (m_pMain == nullptr) return E_FAIL;
 
 	// オブジェクトの種類設定
@@ -143,7 +157,7 @@ HRESULT CTitleLogo::CreateMain()
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CTitleLogo::Uninit()
+void CResultCrown::Uninit()
 {
 	// オブジェクトの破棄
 	Release();
@@ -152,7 +166,7 @@ void CTitleLogo::Uninit()
 //==========================================================================
 // 削除処理
 //==========================================================================
-void CTitleLogo::Kill()
+void CResultCrown::Kill()
 {
 	// ロゴ部分
 	SAFE_KILL(m_pMain);
@@ -164,7 +178,7 @@ void CTitleLogo::Kill()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CTitleLogo::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (GET_MANAGER->GetInstantFade()->GetState() == CInstantFade::EState::STATE_FADEIN)
 	{// フェードINは抜ける
@@ -181,7 +195,7 @@ void CTitleLogo::Update(const float fDeltaTime, const float fDeltaRate, const fl
 //==========================================================================
 // 状態更新
 //==========================================================================
-void CTitleLogo::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// タイマー更新
 	m_fStateTime += fDeltaTime * fDeltaRate * fSlowRate;
@@ -193,10 +207,10 @@ void CTitleLogo::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 // 登場
 //==========================================================================
-void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置更新
-	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(Logo::POS_ORIGIN, Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime, 3.0f);
+	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(GetOriginPosition(), Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime, 3.0f);
 	m_pMain->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)
@@ -208,7 +222,7 @@ void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 // ループ
 //==========================================================================
-void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 回転タイマー加算
 	m_fRotationTime += fDeltaTime * fSlowRate;
@@ -233,7 +247,8 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 	float ratio = m_fStateTime / StateTime::LOOP;
 
 	// 位置更新
-	MyLib::Vector3 pos = Logo::POS_DEFAULT;
+	MyLib::Vector3 pos = m_pMain->GetPosition();
+	pos.y = Logo::POS_DEFAULT.y;
 
 	// 浮上
 	pos.y += sinf(D3DX_PI * (m_fStateTime / StateTime::LOOP)) * Logo::VALUE_FLOAT;
@@ -244,22 +259,19 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 	MyLib::Vector3 setrot = rot + MyLib::Vector3(0.0f, m_fRotationY, 0.0f);
 	m_pMain->SetRotation(setrot);
 
+	//// カメラ取得
+	//CCamera* pCamera = GET_MANAGER->GetCamera();
 
-
-	// カメラ取得
-	CCamera* pCamera = GET_MANAGER->GetCamera();
-
-	// カメラの向き同期
-	MyLib::Vector3 cameraRot = pCamera->GetRotation();
-	cameraRot.y = rot.y;
-	pCamera->SetRotation(cameraRot);
-
+	//// カメラの向き同期
+	//MyLib::Vector3 cameraRot = pCamera->GetRotation();
+	//cameraRot.y = rot.y;
+	//pCamera->SetRotation(cameraRot);
 }
 
 //==========================================================================
 // 開始
 //==========================================================================
-void CTitleLogo::StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -267,7 +279,7 @@ void CTitleLogo::StateStart(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 // 待機
 //==========================================================================
-void CTitleLogo::StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CResultCrown::StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 
 }
@@ -275,7 +287,7 @@ void CTitleLogo::StateWait(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 // 主更新
 //==========================================================================
-void CTitleLogo::UpdateMain()
+void CResultCrown::UpdateMain()
 {
 	
 }
@@ -283,7 +295,7 @@ void CTitleLogo::UpdateMain()
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CTitleLogo::Draw()
+void CResultCrown::Draw()
 {
 
 }
@@ -291,7 +303,7 @@ void CTitleLogo::Draw()
 //==========================================================================
 // 描画状況の設定処理
 //==========================================================================
-void CTitleLogo::SetEnableDisp(bool bDisp)
+void CResultCrown::SetEnableDisp(bool bDisp)
 {
 	// 基底クラスの描画状況設定
 	CObject::SetEnableDisp(bDisp);
@@ -303,8 +315,26 @@ void CTitleLogo::SetEnableDisp(bool bDisp)
 //==========================================================================
 // 状態設定
 //==========================================================================
-void CTitleLogo::SetState(EState state)
+void CResultCrown::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+}
+
+//==========================================================================
+// 位置設定
+//==========================================================================
+void CResultCrown::SetPosition(const MyLib::Vector3& pos)
+{
+	if (m_pMain != nullptr)
+	{
+		m_pMain->SetPosition(pos);
+	}
+}
+
+//==========================================================================
+// Xモデル
+//==========================================================================
+void CResultCrown::BindXData(std::string filepass)
+{
 }

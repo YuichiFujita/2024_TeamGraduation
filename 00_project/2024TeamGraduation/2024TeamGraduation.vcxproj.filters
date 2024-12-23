@@ -797,6 +797,9 @@
     <ClCompile Include="Source\title_susuru.cpp">
       <Filter>mode\title\scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\resultCrown.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1452,6 +1455,9 @@
     </ClInclude>
     <ClInclude Include="Source\title_susuru.h">
       <Filter>mode\title\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resultCrown.h">
+      <Filter>mode\result</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

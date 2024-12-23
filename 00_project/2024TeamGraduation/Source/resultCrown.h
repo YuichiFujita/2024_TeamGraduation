@@ -1,12 +1,12 @@
 //==========================================================================
 // 
-//  タイトルロゴヘッダー [titleLogo.h]
+//  リザルト王冠処理 [resultCrown.cpp]
 //  Author : Kai Takada
 // 
 //==========================================================================
 
-#ifndef _TITLELOGO_H_
-#define _TITLELOGO_H_	// 二重インクルード防止
+#ifndef _RESULTCROWN_H_
+#define _RESULTCROWN_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -21,7 +21,7 @@
 // クラス定義
 //==========================================================================
 // タイトルロゴクラス
-class CTitleLogo : public CObject
+class CResultCrown : public CObject
 {
 public:
 
@@ -38,16 +38,24 @@ public:
 		STATE_MAX
 	};
 
+	enum EResult
+	{
+		RESULT_WIN = 0,		// 王冠
+		RESULT_DRAW,		// 引き分け
+		RESULT_MAX
+	};
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CTitleLogo(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
-	~CTitleLogo();
+	CResultCrown(int nPriority = mylib_const::PRIORITY_DEFAULT, const LAYER layer = LAYER::LAYER_DEFAULT);
+	~CResultCrown();
 
 	//=============================
 	// オーバーライド関数
 	//=============================
 	virtual HRESULT Init() override;
+	virtual HRESULT Init(EResult result);
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
@@ -59,11 +67,15 @@ public:
 	//=============================
 	void SetState(EState state);			// 状態設定
 	EState GetState() { return m_state; }	// 状態取得
+	void SetResult(EResult result) { m_result = result; }	// 結果設定
+	EResult GetResult() { return m_result; }				// 結果取得
+	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
+	void BindXData(std::string filepass);
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CTitleLogo* Create();	// 生成
+	static CResultCrown* Create(EResult result = EResult::RESULT_DRAW);	// 生成
 
 private:
 
@@ -71,7 +83,7 @@ private:
 	// 関数リスト
 	//=============================
 	// 状態関数
-	typedef void(CTitleLogo::*STATE_FUNC)(const float, const float, const float);
+	typedef void(CResultCrown::*STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 
 	//=============================
@@ -79,11 +91,11 @@ private:
 	//=============================
 	// 状態
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {}
-	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 登場
-	void StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ループ
-	void StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 開始
-	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 待機
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {}	// なし
+	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 登場
+	void StateLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ループ
+	void StateStart(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 開始
+	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 待機
 	
 	// 生成
 	HRESULT CreateMain();	// 主生成
@@ -106,6 +118,7 @@ private:
 	// その他
 	CObjectX* m_pMain;		// メインロゴ
 	float m_fTime;			// タイマー
+	EResult m_result;		// 結果
 };
 
 #endif
