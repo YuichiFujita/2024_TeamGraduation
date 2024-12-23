@@ -567,6 +567,18 @@ void CManager::Uninit()
 		m_pRenderer = nullptr;
 	}
 
+	// シーンの破棄
+	if (m_pScene != nullptr)
+	{// メモリの確保が出来ていたら
+
+		// 終了処理
+		m_pScene->Uninit();
+
+		// メモリの開放
+		delete m_pScene;
+		m_pScene = nullptr;
+	}
+
 	// シェーダーの破棄
 	CShader::Release();
 
@@ -653,15 +665,6 @@ void CManager::Uninit()
 
 	// キャラクターアニメーションの破棄
 	SAFE_REF_RELEASE(m_pCharacterAnim);
-
-	if (m_pScene != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pScene->Uninit();
-		delete m_pScene;
-		m_pScene = nullptr;
-	}
 
 	// フェードの破棄
 	if (m_pFade != nullptr)

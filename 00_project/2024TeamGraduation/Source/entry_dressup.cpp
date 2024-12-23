@@ -6,9 +6,12 @@
 // 
 //=============================================================================
 #include "entry_dressup.h"
+#include "manager.h"
+#include "fade.h"
 #include "entry_setupTeam.h"
 #include "playerManager.h"
 #include "dressupUI.h"
+#include "entryRuleManager.h"
 
 //==========================================================================
 // 定数定義
@@ -38,7 +41,9 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CEntry_Dressup::CEntry_Dressup() : CEntryScene(), m_state(STATE_DRESSUP)
+CEntry_Dressup::CEntry_Dressup() : CEntryScene(),
+	m_pRuleManager	(nullptr),		// ルールマネージャー
+	m_state			(STATE_DRESSUP)	// 状態
 {
 	
 }
@@ -104,7 +109,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 
 		// ドレスアップUIの生成
-		pDressup = CDressupUI::Create(i, posUI);
+		pDressup = CDressupUI::Create(this, i, posUI);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
@@ -123,6 +128,16 @@ HRESULT CEntry_Dressup::Init()
 //==========================================================================
 void CEntry_Dressup::Uninit()
 {
+	// エントリールールの破棄
+	SAFE_REF_RELEASE(m_pRuleManager);
+
+	for (auto& rInfo : m_vecDressInfo)
+	{ // 要素数分繰り返す
+
+		// ドレスアップUIの終了
+		SAFE_UNINIT(rInfo);
+	}
+
 	delete this;
 }
 
@@ -132,8 +147,15 @@ void CEntry_Dressup::Uninit()
 void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	switch (m_state)
-	{
+	{ // 状態ごとの処理
 	case EState::STATE_DRESSUP:
+
+		// チーム設定遷移
+		if (TransSetupTeam())
+		{ // 遷移する場合
+
+			return;
+		}
 
 		// ゲーム設定遷移
 		TransSetting();
@@ -141,7 +163,18 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 
 	case EState::STATE_SETTING:
 
+		// ルールマネージャーの更新
+		assert(m_pRuleManager != nullptr);
+		m_pRuleManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		break;
 
+	case EState::STATE_END:
+
+		// セーブ処理
+		Save();
+
+		// ゲーム画面に遷移する
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
 		break;
 
 	default:
@@ -151,6 +184,69 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 
 	// 親の更新
 	CEntryScene::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 状態設定
+//==========================================================================
+void CEntry_Dressup::SetState(const EState state)
+{
+	// 状態を設定
+	m_state = state;
+	switch (m_state)
+	{ // 状態ごとの処理
+	case STATE_DRESSUP:
+
+		// エントリールールの破棄
+		SAFE_REF_RELEASE(m_pRuleManager);
+		break;
+
+	case STATE_SETTING:
+
+		if (m_pRuleManager == nullptr)
+		{
+			// エントリールールの生成
+			m_pRuleManager = CEntryRuleManager::Create(this);
+		}
+		break;
+
+	case STATE_END:
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+}
+
+//==========================================================================
+// チーム設定遷移
+//==========================================================================
+bool CEntry_Dressup::TransSetupTeam()
+{
+	// 準備完了している場合抜ける
+	if (IsAllReady()) { return false; }
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B))
+	{
+		// エントリールールの破棄
+		SAFE_REF_RELEASE(m_pRuleManager);
+
+		for (auto& rInfo : m_vecDressInfo)
+		{ // 要素数分繰り返す
+
+			// ドレスアップUIの終了
+			SAFE_UNINIT(rInfo);
+		}
+
+		// チーム設定シーンへ遷移
+		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
+
+		return true;
+	}
+
+	return false;
 }
 
 //==========================================================================
@@ -164,18 +260,8 @@ void CEntry_Dressup::TransSetting()
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X))
 	{
-		// セーブ処理
-		Save();
-
-		for (auto& rInfo : m_vecDressInfo)
-		{ // 要素数分繰り返す
-
-			// ドレスアップUIの終了
-			SAFE_UNINIT(rInfo);
-		}
-
 		// ゲーム設定状態に遷移
-		m_state = EState::STATE_SETTING;
+		SetState(EState::STATE_SETTING);
 	}
 }
 
