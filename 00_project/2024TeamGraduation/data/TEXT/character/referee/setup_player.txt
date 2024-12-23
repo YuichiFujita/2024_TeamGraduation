@@ -34,7 +34,7 @@ MODEL_FILENAME = data/MODEL/player/referee/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/referee/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/referee/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/referee/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair/PE_hair.x		# [15]髪
+MODEL_FILENAME = data/MODEL/player/hair/PE_hair07.x		# [15]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報

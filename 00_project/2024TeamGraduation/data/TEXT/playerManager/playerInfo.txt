@@ -6,16 +6,7 @@
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
-		ACCESSORY = 0
-		FACE = 0
-		BODY = 0
-		HANDED = 0
-	END_SETPLAYER
-
-	SETPLAYER
-		ID_CONTROLL = 2
+		ID_CONTROLL = 0
 		HAIR = 0
 		ACCESSORY = 0
 		FACE = 0
@@ -28,24 +19,6 @@ END_SETTEAM
 # É`Å[ÉÄ1
 #------------------------------------------------------------------------------
 SETTEAM
-	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
-		ACCESSORY = 0
-		FACE = 0
-		BODY = 0
-		HANDED = 0
-	END_SETPLAYER
-
-	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
-		ACCESSORY = 0
-		FACE = 0
-		BODY = 0
-		HANDED = 0
-	END_SETPLAYER
-
 	SETPLAYER
 		ID_CONTROLL = -1
 		HAIR = 0
