@@ -19,8 +19,8 @@
 //************************************************************
 namespace
 {
-	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\number000.png";		// 数字テクスチャ
-	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";	// 区切りテクスチャ
+	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\number000.png";	// 数字テクスチャ
+	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";		// 区切りテクスチャ
 	const int PRIORITY = 6;	// タイムUIの優先順位
 }
 
@@ -97,7 +97,7 @@ HRESULT CTimeUI::Init(void)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの生成
-		m_apPart[nCntPart] = CObject2D::Create();
+		m_apPart[nCntPart] = CObject2D::Create(PRIORITY);
 		if (m_apPart[nCntPart] == nullptr)
 		{ // 生成に失敗した場合
 
@@ -122,13 +122,15 @@ void CTimeUI::Uninit(void)
 	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
 	{ // 数字の数分繰り返す
 
-		m_apValue[nCntValue] = nullptr;
+		// 数字の終了
+		SAFE_UNINIT(m_apValue[nCntValue]);
 	}
 
 	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
 	{ // 区切りの数分繰り返す
 
-		m_apPart[nCntPart] = nullptr;
+		// 区切りの終了
+		SAFE_UNINIT(m_apPart[nCntPart]);
 	}
 
 	// オブジェクトの破棄
@@ -413,6 +415,19 @@ void CTimeUI::SetColor(const D3DXCOLOR& rCol)
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetColor(rCol);
 	}
+}
+
+//============================================================
+//	透明度の設定処理
+//============================================================
+void CTimeUI::SetAlpha(const float fAlpha)
+{
+	// 透明度を設定
+	D3DXCOLOR col = GetColor();	// 色
+	col.a = fAlpha;
+
+	// 色の設定
+	SetColor(col);
 }
 
 //============================================================

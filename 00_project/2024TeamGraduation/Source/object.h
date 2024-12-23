@@ -113,6 +113,8 @@ public:
 	virtual inline MyLib::Vector3 GetOldRotation() const				{ return m_rotOld; }	// 前回の向き取得
 	virtual inline void SetOriginRotation(const MyLib::Vector3& rot)	{ m_rotOrigin = rot; }	// 元の向き設定
 	virtual inline MyLib::Vector3 GetOriginRotation() const				{ return m_rotOrigin; }	// 元の向き取得
+	virtual inline void SetColor(const D3DXCOLOR& rCol)	{ assert(false); }				// 色設定
+	virtual inline D3DXCOLOR GetColor() const			{ assert(false); return {}; }	// 色取得
 
 	// 変更処理
 	virtual inline void AddPosition(const MyLib::Vector3& pos)	{ m_pos += pos; }	// 位置加算

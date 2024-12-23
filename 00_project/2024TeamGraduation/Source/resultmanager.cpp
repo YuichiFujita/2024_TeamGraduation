@@ -22,15 +22,17 @@
 namespace
 {
 	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\win.png";		// 勝ち
-	const std::string TEXFILE_DRAW= "data\\TEXTURE\\result\\draw.jpg";		// 引き分け
-	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);
-	const float POSY_POLY = 100.0f;
+	const std::string TEXFILE_DRAW = "data\\TEXTURE\\result\\draw.jpg";		// 引き分け
+	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\draw.jpg";	// 試合に勝利したのは！
+	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\draw.jpg";	// よりモテたのは！
+	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);		// 3Dポリゴンサイズ
+	const float POSY_POLY = 100.0f;											// 3Dポリゴン位置(y)
 
-	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);
-	const float DISTANCE_CAMERA = 1940.0f;
+	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);	// スタート時カメラ向き
+	const float DISTANCE_CAMERA = 1940.0f;									// スタート時カメラ距離
+	const float POSR_HEIGHT = 100.0f;										// カメラの注視点の高さ
 
-	const float POSR_HEIGHT = 100.0f;	// カメラの注視点の高さ
-	const MyLib::Vector3 POS_COURT[CGameManager::ETeamSide::SIDE_MAX] =	// 位置
+	const MyLib::Vector3 POS_COURT[CGameManager::ETeamSide::SIDE_MAX] =	// コート中央位置
 	{
 		MyLib::Vector3(-900.0f, 0.0f, 0.0f),	// 左
 		MyLib::Vector3(+900.0f, 0.0f, 0.0f),	// 右
@@ -47,9 +49,9 @@ namespace StateTime
 
 namespace Draw
 {// 引き分け
-	const MyLib::Vector3 POS = MyLib::Vector3(0.0f, 100.0f, 0.0f);
+	const MyLib::Vector3 POS = MyLib::Vector3(0.0f, 100.0f, 0.0f);	// ポリゴン位置
 
-	const float DISTANCE_CAMERA = 1700.0f;
+	const float DISTANCE_CAMERA = 1700.0f;		// カメラ距離
 }
 
 namespace Ready
@@ -102,6 +104,19 @@ namespace Contest
 	const float DISTANCE_CAMERA = 700.0f;
 
 	const float POSY_CROWN = 400.0f;	// 王冠の高さ
+}
+
+// カメラ遷移時間
+namespace CameraTime
+{
+	const float END_TIME[] =
+	{
+		0.0f,		// なにもない
+		0.3f,		// 前座勝敗準備
+		1.0f,		// 前座勝敗
+		0.3f,		// モテ勝敗準備
+		1.0f,		// モテ勝敗
+	};
 }
 
 //==========================================================================
@@ -205,7 +220,7 @@ HRESULT CResultManager::Init()
 	CreateAudience();
 
 	// 遷移可能に
-	m_bStateTrans = false;
+	m_bStateTrans = true;
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -282,8 +297,8 @@ void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float START = 0.0f;
-	const float END = 0.3f;
+	float START = 0.0f;
+	float END = CameraTime::END_TIME[m_state];
 	
 	// 試合に勝利したチーム！
 
@@ -292,9 +307,9 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 	Ready::DISTANCE_CAMERA;
 	if (pCamera->GetState() == CCamera::STATE::STATE_FOLLOW)
 	{
-		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), pCamera->GetDistanceDest(), START, END, m_fStateTime);
-		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), pCamera->GetDestRotation(), START, END, m_fStateTime);
-		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), pCamera->GetPositionRDest(), START, END, m_fStateTime);
+		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Ready::DISTANCE_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Ready::ROT_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Ready::POSR_CAMERA, START, END, m_fStateTime);
 
 		pCamera->SetDistance(fDistance);
 		pCamera->SetRotation(rot);
@@ -313,8 +328,8 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 //==========================================================================
 void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float START = 0.0f;
-	const float END = 1.0f;
+	float START = 0.0f;
+	float END = CameraTime::END_TIME[m_state];
 
 	// カメラ補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -342,8 +357,8 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 //==========================================================================
 void CResultManager::StateCharmContestReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float START = 0.0f;
-	const float END = 0.3f;
+	float START = 0.0f;
+	float END = CameraTime::END_TIME[m_state];
 
 	// モテ勝利したチーム！
 
@@ -353,9 +368,9 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 
 	if (pCamera->GetState() == CCamera::STATE::STATE_FOLLOW)
 	{
-		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), pCamera->GetDistanceDest(), START, END, m_fStateTime);
-		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), pCamera->GetDestRotation(), START, END, m_fStateTime);
-		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), pCamera->GetPositionRDest(), START, END, m_fStateTime);
+		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), Ready::DISTANCE_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), Ready::ROT_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), Ready::POSR_CAMERA, START, END, m_fStateTime);
 
 		pCamera->SetDistance(fDistance);
 		pCamera->SetRotation(rot);
@@ -374,8 +389,8 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 //==========================================================================
 void CResultManager::StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float START = 0.0f;
-	const float END = 1.0f;
+	float START = 0.0f;
+	float END = CameraTime::END_TIME[m_state];
 
 	// カメラ補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();

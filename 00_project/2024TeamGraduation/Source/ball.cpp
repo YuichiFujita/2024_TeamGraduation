@@ -1723,6 +1723,22 @@ void CBall::ThrowSpecial()
 //==========================================================================
 void CBall::Landing()
 {
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		// プレイヤーから保存中のボールを破棄
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		pPlayer->SetBall(nullptr);
+	}
+
+	// キャッチしていたプレイヤーを破棄
+	m_pPlayer = nullptr;
+
+	// 所持マーカーからプレイヤーを破棄
+	m_pHoldMarker->BindPlayer(nullptr);
+
 	// 着地状態にする
 	SetState(STATE_LAND);
 

@@ -14,13 +14,40 @@ SETTEAM
 		HANDED = 0
 	END_SETPLAYER
 
+	SETPLAYER
+		ID_CONTROLL = 2
+		HAIR = 0
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+
 END_SETTEAM
 #------------------------------------------------------------------------------
 # É`Å[ÉÄ1
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
-		ID_CONTROLL = 1
+		ID_CONTROLL = -1
+		HAIR = 0
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 0
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+
+	SETPLAYER
+		ID_CONTROLL = -1
 		HAIR = 0
 		ACCESSORY = 0
 		FACE = 0

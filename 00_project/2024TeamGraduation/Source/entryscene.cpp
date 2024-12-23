@@ -39,9 +39,16 @@ CEntryScene* CEntryScene::Create(CEntry::ESceneType sceneType)
 	switch (sceneType)
 	{
 	case CEntry::SCENETYPE_SETUPTEAM:
+	{
+		CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();	// チーム設定シーン
+
+		// チーム設定シーンの終了
+		SAFE_UNINIT(pSetupTeam);
+
+		// チーム設定シーンの再生成
 		pScene = DEBUG_NEW CEntry_SetUpTeam;
 		break;
-
+	}
 	case CEntry::SCENETYPE_DRESSUP:
 		pScene = DEBUG_NEW CEntry_Dressup;
 		break;
