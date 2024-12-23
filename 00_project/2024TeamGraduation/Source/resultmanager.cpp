@@ -22,9 +22,9 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\draw.jpg";	// 試合に勝利したのは！
-	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\draw.jpg";	// よりモテたのは！
-	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);		// 3Dポリゴンサイズ
+	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\prelude.png";	// 試合に勝利したのは！
+	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\contest.png";	// よりモテたのは！
+	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(500.0f, 100.0f);		// 3Dポリゴンサイズ
 	const float POSY_POLY = 100.0f;											// 3Dポリゴン位置(y)
 
 	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);	// スタート時カメラ向き
@@ -614,6 +614,42 @@ void CResultManager::CreateCrown(CGameManager::ETeamSide team)
 	m_pCrown->SetPosition(pos);
 	m_pCrown->SetOriginPosition(pos);
 	m_pCrown->SetState(CResultCrown::EState::STATE_LOOP);
+}
+
+//==========================================================================
+// 勝敗ポリゴン生成
+//==========================================================================
+void CResultManager::CreatePolygon(EState state)
+{
+	CTexture* pTexture = CTexture::GetInstance();
+
+	SAFE_KILL(m_pText);
+	m_pText = CObject3D::Create();
+	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
+	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
+	m_pText->SetSize(SIZE_POLY);
+
+	MyLib::Vector3 pos = VEC3_ZERO;
+	pos.y += Ready::POSY_WORD;
+	m_pText->SetPosition(pos);
+
+	std::string filepass = TEXFILE_PRELUDE;
+
+	switch (state)
+	{
+	case CResultManager::STATE_PRELUDE_READY:
+		filepass = TEXFILE_PRELUDE;
+		break;
+
+	case CResultManager::STATE_CONTEST_READY:
+		filepass = TEXFILE_CONTEST;
+		break;
+
+	default:
+		break;
+	}
+	
+	m_pText->BindTexture(pTexture->Regist(filepass));
 }
 
 //==========================================================================

@@ -113,6 +113,7 @@ private:
 	//-----------------------------
 	void CreateAudience();								// 観客生成
 	void CreateCrown(CGameManager::ETeamSide team);		// 王冠モデル生成
+	void CreatePolygon(EState state);		// 勝敗ポリゴン生成
 
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み
