@@ -59,8 +59,9 @@ public:
 	//-----------------------------
 	// チーム情報
 	//-----------------------------
-	int GetEntryIdx(int nPadIdx);	// エントリーのインデックス
-	CGameManager::ETeamSide GetTeamSideUser(int nEntryIdx);	// チームサイド取得 (ユーザー)
+	int PadIdxToEntryIdx(int nPadIdx);	// パッドインデックスのエントリーインデックス変換
+	int GetEntryIdx(int nPlayerIdx);	// エントリーインデックス取得
+	CGameManager::ETeamSide GetTeamSide(int nPlayerIdx);	// チームサイド取得
 	CGameManager::ETeamSide GetTeamSideAI(int nOccurIdx);	// チームサイド取得 (AI)
 	inline int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得
 	inline int GetPlayerNum(CGameManager::ETeamSide side)				{ return m_nPlayerNum[side]; }	// プレイヤーの数取得
@@ -103,7 +104,6 @@ private:
 	void ChangeMaxPlayer();	// プレイヤー最大数変更
 	void TransDressUp(const bool bAllReady);	// 着せ替え遷移
 	void DeleteEntry(int* pEntryIdx);			// エントリー解除
-	void DeleteReady(int* pEntryIdx);			// 準備完了解除
 
 	//-----------------------------
 	// プレイヤーフラグ

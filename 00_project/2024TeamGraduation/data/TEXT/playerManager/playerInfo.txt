@@ -20,7 +20,7 @@ END_SETTEAM
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
-		ID_CONTROLL = 3
+		ID_CONTROLL = 1
 		HAIR = 0
 		ACCESSORY = 0
 		FACE = 0

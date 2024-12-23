@@ -69,7 +69,7 @@ protected:
 	//=============================
 	int m_nSwitchIdx;			// 切り替えるインデックス
 	int m_nNowIdx;				// 現在のインデックス
-	int m_nControllIdx;			// 操作するインデックス
+	int m_nControllIdx;			// 操作するインデックス	// TODO：ここはプレイヤーのMyIdxを参照しよう
 	CObjectChara* m_pObjChara;	// キャラクターのポインタ
 	std::vector<std::string> m_vecModelName;	// モデル名
 
