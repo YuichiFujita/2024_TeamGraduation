@@ -18,6 +18,7 @@
 #include "timeUI.h"
 #include "fade.h"
 #include "entry.h"
+#include "entry_dressup.h"
 
 //************************************************************
 //	定数宣言
@@ -26,15 +27,15 @@ namespace
 {
 	const char *TEXTURE[] =	// テクスチャパス
 	{
-		"data\\TEXTURE\\Choices.png",		// ルールタイトルテクスチャ
-		"data\\TEXTURE\\lifeRule.png",		// 撃破条件テクスチャ
-		"data\\TEXTURE\\Battle_Start.png",	// 開始ボタンテクスチャ
-		"data\\TEXTURE\\B_Back.png",		// 操作表示テクスチャ
-		"data\\TEXTURE\\Arrow_Twin.png",	// 矢印テクスチャ
-		"data\\TEXTURE\\flame_choice.png",	// 選択テクスチャ
+		"data\\TEXTURE\\entry\\Choices.png",		// ルールタイトルテクスチャ
+		"data\\TEXTURE\\entry\\lifeRule.png",		// 撃破条件テクスチャ
+		"data\\TEXTURE\\entry\\Battle_Start.png",	// 開始ボタンテクスチャ
+		"data\\TEXTURE\\entry\\B_Back.png",			// 操作表示テクスチャ
+		"data\\TEXTURE\\entry\\Arrow_Twin.png",		// 矢印テクスチャ
+		"data\\TEXTURE\\entry\\flame_choice.png",	// 選択テクスチャ
 	};
 
-	const int PRIORITY		= 7;	// エントリーの優先順位
+	const int PRIORITY		= 6;	// エントリーの優先順位
 	const int MAX_SELECT	= CEntryRuleManager::RULE_MAX + 1;	// ルール選択の総数 (完了操作も含む)
 	const int SELECT_GAME	= CEntryRuleManager::RULE_MAX;		// ゲーム遷移選択番号
 
@@ -51,26 +52,26 @@ namespace
 	namespace rule
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::RULE_MAX);	// テクスチャ分割数
-		const MyLib::Vector3	POS		= MyLib::Vector3(320.0f, 150.0f, 0.0f);	// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 130.0f);		// 大きさ
-		const MyLib::Vector3	SPACE	= MyLib::Vector3(0.0f, 140.0f, 0.0f);	// 空白
+		const MyLib::Vector3	POS		= MyLib::Vector3(320.0f, 150.0f, 0.0f);		// 位置
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 130.0f) * 0.5f;	// 大きさ
+		const MyLib::Vector3	SPACE	= MyLib::Vector3(0.0f, 140.0f, 0.0f);		// 空白
 	}
 
 	// 開始ボタン情報
 	namespace start
 	{
 		const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x, 595.0f, 0.0f);	// 位置
-		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 112.5f);					// 大きさ
+		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 112.5f) * 0.5f;			// 大きさ
 	}
 
 	// タイム情報
 	namespace time
 	{
-		const MyLib::Vector3 POS		= MyLib::Vector3(VEC3_SCREEN_CENT.x, 150.0f, 0.0f);	// タイマー位置
-		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(52.8f, 62.4f) * 1.4f;				// タイマー数字大きさ
-		const MyLib::Vector2 PART_SIZE	= MyLib::Vector2(27.3f, 62.4f) * 1.2f;				// タイマー区切り大きさ
-		const MyLib::Vector2 VAL_SPACE	= MyLib::Vector2(VAL_SIZE.x * 0.85f, 0.0f);			// タイマー数字空白
-		const MyLib::Vector2 PART_SPACE	= MyLib::Vector2(PART_SIZE.x * 0.85f, 0.0f);		// タイマー区切り空白
+		const MyLib::Vector3 POS		= MyLib::Vector3(930.0f, 150.0f, 0.0f);	// タイマー位置
+		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(40.0f, 40.0f);			// タイマー数字大きさ
+		const MyLib::Vector2 PART_SIZE	= MyLib::Vector2(30.0f, 40.0f);			// タイマー区切り大きさ
+		const MyLib::Vector2 VAL_SPACE	= MyLib::Vector2(40.0f, 0.0f);			// タイマー数字空白
+		const MyLib::Vector2 PART_SPACE	= MyLib::Vector2(60.0f, 0.0f);			// タイマー区切り空白
 	}
 
 	// 体力情報
@@ -78,7 +79,7 @@ namespace
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, 3);										// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(930.0f, time::POS.y + rule::SPACE.y, 0.0f);	// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 96.0f);								// 大きさ
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 96.0f) * 0.5f;							// 大きさ
 	}
 
 	// 選択情報
@@ -105,9 +106,9 @@ namespace
 		const float	SPACE_EDGE		= 40.0f;	// 縁の空白
 
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(MAX_RULE_ARROW, 1);	// テクスチャ分割数
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(80.0f, 80.0f);			// 大きさ
-		const MyLib::Vector3	POS		= MyLib::Vector3(select::POS.x - (select::SIZE_RULE.x * 0.5f) - SPACE_EDGE, select::POS.y, 0.0f);	// 位置
-		const MyLib::Vector3	SPACE	= MyLib::Vector3(select::SIZE_RULE.x + (SPACE_EDGE * 2.0f), 0.0f, 0.0f);	// 空白
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(80.0f, 80.0f) * 0.5f;	// 大きさ
+		const MyLib::Vector3	POS		= MyLib::Vector3(select::POS.x - select::SIZE_RULE.x - SPACE_EDGE, select::POS.y, 0.0f);	// 位置
+		const MyLib::Vector3	SPACE	= MyLib::Vector3(select::SIZE_RULE.x * 2.0f + (SPACE_EDGE * 2.0f), 0.0f, 0.0f);	// 空白
 		const D3DXCOLOR			MIN_COL	= D3DXCOLOR(1.0f, 1.0f, 1.0f, BASIC_ALPHA - MAX_ADD_ALPHA);	// 色
 	}
 
@@ -120,7 +121,7 @@ namespace
 		const float	BASIC_ALPHA		= 0.85f;	// 基準の透明度
 
 		const MyLib::Vector3	POS		= MyLib::Vector3(1080.0f, 660.0f, 0.0f);	// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(302.0f, 73.0f);			// 大きさ
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(302.0f, 73.0f) * 0.5f;		// 大きさ
 		const D3DXCOLOR			MIN_COL	= D3DXCOLOR(1.0f, 1.0f, 1.0f, BASIC_ALPHA - MAX_ADD_ALPHA);	// 色
 	}
 }
@@ -136,13 +137,14 @@ static_assert(NUM_ARRAY(TEXTURE) == CEntryRuleManager::TEXTURE_MAX, "ERROR : Tex
 //============================================================
 //	コンストラクタ
 //============================================================
-CEntryRuleManager::CEntryRuleManager() :
+CEntryRuleManager::CEntryRuleManager(CEntry_Dressup* pParent) :
 	m_pLife		 (nullptr),		// 体力の情報
 	m_pTime		 (nullptr),		// 時間の情報
 	m_pSelect	 (nullptr),		// 選択の情報
 	m_pStart	 (nullptr),		// 開始ボタンの情報
 	m_pControl	 (nullptr),		// 操作表示の情報
 	m_pFade		 (nullptr),		// フェードの情報
+	m_pParent	 (pParent),		// 親の情報
 	m_state		 (STATE_INIT),	// 状態
 	m_nSelect	 (RULE_TIME),	// 現在の選択
 	m_nOldSelect (RULE_TIME),	// 前回の選択
@@ -234,6 +236,9 @@ HRESULT CEntryRuleManager::Init()
 
 			// パターンを設定
 			m_apRuleTitle[i]->SetPatternAnim(i);
+
+			// 自動再生をOFFにする
+			m_apRuleTitle[i]->SetEnableAutoPlay(false);
 		}
 	}
 
@@ -270,6 +275,9 @@ HRESULT CEntryRuleManager::Init()
 
 			// パターンを設定
 			m_apArrow[i]->SetPatternAnim(i);
+
+			// 自動再生をOFFにする
+			m_apArrow[i]->SetEnableAutoPlay(false);
 		}
 	}
 
@@ -371,6 +379,9 @@ HRESULT CEntryRuleManager::Init()
 
 		// パターンを設定
 		m_pLife->SetPatternAnim(0);	// TODO：取得した体力の割当
+
+		// 自動再生をOFFにする
+		m_pLife->SetEnableAutoPlay(false);
 	}
 
 	// 時間の生成
@@ -391,6 +402,9 @@ HRESULT CEntryRuleManager::Init()
 			return E_FAIL;
 		}
 	}
+
+	// UIの透明度の設定
+	SetAlphaUI(0.0f, false);
 
 	return S_OK;
 }
@@ -490,8 +504,8 @@ void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, c
 		// UIの自動描画をOFFにする
 		SetEnableDispUI(false);
 
-		// エントリー状態に戻る
-		//CSceneEntry::GetEntryManager()->SetState(CEntryManager::STATE_ENTRY);	// TODO
+		// 着せ替え状態に戻る
+		m_pParent->SetState(CEntry_Dressup::EState::STATE_DRESSUP);
 		return;	// 関数を抜ける
 
 	default:
@@ -538,10 +552,10 @@ void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, c
 //============================================================
 //	生成処理
 //============================================================
-CEntryRuleManager* CEntryRuleManager::Create()
+CEntryRuleManager* CEntryRuleManager::Create(CEntry_Dressup* pParent)
 {
 	// エントリールールマネージャーの生成
-	CEntryRuleManager* pEntryRuleManager = DEBUG_NEW CEntryRuleManager;
+	CEntryRuleManager* pEntryRuleManager = DEBUG_NEW CEntryRuleManager(pParent);
 	if (pEntryRuleManager == nullptr)
 	{ // 生成に失敗した場合
 
@@ -815,9 +829,6 @@ void CEntryRuleManager::Select()
 		PLAY_SOUND(CSound::LABEL_SE_GRIP01);
 	}
 
-	// 選択情報デバッグ表示	TODO
-	//CManager::GetInstance()->GetDebugProc()->Print(CDebugProc::POINT_LEFT, "[選択]：%d\n", m_nSelect);
-
 	// 前回の選択要素の色を黒に設定
 	apSelect[m_nOldSelect]->SetColor(select::DEFAULT_COL);
 
@@ -856,8 +867,8 @@ void CEntryRuleManager::Decide()
 			// ルール変更反映
 			SetRule();
 
-			// 終了状態にする
-			//CSceneEntry::GetEntryManager()->SetState(CEntryManager::STATE_END);	// ゲームに遷移	// TODO
+			// 終了状態に戻る
+			m_pParent->SetState(CEntry_Dressup::EState::STATE_END);
 
 			// サウンドの再生
 			PLAY_SOUND(CSound::LABEL_SE_PUSH);

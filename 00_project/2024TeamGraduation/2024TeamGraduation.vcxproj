@@ -218,7 +218,6 @@
     <ClCompile Include="Source\entryRuleManager.cpp" />
     <ClCompile Include="Source\entryscene.cpp" />
     <ClCompile Include="Source\entry_dressup.cpp" />
-    <ClCompile Include="Source\entry_gameSetting.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
@@ -339,6 +338,7 @@
     <ClCompile Include="Source\reporter.cpp" />
     <ClCompile Include="Source\reporterSet.cpp" />
     <ClCompile Include="Source\result.cpp" />
+    <ClCompile Include="Source\resultCrown.cpp" />
     <ClCompile Include="Source\resultmanager.cpp" />
     <ClCompile Include="Source\sample_character.cpp" />
     <ClCompile Include="Source\sample_obj2D.cpp" />
@@ -442,7 +442,6 @@
     <ClInclude Include="Source\entryRuleManager.h" />
     <ClInclude Include="Source\entryscene.h" />
     <ClInclude Include="Source\entry_dressup.h" />
-    <ClInclude Include="Source\entry_gameSetting.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
@@ -560,6 +559,7 @@
     <ClInclude Include="Source\reporter.h" />
     <ClInclude Include="Source\reporterSet.h" />
     <ClInclude Include="Source\result.h" />
+    <ClInclude Include="Source\resultCrown.h" />
     <ClInclude Include="Source\resultmanager.h" />
     <ClInclude Include="Source\sample_character.h" />
     <ClInclude Include="Source\sample_obj2D.h" />

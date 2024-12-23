@@ -23,6 +23,7 @@
 class CDressup;			// 着せ替えクラス
 class CObject2D;		// オブジェクト2Dクラス
 class CObject2D_Anim;	// オブジェクト2Dアニメクラス
+class CEntry_Dressup;	// ドレスアップ設定クラス
 
 //************************************************************
 //	クラス定義
@@ -51,7 +52,7 @@ public:
 	};
 
 	// コンストラクタ
-	CDressupUI(const int nPlayerIdx);
+	CDressupUI(CEntry_Dressup* pParent, const int nPlayerIdx);
 
 	// デストラクタ
 	~CDressupUI() override;
@@ -69,6 +70,7 @@ public:
 	// 静的メンバ関数
 	static CDressupUI* Create	// 生成
 	( // 引数
+		CEntry_Dressup* pParent,	// 親クラス情報
 		const int nPlayerIdx,		// プレイヤーインデックス
 		const MyLib::Vector3& rPos	// 原点位置
 	);
@@ -109,6 +111,7 @@ private:
 	static int m_nNumAI;	// AI総数
 
 	// メンバ変数
+	CEntry_Dressup* m_pParent;		// 親クラス情報
 	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
 	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
 	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報

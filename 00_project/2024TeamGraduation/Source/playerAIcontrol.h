@@ -83,6 +83,7 @@ public:
 		CHASE_BALL,				// ボールを追いかける
 		RETREAT,				// 後退（安全地帯に移動）
 		RNDOM,					// ランダム
+		LEAVE,					// 離れる
 		MAX
 	};
 
@@ -119,19 +120,11 @@ public:
 		ACTION_MAX
 	};
 
-private:
 
+public:
 	//=============================
 	// 構造体定義
 	//=============================
-	struct SThrow {				// 投げ関連
-		float fTiming;			// タイミングカウント
-		float fTimingRate;		// タイミングの割合
-		float fJumpEnd;			// ジャンプの終了位置
-		bool bTiming;			// タイミングフラグ
-		bool bFoldJump;			// ジャンプの折り返しフラグ
-	};
-
 	struct SMove {
 		CPlayer* pDefenseTarget;	// 守る対象
 		MyLib::Vector3 pos;			// 位置
@@ -140,12 +133,27 @@ private:
 		bool bCancel;				// キャンセル
 	};
 
+private:
+	//=============================
+	// 構造体定義
+	//=============================
 	struct SParameter {			// パラメータ
 		EHeartMain eHeartMain;	// 心(メイン)
 		EHeartMain eHearDSub;	// 心(サブ)
 		int nMotivation;		// モチベーション
 		float fMove;			// 行動
 		bool bSet;				// 設定ON/OFF
+	};
+
+	struct SAI
+	{
+		float fDistance;		// 距離感
+		float fDistanceDefault;	// defaultの距離感
+		float fDistanceValue;	// 距離感の増減
+		bool bTypeAction;		// アクション種類
+		bool bSet;				// 設定ON/OFF
+		bool bRot;				// 向きは正しいか
+		bool bDistance;			// 離れられているか
 	};
 
 public:
@@ -180,6 +188,13 @@ public:
 	void SetThrowFlag(EThrowFlag Throw) { m_eThrowFlag = Throw; }			// 投げ設定
 	EThrowFlag GetThrowFlag() { return m_eThrowFlag; }						// 取得
 
+	void SetMoveInfo(SMove move) { m_sMove = move; }
+	SMove GetMoveInfo() { return m_sMove; }
+
+	void SetIsDistance(bool flag) { m_sAI.bDistance = flag; }
+
+	void SetMoveFlagLandom(int nRate, int nMax, int nMin);
+
 protected:
 	//=============================
 	// 仮想・純粋関数
@@ -207,7 +222,7 @@ protected:
 	//-----------------------------
 	CPlayer* GetThrowTarget();				// 投げるターゲット
 	CPlayer* GetBallOwner();				// ボール持ち主
-	float GetDistance() { return m_fDistance; }
+	float GetDistance() { return m_sAI.fDistance; }
 
 private:
 	//=============================
@@ -229,11 +244,8 @@ private:
 	static MOVESTATE_FUNC m_MoveStateFunc[];				// キャッチ関数
 
 
-
 	typedef void(CPlayerAIControl::* ACTION_FUNC)();
 	static ACTION_FUNC m_ActionFunc[];				// アクション関数
-
-
 
 
 	// フラグ関連の関数
@@ -270,8 +282,9 @@ private:
 	void MoveDodge();				// 回避
 	void MoveSupport();				// サポート
 	void MoveChaseBall();			// ボールを追いかける
-	virtual void MoveRetreat() = 0;				// 後退
-	void MoveRandom();				// ランダム
+	virtual void MoveRetreat() = 0;	// 後退
+	virtual void MoveRandom() = 0;	// ランダム
+	void MoveLeave();				// 離れる
 
 	// 行動フラグ
 	void MoveFlagStop();			// なし
@@ -308,6 +321,7 @@ private:
 	void BallSteal();		// ボールを奪う
 	void BallChase();		// ぼるを追う
 
+	void UpdateSee();						// 更新
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
 
@@ -335,7 +349,6 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pAI;					// 自分情報
-	float m_fDistance;				// 相手との距離
 
 	//-----------------------------
 	// 列挙
@@ -352,9 +365,10 @@ private:
 	//-----------------------------
 	// 構造体
 	//-----------------------------
-	SThrow m_sThrow;				// 投げ
 	SMove m_sMove;					// 行動
-	SParameter m_sParameter;		// パラメータ	
+	SParameter m_sParameter;		// パラメータ
+
+	SAI m_sAI;
 };
 
 #endif

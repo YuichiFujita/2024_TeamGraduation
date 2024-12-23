@@ -26,6 +26,7 @@
 class CObject2D;		// オブジェクト2Dクラス
 class CObject2D_Anim;	// オブジェクト2Dアニメクラス
 class CTimeUI;			// タイムUIクラス
+class CEntry_Dressup;	// ドレスアップ設定クラス
 
 //************************************************************
 //	クラス定義
@@ -66,7 +67,7 @@ public:
 	};
 
 	// コンストラクタ
-	CEntryRuleManager();
+	CEntryRuleManager(CEntry_Dressup* pParent);
 
 	// デストラクタ
 	~CEntryRuleManager();
@@ -77,7 +78,7 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
 
 	// 静的メンバ関数
-	static CEntryRuleManager* Create();	// 生成
+	static CEntryRuleManager* Create(CEntry_Dressup* pParent);		// 生成
 	static void Release(CEntryRuleManager*& prEntryRuleManager);	// 破棄
 
 private:
@@ -102,6 +103,7 @@ private:
 	CObject2D*	m_pStart;		// 開始ボタンの情報
 	CObject2D*	m_pControl;		// 操作表示の情報
 	CObject2D*	m_pFade;		// フェードの情報
+	CEntry_Dressup* m_pParent;	// 親の情報
 	EState	m_state;			// 状態
 	int		m_nSelect;			// 現在の選択
 	int		m_nOldSelect;		// 前回の選択

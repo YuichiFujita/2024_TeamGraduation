@@ -97,7 +97,7 @@ HRESULT CTimeUI::Init(void)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの生成
-		m_apPart[nCntPart] = CObject2D::Create();
+		m_apPart[nCntPart] = CObject2D::Create(PRIORITY);
 		if (m_apPart[nCntPart] == nullptr)
 		{ // 生成に失敗した場合
 
@@ -122,13 +122,15 @@ void CTimeUI::Uninit(void)
 	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
 	{ // 数字の数分繰り返す
 
-		m_apValue[nCntValue] = nullptr;
+		// 数字の終了
+		SAFE_UNINIT(m_apValue[nCntValue]);
 	}
 
 	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
 	{ // 区切りの数分繰り返す
 
-		m_apPart[nCntPart] = nullptr;
+		// 区切りの終了
+		SAFE_UNINIT(m_apPart[nCntPart]);
 	}
 
 	// オブジェクトの破棄
