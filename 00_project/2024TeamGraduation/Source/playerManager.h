@@ -140,8 +140,8 @@ private:
 	SOutInfo GetInfoRightNear();	// 右手前の外野情報取得
 
 	// 生成
-	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);		// 左のプレイヤー生成
-	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);	// 右のプレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 左のプレイヤー生成
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 右のプレイヤー生成
 
 	// ファイル関連
 	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
