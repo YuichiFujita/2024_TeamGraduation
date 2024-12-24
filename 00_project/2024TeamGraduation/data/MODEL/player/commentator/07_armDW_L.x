@@ -1326,7 +1326,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\player\\gakuran_01.png"";
+    "data\\TEXTURE\\player\\gakuran_01.png";
    }
   }
  }
