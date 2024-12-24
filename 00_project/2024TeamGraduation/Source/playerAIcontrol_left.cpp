@@ -277,7 +277,10 @@ bool CPlayerAIControlLeft::IsLineOverPlayer()
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	//if ()
+	if (myPos.y > 0)
+	{
+		return bOver;
+	}
 
 	if (myPos.x > -playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EActionFlag::ACTION_JUMP)
 	{// ˆÊ’u‚ª’´‚¦‚Ä‚¢‚½&&ƒWƒƒƒ“ƒv‚µ‚Ä‚È‚¢ê‡
