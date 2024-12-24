@@ -965,8 +965,8 @@ void CGameManager::EndGame()
 //==========================================================================
 void CGameManager::CheckVictory()
 {
-	int m_aAlive[ETeamSide::SIDE_MAX] = {};
-	int m_aLife[ETeamSide::SIDE_MAX] = {};
+	int m_aAlive[ETeamSide::SIDE_MAX] = {};		// ëçêlêî
+	int m_aLife[ETeamSide::SIDE_MAX] = {};		// ëçëÃóÕ
 
 	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
 	{
@@ -985,7 +985,7 @@ void CGameManager::CheckVictory()
 				m_aAlive[i]++;
 			}
 
-			// ëÃóÕâ¡éZ
+			// ëçëÃóÕâ¡éZ
 			m_aLife[i] += pObj->GetLife();
 		}
 	}

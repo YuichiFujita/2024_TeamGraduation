@@ -150,11 +150,15 @@ bool CTeamStatus::CheckAllDead()
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		CGameManager::ETeamSide team = pPlayer->GetTeam();
+		CPlayer::EFieldArea area = pPlayer->GetAreaType();
+		CPlayer::EState state = pPlayer->GetState();
 
 		// 同じチームが生きている場合 = 全滅していない
-		if (pPlayer->GetTeam() == m_typeTeam &&
-			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN &&	// 内野
-			pPlayer->GetState() != CPlayer::EState::STATE_DEAD_AFTER)
+		if (team == m_typeTeam &&
+			area == CPlayer::EFieldArea::FIELD_IN &&	// 内野
+			(state != CPlayer::EState::STATE_DEAD_AFTER &&
+			state != CPlayer::EState::STATE_DEAD_CARRY))
 		{
 			return false;
 		}
