@@ -31,6 +31,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/kamehame_Flash.efkefc",				// かめはめ波(フラッシュ)
 	"data/Effekseer/kamehame_ballast.efkefc",			// かめはめ波(空間がれき)
 	"data/Effekseer/hit.efkefc",						// ヒット
+	"data/Effekseer/bound.efkefc",						// バウンド
 	"data/Effekseer/sweat.efkefc",						// 汗
 	"data/Effekseer/walk.efkefc",						// 歩き
 	"data/Effekseer/run.efkefc",						// 走り

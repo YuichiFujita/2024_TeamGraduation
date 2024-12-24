@@ -49,6 +49,7 @@ public:
 		EFKLABEL_CAMEHAME_FLASH,		// かめはめ波(フラッシュ)
 		EFKLABEL_CAMEHAME_BALLAST,		// かめはめ波(空間がれき)
 		EFKLABEL_HIT,					// ヒット
+		EFKLABEL_BOUND,					// バウンド
 		EFKLABEL_SWEAT,					// 汗
 		EFKLABEL_WALK,					// 歩き
 		EFKLABEL_RUN,					// 走り
