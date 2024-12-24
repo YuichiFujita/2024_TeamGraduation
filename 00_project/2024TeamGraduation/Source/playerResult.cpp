@@ -34,7 +34,9 @@ CPlayerResult::STATE_FUNC CPlayerResult::m_StateFunc[] =	// 状態関数
 CPlayerResult::VICTORY_FUNC CPlayerResult::m_VictoryFunc[] =	// 状態関数
 {
 	&CPlayerResult::CheckVictoryNone,		// なし
+	&CPlayerResult::CheckVictoryPrelude,	// 前座勝敗準備
 	&CPlayerResult::CheckVictoryPrelude,	// 前座勝敗
+	&CPlayerResult::CheckVictoryContest,	// モテ勝敗準備
 	&CPlayerResult::CheckVictoryContest,	// モテ勝敗
 };
 
