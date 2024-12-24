@@ -515,6 +515,12 @@ void CMotion::UpdateEntityPosition(
 {
 	// 次のキー
 	int nNextKey = (m_nPatternKey + 1) % nowInfo.nNumKey;
+	if (nNextKey == 0 && nowInfo.nLoop == LOOP_OFF)
+	{// ループしないとき
+
+		// 最後で固定
+		nNextKey = nowInfo.nNumKey - 1;
+	}
 
 	if (i == 0)
 	{
@@ -604,43 +610,15 @@ void CMotion::UpdateVisualPosition(
 {
 	// 次のキー
 	int nNextKey = (m_nPatternKey + 1) % nowInfo.nNumKey;
+	if (nNextKey == 0 && nowInfo.nLoop == LOOP_OFF)
+	{// ループしないとき
+
+		// 最後で固定
+		nNextKey = nowInfo.nNumKey - 1;
+	}
 
 	if (i == 0)
 	{
-		//// 本体の位置取得
-		//MyLib::Vector3 pos = m_pObjChara->GetPosition();
-
-		//// 本体の向き取得
-		//MyLib::Vector3 rot = m_pObjChara->GetRotation();
-
-		//// 元の位置取得
-		//MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
-
-		//// パーツの位置取得
-		//MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
-		//MyLib::Vector3 posPartsOld = m_ppModel[i]->GetPosition();
-
-		//// 目標の位置との差分を求める
-		//float posDiffX = nowInfo.aKey[nNextKey].aParts[i].pos.x -
-		//	m_pPartsOld[i].pos.x;
-
-		//float posDiffY = nowInfo.aKey[nNextKey].aParts[i].pos.y -
-		//	m_pPartsOld[i].pos.y;
-
-		//float posDiffZ = nowInfo.aKey[nNextKey].aParts[i].pos.z -
-		//	m_pPartsOld[i].pos.z;
-
-		//// 親のYを補正
-		//posParts.y =
-		//	m_pPartsOld[i].pos.y + (posDiffY * ratio);
-
-		//// 位置設定
-		//m_ppModel[i]->SetPosition(posParts + posOrigin);
-
-
-
-
-
 		// パーツの位置取得
 		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
 
@@ -874,7 +852,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 		//--------------------------
 		// 位置反映
 		//--------------------------
-		UpdatePosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, 1.0f, 1.0f, 1.0f);
+		//UpdatePosition(i, nowInfo, nowParts, nextParts, ratio, nMaxFrame, 1.0f, 1.0f, 1.0f);
 	}
 }
 

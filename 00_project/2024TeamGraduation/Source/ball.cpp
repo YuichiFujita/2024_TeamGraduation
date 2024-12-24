@@ -45,6 +45,7 @@ namespace
 	const float	REV_BOUNCY = 0.58f;		// 跳力の補正係数
 	const float	REV_BOUND_MOVE = 0.2f;	// バウンド時の移動量の補正係数
 	const float	LIMIT_REV_MOVE = 0.1f;	// バウンド時の移動量を補正する最小バウンド量
+	const float	LIMIT_REV_MOVE_EFFECT = 0.5f;	// バウンド時のエフェクトを生成する最小バウンド量
 	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float	DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
@@ -1399,6 +1400,16 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 
 			// 移動速度を減衰させる
 			m_fMoveSpeed += (0.0f - m_fMoveSpeed) * (REV_BOUND_MOVE * fDeltaRate * fSlowRate);
+
+			// エフェクト生成
+			if (m_fBouncy > LIMIT_REV_MOVE_EFFECT)
+			{
+				CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_BOUND,
+					*pPos,
+					MyLib::Vector3(),	// 向き
+					MyLib::Vector3(),
+					15.0f * UtilFunc::Transformation::Clamp((m_fBouncy / LIMIT_REV_MOVE_EFFECT), 0.0f, 1.0f), true);
+			}
 		}
 
 		// 初速を初期化

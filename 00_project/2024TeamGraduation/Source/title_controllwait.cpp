@@ -480,6 +480,18 @@ void CTitle_ControllWait::StateTransitionMoreFirst(const float fDeltaTime, const
 		pCamera->SetRotation(MyLib::Vector3(0.0f, D3DX_PI * 0.2f, pCamera->GetOriginRotation().z));
 		pCamera->SetOriginRotation(pCamera->GetRotation());
 
+		// ”wŒiÁ‚·
+		for (const auto& bg : m_pBG)
+		{
+			bg->SetEnableDisp(false);
+		}
+
+		// ‘I‘ðŽˆ‚ÌUIÁ‚·
+		for (const auto& select : m_pSelectUI)
+		{
+			select->SetEnableDisp(false);
+		}
+
 		// ‘JˆÚ‘Ò‹@
 		SetState(EState::STATE_TRANSITION_WAIT);
 	}
@@ -575,6 +587,18 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 
 		// ƒƒS•œŠˆ
 		m_pLogo->SetState(CTitleLogo::EState::STATE_LOOP);
+
+		// ”wŒi•œŠˆ
+		for (const auto& bg : m_pBG)
+		{
+			bg->SetEnableDisp(true);
+		}
+
+		// ‘I‘ðŽˆ‚ÌUI•œŠˆ
+		for (const auto& select : m_pSelectUI)
+		{
+			select->SetEnableDisp(true);
+		}
 
 		// ƒŠƒZƒbƒg
 		pCamera->ResetByMode(CScene::MODE::MODE_TITLE);

@@ -75,9 +75,17 @@ public:
 		THROWTYPE_MAX
 	};
 
+	enum EActionStatus
+	{
+		ACTIONSTATUS_IDLE = 0,
+		ACTIONSTATUS_ACTION,
+		ACTIONSTATUS_COOLDOWN,
+		ACTIONSTATUS_MAX
+	};
+
 	enum EAction				// アクション
 	{
-		IDLE,					// 何もしない
+		IDLE = 0,
 		DODGE,					// 回避行動
 		SUPPORT,				// 味方をサポート
 		CHASE_BALL,				// ボールを追いかける
@@ -120,8 +128,6 @@ public:
 		ACTION_MAX
 	};
 
-
-public:
 	//=============================
 	// 構造体定義
 	//=============================
@@ -130,6 +136,14 @@ public:
 		MyLib::Vector3 pos;			// 位置
 		float fTimer;				// タイマー
 		bool bSet;					// 設定フラグ
+		bool bCooldown;
+		bool bCancel;				// キャンセル
+	};
+
+	struct SAction {
+		float fTimer;				// タイマー
+		bool bSet;					// 設定フラグ
+		bool bCooldown;				// クールダウン
 		bool bCancel;				// キャンセル
 	};
 
@@ -181,6 +195,9 @@ public:
 	void SetForcibly(EMoveForcibly forcibly) { m_eForcibly = forcibly; }	// 強制行動設定
 	EMoveForcibly GetForcibly() { return m_eForcibly; }						// 取得
 
+	void SetActionStatus(EActionStatus status) { m_eActionStatus = status; }
+	EActionStatus GetActionStatus() { return m_eActionStatus; }
+
 	void SetMoveFlag(EMoveFlag move) { m_eMoveFlag = move; }				// 行動設定
 	EMoveFlag GetMoveFlag() { return m_eMoveFlag; }							// 取得
 	void SetActionFlag(EActionFlag action) { m_eActionFlag = action; }		// アクション設定
@@ -190,6 +207,8 @@ public:
 
 	void SetMoveInfo(SMove move) { m_sMove = move; }
 	SMove GetMoveInfo() { return m_sMove; }
+	void SetActionInfo(SAction action) { m_sAction = action; }
+	SAction GetActionInfo() { return m_sAction; }
 
 	void SetIsDistance(bool flag) { m_sAI.bDistance = flag; }
 
@@ -215,7 +234,6 @@ protected:
 	void MoveDown();		// 下移動
 	void MoveLeft();		// 左移動
 	void MoveRight();		// 右移動
-
 
 	//-----------------------------
 	// 設定関数
@@ -309,7 +327,10 @@ private:
 	void UpdateMode(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モード更新
 	void UpdateForcibly();																			// 強制行動
 	void UpdateThrowType();																			// 投げ種類
-	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// キャッチ
+
+	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
+	void Action();
+	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	void MoveCover(CPlayer* pPlayer);
 
@@ -332,6 +353,7 @@ private:
 	// 設定,取得
 	//-----------------------------
 	void SetMoveTimer(int nMin, int nMax);
+	void SetActionTimer(int nMin, int nMax);
 	void UpdateMoveTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	float GetDistanceBall();				// ボールとの距離
@@ -343,7 +365,10 @@ private:
 	//-----------------------------
 	bool IsDistanceBall();					// 距離：ボール
 	bool IsPassTarget();					// パスする相手がいるか判定
-	bool IsWhoPicksUpTheBall();				// ボールを拾う判断
+
+public:
+	bool IsPicksUpBall();				// ボールを拾う判断
+	private:
 
 	//=============================
 	// メンバ変数
@@ -357,6 +382,7 @@ private:
 	EMoveForcibly m_eForcibly;		// 強制行動
 	EThrowType m_eThrowType;		// 投げ種類
 	EAction m_eAction;				// アクション
+	EActionStatus m_eActionStatus;	// アクション状態
 
 	EMoveFlag m_eMoveFlag;			// 行動フラグ
 	EActionFlag m_eActionFlag;		// アクションフラグ
@@ -366,6 +392,7 @@ private:
 	// 構造体
 	//-----------------------------
 	SMove m_sMove;					// 行動
+	SAction m_sAction;				// アクション
 	SParameter m_sParameter;		// パラメータ
 
 	SAI m_sAI;
