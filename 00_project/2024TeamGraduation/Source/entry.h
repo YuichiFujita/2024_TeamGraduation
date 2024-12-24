@@ -32,10 +32,9 @@ public:
 	//=============================
 	enum ESceneType
 	{
-		SCENETYPE_NONE = 0,			// なにもなし
-		SCENETYPE_SETUPTEAM,		// チーム等設定
-		SCENETYPE_DRESSUP,			// 着せ替え・利き手設定
-		SCENETYPE_GAMESETTING,		// 詳細設定
+		SCENETYPE_NONE = 0,		// なにもなし
+		SCENETYPE_SETUPTEAM,	// チーム等設定
+		SCENETYPE_DRESSUP,		// 着せ替え・利き手設定
 		SCENETYPE_MAX
 	};
 

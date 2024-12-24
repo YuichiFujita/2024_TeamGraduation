@@ -35,6 +35,7 @@ namespace
 		"data\\TEXTURE\\entry\\flame_choice.png",	// 選択テクスチャ
 	};
 
+	const std::string SET_PATH = "data\\TEXT\\entry\\game_setting.txt";
 	const int PRIORITY		= 6;	// エントリーの優先順位
 	const int MAX_SELECT	= CEntryRuleManager::RULE_MAX + 1;	// ルール選択の総数 (完了操作も含む)
 	const int SELECT_GAME	= CEntryRuleManager::RULE_MAX;		// ゲーム遷移選択番号
@@ -77,7 +78,7 @@ namespace
 	// 体力情報
 	namespace life
 	{
-		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, 3);										// テクスチャ分割数
+		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::LIFE_MAX);				// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(930.0f, time::POS.y + rule::SPACE.y, 0.0f);	// 位置
 		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 96.0f) * 0.5f;							// 大きさ
 	}
@@ -377,9 +378,6 @@ HRESULT CEntryRuleManager::Init()
 		// 色を設定
 		m_pLife->SetColor(select::DEFAULT_COL);
 
-		// パターンを設定
-		m_pLife->SetPatternAnim(0);	// TODO：取得した体力の割当
-
 		// 自動再生をOFFにする
 		m_pLife->SetEnableAutoPlay(false);
 	}
@@ -388,7 +386,7 @@ HRESULT CEntryRuleManager::Init()
 	{
 		m_pTime = CTimeUI::Create
 		( // 引数
-			0.0f,				// 表示時間	// TODO：取得した時間の割当
+			0.0f,				// 表示時間
 			time::POS,			// 位置
 			time::VAL_SIZE,		// 数字の大きさ
 			time::PART_SIZE,	// 区切りの大きさ
@@ -405,6 +403,21 @@ HRESULT CEntryRuleManager::Init()
 
 	// UIの透明度の設定
 	SetAlphaUI(0.0f, false);
+
+	// ゲーム設定の読込
+	SRule rule;	// ルール
+	if (FAILED(LoadSetting(&rule)))
+	{ // 読込に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// パターンを設定
+	m_pLife->SetPatternAnim(rule.life);
+
+	// 時間を設定
+	m_pTime->SetTime(rule.fTime);
 
 	return S_OK;
 }
@@ -550,6 +563,22 @@ void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, c
 }
 
 //============================================================
+//	ルール取得処理
+//============================================================
+CEntryRuleManager::SRule CEntryRuleManager::GetRule() const
+{
+	SRule rule;	// ルール
+
+	// パターンを取得
+	rule.life = (ELife)m_pLife->GetPatternAnim();
+
+	// 時間を取得
+	rule.fTime = m_pTime->GetTime();
+
+	return rule;
+}
+
+//============================================================
 //	生成処理
 //============================================================
 CEntryRuleManager* CEntryRuleManager::Create(CEntry_Dressup* pParent)
@@ -589,6 +618,97 @@ void CEntryRuleManager::Release(CEntryRuleManager*& prEntryRuleManager)
 
 	// メモリ開放
 	SAFE_DELETE(prEntryRuleManager);
+}
+
+//============================================================
+//	ゲーム設定の保存処理
+//============================================================
+HRESULT CEntryRuleManager::SaveSetting(SRule* pRule)
+{
+	// ファイルを開く
+	std::ofstream file(SET_PATH);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "ゲーム設定の書き出しに失敗！", "警告！", MB_ICONWARNING);
+		return E_FAIL;
+	}
+
+	// 見出しの書き出し
+	file << "#==============================================================================" << std::endl;
+	file << "#" << std::endl;
+	file << "#	ゲーム設定テキスト [game_setting.txt]" << std::endl;
+	file << "#	Author : 藤田 勇一" << std::endl;
+	file << "#" << std::endl;
+	file << "#==============================================================================" << std::endl;
+
+	// ゲーム設定の書き出し
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "#	ゲーム設定情報" << std::endl;
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "GAMESET" << std::endl;
+	file << "	TIME = " << pRule->fTime << std::endl;
+	file << "	LIFE = " << pRule->life << std::endl;
+	file << "END_GAMESET" << std::endl;
+
+	// ファイルを閉じる
+	file.close();
+
+	return S_OK;
+}
+
+//============================================================
+//	ゲーム設定の読込処理
+//============================================================
+HRESULT CEntryRuleManager::LoadSetting(SRule* pRule)
+{
+	// ファイルを開く
+	std::ifstream file(SET_PATH);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "ゲーム設定の読み込みに失敗！", "警告！", MB_ICONWARNING);
+		return E_FAIL;
+	}
+
+	// ファイルを読込
+	std::string str;	// 読込文字列
+	while (file >> str)
+	{ // ファイルの終端ではない場合ループ
+
+		if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+		else if (str == "GAMESET")
+		{
+			do { // END_GAMESETを読み込むまでループ
+
+				// 文字列を読み込む
+				file >> str;
+
+				if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+				else if (str == "TIME")
+				{
+					file >> str;			// ＝を読込
+					file >> pRule->fTime;	// 時間を読込
+				}
+				else if (str == "LIFE")
+				{
+					int nLife = 0;	// 体力
+					file >> str;	// ＝を読込
+					file >> nLife;	// 体力を読込
+
+					// 列挙に変換
+					pRule->life = (ELife)nLife;
+				}
+			} while (str != "END_GAMESET");	// END_GAMESETを読み込むまでループ
+		}
+	}
+
+	// ファイルを閉じる
+	file.close();
+
+	return S_OK;
 }
 
 //============================================================
@@ -922,7 +1042,7 @@ void CEntryRuleManager::ChangeRule()
 		case RULE_LIFE:
 		{
 			// 左に選択をずらす
-			nLife = (nLife + (life::PART.y - 1)) % life::PART.y;
+			nLife = (nLife + (CEntryRuleManager::LIFE_MAX - 1)) % CEntryRuleManager::LIFE_MAX;
 
 			// サウンドの再生
 			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
@@ -958,7 +1078,7 @@ void CEntryRuleManager::ChangeRule()
 		case RULE_LIFE:
 		{
 			// 右に選択をずらす
-			nLife = (nLife + 1) % life::PART.y;
+			nLife = (nLife + 1) % CEntryRuleManager::LIFE_MAX;
 
 			// サウンドの再生
 			PLAY_SOUND(CSound::LABEL_SE_GRIP01);

@@ -66,6 +66,22 @@ public:
 		RULE_MAX		// この列挙型の総数
 	};
 
+	// 体力列挙
+	enum ELife
+	{
+		LIFE_SMALL = 0,	// 少ない
+		LIFE_NORMAL,	// 通常
+		LIFE_BIG,		// 多い
+		LIFE_MAX		// この列挙型の総数
+	};
+
+	// ルール構造体
+	struct SRule
+	{
+		float fTime;	// 時間
+		ELife life;		// 体力
+	};
+
 	// コンストラクタ
 	CEntryRuleManager(CEntry_Dressup* pParent);
 
@@ -76,10 +92,13 @@ public:
 	HRESULT Init();		// 初期化
 	HRESULT Uninit();	// 終了
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 更新
+	SRule GetRule() const;	// ルール取得
 
 	// 静的メンバ関数
 	static CEntryRuleManager* Create(CEntry_Dressup* pParent);		// 生成
 	static void Release(CEntryRuleManager*& prEntryRuleManager);	// 破棄
+	static HRESULT SaveSetting(SRule* pRule);	// ゲーム設定保存
+	static HRESULT LoadSetting(SRule* pRule);	// ゲーム設定読込
 
 private:
 	// メンバ関数
