@@ -87,6 +87,20 @@ void CPlayerAIControlRight::Update(const float fDeltaTime, const float fDeltaRat
 {
 	// 基底クラスの更新
 	CPlayerAIControl::Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// モーション取得
+	CPlayer* pPlayer = GetPlayer();
+	if (!pPlayer) return;
+
+	CMotion* pMotion = pPlayer->GetMotion();
+
+	// モーションタイプの取得
+	int nMotionType = pMotion->GetType();
+
+	if (nMotionType == CPlayer::EMotion::MOTION_TOSS)
+	{
+		pPlayer->SetRotDest(D3DX_PI * 0.5f);
+	}
 }
 
 //==========================================================================
@@ -244,6 +258,9 @@ void CPlayerAIControlRight::MoveRandom()
 	// 近づく
 	if (Approatch(move.pos, 10.0f)) {
 		move.bSet = false;
+		
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+		SetActionStatus(EActionStatus::ACTIONSTATUS_COOLDOWN);
 	}
 
 	// 行動情報の設定
@@ -262,6 +279,11 @@ bool CPlayerAIControlRight::IsLineOverPlayer()
 	if (!pMy) return bOver;
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
+
+	if (myPos.y > 0)
+	{
+		return bOver;
+	}
 
 	if (myPos.x < playerAIcontrol::LINE_DISTANCE_OVER && GetAction() != EActionFlag::ACTION_JUMP)
 	{// 位置が超えていた&&ジャンプしてない場合
@@ -288,7 +310,7 @@ bool CPlayerAIControlRight::IsLineOverBall()
 
 	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
 
-	if (pBall->GetPosition().x < 0.0f)
+	if (pBall->GetPosition().x < -5.0f)
 	{
 		bOver = true;
 	}

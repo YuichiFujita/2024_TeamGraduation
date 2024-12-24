@@ -135,21 +135,20 @@ CPlayerAIControl::CPlayerAIControl()
 {
 	// 列挙の初期化
 	m_eMode = EMode::MODE_IDLE;
-	m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
+	m_eForcibly = EMoveForcibly::FORCIBLY_START;
 	m_eThrowType = EThrowType::THROWTYPE_NONE;
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
 	m_eThrowFlag = EThrowFlag::THROW_NONE;
 	m_eAction = EAction::IDLE;
+	m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 
 	// 構造体の初期化
 	ZeroMemory(&m_sMove, sizeof(m_sMove));
 	ZeroMemory(&m_sParameter, sizeof(m_sParameter));
 
 	ZeroMemory(&m_sAI, sizeof(m_sAI));
-
-	// 変数の初期化
-	m_sAI.fDistance = 0.0f;
+	ZeroMemory(&m_sAction, sizeof(m_sAction));
 }
 
 //==========================================================================
@@ -235,8 +234,6 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 
 	// 更新：強制行動
 	UpdateForcibly();
-
-	//SetMoveFlagLandom(50, 100, 0);
 	
 	{// フラグの更新
 
@@ -247,9 +244,6 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 		// 更新：投げ
 		UpdateThrowFlag();
 	}
-
-	// 更新：行動時間
-	//UpdateMoveTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
 #ifdef _DEBUG
 
@@ -401,7 +395,7 @@ void CPlayerAIControl::ForciblyReturn()
 //--------------------------------------------------------------------------
 void CPlayerAIControl::ForciblyStart()
 {
-	if (IsWhoPicksUpTheBall())
+	if (IsPicksUpBall())
 	{// 自分より近いプレイヤーがいた場合
 		m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
 		m_eForcibly = EMoveForcibly::FORCIBLY_NONE;
@@ -458,9 +452,9 @@ void CPlayerAIControl::ModeAttack(const float fDeltaTime, const float fDeltaRate
 		}
 		else
 		{// 投げろフラグがオンだったら
-			//int n = 1;
+			int n = 1;
 			// 今はランダムで決定
-			int n = rand() % 2;
+			//int n = rand() % 2;
 
 			switch (n)
 			{
@@ -547,11 +541,45 @@ void CPlayerAIControl::ModeDefense(const float fDeltaTime, const float fDeltaRat
 //================================================================================
 void CPlayerAIControl::UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	switch (m_eActionStatus)
+	{
+	case CPlayerAIControl::IDLE:		// 待機
+
+		Action();
+
+		break;
+
+	case CPlayerAIControl::ACTIONSTATUS_ACTION:		// 行動
+
+		// アクション種類更新
+		(this->*(m_ActionFunc[m_eAction]))();
+
+		break;
+
+	case CPlayerAIControl::ACTIONSTATUS_COOLDOWN:	// クールダウン
+
+		// アクションタイマーの設定
+		SetActionTimer(1, 5);
+
+		// 更新：アクションタイマー
+		UpdateActionTimer(fDeltaTime, fDeltaRate, fSlowRate);
+
+		break;
+
+	default:
+		assert(false);
+		break;
+	}
+}
+
+// アクション決め
+void CPlayerAIControl::Action()
+{
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;	// ボールねぇぞ
 	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
-	
+
 	// 持ち主情報取得
 	CPlayer* pPlayer = GetBallOwner();
 
@@ -562,15 +590,7 @@ void CPlayerAIControl::UpdateDefense(const float fDeltaTime, const float fDeltaR
 
 		if (area == CPlayer::EFieldArea::FIELD_IN)
 		{// ボール持ち主が内野の場合
-			if (!m_sAI.bDistance)
-			{// 距離が離れられていない場合
-
-				// 後退(安全地帯へ)
-				m_eAction = EAction::RETREAT;
-			}
-			else {// 離れられている場合
-				m_eAction = EAction::RNDOM;
-			}
+			m_eAction = EAction::RNDOM;
 		}
 		else {
 			m_eAction = EAction::LEAVE;
@@ -602,19 +622,19 @@ void CPlayerAIControl::UpdateDefense(const float fDeltaTime, const float fDeltaR
 			}
 			else if (distanceBall > 300.0f) {
 				// 後退(安全地帯へ)
-				m_eAction = EAction::RETREAT;
+				m_eAction = EAction::RNDOM;
 			}
 		}
 
 		//if (m_eAction == EAction::IDLE)
 		{
-			if (IsLineOverBall())
-			{// ボールが線を超えている場合
+			//if (IsLineOverBall())
+			//{// ボールが線を超えている場合
 
-				// 後退(安全地帯へ)
-				m_eAction = EAction::RETREAT;
-			}
-			else if (!IsLineOverBall() &&						// 線を超えていない
+			//	// 後退(安全地帯へ)
+			//	m_eAction = EAction::RNDOM;
+			//}
+			/*else */if (!IsLineOverBall() &&						// 線を超えていない
 				stateBall == CBall::EState::STATE_FREE ||		// フリー
 				stateBall == CBall::EState::STATE_PASS ||		// パス
 				stateBall == CBall::EState::STATE_HOM_PASS ||	// ホーミングパス
@@ -626,9 +646,46 @@ void CPlayerAIControl::UpdateDefense(const float fDeltaTime, const float fDeltaR
 		}
 	}
 
-	// アクション種類更新
-	(this->*(m_ActionFunc[m_eAction]))();
+	if (m_eAction != EAction::IDLE)
+	{
+		// アクション状態：アクション
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
+	}
 }
+
+//==========================================================================
+// 更新：アクションタイマー
+//==========================================================================
+void CPlayerAIControl::UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_sAction.bCancel)
+	{
+		// 行動の構造体初期化
+		ZeroMemory(&m_sAction, sizeof(m_sAction));
+	}
+
+	if (m_sAction.bSet)
+	{
+		// タイマーのカウントダウン
+		m_sAction.fTimer -= fDeltaTime * fDeltaRate * fSlowRate;
+
+		if (m_sAction.fTimer <= 0.0f)
+		{
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
+
+			// アクション：なし
+			m_eAction = EAction::IDLE;
+
+			// アクション状態：なし
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
+
+			// 行動：止まる
+			m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
+		}
+	}
+}
+
 
 //================================================================================
 // カバー
@@ -655,6 +712,9 @@ void CPlayerAIControl::MoveIdle()
 {
 	// 行動フラグ：なし
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
+
+	// アクション状態：なし
+	m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 }
 
 //--------------------------------------------------------------------------
@@ -778,17 +838,24 @@ void CPlayerAIControl::MoveChaseBall()
 
 		// ボールを奪う
 		BallSteal();
+
+		return;
 	}
 	else if (!IsLineOverBall())
 	{// 線を越えていない場合
 
-		if (!IsWhoPicksUpTheBall())
+		//if (!IsPicksUpBall())
 		{// 自分がボールに近い場合
 
 			// キャッチ：取りに行く
 			BallChase();
+
+			return;
 		}
 	}
+
+	// アクション状態：なし
+	m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 }
 
 #if 0	// オーバーライドする可能性あり
@@ -871,9 +938,10 @@ void CPlayerAIControl::MoveLeave()
 	{
 		// 止まる
 		m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
+
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 	}
 }
-
 
 //--------------------------------------------------------------------------
 // 上移動
@@ -1169,6 +1237,7 @@ void CPlayerAIControl::BallSteal()
 		if (distanth0 < STEAL_CANCEL_LENGTH)
 		{// ボールとパス先の距離が範囲内ならあきらめる
 			m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 			return;
 		}
 	}
@@ -1187,6 +1256,8 @@ void CPlayerAIControl::BallSteal()
 		{// 取れそうな高さに来た！
 			m_eActionFlag = EActionFlag::ACTION_JUMP;
 		}
+
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 	}
 }
 
@@ -1407,19 +1478,6 @@ bool CPlayerAIControl::Approatch(MyLib::Vector3 targetPos, float distance)
 	// 角度設定
 	m_pAI->SetRotDest(direction);
 
-
-#if 1
-	CEffect3D::Create
-	(// デバッグ用エフェクト(ターゲット)
-		targetPos,
-		VEC3_ZERO,
-		MyLib::color::Red(),
-		20.0f,
-		0.1f,
-		1,
-		CEffect3D::TYPE::TYPE_NORMAL
-	);
-#endif
 	return false;
 }
 
@@ -1513,13 +1571,32 @@ void CPlayerAIControl::SetMoveTimer(int nMin, int nMax)
 {
 	// 角度の設定
 	if (!m_sMove.bSet)
-	{
+	{// 設定されていない場合
+
 		// 行動時間の設定
 		float fRand = (float)UtilFunc::Transformation::Random(nMin, nMax);
 		m_sMove.fTimer = fRand * 0.1f;
 
 		// 時間設定ON
 		m_sMove.bSet = true;
+	}
+}
+
+//==========================================================================
+// アクション時間の設定
+//==========================================================================
+void CPlayerAIControl::SetActionTimer(int nMin, int nMax)
+{
+	// 角度の設定
+	if (!m_sAction.bSet)
+	{// 設定されていない場合
+
+		// 行動時間の設定
+		float fRand = (float)UtilFunc::Transformation::Random(nMin, nMax);
+		m_sAction.fTimer = fRand;
+
+		// 時間設定ON
+		m_sAction.bSet = true;
 	}
 }
 
@@ -1545,7 +1622,7 @@ void CPlayerAIControl::UpdateMoveTimer(const float fDeltaTime, const float fDelt
 			ZeroMemory(&m_sMove, sizeof(m_sMove));
 
 			// アクション：なし
-			m_eAction = EAction::IDLE;
+			//m_eAction = EAction::IDLE;
 
 			// 行動：止まる
 			m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
@@ -1788,10 +1865,9 @@ bool CPlayerAIControl::IsPassTarget()
 //==========================================================================
 // 誰がボールを取りに行きますか？
 //==========================================================================
-bool CPlayerAIControl::IsWhoPicksUpTheBall()
+bool CPlayerAIControl::IsPicksUpBall()
 {
 	float fMyDis = 1000000.0f;	// 自分のボールとの距離
-	float fTeamMemberDis = 1000000.0f;	// チームメンバーのボールとの距離
 
 	// 自分の情報取得
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();	// チームタイプ
