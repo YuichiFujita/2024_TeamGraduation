@@ -77,16 +77,16 @@ HRESULT CPlayerManager_Result::Init()
 //==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
+HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
 {
 	// 位置
-	MyLib::Vector3 pos = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_LEFT);
-	pos += Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT];
-	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_LEFT] * static_cast<float>(i));
+	MyLib::Vector3 posCreate = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_LEFT);
+	posCreate += Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT];
+	posCreate += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_LEFT] * static_cast<float>(i));
 
 	// プレイヤー生成
 	CPlayer* pPlayer = CPlayer::Create(
-		pos,
+		posCreate,
 		CGameManager::ETeamSide::SIDE_LEFT,
 		CPlayer::EHuman::HUMAN_RESULT,
 		info.eBody,
@@ -104,16 +104,16 @@ HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
 //==========================================================================
 // 右のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
+HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
 {
 	// 位置
-	MyLib::Vector3 pos = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_RIGHT);
-	pos += Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT];
-	pos += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_RIGHT] * static_cast<float>(i));
+	MyLib::Vector3 posCreate = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_RIGHT);
+	posCreate += Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT];
+	posCreate += (Player::POS_SHIFT[CGameManager::ETeamSide::SIDE_RIGHT] * static_cast<float>(i));
 
 	// プレイヤー生成
 	CPlayer* pPlayer = CPlayer::Create(
-		pos,
+		posCreate,
 		CGameManager::ETeamSide::SIDE_RIGHT,
 		CPlayer::EHuman::HUMAN_RESULT,
 		info.eBody,
