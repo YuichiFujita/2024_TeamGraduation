@@ -22,7 +22,7 @@
 #include "input_keyboard.h"
 #include "input_gamepad.h"
 
-#if 0
+#if 1
 #define ENTRYSTART()	// エントリーして生成するかのフラグ
 #endif
 
