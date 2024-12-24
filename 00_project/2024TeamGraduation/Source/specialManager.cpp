@@ -21,6 +21,7 @@
 #include "lightPoint.h"
 #include "cutin.h"
 #include "audience.h"
+#include "gymWallManager.h"
 
 //************************************************************
 //	定数宣言
@@ -170,8 +171,8 @@ HRESULT CSpecialManager::Init(void)
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_NONE, false);
 
-// 成功を返す
-return S_OK;
+	// 成功を返す
+	return S_OK;
 }
 
 //============================================================
@@ -302,6 +303,11 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 
 		// プレイヤー盛り上げ位置の設定
 		SetPlayerHypePosition(bInverse);
+
+		// 壁の表示をONにする
+		CGameManager* pGameManager = CGameManager::GetInstance();		// ゲームマネージャー
+		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
+		pGymWall->SetIsWall(true);
 
 		// カメラの原点を設定
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());	// 注視点
@@ -499,6 +505,10 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pSPEffect->FinishSetting();
 	}
+
+	// 壁の表示をOFFにする
+	CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
+	pGymWall->SetIsWall(false);
 
 	// 自身の終了
 	Uninit();
