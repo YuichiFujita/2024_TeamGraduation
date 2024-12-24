@@ -408,6 +408,9 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 		pCamera->SetRotation(rot);
 		pCamera->SetPositionR(posR);
 	}
+
+	// †á
+
 }
 
 //==========================================================================
