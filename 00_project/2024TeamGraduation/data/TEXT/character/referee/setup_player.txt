@@ -20,8 +20,8 @@ NUM_MODEL = 16
 # モデルファイル名
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/player/referee/00_waist.x	# [0]腰
-MODEL_FILENAME = data/MODEL/player/referee/01_body.x		# [1]体
-MODEL_FILENAME = data/MODEL/player/referee/02_head.x		# [2]頭
+MODEL_FILENAME = data/MODEL/player/referee/01_body.x	# [1]体
+MODEL_FILENAME = data/MODEL/player/referee/02_head.x	# [2]頭
 MODEL_FILENAME = data/MODEL/player/referee/03_armUP_R.x	# [3]右腕(上)
 MODEL_FILENAME = data/MODEL/player/referee/04_armDW_R.x	# [4]右腕(下)
 MODEL_FILENAME = data/MODEL/player/referee/05_hand_R.x	# [5]右手
