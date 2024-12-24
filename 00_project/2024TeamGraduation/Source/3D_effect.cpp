@@ -20,20 +20,27 @@
 #define EFFECT_3DSIZE3		(0.99f)
 
 //==========================================================================
+// エフェクト生成 ON/OFF
+//==========================================================================
+#if 1
+#define EFFECT
+#endif
+
+//==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
 const char *CEffect3D::m_apTextureFile[] =					// ファイル読み込み
 {
-	"data\\TEXTURE\\effect\\effect000.jpg",	   // 通常エフェクト
-	"data\\TEXTURE\\effect\\effect_point01.tga",	   // 点エフェクト
-	"data\\TEXTURE\\effect\\smoke_05.tga",	   // 煙エフェクト
-	"data\\TEXTURE\\effect\\smoke_05.tga",	   // 黒煙
-	"data\\TEXTURE\\effect\\effect000.png",	   // 黒エフェクト
-	"data\\TEXTURE\\effect\\effect001.png",		// 十字エフェクト
-	"data\\TEXTURE\\effect\\Star01.png",		// 十字エフェクト
-	"data\\TEXTURE\\effect\\thunder_02.tga",	// 雷エフェクト
-	"data\\TEXTURE\\effect\\water.png",			// 水エフェクト
-	"",											// nullptrエフェクト
+	"data\\TEXTURE\\effect\\effect000.jpg",			// 通常エフェクト
+	"data\\TEXTURE\\effect\\effect_point01.tga",	// 点エフェクト
+	"data\\TEXTURE\\effect\\smoke_05.tga",			// 煙エフェクト
+	"data\\TEXTURE\\effect\\smoke_05.tga",			// 黒煙
+	"data\\TEXTURE\\effect\\effect000.png",			// 黒エフェクト
+	"data\\TEXTURE\\effect\\effect001.png",			// 十字エフェクト
+	"data\\TEXTURE\\effect\\Star01.png",			// 十字エフェクト
+	"data\\TEXTURE\\effect\\thunder_02.tga",		// 雷エフェクト
+	"data\\TEXTURE\\effect\\water.png",				// 水エフェクト
+	"",												// nullptrエフェクト
 };
 int CEffect3D::m_nNumAll = 0;	// 総数
 int CEffect3D::m_nTexIdx[TYPE_MAX] = {};	// テクスチャのインデックス番号
@@ -93,6 +100,7 @@ void CEffect3D::LoadTexture()
 //==========================================================================
 CEffect3D *CEffect3D::Create()
 {
+#ifdef EFFECT
 	// 生成用のオブジェクト
 	CEffect3D *pEffect = nullptr;
 
@@ -111,6 +119,7 @@ CEffect3D *CEffect3D::Create()
 
 		return pEffect;
 	}
+#endif
 
 	return nullptr;
 }
@@ -120,6 +129,7 @@ CEffect3D *CEffect3D::Create()
 //==========================================================================
 CEffect3D* CEffect3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& move, const D3DXCOLOR& col, const float fRadius, const float fLife, const int moveType, const TYPE type, const float fAddSizeValue)
 {
+#ifdef EFFECT
 	// メモリの確保
 	CEffect3D* pEffect = DEBUG_NEW CEffect3D;
 
@@ -136,6 +146,9 @@ CEffect3D* CEffect3D::Create(const MyLib::Vector3& pos, const MyLib::Vector3& mo
 	}
 
 	return pEffect;
+#else
+	return nullptr;
+#endif
 }
 
 //==========================================================================
