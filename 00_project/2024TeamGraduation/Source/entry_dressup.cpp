@@ -316,6 +316,11 @@ void CEntry_Dressup::Save()
 
 	// セーブ処理
 	pPlayerMgr->Save(vecSaveInfo[CGameManager::ETeamSide::SIDE_LEFT], vecSaveInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+
+	// ゲーム設定の保存
+	assert(m_pRuleManager != nullptr);
+	CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
+	CEntryRuleManager::SaveSetting(&rule);
 }
 
 //==========================================================================

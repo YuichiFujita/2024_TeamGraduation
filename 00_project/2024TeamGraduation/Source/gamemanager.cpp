@@ -378,28 +378,27 @@ void CGameManager::StartSetting()
 		// チームステータス
 		CreateTeamStatus();
 
-		// タイマーUI
-		if (m_pTimerUI == nullptr)
-		{
-			m_pTimerUI = CTimerUI::Create(
-				90.0f,
-				90.0f,
-				MyLib::Vector3(640.0f, 70.0f, 0.0f),
-				D3DXVECTOR2(40.0f, 40.0f),
-				D3DXVECTOR2(30.0f, 40.0f),
-				D3DXVECTOR2(40.0f, 0.0f),
-				D3DXVECTOR2(60.0f, 0.0f),
-				CTimerUI::EAlignX::XALIGN_CENTER,
-				CTimerUI::EAlignY::YALIGN_CENTER,
-				MyLib::Vector3(0.0f)
-			);
+		// 外部ファイルから設定されたタイムを読込
+		CEntryRuleManager::SRule rule;			// ルール
+		CEntryRuleManager::LoadSetting(&rule);	// ルール読込
 
-			// 開始
-#if _NDEBUG
-			m_pTimerUI->Start();
-#endif
+		// タイマーの生成
+		m_pTimerUI = CTimerUI::Create
+		( // 引数
+			rule.fTime,
+			rule.fTime,
+			MyLib::Vector3(640.0f, 70.0f, 0.0f),
+			D3DXVECTOR2(40.0f, 40.0f),
+			D3DXVECTOR2(30.0f, 40.0f),
+			D3DXVECTOR2(40.0f, 0.0f),
+			D3DXVECTOR2(60.0f, 0.0f),
+			CTimerUI::EAlignX::XALIGN_CENTER,
+			CTimerUI::EAlignY::YALIGN_CENTER,
+			MyLib::Vector3(0.0f)
+		);
 
-		}
+		// タイマーの計測開始
+		m_pTimerUI->Start();
 
 		// メインへ遷移
 		SetSceneType(ESceneType::SCENE_MAIN);
