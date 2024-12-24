@@ -794,6 +794,9 @@
     <ClCompile Include="Source\entryRuleManager.cpp">
       <Filter>mode\entry</Filter>
     </ClCompile>
+    <ClCompile Include="Source\resultCrown.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1449,6 +1452,9 @@
     </ClInclude>
     <ClInclude Include="Source\entryRuleManager.h">
       <Filter>mode\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resultCrown.h">
+      <Filter>mode\result</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

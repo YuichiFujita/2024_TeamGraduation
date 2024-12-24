@@ -15,17 +15,16 @@
 #include "gamemanager.h"
 #include "object3D.h"
 #include "3D_effect.h"
+#include "resultCrown.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const std::string TEXFILE_WIN = "data\\TEXTURE\\result\\win.png";		// 勝ち
-	const std::string TEXFILE_DRAW = "data\\TEXTURE\\result\\draw.jpg";		// 引き分け
-	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\draw.jpg";	// 試合に勝利したのは！
-	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\draw.jpg";	// よりモテたのは！
-	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(100.0f, 100.0f);		// 3Dポリゴンサイズ
+	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\prelude.png";	// 試合に勝利したのは！
+	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\contest.png";	// よりモテたのは！
+	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(500.0f, 100.0f);		// 3Dポリゴンサイズ
 	const float POSY_POLY = 100.0f;											// 3Dポリゴン位置(y)
 
 	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);	// スタート時カメラ向き
@@ -166,7 +165,8 @@ CResultManager::CResultManager()
 	m_state = EState::STATE_NONE;									// 状態
 	m_fStateTime = 0.0f;											// 状態時間
 	m_bStateTrans = false;											// 状態遷移可能フラグ(t:不可/f:可)
-	m_pCrown = nullptr;												// 勝利チーム用3Dポリゴン
+	m_pText = nullptr;												// 勝利チーム用3Dポリゴン
+	m_pCrown = nullptr;												// 王冠モデル
 }
 
 //==========================================================================
@@ -239,9 +239,12 @@ void CResultManager::Uninit()
 	CPlayerManager* pManager = CPlayerManager::GetInstance();
 	SAFE_UNINIT(pManager);
 
-	// 王冠ポリゴン
+	// 王冠
 	m_pCrown = nullptr;
 	
+	// 勝利準備ポリゴン
+	m_pText = nullptr;
+
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;
@@ -419,16 +422,17 @@ void CResultManager::StateStartPreludeReady()
 
 	// ポリゴン生成
 	SAFE_KILL(m_pCrown);
-	m_pCrown = CObject3D::Create();
-	MyAssert::CustomAssert(m_pCrown != nullptr, "なんでポリゴン生成できてないんだよ");
-	m_pCrown->SetType(CObject::TYPE::TYPE_OBJECT3D);
-	m_pCrown->SetSize(SIZE_POLY);
+	SAFE_KILL(m_pText);
+	m_pText = CObject3D::Create();
+	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
+	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
+	m_pText->SetSize(SIZE_POLY);
 
 	MyLib::Vector3 pos = VEC3_ZERO;
 	pos.y += Ready::POSY_WORD;
-	m_pCrown->SetPosition(pos);
+	m_pText->SetPosition(pos);
 
-	m_pCrown->BindTexture(pTexture->Regist(TEXFILE_DRAW));
+	m_pText->BindTexture(pTexture->Regist(TEXFILE_PRELUDE));
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -454,30 +458,9 @@ void CResultManager::StateStartPrelude()
 	// 観客盛り上げ
 	CAudience::SetEnableJumpAll(true, m_teamPreludeWin);
 
-	// ポリゴン生成
-	SAFE_KILL(m_pCrown);
-	m_pCrown = CObject3D::Create();
-	MyAssert::CustomAssert(m_pCrown != nullptr, "なんでポリゴン生成できてないんだよ");
-	m_pCrown->SetType(CObject::TYPE::TYPE_OBJECT3D);
-
-
-	MyLib::Vector3 pos = VEC3_ZERO;
-	m_pCrown->SetSize(SIZE_POLY);
-
-	if (m_teamPreludeWin == CGameManager::ETeamSide::SIDE_NONE)
-	{// 引き分け
-		pos = Draw::POS;
-		pos.y += Prelude::POSY_CROWN;
-		m_pCrown->SetPosition(pos);
-		m_pCrown->BindTexture(pTexture->Regist(TEXFILE_DRAW));
-	}
-	else
-	{// 勝利
-		pos = POS_COURT[m_teamPreludeWin];
-		pos.y += Prelude::POSY_CROWN;
-		m_pCrown->SetPosition(pos);
-		m_pCrown->BindTexture(pTexture->Regist(TEXFILE_WIN));
-	}
+	// モデル生成
+	SAFE_KILL(m_pText);
+	CreateCrown(m_teamPreludeWin);
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -505,16 +488,17 @@ void CResultManager::StateStartCharmContestReady()
 
 	// ポリゴン生成
 	SAFE_KILL(m_pCrown);
-	m_pCrown = CObject3D::Create();
-	MyAssert::CustomAssert(m_pCrown != nullptr, "なんでポリゴン生成できてないんだよ");
-	m_pCrown->SetType(CObject::TYPE::TYPE_OBJECT3D);
-	m_pCrown->SetSize(SIZE_POLY);
+	SAFE_KILL(m_pText);
+	m_pText = CObject3D::Create();
+	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
+	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
+	m_pText->SetSize(SIZE_POLY);
 
 	MyLib::Vector3 pos = VEC3_ZERO;
 	pos.y += Ready::POSY_WORD;
-	m_pCrown->SetPosition(pos);
+	m_pText->SetPosition(pos);
 
-	m_pCrown->BindTexture(pTexture->Regist(TEXFILE_DRAW));
+	m_pText->BindTexture(pTexture->Regist(TEXFILE_CONTEST));
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -545,29 +529,9 @@ void CResultManager::StateStartCharmContest()
 	// 観客盛り上げ
 	CAudience::SetEnableJumpAll(true, m_teamContestWin);
 
-	// ポリゴン生成
-	SAFE_KILL(m_pCrown);
-	m_pCrown = CObject3D::Create();
-	MyAssert::CustomAssert(m_pCrown != nullptr, "なんでポリゴン生成できてないんだよ");
-
-	MyLib::Vector3 pos = VEC3_ZERO;
-	m_pCrown->SetSize(SIZE_POLY);
-	m_pCrown->SetType(CObject::TYPE::TYPE_OBJECT3D);
-
-	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
-	{// 引き分け
-		pos = Draw::POS;
-		pos.y += Contest::POSY_CROWN;
-		m_pCrown->SetPosition(pos);
-		m_pCrown->BindTexture(pTexture->Regist(TEXFILE_DRAW));
-	}
-	else
-	{// 勝利
-		pos = POS_COURT[m_teamContestWin];
-		pos.y += Contest::POSY_CROWN;
-		m_pCrown->SetPosition(pos);
-		m_pCrown->BindTexture(pTexture->Regist(TEXFILE_WIN));
-	}
+	// モデル生成
+	SAFE_KILL(m_pText);
+	CreateCrown(m_teamContestWin);
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -620,6 +584,79 @@ void CResultManager::CreateAudience()
 		// 観客数を設定
 		CAudience::SetNumWatch(nNumAudience, static_cast<CGameManager::ETeamSide>(i));
 	}
+}
+
+//==========================================================================
+// 王冠モデル生成
+//==========================================================================
+void CResultManager::CreateCrown(CGameManager::ETeamSide team)
+{
+	CResultCrown::EResult result = CResultCrown::EResult::RESULT_WIN;
+	MyLib::Vector3 pos = VEC3_ZERO;
+	pos.y += Prelude::POSY_CROWN;
+
+	if (team == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分け
+		pos += Draw::POS;
+		result = CResultCrown::EResult::RESULT_DRAW;
+	}
+	else
+	{// 勝利
+		pos += POS_COURT[team];
+		result = CResultCrown::EResult::RESULT_WIN;
+	}
+
+	SAFE_KILL(m_pCrown);
+	m_pCrown = CResultCrown::Create(result);
+	MyAssert::CustomAssert(m_pCrown != nullptr, "なんでモデル生成できてないんだよ");
+	m_pCrown->SetType(CObject::TYPE::TYPE_OBJECTX);
+
+	m_pCrown->SetPosition(pos);
+	m_pCrown->SetOriginPosition(pos);
+	m_pCrown->SetState(CResultCrown::EState::STATE_LOOP);
+}
+
+//==========================================================================
+// 勝敗ポリゴン生成
+//==========================================================================
+void CResultManager::CreatePolygon(EState state)
+{
+	CTexture* pTexture = CTexture::GetInstance();
+
+	SAFE_KILL(m_pText);
+	m_pText = CObject3D::Create();
+	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
+	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
+	m_pText->SetSize(SIZE_POLY);
+
+	MyLib::Vector3 pos = VEC3_ZERO;
+	pos.y += Ready::POSY_WORD;
+	m_pText->SetPosition(pos);
+
+	std::string filepass = TEXFILE_PRELUDE;
+
+	switch (state)
+	{
+	case CResultManager::STATE_PRELUDE_READY:
+		filepass = TEXFILE_PRELUDE;
+		break;
+
+	case CResultManager::STATE_CONTEST_READY:
+		filepass = TEXFILE_CONTEST;
+		break;
+
+	default:
+		break;
+	}
+	
+	m_pText->BindTexture(pTexture->Regist(filepass));
+}
+
+//==========================================================================
+// パーティクル生成
+//==========================================================================
+void CResultManager::CreateParticle()
+{
 }
 
 //==========================================================================
@@ -849,7 +886,7 @@ void CResultManager::Debug()
 
 	if (ImGui::TreeNode("crown"))
 	{
-		if (m_pCrown != nullptr)
+		if (m_pCrown!= nullptr)
 		{
 			MyLib::Vector3 pos = m_pCrown->GetPosition();
 			ImGui::DragFloat3("pos", (float*)&pos, 1.0f, 0.0f, 0.0f, "%.2f");

@@ -87,11 +87,9 @@ private:
 	
 	// 生成
 	HRESULT CreateMain();	// 主生成
-	HRESULT CreateSub();	// 副生成
 
 	// その他
 	void UpdateMain();		// 主更新
-	void UpdateSub();		// 副更新
 
 	//=============================
 	// メンバ変数
@@ -107,7 +105,6 @@ private:
 
 	// その他
 	CObjectX* m_pMain;		// メインロゴ
-	CObject2D* m_pSub;		// 副
 	float m_fTime;			// タイマー
 };
 
