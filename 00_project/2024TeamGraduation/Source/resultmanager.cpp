@@ -167,6 +167,7 @@ CResultManager::CResultManager()
 	m_bStateTrans = false;											// 状態遷移可能フラグ(t:不可/f:可)
 	m_pText = nullptr;												// 勝利チーム用3Dポリゴン
 	m_pCrown = nullptr;												// 王冠モデル
+	m_pEfkConfetti = nullptr;										// 紙吹雪エフェクシア
 }
 
 //==========================================================================
@@ -244,6 +245,13 @@ void CResultManager::Uninit()
 	
 	// 勝利準備ポリゴン
 	m_pText = nullptr;
+
+	// エフェクト破棄
+	if (m_pEfkConfetti != nullptr)
+	{
+		m_pEfkConfetti->SetTrigger(0);
+		m_pEfkConfetti = nullptr;
+	}
 
 	// 自身の開放
 	delete m_pThisPtr;
@@ -502,6 +510,10 @@ void CResultManager::StateStartCharmContestReady()
 	m_pText->SetPosition(pos);
 
 	m_pText->BindTexture(pTexture->Regist(TEXFILE_CONTEST));
+
+	// エフェクシア生成
+	//m_pEfkConfetti = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CONFETTI, MyLib::Vector3(), MyLib::Vector3(), MyLib::Vector3(), 1000.0f, false);
+
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
