@@ -633,14 +633,19 @@ void CPlayer::Controll(const float fDeltaTime, const float fDeltaRate, const flo
 	// ゲームパッド情報取得
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (CGameManager::GetInstance()->IsControll())
-	{ // 行動できるとき
+	CGameManager* gmr = CGameManager::GetInstance();
 
-		// ベースの更新
-		m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	if (gmr != nullptr)
+	{
+		if (gmr->IsControll())
+		{ // 行動できるとき
 
-		// ベース変更の更新
-		m_pBase->UpdateChangeBase();
+			// ベースの更新
+			m_pBase->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+			// ベース変更の更新
+			m_pBase->UpdateChangeBase();
+		}
 	}
 
 	// 情報取得
