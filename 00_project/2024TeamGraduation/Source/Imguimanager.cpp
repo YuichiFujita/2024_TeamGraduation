@@ -14,6 +14,13 @@ HWND backupHWnd;
 LPDIRECT3DDEVICE9 device;
 
 //==========================================================================
+// デバッグ表示 ON/OFF
+//==========================================================================
+#ifndef DEBUG_EXE
+#define IMGUI_DRAW
+#endif
+
+//==========================================================================
 // 初期化処理
 //==========================================================================
 void ImguiMgr::Init(HWND hwnd, LPDIRECT3DDEVICE9 pd3dDevice)
@@ -372,11 +379,13 @@ void ImguiMgr::Draw()
 	// ImGuiの描画
 	if (!CManager::IsDisp_ImGui())
 	{
+#ifdef IMGUI_DRAW
 		// ImGuiの描画
 		ImGui::Render();
 
 		// 描画コマンドの処理
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+#endif
 	}
 }
 
