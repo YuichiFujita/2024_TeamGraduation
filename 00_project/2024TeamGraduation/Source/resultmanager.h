@@ -31,6 +31,7 @@ namespace ResultManager
 class CTeamStatus;
 class CObject3D;
 class CResultCrown;
+class CEffekseerObj;
 
 //==========================================================================
 // クラス定義
@@ -114,7 +115,7 @@ private:
 	void CreateAudience();								// 観客生成
 	void CreateCrown(CGameManager::ETeamSide team);		// 王冠モデル生成
 	void CreatePolygon(EState state);					// 勝敗ポリゴン生成
-	void CreateParticle();								// パーティクル生成
+	void CreateEffect();								// エフェクト生成
 
 	void Debug();		// デバッグ
 	void Load();		// ゲーム情報読み込み
@@ -129,6 +130,8 @@ private:
 	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
 	CObject3D* m_pText;											// 勝利チーム用3Dポリゴン
 	CResultCrown* m_pCrown;										// 王冠モデル
+	CEffekseerObj* m_pEfkConfetti;								// 紙吹雪エフェクシア
+
 	//-----------------------------
 	// 状態
 	//-----------------------------

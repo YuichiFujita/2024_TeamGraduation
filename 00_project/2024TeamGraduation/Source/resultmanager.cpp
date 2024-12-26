@@ -167,6 +167,7 @@ CResultManager::CResultManager()
 	m_bStateTrans = false;											// 状態遷移可能フラグ(t:不可/f:可)
 	m_pText = nullptr;												// 勝利チーム用3Dポリゴン
 	m_pCrown = nullptr;												// 王冠モデル
+	m_pEfkConfetti = nullptr;										// 紙吹雪エフェクシア
 }
 
 //==========================================================================
@@ -244,6 +245,13 @@ void CResultManager::Uninit()
 	
 	// 勝利準備ポリゴン
 	m_pText = nullptr;
+
+	// エフェクト破棄
+	if (m_pEfkConfetti != nullptr)
+	{
+		m_pEfkConfetti->SetTrigger(0);
+		m_pEfkConfetti = nullptr;
+	}
 
 	// 自身の開放
 	delete m_pThisPtr;
@@ -536,6 +544,9 @@ void CResultManager::StateStartCharmContest()
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamContestWin);
 
+	// エフェクシア生成
+	CreateEffect();
+
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -656,11 +667,32 @@ void CResultManager::CreatePolygon(EState state)
 }
 
 //==========================================================================
-// パーティクル生成
+// エフェクト生成
 //==========================================================================
-void CResultManager::CreateParticle()
+void CResultManager::CreateEffect()
 {
+	MyLib::Vector3 pos = VEC3_ZERO;
+	pos.y += Prelude::POSY_CROWN;
 
+	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分け
+		pos += Draw::POS;
+	}
+	else
+	{// 勝利
+		pos += POS_COURT[m_teamContestWin];
+	}
+
+	// 生成
+	m_pEfkConfetti = CEffekseerObj::Create
+	(
+		CMyEffekseer::EEfkLabel::EFKLABEL_CONFETTI,
+		pos,
+		MyLib::Vector3(),
+		MyLib::Vector3(),
+		10.0f,
+		false
+	);
 }
 
 //==========================================================================
