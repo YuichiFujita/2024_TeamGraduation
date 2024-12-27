@@ -285,6 +285,13 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 		m_pEffect->SetPosition(pos);
 		m_pEffect->SetRotation(setrot);
 	}
+
+	// í‚Éo‚éƒzƒƒzƒ
+	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_LOGO_ALWAYS,
+		pos,
+		setrot,	// Œü‚«
+		MyLib::Vector3(),
+		10.0f);
 }
 
 //==========================================================================

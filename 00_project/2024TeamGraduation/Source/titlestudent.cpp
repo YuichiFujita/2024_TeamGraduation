@@ -179,9 +179,11 @@ HRESULT CTitleStudent::Init()
 
 	// 状態
 	m_state = EState::STATE_WAIT;		// 状態
-	float ratio = (float)UtilFunc::Transformation::Random(0, 100) / (float)100;
+	float ratio = (float)UtilFunc::Transformation::Random(0, 10) / (float)10;
 	m_fStateTime = ratio * StateTime::WAIT;	// 状態時間
 
+	// 待機
+	GetMotion()->Set(EMotion::MOTION_WAIT);
 	return S_OK;
 }
 
