@@ -106,8 +106,9 @@ private:
 	//--------------------------
 	// 更新
 	//--------------------------
-	void UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 選択肢更新
-	void UpdateColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 色更新
+	void UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 選択肢更新
+	void UpdateColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 色更新
+	void UpdateSelectSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 選択肢のサイズ更新
 
 	//--------------------------
 	// 生成

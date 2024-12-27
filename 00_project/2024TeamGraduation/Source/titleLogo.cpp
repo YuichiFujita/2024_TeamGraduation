@@ -62,7 +62,8 @@ CTitleLogo::CTitleLogo(int nPriority, const LAYER layer) : CObject(nPriority, la
 	m_fRotationTime		(0.0f),					// 回転タイマー
 	m_fIntervalRotate	(0.0f),					// 回転までの間隔
 	m_fRotationY		(0.0f),					// Y軸回転量
-	m_fTime				(0.0f)					// 副のタイマー
+	m_fTime				(0.0f),					// 副のタイマー
+	m_pEffect			(nullptr)				// エフェクト
 {
 	
 }
@@ -145,6 +146,14 @@ HRESULT CTitleLogo::CreateMain()
 //==========================================================================
 void CTitleLogo::Uninit()
 {
+	// 再生中のもの削除
+	if (m_pEffect != nullptr)
+	{
+		m_pEffect->SetTrigger(0);
+		m_pEffect->Uninit();
+		m_pEffect = nullptr;
+	}
+
 	// オブジェクトの破棄
 	Release();
 }
@@ -201,6 +210,22 @@ void CTitleLogo::StateSpawn(const float fDeltaTime, const float fDeltaRate, cons
 
 	if (m_fStateTime >= StateTime::SPAWN)
 	{// 遷移
+
+		// 再生中のもの削除
+		if (m_pEffect != nullptr)
+		{
+			m_pEffect->SetTrigger(0);
+			m_pEffect->Uninit();
+			m_pEffect = nullptr;
+		}
+
+		// エフェクト生成
+		m_pEffect = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_LOGO,
+			GetPosition(),
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			10.0f, false);
+
 		SetState(EState::STATE_LOOP);
 	}
 }
@@ -254,6 +279,12 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 	cameraRot.y = rot.y;
 	pCamera->SetRotation(cameraRot);
 
+	// エフェクト
+	if (m_pEffect != nullptr)
+	{
+		m_pEffect->SetPosition(pos);
+		m_pEffect->SetRotation(setrot);
+	}
 }
 
 //==========================================================================

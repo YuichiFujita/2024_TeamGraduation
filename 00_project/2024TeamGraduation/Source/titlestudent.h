@@ -51,9 +51,7 @@ public:
 	enum EState
 	{
 		STATE_NONE = 0,		// なにもない
-		STATE_GO,			// 向かう
-		STATE_COLLECT,		// 回収
-		STATE_BACK,			// 戻る
+		STATE_WAIT,			// 待機
 		STATE_MAX
 	};
 	
@@ -106,7 +104,8 @@ private:
 	//-----------------------------
 	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
-	
+	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 待機
+
 	//-----------------------------
 	// モーション系関数
 	//-----------------------------

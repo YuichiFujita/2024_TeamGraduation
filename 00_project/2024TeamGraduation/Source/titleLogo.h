@@ -16,6 +16,7 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CEffekseerObj;
 
 //==========================================================================
 // クラス定義
@@ -99,13 +100,14 @@ private:
 	float m_fStateTime;	// 状態タイマー
 
 	// 回転
-	float m_fRotationTime;	// 回転タイマー
+	float m_fRotationTime;		// 回転タイマー
 	float m_fIntervalRotate;	// 回転までの間隔
 	float m_fRotationY;			// Y軸回転量
 
 	// その他
-	CObjectX* m_pMain;		// メインロゴ
-	float m_fTime;			// タイマー
+	CObjectX* m_pMain;			// メインロゴ
+	float m_fTime;				// タイマー
+	CEffekseerObj* m_pEffect;	// エフェクト
 };
 
 #endif

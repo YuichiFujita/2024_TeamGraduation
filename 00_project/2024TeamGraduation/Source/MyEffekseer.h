@@ -60,6 +60,7 @@ public:
 		EFKLABEL_CATCH_NORMAL,			// キャッチ(通常)
 		EFKLABEL_CATCH_JUST,			// キャッチ(ジャスト)
 		EFKLABEL_CONFETTI,				// 紙吹雪
+		EFKLABEL_LOGO,					// ロゴ
 		EFKLABEL_MAX
 	};
 	

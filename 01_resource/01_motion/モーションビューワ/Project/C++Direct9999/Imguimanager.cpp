@@ -78,7 +78,6 @@ void ImguiMgr::Update(void)
 	ImGui_ImplDX9_NewFrame();
 	ImGui::NewFrame();
 
-
 #if 0
 	// ‚±‚±‚ÉImgui‚ÌGUI—v‘f‚ð’Ç‰Á
 	ImGui::Text("Hello, ImGui!");

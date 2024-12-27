@@ -57,6 +57,7 @@ namespace StateTime
 	const float TRANSITION_WAIT = 0.5f;		// 遷移待機
 	const float TRANSITION_SECOND = 0.4f;	// 遷移
 	const float TRANSITION_LAST = 0.5f;		// 遷移(ラスト)
+	const float SCALE = 1.0f;		// 拡大率
 
 	namespace BG
 	{
@@ -404,7 +405,7 @@ void CTitle_ControllWait::UpdateColor(const float fDeltaTime, const float fDelta
 	m_pSelectUI[m_select]->SetColor(selectColor);
 
 	// 拡大率
-	float scale = UtilFunc::Correction::EasingQuintOut(0.0f, 1.0f, 0.0f, MARKERTIME, m_fMarkerTime);
+	float scale = UtilFunc::Correction::EasingQuintOut(0.5f, 1.0f, 0.0f, MARKERTIME, m_fMarkerTime);
 	float scaleRate = (SCALE_SELECT + (1.0f - SCALE_SELECT) * scale);
 
 	for (const auto& select : m_pSelectUI)
@@ -412,6 +413,24 @@ void CTitle_ControllWait::UpdateColor(const float fDeltaTime, const float fDelta
 		select->SetSize(select->GetSizeOrigin() * (1.0f - (scaleRate - SCALE_SELECT)));
 	}
 	m_pSelectUI[m_select]->SetSize(m_pSelectUI[m_select]->GetSizeOrigin() * scaleRate);
+
+	// 選択肢のサイズ更新
+	UpdateSelectSize(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 選択肢のサイズ更新
+//==========================================================================
+void CTitle_ControllWait::UpdateSelectSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 拡縮
+	float scale = sinf(D3DX_PI * (m_fMarkerTime / StateTime::SCALE * 0.5f)) * 0.025f;
+
+	MyLib::Vector2 size = m_pSelectUI[m_select]->GetSize();
+
+	// 今のサイズに加算
+	size += m_pSelectUI[m_select]->GetSizeOrigin() * scale;
+	m_pSelectUI[m_select]->SetSize(size);
 }
 
 //==========================================================================
@@ -617,20 +636,25 @@ void CTitle_ControllWait::StateBGSpawn(const float fDeltaTime, const float fDelt
 	float alpha = UtilFunc::Correction::EasingQuintOut(0.0f, 1.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
 	D3DXCOLOR selectColor = MyLib::color::White(alpha);
 
-	// 背景のUI
-	for (const auto& select : m_pBG)
-	{
-		select->SetColor(MyLib::color::White(1.0f - alpha));
-	}
-	m_pBG[m_select]->SetColor(selectColor);
-
 	// 拡縮
 	float scale = UtilFunc::Correction::EasingQuintInOut(0.0f, 1.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
-	m_pBG[m_select]->SetSize(m_pBG[m_select]->GetSizeOrigin() * scale);
-
 
 	// 回転して登場
 	float rotZ = UtilFunc::Correction::EasingQuintInOut(D3DX_PI * 4.0f, 0.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
+
+	for (const auto& select : m_pBG)
+	{
+		// 色
+		select->SetColor(MyLib::color::White(1.0f - UtilFunc::Correction::EasingQuintOut(0.0f, 0.4f, 0.0f, 1.0f, alpha)));
+
+		// 拡縮
+		select->SetSize(select->GetSizeOrigin() * UtilFunc::Correction::EasingQuintOut(1.0f, SCALE_SELECT, 0.0f, 1.0f, scale));
+
+		// 回転
+		select->SetRotation(MyLib::Vector3());
+	}
+	m_pBG[m_select]->SetColor(selectColor);
+	m_pBG[m_select]->SetSize(m_pBG[m_select]->GetSizeOrigin() * scale);
 	m_pBG[m_select]->SetRotation(MyLib::Vector3(0.0f, 0.0f, rotZ));
 
 	// 状態遷移

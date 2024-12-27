@@ -42,6 +42,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/cantch_normal.efkefc",				// キャッチ(通常)
 	"data/Effekseer/cantch_just.efkefc",				// キャッチ(ジャスト)
 	"data/Effekseer/confetti.efkefc",					// 紙吹雪
+	"data/Effekseer/logo.efkefc",						// ロゴ
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
