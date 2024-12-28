@@ -364,7 +364,7 @@ void CTitleStudent::Draw()
 void CTitleStudent::SetRandWarmUp()
 {
 	// モーション設定
-	GetMotion()->Set(UtilFunc::Transformation::Random(MOTION_WARMUP_01, MOTION_WARMUP_01 + (MOTION_MAX - MOTION_WARMUP_01 - 1)));
+	GetMotion()->Set(UtilFunc::Transformation::Random(MOTION_WARMUP_01, MOTION_WARMUP_01 + (MOTION_MAX - MOTION_WARMUP_01)));
 }
 
 //==========================================================================

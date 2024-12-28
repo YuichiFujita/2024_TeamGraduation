@@ -39,6 +39,7 @@ public:
 	{
 		STATE_WAIT = 0,	// 待機
 		STATE_SCROLL,	// 文字送り
+		STATE_END,		// 終了
 		STATE_MAX
 	};
 
@@ -76,6 +77,7 @@ private:
 	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 待機
 	void StateScroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 文字送り
+	void StateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 終了
 
 	//--------------------------
 	// その他

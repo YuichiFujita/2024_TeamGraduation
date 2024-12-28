@@ -24,7 +24,7 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
-	
+	const CTitle::ESceneType STARTSCENE = CTitle::ESceneType::SCENETYPE_CONTROLLWAIT;	// 初期シーン
 }
 
 namespace STARTCAMERA
@@ -108,10 +108,10 @@ HRESULT CTitle::Init()
 	}
 
 	// シーン生成
-	m_pTitleScene = CTitleScene::Create(ESceneType::SCENETYPE_CONTROLLWAIT);
+	m_pTitleScene = CTitleScene::Create(STARTSCENE);
 
 	// シーン設定
-	m_SceneType = ESceneType::SCENETYPE_CONTROLLWAIT;
+	m_SceneType = STARTSCENE;
 
 	// 成功
 	return S_OK;
