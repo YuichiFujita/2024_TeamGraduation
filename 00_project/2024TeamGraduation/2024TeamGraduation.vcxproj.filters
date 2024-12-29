@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Imgui">
       <UniqueIdentifier>{d130ff42-1fb1-4aa7-ab20-cdd97731dbbb}</UniqueIdentifier>
     </Filter>
@@ -149,6 +145,10 @@
     </Filter>
     <Filter Include="mode\title\option">
       <UniqueIdentifier>{9dc519a8-e6bb-43d8-92c4-9b7f2d744ae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -800,16 +800,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\fade.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\map.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\shadow.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\meshcylinder.h">
       <Filter>mesh</Filter>
@@ -1034,13 +1034,13 @@
       <Filter>effect</Filter>
     </ClInclude>
     <ClInclude Include="Source\controlkeydisp.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\blackframe.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\instantfade.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\Imgui\imconfig.h">
       <Filter>Imgui</Filter>
