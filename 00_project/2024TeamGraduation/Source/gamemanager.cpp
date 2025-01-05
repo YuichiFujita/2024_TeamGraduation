@@ -304,6 +304,14 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	// ゲージ時間更新
 	UpdateGaugeTime();
 
+// 撮影用
+#if 0
+	if (m_pCharmManager != nullptr)
+	{
+		m_pCharmManager->SetHypeTime(CGameManager::ETeamSide::SIDE_LEFT, 10.0f);
+	}
+#endif
+
 #if _DEBUG	// デバッグ処理
 
 	if (ImGui::TreeNode("GameManager"))
@@ -1112,6 +1120,24 @@ void CGameManager::Debug()
 		}
 	}
 
+	// 盛り上がり状態(一瞬？)
+	if (ImGui::TreeNode("ExciteSetting"))
+	{
+		if (m_pCharmManager != nullptr)
+		{
+			if (ImGui::Button("Left"))
+			{
+				m_pCharmManager->SetHypeTime(CGameManager::ETeamSide::SIDE_LEFT, 10.0f);
+			}
+			if (ImGui::Button("Right"))
+			{
+				m_pCharmManager->SetHypeTime(CGameManager::ETeamSide::SIDE_RIGHT, 10.0f);
+			}
+		}
+	
+		ImGui::TreePop();
+	}
+
 	// ゲージのmax時間
 	if (ImGui::TreeNode("GaugeBright"))
 	{
@@ -1125,7 +1151,6 @@ void CGameManager::Debug()
 
 		ImGui::TreePop();
 	}
-
 
 	// モテ値マネージャー
 	if (m_pCharmValueManager != nullptr)
