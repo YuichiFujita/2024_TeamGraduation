@@ -85,9 +85,11 @@ HRESULT CBallLandingMarker::Init()
 
 	// ‰¡•‚ğŒ³‚ÉƒTƒCƒY‚ğİ’è
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 60.0f);
-	SetSize(MyLib::Vector3(size.x, 0.0f, size.y));
+	SetSize(size);
 	SetSizeOrigin(GetSize());
 
+	// Œü‚«İ’è
+	SetRotation(MyLib::Vector3(D3DX_PI * 0.5f, 0.0f, 0.0f));
 	return S_OK;
 }
 

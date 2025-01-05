@@ -62,6 +62,7 @@ public:
 		EFKLABEL_CONFETTI,				// Ž†á
 		EFKLABEL_LOGO,					// ƒƒS
 		EFKLABEL_LOGO_ALWAYS,			// ƒƒS(í‚ÉoŒ»)
+		EFKLABEL_SANDSMOKE,				// »‰Œ
 		EFKLABEL_MAX
 	};
 	

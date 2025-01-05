@@ -50,19 +50,28 @@ namespace
 	const float SCALE_SELECT = 0.7f;	// 選択マーカーのスケール
 }
 
-namespace StateTime
+namespace Timer
 {
-	const float WAIT = 15.0f;	// 待機
-	const float TRANSITION = 0.2f;	// 遷移
-	const float TRANSITION_WAIT = 0.5f;		// 遷移待機
-	const float TRANSITION_SECOND = 0.4f;	// 遷移
-	const float TRANSITION_LAST = 0.5f;		// 遷移(ラスト)
-	const float SCALE = 1.0f;		// 拡大率
+	namespace State
+	{
+		const float WAIT = 15.0f;	// 待機
+		const float TRANSITION = 0.2f;	// 遷移
+		const float TRANSITION_WAIT = 0.5f;		// 遷移待機
+		const float TRANSITION_SECOND = 0.4f;	// 遷移
+		const float TRANSITION_LAST = 0.5f;		// 遷移(ラスト)
+		const float SCALE = 1.0f;		// 拡大率
+	}
 
 	namespace BG
 	{
 		const float SPAWN = 0.3f;	// 出現
 		const float ROTATE = 2.0f;	// 出現
+	}
+
+	namespace SandSmoke
+	{
+		const float SPAWN = 3.5f;	// 生成
+		const int RANDRANGE = 8;	// ランダム範囲(10分の1秒)
 	}
 }
 
@@ -105,8 +114,11 @@ CTitle_ControllWait::CTitle_ControllWait() : CTitleScene()
 	// その他
 	m_pLogo = nullptr;			// ロゴ
 	m_pOptionBBS = nullptr;		// 掲示板
-	m_fMarkerTime = 0.0f;		// マーカーのタイマー
+	m_fTimeMarker = 0.0f;		// マーカーのタイマー
+	m_fTimeSandSmoke = 0.0f;		// 砂煙のタイマー
+	m_fIntervalSandSmoke = 0.0f;	// 砂煙のインターバル
 	m_vecTitleStudent.clear();	// タイトルの生徒
+
 }
 
 //==========================================================================
@@ -156,6 +168,9 @@ HRESULT CTitle_ControllWait::Init()
 	// 掲示板生成
 	m_pOptionBBS = COption_BBS::Create();
 
+	// 砂煙
+	m_fTimeSandSmoke = 0.0f;		// 砂煙のタイマー
+	m_fIntervalSandSmoke = Timer::SandSmoke::SPAWN;	// 砂煙のインターバル
 	return S_OK;
 }
 
@@ -268,6 +283,9 @@ void CTitle_ControllWait::Kill()
 
 	// 終了処理
 	Uninit();
+
+	// エフェクト全削除
+	CMyEffekseer::GetInstance()->StopAll();
 }
 
 //==========================================================================
@@ -284,11 +302,49 @@ void CTitle_ControllWait::Update(const float fDeltaTime, const float fDeltaRate,
 	// 色更新
 	UpdateColor(fDeltaTime, fDeltaRate, fSlowRate);
 
+	// 砂煙更新
+	UpdateSandSmoke(fDeltaTime, fDeltaRate, fSlowRate);
+
 #if _DEBUG
 	ImGui::Text("%s", magic_enum::enum_name(m_select));
 #endif // _DEBUG
 
 
+}
+
+//==========================================================================
+// 砂煙更新
+//==========================================================================
+void CTitle_ControllWait::UpdateSandSmoke(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 砂煙のタイマー加算
+	m_fTimeSandSmoke += fDeltaTime * fSlowRate;;
+	if (m_fTimeSandSmoke < m_fIntervalSandSmoke) return;
+
+	// インターバル再抽選
+	m_fTimeSandSmoke = 0.0f;
+	m_fIntervalSandSmoke = 
+		Timer::SandSmoke::SPAWN + 
+		UtilFunc::Transformation::Random(-Timer::SandSmoke::RANDRANGE, Timer::SandSmoke::RANDRANGE) * 0.1f;
+
+	// 生成位置算出
+	MyLib::Vector3 pos;
+	pos.x = UtilFunc::Transformation::Random(-6, 6) * 100.0f;
+	pos.z = 100.0f + UtilFunc::Transformation::Random(-6, 2) * 100.0f;
+
+	// ニブイチで逆転
+	float rotY = 0.0f;
+	if (rand() % 2 == 0)
+	{
+		rotY += D3DX_PI;
+	}
+
+	// 砂煙生成
+	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_SANDSMOKE,
+		pos,
+		MyLib::Vector3(0.0f, rotY, 0.0f),	// 向き
+		MyLib::Vector3(),
+		10.0f);
 }
 
 //==========================================================================
@@ -316,7 +372,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		m_fStateTime = 0.0f;
 
 		// マーカータイマーリセット
-		m_fMarkerTime = 0.0f;
+		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
@@ -330,7 +386,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		m_fStateTime = 0.0f;
 
 		// マーカータイマーリセット
-		m_fMarkerTime = 0.0f;
+		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
 	}
 
@@ -375,7 +431,7 @@ void CTitle_ControllWait::Decide()
 		SetState(EState::STATE_TRANSITION_MORE_1st);
 
 		// その他へ遷移
-		GET_MANAGER->GetInstantFade()->SetFade(MyLib::color::White(), StateTime::TRANSITION);
+		GET_MANAGER->GetInstantFade()->SetFade(MyLib::color::White(), Timer::State::TRANSITION);
 	}
 		break;
 
@@ -390,10 +446,10 @@ void CTitle_ControllWait::Decide()
 void CTitle_ControllWait::UpdateColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// マーカーのタイマー加算
-	m_fMarkerTime += fDeltaTime * fSlowRate;
+	m_fTimeMarker += fDeltaTime * fSlowRate;
 
 	// 透明度更新
-	float color = UtilFunc::Correction::EasingQuintOut(COLOR_NOTSELECT.r, 1.0f, 0.0f, MARKERTIME, m_fMarkerTime);
+	float color = UtilFunc::Correction::EasingQuintOut(COLOR_NOTSELECT.r, 1.0f, 0.0f, MARKERTIME, m_fTimeMarker);
 	D3DXCOLOR selectColor = D3DXCOLOR(color, color, color, 1.0f);
 
 	// 選択肢のUI
@@ -405,7 +461,7 @@ void CTitle_ControllWait::UpdateColor(const float fDeltaTime, const float fDelta
 	m_pSelectUI[m_select]->SetColor(selectColor);
 
 	// 拡大率
-	float scale = UtilFunc::Correction::EasingQuintOut(0.5f, 1.0f, 0.0f, MARKERTIME, m_fMarkerTime);
+	float scale = UtilFunc::Correction::EasingQuintOut(0.5f, 1.0f, 0.0f, MARKERTIME, m_fTimeMarker);
 	float scaleRate = (SCALE_SELECT + (1.0f - SCALE_SELECT) * scale);
 
 	for (const auto& select : m_pSelectUI)
@@ -424,7 +480,7 @@ void CTitle_ControllWait::UpdateColor(const float fDeltaTime, const float fDelta
 void CTitle_ControllWait::UpdateSelectSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 拡縮
-	float scale = sinf(D3DX_PI * (m_fMarkerTime / StateTime::SCALE * 0.5f)) * 0.025f;
+	float scale = sinf(D3DX_PI * (m_fTimeMarker / Timer::State::SCALE * 0.5f)) * 0.025f;
 
 	MyLib::Vector2 size = m_pSelectUI[m_select]->GetSize();
 
@@ -455,10 +511,10 @@ void CTitle_ControllWait::StateWait(const float fDeltaTime, const float fDeltaRa
 	// 選択肢更新
 	UpdateSelect(fDeltaTime, fDeltaRate, fSlowRate);
 
-	if (m_fStateTime >= StateTime::WAIT)
+	if (m_fStateTime >= Timer::State::WAIT)
 	{
 		// シーン切り替え
-		//CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_SUSURU);
+		CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_SUSURU);
 	}
 }
 
@@ -485,10 +541,10 @@ void CTitle_ControllWait::StateTransitionMoreFirst(const float fDeltaTime, const
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
 	// 奥へ高速移動
-	MyLib::Vector3 posR = UtilFunc::Correction::EaseInExpo(pCamera->GetPositionROrigin(), MyLib::Vector3(0.0f, 0.0f, 1500.0f), 0.0f, StateTime::TRANSITION, m_fStateTime);
+	MyLib::Vector3 posR = UtilFunc::Correction::EaseInExpo(pCamera->GetPositionROrigin(), MyLib::Vector3(0.0f, 0.0f, 1500.0f), 0.0f, Timer::State::TRANSITION, m_fStateTime);
 	pCamera->SetPositionR(posR);
 
-	if (m_fStateTime >= StateTime::TRANSITION)
+	if (m_fStateTime >= Timer::State::TRANSITION)
 	{// 後半へ遷移
 
 		// カメラの初期位置を現在の値に設定
@@ -522,7 +578,7 @@ void CTitle_ControllWait::StateTransitionMoreFirst(const float fDeltaTime, const
 //==========================================================================
 void CTitle_ControllWait::StateTransitionWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_fStateTime >= StateTime::TRANSITION_WAIT)
+	if (m_fStateTime >= Timer::State::TRANSITION_WAIT)
 	{// 後半へ遷移
 		SetState(EState::STATE_TRANSITION_MORE_2nd);
 	}
@@ -537,14 +593,14 @@ void CTitle_ControllWait::StateTransitionMoreSecond(const float fDeltaTime, cons
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
 	// 掲示板の位置へ移動
-	MyLib::Vector3 posR = UtilFunc::Correction::EasingQuintInOut(pCamera->GetPositionROrigin(), m_pOptionBBS->GetPosition(), 0.0f, StateTime::TRANSITION_SECOND, m_fStateTime);
+	MyLib::Vector3 posR = UtilFunc::Correction::EasingQuintInOut(pCamera->GetPositionROrigin(), m_pOptionBBS->GetPosition(), 0.0f, Timer::State::TRANSITION_SECOND, m_fStateTime);
 	pCamera->SetPositionR(posR);
 
 	// 向き
-	MyLib::Vector3 rot = UtilFunc::Correction::EasingQuintInOut(pCamera->GetOriginRotation(), MyLib::Vector3(0.0f, 0.0f, pCamera->GetOriginRotation().z), 0.0f, StateTime::TRANSITION_SECOND, m_fStateTime);
+	MyLib::Vector3 rot = UtilFunc::Correction::EasingQuintInOut(pCamera->GetOriginRotation(), MyLib::Vector3(0.0f, 0.0f, pCamera->GetOriginRotation().z), 0.0f, Timer::State::TRANSITION_SECOND, m_fStateTime);
 	pCamera->SetRotation(rot);
 
-	if (m_fStateTime >= StateTime::TRANSITION_SECOND)
+	if (m_fStateTime >= Timer::State::TRANSITION_SECOND)
 	{// ラストへ遷移
 
 		// カメラの初期位置を現在の値に設定
@@ -567,14 +623,14 @@ void CTitle_ControllWait::StateTransitionMoreLast(const float fDeltaTime, const 
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
 	// 向き
-	MyLib::Vector3 rot = UtilFunc::Correction::EasingQuintInOut(pCamera->GetOriginRotation(), MyLib::Vector3(), 0.0f, StateTime::TRANSITION_SECOND, m_fStateTime);
+	MyLib::Vector3 rot = UtilFunc::Correction::EasingQuintInOut(pCamera->GetOriginRotation(), MyLib::Vector3(), 0.0f, Timer::State::TRANSITION_SECOND, m_fStateTime);
 	pCamera->SetRotation(rot);
 
 	// 距離
-	float distance = UtilFunc::Correction::EasingQuintInOut(pCamera->GetDistanceOrigin(), 150.0f, 0.0f, StateTime::TRANSITION_LAST, m_fStateTime);
+	float distance = UtilFunc::Correction::EasingQuintInOut(pCamera->GetDistanceOrigin(), 150.0f, 0.0f, Timer::State::TRANSITION_LAST, m_fStateTime);
 	pCamera->SetDistance(distance);
 
-	if (m_fStateTime >= StateTime::TRANSITION_SECOND)
+	if (m_fStateTime >= Timer::State::TRANSITION_SECOND)
 	{// 操作へ遷移
 
 		// カメラの初期位置を現在の値に設定
@@ -597,10 +653,10 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
 	// 奥へ高速移動
-	MyLib::Vector3 posR = UtilFunc::Correction::EaseInExpo(pCamera->GetPositionROrigin(), MyLib::Vector3(0.0f, 0.0f, -1500.0f), 0.0f, StateTime::TRANSITION, m_fStateTime);
+	MyLib::Vector3 posR = UtilFunc::Correction::EaseInExpo(pCamera->GetPositionROrigin(), MyLib::Vector3(0.0f, 0.0f, -1500.0f), 0.0f, Timer::State::TRANSITION, m_fStateTime);
 	pCamera->SetPositionR(posR);
 
-	if (m_fStateTime >= StateTime::TRANSITION)
+	if (m_fStateTime >= Timer::State::TRANSITION)
 	{// 待機へ遷移
 		SetState(EState::STATE_WAIT);
 
@@ -633,14 +689,14 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 void CTitle_ControllWait::StateBGSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 透明度更新
-	float alpha = UtilFunc::Correction::EasingQuintOut(0.0f, 1.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
+	float alpha = UtilFunc::Correction::EasingQuintOut(0.0f, 1.0f, 0.0f, Timer::BG::SPAWN, m_fStateTimeBG);
 	D3DXCOLOR selectColor = MyLib::color::White(alpha);
 
 	// 拡縮
-	float scale = UtilFunc::Correction::EasingQuintInOut(0.0f, 1.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
+	float scale = UtilFunc::Correction::EasingQuintInOut(0.0f, 1.0f, 0.0f, Timer::BG::SPAWN, m_fStateTimeBG);
 
 	// 回転して登場
-	float rotZ = UtilFunc::Correction::EasingQuintInOut(D3DX_PI * 4.0f, 0.0f, 0.0f, StateTime::BG::SPAWN, m_fStateTimeBG);
+	float rotZ = UtilFunc::Correction::EasingQuintInOut(D3DX_PI * 4.0f, 0.0f, 0.0f, Timer::BG::SPAWN, m_fStateTimeBG);
 
 	for (const auto& select : m_pBG)
 	{
@@ -658,7 +714,7 @@ void CTitle_ControllWait::StateBGSpawn(const float fDeltaTime, const float fDelt
 	m_pBG[m_select]->SetRotation(MyLib::Vector3(0.0f, 0.0f, rotZ));
 
 	// 状態遷移
-	if (m_fStateTimeBG >= StateTime::BG::SPAWN)
+	if (m_fStateTimeBG >= Timer::BG::SPAWN)
 	{
 		m_stateBG = EStateBG::STATEBG_LOOP;
 		m_fStateTimeBG = 0.0f;
@@ -671,14 +727,14 @@ void CTitle_ControllWait::StateBGSpawn(const float fDeltaTime, const float fDelt
 void CTitle_ControllWait::StateBGLoop(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 回転
-	float rotZ = sinf(D3DX_PI * (m_fStateTimeBG / StateTime::BG::ROTATE)) * (D3DX_PI * 0.01f);
+	float rotZ = sinf(D3DX_PI * (m_fStateTimeBG / Timer::BG::ROTATE)) * (D3DX_PI * 0.01f);
 	m_pBG[m_select]->SetRotation(MyLib::Vector3(0.0f, 0.0f, rotZ));
 
 	// 拡縮
-	float scale = 1.0f + sinf(D3DX_PI * (m_fStateTimeBG / StateTime::BG::ROTATE * 0.5f)) * 0.05f;
+	float scale = 1.0f + sinf(D3DX_PI * (m_fStateTimeBG / Timer::BG::ROTATE * 0.5f)) * 0.05f;
 	m_pBG[m_select]->SetSize(m_pBG[m_select]->GetSizeOrigin() * scale);
 
-	if (m_fStateTimeBG >= StateTime::BG::ROTATE * 2.0f)
+	if (m_fStateTimeBG >= Timer::BG::ROTATE * 2.0f)
 	{
 		m_fStateTimeBG = 0.0f;
 	}

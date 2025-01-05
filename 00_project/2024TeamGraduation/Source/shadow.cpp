@@ -118,6 +118,9 @@ HRESULT CShadow::Init()
 	// テクスチャの割り当て
 	BindTexture(m_nTexIdx);
 
+	// 向き設定
+	SetRotation(MyLib::Vector3(D3DX_PI * 0.5f, 0.0f, 0.0f));
+
 	return S_OK;
 }
 
@@ -192,7 +195,7 @@ void CShadow::SetPositionRelative()
 {
 	MyLib::Vector3 posParent = m_pObject->GetPosition();	// 親オブジェクト位置
 	MyLib::Vector3 posShadow = posParent;	// 影位置
-	MyLib::Vector3 sizeShadow = VEC3_ZERO;	// 影大きさ
+	MyLib::Vector2 sizeShadow;	// 影大きさ
 	float fDis = 0.0f;		// 影と親の距離
 	float fAlpha = 0.0f;	// 透明度
 
@@ -206,7 +209,7 @@ void CShadow::SetPositionRelative()
 
 	// 影の大きさを求める
 	float fRadius = m_fOriginRadius + (MAX_PLUS_RADIUS * fDis);	// 半径
-	sizeShadow = MyLib::Vector3(fRadius, 0.0f, fRadius);
+	sizeShadow = fRadius;
 
 	// α値を求める
 	fAlpha = fabsf(fDis - 1.0f);	// α値を設定

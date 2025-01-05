@@ -44,6 +44,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/confetti.efkefc",					// 紙吹雪
 	"data/Effekseer/logo.efkefc",						// ロゴ
 	"data/Effekseer/logo_always.efkefc",				// ロゴ(常に出現)
+	"data/Effekseer/sandsmoke.efkefc",					// 砂煙
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
