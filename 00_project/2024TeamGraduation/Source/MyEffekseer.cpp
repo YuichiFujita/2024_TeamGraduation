@@ -22,6 +22,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/ball.efkefc",						// ボール
 	"data/Effekseer/throwLine_normal.efkefc",			// 投げた時の線(通常)
 	"data/Effekseer/throwLine_fast.efkefc",				// 投げた時の線(早い)
+	"data/Effekseer/throwLine_pass.efkefc",				// 投げた時の線(パス)
 	"data/Effekseer/kamehame_chargeStart.efkefc",		// かめはめ波(開始)
 	"data/Effekseer/kamehame_aura.efkefc",				// かめはめ波(チャージ)
 	"data/Effekseer/kamehame_chargeWind.efkefc",		// かめはめ波(チャージ)(風)
@@ -42,6 +43,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/cantch_normal.efkefc",				// キャッチ(通常)
 	"data/Effekseer/cantch_just.efkefc",				// キャッチ(ジャスト)
 	"data/Effekseer/confetti.efkefc",					// 紙吹雪
+	"data/Effekseer/crown.efkefc",						// 王冠
 	"data/Effekseer/logo.efkefc",						// ロゴ
 	"data/Effekseer/logo_always.efkefc",				// ロゴ(常に出現)
 	"data/Effekseer/sandsmoke.efkefc",					// 砂煙

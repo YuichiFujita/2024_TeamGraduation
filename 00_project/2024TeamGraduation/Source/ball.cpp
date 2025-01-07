@@ -1968,7 +1968,11 @@ void CBall::UpdateThrowLine()
 		m_pAura->SetPosition(GetWorldMtx().GetWorldPosition());
 	}
 
-	if (IsAttack())
+	// 状態フラグ
+	bool bThrow = IsAttack();
+	bool bPass = m_state == EState::STATE_PASS || m_state == EState::STATE_HOM_PASS;
+
+	if (bThrow && !bPass)
 	{// 攻撃中
 
 		// 情報を取得
@@ -2019,15 +2023,41 @@ void CBall::UpdateThrowLine()
 		m_pThrowLine->SetPosition(pos);
 		m_pThrowLine->SetRotation(rot);
 	}
-	else if(m_pThrowLine != nullptr)
+
+	if (!bThrow && bPass)
+	{// パス状態
+
+		// 情報を取得
+		MyLib::Vector3 pos = GetPosition(), posOld = GetOldPosition();	// 位置
+
+		// Y軸の向き
+		MyLib::Vector3 rot;
+		rot.y = pos.AngleXZ(posOld);
+
+		// Z軸の向き
+		rot.z = pos.AngleXY(posOld) - D3DX_PI * 0.5f;
+
+		// エフェクト生成
+		if (m_pThrowLine == nullptr)
+		{
+			m_pThrowLine = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_THROWLINE_PASS,
+				GetPosition(),
+				rot,
+				MyLib::Vector3(),
+				40.0f);
+		}
+		m_pThrowLine->SetPosition(pos);
+		m_pThrowLine->SetRotation(rot);
+	}
+	
+	if (m_pThrowLine != nullptr &&
+		!bThrow &&
+		!bPass)
 	{// 投げ終わり
 
 		// 停止
-		if (m_pThrowLine != nullptr)
-		{
-			m_pThrowLine->SetTrigger(0);
-			m_pThrowLine->SetTrigger(1);
-			m_pThrowLine = nullptr;
-		}
+		m_pThrowLine->SetTrigger(0);
+		m_pThrowLine->SetTrigger(1);
+		m_pThrowLine = nullptr;
 	}
 }

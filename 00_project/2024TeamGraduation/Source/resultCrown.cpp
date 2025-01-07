@@ -37,12 +37,13 @@ namespace Rotate
 	const float TIME = 2.0f;	// 回転する時間
 }
 
-namespace Logo
+namespace Crown
 {
 	const MyLib::Vector3 POS_ORIGIN = MyLib::Vector3(0.0f, 600.0f, 600.0f);				// 初期位置
 	const MyLib::Vector3 POS_DEFAULT = MyLib::Vector3(0.0f, 250.0f, 0.0f);				// 通常位置
 	const MyLib::Vector3 VALUE_ROTATION = MyLib::Vector3(0.0f, D3DX_PI * 0.05f, 0.0f);	// 向き
 	const float VALUE_FLOAT = 10.0f;													// 浮上値
+	const MyLib::Vector3 OFFSET_EFFECT = MyLib::Vector3(0.0f, 20.0f, 0.0f);				// エフェクトのオフセット
 }
 
 //==========================================================================
@@ -67,7 +68,8 @@ CResultCrown::CResultCrown(int nPriority, const LAYER layer) : CObject(nPriority
 	m_fIntervalRotate	(0.0f),					// 回転までの間隔
 	m_fRotationY		(0.0f),					// Y軸回転量
 	m_fTime				(0.0f),					// 副のタイマー
-	m_result			(EResult::RESULT_WIN)	// 結果
+	m_result			(EResult::RESULT_WIN),	// 結果
+	m_pEffect			(nullptr)				// エフェクト
 {
 	
 }
@@ -126,6 +128,13 @@ HRESULT CResultCrown::Init()
 	cameraRot.y = 0.0f;
 	pCamera->SetRotation(cameraRot);
 
+	// エフェクト生成
+	m_pEffect = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CROWN,
+		GetPosition(),
+		MyLib::Vector3(),	// 向き
+		MyLib::Vector3(),
+		35.0f, false);
+
 	return S_OK;
 }
 
@@ -134,6 +143,7 @@ HRESULT CResultCrown::Init()
 //==========================================================================
 HRESULT CResultCrown::Init(EResult result)
 {
+	// 結果設定
 	SetResult(result);
 
 	return Init();
@@ -145,7 +155,7 @@ HRESULT CResultCrown::Init(EResult result)
 HRESULT CResultCrown::CreateMain()
 {
 	// 生成処理
-	m_pMain = CObjectX::Create(MODEL[m_result], Logo::POS_ORIGIN);
+	m_pMain = CObjectX::Create(MODEL[m_result], Crown::POS_ORIGIN);
 	if (m_pMain == nullptr) return E_FAIL;
 
 	// オブジェクトの種類設定
@@ -159,6 +169,14 @@ HRESULT CResultCrown::CreateMain()
 //==========================================================================
 void CResultCrown::Uninit()
 {
+	// エフェクト削除
+	if (m_pEffect != nullptr)
+	{
+		m_pEffect->SetTrigger(0);
+		m_pEffect->Uninit();
+		m_pEffect = nullptr;
+	}
+
 	// オブジェクトの破棄
 	Release();
 }
@@ -190,6 +208,12 @@ void CResultCrown::Update(const float fDeltaTime, const float fDeltaRate, const 
 
 	// ポリゴン更新
 	UpdateMain();
+
+	// エフェクトの位置更新
+	if (m_pEffect != nullptr)
+	{
+		m_pEffect->SetPosition(m_pMain->GetPosition() + Crown::OFFSET_EFFECT);
+	}
 }
 
 //==========================================================================
@@ -210,7 +234,7 @@ void CResultCrown::UpdateState(const float fDeltaTime, const float fDeltaRate, c
 void CResultCrown::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置更新
-	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(GetOriginPosition(), Logo::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime, 3.0f);
+	MyLib::Vector3 pos = UtilFunc::Correction::EaseOutBack(GetOriginPosition(), Crown::POS_DEFAULT, 0.0f, StateTime::SPAWN, m_fStateTime, 3.0f);
 	m_pMain->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)
@@ -248,24 +272,16 @@ void CResultCrown::StateLoop(const float fDeltaTime, const float fDeltaRate, con
 
 	// 位置更新
 	MyLib::Vector3 pos = m_pMain->GetPosition();
-	pos.y = Logo::POS_DEFAULT.y;
+	pos.y = Crown::POS_DEFAULT.y;
 
 	// 浮上
-	pos.y += sinf(D3DX_PI * (m_fStateTime / StateTime::LOOP)) * Logo::VALUE_FLOAT;
+	pos.y += sinf(D3DX_PI * (m_fStateTime / StateTime::LOOP)) * Crown::VALUE_FLOAT;
 	m_pMain->SetPosition(pos);
 
 	// 回転
-	MyLib::Vector3 rot = sinf(D3DX_PI * m_fStateTime / StateTime::LOOP_ROTATION) * Logo::VALUE_ROTATION;
+	MyLib::Vector3 rot = sinf(D3DX_PI * m_fStateTime / StateTime::LOOP_ROTATION) * Crown::VALUE_ROTATION;
 	MyLib::Vector3 setrot = rot + MyLib::Vector3(0.0f, m_fRotationY, 0.0f);
 	m_pMain->SetRotation(setrot);
-
-	//// カメラ取得
-	//CCamera* pCamera = GET_MANAGER->GetCamera();
-
-	//// カメラの向き同期
-	//MyLib::Vector3 cameraRot = pCamera->GetRotation();
-	//cameraRot.y = rot.y;
-	//pCamera->SetRotation(cameraRot);
 }
 
 //==========================================================================
@@ -326,10 +342,14 @@ void CResultCrown::SetState(EState state)
 //==========================================================================
 void CResultCrown::SetPosition(const MyLib::Vector3& pos)
 {
+	// 王冠の位置設定
 	if (m_pMain != nullptr)
 	{
 		m_pMain->SetPosition(pos);
 	}
+	
+	// 元のオブジェクトの位置設定
+	CObject::SetPosition(pos);
 }
 
 //==========================================================================
