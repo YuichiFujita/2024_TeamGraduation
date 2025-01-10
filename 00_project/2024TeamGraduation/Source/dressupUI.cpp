@@ -739,6 +739,31 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return; }
 
+
+
+	//--------------------------
+	// デバッグ完了操作
+	//--------------------------
+#if _DEBUG
+	if (CInputKeyboard::GetInstance()->GetTrigger(DIK_RETURN))
+	{
+		// 準備完了状態にする
+		m_bReady = true;
+
+		// エディット種類を実際の変更にする
+		m_typeEdit = EEditType::EDIT_PROCESS;
+
+		// 変更種類を体型の変更にする
+		m_typeChange = EChangeType::TYPE_BODY;
+
+		// プレイヤーUIの更新
+		UpdatePlayerUI();
+
+		// テクスチャパターンの更新
+		m_pReadyCheck->SetPatternAnim((int)m_bReady);
+	}
+#endif // _DEBUG
+
 	// 操作権インデックスが範囲外の場合抜ける
 	if (m_nPadIdx <= -1 || m_nPadIdx >= mylib_const::MAX_PLAYER) { return; }
 

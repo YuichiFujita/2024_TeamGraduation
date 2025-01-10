@@ -371,6 +371,17 @@ void CEntry_Dressup::Load()
 //==========================================================================
 void CEntry_Dressup::Debug()
 {
+
+	//--------------------------
+	// ƒV[ƒ“‘JˆÚ
+	//--------------------------
+	if (IsAllReady() &&
+		CInputKeyboard::GetInstance()->GetTrigger(DIK_X))
+	{
+		// ƒQ[ƒ€İ’èó‘Ô‚É‘JˆÚ
+		SetState(EState::STATE_SETTING);
+	}
+
 	if (ImGui::TreeNode("SetUpTeam"))
 	{
 		//=============================

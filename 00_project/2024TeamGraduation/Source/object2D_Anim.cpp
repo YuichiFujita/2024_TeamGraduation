@@ -172,3 +172,36 @@ void CObject2D_Anim::SetVtx()
 	// 頂点バッファをアンロックロック
 	GetVtxBuff()->Unlock();
 }
+
+//==========================================================================
+// U分割数設定
+//==========================================================================
+void CObject2D_Anim::SetDivisionU(int div)
+{
+	// 分割数設定
+	m_nDivisionU = div;
+
+	// スプライト量
+	m_fSplitValueU = 1.0f / static_cast<float>(m_nDivisionU);
+}
+
+//==========================================================================
+// V分割数設定
+//==========================================================================
+void CObject2D_Anim::SetDivisionV(int div)
+{
+	// 分割数設定
+	m_nDivisionV = div;
+
+	// スプライト量
+	m_fSplitValueV = 1.0f / static_cast<float>(m_nDivisionV);
+}
+
+//==========================================================================
+// UV分割数設定
+//==========================================================================
+void CObject2D_Anim::SetDivisionUV(int divU, int divV)
+{
+	SetDivisionU(divU);
+	SetDivisionV(divV);
+}

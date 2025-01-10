@@ -35,6 +35,13 @@ public:
 	bool IsFinish() { return m_bFinish; }						// 終了の判定
 	
 	//--------------------------
+	// パターン
+	//--------------------------
+	void SetDivisionU(int div);				// U分割数設定
+	void SetDivisionV(int div);				// V分割数設定
+	void SetDivisionUV(int divU, int divV);	// UV分割数設定
+
+	//--------------------------
 	// アニメーション関連
 	//--------------------------
 	void SetPatternAnim(int nPattern)	{ m_nPatternAnim = nPattern; }	// アニメーションパターン設定

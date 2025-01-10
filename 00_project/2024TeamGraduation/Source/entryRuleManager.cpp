@@ -15,6 +15,7 @@
 #include "texture.h"
 #include "object2D.h"
 #include "object2D_Anim.h"
+#include "arrowUI.h"
 #include "timeUI.h"
 #include "fade.h"
 #include "entry.h"
@@ -107,7 +108,7 @@ namespace
 		const float	SPACE_EDGE		= 40.0f;	// 縁の空白
 
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(MAX_RULE_ARROW, 1);	// テクスチャ分割数
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(80.0f, 80.0f) * 0.5f;	// 大きさ
+		const float				SIZE	= 40.0f;								// 大きさ
 		const MyLib::Vector3	POS		= MyLib::Vector3(select::POS.x - select::SIZE_RULE.x - SPACE_EDGE, select::POS.y, 0.0f);	// 位置
 		const MyLib::Vector3	SPACE	= MyLib::Vector3(select::SIZE_RULE.x * 2.0f + (SPACE_EDGE * 2.0f), 0.0f, 0.0f);	// 空白
 		const D3DXCOLOR			MIN_COL	= D3DXCOLOR(1.0f, 1.0f, 1.0f, BASIC_ALPHA - MAX_ADD_ALPHA);	// 色
@@ -249,13 +250,12 @@ HRESULT CEntryRuleManager::Init()
 		{ // 矢印の総数分繰り返す
 
 			// 矢印の生成
-			m_apArrow[i] = CObject2D_Anim::Create
+			m_apArrow[i] = CArrowUI::Create
 			( // 引数
+				(CArrowUI::EDirection)i,	// 方向
 				arrow::POS + ((float)i * arrow::SPACE),	// 位置
-				arrow::PART.x,	// テクスチャ横分割数
-				arrow::PART.y,	// テクスチャ縦分割数
-				0.0f,			// 待機時間
-				false,			// 自動破棄
+				arrow::SIZE,							// サイズ
+				MyLib::color::White(0.0f),				// 色
 				PRIORITY		// 優先順位
 			);
 			if (m_apArrow[i] == nullptr)
@@ -264,21 +264,6 @@ HRESULT CEntryRuleManager::Init()
 				assert(false);
 				return E_FAIL;
 			}
-
-			// テクスチャを登録・割当
-			m_apArrow[i]->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_ARROW]));
-
-			// 大きさを設定
-			m_apArrow[i]->SetSize(arrow::SIZE);
-
-			// 色を設定
-			m_apArrow[i]->SetColor(MyLib::color::White(0.0f));
-
-			// パターンを設定
-			m_apArrow[i]->SetPatternAnim(i);
-
-			// 自動再生をOFFにする
-			m_apArrow[i]->SetEnableAutoPlay(false);
 		}
 	}
 
@@ -876,7 +861,9 @@ void CEntryRuleManager::Select()
 			{ // 矢印の総数分繰り返す
 
 				// 矢印の位置を変更
-				m_apArrow[i]->SetPosition(MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f));
+				MyLib::Vector3 setpos = MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f);
+				m_apArrow[i]->SetPosition(setpos);
+				m_apArrow[i]->SetOriginPosition(setpos);
 
 				// 自動描画をONにする
 				m_apArrow[i]->SetEnableDisp(true);
@@ -923,7 +910,10 @@ void CEntryRuleManager::Select()
 			{ // 矢印の総数分繰り返す
 
 				// 矢印の位置を変更
-				m_apArrow[i]->SetPosition(MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f));
+				MyLib::Vector3 setpos = MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f);
+				m_apArrow[i]->SetPosition(setpos);
+				m_apArrow[i]->SetOriginPosition(setpos);
+
 
 				// 自動描画をONにする
 				m_apArrow[i]->SetEnableDisp(true);
@@ -1026,6 +1016,9 @@ void CEntryRuleManager::ChangeRule()
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT))
 	{ // 左移動の操作が行われた場合
 
+		// 選択時移動状態へ遷移
+		m_apArrow[CArrowUI::EDirection::DIRECTION_L]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
+
 		switch (m_nSelect)
 		{ // 選択ごとの処理
 		case RULE_TIME:
@@ -1061,6 +1054,9 @@ void CEntryRuleManager::ChangeRule()
 	||  pKey->GetTrigger(DIK_RIGHT)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT))
 	{ // 右移動の操作が行われた場合
+
+		// 選択時移動状態へ遷移
+		m_apArrow[CArrowUI::EDirection::DIRECTION_R]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 
 		switch (m_nSelect)
 		{ // 選択ごとの処理

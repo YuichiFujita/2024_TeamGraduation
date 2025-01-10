@@ -797,6 +797,9 @@
     <ClCompile Include="Source\playerSpawnManager.cpp">
       <Filter>player\playerManager</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arrowUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1455,6 +1458,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerSpawnManager.h">
       <Filter>player\playerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\arrowUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
