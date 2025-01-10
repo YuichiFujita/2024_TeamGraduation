@@ -8822,7 +8822,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\player\\02_red.jpg";
+    "data\\TEXTURE\\player\\00_body.jpg";
    }
   }
  }

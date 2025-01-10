@@ -77,7 +77,7 @@ HRESULT CPlayerManager_Result::Init()
 //==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
 {
 	// 位置
 	MyLib::Vector3 posCreate = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_LEFT);
@@ -104,7 +104,7 @@ HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info, con
 //==========================================================================
 // 右のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 {
 	// 位置
 	MyLib::Vector3 posCreate = CResultManager::GetInstance()->GetPosMid(CGameManager::ETeamSide::SIDE_RIGHT);
