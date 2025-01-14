@@ -196,11 +196,11 @@ void CBlackFrame::Update(const float fDeltaTime, const float fDeltaRate, const f
 	if (m_state == STATE::STATE_OUT ||
 		m_state == STATE::STATE_OUTCOMPLETION)
 	{
-		pMgr->SerEnableDisp_UI(true);
+		pMgr->SetEnableDisp_UI(true);
 	}
 	else
 	{
-		pMgr->SerEnableDisp_UI(false);
+		pMgr->SetEnableDisp_UI(false);
 	}
 
 	for (int nCntSelect = 0; nCntSelect < VTX_MAX; nCntSelect++)

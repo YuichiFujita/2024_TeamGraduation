@@ -237,6 +237,7 @@
     <ClCompile Include="Source\Imguimanager.cpp" />
     <ClCompile Include="Source\impactwave.cpp" />
     <ClCompile Include="Source\input.cpp" />
+    <ClCompile Include="Source\inputKeyButton.cpp" />
     <ClCompile Include="Source\input_gamepad.cpp" />
     <ClCompile Include="Source\input_keyboard.cpp" />
     <ClCompile Include="Source\input_mouse.cpp" />
@@ -463,6 +464,7 @@
     <ClInclude Include="Source\Imguimanager.h" />
     <ClInclude Include="Source\impactwave.h" />
     <ClInclude Include="Source\input.h" />
+    <ClInclude Include="Source\inputKeyButton.h" />
     <ClInclude Include="Source\input_gamepad.h" />
     <ClInclude Include="Source\input_keyboard.h" />
     <ClInclude Include="Source\input_mouse.h" />

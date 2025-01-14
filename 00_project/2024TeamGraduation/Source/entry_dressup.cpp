@@ -12,6 +12,7 @@
 #include "playerManager.h"
 #include "dressupUI.h"
 #include "entryRuleManager.h"
+#include "inputKeyButton.h"
 
 //==========================================================================
 // ’è”’è‹`
