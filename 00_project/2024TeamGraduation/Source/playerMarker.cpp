@@ -20,7 +20,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE = "data\\TEXTURE\\playerMarker000.png";	// プレイヤーマーカーテクスチャ
+	const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker000.png";	// プレイヤーマーカーテクスチャ
 	const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
 }
 
