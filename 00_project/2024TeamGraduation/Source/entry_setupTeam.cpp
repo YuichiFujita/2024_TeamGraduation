@@ -25,7 +25,7 @@ namespace
 
 	namespace pad
 	{
-		const std::string TEXTURE = "data\\TEXTURE\\playerMarker000.png";	// コントローラーUIテクスチャ
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker000.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
 		const float WIDTH = 100.0f;	// 横幅
 
@@ -62,6 +62,11 @@ namespace
 	{
 		const std::string TEXTURE = "data\\TEXTURE\\number\\number000.png";	// 数字テクスチャ
 		const float WIDTH = 200.0f;	// 横幅
+	}
+
+	namespace allready
+	{
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\allReady.png";	// 数字テクスチャ
 	}
 }
 
@@ -189,6 +194,11 @@ HRESULT CEntry_SetUpTeam::CreateAllReady()
 	m_pAllReady->SetPosition(VEC3_SCREEN_CENT);
 	m_pAllReady->SetSize(MyLib::Vector2(100.0f, 100.0f));
 
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = pTexture->Regist(allready::TEXTURE);
+	m_pAllReady->BindTexture(nTexID);
+
 	// 自動描画をOFFにする
 	m_pAllReady->SetEnableDisp(false);
 
@@ -216,7 +226,7 @@ HRESULT CEntry_SetUpTeam::CreateNumInTeam()
 
 		// テクスチャの割当
 		CTexture* pTexture = CTexture::GetInstance();
-		int nTexID = CTexture::GetInstance()->Regist(num::TEXTURE);
+		int nTexID = pTexture->Regist(num::TEXTURE);
 		m_apNumInTeam[i]->BindTexture(nTexID);
 
 		// 数字の設定
@@ -265,7 +275,7 @@ HRESULT CEntry_SetUpTeam::CreatePadUI()
 
 		// テクスチャの割当
 		CTexture* pTexture = CTexture::GetInstance();
-		int nTexID = CTexture::GetInstance()->Regist(pad::TEXTURE);
+		int nTexID = pTexture->Regist(pad::TEXTURE);
 		m_apPadUI[i]->BindTexture(nTexID);
 
 		// テクスチャパターンの設定
@@ -489,6 +499,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	int nNumEntry = 0;	// エントリー人数
 	int nNumReady = 0;	// 準備完了人数
+
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド認識の最大数分繰り返す
 
@@ -900,6 +911,34 @@ void CEntry_SetUpTeam::Load()
 //==========================================================================
 void CEntry_SetUpTeam::Debug()
 {
+
+	//--------------------------
+	// エントリー操作
+	//--------------------------
+	if (CInputKeyboard::GetInstance()->GetTrigger(DIK_RETURN))
+	{
+		// 今回のプレイヤーインデックスを追加
+		m_nEntryIdx[0] = 0;
+
+		// コントローラーUIの自動描画をONにする
+		m_apPadUI[0]->SetEnableDisp(true);
+
+		// 左に移動
+		m_TeamSide[0].team = CGameManager::ETeamSide::SIDE_LEFT;
+
+		// 準備完了配列に追加
+		m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT].push_back(0);
+	}
+
+	//--------------------------
+	// シーン遷移
+	//--------------------------
+	if (CInputKeyboard::GetInstance()->GetTrigger(DIK_X))
+	{
+		// 着せ替えシーンへ遷移
+		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
+	}
+
 	if (ImGui::TreeNode("SetUpTeam"))
 	{
 		//=============================

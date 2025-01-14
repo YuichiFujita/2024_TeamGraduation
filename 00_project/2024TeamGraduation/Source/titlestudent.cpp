@@ -29,12 +29,18 @@ namespace
 	const float DISTANCE = 600.0f;	// 間隔
 }
 
+namespace StateTime
+{
+	const float WAIT = 1.0f;	// 待機
+}
+
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
 CTitleStudent::STATE_FUNC CTitleStudent::m_StateFunc[] =	// 状態関数
 {
 	&CTitleStudent::StateNone,		// なし
+	&CTitleStudent::StateWait,		// 待機
 };
 
 //==========================================================================
@@ -169,10 +175,15 @@ HRESULT CTitleStudent::Init()
 		// 向き設定
 		setrot.y = setpos.AngleXZ(posV);
 		m_List.GetData(i)->SetRotation(setrot);
-
 	}
 
+	// 状態
+	m_state = EState::STATE_WAIT;		// 状態
+	float ratio = (float)UtilFunc::Transformation::Random(0, 10) / (float)10;
+	m_fStateTime = ratio * StateTime::WAIT;	// 状態時間
 
+	// 待機
+	GetMotion()->Set(EMotion::MOTION_WAIT);
 	return S_OK;
 }
 
@@ -312,6 +323,27 @@ void CTitleStudent::StateNone(const float fDeltaTime, const float fDeltaRate, co
 
 	if (pMotion->IsFinish())
 	{
+		// 待機する
+		m_state = EState::STATE_WAIT;
+		m_fStateTime = 0.0f;
+
+		// 待機
+		GetMotion()->Set(EMotion::MOTION_WAIT);
+	}
+}
+
+//==========================================================================
+// 待機
+//==========================================================================
+void CTitleStudent::StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fStateTime >= StateTime::WAIT)
+	{// 待機終了
+
+		// 準備体操する
+		m_state = EState::STATE_NONE;
+		m_fStateTime = 0.0f;
+
 		// ランダムの準備体操設定
 		SetRandWarmUp();
 	}
@@ -332,7 +364,7 @@ void CTitleStudent::Draw()
 void CTitleStudent::SetRandWarmUp()
 {
 	// モーション設定
-	GetMotion()->Set(UtilFunc::Transformation::Random(MOTION_WARMUP_01, MOTION_WARMUP_01 + (MOTION_MAX - MOTION_WARMUP_01 - 1)));
+	GetMotion()->Set(UtilFunc::Transformation::Random(MOTION_WARMUP_01, MOTION_WARMUP_01 + (MOTION_MAX - MOTION_WARMUP_01)));
 }
 
 //==========================================================================

@@ -8,6 +8,8 @@
 #ifndef _IMGUIMANAGER_H_
 #define _IMGUIMANAGER_H_		// 二重インクルード防止
 
+#include "ImGuizmo.h"
+
 /**
 	@brief	Imguiのマネージャ
 */

@@ -1055,6 +1055,11 @@ CCamera::SSide CCamera::GetPlayerMaxSide()
 	{ // 要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		if (pPlayer == nullptr) continue;
+
+		// 死んでるやつは判定を通さない
+		if (pPlayer->GetMotionFrag().bDead) continue;
+
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
 		// 外野の場合次へ

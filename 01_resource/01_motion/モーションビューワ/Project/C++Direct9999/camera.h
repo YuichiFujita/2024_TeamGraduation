@@ -29,6 +29,10 @@ public:
 	void SetShake(int nTime, float fLength, float fLengthY);	// 振動設定
 	void EnableChase(void);
 
+
+	D3DXMATRIX	GetViewMtx() { return m_mtxView; };				// ビューマトリックス
+	D3DXMATRIX	GetProjectionMtx() { return m_mtxProjection; }	// プロジェクションマトリックス
+
 private:
 
 	// 列挙型定義

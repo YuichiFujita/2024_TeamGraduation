@@ -172,21 +172,39 @@ HRESULT CPlayerManager::Init()
 	Load();
 
 	// 読み込んだ情報をもとにプレイヤー生成
-	int nLeft = 0, nRight = 0;
+	int nMaxLeft = static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size());		// 左チーム人数
+	int nMaxRight = static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size());	// 右チーム人数
+	int nCntLeft = 0, nCntRight = 0;	// 人数カウント
 	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
 	{
 		// 左のプレイヤー生成
-		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size()))
+		if (j < nMaxLeft)
 		{
-			CreateLeftPlayer(nLeft, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
-			nLeft++;
+			MyLib::Vector3 pos = player::left::POS;	// 生成位置
+
+			// Z座標を動かす
+			pos.z = player::left::POS.z - (player::left::OFFSET_Z * (float)(nMaxLeft - 1)) * 0.5f + (player::left::OFFSET_Z * (float)nCntLeft);
+
+			// 左チームプレイヤー生成
+			CreateLeftPlayer(nCntLeft, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j], pos);
+
+			// 左人数加算
+			nCntLeft++;
 		}
 
 		// 右のプレイヤー生成
-		if (j < static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size()))
+		if (j < nMaxRight)
 		{
-			CreateRightPlayer(nRight, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
-			nRight++;
+			MyLib::Vector3 pos = player::right::POS;	// 生成位置
+
+			// Z座標を動かす
+			pos.z = player::right::POS.z - (player::right::OFFSET_Z * (float)(nMaxRight - 1)) * 0.5f + (player::right::OFFSET_Z * (float)nCntRight);
+
+			// 右チームプレイヤー生成
+			CreateRightPlayer(nCntRight, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j], pos);
+
+			// 右人数加算
+			nCntRight++;
 		}
 	}
 
@@ -243,7 +261,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーUser生成(左)
-#if 0
+#if 1
 	CPlayer* pUser = CPlayer::Create(MyLib::Vector3(-200.0f, 0.0f, 0.0f), CGameManager::SIDE_LEFT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_USER);
 	if (pUser == nullptr)
 	{
@@ -265,7 +283,7 @@ HRESULT CPlayerManager::Init()
 #endif
 
 	// プレイヤーAI一人生成(右)
-#if 0
+#if 1
 	CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
 	if (pAI == nullptr)
 	{
@@ -295,12 +313,12 @@ HRESULT CPlayerManager::Init()
 //==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info)
 {
 	CPlayer::EBaseType baseType = (info.nControllIdx >= 0) ? CPlayer::EBaseType::TYPE_USER : CPlayer::EBaseType::TYPE_AI;	// ベースタイプ
 	CPlayer* pPlayer = CPlayer::Create
 	(
-		pos, 								// 位置
+		MyLib::Vector3(), 					// 位置
 		CGameManager::ETeamSide::SIDE_LEFT,	// チームサイド
 		CPlayer::EFieldArea::FIELD_IN,		// ポジション
 		baseType,							// ベースタイプ
@@ -324,19 +342,34 @@ HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info, const MyLi
 }
 
 //==========================================================================
+// 左のプレイヤー生成(位置あり)
+//==========================================================================
+HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+{
+	// 左のプレイヤー生成
+	HRESULT hr = CreateLeftPlayer(i, info);
+
+	// 追加されたプレイヤー取得
+	CPlayer* pPlayer = CPlayer::GetList().GetList().back();
+	pPlayer->GetBase()->InitPosition(pos);
+
+	return hr;
+}
+
+//==========================================================================
 // 右のプレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info)
 {
 	CPlayer::EBaseType baseType = (info.nControllIdx >= 0) ? CPlayer::EBaseType::TYPE_USER : CPlayer::EBaseType::TYPE_AI;	// ベースタイプ
 	CPlayer* pPlayer = CPlayer::Create
 	(
-		pos, 								// 位置
+		MyLib::Vector3(), 						// 位置
 		CGameManager::ETeamSide::SIDE_RIGHT,	// チームサイド
-		CPlayer::EFieldArea::FIELD_IN,		// ポジション
-		baseType,							// ベースタイプ
-		info.eBody,							// 体系
-		info.eHanded						// 利き手
+		CPlayer::EFieldArea::FIELD_IN,			// ポジション
+		baseType,								// ベースタイプ
+		info.eBody,								// 体系
+		info.eHanded							// 利き手
 	);
 	if (pPlayer == nullptr)
 	{
@@ -352,6 +385,21 @@ HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info, const MyL
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
+}
+
+//==========================================================================
+// 右のプレイヤー生成(位置あり)
+//==========================================================================
+HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos)
+{
+	// 右のプレイヤー生成
+	HRESULT hr = CreateRightPlayer(i, info);
+
+	// 追加されたプレイヤー取得
+	CPlayer* pPlayer = CPlayer::GetList().GetList().back();
+	pPlayer->GetBase()->InitPosition(pos);
+
+	return hr;
 }
 
 //==========================================================================

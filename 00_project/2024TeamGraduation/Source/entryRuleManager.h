@@ -27,6 +27,7 @@ class CObject2D;		// オブジェクト2Dクラス
 class CObject2D_Anim;	// オブジェクト2Dアニメクラス
 class CTimeUI;			// タイムUIクラス
 class CEntry_Dressup;	// ドレスアップ設定クラス
+class CArrowUI;			// 矢印UI
 
 //************************************************************
 //	クラス定義
@@ -115,7 +116,7 @@ private:
 
 	// メンバ変数
 	CObject2D_Anim*	m_apRuleTitle[RULE_MAX];	// ルールタイトルの情報
-	CObject2D_Anim*	m_apArrow[MAX_RULE_ARROW];	// 矢印の情報
+	CArrowUI*	m_apArrow[MAX_RULE_ARROW];		// 矢印の情報
 	CObject2D_Anim*	m_pLife;	// 体力の情報
 	CTimeUI*	m_pTime;		// 時間の情報
 	CObject2D*	m_pSelect;		// 選択の情報

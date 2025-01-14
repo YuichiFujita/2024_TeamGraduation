@@ -40,6 +40,7 @@ public:
 		EFKLABEL_BALL,					// ボール
 		EFKLABEL_THROWLINE_NORMAL,		// 投げた時の線(通常)
 		EFKLABEL_THROWLINE_FAST,		// 投げた時の線(早い)
+		EFKLABEL_THROWLINE_PASS,		// 投げた時の線(パス)
 		EFKLABEL_CAMEHAME_ENERGY,		// かめはめ波エネルギー部分
 		EFKLABEL_CAMEHAME_CHARGE,		// かめはめ波(チャージ)
 		EFKLABEL_CAMEHAME_CHARGE_WIND,	// かめはめ波(チャージ)(風)
@@ -60,6 +61,10 @@ public:
 		EFKLABEL_CATCH_NORMAL,			// キャッチ(通常)
 		EFKLABEL_CATCH_JUST,			// キャッチ(ジャスト)
 		EFKLABEL_CONFETTI,				// 紙吹雪
+		EFKLABEL_CROWN,					// 王冠
+		EFKLABEL_LOGO,					// ロゴ
+		EFKLABEL_LOGO_ALWAYS,			// ロゴ(常に出現)
+		EFKLABEL_SANDSMOKE,				// 砂煙
 		EFKLABEL_MAX
 	};
 	

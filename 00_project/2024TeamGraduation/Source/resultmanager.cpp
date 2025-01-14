@@ -511,10 +511,6 @@ void CResultManager::StateStartCharmContestReady()
 
 	m_pText->BindTexture(pTexture->Regist(TEXFILE_CONTEST));
 
-	// エフェクシア生成
-	//m_pEfkConfetti = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CONFETTI, MyLib::Vector3(), MyLib::Vector3(), MyLib::Vector3(), 1000.0f, false);
-
-
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -547,6 +543,9 @@ void CResultManager::StateStartCharmContest()
 	// モデル生成
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamContestWin);
+
+	// エフェクシア生成
+	CreateEffect();
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -668,11 +667,32 @@ void CResultManager::CreatePolygon(EState state)
 }
 
 //==========================================================================
-// パーティクル生成
+// エフェクト生成
 //==========================================================================
-void CResultManager::CreateParticle()
+void CResultManager::CreateEffect()
 {
+	MyLib::Vector3 pos = VEC3_ZERO;
+	pos.y += Prelude::POSY_CROWN;
 
+	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
+	{// 引き分け
+		pos += Draw::POS;
+	}
+	else
+	{// 勝利
+		pos += POS_COURT[m_teamContestWin];
+	}
+
+	// 生成
+	m_pEfkConfetti = CEffekseerObj::Create
+	(
+		CMyEffekseer::EEfkLabel::EFKLABEL_CONFETTI,
+		pos,
+		MyLib::Vector3(),
+		MyLib::Vector3(),
+		10.0f,
+		false
+	);
 }
 
 //==========================================================================

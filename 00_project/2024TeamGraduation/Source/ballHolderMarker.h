@@ -55,17 +55,24 @@ public:
 private:
 
 	//=============================
-	// メンバ変数
+	// メンバ関数
 	//=============================
-	HRESULT CreateCircle();	// 円生成
-	HRESULT CreateArrow();	// 矢印生成
+	// 生成
+	HRESULT CreateCircle();		// 円生成
+	HRESULT CreateOutCircle();	// 外周円生成
+	HRESULT CreateArrow();		// 矢印生成
+
+	// 更新
+	void UpdateScaling(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 拡縮の更新
 
 	//=============================
 	// メンバ変数
 	//=============================
-	CObject3D* m_pCircle;	// 円
+	CObject3D* m_pCircle;		// 円
+	CObject3D* m_pOutCircle;	// 外周円
 	CObject3D* m_pArrow;	// 矢印
 	CPlayer* m_pPlayer;		// ボールを所持してるプレイヤーのポインタ
+	float m_fCircleTime;	// 円のタイマー
 	float m_fArrowTime;		// 矢印のタイマー
 };
 

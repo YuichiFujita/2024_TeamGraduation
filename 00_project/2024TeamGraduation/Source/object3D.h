@@ -18,6 +18,23 @@ class CObject3D : public CObject
 {
 public:
 
+	//=============================
+	// 列挙型定義
+	//=============================
+	enum EAnchorPoint
+	{
+		LEFT = 0,		// 左
+		TOP_LEFT,		// 左上
+		TOP_CENTER,		// 上
+		TOP_RIGHT,		// 右上
+		RIGHT,			// 右
+		UNDER_RIGHT,	// 右下
+		UNDER_CENTER,	// 下
+		UNDER_LEFT,		// 左下
+		CENTER,			// 中央
+		MAX
+	};
+
 	CObject3D(int nPriority, const LAYER layer = LAYER::LAYER_DEFAULT);
 	virtual ~CObject3D();
 
@@ -40,10 +57,10 @@ public:
 	void SetAlpha(float a) { m_col.a = a; }			// 透明度設定
 	float GetAlpha() { return m_col.a; }			// 透明度取得
 
-	void SetSize(const MyLib::Vector3& size) { m_size = size; }		// サイズ設定
-	MyLib::Vector3 GetSize() const { return m_size; }					// サイズ取得
-	void SetSizeOrigin(const MyLib::Vector3& size) { m_sizeOrigin = size; }	// 元のサイズ設定
-	MyLib::Vector3 GetSizeOrigin() const { return m_sizeOrigin; }			// 元のサイズ取得
+	void SetSize(const MyLib::Vector2& size);								// サイズ設定
+	MyLib::Vector2 GetSize() const { return m_size; }						// サイズ取得
+	void SetSizeOrigin(const MyLib::Vector2& size) { m_sizeOrigin = size; }	// 元のサイズ設定
+	MyLib::Vector2 GetSizeOrigin() const { return m_sizeOrigin; }			// 元のサイズ取得
 	
 
 	//--------------------------
@@ -52,6 +69,12 @@ public:
 	// UV
 	void SetUV(const std::vector<D3DXVECTOR2>& uv) { m_vecUV = uv; }		// テクスチャ座標設定
 	std::vector<D3DXVECTOR2> GetUV() { return m_vecUV; }					// テクスチャ座標取得
+
+	// アンカーポイント
+	void SetAnchorType(const EAnchorPoint& type) { m_AnchorType = type; }	// アンカーポイントの種類設定
+	EAnchorPoint GetAnchorType() { return m_AnchorType; }					// アンカーポイントの種類取得
+	void SetAnchorRate(float rate) { m_fAnchorRate = UtilFunc::Transformation::Clamp(rate, 0.0f, 1.0f); }	// アンカーの割合設定
+	float GetAnchorRate() { return m_fAnchorRate; }															// アンカーの割合取得
 
 	static CObject3D *Create(int nPriority = 5);
 	static CObject3D *Create(const MyLib::Vector3& pos, const MyLib::Vector3& rot);
@@ -69,14 +92,23 @@ protected:
 private:
 
 	//=============================
+	// メンバ関数
+	//=============================
+	MyLib::Vector3 RotateVtx(const MyLib::Vector3& vtx, const MyLib::Vector3& center);
+
+	//=============================
 	// メンバ変数
 	//=============================
 	MyLib::Matrix m_mtxWorld;	// ワールドマトリックス
 	std::vector<D3DXVECTOR2> m_vecUV;		// テクスチャ座標
 	D3DXCOLOR m_col;				// 色
 	D3DXCOLOR m_colOrigin;			// 元の色
-	MyLib::Vector3 m_size;			// サイズ
-	MyLib::Vector3 m_sizeOrigin;	// 元のサイズ
+	MyLib::Vector2 m_size;			// サイズ
+	MyLib::Vector2 m_sizeOrigin;	// 元のサイズ
+	EAnchorPoint m_AnchorType;		// アンカーポイントの種類
+	float m_fAnchorRate;			// アンカーの割合
+	float m_fLength;				// 対角線の長さ
+	float m_fAngle;					// 対角線の向き
 	int m_nTexIdx;					// テクスチャのインデックス番号
 };
 

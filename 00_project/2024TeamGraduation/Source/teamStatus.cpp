@@ -204,7 +204,7 @@ void CTeamStatus::InitSpecialInfo()
 	}
 
 	//ƒQ[ƒW¶¬
-	m_sSpecialInfo.pGauge = CGauge2D::Create(Special::VALUE_MAX, 0.1f, Special::GAUGE_POS, Special::GAUGE_SIZE);
+	m_sSpecialInfo.pGauge = CGauge2D::Create(Special::VALUE_MAX, 10.1f, Special::GAUGE_POS, Special::GAUGE_SIZE);
 	m_sSpecialInfo.pGauge->SetColorFront(MyLib::color::White());
 	m_sSpecialInfo.pGauge->SetColorBack(MyLib::color::Black());
 

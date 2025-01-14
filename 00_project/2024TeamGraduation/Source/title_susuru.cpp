@@ -18,13 +18,26 @@
 namespace
 {
 	const std::string TEXTURE = "data\\TEXTURE\\title\\susuru.png";		// テクスチャ
-	const MyLib::Vector2 TEXTSIZE = MyLib::Vector2((SCREEN_WIDTH / CTitle_SUSURU::NUM_TEXT) * 0.75f, SCREEN_HEIGHT * 0.5f);	// サイズ
+	const MyLib::Vector2 TEXTSIZE = MyLib::Vector2((SCREEN_WIDTH / (CTitle_SUSURU::NUM_TEXT + 1)) * 0.75f, SCREEN_HEIGHT * 0.5f);	// サイズ
 }
 
 namespace StateTime
 {
 	const float WAIT = 0.2f;		// 待機
-	const float SCROLL = 1.0f;	// 送り
+	float SCROLL[CTitle_SUSURU::NUM_TEXT] = // 送り
+	{
+		2.7f,	// 俺はただ
+		3.4f,	// でも、気づいたんだよ
+		2.1f,	// この学園でトップを目指すためには
+		1.25f,	// 「モテ」なきゃいけない
+		3.2f,	// スポーツも勉強も
+		2.3f,	// モテなきゃ意味がない
+		2.5f,	// 必ずこの学園の頂点
+		2.85f,	// いや「モテ王」の座に
+		1.5f,	// 待っていろよ
+		4.0f,	// 俺の輝く魅力で
+	};
+	const float END = 2.0f;		// 終了
 }
 
 //==========================================================================
@@ -34,6 +47,7 @@ CTitle_SUSURU::STATE_FUNC CTitle_SUSURU::m_StateFunc[] =	// 状態関数
 {
 	&CTitle_SUSURU::StateWait,		// 待機
 	&CTitle_SUSURU::StateScroll,	// 文字送り
+	&CTitle_SUSURU::StateEnd,		// 終了
 };
 
 //==========================================================================
@@ -74,10 +88,10 @@ HRESULT CTitle_SUSURU::Init()
 	if (FAILED(CreateSUSURU())) return E_FAIL;
 
 	// 送る文字インデックス
-	m_nIdxScroll = 0;
+	m_nIdxScroll = -1;
 
 	// BGM再生
-	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_TITLE_SUSURU);
+	//CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_TITLE_SUSURU);
 
 	return S_OK;
 }
@@ -109,12 +123,13 @@ HRESULT CTitle_SUSURU::CreateText()
 		m_apText[i]->SetSizeOrigin(TEXTSIZE);
 
 		// 位置設定
-		m_apText[i]->SetPosition(MyLib::Vector3(TEXTSIZE.x * 0.75f, 0.0f, 0.0f) + MyLib::Vector3(SCREEN_WIDTH - TEXTSIZE.x * 1.5f * i, 0.0f, 0.0f));
+		m_apText[i]->SetPosition(MyLib::Vector3(-TEXTSIZE.x * 0.5f, 0.0f, 0.0f) + MyLib::Vector3(SCREEN_WIDTH - TEXTSIZE.x * 1.5f * i, 0.0f, 0.0f));
 
 		// UV
 		D3DXVECTOR2* pTex = m_apText[i]->GetTex();
-		pTex[0].x = pTex[2].x = 1.0f - u * i;
-		pTex[1].x = pTex[3].x = 1.0f - (u * i) + u;
+		pTex[0].x = pTex[2].x = 0.9f - u * i;
+		pTex[1].x = pTex[3].x = 0.9f - (u * i) + u;
+		int nnn = 0;
 	}
 	return S_OK;
 }
@@ -180,6 +195,38 @@ void CTitle_SUSURU::Update(const float fDeltaTime, const float fDeltaRate, const
 		// シーン切り替え
 		CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_CONTROLLWAIT);
 	}
+
+#if _DEBUG
+
+	for(int i = 0; i < CTitle_SUSURU::NUM_TEXT; i++)
+	{
+		std::string str = "SCROLL[" + std::to_string(i) + "]";
+		ImGui::DragFloat(str.c_str(), &StateTime::SCROLL[i], 0.01f);
+	}
+
+	if (ImGui::Button("Reset"))
+	{
+		// 送る文字インデックス
+		m_nIdxScroll = -1;
+
+		// 状態
+		m_state = EState::STATE_WAIT;	// 状態
+		m_fStateTime = 0.0f;			// 状態時間
+
+		// BGM再生
+		CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_AI);
+
+		for (const auto& text : m_apText)
+		{
+			// サイズ設定
+			MyLib::Vector2 size = text->GetSize();
+			size.y = 0.0f;
+			text->SetSize(size);
+		}
+	}
+
+#endif // _DEBUG
+
 }
 
 //==========================================================================
@@ -201,10 +248,10 @@ void CTitle_SUSURU::StateWait(const float fDeltaTime, const float fDeltaRate, co
 {
 	if (m_fStateTime >= StateTime::WAIT)
 	{
-		m_fStateTime = 0.0f;
+		m_fStateTime -= StateTime::WAIT;
 		m_state = EState::STATE_SCROLL;
 
-		if (m_nIdxScroll == 0)
+		if (m_nIdxScroll < 0)
 		{// AI読み上げ開始
 			PLAY_SOUND(CSound::ELabel::LABEL_SE_AI);
 		}
@@ -214,7 +261,10 @@ void CTitle_SUSURU::StateWait(const float fDeltaTime, const float fDeltaRate, co
 
 		if (m_nIdxScroll >= CTitle_SUSURU::NUM_TEXT)
 		{// 全て更新
-			CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_CONTROLLWAIT);
+
+			// 終了状態
+			m_state = EState::STATE_END;	// 状態
+			m_fStateTime = 0.0f;			// 状態時間
 		}
 	}
 }
@@ -228,7 +278,7 @@ void CTitle_SUSURU::StateScroll(const float fDeltaTime, const float fDeltaRate, 
 	MyLib::Vector2 size = m_apText[m_nIdxScroll]->GetSize();
 
 	// サイズ設定
-	size.y = UtilFunc::Correction::EasingLinear(0.0f, TEXTSIZE.y, 0.0f, StateTime::SCROLL, m_fStateTime);
+	size.y = UtilFunc::Correction::EasingLinear(0.0f, TEXTSIZE.y, 0.0f, StateTime::SCROLL[m_nIdxScroll], m_fStateTime);
 	m_apText[m_nIdxScroll]->SetSize(size);
 
 
@@ -236,9 +286,20 @@ void CTitle_SUSURU::StateScroll(const float fDeltaTime, const float fDeltaRate, 
 	D3DXVECTOR2* pTex = m_apText[m_nIdxScroll]->GetTex();
 	pTex[2].y = pTex[3].y = m_apText[m_nIdxScroll]->GetSize().y / m_apText[m_nIdxScroll]->GetSizeOrigin().y;
 
-	if (m_fStateTime >= StateTime::SCROLL)
+	if (m_fStateTime >= StateTime::SCROLL[m_nIdxScroll])
 	{
-		m_fStateTime = 0.0f;
+		m_fStateTime -= StateTime::SCROLL[m_nIdxScroll];
 		m_state = EState::STATE_WAIT;
+	}
+}
+
+//==========================================================================
+// 終了
+//==========================================================================
+void CTitle_SUSURU::StateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fStateTime >= StateTime::END)
+	{
+		CTitle::GetInstance()->ChangeScene(CTitle::ESceneType::SCENETYPE_CONTROLLWAIT);
 	}
 }

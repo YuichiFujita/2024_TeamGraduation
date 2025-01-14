@@ -106,8 +106,10 @@ private:
 	//--------------------------
 	// 更新
 	//--------------------------
-	void UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 選択肢更新
-	void UpdateColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 色更新
+	void UpdateSandSmoke(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 砂煙更新
+	void UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 選択肢更新
+	void UpdateColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 色更新
+	void UpdateSelectSize(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 選択肢のサイズ更新
 
 	//--------------------------
 	// 生成
@@ -141,7 +143,9 @@ private:
 	//--------------------------
 	CTitleLogo* m_pLogo;		// ロゴ
 	COption_BBS* m_pOptionBBS;	// 掲示板
-	float m_fMarkerTime;		// マーカーのタイマー
+	float m_fTimeMarker;		// マーカーのタイマー
+	float m_fTimeSandSmoke;		// 砂煙のタイマー
+	float m_fIntervalSandSmoke;	// 砂煙のインターバル
 	std::vector<CTitleStudent*> m_vecTitleStudent;	// タイトルの生徒
 };
 
