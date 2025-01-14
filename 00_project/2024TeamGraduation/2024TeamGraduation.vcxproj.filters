@@ -800,6 +800,9 @@
     <ClCompile Include="Source\arrowUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressup_uniform.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1461,6 +1464,9 @@
     </ClInclude>
     <ClInclude Include="Source\arrowUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_uniform.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

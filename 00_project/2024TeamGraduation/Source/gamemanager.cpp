@@ -535,6 +535,12 @@ void CGameManager::SkipSpawn()
 	// プレイヤー登場演出マネージャーの終了
 	SAFE_UNINIT(pManager);
 
+	// ドア閉める
+	for (const auto& door : m_apGymDoor)
+	{
+		door->SetEnableOpen(false);
+	}
+
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create(CScene::MODE::MODE_GAME);
 

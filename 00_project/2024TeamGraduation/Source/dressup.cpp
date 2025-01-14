@@ -14,6 +14,7 @@
 #include "dressup_hair.h"		// 髪
 #include "dressup_accessory.h"	// アクセ
 #include "dressup_face.h"		// 顔
+#include "dressup_uniform.h"	// ユニフォーム
 
 //==========================================================================
 // コンストラクタ
@@ -55,6 +56,10 @@ CDressup* CDressup::Create(EType type, CObjectChara* pObjChara, int nSwitchType)
 
 	case CDressup::TYPE_FACE:
 		pObj = DEBUG_NEW CDressup_Face;
+		break;
+
+	case CDressup::EType::TYPE_UNIFORM:
+		pObj = DEBUG_NEW CDressup_Uniform;
 		break;
 
 	default:

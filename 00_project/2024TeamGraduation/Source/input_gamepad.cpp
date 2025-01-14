@@ -14,9 +14,42 @@
 namespace
 {
 	const int SHOT_FPS = 15;	// 弾の間隔
-	const int DMG_TIME = 30;	// バイブの時間
 	const float DEADZONE = 0.99f;	// デッドゾーン
+
+	namespace Vib
+	{
+		CInputGamepad::SVib SETINFO[CInputGamepad::EVibType::VIBTYPE_MAX] =		// 設定する情報
+		{
+			CInputGamepad::SVib(0.0f, 0.00f, 0.00f, 0.00f, CInputGamepad::EEasing::Linear),		// VIBTYPE_NONE
+			CInputGamepad::SVib(0.0f, 0.12f, 0.80f, 0.50f, CInputGamepad::EEasing::Linear),		// VIBTYPE_CATCH_NORMAL
+			CInputGamepad::SVib(0.0f, 0.27f, 0.67f, 0.34f, CInputGamepad::EEasing::EaseInOut),	// VIBTYPE_CATCH_FAST
+			CInputGamepad::SVib(0.0f, 0.15f, 0.55f, 0.76f, CInputGamepad::EEasing::EaseOut),	// VIBTYPE_THROW_NORMAL
+			CInputGamepad::SVib(0.0f, 0.20f, 0.55f, 0.77f, CInputGamepad::EEasing::EaseOut),	// VIBTYPE_THROW_FAST
+			CInputGamepad::SVib(0.0f, 0.18f, 1.00f, 0.85f, CInputGamepad::EEasing::EaseInOut),	// VIBTYPE_HIT
+			CInputGamepad::SVib(0.0f, 0.60f, 1.00f, 0.85f, CInputGamepad::EEasing::EaseInOut),	// VIBTYPE_HIT_SP
+			CInputGamepad::SVib(0.0f, 2.19f, 0.80f, 0.00f, CInputGamepad::EEasing::EaseInExpo),	// VIBTYPE_HIT_SP
+		};
+	}
 }
+
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+// float線形補正リスト
+CInputGamepad::FLOAT_EASING_FUNC CInputGamepad::m_FloatEasingFunc[] =
+{
+	&UtilFunc::Correction::EasingLinear,
+	&UtilFunc::Correction::EasingQuintIn,
+	&UtilFunc::Correction::EasingQuintOut,
+	&UtilFunc::Correction::EasingEaseInOutQuart,
+	&UtilFunc::Correction::EaseInExpo,
+	&UtilFunc::Correction::EaseOutExpo,
+	&UtilFunc::Correction::EaseInOutExpo,
+};
+
+//==========================================================================
+// 静的メンバ変数
+//==========================================================================
 CInputGamepad* CInputGamepad::m_pThisPtr = nullptr;	// 自身のポインタ
 
 //==========================================================================
@@ -31,17 +64,19 @@ CInputGamepad::CInputGamepad()
 		memset(&m_aGamepadStateRepeat[nCntPlayer], 0, sizeof(XINPUT_STATE));
 		memset(&m_aGamepadStateRelease[nCntPlayer], 0, sizeof(XINPUT_STATE));
 		memset(&m_aGamepadStateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
-		m_VibrationState[nCntPlayer] = VIBRATION_STATE_NONE;	// 振動の種類
-		m_nCntVibration[nCntPlayer] = 0;						// 振動の時間
-		m_nMaxCntVibration[nCntPlayer] = 0;						// 振動の時間
+		m_aVibType[nCntPlayer] = VIBTYPE_NONE;	// 振動の種類
+		m_aVibInfo[nCntPlayer] = SVib();				// 振動情報
 	}
 	memset(&m_fTapTimer, 0, sizeof(m_fTapTimer));		// タップ判定用のタイマー
 	memset(&m_fOldTapTimer, 0, sizeof(m_fOldTapTimer));	// 前回のタップ判定用のタイマー
 
 	m_bVibrationUse = false;				// バイブを使用するかどうか
-	m_nCntPadrepeat = 0;									// リピート用カウント
-	m_fVibrationMulti = 0.0f;
+	m_nCntPadrepeat = 0;					// リピート用カウント
+	m_fVibrationMulti = 1.0f;				// バイブレーション倍率
 	m_fDeadZone = 0.0f;						// デッドゾーン
+
+	// デバッグ
+	m_EditVibType = EVibType::VIBTYPE_NONE;	// 編集するバイブの種類
 }
 
 //==========================================================================
@@ -99,16 +134,14 @@ HRESULT CInputGamepad::Init(HINSTANCE hInstance, HWND hWnd)
 	// メモリクリア
 	for (int nCntPlayer = 0; nCntPlayer < mylib_const::MAX_PLAYER; nCntPlayer++)
 	{
-		m_nCntVibration[nCntPlayer] = 0;
-		m_VibrationState[nCntPlayer] = VIBRATION_STATE_NONE;
-		m_nMaxCntVibration[nCntPlayer] = 0;
+		m_aVibType[nCntPlayer] = VIBTYPE_NONE;			// バイブの種類
+		m_aVibInfo[nCntPlayer] = SVib();				// 振動情報
+		memset(&m_aGamepadStateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
 
 		memset(&m_aGamepadState[nCntPlayer], 0, sizeof(XINPUT_STATE));
 		memset(&m_aGamepadStateTrigger[nCntPlayer], 0, sizeof(XINPUT_STATE));
 		memset(&m_aGamepadStateRepeat[nCntPlayer], 0, sizeof(XINPUT_STATE));
 		memset(&m_aGamepadStateRelease[nCntPlayer], 0, sizeof(XINPUT_STATE));
-		memset(&m_aGamepadStateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
-		memset(&m_aUpdateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
 		memset(&m_aGamepadState[nCntPlayer], 0, sizeof(XINPUT_STATE));
 
 	}
@@ -184,21 +217,8 @@ void CInputGamepad::Update(const float fDeltaTime, const float fDeltaRate, const
 			}
 		}
 
-		// タイマーを減算
-		m_nCntVibration[nCntPlayer]--;
-
-		if (m_nCntVibration[nCntPlayer] < 0)
-		{// カウントがゼロ以下
-
-			// 何もしてない状態に設定
-			m_VibrationState[nCntPlayer] = VIBRATION_STATE_NONE;
-
-			// メモリ初期化
-			memset(&m_aGamepadStateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
-		}
-
 		// 振動更新
-		UpdateVibration(nCntPlayer);
+		UpdateVibration(fDeltaTime, fDeltaRate, fSlowRate, nCntPlayer);
 
 		// スティックのトリガー判定更新
 		UpdateStickTrigger(nCntPlayer);
@@ -206,6 +226,13 @@ void CInputGamepad::Update(const float fDeltaTime, const float fDeltaRate, const
 		// タップ判定タイマーの更新
 		UpdateTapTimer(fDeltaTime, fDeltaRate, fSlowRate, nCntPlayer);
 	}
+
+#if _DEBUG
+
+	// デバッグ
+	Debug();
+#endif // _DEBUG
+
 }
 
 //==========================================================================
@@ -341,35 +368,48 @@ void CInputGamepad::UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate)
 //==========================================================================
 // バイブの更新処理
 //==========================================================================
-void CInputGamepad::UpdateVibration(int nCntPlayer)
+void CInputGamepad::UpdateVibration(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer)
 {
-	// プレイヤーインデックスが範囲外の場合抜ける
-	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
+	// バイブ情報
+	SVib* pVibInfo = &m_aVibInfo[nCntPlayer];
 
-	switch (m_VibrationState[nCntPlayer])
-	{
-	case VIBRATION_STATE_NONE:
-	{
-		
-	}
-		break;
+	// 振動タイマーを加算
+	pVibInfo->timer += fDeltaTime;	// 振動情報
 
-	case VIBRATION_STATE_DMG:
-	{
-		// 減らしていく
-		m_aGamepadStateVib[nCntPlayer].wLeftMotorSpeed = m_aUpdateVib[nCntPlayer].wLeftMotorSpeed;
-		m_aGamepadStateVib[nCntPlayer].wRightMotorSpeed = m_aUpdateVib[nCntPlayer].wRightMotorSpeed;
-		m_aUpdateVib[nCntPlayer].wLeftMotorSpeed *= m_fVibrationMulti;
-		m_aUpdateVib[nCntPlayer].wRightMotorSpeed *= m_fVibrationMulti;
-	}
+	// 振動のパラメータ設定
+	SetVibrationParam(nCntPlayer);
 
-	default:
-		break;
+	// 完了
+	if (pVibInfo->timer >= pVibInfo->maxTimer)
+	{
+		// 振動タイマーリセット
+		pVibInfo->timer = 0.0;
+
+		// 何もしてない状態に設定
+		SetVibration(EVibType::VIBTYPE_NONE, nCntPlayer);
+
+		// メモリ初期化
+		memset(&m_aGamepadStateVib[nCntPlayer], 0, sizeof(XINPUT_VIBRATION));
+		XInputSetState(nCntPlayer, &m_aGamepadStateVib[nCntPlayer]);
 	}
+}
+
+//==========================================================================
+// 振動のパラメータ設定
+//==========================================================================
+void CInputGamepad::SetVibrationParam(int nCntPlayer)
+{
+	// バイブ情報
+	SVib* pVibInfo = &m_aVibInfo[nCntPlayer];
+
+	// イージング補間
+	float speed = m_FloatEasingFunc[pVibInfo->easeType](pVibInfo->startSpeed, pVibInfo->endSpeed, 0.0f, pVibInfo->maxTimer, pVibInfo->timer);
+	speed *= static_cast<float>(USHRT_MAX);
 
 	// 補正
-	UtilFunc::Transformation::Clamp(m_aGamepadStateVib[nCntPlayer].wLeftMotorSpeed, static_cast<WORD>(0.0f), static_cast<WORD>(USHRT_MAX));
-	UtilFunc::Transformation::Clamp(m_aGamepadStateVib[nCntPlayer].wRightMotorSpeed, static_cast<WORD>(0.0f), static_cast<WORD>(USHRT_MAX));
+	speed = UtilFunc::Transformation::Clamp(speed, static_cast<float>(0.0f), static_cast<float>(USHRT_MAX));
+	m_aGamepadStateVib[nCntPlayer].wLeftMotorSpeed = speed;
+	m_aGamepadStateVib[nCntPlayer].wRightMotorSpeed = speed;
 
 	// コントローラーにバイブの情報をXINPUTに送る
 	m_aGamepadStateVib[nCntPlayer].wLeftMotorSpeed *= m_fVibrationMulti;
@@ -380,29 +420,23 @@ void CInputGamepad::UpdateVibration(int nCntPlayer)
 //==========================================================================
 // バイブの設定処理
 //==========================================================================
-void CInputGamepad::SetVibration(VIBRATION_STATE VibState, int nCntPlayer)
+void CInputGamepad::SetVibration(EVibType vibType, int nCntPlayer)
 {
 	// プレイヤーインデックスが範囲外の場合抜ける
 	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
 
+	// バイブ使用しないときはやめる
 	if (!m_bVibrationUse) return;
 
-	// 状態を代入
-	m_VibrationState[nCntPlayer] = VibState;
+	// バイブの種類
+	m_aVibType[nCntPlayer] = vibType;
 
-	switch (VibState)
-	{
-	case VIBRATION_STATE_DMG:
+	// 初期化
+	m_aVibInfo[nCntPlayer].timer = 0.0f;
 
-		m_nCntVibration[nCntPlayer] = 15;
-		m_nMaxCntVibration[nCntPlayer] = m_nCntVibration[nCntPlayer];
-		m_aUpdateVib[nCntPlayer].wLeftMotorSpeed = (USHRT_MAX * 0.8f);
-		m_aUpdateVib[nCntPlayer].wRightMotorSpeed = (USHRT_MAX * 0.8f);
-		break;
-	}
-
-	// コントローラーにバイブの情報をXINPUTに送る
-	XInputSetState(nCntPlayer, &m_aGamepadStateVib[nCntPlayer]);
+	// 振動のパラメータ設定
+	m_aVibInfo[nCntPlayer] = Vib::SETINFO[vibType];
+	SetVibrationParam(nCntPlayer);
 }
 
 //==========================================================================
@@ -810,4 +844,42 @@ bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_AXIS XY)
 int CInputGamepad::GetnCntPad()
 {
 	return m_nCntPadrepeat;
+}
+
+//==========================================================================
+// デバッグ
+//==========================================================================
+void CInputGamepad::Debug()
+{
+	if (ImGui::TreeNode("Gamepad"))
+	{
+		// 起動
+		if (ImGui::Button("Vib!"))
+		{
+			SetVibration(m_EditVibType, 0);
+		}
+
+		// 編集するバイブの種類
+		int type = (int)m_EditVibType;
+		ImGui::Text(magic_enum::enum_name(m_EditVibType).data());
+		ImGui::SliderInt("EditVibType", &type, 0, EVibType::VIBTYPE_MAX - 1);
+		m_EditVibType = (EVibType)type;
+
+		// 調整
+		ImGui::DragFloat("maxTimer", (float*)&Vib::SETINFO[m_EditVibType].maxTimer, 0.01f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("startSpeed", (float*)&Vib::SETINFO[m_EditVibType].startSpeed, 0.01f, 0.0f, 1.0f, "%.2f");
+		ImGui::DragFloat("endSpeed", (float*)&Vib::SETINFO[m_EditVibType].endSpeed, 0.01f, 0.0f, 1.0f, "%.2f");
+
+		// モータースピード
+		ImGui::Text("m_aGamepadStateVib[nCntPlayer].wLeftMotorSpeed : %.2f", (float)m_aGamepadStateVib[0].wLeftMotorSpeed);
+
+		// イージング
+		int esseType = Vib::SETINFO[m_EditVibType].easeType;
+		ImGui::SliderInt("EaseType", &esseType, 0, static_cast<int>(EEasing::MAX) - 1, "%d");
+		Vib::SETINFO[m_EditVibType].easeType = static_cast<EEasing>(esseType);
+		ImGui::SameLine();
+		ImGui::Text("[%s]", magic_enum::enum_name(Vib::SETINFO[m_EditVibType].easeType));
+
+		ImGui::TreePop();
+	}
 }

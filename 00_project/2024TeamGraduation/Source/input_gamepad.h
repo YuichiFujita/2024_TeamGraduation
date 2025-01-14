@@ -55,11 +55,30 @@ public:
 	};
 
 	// バイブレーション
-	enum VIBRATION_STATE
+	enum EVibType
 	{
-		VIBRATION_STATE_NONE = 0,	// 何もしてない状態
-		VIBRATION_STATE_DMG,		// ダメージ時
-		VIBRATION_STATE_MAX
+		VIBTYPE_NONE = 0,		// 何もしてない状態
+		VIBTYPE_CATCH_NORMAL,	// キャッチ(通常)
+		VIBTYPE_CATCH_FAST,		// キャッチ(早めの)
+		VIBTYPE_THROW_NORMAL,	// 投げ(通常)
+		VIBTYPE_THROW_FAST,		// 投げ(早めの)
+		VIBTYPE_HIT,			// 被弾
+		VIBTYPE_HIT_SP,			// 被弾(スペシャル)
+		VIBTYPE_DEAD,			// 死亡
+		VIBTYPE_MAX
+	};
+
+	// 補正種類
+	enum EEasing
+	{
+		Linear = 0,
+		EaseIn,
+		EaseOut,
+		EaseInOut,
+		EaseInExpo,
+		EaseOutExpo,
+		EaseInOutExpo,
+		MAX
 	};
 
 
@@ -74,6 +93,28 @@ public:
 
 		// コンストラクタ
 		STapInfo() : bInput(false), bComplete(false), fRatio(0.0f) {}
+	};
+
+	struct SVib	// バイブ
+	{
+		float timer;		// 時間
+		float maxTimer;		// 時間の最大値
+		float startSpeed;	// 初期速度
+		float endSpeed;		// 目標速度
+		EEasing easeType;	// 補正種類
+
+		// コンストラクタ
+		SVib() :timer(0.0f), maxTimer(0.0f), startSpeed(0.0f), endSpeed(0.0f), easeType(EEasing::Linear) {}
+		
+		// パラメータ付きコンストラクタ
+		SVib
+		(
+			float _timer,		// 時間
+			float _maxTimer,	// 時間の最大値
+			float _startSpeed,	// 初期速度
+			float _endSpeed,	// 目標速度
+			EEasing _easeType	// 補正種類
+		) : timer(_timer), maxTimer(_maxTimer), startSpeed(_startSpeed), endSpeed(_endSpeed), easeType(_easeType) {}
 	};
 
 	CInputGamepad();
@@ -98,6 +139,7 @@ public:
 	bool GetAllTrigger(BUTTON nKey);
 	bool GetAllRepeat(BUTTON nKey);
 	bool GetAllRelease(BUTTON nKey);
+	int GetnCntPad();
 
 	//--------------------------
 	// トリガー系
@@ -110,26 +152,25 @@ public:
 	//--------------------------
 	// スティック系
 	//--------------------------
-	bool GetLStickTrigger(int nCntPlayer, STICK_AXIS XY);	// スティックのトリガー判定
-	bool GetRStickTrigger(int nCntPlayer, STICK_AXIS XY);	// スティックのトリガー判定
-	MyLib::Vector3 GetStickMoveL(int nCntPlayer);
-	MyLib::Vector3 GetStickMoveR(int nCntPlayer);
-	MyLib::Vector3 GetStickPositionRatioL(int nCntPlayer);	// 左スティックの割合取得
-	MyLib::Vector3 GetStickPositionRatioR(int nCntPlayer);	// 右スティックの割合取得
-	float GetStickRotL(int nCntPlayer);					// スティックの向き取得
-	float GetStickRotR(int nCntPlayer);					// スティックの向き取得
-	bool IsTipStickL(int nCntPlayer, STICK_AXIS XY) { return m_bLStickTip[nCntPlayer][XY]; }		// Lスティックが倒れてるかの判定
-	bool IsTipStickR(int nCntPlayer, STICK_AXIS XY) { return m_bRStickTip[nCntPlayer][XY]; }		// Rスティックが倒れてるかの判定
-	float GetVibMulti() { return m_fVibrationMulti; }
-	void SetVibMulti(float fMulti) { m_fVibrationMulti = fMulti; }
+	bool GetLStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Lスティックのトリガー判定
+	bool GetRStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Rスティックのトリガー判定
+	MyLib::Vector3 GetStickMoveL(int nCntPlayer);			// Lスティックの移動量取得
+	MyLib::Vector3 GetStickMoveR(int nCntPlayer);			// Rスティックの移動量取得
+	MyLib::Vector3 GetStickPositionRatioL(int nCntPlayer);	// Lスティックの割合取得
+	MyLib::Vector3 GetStickPositionRatioR(int nCntPlayer);	// Rスティックの割合取得
+	float GetStickRotL(int nCntPlayer);						// Lスティックの向き取得
+	float GetStickRotR(int nCntPlayer);						// Rスティックの向き取得
+	bool IsTipStickL(int nCntPlayer, STICK_AXIS XY) { return m_bLStickTip[nCntPlayer][XY]; }	// Lスティックが倒れてるかの判定
+	bool IsTipStickR(int nCntPlayer, STICK_AXIS XY) { return m_bRStickTip[nCntPlayer][XY]; }	// Rスティックが倒れてるかの判定
 
 	//--------------------------
 	// バイブレーション系
 	//--------------------------
 	void SetEnableVibration(bool bUse) { m_bVibrationUse = bUse; }	// バイブの使用状況切り替え
 	bool IsEnableVibration() { return m_bVibrationUse; }			// バイブの使用状況取得
-	void SetVibration(VIBRATION_STATE VibState, int nCntPlayer);
-	int GetnCntPad();
+	void SetVibration(EVibType VibState, int nCntPlayer);			// バイブ設定
+	void SetVibMulti(float fMulti)	{ m_fVibrationMulti = fMulti; }	// バイブの倍率設定
+	float GetVibMulti()				{ return m_fVibrationMulti; }	// バイブの倍率取得
 
 	static CInputGamepad* GetInstance() { return m_pThisPtr; }		// インスタンス取得
 	static CInputGamepad* Create(HINSTANCE hInstance, HWND hWnd);	// 生成処理
@@ -153,8 +194,10 @@ private:
 	//=============================
 	void UpdateStickTrigger(int nCntPlayer);		// スティックのトリガー判定
 	void UpdateTriggerState(int nCntPlayer, XINPUT_STATE inputstate);	// トリガーの判定処理
-	void UpdateVibration(int nCntPlayer);	// 振動の更新処理
+	void UpdateVibration(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer);	// 振動の更新処理
+	void SetVibrationParam(int nCntPlayer);																			// 振動のパラメータ設定
 	void UpdateTapTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate, int nCntPlayer);	// タップ判定タイマーの更新
+	void Debug();	// デバッグ
 
 	//=============================
 	// メンバ変数
@@ -166,14 +209,20 @@ private:
 	XINPUT_STATE m_aGamepadStateTrigger[mylib_const::MAX_PLAYER];		// トリガー情報
 	XINPUT_STATE m_aGamepadStateRepeat[mylib_const::MAX_PLAYER];		// リピート情報
 	XINPUT_STATE m_aGamepadStateRelease[mylib_const::MAX_PLAYER];		// リリース情報
-	XINPUT_VIBRATION m_aGamepadStateVib[mylib_const::MAX_PLAYER];		// バイブレーション
-	XINPUT_VIBRATION m_aUpdateVib[mylib_const::MAX_PLAYER];				// バイブレーション更新用
-	VIBRATION_STATE m_VibrationState[mylib_const::MAX_PLAYER];			// 振動の種類
-	int m_nCntVibration[mylib_const::MAX_PLAYER];						// 振動の時間
-	int m_nMaxCntVibration[mylib_const::MAX_PLAYER];					// 振動の時間
 	int m_nCntPadrepeat;												// リピート用カウント
 	float m_fTapTimer[BUTTON::BUTTON_MAX][mylib_const::MAX_PLAYER];		// タップ判定用のタイマー
 	float m_fOldTapTimer[BUTTON::BUTTON_MAX][mylib_const::MAX_PLAYER];	// 前回のタップ判定用のタイマー
+
+	//--------------------------
+	// 振動
+	//--------------------------
+	// float線形補正リスト
+	typedef float(*FLOAT_EASING_FUNC)(float, float, float, float, float);
+	static FLOAT_EASING_FUNC m_FloatEasingFunc[];
+
+	XINPUT_VIBRATION m_aGamepadStateVib[mylib_const::MAX_PLAYER];	// バイブレーション
+	EVibType m_aVibType[mylib_const::MAX_PLAYER];					// バイブの種類
+	SVib m_aVibInfo[mylib_const::MAX_PLAYER];						// 振動情報
 
 	//--------------------------
 	// トリガー
@@ -193,6 +242,11 @@ private:
 	bool m_bVibrationUse;					// バイブを使用するかどうか
 	float m_fVibrationMulti;				// バイブレーション倍率
 	float m_fDeadZone;						// デッドゾーン
+
+	//--------------------------
+	// デバッグ
+	//--------------------------
+	EVibType m_EditVibType;	// 編集するバイブの種類
 
 	static CInputGamepad* m_pThisPtr;	// 自身のポインタ
 };
