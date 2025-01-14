@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
+<<<<<<< HEAD
 		ID_CONTROLL = 0
 <<<<<<< HEAD
 		HAIR = 7
@@ -24,6 +25,9 @@ SETTEAM
 		ID_CONTROLL = -1
 =======
 >>>>>>> ec8f0b15d556bb7f6e38f01530aa6ee7f4987397
+=======
+		ID_CONTROLL = -1
+>>>>>>> 9230673da2706a9460af2d2649f8077b4ddbcaa2
 		HAIR = 0
 		ACCESSORY = 0
 		FACE = 0
@@ -39,8 +43,8 @@ END_SETTEAM
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
+		ID_CONTROLL = 0
+		HAIR = 1
 		ACCESSORY = 0
 		FACE = 0
 		BODY = 0

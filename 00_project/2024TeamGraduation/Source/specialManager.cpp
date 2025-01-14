@@ -159,7 +159,7 @@ HRESULT CSpecialManager::Init(void)
 
 #if 1
 	// 世界の時を止める
-	GET_MANAGER->SerEnableWorldPaused(true);
+	GET_MANAGER->SetEnableWorldPaused(true);
 #endif
 
 #if 1
@@ -293,7 +293,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 
 		// 世界の時はうごきだす
-		GET_MANAGER->SerEnableWorldPaused(false);
+		GET_MANAGER->SetEnableWorldPaused(false);
 
 		// カットインの終了
 		SAFE_UNINIT(m_pCutIn);

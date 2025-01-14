@@ -800,6 +800,9 @@
     <ClCompile Include="Source\arrowUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\inputKeyButton.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1461,6 +1464,9 @@
     </ClInclude>
     <ClInclude Include="Source\arrowUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\inputKeyButton.h">
+      <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
