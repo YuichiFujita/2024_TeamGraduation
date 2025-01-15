@@ -800,6 +800,9 @@
     <ClCompile Include="Source\arrowUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressup_uniform.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
     <ClCompile Include="Source\inputKeyButton.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -1464,6 +1467,9 @@
     </ClInclude>
     <ClInclude Include="Source\arrowUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_uniform.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
     <ClInclude Include="Source\inputKeyButton.h">
       <Filter>Input</Filter>

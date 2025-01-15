@@ -28,6 +28,7 @@ public:
 		TYPE_HAIR = 0,	// 髪
 		TYPE_ACCESSORY,	// アクセサリー
 		TYPE_FACE,		// 顔
+		TYPE_UNIFORM,	// ユニフォーム
 		TYPE_MAX
 	};
 
@@ -49,12 +50,13 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	void SetControllIdx(int idx) { m_nControllIdx = idx; }	// 操作するインデックス設定
-	virtual void ReRegist(int idx);							// 再割り当て
-	virtual void ReRegist() = 0;							// 再割り当て
-	virtual void RandSet();									// ランダム設定
+	void SetControllIdx(int idx)	{ m_nControllIdx = idx; }	// 操作するインデックス設定
+	void SetNowIdx(int idx)			{ m_nNowIdx = idx; }		// 現在のインデックス設定
+	int GetNowIdx()					{ return m_nNowIdx; }		// 現在のインデックス取得
+	virtual void ReRegist(int idx);								// 再割り当て
+	virtual void ReRegist() = 0;								// 再割り当て
+	virtual void RandSet();										// ランダム設定
 	virtual void Debug();
-	int GetNowIdx() { return m_nNowIdx; }					// 現在のインデックス取得
 
 	// 静的関数
 	static CDressup* Create(EType type, CObjectChara* pObjChara, int nSwitchType);	// 生成処理

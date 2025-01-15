@@ -19,11 +19,15 @@ namespace
 // プレイヤー
 namespace Player
 {
-	const float INIT_IN_X(100.0f);	// 初期位置(内野)
-	const float INIT_IN_Z(100.0f);	// 初期位置(内野)
-	const float INIT_OUT_X(100.0f);	// 初期位置(外野)
-	const float INIT_OUT_Z(300.0f);	// 初期位置(外野)
+	const float INIT_IN_X(900.0f);	// 初期位置(内野)
+	const float INIT_IN_Z(-400.0f);	// 初期位置(内野)
+	const float INIT_OUT_X(900.0f);	// 初期位置(外野)
+	const float INIT_OUT_Z(100.0f);	// 初期位置(外野)
 	const float SHIFT(50.0f);	// ずらし値
+
+	const float RANGE = D3DX_PI * 0.6f;	// 生成範囲
+	const float RANGE_OUT = D3DX_PI * 1.0f;	// 生成範囲
+	const float DISTANCE = 400.0f;	// 間隔
 
 	const MyLib::Vector3 POS_IN[CGameManager::ETeamSide::SIDE_MAX] =
 	{// 内野位置
@@ -186,36 +190,53 @@ void CPlayerManager_Result::InitPlayer()
 	MyLib::Vector3 pos = VEC3_ZERO;
 
 	// 位置設定
-	int nNumRight = 0, nNumLeft = 0;
 	CListManager<CPlayerResult> sampleList = CPlayerResult::GetList();
 	std::list<CPlayerResult*>::iterator itr = sampleList.GetEnd();
 	CPlayerResult* pObj = nullptr;
+
+	// 左右のリスト
+	std::vector<CPlayer*> leftList, rightList;
+	std::vector<CPlayer*> outLeftList, outRightList;
 
 	while (sampleList.ListLoop(itr))
 	{
 		pObj = (*itr);
 		// pObjか(*itr)を使って処理
 	
-		// 内野排除
-		if (pObj->GetAreaType() == CPlayer::EFieldArea::FIELD_IN) continue;
-
+		// チーム取得
 		CGameManager::ETeamSide team = pObj->GetTeam();
-		pos = CResultManager::GetInstance()->GetPosMid(team);
-		pos += Player::POS_OUT[team];
 
 		// カウンター
 		switch (team)
 		{
 		case CGameManager::ETeamSide::SIDE_LEFT:
 
-			pos += (Player::POS_SHIFT[team] * static_cast<float>(nNumLeft));
-			nNumLeft++;
+			// 内野
+			if (pObj->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
+			{
+				// リスト追加
+				leftList.push_back(pObj);
+			}
+			else
+			{
+				// リスト追加
+				outLeftList.push_back(pObj);
+			}
 			break;
 		
 		case CGameManager::ETeamSide::SIDE_RIGHT:
 
-			pos += (Player::POS_SHIFT[team] * static_cast<float>(nNumRight));
-			nNumRight++;
+			// 内野
+			if (pObj->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
+			{
+				// リスト追加
+				rightList.push_back(pObj);
+			}
+			else
+			{
+				// リスト追加
+				outRightList.push_back(pObj);
+			}
 			break;
 	
 		default:
@@ -225,6 +246,93 @@ void CPlayerManager_Result::InitPlayer()
 
 		pObj->SetPosition(pos);
 	}
+
+
+
+
+	// プレイヤー数
+	float division = Player::RANGE / leftList.size();	// 1分割あたりの向き
+	float fRot = Player::RANGE / (float)(leftList.size() + 1);
+
+	MyLib::Vector3 setpos, setrot;
+
+	// 左
+	for (int i = 0; i < leftList.size(); i++)
+	{
+		// 位置計算
+		setpos = Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT];
+		setpos.x += sinf(fRot * (i + 1) - Player::RANGE * 0.5f) * Player::DISTANCE;
+		setpos.z += Player::DISTANCE * 0.25f + cosf(fRot * (i + 1) - Player::RANGE * 0.5f) * Player::DISTANCE;
+
+		// 位置設定
+		leftList[i]->SetPosition(setpos);
+
+		// 向き設定
+		setrot.y = setpos.AngleXZ(Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT]);
+		leftList[i]->SetRotation(setrot);
+	}
+
+	// 左外野
+	division = Player::RANGE_OUT / outLeftList.size();	// 1分割あたりの向き
+	fRot = Player::RANGE_OUT / (float)(outLeftList.size() + 1);
+	for (int i = 0; i < outLeftList.size(); i++)
+	{
+		// 位置計算
+		setpos = Player::POS_OUT[CGameManager::ETeamSide::SIDE_LEFT];
+		setpos.x += sinf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE;
+		setpos.z += Player::DISTANCE * 0.25f + cosf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE;
+
+		// カーブを緩やかにする
+		setpos.z -= cosf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE * 0.75f;
+
+		// 位置設定
+		outLeftList[i]->SetPosition(setpos);
+
+		// 向き設定
+		setrot.y = setpos.AngleXZ(Player::POS_IN[CGameManager::ETeamSide::SIDE_LEFT]);
+		outLeftList[i]->SetRotation(setrot);
+	}
+
+	// 右
+	division = Player::RANGE / rightList.size();	// 1分割あたりの向き
+	fRot = Player::RANGE / (float)(rightList.size() + 1);
+	for (int i = 0; i < rightList.size(); i++)
+	{
+		// 位置計算
+		setpos = Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT];
+		setpos.x += sinf(fRot * (i + 1) - Player::RANGE * 0.5f) * Player::DISTANCE;
+		setpos.z += Player::DISTANCE * 0.25f + cosf(fRot * (i + 1) - Player::RANGE * 0.5f) * Player::DISTANCE;
+
+		// 位置設定
+		rightList[i]->SetPosition(setpos);
+
+		// 向き設定
+		setrot.y = setpos.AngleXZ(Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT]);
+		rightList[i]->SetRotation(setrot);
+	}
+
+	// 右外野
+	division = Player::RANGE_OUT / outRightList.size();	// 1分割あたりの向き
+	fRot = Player::RANGE_OUT / (float)(outRightList.size() + 1);
+	for (int i = 0; i < outRightList.size(); i++)
+	{
+		// 位置計算
+		setpos = Player::POS_OUT[CGameManager::ETeamSide::SIDE_RIGHT];
+		setpos.x += sinf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE;
+		setpos.z += Player::DISTANCE * 0.25f + cosf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE;
+
+		// カーブを緩やかにする
+		setpos.z -= cosf(fRot * (i + 1) - Player::RANGE_OUT * 0.5f) * Player::DISTANCE * 0.75f;
+
+		// 位置設定
+		outRightList[i]->SetPosition(setpos);
+
+		// 向き設定
+		setrot.y = setpos.AngleXZ(Player::POS_IN[CGameManager::ETeamSide::SIDE_RIGHT]);
+		outRightList[i]->SetRotation(setrot);
+	}
+
+
 }
 
 //==========================================================================

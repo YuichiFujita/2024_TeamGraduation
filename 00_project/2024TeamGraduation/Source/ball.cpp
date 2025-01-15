@@ -568,6 +568,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
+
+	// 振動
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_NORMAL, pPlayer->GetMyPlayerIdx());
 }
 
 //==========================================================================
@@ -650,6 +653,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_JUMP);
+
+	// 振動
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, pPlayer->GetMyPlayerIdx());
 }
 
 //==========================================================================

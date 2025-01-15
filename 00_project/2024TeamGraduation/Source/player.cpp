@@ -64,6 +64,7 @@
 #include "dressup_hair.h"
 #include "dressup_accessory.h"
 #include "dressup_face.h"
+#include "dressup_uniform.h"	// ユニフォーム
 
 #if 0
 #define WALKSE()	// 徒歩音再生
@@ -245,6 +246,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pDressUp_Hair = nullptr;		// ドレスアップ(髪)
 	m_pDressUp_Accessory = nullptr;	// ドレスアップ(アクセ)
 	m_pDressUp_Face = nullptr;		// ドレスアップ(顔)
+	m_pDressUp_Uniform = nullptr;	// ドレスアップ(ユニフォーム)
 
 	// その他
 	m_fEscapeTime = 0.0f;	// ボール所持タイマー
@@ -464,6 +466,13 @@ HRESULT CPlayer::Init()
 	// ドレスアップ生成
 	CreateDressUp();
 
+	// チームごとのユニフォームにする
+	if (m_pDressUp_Uniform != nullptr)
+	{
+		m_pDressUp_Uniform->SetNowIdx((int)m_typeTeam);
+		m_pDressUp_Uniform->ReRegist();
+	}
+
 	// プレイヤーリストに割当
 	m_List.Regist(this);
 
@@ -566,7 +575,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// フラグリセット
 	ResetFrag();
-
+	m_pDressUp_Uniform->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	// 親の更新処理
 	float nowSlowRate = fSlowRate;
 	if (m_bAlign) nowSlowRate *= Align::MULTIPLY_MOTION;
@@ -1326,10 +1335,16 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 	{
 	case CBall::ATK_NORMAL:
 		SetMotion(EMotion::MOTION_CATCH_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		SetMotion(EMotion::MOTION_CATCH_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -1371,10 +1386,16 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	{
 	case CBall::ATK_NORMAL:
 		SetMotion(EMotion::MOTION_JUSTCATCH_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -1471,6 +1492,9 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	// 死んだ
 	result->isdeath = true;
 
+	// 振動
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_DEAD, GetMyPlayerIdx());
+
 	// 近くのAIに操作権を移し、自身をAIにする
 	CPlayerManager::GetInstance()->ChangeUserToAI(this);
 }
@@ -1504,14 +1528,23 @@ void CPlayer::DamageSetting(CBall* pBall)
 	{
 	case CBall::ATK_NORMAL:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_SPECIAL:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT_SP, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -2476,6 +2509,12 @@ void CPlayer::CreateDressUp()
 		CDressup::EType::TYPE_FACE,	// 着せ替えの種類
 		this,						// 変更するプレイヤー
 		CPlayer::ID_FACE);			// 変更箇所のインデックス
+
+	// ドレスアップ(ユニフォーム)
+	m_pDressUp_Uniform = CDressup::Create(
+		CDressup::EType::TYPE_UNIFORM,	// 着せ替えの種類
+		this,							// 変更するプレイヤー
+		CPlayer::ID_HAIR);				// 変更箇所のインデックス
 }
 
 //==========================================================================
@@ -2486,6 +2525,7 @@ void CPlayer::DeleteDressUp()
 	SAFE_UNINIT(m_pDressUp_Hair);
 	SAFE_UNINIT(m_pDressUp_Accessory);
 	SAFE_UNINIT(m_pDressUp_Face);
+	SAFE_UNINIT(m_pDressUp_Uniform);
 }
 
 //==========================================================================
@@ -2494,9 +2534,10 @@ void CPlayer::DeleteDressUp()
 void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
 {
 	// 再割り当て
-	m_pDressUp_Hair->ReRegist(nHair);			// ドレスアップ(髪)
-	m_pDressUp_Accessory->ReRegist(nAccessory);	// ドレスアップ(アクセ)
-	m_pDressUp_Face->ReRegist(nFace);			// ドレスアップ(顔)
+	m_pDressUp_Hair->ReRegist(nHair);				// ドレスアップ(髪)
+	m_pDressUp_Accessory->ReRegist(nAccessory);		// ドレスアップ(アクセ)
+	m_pDressUp_Face->ReRegist(nFace);				// ドレスアップ(顔)
+	m_pDressUp_Uniform->ReRegist((int)m_typeTeam);	// ドレスアップ(ユニフォーム)
 }
 
 //==========================================================================

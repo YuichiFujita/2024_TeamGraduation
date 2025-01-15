@@ -470,7 +470,8 @@ private:
 	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
 	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
-	//-----------------------------
+	
+																										//-----------------------------
 	// 状態関数
 	//-----------------------------
 	void StateEndInvincible();		// 無敵
@@ -578,6 +579,7 @@ private:
 	CDressup* m_pDressUp_Hair;		// ドレスアップ(髪)
 	CDressup* m_pDressUp_Accessory;	// ドレスアップ(アクセ)
 	CDressup* m_pDressUp_Face;		// ドレスアップ(顔)
+	CDressup* m_pDressUp_Uniform;	// ドレスアップ(ユニフォーム)
 
 	//-----------------------------
 	// その他変数

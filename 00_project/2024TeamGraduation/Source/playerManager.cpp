@@ -349,8 +349,15 @@ HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info, const MyLi
 	// 左のプレイヤー生成
 	HRESULT hr = CreateLeftPlayer(i, info);
 
+	// リスト取得
+	std::list<CPlayer*> list = CPlayer::GetList().GetList();
+	if (list.empty()) return hr;
+
 	// 追加されたプレイヤー取得
-	CPlayer* pPlayer = CPlayer::GetList().GetList().back();
+	CPlayer* pPlayer = list.back();
+	if (pPlayer == nullptr) return hr;
+
+	// 位置の初期化
 	pPlayer->GetBase()->InitPosition(pos);
 
 	return hr;
@@ -395,8 +402,15 @@ HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info, const MyL
 	// 右のプレイヤー生成
 	HRESULT hr = CreateRightPlayer(i, info);
 
+	// リスト取得
+	std::list<CPlayer*> list = CPlayer::GetList().GetList();
+	if (list.empty()) return hr;
+
 	// 追加されたプレイヤー取得
-	CPlayer* pPlayer = CPlayer::GetList().GetList().back();
+	CPlayer* pPlayer = list.back();
+	if (pPlayer == nullptr) return hr;
+
+	// 位置の初期化
 	pPlayer->GetBase()->InitPosition(pos);
 
 	return hr;
