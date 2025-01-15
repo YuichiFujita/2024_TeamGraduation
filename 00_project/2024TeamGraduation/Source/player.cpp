@@ -241,6 +241,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pEfkCatchStance = nullptr;	// キャッチの構え用
 	m_pEfkCatchNormal = nullptr;	// 通常キャッチ
 	m_pEfkCatchJust = nullptr;		// ジャストキャッチ
+	m_pEfkDeadAfter = nullptr;		// 死亡後
 
 	// ドレスアップ
 	m_pDressUp_Hair = nullptr;		// ドレスアップ(髪)
@@ -513,6 +514,9 @@ void CPlayer::Uninit()
 
 	// ドレスアップ
 	DeleteDressUp();
+
+	// エフェクト削除
+	DeleteEffect();
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -1207,6 +1211,39 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
 		break;
 
+	case EMotion::MOTION_DEAD_AFTER:	
+		
+		if (m_pEfkDeadAfter == nullptr)
+		{// 死亡後エフェクト
+			m_pEfkDeadAfter = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_JO,
+				GetPosition(),
+				MyLib::Vector3(0.0f, GetRotDest(), 0.0f),	// 向き
+				MyLib::Vector3(),
+				20.0f, false);
+
+			// モデル取得
+			CModel** ppModel = GetModel();
+			int nNumModel = GetNumModel();	// モデル数
+
+			for (int i = 0; i < nNumModel; i++)
+			{
+				if (ppModel[i] == nullptr) continue;
+
+				// テクスチャインデックス番号取得
+				std::vector<int> vecIdx = ppModel[i]->GetIdxTexture();
+				
+				// 全てのテクスチャを消す
+				std::fill(vecIdx.begin(), vecIdx.end(), 0);
+
+				// テクスチャのインデックス割り当て
+				ppModel[i]->SetIdxTexture(vecIdx);
+			}
+
+			// 真っ白
+			m_mMatcol = MyLib::color::White();
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -1894,7 +1931,10 @@ void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CPlayer::StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pEfkDeadAfter != nullptr)
+	{// 死亡後エフェクト
+		m_pEfkDeadAfter->SetPosition(GetPosition());
+	}
 }
 
 //==========================================================================
@@ -2248,9 +2288,6 @@ void CPlayer::StateEndDeadAfter()
 {
 	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
-
-	// 担架生成
-	CStretcher::Create(this);
 }
 
 //==========================================================================
@@ -2331,7 +2368,9 @@ void CPlayer::Draw()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	// 普通の描画
-	if (m_state == STATE_DMG)
+	if (m_state == EState::STATE_DMG ||
+		m_state == EState::STATE_DEAD_AFTER || 
+		m_state == EState::STATE_DEAD_CARRY)
 	{
 		CObjectChara::Draw(m_mMatcol);
 	}
@@ -2485,6 +2524,19 @@ MyLib::Vector3 CPlayer::GetLookOffset() const
 }
 
 //==========================================================================
+// 死亡回収時処理
+//==========================================================================
+void CPlayer::DeadCollectSetting()
+{
+	if (m_pEfkDeadAfter != nullptr)
+	{// 死亡後エフェクト
+		m_pEfkDeadAfter->SetTrigger(0);
+		m_pEfkDeadAfter->SetEnableAutoDeath(true);
+		m_pEfkDeadAfter = nullptr;
+	}
+}
+
+//==========================================================================
 // ドレスアップ生成
 //==========================================================================
 void CPlayer::CreateDressUp()
@@ -2554,6 +2606,18 @@ HRESULT CPlayer::CreateShadow()
 	}
 
 	return S_OK;
+}
+
+//==========================================================================
+// エフェクト削除
+//==========================================================================
+void CPlayer::DeleteEffect()
+{
+	// エフェクト用
+	SAFE_UNINIT(m_pEfkCatchStance);	// キャッチの構え用
+	SAFE_UNINIT(m_pEfkCatchNormal);	// 通常キャッチ
+	SAFE_UNINIT(m_pEfkCatchJust);	// ジャストキャッチ
+	SAFE_UNINIT(m_pEfkDeadAfter);	// 死亡後
 }
 
 //==========================================================================

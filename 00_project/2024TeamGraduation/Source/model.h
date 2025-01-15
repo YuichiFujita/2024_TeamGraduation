@@ -32,9 +32,10 @@ public:
 	void Draw(float fAlpha);
 	void BindXData(int nIdxXFile);
 
-	std::vector<int> GetIdxTexture() {return m_nIdxTexture; }		// テクスチャインデックス番号取得
-	int GetIdxTexture(int nIdx) { return m_nIdxTexture[nIdx]; }		// テクスチャインデックス番号取得
-	void SetIdxTexture(int i, int nIdx);							// テクスチャのインデックス割り当て
+	std::vector<int> GetIdxTexture() {return m_nIdxTexture; }					// テクスチャインデックス番号取得
+	int GetIdxTexture(int nIdx) { return m_nIdxTexture[nIdx]; }					// テクスチャインデックス番号取得
+	void SetIdxTexture(int i, int nIdx);										// テクスチャのインデックス割り当て
+	void SetIdxTexture(const std::vector<int>& nIdx) { m_nIdxTexture = nIdx; }	// テクスチャのインデックス割り当て
 	int GetIdxXFile() const { return m_nIdxXFile; }					// Xファイルのインデックス番号取得
 	void SetWorldMtx(const MyLib::Matrix mtx);		// マトリックス設定
 	MyLib::Matrix GetWorldMtx() ;			// マトリックス取得

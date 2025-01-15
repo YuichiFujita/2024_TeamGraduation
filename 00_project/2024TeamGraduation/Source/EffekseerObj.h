@@ -28,6 +28,7 @@ public:
 
 	void Stop();	// 停止
 	void DeleteLater(float time);	// 後で消す
+	void SetEnableAutoDeath(bool bDeath) { m_EffekseerInfo.bAutoDeath = bDeath; }	// 自動削除フラグ設定
 	Effekseer::Handle GetHandle() { return m_EffekseerInfo.handle; }	// ハンドル取得
 
 	void SetTrigger(int trigger);					// トリガー送信 

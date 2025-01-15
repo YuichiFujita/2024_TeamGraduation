@@ -372,6 +372,7 @@ public:
 	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
 	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);			// 未来位置計算
 	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
+	void DeadCollectSetting();											// 死亡回収時処理
 
 	//=============================
 	// 静的メンバ関数
@@ -471,7 +472,7 @@ private:
 	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
 	
-																										//-----------------------------
+	//-----------------------------
 	// 状態関数
 	//-----------------------------
 	void StateEndInvincible();		// 無敵
@@ -518,6 +519,11 @@ private:
 	// ドレスアップ
 	//-----------------------------
 	void DeleteDressUp();	// ドレスアップ削除
+
+	//-----------------------------
+	// エフェクト
+	//-----------------------------
+	void DeleteEffect();	// エフェクト削除
 
 	//=============================
 	// メンバ変数
@@ -572,6 +578,7 @@ private:
 	CEffekseerObj* m_pEfkCatchStance;	// キャッチの構え
 	CEffekseerObj* m_pEfkCatchNormal;	// 通常キャッチ
 	CEffekseerObj* m_pEfkCatchJust;		// ジャストキャッチ
+	CEffekseerObj* m_pEfkDeadAfter;		// 死亡後
 
 	//-----------------------------
 	// ドレスアップ
