@@ -806,6 +806,9 @@
     <ClCompile Include="Source\inputKeyButton.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerManager_spawn.cpp">
+      <Filter>player\playerManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1473,6 +1476,9 @@
     </ClInclude>
     <ClInclude Include="Source\inputKeyButton.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerManager_spawn.h">
+      <Filter>player\playerManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -196,6 +196,9 @@ bool CPlayerBase::IsCrab()
 	// 走りでない
 	if (m_pPlayer->IsDash()) { return false; }
 
+	// キュでもない
+	if (m_pPlayer->GetMotion()->GetType() == CPlayer::EMotion::MOTION_GRIP_FRONT) { return false; }
+
 	// 敵チームで攻撃判定がある場合はカニ歩き
 	if (pBall->IsAttack()) { return true; }
 

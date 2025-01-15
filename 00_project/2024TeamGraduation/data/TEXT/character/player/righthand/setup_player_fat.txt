@@ -320,6 +320,7 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_unstable.txt				# おっとっと
+MOTION_FILENAME = data/TEXT/character/player/common/motion_door.txt					# ドア
 MOTION_FILENAME = data/TEXT/character/player/common/motion_bow.txt					# 礼
 
 

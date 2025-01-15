@@ -1,12 +1,12 @@
 //==========================================================================
 // 
-//  プレイヤーマネージャー(ゲーム)ヘッダー [playerManager_game.h]
+//  プレイヤーマネージャー(登場時)ヘッダー [playerManager_spawn.h]
 //  Author : 相馬靜雅
 // 
 //==========================================================================
 
-#ifndef _PLAYER_MANAGER_GAME_H_
-#define _PLAYER_MANAGER_GAME_H_	// 二重インクルード防止
+#ifndef _PLAYER_MANAGER_SPAWN_H_
+#define _PLAYER_MANAGER_SPAWN_H_	// 二重インクルード防止
 
 //==========================================================================
 // インクルードファイル
@@ -20,16 +20,16 @@
 //==========================================================================
 // クラス定義
 //==========================================================================
-// プレイヤーマネージャー(ゲーム)クラス
-class CPlayerManager_Game : public CPlayerManager
+// プレイヤーマネージャー(登場時)クラス
+class CPlayerManager_Spawn : public CPlayerManager
 {
 public:
 
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CPlayerManager_Game();
-	~CPlayerManager_Game() override;
+	CPlayerManager_Spawn();
+	~CPlayerManager_Spawn() override;
 
 	//=============================
 	// 仮想関数
@@ -39,7 +39,12 @@ public:
 
 private:
 
-	HRESULT CreatePlayer() override;	// プレイヤー生成
+	//=============================
+	// メンバ関数
+	//=============================
+	// 生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info) override;		// 左のプレイヤー生成
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info) override;	// 右のプレイヤー生成
 
 };
 

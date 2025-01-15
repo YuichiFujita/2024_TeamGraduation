@@ -30,6 +30,8 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/run00.wav",0},				// 走り1
 	{ TYPE_SE,"data/SE/run01.wav",0},				// 走り2
 	{ TYPE_SE,"data/SE/grip01.wav",0},				// グリップ
+	{ TYPE_SE,"data/SE/grip02.wav",0},				// グリップ
+	{ TYPE_SE,"data/SE/grip03.wav",0},				// グリップ
 
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ

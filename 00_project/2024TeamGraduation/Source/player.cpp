@@ -515,9 +515,6 @@ void CPlayer::Uninit()
 	// ドレスアップ
 	DeleteDressUp();
 
-	// エフェクト削除
-	DeleteEffect();
-
 	// 終了処理
 	CObjectChara::Uninit();
 
@@ -562,6 +559,9 @@ void CPlayer::Kill()
 		m_pMarker->Kill();
 		m_pMarker = nullptr;
 	}
+
+	// エフェクト削除
+	DeleteEffect();
 
 	// 終了処理
 	Uninit();
@@ -1155,6 +1155,14 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	}
 		break;
 
+	case EMotion::MOTION_CRAB_LEFT:
+	case EMotion::MOTION_CRAB_RIGHT:
+	{
+		// キュッキュランダム
+		PlaySoundCrabGrip();
+	}
+	break;
+
 	case EMotion::MOTION_RUN:
 	case EMotion::MOTION_RUN_BALL:
 	{
@@ -1361,6 +1369,42 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 	{// 終了してたら抜ける
 		return;
 	}
+}
+
+//==========================================================================
+// カニ歩きのグリップ音再生
+//==========================================================================
+void CPlayer::PlaySoundCrabGrip()
+{
+	// ラベルランダム再生
+	CSound::ELabel label = (CSound::ELabel)UtilFunc::Transformation::Random((int)CSound::ELabel::LABEL_SE_GRIP01, (int)CSound::ELabel::LABEL_SE_GRIP03);
+
+	// サウンドインスタンス取得
+	CSound* pSound = CSound::GetInstance();
+	pSound->PlaySound(label);
+
+	// 周波数設定
+	float frequency = 1.0f + UtilFunc::Transformation::Random(-20, 20) * 0.01f;
+	pSound->SetFrequency(label, frequency);
+}
+
+//==========================================================================
+// ランダムグリップ音再生
+//==========================================================================
+void CPlayer::PlaySoundRandGrip()
+{
+	if (UtilFunc::Transformation::Random(0, 3) != 0) return;
+
+	// ラベルランダム再生
+	CSound::ELabel label = (CSound::ELabel)UtilFunc::Transformation::Random((int)CSound::ELabel::LABEL_SE_GRIP01, (int)CSound::ELabel::LABEL_SE_GRIP03);
+
+	// サウンドインスタンス取得
+	CSound* pSound = CSound::GetInstance();
+	pSound->PlaySound(label);
+
+	// 周波数設定
+	float frequency = 1.0f + UtilFunc::Transformation::Random(-20, 20) * 0.01f;
+	pSound->SetFrequency(label, frequency);
 }
 
 //==========================================================================
@@ -2629,6 +2673,11 @@ void CPlayer::Debug()
 
 	// 
 	ImGui::Checkbox("bMove", &m_bDebugMove);
+
+	if (ImGui::Button("Grip"))
+	{
+		PlaySoundCrabGrip();
+	}
 
 	//-----------------------------
 	// 位置

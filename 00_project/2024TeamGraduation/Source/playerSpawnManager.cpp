@@ -12,6 +12,8 @@
 #include "camera.h"
 #include "fade.h"
 #include "player.h"
+#include "playerManager.h"
+#include "gymWallManager.h"
 
 //************************************************************
 //	定数宣言
@@ -66,7 +68,8 @@ CPlayerSpawnManager::~CPlayerSpawnManager()
 //============================================================
 HRESULT CPlayerSpawnManager::Init(void)
 {
-	// FUJITA：エントリーで外部に保存されたプレイヤー情報を取得しプレイヤーを生成
+	// プレイヤーマネージャー
+	CPlayerManager::Create(CPlayerManager::EType::TYPE_SPAWN);
 
 	// メンバ変数を初期化
 	m_state		= STATE_OPEN_DOOR;	// 状態
@@ -74,42 +77,6 @@ HRESULT CPlayerSpawnManager::Init(void)
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
-
-	// 左チームプレイヤー生成
-	for (int i = 0; i < 6; i++)
-	{
-		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
-		CPlayer* pLeftPlayer = CPlayer::Create
-		(
-			POS_LEFT + offset, 				// 位置
-			CGameManager::SIDE_LEFT,		// チームサイド
-			CPlayer::EHuman::HUMAN_SPAWN,	// 人
-			CPlayer::EBody::BODY_GARI,		// 体系
-			CPlayer::EHandedness::HAND_L	// 利き手
-		);
-		if (pLeftPlayer == nullptr)
-		{
-			return E_FAIL;
-		}
-	}
-
-	// 右チームプレイヤー生成
-	for (int i = 0; i < 6; i++)
-	{
-		MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
-		CPlayer* pRightPlayer = CPlayer::Create
-		(
-			POS_RIGHT + offset, 			// 位置
-			CGameManager::SIDE_RIGHT,		// チームサイド
-			CPlayer::EHuman::HUMAN_SPAWN,	// 人
-			CPlayer::EBody::BODY_DEBU,		// 体系
-			CPlayer::EHandedness::HAND_R	// 利き手
-		);
-		if (pRightPlayer == nullptr)
-		{
-			return E_FAIL;
-		}
-	}
 
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
@@ -124,6 +91,10 @@ HRESULT CPlayerSpawnManager::Init(void)
 	CSound* pSound = CSound::GetInstance();
 	pSound->StopSound();
 	pSound->PlaySound(CSound::ELabel::LABEL_BGM_SPAWN);
+
+	// 体育館の壁生成
+	CGymWallManager* pWall = CGameManager::GetInstance()->GetGymWallManager();
+	pWall->SetIsWall(true);
 
 	// 成功を返す
 	return S_OK;
@@ -149,8 +120,16 @@ void CPlayerSpawnManager::Uninit(void)
 		}
 	}
 
+	// プレイヤーマネージャー
+	CPlayerManager* pManager = CPlayerManager::GetInstance();
+	SAFE_UNINIT(pManager);
+
 	// オブジェクトを破棄
 	Release();
+
+	// 体育館の壁削除
+	CGymWallManager* pWall = CGameManager::GetInstance()->GetGymWallManager();
+	pWall->SetIsWall(false);
 
 	// 自身の保存していたインスタンスを初期化
 	m_pInstance = nullptr;
@@ -286,17 +265,20 @@ CPlayerSpawnManager* CPlayerSpawnManager::GetInstance()
 //============================================================
 void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	const float TIME_END = 0.65f;	// 終了時間
+	const float TIME_END = 1.35f;	// 終了時間
 
 	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
 	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
 	if (pCameraMotion->GetNowTriggerIdx() <= 0) { return; }		// トリガーが次に行くまで待機
 
-	if (pCameraMotion->IsImpactFrame(0))
+	// モーションのドア開ける瞬間
+	CMotion* pMotion = m_listLeft.GetData(0)->GetMotion();
+	if (pMotion->GetType() == CPlayer::EMotion::MOTION_DOOR &&
+		pMotion->IsImpactFrame(pMotion->GetInfo()))
 	{
 		// ドアを開放する
 		CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
-		pManager->SetEnableOpen(true, 0.25f);
+		pManager->SetEnableOpen(true, 0.2f);
 	}
 
 	// 経過時間を加算
@@ -309,6 +291,10 @@ void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDe
 
 		// Z軸移動状態にする
 		m_state = EState::STATE_WALK_Z;
+
+		// 歩かせる
+		m_listLeft.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
+		m_listRight.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
 	}
 }
 

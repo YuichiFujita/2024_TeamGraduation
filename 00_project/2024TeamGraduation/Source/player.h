@@ -99,6 +99,7 @@ public:
 		MOTION_GRIP_DEF,				// デフォグリップ
 		MOTION_GRIP_FRONT,				// 前グリップ
 		MOTION_UNSTABLE,				// おっとっと
+		MOTION_DOOR,					// ドア開け
 		MOTION_BOW,						// 礼
 		MOTION_MAX
 	};
@@ -494,6 +495,12 @@ private:
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
+	
+	//-----------------------------
+	// サウンド
+	//-----------------------------
+	void PlaySoundCrabGrip();	// カニ歩きのグリップ音再生
+	void PlaySoundRandGrip();	// ランダムグリップ音再生
 
 	//-----------------------------
 	// モーション系関数

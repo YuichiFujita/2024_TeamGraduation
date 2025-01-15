@@ -542,7 +542,7 @@ void CGameManager::SkipSpawn()
 	}
 
 	// プレイヤーマネージャーの生成
-	CPlayerManager::Create(CScene::MODE::MODE_GAME);
+	CPlayerManager::Create(CPlayerManager::EType::TYPE_GAME);
 
 	// 実況生成
 	CReporter::Create(ETeamSide::SIDE_LEFT);

@@ -215,7 +215,7 @@ HRESULT CResultManager::Init()
 	Load();
 
 	// プレイヤーマネージャーの生成
-	CPlayerManager::Create(CScene::MODE::MODE_RESULT);
+	CPlayerManager::Create(CPlayerManager::EType::TYPE_RESULT);
 
 	// 観客生成
 	CreateAudience();

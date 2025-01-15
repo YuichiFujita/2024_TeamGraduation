@@ -311,6 +311,7 @@
     <ClCompile Include="Source\playerManager.cpp" />
     <ClCompile Include="Source\playerManager_game.cpp" />
     <ClCompile Include="Source\playerManager_result.cpp" />
+    <ClCompile Include="Source\playerManager_spawn.cpp" />
     <ClCompile Include="Source\playerMarker.cpp" />
     <ClCompile Include="Source\playerNone.cpp" />
     <ClCompile Include="Source\playerOut.cpp" />
@@ -538,6 +539,7 @@
     <ClInclude Include="Source\playerManager.h" />
     <ClInclude Include="Source\playerManager_game.h" />
     <ClInclude Include="Source\playerManager_result.h" />
+    <ClInclude Include="Source\playerManager_spawn.h" />
     <ClInclude Include="Source\playerMarker.h" />
     <ClInclude Include="Source\playerNone.h" />
     <ClInclude Include="Source\playerOut.h" />
