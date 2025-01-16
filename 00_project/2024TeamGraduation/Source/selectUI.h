@@ -48,14 +48,17 @@ public:
 	static CSelectUI* Create(const int nPlayerIdx, const int nPadIdx, const MyLib::Vector3& pos);	// 生成
 
 	// メンバ関数
-	inline int GetPadIdx() const	{ return m_nPadIdx; }			// 操作権インデックス取得
-	inline int GetSelectIdx() const	{ return m_nSelectPlayerIdx; }	// 選択プレイヤーインデックス取得
+	inline void SetSelect(const bool bSelect) { m_bSelect = bSelect; }	// 選択操作フラグ設定
+	inline bool IsSelect() const	{ return m_bSelect; }				// 選択操作フラグ取得
+	inline int GetPadIdx() const	{ return m_nPadIdx; }				// 操作権インデックス取得
+	inline int GetSelectIdx() const	{ return m_nSelectPlayerIdx; }		// 選択プレイヤーインデックス取得
 
 private:
 	// メンバ関数
 	HRESULT CreateUI();			// UI生成
 	void UpdateSelect();		// 選択更新
 	void UpdateDecide();		// 決定更新
+	void UpdateCancel();		// キャンセル更新
 	void SetPositionRelative();	// 相対位置設定
 
 	// メンバ変数
@@ -63,6 +66,7 @@ private:
 	CObject2D* m_pFrame;		// フレーム情報
 	const int m_nPadIdx;		// 操作権インデックス
 	int m_nSelectPlayerIdx;		// 選択プレイヤーインデックス
+	bool m_bSelect;				// 選択操作フラグ
 };
 
 #endif	// _SELECT_UI_H_

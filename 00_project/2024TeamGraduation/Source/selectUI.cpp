@@ -45,7 +45,8 @@ CSelectUI::CSelectUI(const int nPlayerIdx, const int nPadIdx) : CObject(PRIO_BG,
 	m_pPadUI			(nullptr),		// コントローラーUI情報
 	m_pFrame			(nullptr),		// フレーム情報
 	m_nSelectPlayerIdx	(nPlayerIdx),	// 選択プレイヤーインデックス
-	m_nPadIdx			(nPadIdx)		// 操作権インデックス
+	m_nPadIdx			(nPadIdx),		// 操作権インデックス
+	m_bSelect			(true)			// 選択操作フラグ
 {
 
 }
@@ -108,11 +109,21 @@ void CSelectUI::Kill()
 //============================================================
 void CSelectUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 選択の更新
-	UpdateSelect();
+	if (m_bSelect)
+	{ // 選択操作中の場合
 
-	// 決定の更新
-	UpdateDecide();
+		// 選択の更新
+		UpdateSelect();
+
+		// 決定の更新
+		UpdateDecide();
+	}
+	else
+	{ // 着せ替え操作中の場合
+
+		// キャンセルの更新
+		UpdateCancel();
+	}
 
 	// 相対位置の設定
 	SetPositionRelative();
@@ -246,6 +257,7 @@ HRESULT CSelectUI::CreateUI()
 //============================================================
 void CSelectUI::UpdateSelect()
 {
+	// 着せ替えシーンの取得
 	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
 	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
 	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
@@ -253,6 +265,7 @@ void CSelectUI::UpdateSelect()
 	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
 	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
 
+	// 選択の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
 	{
@@ -266,7 +279,7 @@ void CSelectUI::UpdateSelect()
 			nLoop++;
 			if (nLoop >= nNumPlayer) { break; }
 
-		} while (!pDressup->GetSelectOK(m_nPadIdx, m_nSelectPlayerIdx));
+		} while (!pDressup->IsSelectOK(m_nPadIdx, m_nSelectPlayerIdx));
 
 		// UI位置を反映
 		SetPosition(pDressup->GetDressUIPosition(m_nSelectPlayerIdx));
@@ -283,7 +296,7 @@ void CSelectUI::UpdateSelect()
 			nLoop++;
 			if (nLoop >= nNumPlayer) { break; }
 
-		} while (!pDressup->GetSelectOK(m_nPadIdx, m_nSelectPlayerIdx));
+		} while (!pDressup->IsSelectOK(m_nPadIdx, m_nSelectPlayerIdx));
 
 		// UI位置を反映
 		SetPosition(pDressup->GetDressUIPosition(m_nSelectPlayerIdx));
@@ -295,7 +308,58 @@ void CSelectUI::UpdateSelect()
 //============================================================
 void CSelectUI::UpdateDecide()
 {
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
 
+	// 決定の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	{
+		// 入力情報の初期化
+		pPad->InitTrigger(m_nPadIdx);
+
+		// 着せ替えUI準備完了フラグの初期化
+		pDressup->SetDressUIReady(m_nSelectPlayerIdx, false);
+
+		// 着せ替えUI操作権の設定
+		pDressup->SetDressUIControl(m_nPadIdx, m_nSelectPlayerIdx);
+
+		// 選択操作を停止
+		m_bSelect = false;
+	}
+}
+
+//============================================================
+//	キャンセルの更新処理
+//============================================================
+void CSelectUI::UpdateCancel()
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// 準備完了済みの場合操作不可
+	if (pDressup->IsDressUIReady(m_nSelectPlayerIdx)) { return; }
+
+	// キャンセルの更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx))
+	{
+		// 着せ替えUI操作権の初期化
+		pDressup->SetDressUIControl(-1, m_nSelectPlayerIdx);
+
+		// 選択操作を再開
+		m_bSelect = true;
+	}
 }
 
 //============================================================

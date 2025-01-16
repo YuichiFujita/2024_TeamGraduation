@@ -321,11 +321,37 @@ CDressupUI *CDressupUI::Create
 }
 
 //============================================================
-// 操作権インデックスの取得処理
+// 準備完了フラグの設定処理
 //============================================================
-int CDressupUI::GetPadIdx() const
+void CDressupUI::SetReady(const bool bReady)
 {
-	// 操作権インデックスを返す
+	// 準備完了フラグの設定
+	m_bReady = bReady;
+
+	// テクスチャパターンの更新
+	m_pReadyCheck->SetPatternAnim((int)m_bReady);
+}
+
+//============================================================
+// 操作権インデックスの設定処理
+//============================================================
+void CDressupUI::SetPadIdx(const int nPadIdx)
+{
+	// 操作権インデックスの設定
+	m_nPadIdx = nPadIdx;
+
+	// 着せ替え情報の操作権インデックスの設定
+	m_pHair->SetControllIdx(m_nPadIdx);
+	m_pAccessory->SetControllIdx(m_nPadIdx);
+	m_pFace->SetControllIdx(m_nPadIdx);
+}
+
+//============================================================
+// プレイヤーインデックスの取得処理
+//============================================================
+int CDressupUI::GetMyPlayerIdx() const
+{
+	// プレイヤーインデックスを返す
 	return m_pPlayer->GetMyPlayerIdx();
 }
 
@@ -642,7 +668,7 @@ HRESULT CDressupUI::CreateSetup()
 	m_pPlayer->CObject::SetOriginPosition(VEC3_ZERO);
 
 	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(m_nPadIdx);
+	m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
 
 	// 髪着せ替え生成
 	m_pHair = CDressup::Create
@@ -682,11 +708,6 @@ HRESULT CDressupUI::CreateSetup()
 
 		return E_FAIL;
 	}
-
-	// 操作権インデックス設定
-	m_pHair->SetControllIdx(m_nPadIdx);
-	m_pAccessory->SetControllIdx(m_nPadIdx);
-	m_pFace->SetControllIdx(m_nPadIdx);
 
 	return S_OK;
 }
@@ -785,8 +806,16 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nPadIdx))
 	{
+		// 着せ替えシーンの取得
+		CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+		if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+		CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+		if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+		CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+		if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
 		// 準備完了状態にする
-		m_bReady = true;
+		SetReady(true);
 
 		// エディット種類を実際の変更にする
 		m_typeEdit = EEditType::EDIT_PROCESS;
@@ -797,16 +826,16 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 		// プレイヤーUIの更新
 		UpdatePlayerUI();
 
-		// テクスチャパターンの更新
-		m_pReadyCheck->SetPatternAnim((int)m_bReady);
+		// 選択UIを操作可能にする
+		pDressup->SetSelectUISelect(m_nPadIdx, true);
+
+		// 操作権の初期化
+		SetPadIdx(-1);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
 	{
 		// 準備未完了状態にする
-		m_bReady = false;
-
-		// テクスチャパターンの更新
-		m_pReadyCheck->SetPatternAnim((int)m_bReady);
+		SetReady(false);
 	}
 
 	// 準備完了している場合抜ける
@@ -1069,14 +1098,14 @@ void CDressupUI::ChangeHandedness(int nPadIdx)
 	CPlayer::EHandedness handedness = m_pPlayer->GetHandedness();
 	CPlayer::EHandedness oldHandedness = handedness;
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx))
 	{// ループ
 
 		// 次へ変更
 		int afterHandedness = (handedness + 1) % CPlayer::EHandedness::HAND_MAX;
 		handedness = static_cast<CPlayer::EHandedness>(afterHandedness);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx))
 	{// 逆ループ
 
 		// 前へ変更
@@ -1138,7 +1167,7 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
 
 	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(m_nPadIdx);
+	m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
 
 	// ドレスアップに再割当
 	m_pHair->BindObjectCharacter(m_pPlayer);

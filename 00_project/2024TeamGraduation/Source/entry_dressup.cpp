@@ -265,12 +265,48 @@ void CEntry_Dressup::SetState(const EState state)
 }
 
 //==========================================================================
+// 着せ替えUI準備完了フラグの設定
+//==========================================================================
+void CEntry_Dressup::SetDressUIReady(const int nPlayerIdx, const bool bReady)
+{
+	// プレイヤーインデックスが範囲外の場合エラー
+	if (nPlayerIdx <= -1 || nPlayerIdx >= GetNumPlayer()) { assert(false); return; }
+
+	// 準備完了フラグを返す
+	m_vecDressInfo[nPlayerIdx]->SetReady(bReady);
+}
+
+//==========================================================================
+// 着せ替えUIの準備完了済みかの確認
+//==========================================================================
+bool CEntry_Dressup::IsDressUIReady(const int nPlayerIdx)
+{
+	// プレイヤーインデックスが範囲外の場合エラー
+	if (nPlayerIdx <= -1 || nPlayerIdx >= GetNumPlayer()) { assert(false); return false; }
+
+	// 準備完了フラグを返す
+	return m_vecDressInfo[nPlayerIdx]->IsReady();
+}
+
+//==========================================================================
+// 着せ替えUI操作権の設定
+//==========================================================================
+void CEntry_Dressup::SetDressUIControl(const int nPadIdx, const int nPlayerIdx)
+{
+	// プレイヤーインデックスが範囲外の場合エラー
+	if (nPlayerIdx <= -1 || nPlayerIdx >= GetNumPlayer()) { assert(false); return; }
+
+	// 引数プレイヤーの着せ替えUI位置を返す
+	m_vecDressInfo[nPlayerIdx]->SetPadIdx(nPadIdx);
+}
+
+//==========================================================================
 // 選択可能かの確認
 //==========================================================================
-bool CEntry_Dressup::GetSelectOK(const int nPadIdx, const int nPlayerIdx) const
+bool CEntry_Dressup::IsSelectOK(const int nPadIdx, const int nPlayerIdx) const
 {
 	// 自分以外のユーザーの着せ替えUIの場合選択不可
-	const int nSelectPadIdx = m_vecDressInfo[nPlayerIdx]->GetPadIdx();	// 選択予定先の操作権インデックス
+	const int nSelectPadIdx = m_vecDressInfo[nPlayerIdx]->GetMyPlayerIdx();	// 選択予定先の操作権インデックス
 	if (nSelectPadIdx > -1 && nSelectPadIdx != nPadIdx) { return false; }
 
 	for (const auto& rSelect : m_vecSelect)
@@ -282,6 +318,22 @@ bool CEntry_Dressup::GetSelectOK(const int nPadIdx, const int nPlayerIdx) const
 	}
 
 	return true;
+}
+
+//==========================================================================
+// 選択UI選択操作フラグの設定
+//==========================================================================
+void CEntry_Dressup::SetSelectUISelect(const int nPadIdx, const bool bSelect)
+{
+	for (auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		// 選択UIの操作権インデックスが引数の操作権インデックスと一致しない場合次へ
+		if (rSelect->GetPadIdx() != nPadIdx) { continue; }
+
+		// 選択操作可能フラグの設定
+		return rSelect->SetSelect(bSelect);
+	}
 }
 
 //==========================================================================
@@ -301,16 +353,16 @@ MyLib::Vector3 CEntry_Dressup::GetDressUIPosition(const int nPlayerIdx) const
 //==========================================================================
 bool CEntry_Dressup::TransSetupTeam()
 {
-	// 準備完了している場合抜ける
-	if (IsAllReady()) { return false; }
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	for (int nPadIdx = 0; nPadIdx < mylib_const::MAX_PLAYER; nPadIdx++)
+	{ // コントローラー接続総数分繰り返す
 
-	CInputKeyboard*	pKey = CInputKeyboard::GetInstance();	// キーボード情報
-	CInputGamepad*	pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pKey->GetTrigger(DIK_RETURN) || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B))
-	{
-		// チーム設定シーンへ遷移
-		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
-		return true;
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nPadIdx))
+		{
+			// チーム設定シーンへ遷移
+			//CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);	// TODO：戻るボタンを作ったほうがいい
+			return true;
+		}
 	}
 
 	return false;

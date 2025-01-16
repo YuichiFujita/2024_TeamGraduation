@@ -76,13 +76,16 @@ public:
 	);
 
 	// メンバ関数
-	int GetPadIdx() const;						// 操作権インデックス取得
+	void SetReady(const bool bReady);			// 準備完了フラグ設定
+	void SetPadIdx(const int nPadIdx);			// 操作権インデックス設定
+	int GetMyPlayerIdx() const;					// プレイヤーインデックス取得
 	CGameManager::ETeamSide GetTeam() const;	// チームサイド取得
 	int GetHairNowIdx() const;					// 髪のインデックス番号取得
 	int GetAccessoryNowIdx() const;				// アクセのインデックス番号取得
 	int GetFaceNowIdx() const;					// 顔のインデックス番号取得
 	CPlayer::EBody GetBodyType() const;			// 体型取得
 	CPlayer::EHandedness GetHandedness() const;	// 利き手取得
+	inline int GetPadIdx() const				{ return m_nPadIdx; }		// 操作権インデックス取得
 	inline EEditType GetTypeEdit() const		{ return m_typeEdit; }		// エディット種類取得
 	inline EChangeType GetTypeChange() const	{ return m_typeChange; }	// 変更種類取得
 	inline bool IsReady() const					{ return m_bReady; }		// 準備完了フラグ取得

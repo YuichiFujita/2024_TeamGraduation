@@ -130,6 +130,10 @@ public:
 	//--------------------------
 	// ボタン系
 	//--------------------------
+	void InitPress(int nCntPlayer);		// プレス初期化
+	void InitTrigger(int nCntPlayer);	// トリガー初期化
+	void InitRepeat(int nCntPlayer);	// リピート初期化
+	void InitRelease(int nCntPlayer);	// リリース初期化
 	bool GetPress(BUTTON nKey, int nCntPlayer);
 	bool GetTrigger(BUTTON nKey, int nCntPlayer);
 	bool GetRepeat(BUTTON nKey, int nCntPlayer);
