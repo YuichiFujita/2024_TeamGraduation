@@ -20,7 +20,7 @@ MOTIONSET
 	# çUåÇèÓïÒ
 	#===================
 	ATTACKINFO
-		COLLISIONPARTS = 11
+		COLLISIONPARTS = 0
 		ATTACKRANGE = 0.00
 		OFFSET = 0.00 -6.00 0.00
 		ATTACKCOUNT = 0 0
@@ -29,7 +29,7 @@ MOTIONSET
 	END_ATTACKINFO
 
 	KEYSET			# --- << KEY : 0 / 2 >> ---
-		FRAME = 12
+		FRAME = 9
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.31 0.00 0.00
 			POS = 0.00 0.00 0.00
@@ -93,7 +93,7 @@ MOTIONSET
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 1 / 2 >> ---
-		FRAME = 12
+		FRAME = 9
 		PARTS	# ----- [ 0 ] -----
 			ROT = -0.31 0.00 0.00
 			POS = 0.00 10.50 0.00
