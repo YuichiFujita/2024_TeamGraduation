@@ -59,8 +59,8 @@ public:
 	//-----------------------------
 	// チーム情報
 	//-----------------------------
-	int PadIdxToEntryIdx(int nPadIdx);	// パッドインデックスのエントリーインデックス変換
-	int GetEntryIdx(int nPlayerIdx);	// エントリーインデックス取得
+	int PadIdxToEntryIdx(int nPadIdx);		// パッドインデックスのエントリーインデックス変換
+	int PlayerIdxToPadIdx(int nPlayerIdx);	// プレイヤーインデックスのパッドインデックス変換
 	CGameManager::ETeamSide GetTeamSide(int nPlayerIdx);	// チームサイド取得
 	CGameManager::ETeamSide GetTeamSideAI(int nOccurIdx);	// チームサイド取得 (AI)
 	inline int GetAllPlayerNum() { return (m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] + m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT]); }	// 全てのプレイヤーの数取得

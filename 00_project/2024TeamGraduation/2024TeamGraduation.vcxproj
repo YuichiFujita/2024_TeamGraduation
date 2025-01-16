@@ -354,6 +354,7 @@
     <ClCompile Include="Source\screen.cpp" />
     <ClCompile Include="Source\scrollString2D.cpp" />
     <ClCompile Include="Source\scrollText2D.cpp" />
+    <ClCompile Include="Source\selectUI.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
@@ -579,6 +580,7 @@
     <ClInclude Include="Source\screen.h" />
     <ClInclude Include="Source\scrollString2D.h" />
     <ClInclude Include="Source\scrollText2D.h" />
+    <ClInclude Include="Source\selectUI.h" />
     <ClInclude Include="Source\shader.h" />
     <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />

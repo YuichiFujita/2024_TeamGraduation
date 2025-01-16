@@ -1,6 +1,6 @@
 //============================================================
 //
-//	ドレスアップUIヘッダー [dressupUI.h]
+//	着せ替えUIヘッダー [dressupUI.h]
 //	Author：藤田勇一
 //
 //============================================================
@@ -28,7 +28,7 @@ class CEntry_Dressup;	// ドレスアップ設定クラス
 //************************************************************
 //	クラス定義
 //************************************************************
-// ドレスアップUIクラス
+// 着せ替えUIクラス
 class CDressupUI : public CObject
 {
 public:
@@ -76,7 +76,7 @@ public:
 	);
 
 	// メンバ関数
-	int GetMyPlayerIdx() const;					// 操作権インデックス取得
+	int GetPadIdx() const;						// 操作権インデックス取得
 	CGameManager::ETeamSide GetTeam() const;	// チームサイド取得
 	int GetHairNowIdx() const;					// 髪のインデックス番号取得
 	int GetAccessoryNowIdx() const;				// アクセのインデックス番号取得
@@ -115,7 +115,7 @@ private:
 	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
 	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
 	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報
-	CObject2D* m_pPlayerFrame;		// プレイヤーフレーム情報
+	CObject2D_Anim* m_pPlayerFrame;	// プレイヤーフレーム情報
 	CObject2D* m_pPlayerUI;			// プレイヤーUI情報
 	const int m_nPlayerIdx;			// プレイヤーインデックス
 	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)

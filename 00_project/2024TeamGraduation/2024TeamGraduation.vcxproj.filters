@@ -806,6 +806,9 @@
     <ClCompile Include="Source\inputKeyButton.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\selectUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
     <ClCompile Include="Source\playerManager_spawn.cpp">
       <Filter>player\playerManager</Filter>
     </ClCompile>
@@ -1476,6 +1479,9 @@
     </ClInclude>
     <ClInclude Include="Source\inputKeyButton.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\selectUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerManager_spawn.h">
       <Filter>player\playerManager</Filter>

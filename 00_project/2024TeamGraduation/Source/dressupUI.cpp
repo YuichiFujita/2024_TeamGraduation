@@ -1,6 +1,6 @@
 //============================================================
 //
-//	ドレスアップUI処理 [dressupUI.cpp]
+//	着せ替えUI処理 [dressupUI.cpp]
 //	Author：藤田勇一
 //
 //============================================================
@@ -24,7 +24,7 @@
 //************************************************************
 namespace
 {
-	const int PRIORITY = 6;	// ドレスアップUIの優先順位
+	const int PRIORITY = 5;	// 着せ替えUIの優先順位
 	const D3DXCOLOR COL_CHOICE	= MyLib::color::White();				// 選択中色
 	const D3DXCOLOR COL_DEFAULT	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);	// 非選択中色
 
@@ -32,14 +32,15 @@ namespace
 	{
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(CDressupUI::EChangeType::TYPE_MAX, 1);	// テクスチャ分割数
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\ChangeType000.png";	// 変更種類アイコンテクスチャ
-		const float WIDTH = 300.0f;	// 横幅
+		const float WIDTH = 500.0f;	// 横幅
 	}
 
 	namespace player
 	{
 		namespace frame
 		{
-			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame000.png";	// プレイヤーフレームアイコンテクスチャ
+			const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(mylib_const::MAX_PLAYER + 1, 1);	// テクスチャ分割数
+			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame001.png";			// プレイヤーフレームアイコンテクスチャ
 			const float WIDTH = 100.0f;	// 横幅
 		}
 
@@ -158,7 +159,7 @@ void CDressupUI::Uninit()
 	{ // チームセットアップ情報が破棄されていない場合
 
 		// 破棄したプレイヤーがAIの場合はAI総数を減算
-		if (pSetupTeam->GetEntryIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
+		if (pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
 	}
 
 	// レンダーテクスチャの破棄
@@ -292,7 +293,7 @@ CDressupUI *CDressupUI::Create
 	const MyLib::Vector3 &rPos	// 原点位置
 )
 {
-	// ドレスアップUIの生成
+	// 着せ替えUIの生成
 	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, nPlayerIdx);
 	if (pDressupUI == nullptr)
 	{ // 生成に失敗した場合
@@ -302,11 +303,11 @@ CDressupUI *CDressupUI::Create
 	else
 	{ // 生成に成功した場合
 
-		// ドレスアップUIの初期化
+		// 着せ替えUIの初期化
 		if (FAILED(pDressupUI->Init()))
 		{ // 初期化に失敗した場合
 
-			// ドレスアップUIの破棄
+			// 着せ替えUIの破棄
 			SAFE_DELETE(pDressupUI);
 			return nullptr;
 		}
@@ -322,7 +323,7 @@ CDressupUI *CDressupUI::Create
 //============================================================
 // 操作権インデックスの取得処理
 //============================================================
-int CDressupUI::GetMyPlayerIdx() const
+int CDressupUI::GetPadIdx() const
 {
 	// 操作権インデックスを返す
 	return m_pPlayer->GetMyPlayerIdx();
@@ -513,8 +514,20 @@ HRESULT CDressupUI::CreateReadyCheck()
 //============================================================
 HRESULT CDressupUI::CreatePlayerFrame()
 {
+	// チームセットアップ情報の取得
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
+	if (pSetupTeam == nullptr) { return E_FAIL; }
+
 	// プレイヤーフレームの生成
-	m_pPlayerFrame = CObject2D::Create(PRIORITY);
+	m_pPlayerFrame = CObject2D_Anim::Create
+	( // 引数
+		VEC3_ZERO,				// 位置
+		player::frame::PTRN.x,	// テクスチャ横分割数
+		player::frame::PTRN.y,	// テクスチャ縦分割数
+		0.0f,					// 再生時間
+		false,					// 自動破棄
+		PRIORITY				// 優先順位
+	);
 	if (m_pPlayerFrame == nullptr)
 	{ // 生成に失敗した場合
 
@@ -524,6 +537,12 @@ HRESULT CDressupUI::CreatePlayerFrame()
 	// 種類を自動破棄/更新/描画しないものにする
 	m_pPlayerFrame->SetType(CObject::TYPE::TYPE_NONE);
 
+	// 自動再生をOFFにする
+	m_pPlayerFrame->SetEnableAutoPlay(false);
+
+	// テクスチャパターンの初期化
+	m_pPlayerFrame->SetPatternAnim(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
 	int nTexID = CTexture::GetInstance()->Regist(player::frame::TEXTURE);
@@ -532,6 +551,7 @@ HRESULT CDressupUI::CreatePlayerFrame()
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::frame::WIDTH);
+	size.y *= player::frame::PTRN.x;
 	m_pPlayerFrame->SetSize(size);
 	m_pPlayerFrame->SetSizeOrigin(m_pPlayerFrame->GetSize());
 
@@ -576,16 +596,13 @@ HRESULT CDressupUI::CreateSetup()
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
 	// エントリーインデックスを取得
-	const int nEntryIdx = pSetupTeam->GetEntryIdx(m_nPlayerIdx);
+	const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx);
 	CGameManager::ETeamSide side;
-	if (nEntryIdx > -1)
+	if (nPadIdx > -1)
 	{ // ユーザーの場合
 
 		// エントリーインデックスからチームサイドを取得
-		side = pSetupTeam->GetTeamSide(nEntryIdx);
-
-		// 操作権インデックスを保存
-		m_nPadIdx = nEntryIdx;
+		side = pSetupTeam->GetTeamSide(nPadIdx);
 	}
 	else
 	{ // AIの場合
@@ -715,10 +732,10 @@ void CDressupUI::SetPositionRelative()
 	MyLib::Vector3 posThis = GetPosition();
 
 	// 変更種類アイコンの位置設定
-	m_pChangeIcon->SetPosition(posThis + MyLib::Vector3(0.0f, -220.0f, 0.0f));
+	m_pChangeIcon->SetPosition(posThis + MyLib::Vector3(0.0f, 175.0f, 0.0f));
 
 	// 準備完了チェックの位置設定
-	m_pReadyCheck->SetPosition(posThis + MyLib::Vector3(0.0f, 200.0f, 0.0f));
+	m_pReadyCheck->SetPosition(posThis + MyLib::Vector3(0.0f, 230.0f, 0.0f));
 
 	// プレイヤーフレームの位置設定
 	m_pPlayerFrame->SetPosition(posThis);
@@ -738,8 +755,6 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 	// チームセットアップ情報の取得
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return; }
-
-
 
 	//--------------------------
 	// デバッグ完了操作
