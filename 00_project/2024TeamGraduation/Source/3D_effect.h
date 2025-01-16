@@ -70,6 +70,10 @@ public:
 	void UpdatePosition(MyLib::Vector3 rot);	// 位置更新
 	static int GetNumAll();	// 総数取得
 
+	// フラグ
+	void SetEnableDeleteLife(bool bDelete) { m_bDeleteLife = bDelete; }		// 寿命で削除
+
+
 private:
 
 	// メンバ関数
@@ -100,6 +104,7 @@ private:
 	bool m_bZSort;				// Zソートのフラグ
 	bool m_bGravity;			// 重力のフラグ
 	bool m_bChaseDest;			// 目標の位置へ向かうフラグ
+	bool m_bDeleteLife;			// 寿命で削除
 	TYPE m_nType;				// 種類
 	static const char *m_apTextureFile[];	// テクスチャのファイル
 	static int m_nNumAll;			// 総数

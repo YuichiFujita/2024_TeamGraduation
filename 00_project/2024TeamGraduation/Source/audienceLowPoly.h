@@ -90,6 +90,9 @@ protected:
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE) override;	// 退場設定
 	virtual bool SetNTR(CGameManager::ETeamSide team) override;									// NTR設定
 
+	// 更新
+	void UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ペンライトの更新
+
 private:
 
 	//=============================
@@ -103,7 +106,8 @@ private:
 	// メンバ関数
 	//=============================
 	HRESULT CreateCharacter(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot);	// キャラクター生成
-	HRESULT CreatePenLight();		// ペンライト生成
+	HRESULT CreatePenLight();				// ペンライト生成
+	HRESULT CreatePenLightBlur();			// ペンライトのブラー生成
 	virtual void CalcWatchPositionFar();	// 観戦位置計算 (奥)
 	virtual void CalcWatchPositionSide();	// 観戦位置計算 (横)
 	virtual void CalcWatchPositionNear();	// 観戦位置計算 (手前)
@@ -113,6 +117,7 @@ private:
 	//=============================
 	CObjectChara* m_pChara;		// キャラクター情報
 	CObjectX* m_pLight;			// ペンライト情報
+	CEffect3D* m_pLightBlur;	// ペンライトのブラー
 	CDressup* m_pDressUp_Hair;	// ドレスアップ(髪)
 	CDressup* m_pDressUp_Face;	// ドレスアップ(顔)
 };

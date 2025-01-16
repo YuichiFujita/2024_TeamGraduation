@@ -63,6 +63,7 @@ CAudienceHighPoly::WATCH_POS_FUNC CAudienceHighPoly::m_CalcWatchPositionFunc[] =
 CAudienceHighPoly::CAudienceHighPoly(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
 	m_pChara		(nullptr),	// キャラクター情報
 	m_pLight		(nullptr),	// ペンライト情報
+	m_pLightBlur	(nullptr),	// ペンライトのブラー
 	m_pDressUp_Hair	(nullptr)	// ドレスアップ(髪)
 {
 }
@@ -107,21 +108,24 @@ HRESULT CAudienceHighPoly::Init()
 	// オブジェクトキャラクターの生成
 	if (FAILED(CreateCharacter(posSpawn, MyLib::Vector3(0.0f, HALF_PI * fTurn, 0.0f))))
 	{ // 生成に失敗した場合
-
 		return E_FAIL;
 	}
 
 	// ペンライトの生成
 	if (FAILED(CreatePenLight()))
 	{ // 生成に失敗した場合
+		return E_FAIL;
+	}
 
+	// ペンライトのブラー生成
+	if (FAILED(CreatePenLightBlur()))
+	{ // 生成に失敗した場合
 		return E_FAIL;
 	}
 
 	// 影の生成
 	if (FAILED(CreateShadow(this)))
 	{ // 生成に失敗した場合
-
 		return E_FAIL;
 	}
 
@@ -185,6 +189,19 @@ void CAudienceHighPoly::Update(const float fDeltaTime, const float fDeltaRate, c
 }
 
 //==========================================================================
+// ペンライトの更新
+//==========================================================================
+void CAudienceHighPoly::UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_pChara == nullptr) return;
+	if (m_pLight == nullptr) return;
+
+	// ライトの位置を頭の上にする
+	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+	m_pLightBlur->SetPosition(m_pLight->GetPosition());
+}
+
+//==========================================================================
 // 描画処理
 //==========================================================================
 void CAudienceHighPoly::Draw()
@@ -209,6 +226,7 @@ int CAudienceHighPoly::UpdateSpawn(const float fDeltaTime, const float fDeltaRat
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 移動モーションを返す
 	return EMotion::MOTION_SPAWN;
@@ -224,6 +242,7 @@ int CAudienceHighPoly::UpdateNormal(const float fDeltaTime, const float fDeltaRa
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 待機モーションを返す
 	return EMotion::MOTION_DEF;
@@ -239,6 +258,7 @@ int CAudienceHighPoly::UpdateJump(const float fDeltaTime, const float fDeltaRate
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// ジャンプモーションを返す
 	return EMotion::MOTION_JUMP;
@@ -254,9 +274,11 @@ int CAudienceHighPoly::UpdateSpecial(const float fDeltaTime, const float fDeltaR
 
 	// ライトの自動描画をオンにする
 	m_pLight->SetEnableDisp(true);
+	m_pLightBlur->SetEnableDisp(true);
 
 	// ライトの位置を頭の上にする
 	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+	m_pLightBlur->SetPosition(m_pLight->GetPosition());
 
 	// ジャンプモーションを返す
 	return EMotion::MOTION_JUMP;
@@ -272,6 +294,7 @@ int CAudienceHighPoly::UpdateDespawn(const float fDeltaTime, const float fDeltaR
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 移動モーションを返す
 	return EMotion::MOTION_DESPAWN;
@@ -427,6 +450,34 @@ HRESULT CAudienceHighPoly::CreatePenLight()
 	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
 #endif
 
+	return S_OK;
+}
+
+//==========================================================================
+// ペンライトのブラー生成
+//==========================================================================
+HRESULT CAudienceHighPoly::CreatePenLightBlur()
+{
+	// ペンライトの生成
+	m_pLightBlur = CEffect3D::Create(
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),	// 位置
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),	// 移動量
+		D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),	// 色
+		200.0f,								// 半径
+		0,									// 寿命
+		CEffect3D::MOVEEFFECT_NONE,			// 移動の種類
+		CEffect3D::TYPE_POINT);				// エフェクトの種類
+	if (m_pLightBlur == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 自動描画フラグをオフにする
+	m_pLightBlur->SetEnableDisp(false);
+
+	// 寿命削除OFF
+	m_pLightBlur->SetEnableDeleteLife(false);
 	return S_OK;
 }
 

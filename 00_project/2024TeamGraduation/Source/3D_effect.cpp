@@ -70,6 +70,7 @@ CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 	m_bZSort = false;				// Zソートのフラグ
 	m_bGravity = false;				// 重力のフラグ
 	m_bChaseDest = false;			// 目標の位置へ向かうフラグ
+	m_bDeleteLife = false;			// 寿命で削除
 
 	// 総数加算
 	m_nNumAll++;
@@ -263,6 +264,9 @@ HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, c
 	// Zソートのフラグ
 	m_bZSort = true;
 
+	// 寿命削除のフラグ
+	m_bDeleteLife = true;
+
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
@@ -310,56 +314,19 @@ void CEffect3D::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	// 過去の位置設定
 	SetOldPosition(GetPosition());
 
-#if 0
-	// 移動処理
-	UpdateMove(fDeltaTime, fDeltaRate, fSlowRate);
+	if (m_bDeleteLife)
+	{// 寿命で削除
 
-	switch (m_moveType)
-	{
-	case MOVEEFFECT_ADD:
-		AddSize(fDeltaTime, fDeltaRate, fSlowRate);
-		break;
+		// 寿命の更新
+		m_fLife -= fDeltaTime * fSlowRate;
 
-	case MOVEEFFECT_SUB:
-		SubSize(fDeltaTime, fDeltaRate, fSlowRate);
-		break;
+		if (m_fLife <= 0.0f)
+		{// 寿命が尽きたら
 
-	case MOVEEFFECT_SUPERSUB:
-		SuperSubSize(fDeltaTime, fDeltaRate, fSlowRate);
-		break;
-
-	case MOVEEFFECT_GENSUI:
-		Gensui(fDeltaTime, fDeltaRate, fSlowRate);
-		break;
-	}
-
-	// サイズ設定
-	SetSize(D3DXVECTOR2(m_fRadius, m_fRadius));
-
-	// 寿命の更新
-	m_fLife -= fDeltaTime * fSlowRate;
-
-	// 色取得
-	D3DXCOLOR col = GetColor();
-
-	// 不透明度の更新
-	col.a = m_colOrigin.a * (m_fLife / m_fMaxLife);
-
-	// 色設定
-	SetColor(col);
-#endif
-	// 不透明度の更新
-	SetAlpha(1.0f);
-
-	// 寿命の更新
-	m_fLife -= fDeltaTime * fSlowRate;
-
-	if (m_fLife <= 0.0f)
-	{// 寿命が尽きたら
-
-		// エフェクトの削除
-		Uninit();
-		return;
+			// エフェクトの削除
+			Uninit();
+			return;
+		}
 	}
 
 

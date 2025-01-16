@@ -92,6 +92,9 @@ protected:
 	void SetMoveMotion(const EMotion motion) { m_moveMotion = motion; }		// 移動モーション
 	virtual bool SetNTR(CGameManager::ETeamSide team) override;									// NTR設定
 
+	// 更新
+	void UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ペンライトの更新
+
 private:
 
 	//=============================
@@ -106,6 +109,7 @@ private:
 	//=============================
 	HRESULT CreateAnimCharacter(const MyLib::Vector3& rPos);	// キャラクター生成
 	HRESULT CreatePenLight();		// ペンライト生成
+	HRESULT CreatePenLightBlur();			// ペンライトのブラー生成
 	virtual void CalcWatchPositionFar();	// 観戦位置計算 (奥)
 	virtual void CalcWatchPositionUp();		// 観戦位置計算 (上)
 	virtual void CalcWatchPositionNear();	// 観戦位置計算 (手前)
@@ -115,10 +119,11 @@ private:
 	//=============================
 	CObjectCharaAnim* m_pFrontAnimChara;	// 表面キャラクター情報
 	CObjectCharaAnim* m_pBackAnimChara;		// 裏面キャラクター情報
-	CObjectX* m_pLight;		// ペンライト情報
-	EMotion m_idolMotion;	// 待機モーション
-	EMotion m_jumpMotion;	// ジャンプモーション
-	EMotion m_moveMotion;	// 移動モーション
+	CObjectX* m_pLight;			// ペンライト情報
+	CEffect3D* m_pLightBlur;	// ペンライトのブラー
+	EMotion m_idolMotion;		// 待機モーション
+	EMotion m_jumpMotion;		// ジャンプモーション
+	EMotion m_moveMotion;		// 移動モーション
 };
 
 #endif
