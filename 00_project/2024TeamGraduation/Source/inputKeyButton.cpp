@@ -96,7 +96,7 @@ CInputKeyButton* CInputKeyButton::m_pInstance = nullptr;	// 自身のインスタンス
 //============================================================
 //	コンストラクタ
 //============================================================
-CInputKeyButton::CInputKeyButton(const int nPadIdx, const std::string& rOrigin, std::string* pChange) :
+CInputKeyButton::CInputKeyButton(const int nPadIdx, const std::string& rOrigin, CString2D* pChange) :
 	m_nPadIdx	(nPadIdx),				// 操作権インデックス
 	m_sOrigin	(rOrigin),				// 元の文字列
 	m_pChange	(pChange),				// 変更する文字列
@@ -151,7 +151,7 @@ HRESULT CInputKeyButton::Init()
 	m_pBG->SetSize(VEC2_SCREEN_SIZE);
 
 	// 色を設定
-	m_pBG->SetColor(MyLib::color::Black(0.35f));
+	m_pBG->SetColor(MyLib::color::Black(0.8f));
 
 	// タイトルの生成
 	m_pTitle = CString2D::Create
@@ -250,6 +250,9 @@ HRESULT CInputKeyButton::Init()
 //============================================================
 void CInputKeyButton::Uninit()
 {
+	// 自身の保存インスタンスを初期化
+	m_pInstance = nullptr;
+
 	// 世界の時を動かす
 	GET_MANAGER->SetEnableWorldPaused(false);
 
@@ -378,11 +381,9 @@ CInputKeyButton* CInputKeyButton::Create
 (
 	const int nPadIdx,			// 操作権インデックス
 	const std::string& rOrigin,	// 変更前の文字列
-	std::string* pChange		// 変更する文字列
+	CString2D* pChange			// 変更する文字列
 )
 {
-	if (m_pInstance != nullptr) { return m_pInstance; }	// TODO
-
 	// インスタンスの生成
 	assert(m_pInstance == nullptr);
 	m_pInstance = DEBUG_NEW CInputKeyButton(nPadIdx, rOrigin, pChange);
@@ -409,7 +410,6 @@ CInputKeyButton* CInputKeyButton::Create
 CInputKeyButton* CInputKeyButton::GetInstance()
 {
 	// インスタンスを返す
-	assert(m_pInstance != nullptr);
 	return m_pInstance;
 }
 
@@ -420,7 +420,7 @@ void CInputKeyButton::ControlSelect()
 {
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
-	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetRepeat(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -430,7 +430,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetRepeat(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -440,7 +440,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetTrigger(DIK_UP) || pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_UP) || pPad->GetRepeat(CInputGamepad::BUTTON_UP, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -465,7 +465,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetTrigger(DIK_DOWN) || pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
+	if (pKey->GetRepeat(DIK_DOWN, 26) || pPad->GetRepeat(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -584,7 +584,7 @@ void CInputKeyButton::UpdateDecide()
 				{ // 文字が設定されている場合
 
 					// 変更した文字列を保存
-					*m_pChange = m_pName->GetStr();
+					m_pChange->SetString(m_pName->GetStr());
 
 					// 自身の終了
 					Uninit();
