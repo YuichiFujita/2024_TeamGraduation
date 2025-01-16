@@ -8,7 +8,7 @@ CHARACTERSET
 		OFFSET = 0.00 30.50 0.00		# ÉIÉtÉZÉbÉgà íu
 	END_CENTERSET
 
-	VELOCITY = 1.00		# à⁄ìÆó 
+	VELOCITY = 0.00		# à⁄ìÆó 
 	JUMP = 0.00		# ÉWÉÉÉìÉvó 
 	RADIUS = 60.00		# îºåa
 	HEIGHT = 0.00		# çÇÇ≥
@@ -19,7 +19,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 72.00 0.00
+		POS = 0.00 16.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -29,7 +29,7 @@ CHARACTERSET
 		PARENT = 0
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 8.50 -0.50
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -39,7 +39,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 44.50 1.50
+		POS = 0.00 40.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -49,7 +49,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -15.00 36.50 0.00
+		POS = -9.50 29.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -59,7 +59,7 @@ CHARACTERSET
 		PARENT = 3
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -20.50 0.00 1.75
+		POS = -9.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -69,7 +69,7 @@ CHARACTERSET
 		PARENT = 4
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -12.00 -1.00 0.25
+		POS = -18.50 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -79,7 +79,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 15.00 36.50 0.00
+		POS = 9.50 29.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -89,7 +89,7 @@ CHARACTERSET
 		PARENT = 6
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 23.00 0.00 1.75
+		POS = 9.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -99,87 +99,7 @@ CHARACTERSET
 		PARENT = 7
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 11.50 -0.50 0.25
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 9
-		PARENT = 0
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = -7.50 -9.00 -0.50
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 10
-		PARENT = 9
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 -31.50 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 11
-		PARENT = 10
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = 0.50 -23.00 0.50
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 12
-		PARENT = 0
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = 7.50 -9.00 -0.50
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 13
-		PARENT = 12
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = 0.50 -31.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 14
-		PARENT = 13
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = -0.50 -23.50 1.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 15
-		PARENT = 2
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 0.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 16
-		PARENT = 5
-		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
-		INVERSE = -1					# îΩì]êÊ
-		POS = -6.50 -12.00 0.00
+		POS = 18.50 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
