@@ -533,7 +533,7 @@ void CGameManager::SkipSpawn()
 	assert(pManager != nullptr);
 
 	// プレイヤー登場演出マネージャーの終了
-	SAFE_UNINIT(pManager);
+	SAFE_KILL(pManager);
 
 	// ドア閉める
 	for (const auto& door : m_apGymDoor)

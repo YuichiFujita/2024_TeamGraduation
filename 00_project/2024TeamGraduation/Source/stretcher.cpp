@@ -117,7 +117,7 @@ HRESULT CStretcher::Init()
 	}
 
 	// 幅
-	m_fWidth = GetVtxMax().x;
+	m_fWidth = GetVtxMax().z;
 
 	// 影生成
 	if (m_pShadow == nullptr)
@@ -142,6 +142,9 @@ HRESULT CStretcher::Init()
 	// 位置設定
 	SetPosition(STARTPOS);
 	m_startPos = STARTPOS;
+
+	// 半回転
+	SetRotation(MyLib::Vector3(0.0f, D3DX_PI * 0.5f, 0.0f));
 
 	// 出動
 	SetState(EState::STATE_GO);
@@ -206,8 +209,8 @@ void CStretcher::PosAdjNurse()
 	MyLib::Vector3 setpos = MyLib::Vector3(pos.x, 0.0f, pos.z);
 
 	// 位置割り出し
-	setpos.x += sinf(D3DX_PI * 0.5f + rot.y) * m_fWidth;
-	setpos.z += cosf(D3DX_PI * 0.5f + rot.y) * m_fWidth;
+	setpos.x += sinf(rot.y) * m_fWidth;
+	setpos.z += cosf(rot.y) * m_fWidth;
 	if (m_pLeftNurse != nullptr)
 	{
 		m_pLeftNurse->SetPosition(setpos);
@@ -220,8 +223,8 @@ void CStretcher::PosAdjNurse()
 	setpos = MyLib::Vector3(pos.x, 0.0f, pos.z);
 
 	// 位置割り出し
-	setpos.x += sinf(D3DX_PI * 0.5f + rot.y) * -m_fWidth;
-	setpos.z += cosf(D3DX_PI * 0.5f + rot.y) * -m_fWidth;
+	setpos.x += sinf(rot.y) * -m_fWidth;
+	setpos.z += cosf(rot.y) * -m_fWidth;
 	if (m_pRightNurse != nullptr)
 	{
 		m_pRightNurse->SetPosition(setpos);
@@ -263,6 +266,10 @@ void CStretcher::CollectEndSetting()
 	{
 		// 再出動
 		SetState(EState::STATE_GO);
+
+		// 先生もGO
+		m_pLeftNurse->SetState(CSchoolNurse::EState::STATE_GO);
+		m_pRightNurse->SetState(CSchoolNurse::EState::STATE_GO);
 	}
 
 	// 終了のセッティング
@@ -316,7 +323,7 @@ void CStretcher::StateGo(const float fDeltaTime, const float fDeltaRate, const f
 	MyLib::Vector3 playerPos = pPlayer->GetPosition();
 
 	// 担架から見たプレイヤーへの向き
-	float fRotY = GetPosition().AngleXZ(playerPos) + D3DX_PI * 0.5f;
+	float fRotY = GetPosition().AngleXZ(playerPos);
 	SetRotation(MyLib::Vector3(0.0f, fRotY, 0.0f));
 
 	// プレイヤーに向けて移動
@@ -366,7 +373,7 @@ void CStretcher::StateBack(const float fDeltaTime, const float fDeltaRate, const
 
 
 	// 担架から見た終了地点
-	float fRotY = GetPosition().AngleXZ(STARTPOS) + D3DX_PI * 0.5f;
+	float fRotY = GetPosition().AngleXZ(STARTPOS);
 	SetRotation(MyLib::Vector3(0.0f, fRotY, 0.0f));
 
 	// プレイヤーに向けて移動

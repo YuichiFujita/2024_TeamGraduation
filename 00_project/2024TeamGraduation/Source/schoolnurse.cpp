@@ -92,7 +92,7 @@ HRESULT CSchoolNurse::Init()
 	SetType(CObject::TYPE::TYPE_PLAYER);
 
 	// 状態
-	SetState(EState::STATE_NONE);
+	SetState(EState::STATE_GO);
 
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
@@ -174,6 +174,15 @@ void CSchoolNurse::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	switch (nType)
 	{
 	case EMotion::MOTION_DEF:
+		break;
+
+	case EMotion::MOTION_WALK:
+		// 歩きのエフェクト
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_RUN,
+			weponpos,
+			MyLib::Vector3(),	// 向き
+			MyLib::Vector3(),
+			15.0f, true);
 		break;
 
 	default:

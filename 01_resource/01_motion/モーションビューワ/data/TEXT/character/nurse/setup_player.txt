@@ -1,0 +1,191 @@
+#====================================================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_player.txt]
+# Author : 相馬 靜雅
+#
+#====================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 10
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/player/nurse/kosi.x		# [0]腰
+MODEL_FILENAME = data/MODEL/player/nurse/body.x		# [1]体
+MODEL_FILENAME = data/MODEL/player/nurse/face.x		# [2]顔
+MODEL_FILENAME = data/MODEL/player/nurse/armUP_R.x	# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/player/nurse/armDW_R.x	# [4]右腕(下)
+MODEL_FILENAME = data/MODEL/player/nurse/Hand_R.x	# [5]手(右)
+MODEL_FILENAME = data/MODEL/player/nurse/armUP_L.x	# [6]左腕(上)
+MODEL_FILENAME = data/MODEL/player/nurse/armDW_L.x	# [7]左腕(下)
+MODEL_FILENAME = data/MODEL/player/nurse/Hand_L.x	# [8]手(左)
+MODEL_FILENAME = data/MODEL/player/nurse/cap.x		# [8]手(左)
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+	VELOCITY_NORMAL = 1.6	# 通常移動量
+	VELOCITY_RUN = 2.67		# ダッシュ移動量
+	VELOCITY_BLINK = 29.61	# ブリンク移動量
+	
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
+	
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 60.00	# 半径
+	HEIGHT = 100.00	# 高さ
+	LIFE = 50		# 体力
+	
+	CENTERSET
+		PARTS = 0		# 中心にするパーツ
+		OFFSET = 0.00 30.50 0.00		# オフセット位置
+	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = 0.00 0.0 0.00		# オフセット位置
+	END_BALLSET
+
+	PARTSSET
+		INDEX = 0
+		PARENT = -1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 16.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 0
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 40.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -9.50 29.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 3
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -9.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5
+		PARENT = 4
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -18.50 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 9.50 29.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 6
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 9.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8
+		PARENT = 7
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 18.50 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 9
+		PARENT = 2
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 -1.50 -11.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+END_CHARACTERSET
+
+
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+#デフォルトモーションのインデックス
+#------------------------------------------------------------------------------
+DEFAULT_ID = 0
+
+#------------------------------------------------------------------------------
+# モーションファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/nurse/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/nurse/motion_walk.txt		# 歩き
+MOTION_FILENAME = data/TEXT/character/nurse/motion_collect.txt	# 回収
+
+
+
+END_SCRIPT		# この行は絶対消さないこと！
