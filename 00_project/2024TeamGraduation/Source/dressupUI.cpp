@@ -1006,12 +1006,12 @@ void CDressupUI::ChangeEditType(int nPadIdx)
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nPadIdx))
 	{// 変更する箇所の種類変更へ変更
 
 		m_typeEdit = EEditType::EDIT_PROCESS;
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx))
 	{// 実際の変更画面へ
 
 		m_typeEdit = EEditType::EDIT_CHANGETYPE;

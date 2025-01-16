@@ -13,6 +13,8 @@
 #include "entry.h"
 #include "entryscene.h"
 #include "entry_dressup.h"
+#include "inputKeyButton.h"
+#include "string2D.h"
 
 //************************************************************
 //	定数宣言
@@ -31,9 +33,23 @@ namespace
 
 	namespace frame
 	{
-		const MyLib::Vector2 SIZE = MyLib::Vector2(110.0f, 200.0f);	// 大きさ
+		namespace dressup
+		{
+			const MyLib::Vector2 SIZE = MyLib::Vector2(110.0f, 200.0f);	// 大きさ
+		}
 	}
 }
+
+//************************************************************
+//	関数ポインタ
+//************************************************************
+// 選択関数
+CSelectUI::SELECT_FUNC CSelectUI::m_SelectFuncList[] =
+{
+	&CSelectUI::UpdateName,		// 名前の更新
+	&CSelectUI::UpdateDressup,	// 着せ替えの更新
+	&CSelectUI::UpdateBack,		// 戻るの更新
+};
 
 //************************************************************
 //	子クラス [CSelectUI] のメンバ関数
@@ -41,14 +57,17 @@ namespace
 //============================================================
 //	コンストラクタ
 //============================================================
-CSelectUI::CSelectUI(const int nPlayerIdx, const int nPadIdx) : CObject(PRIO_BG, LAYER::LAYER_2D),
-	m_pPadUI			(nullptr),		// コントローラーUI情報
-	m_pFrame			(nullptr),		// フレーム情報
-	m_nSelectPlayerIdx	(nPlayerIdx),	// 選択プレイヤーインデックス
-	m_nPadIdx			(nPadIdx),		// 操作権インデックス
-	m_bSelect			(true)			// 選択操作フラグ
+CSelectUI::CSelectUI(CGameManager::ETeamSide team, const int nPlayerIdx, const int nPadIdx) : CObject(PRIO_BG, LAYER::LAYER_2D),
+	m_pPadUI			(nullptr),			// コントローラーUI情報
+	m_pFrame			(nullptr),			// フレーム情報
+	m_select			(SELECT_DRESSUP),	// 選択インデックス
+	m_nSelectPlayerIdx	(nPlayerIdx),		// 選択プレイヤーインデックス
+	m_nPadIdx			(nPadIdx),			// 操作権インデックス
+	m_bSelect			(true),				// 選択操作フラグ
+	m_team				(team)				// チーム
 {
-
+	// スタティックアサート
+	static_assert(NUM_ARRAY(m_SelectFuncList) == CSelectUI::SELECT_MAX, "ERROR : Select Count Mismatch");
 }
 
 //============================================================
@@ -109,24 +128,18 @@ void CSelectUI::Kill()
 //============================================================
 void CSelectUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_bSelect)
-	{ // 選択操作中の場合
-
-		// 選択の更新
-		UpdateSelect();
-
-		// 決定の更新
-		UpdateDecide();
-	}
-	else
-	{ // 着せ替え操作中の場合
-
-		// キャンセルの更新
-		UpdateCancel();
-	}
+	// 選択の更新
+	UpdateSelect();
 
 	// 相対位置の設定
 	SetPositionRelative();
+
+	if (m_SelectFuncList[m_select] != nullptr)
+	{ // 選択更新関数がある場合
+
+		// 選択別処理
+		(this->*(m_SelectFuncList[m_select]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
 
 //============================================================
@@ -167,10 +180,10 @@ void CSelectUI::SetPosition(const MyLib::Vector3& pos)
 //============================================================
 //	生成処理
 //============================================================
-CSelectUI *CSelectUI::Create(const int nPlayerIdx, const int nPadIdx, const MyLib::Vector3& pos)
+CSelectUI *CSelectUI::Create(CGameManager::ETeamSide team, const int nPlayerIdx, const int nPadIdx, const MyLib::Vector3& pos)
 {
 	// 選択UIの生成
-	CSelectUI* pSelectUI = DEBUG_NEW CSelectUI(nPlayerIdx, nPadIdx);
+	CSelectUI* pSelectUI = DEBUG_NEW CSelectUI(team, nPlayerIdx, nPadIdx);
 	if (pSelectUI == nullptr)
 	{ // 生成に失敗した場合
 
@@ -197,6 +210,90 @@ CSelectUI *CSelectUI::Create(const int nPlayerIdx, const int nPadIdx, const MyLi
 }
 
 //============================================================
+//	名前の更新処理
+//============================================================
+void CSelectUI::UpdateName(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// UI情報を反映
+	m_pFrame->SetPosition(pDressup->GetNameUIPosition(m_team));
+	m_pFrame->SetSize(pDressup->GetNameUISize(m_team) + 10.0f);
+
+	// 選択操作ができない場合抜ける
+	if (!IsSelectOK()) { return; }
+
+	// 既に名前入力中の場合抜ける
+	if (CInputKeyButton::GetInstance() != nullptr) { return; }
+
+	// 決定の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	{
+		// 名前変更クラスの生成
+		CString2D* pName = pDressup->GetNameString2D(m_team);	// 名前文字列
+		CInputKeyButton::Create(m_nPadIdx, pName->GetStr(), pName);
+	}
+}
+
+//============================================================
+//	着せ替えの更新処理
+//============================================================
+void CSelectUI::UpdateDressup(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (IsSelectOK())
+	{ // 選択操作中の場合
+
+		// 選択プレイヤーの更新
+		UpdateSelectPlayer();
+
+		// 決定の更新
+		UpdateDecideDressup();
+	}
+	else
+	{ // 着せ替え操作中の場合
+
+		// キャンセルの更新
+		UpdateCancelDressup();
+	}
+}
+
+//============================================================
+//	戻るの更新処理
+//============================================================
+void CSelectUI::UpdateBack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// UI情報を反映
+	m_pFrame->SetPosition(pDressup->GetBackUIPosition());
+	m_pFrame->SetSize(pDressup->GetBackUISize() + 10.0f);
+
+	// 選択操作ができない場合抜ける
+	if (!IsSelectOK()) { return; }
+
+	// 決定の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	{
+		// チーム設定シーンへ遷移
+		pEntry->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
+	}
+}
+
+//============================================================
 //	UIの生成処理
 //============================================================
 HRESULT CSelectUI::CreateUI()
@@ -210,7 +307,7 @@ HRESULT CSelectUI::CreateUI()
 	}
 
 	// 大きさの設定
-	m_pFrame->SetSize(frame::SIZE);
+	m_pFrame->SetSize(frame::dressup::SIZE);
 
 	// 種類の設定
 	m_pFrame->SetType(CObject::TYPE::TYPE_OBJECT2D);
@@ -256,6 +353,95 @@ HRESULT CSelectUI::CreateUI()
 //	選択の更新処理
 //============================================================
 void CSelectUI::UpdateSelect()
+{
+	// 選択操作ができない場合抜ける
+	if (!IsSelectOK()) { return; }
+
+	// 選択の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
+	{
+		if (m_select != SELECT_NAME)
+		{ // 一番上じゃない場合
+
+			// 上に移動
+			m_select = (m_select == SELECT_DRESSUP) ? SELECT_NAME : SELECT_DRESSUP;
+		}
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
+	{
+		if (m_select != SELECT_BACK)
+		{ // 一番下じゃない場合
+
+			// 下に移動
+			m_select = (m_select == SELECT_DRESSUP) ? SELECT_BACK : SELECT_DRESSUP;
+		}
+	}
+}
+
+//============================================================
+//	決定の更新処理
+//============================================================
+void CSelectUI::UpdateDecideDressup()
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// 決定の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	{
+		// 入力情報の初期化
+		pPad->InitTrigger(m_nPadIdx);
+
+		// 着せ替えUI準備完了フラグの初期化
+		pDressup->SetDressUIReady(m_nSelectPlayerIdx, false);
+
+		// 着せ替えUI操作権の設定
+		pDressup->SetDressUIControl(m_nPadIdx, m_nSelectPlayerIdx);
+
+		// 選択操作を停止
+		m_bSelect = false;
+	}
+}
+
+//============================================================
+//	キャンセルの更新処理
+//============================================================
+void CSelectUI::UpdateCancelDressup()
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// 準備完了済みの場合操作不可
+	if (pDressup->IsDressUIReady(m_nSelectPlayerIdx)) { return; }
+
+	// キャンセルの更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx))
+	{
+		// 着せ替えUI操作権の初期化
+		pDressup->SetDressUIControl(-1, m_nSelectPlayerIdx);
+
+		// 選択操作を再開
+		m_bSelect = true;
+	}
+}
+
+//============================================================
+//	選択プレイヤーの更新処理
+//============================================================
+void CSelectUI::UpdateSelectPlayer()
 {
 	// 着せ替えシーンの取得
 	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
@@ -304,65 +490,6 @@ void CSelectUI::UpdateSelect()
 }
 
 //============================================================
-//	決定の更新処理
-//============================================================
-void CSelectUI::UpdateDecide()
-{
-	// 着せ替えシーンの取得
-	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
-	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
-	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
-	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
-	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
-	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
-
-	// 決定の更新
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
-	{
-		// 入力情報の初期化
-		pPad->InitTrigger(m_nPadIdx);
-
-		// 着せ替えUI準備完了フラグの初期化
-		pDressup->SetDressUIReady(m_nSelectPlayerIdx, false);
-
-		// 着せ替えUI操作権の設定
-		pDressup->SetDressUIControl(m_nPadIdx, m_nSelectPlayerIdx);
-
-		// 選択操作を停止
-		m_bSelect = false;
-	}
-}
-
-//============================================================
-//	キャンセルの更新処理
-//============================================================
-void CSelectUI::UpdateCancel()
-{
-	// 着せ替えシーンの取得
-	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
-	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
-	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
-	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
-	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
-	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
-
-	// 準備完了済みの場合操作不可
-	if (pDressup->IsDressUIReady(m_nSelectPlayerIdx)) { return; }
-
-	// キャンセルの更新
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx))
-	{
-		// 着せ替えUI操作権の初期化
-		pDressup->SetDressUIControl(-1, m_nSelectPlayerIdx);
-
-		// 選択操作を再開
-		m_bSelect = true;
-	}
-}
-
-//============================================================
 //	相対位置の設定処理
 //============================================================
 void CSelectUI::SetPositionRelative()
@@ -370,9 +497,40 @@ void CSelectUI::SetPositionRelative()
 	// 自身の位置を取得
 	MyLib::Vector3 posThis = GetPosition();
 
-	// コントローラーUIの位置設定
-	m_pPadUI->SetPosition(posThis + MyLib::Vector3(0.0f, -155.0f, 0.0f));
+	if (m_select == SELECT_DRESSUP)
+	{
+		// コントローラーUIの自動描画をONにする
+		m_pPadUI->SetEnableDisp(true);
 
-	// フレームの位置設定
-	m_pFrame->SetPosition(posThis + MyLib::Vector3(0.0f, 55.0f, 0.0f));
+		// コントローラーUIの位置設定
+		m_pPadUI->SetPosition(posThis + MyLib::Vector3(0.0f, -155.0f, 0.0f));
+
+		// フレームの位置設定
+		m_pFrame->SetPosition(posThis + MyLib::Vector3(0.0f, 55.0f, 0.0f));
+
+		// フレームの大きさ設定
+		m_pFrame->SetSize(frame::dressup::SIZE);
+	}
+	else
+	{
+		// コントローラーUIの自動描画をOFFにする
+		m_pPadUI->SetEnableDisp(false);
+	}
+}
+
+//============================================================
+//	選択操作可能かの確認処理
+//============================================================
+bool CSelectUI::IsSelectOK() const
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();							// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return false; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();				// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return false; }	// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();		// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return false; }		// 着せ替えシーンがない場合抜ける
+
+	// 選択操作が可能且つ、着せ替え状態の場合
+	return (m_bSelect && pDressup->GetState() == CEntry_Dressup::STATE_DRESSUP);
 }

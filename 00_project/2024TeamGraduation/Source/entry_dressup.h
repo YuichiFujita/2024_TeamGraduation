@@ -18,8 +18,10 @@
 //==========================================================================
 // 前方宣言
 //==========================================================================
+class CString2D;
 class CDressupUI;
 class CSelectUI;
+class CObject2D;
 class CEntryRuleManager;
 
 //==========================================================================
@@ -73,13 +75,17 @@ public:
 	void SetSelectUISelect(const int nPadIdx, const bool bSelect);			// 選択UI選択操作フラグの設定
 	MyLib::Vector3 GetDressUIPosition(const int nPlayerIdx) const;			// 着せ替えUI位置取得
 	inline int GetNumPlayer() const	{ return (int)m_vecDressInfo.size(); }	// プレイヤー数取得
+	MyLib::Vector3 GetNameUIPosition(const CGameManager::ETeamSide team);	// 名前UI位置取得
+	MyLib::Vector2 GetNameUISize(const CGameManager::ETeamSide team);		// 名前UI大きさ取得
+	MyLib::Vector3 GetBackUIPosition();	// 戻るUI位置取得
+	MyLib::Vector2 GetBackUISize();		// 戻るUI大きさ取得
+	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
 
 private:
 
 	//=============================
 	// メンバ関数
 	//=============================
-	bool TransSetupTeam();	// チーム設定遷移
 	void TransSetting();	// 着せ替え遷移
 	bool IsAllReady();		// 準備全完了フラグ取得
 	void Save();			// セーブ
@@ -88,10 +94,12 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	std::vector<CDressupUI*> m_vecDressInfo;	// 着せ替え情報
-	std::vector<CSelectUI*> m_vecSelect;	// 選択情報
+	CString2D* m_apTeamName[CGameManager::SIDE_MAX];	// チーム名情報
+	std::vector<CDressupUI*> m_vecDressInfo;			// 着せ替え情報
+	std::vector<CSelectUI*> m_vecSelect;				// 選択情報
 	CEntryRuleManager* m_pRuleManager;	// ルールマネージャー
-	EState m_state;	// 状態
+	CObject2D* m_pBack;	// 戻る情報
+	EState m_state;		// 状態
 };
 
 #endif

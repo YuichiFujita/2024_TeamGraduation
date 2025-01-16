@@ -10,10 +10,12 @@
 #include "fade.h"
 #include "entry_setupTeam.h"
 #include "playerManager.h"
+#include "inputKeyButton.h"
+#include "string2D.h"
 #include "dressupUI.h"
 #include "selectUI.h"
+#include "object2D.h"
 #include "entryRuleManager.h"
-#include "inputKeyButton.h"
 
 //==========================================================================
 // 定数定義
@@ -28,14 +30,30 @@ namespace
 	{
 		namespace left
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y, 0.0f);	// 左中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y - 40.0f, 0.0f);	// 左中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
 		}
 
 		namespace right
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y, 0.0f);	// 右中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y - 40.0f, 0.0f);	// 右中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
+		}
+
+		namespace name
+		{
+			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 75.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 75.0f, 0.0f) };	// 原点位置
+			const char*	FONT		= "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
+			const bool	ITALIC		= false;					// イタリック
+			const float	HEIGHT		= 42.0f;					// 文字縦幅
+			const EAlignX ALIGN_X	= XALIGN_CENTER;			// 横配置
+			const D3DXCOLOR COL		= MyLib::color::Black();	// 色
+		}
+
+		namespace back
+		{
+			const MyLib::Vector3 POS	= MyLib::Vector3(280.0f, 640.0f, 0.0f);	// 戻る位置
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);		// 戻る大きさ
 		}
 	}
 }
@@ -45,9 +63,11 @@ namespace
 //==========================================================================
 CEntry_Dressup::CEntry_Dressup() : CEntryScene(),
 	m_pRuleManager	(nullptr),		// ルールマネージャー
+	m_pBack			(nullptr),		// 戻る情報
 	m_state			(STATE_DRESSUP)	// 状態
 {
-	
+	// メンバ変数をクリア
+	memset(&m_apTeamName[0], 0, sizeof(m_apTeamName));	// チーム名情報
 }
 
 //==========================================================================
@@ -102,7 +122,7 @@ HRESULT CEntry_Dressup::Init()
 		{ // プレイヤーの場合
 
 			// 選択UIの生成
-			CSelectUI* pSelect = CSelectUI::Create(nCurLeft - 1, nPadIdx, posUI);
+			CSelectUI* pSelect = CSelectUI::Create(team, nCurLeft - 1, nPadIdx, posUI);
 			if (pSelect == nullptr)
 			{ // 生成に失敗した場合
 
@@ -146,7 +166,7 @@ HRESULT CEntry_Dressup::Init()
 		{ // プレイヤーの場合
 
 			// 選択UIの生成
-			CSelectUI* pSelect = CSelectUI::Create(nCurLeft + nCurRight - 1, nPadIdx, posUI);
+			CSelectUI* pSelect = CSelectUI::Create(team, nCurLeft + nCurRight - 1, nPadIdx, posUI);
 			if (pSelect == nullptr)
 			{ // 生成に失敗した場合
 
@@ -157,6 +177,44 @@ HRESULT CEntry_Dressup::Init()
 			m_vecSelect.push_back(pSelect);
 		}
 	}
+
+	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		// チーム名の生成
+		m_apTeamName[i] = CString2D::Create
+		( // 引数
+			ui::name::FONT,		// フォントパス
+			ui::name::ITALIC,	// イタリック
+			L"ここにチーム名",	// 指定文字列
+			ui::name::POS[i],	// 原点位置
+			ui::name::HEIGHT,	// 文字縦幅
+			ui::name::ALIGN_X,	// 横配置
+			VEC3_ZERO,			// 原点向き
+			ui::name::COL		// 色
+		);
+		if (m_apTeamName[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+	}
+
+	// 戻るの生成
+	m_pBack = CObject2D::Create(6);
+	if (m_pBack == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// 位置を設定
+	m_pBack->SetPosition(ui::back::POS);
+
+	// 大きさを設定
+	m_pBack->SetSize(ui::back::SIZE);
 
 	return S_OK;
 }
@@ -183,6 +241,16 @@ void CEntry_Dressup::Uninit()
 		SAFE_UNINIT(rSelect);
 	}
 
+	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		// チーム名の終了
+		SAFE_UNINIT(m_apTeamName[i]);
+	}
+
+	// 戻るの終了
+	SAFE_UNINIT(m_pBack);
+
 	delete this;
 }
 
@@ -194,13 +262,6 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 	switch (m_state)
 	{ // 状態ごとの処理
 	case EState::STATE_DRESSUP:
-
-		// チーム設定遷移
-		if (TransSetupTeam())
-		{ // 遷移する場合
-
-			return;
-		}
 
 		// ゲーム設定遷移
 		TransSetting();
@@ -349,23 +410,39 @@ MyLib::Vector3 CEntry_Dressup::GetDressUIPosition(const int nPlayerIdx) const
 }
 
 //==========================================================================
-// チーム設定遷移
+// 名前UI位置取得
 //==========================================================================
-bool CEntry_Dressup::TransSetupTeam()
+MyLib::Vector3 CEntry_Dressup::GetNameUIPosition(const CGameManager::ETeamSide team)
 {
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	for (int nPadIdx = 0; nPadIdx < mylib_const::MAX_PLAYER; nPadIdx++)
-	{ // コントローラー接続総数分繰り返す
+	// 文字列の位置を返す
+	return m_apTeamName[team]->GetPosition();
+}
 
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nPadIdx))
-		{
-			// チーム設定シーンへ遷移
-			//CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);	// TODO：戻るボタンを作ったほうがいい
-			return true;
-		}
-	}
+//==========================================================================
+// 名前UI大きさ取得
+//==========================================================================
+MyLib::Vector2 CEntry_Dressup::GetNameUISize(const CGameManager::ETeamSide team)
+{
+	// 文字列の大きさを返す
+	return MyLib::Vector2(m_apTeamName[team]->GetStrWidth(), ui::name::HEIGHT);
+}
 
-	return false;
+//==========================================================================
+// 戻るUI位置取得
+//==========================================================================
+MyLib::Vector3 CEntry_Dressup::GetBackUIPosition()
+{
+	// ポリゴンの位置を返す
+	return m_pBack->GetPosition();
+}
+
+//==========================================================================
+// 戻るUI大きさ取得
+//==========================================================================
+MyLib::Vector2 CEntry_Dressup::GetBackUISize()
+{
+	// ポリゴンの大きさを返す
+	return m_pBack->GetSize();
 }
 
 //==========================================================================

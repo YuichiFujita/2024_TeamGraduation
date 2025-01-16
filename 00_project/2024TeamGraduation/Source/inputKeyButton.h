@@ -55,7 +55,7 @@ public:
 	};
 
 	// コンストラクタ
-	CInputKeyButton(const int nPadIdx, const std::string& rOrigin, std::string* pChange);
+	CInputKeyButton(const int nPadIdx, const std::string& rOrigin, CString2D* pChange);
 
 	// デストラクタ
 	~CInputKeyButton() override;
@@ -72,7 +72,7 @@ public:
 	( // 引数
 		const int nPadIdx,			// 操作権インデックス
 		const std::string& rOrigin,	// 変更前の文字列
-		std::string* pChange		// 変更する文字列
+		CString2D* pChange			// 変更する文字列
 	);
 	static CInputKeyButton* GetInstance();	// インスタンス取得
 
@@ -91,7 +91,7 @@ private:
 	std::vector<std::vector<CString2D*>> m_vecSelect;	// 選択文字
 	const int m_nPadIdx;			// 操作権インデックス
 	const std::string m_sOrigin;	// 変更前の文字列
-	std::string* m_pChange;			// 変更する文字列
+	CString2D* m_pChange;			// 変更する文字列
 	CObject2D* m_pBG;				// 背景
 	CString2D* m_pTitle;			// タイトル
 	CString2D* m_pName;				// 名前
