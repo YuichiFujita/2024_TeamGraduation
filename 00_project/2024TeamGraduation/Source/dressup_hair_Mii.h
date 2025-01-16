@@ -1,43 +1,35 @@
 //=============================================================================
 //
-// 着せ替え(髪)処理 [dressup_hair.h]
+// 着せ替え(髪)処理 [dressup_hair_Mii.h]
 // Author : 相馬靜雅
 //
 //=============================================================================
-#ifndef _DRESSUP_HAIR_H_		// このマクロ定義がされていなかったら
-#define _DRESSUP_HAIR_H_		// 二重インクルード防止のマクロを定義する
+#ifndef _DRESSUP_HAIR_MII_H_		// このマクロ定義がされていなかったら
+#define _DRESSUP_HAIR_MII_H_		// 二重インクルード防止のマクロを定義する
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "dressup.h"
+#include "dressup_hair.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
 // 着せ替え(髪)クラス
-class CDressup_Hair : public CDressup
+class CDressup_Hair_Mii : public CDressup_Hair
 {
 public:
 
-	CDressup_Hair();
-	~CDressup_Hair();
+	CDressup_Hair_Mii();
+	~CDressup_Hair_Mii();
 
 	//=============================
 	// メンバ関数
 	//=============================
-	virtual HRESULT Init() override;	// 初期化
-	virtual void Uninit() override;		// 終了
-	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override; // 更新
-	virtual void ReRegist() override;	// 再割り当て
+	HRESULT Init() override;	// 初期化
+	void Uninit() override;		// 終了
 
 private:
-
-	//=============================
-	// メンバ関数
-	//=============================
-	// その他
-	void Debug() override;
 
 };
 

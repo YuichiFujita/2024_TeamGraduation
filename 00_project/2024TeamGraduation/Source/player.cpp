@@ -579,7 +579,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// フラグリセット
 	ResetFrag();
-	m_pDressUp_Uniform->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// 親の更新処理
 	float nowSlowRate = fSlowRate;
 	if (m_bAlign) nowSlowRate *= Align::MULTIPLY_MOTION;

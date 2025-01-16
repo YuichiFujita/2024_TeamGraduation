@@ -8,15 +8,18 @@
 #include "manager.h"
 #include "renderer.h"
 #include "objectX.h"
+#include "dressup.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\setup_player.txt";	// プレイヤーセットアップテキスト
+	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\Mii\\setup_player.txt";	// プレイヤーセットアップテキスト
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
+	const int ID_HAIR = 9;	// 髪のID
+	const int ID_FACE = 2;	// 顔のID
 
 	namespace Side
 	{
@@ -58,8 +61,10 @@ CAudienceLowPoly::WATCH_POS_FUNC CAudienceLowPoly::m_CalcWatchPositionFunc[] =
 // コンストラクタ
 //==========================================================================
 CAudienceLowPoly::CAudienceLowPoly(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pChara	(nullptr),	// キャラクター情報
-	m_pLight	(nullptr)	// ペンライト情報
+	m_pChara		(nullptr),	// キャラクター情報
+	m_pLight		(nullptr),	// ペンライト情報
+	m_pDressUp_Hair	(nullptr),	// ドレスアップ(髪)
+	m_pDressUp_Face	(nullptr)	// ドレスアップ(顔)
 {
 }
 
@@ -121,6 +126,20 @@ HRESULT CAudienceLowPoly::Init()
 		return E_FAIL;
 	}
 
+	// ドレスアップ(髪)
+	m_pDressUp_Hair = CDressup::Create(
+		CDressup::EType::TYPE_HAIR_MII,		// 着せ替えの種類
+		m_pChara,						// 変更するプレイヤー
+		ID_HAIR);						// 変更箇所のインデックス
+	m_pDressUp_Hair->RandSet();
+
+	// ドレスアップ(顔)
+	m_pDressUp_Face = CDressup::Create(
+		CDressup::EType::TYPE_FACE_MII,		// 着せ替えの種類
+		m_pChara,						// 変更するプレイヤー
+		ID_FACE);						// 変更箇所のインデックス
+	m_pDressUp_Face->RandSet();
+
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
@@ -132,6 +151,10 @@ HRESULT CAudienceLowPoly::Init()
 //==========================================================================
 void CAudienceLowPoly::Uninit()
 {
+	// ドレスアップ削除
+	SAFE_UNINIT(m_pDressUp_Hair);
+	SAFE_UNINIT(m_pDressUp_Face);
+
 	// 親クラスの終了
 	CAudience::Uninit();
 
@@ -177,13 +200,8 @@ void CAudienceLowPoly::Draw()
 {
 	if (m_pChara != nullptr)
 	{
-		// TODO：ローポリ識別用
 		// オブジェクトキャラクターの描画
-#if 0
 		m_pChara->Draw();
-#else
-		m_pChara->Draw(MyLib::color::Blue());
-#endif
 	}
 
 	// 親クラスの描画
@@ -381,6 +399,9 @@ HRESULT CAudienceLowPoly::CreateCharacter(const MyLib::Vector3& rPos, const MyLi
 
 	// 向きの設定
 	m_pChara->SetRotation(rRot);
+
+	// スケール少しランダム
+	m_pChara->SetScale(1.0f + UtilFunc::Transformation::Random(0, 250) * 0.001f);
 
 	// モーションの設定
 	m_pChara->GetMotion()->Set(EMotion::MOTION_SPAWN);

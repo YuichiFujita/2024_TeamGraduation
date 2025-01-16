@@ -31,15 +31,6 @@ CPlayerResult::STATE_FUNC CPlayerResult::m_StateFunc[] =	// 状態関数
 	&CPlayerResult::StateDraw,		// 引き分け
 };
 
-CPlayerResult::VICTORY_FUNC CPlayerResult::m_VictoryFunc[] =	// 状態関数
-{
-	&CPlayerResult::CheckVictoryNone,		// なし
-	&CPlayerResult::CheckVictoryPrelude,	// 前座勝敗準備
-	&CPlayerResult::CheckVictoryPrelude,	// 前座勝敗
-	&CPlayerResult::CheckVictoryContest,	// モテ勝敗準備
-	&CPlayerResult::CheckVictoryContest,	// モテ勝敗
-};
-
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
@@ -126,9 +117,6 @@ void CPlayerResult::Update(const float fDeltaTime, const float fDeltaRate, const
 	// 親の更新処理
 	CObjectChara::Update(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// 勝敗チェック
-	CheckVictory(fDeltaTime, fDeltaRate, fSlowRate);
-
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -176,7 +164,6 @@ void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, con
 	if (pMotion->GetType() != EMotion::MOTION_WIN)
 	{// 勝利モーション以外なら勝利にする
 
-
 		// 勝利モーション設定
 		CMotion::Info info = GetMotion()->GetInfo(EMotion::MOTION_WIN);	// モーション情報
 		int nKey = rand() % info.nNumKey;														// 開始キー
@@ -218,30 +205,15 @@ void CPlayerResult::StateDraw(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 // 勝敗チェック
 //==========================================================================
-void CPlayerResult::CheckVictory(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	CResultManager* pRsltMgr = CResultManager::GetInstance();
-	CResultManager::EState resultState = pRsltMgr->GetState();
-
-	// 状態更新
-	if (m_VictoryFunc[resultState] != nullptr)
-	{
-		(this->*(m_VictoryFunc[resultState]))(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-}
-
-//==========================================================================
-// 勝敗チェック
-//==========================================================================
-void CPlayerResult::CheckVictoryNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerResult::CheckVictoryNone()
 {
 	SetState(EState::STATE_NONE);
 }
 
 //==========================================================================
-// 勝敗チェック
+// 勝敗チェック(前座)
 //==========================================================================
-void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerResult::CheckVictoryPrelude()
 {
 	CResultManager* pRsltMgr = CResultManager::GetInstance();
 	CGameManager::ETeamSide teamWin = pRsltMgr->GetTeamPreludeWin();
@@ -261,9 +233,9 @@ void CPlayerResult::CheckVictoryPrelude(const float fDeltaTime, const float fDel
 }
 
 //==========================================================================
-// 勝敗チェック
+// 勝敗チェック(モテ)
 //==========================================================================
-void CPlayerResult::CheckVictoryContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerResult::CheckVictoryContest()
 {
 	CResultManager* pRsltMgr = CResultManager::GetInstance();
 	CGameManager::ETeamSide teamWin = pRsltMgr->GetTeamContestWin();

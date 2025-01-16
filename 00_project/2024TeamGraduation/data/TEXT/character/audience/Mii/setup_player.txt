@@ -14,20 +14,21 @@ SCRIPT			# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI
 #------------------------------------------------------------------------------
 # ÉÇÉfÉãêî
 #------------------------------------------------------------------------------
-NUM_MODEL = 9
+NUM_MODEL = 10
 
 #------------------------------------------------------------------------------
 # ÉÇÉfÉãÉtÉ@ÉCÉãñº
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/audience/Mii/face.x	# [0]äÁ
-MODEL_FILENAME = data/MODEL/audience/Mii/body.x	# [1]ëÃ
-MODEL_FILENAME = data/MODEL/audience/Mii/kosi.x	# [2]çò
+MODEL_FILENAME = data/MODEL/audience/Mii/kosi.x		# [0]çò
+MODEL_FILENAME = data/MODEL/audience/Mii/body.x		# [1]ëÃ
+MODEL_FILENAME = data/MODEL/audience/Mii/face.x		# [2]äÁ
 MODEL_FILENAME = data/MODEL/audience/Mii/armUP_R.x	# [3]âEòr(è„)
 MODEL_FILENAME = data/MODEL/audience/Mii/armDW_R.x	# [4]âEòr(â∫)
-MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x	# [5]ç∂òr(è„)
-MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	# [6]ç∂òr(â∫)
-MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	# [7]éË(âE)
+MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	# [5]éË(âE)
+MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x	# [6]ç∂òr(è„)
+MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	# [7]ç∂òr(â∫)
 MODEL_FILENAME = data/MODEL/audience/Mii/Hand_L.x	# [8]éË(ç∂)
+MODEL_FILENAME = data/MODEL/audience/hair/suiren.x	# [9]îØ
 
 #------------------------------------------------------------------------------
 # ÉLÉÉÉâÉNÉ^Å[èÓïÒ
@@ -57,16 +58,30 @@ CHARACTERSET
 
 	PARTSSET
 		INDEX = 0
-		PARENT = 1
-		POS = 0.00 37.50 0.00
+		PARENT = -1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 16.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 1
-		PARENT = 2
+		PARENT = 0
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 40.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -74,7 +89,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		POS = 0.00 31.50 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -9.50 29.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -82,47 +99,59 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
-		POS = -12.00 28.00 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -9.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 5
-		PARENT = 1
-		POS = -11.50 0.00 0.50
+		PARENT = 4
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = -18.50 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 6
-		PARENT = 5
-		POS = 12.00 28.00 0.00
+		PARENT = 1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 9.50 29.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 7
-		PARENT = 4
-		POS = 12.50 0.00 0.50
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 7
-		PARENT = 0
-		POS = -5.50 -7.50 1.00
+		PARENT = 6
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 9.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 8
-		PARENT = 6
-		POS = 0.00 -14.00 0.00
+		PARENT = 7
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 18.50 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 9
+		PARENT = 2
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET

@@ -97,7 +97,11 @@ void CDressup_Face::ReRegist()
 	// 顔切り替え
 	CModel* pModel = m_pObjChara->GetModel(m_nSwitchIdx);
 	int idx = CTexture::GetInstance()->Regist(m_vecModelName[m_nNowIdx]);
-	pModel->SetIdxTexture(0, idx);
+	
+	// テクスチャインデックス設定
+	std::vector<int> vecIdx = pModel->GetIdxTexture();
+	std::fill(vecIdx.begin(), vecIdx.end(), idx);
+	pModel->SetIdxTexture(vecIdx);
 }
 
 //==========================================================================

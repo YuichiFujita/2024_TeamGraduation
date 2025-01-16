@@ -9,6 +9,7 @@
 #include "manager.h"
 #include "renderer.h"
 #include "objectX.h"
+#include "dressup.h"
 
 //==========================================================================
 // 定数定義
@@ -18,6 +19,7 @@ namespace
 	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\setup_player.txt";	// プレイヤーセットアップテキスト
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
+	const int ID_HAIR = 11;	// 髪のID
 
 	namespace Side
 	{
@@ -59,8 +61,9 @@ CAudienceHighPoly::WATCH_POS_FUNC CAudienceHighPoly::m_CalcWatchPositionFunc[] =
 // コンストラクタ
 //==========================================================================
 CAudienceHighPoly::CAudienceHighPoly(EObjType type, CGameManager::ETeamSide team) : CAudience(type, team, PRIORITY, CObject::LAYER_DEFAULT),
-	m_pChara	(nullptr),	// キャラクター情報
-	m_pLight	(nullptr)	// ペンライト情報
+	m_pChara		(nullptr),	// キャラクター情報
+	m_pLight		(nullptr),	// ペンライト情報
+	m_pDressUp_Hair	(nullptr)	// ドレスアップ(髪)
 {
 }
 
@@ -122,6 +125,13 @@ HRESULT CAudienceHighPoly::Init()
 		return E_FAIL;
 	}
 
+	// ドレスアップ(髪)
+	m_pDressUp_Hair = CDressup::Create(
+		CDressup::EType::TYPE_HAIR_MII,		// 着せ替えの種類
+		m_pChara,						// 変更するプレイヤー
+		ID_HAIR);						// 変更箇所のインデックス
+	m_pDressUp_Hair->RandSet();
+
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
@@ -133,6 +143,9 @@ HRESULT CAudienceHighPoly::Init()
 //==========================================================================
 void CAudienceHighPoly::Uninit()
 {
+	// ドレスアップ削除
+	SAFE_UNINIT(m_pDressUp_Hair);
+
 	// 親クラスの終了
 	CAudience::Uninit();
 
@@ -377,6 +390,9 @@ HRESULT CAudienceHighPoly::CreateCharacter(const MyLib::Vector3& rPos, const MyL
 
 	// 向きの設定
 	m_pChara->SetRotation(rRot);
+
+	// スケール少しランダム
+	m_pChara->SetScale(1.0f + UtilFunc::Transformation::Random(0, 250) * 0.001f);
 
 	// モーションの設定
 	m_pChara->GetMotion()->Set(EMotion::MOTION_SPAWN);
