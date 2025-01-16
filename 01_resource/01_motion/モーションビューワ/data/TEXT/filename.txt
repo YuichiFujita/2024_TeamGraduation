@@ -11,10 +11,11 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 1MOTION_FILENAME = data/TEXT/character/enemy/practice/setup_practice.txt
 1MOTION_FILENAME = data/TEXT/character/audience/setup_player.txt
-MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player.txt
+1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_fat.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_gari.txt
 1MOTION_FILENAME = data/TEXT/character/audience/Mii/setup_player.txt
 1MOTION_FILENAME = data/TEXT/character/audience/Mii/setup_nurs.txt
+MOTION_FILENAME = data/TEXT/character/player/main_01/setup_reporter.txt
 
 END_SCRIPT		# この行は絶対消さないこと！

@@ -483,9 +483,18 @@ void CCamera::Reset()
 //==========================================================================
 void CCamera::ResetByMode(CScene::MODE mode)
 {
+	// 視点情報
 	m_posR = Reset::POSITION[mode];			// 注視点
 	m_rot = Reset::ROTATION[mode];			// 向き
 	m_fDistance = Reset::DISTANCE[mode];	// 距離
+	m_fDestDistance = m_fDistance;			// 目標の距離
+	m_fOriginDistance = m_fDistance;		// 元の距離
+
+	// 状態
+	m_state = STATE::STATE_NONE;
+
+	// その他
+	m_fViewAngle = m_fDestViewAngle = none::INIT_VIEWANGLE;
 
 	// カメラワープ
 	SetWarp(m_posR);

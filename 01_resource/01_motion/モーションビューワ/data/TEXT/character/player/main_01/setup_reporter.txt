@@ -34,40 +34,26 @@ MODEL_FILENAME = data/MODEL/player/commentator/11_shoes_R.x	# [11]右足
 MODEL_FILENAME = data/MODEL/player/commentator/12_legUP_L.x	# [12]左脚(上)
 MODEL_FILENAME = data/MODEL/player/commentator/13_legDW_L.x	# [13]左脚(下)
 MODEL_FILENAME = data/MODEL/player/commentator/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair/mohikan.x		# [15]髪
-MODEL_FILENAME = data/MODEL/player/accessory/sukautare00.x	# [16]アクセサリー
+MODEL_FILENAME = data/MODEL/player/hair_goku.x	# [15]髪
+MODEL_FILENAME = data/MODEL/dodgeball.x			# [16]ボール
 
 #------------------------------------------------------------------------------
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	
-	SCALE = 1.0		# キャラスケール
-	
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
 	VELOCITY_BLINK = 29.61	# ブリンク移動量
 	
+	VELOCITY = 1.00	# ブリンク移動量
+	
 	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
 	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
 	
-	JUMP = 12.00		# ジャンプ量
-	RADIUS = 60.00		# 半径
-	HEIGHT = 100.00		# 高さ
-	LIFE = 50			# 体力
-	
-	BALLSTATUSSET
-		THROW_NORMAL = 22.50		#投げ速度(通常)
-		THROW_JUMP = 27.00			#投げ速度(ジャンプ)
-		THROW_SPECIAL = 0.00		#投げ速度(スペシャル)
-		CATCH_RANGE = 160			#キャッチ範囲(度数法)
-		DAMAGE_NORMAL = 10			#ダメージ(通常)
-		DAMAGE_JUMP = 15			#ダメージ(ジャンプ)
-		DAMAGE_SPECIAL = 30			#ダメージ(スペシャル)
-		KNOCKBACK_NORMAL = 80		#ノックバック(通常)
-		KNOCKBACK_JUMP = 100		#ノックバック(ジャンプ)
-		KNOCKBACK_SPECIAL = 150		#ノックバック(スペシャル)
-	END_BALLSTATUSSET
+	JUMP = 0.00		# ジャンプ量
+	RADIUS = 60.00	# 半径
+	HEIGHT = 100.00	# 高さ
+	LIFE = 50		# 体力
 	
 	CENTERSET
 		PARTS = 0		# 中心にするパーツ
@@ -75,13 +61,14 @@ CHARACTERSET
 	END_CENTERSET
 	
 	BALLSET
-		PARTS = 8		# 中心にするパーツ
-		OFFSET = 6.50 -12.00 0.00		# オフセット位置
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = -6.50 -4.00 0.00		# オフセット位置
 	END_BALLSET
 
 	PARTSSET
 		INDEX = 0
 		PARENT = -1
+		SIDE = 0					# 反転[-1:左 / 0:中央 / 1:右]
 		POS = 0.00 66.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -106,6 +93,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 6					# 反転先
 		POS = -15.00 36.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -114,6 +103,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 7					# 反転先
 		POS = -18.50 0.00 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -122,6 +113,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 5
 		PARENT = 4
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 8					# 反転先
 		POS = -14.00 -0.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -130,6 +123,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 6
 		PARENT = 1
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 3					# 反転先
 		POS = 15.00 36.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -138,6 +133,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 7
 		PARENT = 6
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 4					# 反転先
 		POS = 18.50 0.00 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -146,6 +143,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 8
 		PARENT = 7
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 5					# 反転先
 		POS = 14.00 -0.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -154,6 +153,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 9
 		PARENT = 0
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 12				# 反転先
 		POS = -7.00 -8.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -162,6 +163,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 10
 		PARENT = 9
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 13				# 反転先
 		POS = -0.50 -26.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -170,6 +173,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 11
 		PARENT = 10
+		SIDE = 1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 14				# 反転先
 		POS = 1.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -178,6 +183,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 12
 		PARENT = 0
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 9					# 反転先
 		POS = 7.00 -8.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -186,6 +193,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 13
 		PARENT = 12
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 10				# 反転先
 		POS = 0.50 -26.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -194,6 +203,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 14
 		PARENT = 13
+		SIDE = -1					# 反転[-1:左 / 0:中央 / 1:右]
+		INVERSE = 11				# 反転先
 		POS = 1.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -209,10 +220,10 @@ CHARACTERSET
 	
 	PARTSSET
 		INDEX = 16
-		PARENT = 2
-		POS = 0.00 0.00 0.00
+		PARENT = 5
+		POS = -6.50 -12.00 0.00
 		ROT = 0.00 0.00 0.00
-		START = 1
+		START = 0
 	END_PARTSSET
 	
 END_CHARACTERSET
@@ -231,17 +242,48 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #
 #==============================================================================
 #------------------------------------------------------------------------------
-#デフォルトモーションのインデックス
+# モーション数
 #------------------------------------------------------------------------------
-DEFAULT_ID = 0
+NUM_MOTION = 34
+
 
 #------------------------------------------------------------------------------
-# モーションファイル名
+# モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/reporter/motion_def.txt		# デフォルト
-MOTION_FILENAME = data/TEXT/character/reporter/motion_walk.txt		# 歩き
-MOTION_FILENAME = data/TEXT/character/reporter/motion_collect.txt	# 回収
-
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_def.txt					# デフォルト
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk.txt				# 歩き
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_walk_ball.txt			# 歩き(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_front.txt			# カニ歩き(前)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_back.txt			# カニ歩き(後)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_left.txt			# カニ歩き(左)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_crab_right.txt			# カニ歩き(右)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run.txt					# 走り
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_run_ball.txt			# 走り(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_blink.txt				# ブリンク
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dodge.txt				# 回避成功時
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump.txt				# ジャンプ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_jump_ball.txt			# ジャンプ(ボール所持)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_land.txt				# 着地
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance.txt		# キャッチ構え
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_normal.txt		# 通常キャッチ(通常)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_jump.txt			# 通常キャッチ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_normal.txt	# ジャストキャッチ(通常)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_justcatch_jump.txt		# ジャストキャッチ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_catch_stance_jump.txt	# キャッチ構え(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dropcatch_walk.txt		# 落ちてるのキャッチ(歩き)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw.txt				# 投げ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_dash.txt			# 投げ(ダッシュ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_jump.txt			# 投げ(ジャンプ)
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_throw_drop.txt			# 落ちてるの投げ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_toss.txt				# トス
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_hype.txt				# 盛り上げ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_special.txt				# スペシャル
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_win.txt					# 勝利
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_damage.txt				# ダメージ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_dead.txt				# 死亡
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_def.txt			# 通常グリップ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_grip_front.txt			# 前グリップ
+MOTION_FILENAME = data/TEXT/character/player/main_01/motion_unstable.txt			# 前グリップ
 
 
 END_SCRIPT		# この行は絶対消さないこと！
