@@ -409,3 +409,25 @@ void CStretcher::SetState(EState state)
 	m_state = state;
 	m_fStateTime = 0.0f;
 }
+
+//==========================================================================
+// 回収時設定
+//==========================================================================
+void CStretcher::CollectSetting()
+{
+	// 先頭取得
+	std::vector<CPlayer*>::iterator itr = m_pCollectPlayer.begin();
+	CPlayer* pPlayer = (*itr);
+	if (pPlayer == nullptr) return;
+
+	// 回収モーション設定
+	pPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_DEAD_COLLECT);
+
+	// プレイヤー運搬
+	MyLib::Vector3 pos = GetPosition();
+	for (const auto& player : m_pCarryPlayer)
+	{
+		pos.y += DISTANCE_UP;
+	}
+	pPlayer->SetPosition(pos);
+}

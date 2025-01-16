@@ -317,6 +317,7 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_damage_right.txt			# 
 MOTION_FILENAME = data/TEXT/character/player/common/motion_damage_back.txt			# ダメージ(背後)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead.txt					# 死亡
 MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_after.txt			# 死亡後
+MOTION_FILENAME = data/TEXT/character/player/common/motion_dead_collect.txt			# 死亡回収
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_def.txt				# 通常グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# 前グリップ
 MOTION_FILENAME = data/TEXT/character/player/common/motion_unstable.txt				# おっとっと

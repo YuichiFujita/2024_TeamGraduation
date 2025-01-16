@@ -185,6 +185,12 @@ void CSchoolNurse::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 			15.0f, true);
 		break;
 
+	case EMotion::MOTION_COLLECT:
+
+		// 回収時設定
+		m_pStretcher->CollectSetting();
+		break;
+
 	default:
 		break;
 	}
