@@ -66,7 +66,11 @@ public:
 	//=============================
 	void SetState(const EState state);					// 状態設定
 	inline EState GetState() const	{ return m_state; }	// 状態取得
-	bool GetSelectOK(const int nPadIdx, const int nPlayerIdx) const;		// 選択可能かの確認
+	void SetDressUIReady(const int nPlayerIdx, const bool bReady);			// 着せ替えUI準備完了フラグの設定
+	bool IsDressUIReady(const int nPlayerIdx);								// 着せ替えUI準備完了済みかの確認
+	void SetDressUIControl(const int nPadIdx, const int nPlayerIdx);		// 着せ替えUI操作権の設定
+	bool IsSelectOK(const int nPadIdx, const int nPlayerIdx) const;			// 選択可能かの確認
+	void SetSelectUISelect(const int nPadIdx, const bool bSelect);			// 選択UI選択操作フラグの設定
 	MyLib::Vector3 GetDressUIPosition(const int nPlayerIdx) const;			// 着せ替えUI位置取得
 	inline int GetNumPlayer() const	{ return (int)m_vecDressInfo.size(); }	// プレイヤー数取得
 

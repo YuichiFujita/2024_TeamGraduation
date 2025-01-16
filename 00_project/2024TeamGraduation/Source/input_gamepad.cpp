@@ -440,6 +440,42 @@ void CInputGamepad::SetVibration(EVibType vibType, int nCntPlayer)
 }
 
 //==========================================================================
+// プレス初期化処理 (ボタン)
+//==========================================================================
+void CInputGamepad::InitPress(int nPadIdx)
+{
+	// メモリをクリア
+	memset(&m_aGamepadState[nPadIdx].Gamepad.wButtons, 0, sizeof(m_aGamepadState[nPadIdx].Gamepad.wButtons));
+}
+
+//==========================================================================
+// トリガー初期化処理 (ボタン)
+//==========================================================================
+void CInputGamepad::InitTrigger(int nPadIdx)
+{
+	// メモリをクリア
+	memset(&m_aGamepadStateTrigger[nPadIdx].Gamepad.wButtons, 0, sizeof(m_aGamepadStateTrigger[nPadIdx].Gamepad.wButtons));
+}
+
+//==========================================================================
+// リピート初期化処理 (ボタン)
+//==========================================================================
+void CInputGamepad::InitRepeat(int nPadIdx)
+{
+	// メモリをクリア
+	memset(&m_aGamepadStateRepeat[nPadIdx].Gamepad.wButtons, 0, sizeof(m_aGamepadStateRepeat[nPadIdx].Gamepad.wButtons));
+}
+
+//==========================================================================
+// リリース初期化処理 (ボタン)
+//==========================================================================
+void CInputGamepad::InitRelease(int nPadIdx)
+{
+	// メモリをクリア
+	memset(&m_aGamepadStateRelease[nPadIdx].Gamepad.wButtons, 0, sizeof(m_aGamepadStateRelease[nPadIdx].Gamepad.wButtons));
+}
+
+//==========================================================================
 // ゲームパッドのプレス処理
 //==========================================================================
 bool CInputGamepad::GetPress(BUTTON nKey, int nCntPlayer)
