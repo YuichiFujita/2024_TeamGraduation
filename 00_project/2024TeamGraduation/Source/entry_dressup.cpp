@@ -11,6 +11,7 @@
 #include "entry_setupTeam.h"
 #include "playerManager.h"
 #include "dressupUI.h"
+#include "selectUI.h"
 #include "entryRuleManager.h"
 #include "inputKeyButton.h"
 
@@ -70,55 +71,91 @@ HRESULT CEntry_Dressup::Init()
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
 	int nCurLeft = 0;	// 現在の左プレイヤー数
-	int nCurRight = 0;	// 現在の右プレイヤー数
 	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
-	int nMaxRight = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_RIGHT);	// 右プレイヤー総数
-	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
+	for (int nPlayerIdx = 0; nPlayerIdx < CGameManager::MAX_PLAYER; nPlayerIdx++)
 	{ // プレイヤー人数分繰り返す
 
 		// チーム指定がない場合次へ
-		CGameManager::ETeamSide team = pSetupTeam->GetTeamSide(i);	// チームサイド
-		if (team == CGameManager::ETeamSide::SIDE_NONE) { continue; }
+		CGameManager::ETeamSide team = pSetupTeam->GetTeamSide(nPlayerIdx);	// チームサイド
+		if (team != CGameManager::ETeamSide::SIDE_LEFT) { continue; }
 
-		CDressupUI* pDressup = nullptr;	// ドレスアップUI情報
-		MyLib::Vector3 posUI;	// UI位置
-		switch (team)
-		{ // チームごとの処理
-		case CGameManager::ETeamSide::SIDE_LEFT:
-		{
-			// UIの位置を計算
-			posUI = ui::left::POS;
-			posUI.x = ui::left::POS.x - (ui::left::OFFSET_X * (float)(nMaxLeft - 1)) * 0.5f + (ui::left::OFFSET_X * (float)nCurLeft);
+		// UIの位置を計算
+		MyLib::Vector3 posUI = ui::left::POS;	// UI位置
+		posUI.x = ui::left::POS.x - (ui::left::OFFSET_X * (float)(nMaxLeft - 1)) * 0.5f + (ui::left::OFFSET_X * (float)nCurLeft);
 
-			// チームメンバー数を加算
-			nCurLeft++;
-			break;
-		}
-		case CGameManager::ETeamSide::SIDE_RIGHT:
-		{
-			// UIの位置を計算
-			posUI = ui::right::POS;
-			posUI.x = ui::right::POS.x - (ui::right::OFFSET_X * (float)(nMaxRight - 1)) * 0.5f + (ui::right::OFFSET_X * (float)nCurRight);
+		// チームメンバー数を加算
+		nCurLeft++;
 
-			// チームメンバー数を加算
-			nCurRight++;
-			break;
-		}
-		default:
-			assert(false);
-			break;
-		}
-
-		// ドレスアップUIの生成
-		pDressup = CDressupUI::Create(this, i, posUI);
+		// 着せ替えUIの生成
+		CDressupUI* pDressup = CDressupUI::Create(this, nPlayerIdx, posUI);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
 			return E_FAIL;
 		}
 
-		// ドレスアップUIの追加
+		// 着せ替えUIの追加
 		m_vecDressInfo.push_back(pDressup);
+
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス
+		if (nPadIdx > -1)
+		{ // プレイヤーの場合
+
+			// 選択UIの生成
+			CSelectUI* pSelect = CSelectUI::Create(nCurLeft - 1, nPadIdx, posUI);
+			if (pSelect == nullptr)
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 選択UIの追加
+			m_vecSelect.push_back(pSelect);
+		}
+	}
+
+	int nCurRight = 0;	// 現在の右プレイヤー数
+	int nMaxRight = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_RIGHT);	// 右プレイヤー総数
+	for (int nPlayerIdx = 0; nPlayerIdx < CGameManager::MAX_PLAYER; nPlayerIdx++)
+	{ // プレイヤー人数分繰り返す
+
+		// チーム指定がない場合次へ
+		CGameManager::ETeamSide team = pSetupTeam->GetTeamSide(nPlayerIdx);	// チームサイド
+		if (team != CGameManager::ETeamSide::SIDE_RIGHT) { continue; }
+
+		// UIの位置を計算
+		MyLib::Vector3 posUI = ui::right::POS;	// UI位置
+		posUI.x = ui::right::POS.x - (ui::right::OFFSET_X * (float)(nMaxRight - 1)) * 0.5f + (ui::right::OFFSET_X * (float)nCurRight);
+
+		// チームメンバー数を加算
+		nCurRight++;
+
+		// 着せ替えUIの生成
+		CDressupUI* pDressup = CDressupUI::Create(this, nPlayerIdx, posUI);
+		if (pDressup == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 着せ替えUIの追加
+		m_vecDressInfo.push_back(pDressup);
+
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス
+		if (nPadIdx > -1)
+		{ // プレイヤーの場合
+
+			// 選択UIの生成
+			CSelectUI* pSelect = CSelectUI::Create(nCurLeft + nCurRight - 1, nPadIdx, posUI);
+			if (pSelect == nullptr)
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 選択UIの追加
+			m_vecSelect.push_back(pSelect);
+		}
 	}
 
 	return S_OK;
@@ -135,8 +172,15 @@ void CEntry_Dressup::Uninit()
 	for (auto& rInfo : m_vecDressInfo)
 	{ // 要素数分繰り返す
 
-		// ドレスアップUIの終了
+		// 着せ替えUIの終了
 		SAFE_UNINIT(rInfo);
+	}
+
+	for (auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		// 選択UIの終了
+		SAFE_UNINIT(rSelect);
 	}
 
 	delete this;
@@ -221,6 +265,38 @@ void CEntry_Dressup::SetState(const EState state)
 }
 
 //==========================================================================
+// 選択可能かの確認
+//==========================================================================
+bool CEntry_Dressup::GetSelectOK(const int nPadIdx, const int nPlayerIdx) const
+{
+	// 自分以外のユーザーの着せ替えUIの場合選択不可
+	const int nSelectPadIdx = m_vecDressInfo[nPlayerIdx]->GetPadIdx();	// 選択予定先の操作権インデックス
+	if (nSelectPadIdx > -1 && nSelectPadIdx != nPadIdx) { return false; }
+
+	for (const auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		// 既に自分以外のユーザーが選択中の場合選択不可
+		if (rSelect->GetSelectIdx()	== nPlayerIdx
+		&&  rSelect->GetPadIdx()	!= nPadIdx) { return false; }
+	}
+
+	return true;
+}
+
+//==========================================================================
+// 着せ替えUI位置取得
+//==========================================================================
+MyLib::Vector3 CEntry_Dressup::GetDressUIPosition(const int nPlayerIdx) const
+{
+	// プレイヤーインデックスが範囲外の場合エラー
+	if (nPlayerIdx <= -1 || nPlayerIdx >= GetNumPlayer()) { assert(false); return VEC3_ZERO; }
+
+	// 引数プレイヤーの着せ替えUI位置を返す
+	return m_vecDressInfo[nPlayerIdx]->GetPosition();
+}
+
+//==========================================================================
 // チーム設定遷移
 //==========================================================================
 bool CEntry_Dressup::TransSetupTeam()
@@ -228,22 +304,12 @@ bool CEntry_Dressup::TransSetupTeam()
 	// 準備完了している場合抜ける
 	if (IsAllReady()) { return false; }
 
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B))
+	CInputKeyboard*	pKey = CInputKeyboard::GetInstance();	// キーボード情報
+	CInputGamepad*	pPad = CInputGamepad::GetInstance();	// パッド情報
+	if (pKey->GetTrigger(DIK_RETURN) || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B))
 	{
-		// エントリールールの破棄
-		SAFE_REF_RELEASE(m_pRuleManager);
-
-		for (auto& rInfo : m_vecDressInfo)
-		{ // 要素数分繰り返す
-
-			// ドレスアップUIの終了
-			SAFE_UNINIT(rInfo);
-		}
-
 		// チーム設定シーンへ遷移
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
-
 		return true;
 	}
 
@@ -301,13 +367,13 @@ void CEntry_Dressup::Save()
 	for (int i = 0; i < size; i++)
 	{
 		// 自身の操作するインデックス番号取得
-		int controllIdx = m_vecDressInfo[i]->GetMyPlayerIdx();
+		int nPadIdx = m_vecDressInfo[i]->GetPadIdx();
 		CGameManager::ETeamSide side = m_vecDressInfo[i]->GetTeam();
 
 		// 読み込み情報
 		vecSaveInfo[side].emplace_back();
 		CPlayerManager::LoadInfo* pLoadInfo = &vecSaveInfo[side].back();
-		pLoadInfo->nControllIdx = controllIdx;								// 自身の操作するインデックス番号取得
+		pLoadInfo->nControllIdx = nPadIdx;									// 自身の操作するインデックス番号取得
 		pLoadInfo->nHair = m_vecDressInfo[i]->GetHairNowIdx();				// 髪のインデックス番号
 		pLoadInfo->nAccessory = m_vecDressInfo[i]->GetAccessoryNowIdx();	// アクセのインデックス番号
 		pLoadInfo->nFace = m_vecDressInfo[i]->GetFaceNowIdx();				// 顔のインデックス番号

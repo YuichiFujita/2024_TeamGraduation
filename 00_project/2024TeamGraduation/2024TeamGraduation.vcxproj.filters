@@ -803,6 +803,9 @@
     <ClCompile Include="Source\inputKeyButton.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\selectUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1467,6 +1470,9 @@
     </ClInclude>
     <ClInclude Include="Source\inputKeyButton.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\selectUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

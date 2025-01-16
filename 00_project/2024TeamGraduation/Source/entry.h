@@ -18,6 +18,7 @@
 //==========================================================================
 class CEntryScene;
 class CEntry_SetUpTeam;
+class CEntry_Dressup;
 
 //==========================================================================
 // クラス定義
@@ -60,8 +61,8 @@ public:
 
 	void ChangeEntryScene(ESceneType type);					// エントリーシーン切り替え
 	CEntryScene* GetEntryScene() { return m_pEntryScene; }	// エントリーシーン取得
+	void ResetSetupTeam() { m_pSetupTeam = nullptr; }		// チーム等の設定リセット
 	virtual CEntry_SetUpTeam* GetSetupTeam() { return m_pSetupTeam; }	// チーム等の設定取得
-
 
 	//=============================
 	// 静的関数

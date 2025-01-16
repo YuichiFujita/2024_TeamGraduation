@@ -27,7 +27,7 @@ namespace
 	{
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker000.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
-		const float WIDTH = 100.0f;	// 横幅
+		const float WIDTH = 25.0f;	// 横幅
 
 		namespace none
 		{
@@ -153,6 +153,9 @@ HRESULT CEntry_SetUpTeam::Init()
 //==========================================================================
 void CEntry_SetUpTeam::Uninit()
 {
+	// 保存された自身のアドレスを初期化
+	CEntry::GetInstance()->ResetSetupTeam();
+
 	delete this;
 }
 
@@ -284,7 +287,7 @@ HRESULT CEntry_SetUpTeam::CreatePadUI()
 		// 横幅を元にサイズを設定
 		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::WIDTH);
-		size.x /= (float)pad::PTRN.x;
+		size.y *= (float)pad::PTRN.x;
 		m_apPadUI[i]->SetSize(size);
 		m_apPadUI[i]->SetSizeOrigin(m_apPadUI[i]->GetSize());
 	}
@@ -1039,9 +1042,9 @@ int CEntry_SetUpTeam::PadIdxToEntryIdx(int nPadIdx)
 }
 
 //==========================================================================
-// エントリーインデックス取得
+// プレイヤーインデックスのパッドインデックス変換
 //==========================================================================
-int CEntry_SetUpTeam::GetEntryIdx(int nPlayerIdx)
+int CEntry_SetUpTeam::PlayerIdxToPadIdx(int nPlayerIdx)
 {
 	if (nPlayerIdx >= CGameManager::MAX_PLAYER) return -1;
 	return m_TeamSide[nPlayerIdx].nPadIdx;

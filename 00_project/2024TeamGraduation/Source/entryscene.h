@@ -39,7 +39,8 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	virtual CEntry_SetUpTeam* GetSetupTeam() { return nullptr; }	// チーム等の設定取得
+	virtual CEntry_SetUpTeam* GetSetupTeam() { return nullptr; }	// チーム等の設定シーン取得
+	virtual CEntry_Dressup* GetDressupTeam() { return nullptr; }	// ドレスアップ設定シーン取得
 	virtual void Debug() = 0;
 
 	static CEntryScene* Create(CEntry::ESceneType sceneType);	// 生成

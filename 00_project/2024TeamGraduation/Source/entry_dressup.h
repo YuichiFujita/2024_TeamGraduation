@@ -19,6 +19,7 @@
 // 前方宣言
 //==========================================================================
 class CDressupUI;
+class CSelectUI;
 class CEntryRuleManager;
 
 //==========================================================================
@@ -53,6 +54,7 @@ public:
 	virtual HRESULT Init() override;	// 初期化
 	virtual void Uninit() override;		// 終了
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	inline CEntry_Dressup* GetDressupTeam() override { return this; }	// ドレスアップ設定シーン取得
 
 	//-----------------------------
 	// その他
@@ -63,7 +65,10 @@ public:
 	// メンバ関数
 	//=============================
 	void SetState(const EState state);					// 状態設定
-	inline EState GetState() const { return m_state; }	// 状態取得
+	inline EState GetState() const	{ return m_state; }	// 状態取得
+	bool GetSelectOK(const int nPadIdx, const int nPlayerIdx) const;		// 選択可能かの確認
+	MyLib::Vector3 GetDressUIPosition(const int nPlayerIdx) const;			// 着せ替えUI位置取得
+	inline int GetNumPlayer() const	{ return (int)m_vecDressInfo.size(); }	// プレイヤー数取得
 
 private:
 
@@ -80,6 +85,7 @@ private:
 	// メンバ変数
 	//=============================
 	std::vector<CDressupUI*> m_vecDressInfo;	// 着せ替え情報
+	std::vector<CSelectUI*> m_vecSelect;	// 選択情報
 	CEntryRuleManager* m_pRuleManager;	// ルールマネージャー
 	EState m_state;	// 状態
 };
