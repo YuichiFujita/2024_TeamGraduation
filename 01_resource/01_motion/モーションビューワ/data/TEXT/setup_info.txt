@@ -103,4 +103,14 @@ CHARACTERSET
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
+
+	PARTSSET
+		INDEX = 9
+		PARENT = 2
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 -1.50 -11.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
 END_CHARACTERSET

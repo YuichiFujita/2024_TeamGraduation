@@ -5818,7 +5818,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\outUV08.png";
+    "data\\TEXTURE\\nurs\\outUV08.png";
    }
   }
   Material {
@@ -5839,7 +5839,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Downloads\\Mobile - Miitomo - Default Mii\\Mii (Default)\\msk_h.png";
+    "data\\TEXTURE\\nurs\\msk_h.png";
    }
   }
   Material {

@@ -151,7 +151,7 @@ CHARACTERSET
 		PARENT = 2
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
-		POS = 0.00 0.00 0.00
+		POS = 0.00 -1.50 -11.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -174,16 +174,14 @@ COLLIDER_FILENAME = data/TEXT/character/audience/Mii/sphere_collider.json
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 5
+NUM_MOTION = 3
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def.txt			# デフォ
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_spawn.txt			# 入場
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_jump.txt			# 盛り上がり
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_special.txt			# スペシャル
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_despawn.txt			# 退場
+MOTION_FILENAME = data/TEXT/character/nurse/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/nurse/motion_walk.txt		# 歩き
+MOTION_FILENAME = data/TEXT/character/nurse/motion_collect.txt	# 回収
 
 
 END_SCRIPT		# この行は絶対消さないこと！
