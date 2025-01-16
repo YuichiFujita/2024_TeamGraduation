@@ -24,7 +24,7 @@ class CScrollText2D : public CText2D
 {
 public:
 	// コンストラクタ
-	CScrollText2D();
+	CScrollText2D(const int nPriority);
 
 	// デストラクタ
 	~CScrollText2D() override;
@@ -54,7 +54,8 @@ public:
 		const EAlignX alignX = XALIGN_CENTER,	// 横配置
 		const EAlignY alignY = YALIGN_CENTER,	// 縦配置
 		const MyLib::Vector3& rRot = VEC3_ZERO,	// 原点向き
-		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
+		const D3DXCOLOR& rCol = MyLib::color::White(),	// 色
+		const int nPriority = 6							// 優先順位
 	);
 
 	// メンバ関数

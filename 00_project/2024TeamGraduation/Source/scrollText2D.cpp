@@ -18,7 +18,7 @@
 //============================================================
 //	コンストラクタ
 //============================================================
-CScrollText2D::CScrollText2D() :
+CScrollText2D::CScrollText2D(const int nPriority) : CText2D(nPriority),
 	m_labelSE	(CSound::LABEL_NONE),	// 文字送り再生SEラベル
 	m_nNextIdx	(0),	// 次表示する文字インデックス
 	m_fNextTime	(0.0f),	// 次表示するまでの時間
@@ -271,11 +271,12 @@ CScrollText2D* CScrollText2D::Create
 	const EAlignX alignX,			// 横配置
 	const EAlignY alignY,			// 縦配置
 	const MyLib::Vector3& rRot,		// 原点向き
-	const D3DXCOLOR& rCol			// 色
+	const D3DXCOLOR& rCol,			// 色
+	const int nPriority				// 優先順位
 )
 {
 	// 文字送りテキスト2Dの生成
-	CScrollText2D* pScrollText2D = DEBUG_NEW CScrollText2D;
+	CScrollText2D* pScrollText2D = DEBUG_NEW CScrollText2D(nPriority);
 	if (pScrollText2D == nullptr)
 	{ // 生成に失敗した場合
 

@@ -136,7 +136,7 @@ HRESULT CInputKeyButton::Init()
 	m_vecSelect.clear();
 
 	// 背景の生成
-	m_pBG = CObject2D::Create(PRIORITY);
+	m_pBG = CObject2D::Create(6);
 	if (m_pBG == nullptr)
 	{ // 生成に失敗した場合
 
@@ -158,12 +158,13 @@ HRESULT CInputKeyButton::Init()
 	( // 引数
 		title::FONT,		// フォントパス
 		title::ITALIC,		// イタリック
-		L"チーム名を入力",	// 指定文字列
+		L"チーム名を入力",	// 指定文字列	// TODO：ランダムなチーム名
 		title::POS,			// 原点位置
 		title::HEIGHT,		// 文字縦幅
 		title::ALIGN_X,		// 横配置
 		title::ROT,			// 原点向き
-		title::COL			// 色
+		title::COL,			// 色
+		PRIORITY			// 優先順位
 	);
 	if (m_pTitle == nullptr)
 	{ // 生成に失敗した場合
@@ -182,7 +183,8 @@ HRESULT CInputKeyButton::Init()
 		name::HEIGHT,	// 文字縦幅
 		name::ALIGN_X,	// 横配置
 		name::ROT,		// 原点向き
-		name::COL		// 色
+		name::COL,		// 色
+		PRIORITY		// 優先順位
 	);
 	if (m_pName == nullptr)
 	{ // 生成に失敗した場合
@@ -211,7 +213,8 @@ HRESULT CInputKeyButton::Init()
 				select::HEIGHT,			// 文字縦幅
 				select::ALIGN_X,		// 横配置
 				select::ROT,			// 原点向き
-				select::COL_DEFAULT		// 色
+				select::COL_DEFAULT,	// 色
+				PRIORITY				// 優先順位
 			);
 			if (pSelect == nullptr)
 			{ // 生成に失敗した場合
@@ -341,37 +344,7 @@ void CInputKeyButton::Update(const float fDeltaTime, const float fDeltaRate, con
 //============================================================
 void CInputKeyButton::Draw()
 {
-	if (m_pBG != nullptr)
-	{
-		// 背景の描画
-		m_pBG->Draw();
-	}
 
-	if (m_pTitle != nullptr)
-	{
-		// タイトルの描画
-		m_pTitle->Draw();
-	}
-
-	if (m_pName != nullptr)
-	{
-		// 名前の描画
-		m_pName->Draw();
-	}
-
-	for (int i = 0; i < (int)m_vecSelect.size(); i++)
-	{ // 行の総数分繰り返す
-
-		for (int j = 0; j < (int)m_vecSelect[i].size(); j++)
-		{ // 列の総数分繰り返す
-
-			if (m_vecSelect[i][j] != nullptr)
-			{
-				// 選択文字の描画
-				m_vecSelect[i][j]->Draw();
-			}
-		}
-	}
 }
 
 //============================================================
@@ -420,7 +393,7 @@ void CInputKeyButton::ControlSelect()
 {
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
-	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetRepeat(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -430,7 +403,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetRepeat(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -440,7 +413,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetTrigger(DIK_UP) || pPad->GetRepeat(CInputGamepad::BUTTON_UP, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_UP) || pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -465,7 +438,7 @@ void CInputKeyButton::ControlSelect()
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
 	}
-	if (pKey->GetRepeat(DIK_DOWN, 26) || pPad->GetRepeat(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_DOWN) || pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
 

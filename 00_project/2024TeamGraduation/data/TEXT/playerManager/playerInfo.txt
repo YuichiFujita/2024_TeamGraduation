@@ -5,6 +5,15 @@
 # チーム0
 #------------------------------------------------------------------------------
 SETTEAM
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 0
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+
 END_SETTEAM
 #------------------------------------------------------------------------------
 # チーム1
@@ -12,20 +21,11 @@ END_SETTEAM
 SETTEAM
 	SETPLAYER
 		ID_CONTROLL = -1
-		HAIR = 18
-		ACCESSORY = 12
+		HAIR = 0
+		ACCESSORY = 0
 		FACE = 0
-		BODY = 2
+		BODY = 0
 		HANDED = 0
-	END_SETPLAYER
-
-	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 17
-		ACCESSORY = 13
-		FACE = 0
-		BODY = 1
-		HANDED = 1
 	END_SETPLAYER
 
 END_SETTEAM

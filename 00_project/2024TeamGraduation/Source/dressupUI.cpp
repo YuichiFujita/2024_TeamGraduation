@@ -1130,23 +1130,11 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
+	// 元のチームを保存
+	CGameManager::ETeamSide side = m_pPlayer->GetTeam();
+
 	// プレイヤーの削除
 	SAFE_KILL(m_pPlayer);
-
-	// エントリーインデックスを取得
-	CGameManager::ETeamSide side;
-	if (m_nPadIdx > -1)
-	{ // ユーザーの場合
-
-		// エントリーインデックスからチームサイドを取得
-		side = pSetupTeam->GetTeamSide(m_nPadIdx);
-	}
-	else
-	{ // AIの場合
-
-		// AI生成順からチームサイドを取得
-		side = pSetupTeam->GetTeamSideAI(m_nOrdinalAI);
-	}
 
 	// 再生成
 	m_pPlayer = CPlayer::Create

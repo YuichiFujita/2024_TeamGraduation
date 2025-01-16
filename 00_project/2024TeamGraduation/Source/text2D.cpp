@@ -12,20 +12,12 @@
 #include "font.h"
 
 //************************************************************
-//	定数宣言
-//************************************************************
-namespace
-{
-	const int PRIORITY = 7;	// テキスト2Dの優先順位
-}
-
-//************************************************************
 //	子クラス [CText2D] のメンバ関数
 //************************************************************
 //============================================================
 //	コンストラクタ
 //============================================================
-CText2D::CText2D() : CObject(PRIORITY, LAYER::LAYER_2D),
+CText2D::CText2D(const int nPriority) : CObject(nPriority, LAYER::LAYER_2D),
 	m_pFontChar		(nullptr),					// フォント文字
 	m_col			(MyLib::color::White()),	// 色
 	m_alignX		(XALIGN_CENTER),			// 横配置
@@ -205,11 +197,12 @@ CText2D* CText2D::Create
 	const EAlignX alignX,			// 横配置
 	const EAlignY alignY,			// 縦配置
 	const MyLib::Vector3& rRot,		// 原点向き
-	const D3DXCOLOR& rCol			// 色
+	const D3DXCOLOR& rCol,			// 色
+	const int nPriority				// 優先順位
 )
 {
 	// テキスト2Dの生成
-	CText2D* pText2D = new CText2D;
+	CText2D* pText2D = new CText2D(nPriority);
 	if (pText2D == nullptr)
 	{ // 生成に失敗した場合
 
