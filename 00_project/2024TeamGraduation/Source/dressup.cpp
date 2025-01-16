@@ -12,8 +12,10 @@
 
 // 派生先
 #include "dressup_hair.h"		// 髪
+#include "dressup_hair_Mii.h"	// 髪(Mii)
 #include "dressup_accessory.h"	// アクセ
 #include "dressup_face.h"		// 顔
+#include "dressup_face_Mii.h"	// 顔(Mii)
 #include "dressup_uniform.h"	// ユニフォーム
 
 //==========================================================================
@@ -50,12 +52,20 @@ CDressup* CDressup::Create(EType type, CObjectChara* pObjChara, int nSwitchType)
 		pObj = DEBUG_NEW CDressup_Hair;
 		break;
 
+	case CDressup::TYPE_HAIR_MII:
+		pObj = DEBUG_NEW CDressup_Hair_Mii;
+		break;
+
 	case CDressup::TYPE_ACCESSORY:
 		pObj = DEBUG_NEW CDressup_Accessory;
 		break;
 
 	case CDressup::TYPE_FACE:
 		pObj = DEBUG_NEW CDressup_Face;
+		break;
+
+	case CDressup::TYPE_FACE_MII:
+		pObj = DEBUG_NEW CDressup_Face_Mii;
 		break;
 
 	case CDressup::EType::TYPE_UNIFORM:

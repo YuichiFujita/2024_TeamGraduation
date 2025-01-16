@@ -812,6 +812,12 @@
     <ClCompile Include="Source\playerManager_spawn.cpp">
       <Filter>player\playerManager</Filter>
     </ClCompile>
+    <ClCompile Include="Source\dressup_hair_Mii.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dressup_face_Mii.cpp">
+      <Filter>character\dressup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1485,6 +1491,12 @@
     </ClInclude>
     <ClInclude Include="Source\playerManager_spawn.h">
       <Filter>player\playerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_hair_Mii.h">
+      <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dressup_face_Mii.h">
+      <Filter>character\dressup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

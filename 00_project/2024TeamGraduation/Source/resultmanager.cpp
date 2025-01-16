@@ -330,6 +330,17 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::READY && m_bStateTrans)
 	{
+		// リザルトプレイヤー全員確認
+		CListManager<CPlayerResult> list = CPlayerResult::GetList();
+		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+		while (list.ListLoop(itr))
+		{
+			// 勝敗チェック(前座)
+			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+			pPlayer->CheckVictoryPrelude();
+		}
+
+		// 前座勝敗状態
 		SetState(EState::STATE_PRELUDE);
 	}
 }
@@ -359,6 +370,16 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::PRELUDE && m_bStateTrans)
 	{
+		// リザルトプレイヤー全員確認
+		CListManager<CPlayerResult> list = CPlayerResult::GetList();
+		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+		while (list.ListLoop(itr))
+		{
+			// 状態NONEへ
+			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+			pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
+		}
+
 		SetState(EState::STATE_CONTEST_READY);
 	}
 }
@@ -391,6 +412,16 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::READY && m_bStateTrans)
 	{
+		// リザルトプレイヤー全員確認
+		CListManager<CPlayerResult> list = CPlayerResult::GetList();
+		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+		while (list.ListLoop(itr))
+		{
+			// 勝敗チェック(モテ)
+			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+			pPlayer->CheckVictoryContest();
+		}
+
 		SetState(EState::STATE_CONTEST);
 	}
 }
@@ -671,9 +702,7 @@ void CResultManager::CreatePolygon(EState state)
 //==========================================================================
 void CResultManager::CreateEffect()
 {
-	MyLib::Vector3 pos = VEC3_ZERO;
-	pos.y += Prelude::POSY_CROWN;
-
+	MyLib::Vector3 pos;
 	if (m_teamContestWin == CGameManager::ETeamSide::SIDE_NONE)
 	{// 引き分け
 		pos += Draw::POS;
@@ -682,6 +711,7 @@ void CResultManager::CreateEffect()
 	{// 勝利
 		pos += POS_COURT[m_teamContestWin];
 	}
+	pos.y = 0.0f;
 
 	// 生成
 	m_pEfkConfetti = CEffekseerObj::Create

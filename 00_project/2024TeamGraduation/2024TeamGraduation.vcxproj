@@ -211,7 +211,9 @@
     <ClCompile Include="Source\dressupUI.cpp" />
     <ClCompile Include="Source\dressup_accessory.cpp" />
     <ClCompile Include="Source\dressup_face.cpp" />
+    <ClCompile Include="Source\dressup_face_Mii.cpp" />
     <ClCompile Include="Source\dressup_hair.cpp" />
+    <ClCompile Include="Source\dressup_hair_Mii.cpp" />
     <ClCompile Include="Source\dressup_uniform.cpp" />
     <ClCompile Include="Source\edit.cpp" />
     <ClCompile Include="Source\edithandle.cpp" />
@@ -440,7 +442,9 @@
     <ClInclude Include="Source\dressupUI.h" />
     <ClInclude Include="Source\dressup_accessory.h" />
     <ClInclude Include="Source\dressup_face.h" />
+    <ClInclude Include="Source\dressup_face_Mii.h" />
     <ClInclude Include="Source\dressup_hair.h" />
+    <ClInclude Include="Source\dressup_hair_Mii.h" />
     <ClInclude Include="Source\dressup_uniform.h" />
     <ClInclude Include="Source\edit.h" />
     <ClInclude Include="Source\edithandle.h" />
