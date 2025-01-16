@@ -30,7 +30,8 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPlayerUserControlAction::CPlayerUserControlAction()
+CPlayerUserControlAction::CPlayerUserControlAction() :
+	 m_bThrowButtonHold	(false)	// 投げボタンのホールド判定
 {
 
 }
@@ -58,6 +59,9 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 			motion = CPlayer::EMotion::MOTION_CATCH_STANCE_JUMP;
 		}
 		SetPattern(player, motion, CPlayer::EAction::ACTION_CATCH);
+
+		// ボタンホールド判定
+		m_bThrowButtonHold = true;
 	}
 }
 
@@ -66,18 +70,29 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CBall* pBall = player->GetBall();
-
-	if (pBall == nullptr) return;
-
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	CMotion* pMotion = player->GetMotion();
-
 	// タップ取得
 	CInputGamepad::STapInfo tapInfo = pPad->GetTap(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx(), TAPTIME);
+
+	// 投げのボタンホールド判定
+	if (m_bThrowButtonHold)
+	{
+		// 押下判定
+		bool bHold = pPad->GetPress(CInputGamepad::BUTTON::BUTTON_B, player->GetMyPlayerIdx());
+
+		if (pPad->GetRelease(CInputGamepad::BUTTON::BUTTON_B, player->GetMyPlayerIdx()))
+		{// 離された瞬間はなにもしない
+			m_bThrowButtonHold = bHold;
+			return;
+		}
+		m_bThrowButtonHold = bHold;
+	}
+
+	// 投げのボタンホールドされていたら抜ける
+	if (m_bThrowButtonHold) return;
 
 	if (pKey->GetTrigger(DIK_K) ||
 		tapInfo.bInput)
