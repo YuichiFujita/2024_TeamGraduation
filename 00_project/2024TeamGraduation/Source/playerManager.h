@@ -53,6 +53,15 @@ public:
 		OUT_MAX				// この列挙型の総数
 	};
 
+	// 生成する種類
+	enum EType
+	{
+		TYPE_GAME = 0,	// ゲーム
+		TYPE_SPAWN,		// 登場時
+		TYPE_RESULT,	// リザルト
+		TYPE_MAX
+	};
+
 	//=============================
 	// 構造体定義
 	//=============================
@@ -111,8 +120,9 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CPlayerManager* Create(CScene::MODE mode);	// 生成
+	static CPlayerManager* Create(EType type);	// 生成
 	static CPlayerManager* GetInstance() { return m_pInstance; }	// インスタンス取得
+	static std::vector<LoadInfo> GetLoadInfo(CGameManager::ETeamSide side) { return m_vecLoadInfo[side]; }	// 読み込み情報
 
 private:
 
@@ -139,12 +149,6 @@ private:
 	SOutInfo GetInfoRight();		// 右の外野情報取得
 	SOutInfo GetInfoRightNear();	// 右手前の外野情報取得
 
-	// 生成
-	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);						// 左のプレイヤー生成
-	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 左のプレイヤー生成(位置あり)
-	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);						// 右のプレイヤー生成
-	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 右のプレイヤー生成(位置あり)
-
 	// ファイル関連
 	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
 	static void Load();
@@ -162,6 +166,17 @@ private:
 	static std::vector<LoadInfo> m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 読み込み情報
 
 protected:
+
+	//=============================
+	// メンバ関数
+	//=============================
+	// 生成
+	virtual HRESULT CreatePlayer();	// プレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);						// 左のプレイヤー生成
+	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 左のプレイヤー生成(位置あり)
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);						// 右のプレイヤー生成
+	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 右のプレイヤー生成(位置あり)
+
 	//=============================
 	// 静的メンバ変数
 	//=============================

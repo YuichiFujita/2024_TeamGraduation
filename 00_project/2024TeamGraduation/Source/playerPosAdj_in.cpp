@@ -44,8 +44,10 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 	CPlayer::EState state = pPlayer->GetState();	// 状態
 	bool bJump = pPlayer->IsJump();					// ジャンプフラグ
 
-	if (state != CPlayer::EState::STATE_OUTCOURT
-	&&  state != CPlayer::EState::STATE_OUTCOURT_RETURN)
+	if (state != CPlayer::EState::STATE_OUTCOURT &&
+		state != CPlayer::EState::STATE_OUTCOURT_RETURN &&
+		state != CPlayer::EState::STATE_DEAD_CARRY
+		)
 	{ // コート越え状態以外はコート内に補正
 
 		// コート内に補正

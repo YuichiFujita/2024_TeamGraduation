@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 9
+NUM_MODEL = 10
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -28,6 +28,7 @@ MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	# [5]手(右)
 MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x	# [6]左腕(上)
 MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	# [7]左腕(下)
 MODEL_FILENAME = data/MODEL/audience/Mii/Hand_L.x	# [8]手(左)
+MODEL_FILENAME = data/MODEL/audience/Mii/suiren.x	# [9]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -123,6 +124,14 @@ CHARACTERSET
 		INDEX = 8
 		PARENT = 7
 		POS = 0.00 -14.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 9
+		PARENT = 2
+		POS = 0.00 -0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET

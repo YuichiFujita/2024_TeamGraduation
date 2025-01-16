@@ -6,8 +6,47 @@
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
+<<<<<<< HEAD
+		ID_CONTROLL = 0
+<<<<<<< HEAD
+		HAIR = 7
+		ACCESSORY = 12
+		FACE = 7
+		BODY = 1
+		HANDED = 0
+	END_SETPLAYER
+
+END_SETTEAM
+#------------------------------------------------------------------------------
+# チーム1
+#------------------------------------------------------------------------------
+SETTEAM
+	SETPLAYER
 		ID_CONTROLL = -1
+=======
+>>>>>>> ec8f0b15d556bb7f6e38f01530aa6ee7f4987397
+=======
+		ID_CONTROLL = -1
+>>>>>>> 9230673da2706a9460af2d2649f8077b4ddbcaa2
 		HAIR = 0
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+	
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 1
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+	
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 2
 		ACCESSORY = 0
 		FACE = 0
 		BODY = 0
@@ -15,6 +54,8 @@ SETTEAM
 	END_SETPLAYER
 
 END_SETTEAM
+<<<<<<< HEAD
+=======
 #------------------------------------------------------------------------------
 # チーム1
 #------------------------------------------------------------------------------
@@ -27,5 +68,24 @@ SETTEAM
 		BODY = 0
 		HANDED = 0
 	END_SETPLAYER
+	
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 1
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
+	
+	SETPLAYER
+		ID_CONTROLL = -1
+		HAIR = 2
+		ACCESSORY = 0
+		FACE = 0
+		BODY = 0
+		HANDED = 0
+	END_SETPLAYER
 
 END_SETTEAM
+>>>>>>> ec8f0b15d556bb7f6e38f01530aa6ee7f4987397

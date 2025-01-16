@@ -246,6 +246,9 @@ void CStretcher::CollectEndSetting()
 	m_pCarryPlayer.push_back((*m_pCollectPlayer.begin()));	// 運ぶプレイヤー
 	m_pCollectPlayer.erase(m_pCollectPlayer.begin());
 
+	// 追加された運搬プレイヤーに回収時処理
+	m_pCarryPlayer.back()->DeadCollectSetting();
+
 	if (m_pCollectPlayer.empty())
 	{// 要素全員いなくなってたら
 
@@ -345,6 +348,23 @@ void CStretcher::StateCollect(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CStretcher::StateBack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+
+	// 戻ってる途中でも、患者が追加されたら向かう
+	if (!m_pCollectPlayer.empty())
+	{
+		// 再出動
+		SetState(EState::STATE_GO);
+
+		// 先生も再出動
+		m_pLeftNurse->SetState(CSchoolNurse::EState::STATE_BACK);
+		m_pRightNurse->SetState(CSchoolNurse::EState::STATE_BACK);
+
+		// 開始位置更新
+		m_startPos = GetPosition();
+		return;
+	}
+
+
 	// 担架から見た終了地点
 	float fRotY = GetPosition().AngleXZ(STARTPOS) + D3DX_PI * 0.5f;
 	SetRotation(MyLib::Vector3(0.0f, fRotY, 0.0f));

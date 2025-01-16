@@ -89,15 +89,15 @@ namespace Contest
 	const std::map<CGameManager::ETeamSide, MyLib::Vector3> POSR_CAMERA =
 	{
 		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, POSR_HEIGHT, 0.0f)},						// コート不明
-		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(-200.0f, POSR_HEIGHT, 400.0f) + POS_COURT[0]},	// 左コート
-		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(+200.0f, POSR_HEIGHT, 400.0f) + POS_COURT[1]},	// 右コート
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(-37.34f, 220.0f, 260.0f) + POS_COURT[0]},	// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(+37.34f, 220.0f, 260.0f) + POS_COURT[1]},	// 右コート
 	};
 
 	const std::map<CGameManager::ETeamSide, MyLib::Vector3> ROT_CAMERA =
 	{
 		{CGameManager::ETeamSide::SIDE_NONE,	MyLib::Vector3(0.0f, 0.0f, -0.36f)},		// コート不明
-		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(0.0f, -0.49f, 0.12f)},		// 左コート
-		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(0.0f, +0.49f, 0.12f)},		// 右コート
+		{CGameManager::ETeamSide::SIDE_LEFT,	MyLib::Vector3(0.0f, -0.46f, 0.23f)},		// 左コート
+		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(0.0f, +0.46f, 0.23f)},		// 右コート
 	};
 
 	const float DISTANCE_CAMERA = 700.0f;
@@ -215,7 +215,7 @@ HRESULT CResultManager::Init()
 	Load();
 
 	// プレイヤーマネージャーの生成
-	CPlayerManager::Create(CScene::MODE::MODE_RESULT);
+	CPlayerManager::Create(CPlayerManager::EType::TYPE_RESULT);
 
 	// 観客生成
 	CreateAudience();

@@ -65,6 +65,7 @@ public:
 		EFKLABEL_LOGO,					// ÉçÉS
 		EFKLABEL_LOGO_ALWAYS,			// ÉçÉS(èÌÇ…èoåª)
 		EFKLABEL_SANDSMOKE,				// çªâå
+		EFKLABEL_JO,					// ÉWÉáÅ[
 		EFKLABEL_MAX
 	};
 	

@@ -39,6 +39,8 @@ public:
 
 private:
 
+	HRESULT CreatePlayer() override;	// ƒvƒŒƒCƒ„[¶¬
+
 };
 
 #endif

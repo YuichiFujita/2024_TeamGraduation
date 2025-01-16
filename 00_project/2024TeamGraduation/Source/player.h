@@ -99,6 +99,7 @@ public:
 		MOTION_GRIP_DEF,				// デフォグリップ
 		MOTION_GRIP_FRONT,				// 前グリップ
 		MOTION_UNSTABLE,				// おっとっと
+		MOTION_DOOR,					// ドア開け
 		MOTION_BOW,						// 礼
 		MOTION_MAX
 	};
@@ -372,6 +373,7 @@ public:
 	float GetEscapeTime() { return m_fEscapeTime; }						// 端逃げタイマー
 	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);			// 未来位置計算
 	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
+	void DeadCollectSetting();											// 死亡回収時処理
 
 	//=============================
 	// 静的メンバ関数
@@ -470,6 +472,7 @@ private:
 	void StateOutCourt_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// コート越えから戻る
 	void StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コートに侵入トス
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
+	
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
@@ -492,6 +495,12 @@ private:
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
+	
+	//-----------------------------
+	// サウンド
+	//-----------------------------
+	void PlaySoundCrabGrip();	// カニ歩きのグリップ音再生
+	void PlaySoundRandGrip();	// ランダムグリップ音再生
 
 	//-----------------------------
 	// モーション系関数
@@ -517,6 +526,11 @@ private:
 	// ドレスアップ
 	//-----------------------------
 	void DeleteDressUp();	// ドレスアップ削除
+
+	//-----------------------------
+	// エフェクト
+	//-----------------------------
+	void DeleteEffect();	// エフェクト削除
 
 	//=============================
 	// メンバ変数
@@ -571,6 +585,7 @@ private:
 	CEffekseerObj* m_pEfkCatchStance;	// キャッチの構え
 	CEffekseerObj* m_pEfkCatchNormal;	// 通常キャッチ
 	CEffekseerObj* m_pEfkCatchJust;		// ジャストキャッチ
+	CEffekseerObj* m_pEfkDeadAfter;		// 死亡後
 
 	//-----------------------------
 	// ドレスアップ
@@ -578,6 +593,7 @@ private:
 	CDressup* m_pDressUp_Hair;		// ドレスアップ(髪)
 	CDressup* m_pDressUp_Accessory;	// ドレスアップ(アクセ)
 	CDressup* m_pDressUp_Face;		// ドレスアップ(顔)
+	CDressup* m_pDressUp_Uniform;	// ドレスアップ(ユニフォーム)
 
 	//-----------------------------
 	// その他変数

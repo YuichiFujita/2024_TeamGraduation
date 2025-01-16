@@ -64,6 +64,7 @@
 #include "dressup_hair.h"
 #include "dressup_accessory.h"
 #include "dressup_face.h"
+#include "dressup_uniform.h"	// ユニフォーム
 
 #if 0
 #define WALKSE()	// 徒歩音再生
@@ -240,11 +241,13 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_pEfkCatchStance = nullptr;	// キャッチの構え用
 	m_pEfkCatchNormal = nullptr;	// 通常キャッチ
 	m_pEfkCatchJust = nullptr;		// ジャストキャッチ
+	m_pEfkDeadAfter = nullptr;		// 死亡後
 
 	// ドレスアップ
 	m_pDressUp_Hair = nullptr;		// ドレスアップ(髪)
 	m_pDressUp_Accessory = nullptr;	// ドレスアップ(アクセ)
 	m_pDressUp_Face = nullptr;		// ドレスアップ(顔)
+	m_pDressUp_Uniform = nullptr;	// ドレスアップ(ユニフォーム)
 
 	// その他
 	m_fEscapeTime = 0.0f;	// ボール所持タイマー
@@ -464,6 +467,13 @@ HRESULT CPlayer::Init()
 	// ドレスアップ生成
 	CreateDressUp();
 
+	// チームごとのユニフォームにする
+	if (m_pDressUp_Uniform != nullptr)
+	{
+		m_pDressUp_Uniform->SetNowIdx((int)m_typeTeam);
+		m_pDressUp_Uniform->ReRegist();
+	}
+
 	// プレイヤーリストに割当
 	m_List.Regist(this);
 
@@ -550,6 +560,9 @@ void CPlayer::Kill()
 		m_pMarker = nullptr;
 	}
 
+	// エフェクト削除
+	DeleteEffect();
+
 	// 終了処理
 	Uninit();
 }
@@ -566,7 +579,7 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// フラグリセット
 	ResetFrag();
-
+	m_pDressUp_Uniform->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	// 親の更新処理
 	float nowSlowRate = fSlowRate;
 	if (m_bAlign) nowSlowRate *= Align::MULTIPLY_MOTION;
@@ -1142,6 +1155,14 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	}
 		break;
 
+	case EMotion::MOTION_CRAB_LEFT:
+	case EMotion::MOTION_CRAB_RIGHT:
+	{
+		// キュッキュランダム
+		PlaySoundCrabGrip();
+	}
+	break;
+
 	case EMotion::MOTION_RUN:
 	case EMotion::MOTION_RUN_BALL:
 	{
@@ -1196,6 +1217,39 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 
 		// トリガー処理
 		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
+		break;
+
+	case EMotion::MOTION_DEAD_AFTER:	
+		
+		if (m_pEfkDeadAfter == nullptr)
+		{// 死亡後エフェクト
+			m_pEfkDeadAfter = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_JO,
+				GetPosition(),
+				MyLib::Vector3(0.0f, GetRotDest(), 0.0f),	// 向き
+				MyLib::Vector3(),
+				20.0f, false);
+
+			// モデル取得
+			CModel** ppModel = GetModel();
+			int nNumModel = GetNumModel();	// モデル数
+
+			for (int i = 0; i < nNumModel; i++)
+			{
+				if (ppModel[i] == nullptr) continue;
+
+				// テクスチャインデックス番号取得
+				std::vector<int> vecIdx = ppModel[i]->GetIdxTexture();
+				
+				// 全てのテクスチャを消す
+				std::fill(vecIdx.begin(), vecIdx.end(), 0);
+
+				// テクスチャのインデックス割り当て
+				ppModel[i]->SetIdxTexture(vecIdx);
+			}
+
+			// 真っ白
+			m_mMatcol = MyLib::color::White();
+		}
 		break;
 
 	default:
@@ -1318,6 +1372,42 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 }
 
 //==========================================================================
+// カニ歩きのグリップ音再生
+//==========================================================================
+void CPlayer::PlaySoundCrabGrip()
+{
+	// ラベルランダム再生
+	CSound::ELabel label = (CSound::ELabel)UtilFunc::Transformation::Random((int)CSound::ELabel::LABEL_SE_GRIP01, (int)CSound::ELabel::LABEL_SE_GRIP03);
+
+	// サウンドインスタンス取得
+	CSound* pSound = CSound::GetInstance();
+	pSound->PlaySound(label);
+
+	// 周波数設定
+	float frequency = 1.0f + UtilFunc::Transformation::Random(-20, 20) * 0.01f;
+	pSound->SetFrequency(label, frequency);
+}
+
+//==========================================================================
+// ランダムグリップ音再生
+//==========================================================================
+void CPlayer::PlaySoundRandGrip()
+{
+	if (UtilFunc::Transformation::Random(0, 3) != 0) return;
+
+	// ラベルランダム再生
+	CSound::ELabel label = (CSound::ELabel)UtilFunc::Transformation::Random((int)CSound::ELabel::LABEL_SE_GRIP01, (int)CSound::ELabel::LABEL_SE_GRIP03);
+
+	// サウンドインスタンス取得
+	CSound* pSound = CSound::GetInstance();
+	pSound->PlaySound(label);
+
+	// 周波数設定
+	float frequency = 1.0f + UtilFunc::Transformation::Random(-20, 20) * 0.01f;
+	pSound->SetFrequency(label, frequency);
+}
+
+//==========================================================================
 // キャッチ時処理(地上・通常)
 //==========================================================================
 void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
@@ -1326,10 +1416,16 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 	{
 	case CBall::ATK_NORMAL:
 		SetMotion(EMotion::MOTION_CATCH_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		SetMotion(EMotion::MOTION_CATCH_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -1371,10 +1467,16 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	{
 	case CBall::ATK_NORMAL:
 		SetMotion(EMotion::MOTION_JUSTCATCH_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		SetMotion(EMotion::MOTION_JUSTCATCH_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -1471,6 +1573,9 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	// 死んだ
 	result->isdeath = true;
 
+	// 振動
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_DEAD, GetMyPlayerIdx());
+
 	// 近くのAIに操作権を移し、自身をAIにする
 	CPlayerManager::GetInstance()->ChangeUserToAI(this);
 }
@@ -1504,14 +1609,23 @@ void CPlayer::DamageSetting(CBall* pBall)
 	{
 	case CBall::ATK_NORMAL:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_NORMAL);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_JUMP:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
 		break;
 
 	case CBall::ATK_SPECIAL:
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
+
+		// 振動
+		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT_SP, GetMyPlayerIdx());
 		break;
 
 	default:
@@ -1861,7 +1975,10 @@ void CPlayer::StateDeadAfter(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CPlayer::StateDeadCarry(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-
+	if (m_pEfkDeadAfter != nullptr)
+	{// 死亡後エフェクト
+		m_pEfkDeadAfter->SetPosition(GetPosition());
+	}
 }
 
 //==========================================================================
@@ -2215,9 +2332,6 @@ void CPlayer::StateEndDeadAfter()
 {
 	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
-
-	// 担架生成
-	CStretcher::Create(this);
 }
 
 //==========================================================================
@@ -2298,7 +2412,9 @@ void CPlayer::Draw()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	// 普通の描画
-	if (m_state == STATE_DMG)
+	if (m_state == EState::STATE_DMG ||
+		m_state == EState::STATE_DEAD_AFTER || 
+		m_state == EState::STATE_DEAD_CARRY)
 	{
 		CObjectChara::Draw(m_mMatcol);
 	}
@@ -2452,6 +2568,19 @@ MyLib::Vector3 CPlayer::GetLookOffset() const
 }
 
 //==========================================================================
+// 死亡回収時処理
+//==========================================================================
+void CPlayer::DeadCollectSetting()
+{
+	if (m_pEfkDeadAfter != nullptr)
+	{// 死亡後エフェクト
+		m_pEfkDeadAfter->SetTrigger(0);
+		m_pEfkDeadAfter->SetEnableAutoDeath(true);
+		m_pEfkDeadAfter = nullptr;
+	}
+}
+
+//==========================================================================
 // ドレスアップ生成
 //==========================================================================
 void CPlayer::CreateDressUp()
@@ -2476,6 +2605,12 @@ void CPlayer::CreateDressUp()
 		CDressup::EType::TYPE_FACE,	// 着せ替えの種類
 		this,						// 変更するプレイヤー
 		CPlayer::ID_FACE);			// 変更箇所のインデックス
+
+	// ドレスアップ(ユニフォーム)
+	m_pDressUp_Uniform = CDressup::Create(
+		CDressup::EType::TYPE_UNIFORM,	// 着せ替えの種類
+		this,							// 変更するプレイヤー
+		CPlayer::ID_HAIR);				// 変更箇所のインデックス
 }
 
 //==========================================================================
@@ -2486,6 +2621,7 @@ void CPlayer::DeleteDressUp()
 	SAFE_UNINIT(m_pDressUp_Hair);
 	SAFE_UNINIT(m_pDressUp_Accessory);
 	SAFE_UNINIT(m_pDressUp_Face);
+	SAFE_UNINIT(m_pDressUp_Uniform);
 }
 
 //==========================================================================
@@ -2494,9 +2630,10 @@ void CPlayer::DeleteDressUp()
 void CPlayer::BindDressUp(int nHair, int nAccessory, int nFace)
 {
 	// 再割り当て
-	m_pDressUp_Hair->ReRegist(nHair);			// ドレスアップ(髪)
-	m_pDressUp_Accessory->ReRegist(nAccessory);	// ドレスアップ(アクセ)
-	m_pDressUp_Face->ReRegist(nFace);			// ドレスアップ(顔)
+	m_pDressUp_Hair->ReRegist(nHair);				// ドレスアップ(髪)
+	m_pDressUp_Accessory->ReRegist(nAccessory);		// ドレスアップ(アクセ)
+	m_pDressUp_Face->ReRegist(nFace);				// ドレスアップ(顔)
+	m_pDressUp_Uniform->ReRegist((int)m_typeTeam);	// ドレスアップ(ユニフォーム)
 }
 
 //==========================================================================
@@ -2516,6 +2653,18 @@ HRESULT CPlayer::CreateShadow()
 }
 
 //==========================================================================
+// エフェクト削除
+//==========================================================================
+void CPlayer::DeleteEffect()
+{
+	// エフェクト用
+	SAFE_UNINIT(m_pEfkCatchStance);	// キャッチの構え用
+	SAFE_UNINIT(m_pEfkCatchNormal);	// 通常キャッチ
+	SAFE_UNINIT(m_pEfkCatchJust);	// ジャストキャッチ
+	SAFE_UNINIT(m_pEfkDeadAfter);	// 死亡後
+}
+
+//==========================================================================
 // デバッグ処理
 //==========================================================================
 void CPlayer::Debug()
@@ -2524,6 +2673,11 @@ void CPlayer::Debug()
 
 	// 
 	ImGui::Checkbox("bMove", &m_bDebugMove);
+
+	if (ImGui::Button("Grip"))
+	{
+		PlaySoundCrabGrip();
+	}
 
 	//-----------------------------
 	// 位置
