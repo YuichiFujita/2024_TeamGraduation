@@ -96,6 +96,7 @@ public:
 		MOTION_DAMAGE_BACK,				// 背後ダメージ
 		MOTION_DEAD,					// 死亡
 		MOTION_DEAD_AFTER,				// 死亡後
+		MOTION_DEAD_COLLECT,			// 死亡回収
 		MOTION_GRIP_DEF,				// デフォグリップ
 		MOTION_GRIP_FRONT,				// 前グリップ
 		MOTION_UNSTABLE,				// おっとっと

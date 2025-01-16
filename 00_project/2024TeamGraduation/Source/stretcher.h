@@ -60,6 +60,7 @@ public:
 	//=============================
 	void SetState(EState state);							// 状態設定
 	void SetEnableEnd(bool bEnd) { m_bEndSetting = bEnd; }	// 終了の設定
+	void CollectSetting();									// 回収時設定
 	CPlayer* GetCollectPlayer();							// 回収するプレイヤー取得
 
 	//=============================
