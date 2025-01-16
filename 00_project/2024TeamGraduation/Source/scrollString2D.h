@@ -24,7 +24,7 @@ class CScrollString2D : public CString2D
 {
 public:
 	// コンストラクタ
-	CScrollString2D();
+	CScrollString2D(const int nPriority);
 
 	// デストラクタ
 	~CScrollString2D() override;
@@ -50,7 +50,8 @@ public:
 		const float fHeight = 100.0f,			// 文字縦幅
 		const EAlignX alignX = XALIGN_CENTER,	// 横配置
 		const MyLib::Vector3& rRot = VEC3_ZERO,	// 原点向き
-		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
+		const D3DXCOLOR& rCol = MyLib::color::White(),	// 色
+		const int nPriority = 6							// 優先順位
 	);
 	static CScrollString2D* Create	// 生成 (ワイド文字列)
 	( // 引数
@@ -62,7 +63,8 @@ public:
 		const float fHeight = 100.0f,			// 文字縦幅
 		const EAlignX alignX = XALIGN_CENTER,	// 横配置
 		const MyLib::Vector3& rRot = VEC3_ZERO,	// 原点向き
-		const D3DXCOLOR& rCol = MyLib::color::White()	// 色
+		const D3DXCOLOR& rCol = MyLib::color::White(),	// 色
+		const int nPriority = 6							// 優先順位
 	);
 
 	// メンバ関数

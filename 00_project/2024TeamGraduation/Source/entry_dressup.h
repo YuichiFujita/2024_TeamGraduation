@@ -97,7 +97,7 @@ private:
 	CString2D* m_apTeamName[CGameManager::SIDE_MAX];	// チーム名情報
 	std::vector<CDressupUI*> m_vecDressInfo;			// 着せ替え情報
 	std::vector<CSelectUI*> m_vecSelect;				// 選択情報
-	CEntryRuleManager* m_pRuleManager;	// ルールマネージャー
+	CEntryRuleManager* m_pRuleManager;					// ルールマネージャー
 	CObject2D* m_pBack;	// 戻る情報
 	EState m_state;		// 状態
 };

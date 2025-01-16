@@ -13,20 +13,12 @@
 #include "char2D.h"
 
 //************************************************************
-//	定数宣言
-//************************************************************
-namespace
-{
-	const int PRIORITY = 7;	// 文字列2Dの優先順位
-}
-
-//************************************************************
 //	子クラス [CString2D] のメンバ関数
 //************************************************************
 //============================================================
 //	コンストラクタ
 //============================================================
-CString2D::CString2D() : CObject(PRIORITY, LAYER::LAYER_2D),
+CString2D::CString2D(const int nPriority) : CObject(nPriority, LAYER::LAYER_2D),
 	m_ppChar		(nullptr),					// 文字ポリゴンの情報
 	m_pFontChar		(nullptr),					// フォント文字
 	m_col			(MyLib::color::White()),	// 色
@@ -203,7 +195,8 @@ CString2D *CString2D::Create
 	const float fHeight,			// 文字縦幅
 	const EAlignX alignX,			// 横配置
 	const MyLib::Vector3& rRot,		// 原点向き
-	const D3DXCOLOR& rCol			// 色
+	const D3DXCOLOR& rCol,			// 色
+	const int nPriority				// 優先順位
 )
 {
 	// ワイド文字列変換
@@ -219,7 +212,8 @@ CString2D *CString2D::Create
 		fHeight,	// 文字縦幅
 		alignX,		// 横配置
 		rRot,		// 原点向き
-		rCol		// 色
+		rCol,		// 色
+		nPriority	// 優先順位
 	);
 }
 
@@ -235,11 +229,12 @@ CString2D* CString2D::Create
 	const float fHeight,			// 文字縦幅
 	const EAlignX alignX,			// 横配置
 	const MyLib::Vector3& rRot,		// 原点向き
-	const D3DXCOLOR& rCol			// 色
+	const D3DXCOLOR& rCol,			// 色
+	const int nPriority				// 優先順位
 )
 {
 	// 文字列2Dの生成
-	CString2D *pString2D = DEBUG_NEW CString2D;
+	CString2D *pString2D = DEBUG_NEW CString2D(nPriority);
 	if (pString2D == nullptr)
 	{ // 生成に失敗した場合
 
