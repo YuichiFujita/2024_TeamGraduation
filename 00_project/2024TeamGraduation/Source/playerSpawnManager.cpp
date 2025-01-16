@@ -127,10 +127,6 @@ void CPlayerSpawnManager::Uninit(void)
 	// オブジェクトを破棄
 	Release();
 
-	// 体育館の壁削除
-	CGymWallManager* pWall = CGameManager::GetInstance()->GetGymWallManager();
-	pWall->SetIsWall(false);
-
 	// 自身の保存していたインスタンスを初期化
 	m_pInstance = nullptr;
 }
@@ -140,6 +136,10 @@ void CPlayerSpawnManager::Uninit(void)
 //============================================================
 void CPlayerSpawnManager::Kill()
 {
+	// 体育館の壁削除
+	CGymWallManager* pWall = CGameManager::GetInstance()->GetGymWallManager();
+	pWall->SetIsWall(false);
+
 	// 自身の終了
 	Uninit();
 }

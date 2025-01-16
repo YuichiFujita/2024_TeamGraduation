@@ -70,6 +70,10 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 //==========================================================================
 void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボールなかったら抜ける
+	CBall* pBall = player->GetBall();
+	if (pBall == nullptr) return;
+
 	// インプット情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();

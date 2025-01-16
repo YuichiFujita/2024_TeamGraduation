@@ -61,6 +61,16 @@ HRESULT CPlayerManager_Game::Init()
 		CPlayer::EHandedness::HAND_R				// —˜‚«Žè
 	);
 
+	for (int i = 0; i < 10; i++)
+	{
+		CPlayer* pAI = CPlayer::Create(MyLib::Vector3(200.0f, 0.0f, 0.0f), CGameManager::SIDE_RIGHT, CPlayer::EFieldArea::FIELD_IN, CPlayer::EBaseType::TYPE_AI);
+		if (pAI == nullptr)
+		{
+			return E_FAIL;
+		}
+		pAI->SetRotation(MyLib::Vector3(0.0f, HALF_PI, 0.0f));
+		pAI->SetRotDest(HALF_PI);
+	}
 	return S_OK;
 }
 

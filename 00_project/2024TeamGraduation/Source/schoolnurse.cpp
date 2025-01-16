@@ -92,7 +92,7 @@ HRESULT CSchoolNurse::Init()
 	SetType(CObject::TYPE::TYPE_PLAYER);
 
 	// 状態
-	SetState(EState::STATE_NONE);
+	SetState(EState::STATE_GO);
 
 	// キャラ作成
 	HRESULT hr = SetCharacter(CHARAFILE);
