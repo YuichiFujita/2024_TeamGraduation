@@ -248,6 +248,7 @@ private:
 	int m_nDamage;			// ダメージ
 	int m_nCoverHeal;		// カバー回復
 	float m_fKnockback;		// ノックバック
+	float m_fBallAngle;		// 回転角度
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
 	CEffekseerObj* m_pAura;			// オーラ
 };

@@ -50,6 +50,7 @@ namespace
 	const int	VIEW_ANGLE = 104;		// 視野角
 	const float	DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
 	const float	REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
+	const float REV_ROLL = 0.0025f;		// 回転量の補正係数
 
 	namespace move
 	{
@@ -218,7 +219,8 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_pAura			(nullptr),		// オーラ
 	m_nDamage		(0),			// ダメージ
 	m_nCoverHeal	(0),			// カバー回復
-	m_fKnockback	(0.0f)			// ノックバック
+	m_fKnockback	(0.0f),			// ノックバック
+	m_fBallAngle	(0.0f)			// 回転角度
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -861,12 +863,53 @@ void CBall::CalWorldMtx()
 
 		// 影の描画を停止
 		m_pShadow->SetEnableDisp(false);
+
+		// 回転角度を初期化
+		m_fBallAngle = 0.0f;
 	}
 	else
 	{ // キャッチしていない場合
 
-		// 親クラスのワールドマトリックス計算
-		CObjectX::CalWorldMtx();
+		MyLib::Vector3 pos = GetPosition();			// 自身の位置
+		MyLib::Vector3 rot = GetRotation();			// 自身の向き
+		MyLib::Vector3 scale = GetScale();			// 自身の拡大率
+		MyLib::Matrix mtxWorld = GetWorldMtx();		// 自身のワールドマトリックス
+		MyLib::Matrix mtxRot, mtxTrans, mtxScale;	// 計算用マトリックス宣言
+
+		// ワールドマトリックスの初期化
+		mtxWorld.Identity();
+
+		// スケールを反映する
+		mtxScale.Scaling(scale);
+		mtxWorld.Multiply(mtxWorld, mtxScale);
+
+		// 回転角度を回す
+		m_fBallAngle += (m_fInitialSpeed + m_fMoveSpeed) * REV_ROLL;
+
+		// 回転軸を正規化
+		MyLib::Vector3 vecAxis = GetMove();	// 移動ベクトルを取得
+		vecAxis.y = 0.0f;					// Y軸を無視する
+		vecAxis = vecAxis.rotateAroundY();	// 移動方向から90度回転
+		vecAxis = vecAxis.Normal();			// ベクトルを正規化
+
+		// クォータニオンを作成
+		D3DXQUATERNION quat;
+		D3DXQuaternionRotationAxis(&quat, &vecAxis, m_fBallAngle);
+
+		// クォータニオンから回転行列を作成
+		D3DXMATRIX mtxDefRot = mtxRot.ConvertD3DXMATRIX();
+		D3DXMatrixRotationQuaternion(&mtxDefRot, &quat);
+
+		// 向きを反映する
+		mtxRot = mtxDefRot;
+		mtxWorld.Multiply(mtxWorld, mtxRot);
+
+		// 位置を反映する
+		mtxTrans.Translation(pos);
+		mtxWorld.Multiply(mtxWorld, mtxTrans);
+
+		// マトリックスを反映
+		SetWorldMtx(mtxWorld);
 
 		// 影の描画を再開
 		m_pShadow->SetEnableDisp(true);

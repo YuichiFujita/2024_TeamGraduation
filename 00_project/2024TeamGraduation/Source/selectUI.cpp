@@ -309,9 +309,6 @@ HRESULT CSelectUI::CreateUI()
 	// 大きさの設定
 	m_pFrame->SetSize(frame::dressup::SIZE);
 
-	// 種類の設定
-	m_pFrame->SetType(CObject::TYPE::TYPE_OBJECT2D);
-
 	// コントローラーUIの生成
 	m_pPadUI = CObject2D_Anim::Create
 	( // 引数
