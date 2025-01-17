@@ -44,8 +44,8 @@ namespace
 	// フェード情報
 	namespace fade
 	{
-		const D3DXCOLOR INIT_COL = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);	// 初期化色
-		const D3DXCOLOR SET_COL	 = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.84f);	// 設定色
+		const D3DXCOLOR INIT_COL = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);	// 初期化色
+		const D3DXCOLOR SET_COL	 = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.9f);	// 設定色
 		const float	ADD_ALPHA = 0.025f;	// 透明度の加算量
 		const float	SUB_ALPHA = 0.025f;	// 透明度の減算量
 	}
@@ -55,22 +55,22 @@ namespace
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::RULE_MAX);	// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(320.0f, 150.0f, 0.0f);		// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 130.0f) * 0.5f;	// 大きさ
-		const MyLib::Vector3	SPACE	= MyLib::Vector3(0.0f, 140.0f, 0.0f);		// 空白
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 75.0f);	// 大きさ
+		const MyLib::Vector3	SPACE	= MyLib::Vector3(0.0f, 200.0f, 0.0f);		// 空白
 	}
 
 	// 開始ボタン情報
 	namespace start
 	{
 		const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x, 595.0f, 0.0f);	// 位置
-		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 112.5f) * 0.5f;			// 大きさ
+		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 90.0f);			// 大きさ
 	}
 
 	// タイム情報
 	namespace time
 	{
 		const MyLib::Vector3 POS		= MyLib::Vector3(930.0f, 150.0f, 0.0f);	// タイマー位置
-		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(40.0f, 40.0f);			// タイマー数字大きさ
+		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(30.0f, 30.0f);			// タイマー数字大きさ
 		const MyLib::Vector2 PART_SIZE	= MyLib::Vector2(30.0f, 40.0f);			// タイマー区切り大きさ
 		const MyLib::Vector2 VAL_SPACE	= MyLib::Vector2(40.0f, 0.0f);			// タイマー数字空白
 		const MyLib::Vector2 PART_SPACE	= MyLib::Vector2(60.0f, 0.0f);			// タイマー区切り空白
@@ -81,13 +81,13 @@ namespace
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::LIFE_MAX);				// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(930.0f, time::POS.y + rule::SPACE.y, 0.0f);	// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 96.0f) * 0.5f;							// 大きさ
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 65.0f);							// 大きさ
 	}
 
 	// 選択情報
 	namespace select
 	{
-		const float	ADD_SIZE = 17.5f;	// 大きさ加算量
+		const float	ADD_SIZE = 2.5f;	// 大きさ加算量
 
 		const MyLib::Vector3	POS	= MyLib::Vector3(930.0f, rule::POS.y, 0.0f);	// 位置
 		const D3DXCOLOR			COL	= D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.6f);			// 色
@@ -110,7 +110,7 @@ namespace
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(MAX_RULE_ARROW, 1);	// テクスチャ分割数
 		const float				SIZE	= 40.0f;								// 大きさ
 		const MyLib::Vector3	POS		= MyLib::Vector3(select::POS.x - select::SIZE_RULE.x - SPACE_EDGE, select::POS.y, 0.0f);	// 位置
-		const MyLib::Vector3	SPACE	= MyLib::Vector3(select::SIZE_RULE.x * 2.0f + (SPACE_EDGE * 2.0f), 0.0f, 0.0f);	// 空白
+		const MyLib::Vector3	SPACE	= MyLib::Vector3(select::SIZE_RULE.x * 0.5f + 50.0f, 0.0f, 0.0f);	// 空白
 		const D3DXCOLOR			MIN_COL	= D3DXCOLOR(1.0f, 1.0f, 1.0f, BASIC_ALPHA - MAX_ADD_ALPHA);	// 色
 	}
 
@@ -146,6 +146,7 @@ CEntryRuleManager::CEntryRuleManager(CEntry_Dressup* pParent) :
 	m_pStart	 (nullptr),		// 開始ボタンの情報
 	m_pControl	 (nullptr),		// 操作表示の情報
 	m_pFade		 (nullptr),		// フェードの情報
+	m_pBG		 (nullptr),		// 背景の情報
 	m_pParent	 (pParent),		// 親の情報
 	m_state		 (STATE_INIT),	// 状態
 	m_nSelect	 (RULE_TIME),	// 現在の選択
@@ -187,6 +188,31 @@ HRESULT CEntryRuleManager::Init()
 	m_nOldSelect = RULE_TIME;		// 前回の選択
 	m_fSinControlAlpha	= -HALF_PI;	// 操作表示の透明向き
 	m_fSinArrowAlpha	= -HALF_PI;	// 矢印表示の透明向き
+	
+	// 背景の生成
+	{
+		m_pBG = CObject2D::Create(PRIORITY);
+		if (m_pBG == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// 位置を設定
+		m_pBG->SetPosition(VEC3_SCREEN_CENT);
+
+		// 大きさを設定
+		m_pBG->SetSize(MyLib::Vector2(640.0f, 360.0f));
+
+		// 色を設定
+		m_pBG->SetColor(fade::INIT_COL);
+
+		// テクスチャを登録・割当
+		int texID = pTexture->Regist("data\\TEXTURE\\entry\\bg.png");
+		m_pBG->BindTexture(texID);
+	}
+
 
 	// フェードの生成
 	{
@@ -202,10 +228,14 @@ HRESULT CEntryRuleManager::Init()
 		m_pFade->SetPosition(VEC3_SCREEN_CENT);
 
 		// 大きさを設定
-		m_pFade->SetSize(VEC2_SCREEN_SIZE);
+		m_pFade->SetSize(MyLib::Vector2(640.0f, 360.0f));
 
 		// 色を設定
 		m_pFade->SetColor(fade::INIT_COL);
+		
+		// テクスチャを登録・割当
+		int texID = pTexture->Regist("data\\TEXTURE\\entry\\bg_scroll.png");
+		m_pFade->BindTexture(texID);
 	}
 
 	// ルールタイトルの生成
@@ -231,10 +261,16 @@ HRESULT CEntryRuleManager::Init()
 			}
 
 			// テクスチャを登録・割当
-			m_apRuleTitle[i]->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_RULE_TITLE]));
+			int texID = pTexture->Regist(TEXTURE[TEXTURE_RULE_TITLE]);
+			m_apRuleTitle[i]->BindTexture(texID);
 
-			// 大きさを設定
-			m_apRuleTitle[i]->SetSize(rule::SIZE);
+			// 画像比率から大きさを設定
+			MyLib::Vector2 size = pTexture->GetImageSize(texID);
+			size.y *= (1.0f / (float)rule::PART.y);
+
+			size = UtilFunc::Transformation::AdjustSizeByHeight(size, rule::SIZE.y);	// 縦幅を元にサイズ計算
+			m_apRuleTitle[i]->SetSize(size);
+			m_apRuleTitle[i]->SetSizeOrigin(size);
 
 			// パターンを設定
 			m_apRuleTitle[i]->SetPatternAnim(i);
@@ -277,14 +313,18 @@ HRESULT CEntryRuleManager::Init()
 			return E_FAIL;
 		}
 
-		// テクスチャを登録・割当
-		m_pSelect->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_SELECT]));
-
 		// 位置を設定
 		m_pSelect->SetPosition(select::POS);
 
-		// 大きさを設定
-		m_pSelect->SetSize(select::SIZE_RULE);
+		// テクスチャを登録・割当
+		int texID = pTexture->Regist(TEXTURE[TEXTURE_SELECT]);
+		m_pSelect->BindTexture(texID);
+
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID);
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, select::SIZE_RULE.y);	// 縦幅を元にサイズ計算
+		m_pSelect->SetSize(size);
+		m_pSelect->SetSizeOrigin(size);
 
 		// 色を設定
 		m_pSelect->SetColor(select::COL);
@@ -301,13 +341,17 @@ HRESULT CEntryRuleManager::Init()
 		}
 
 		// テクスチャを登録・割当
-		m_pStart->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_START]));
+		int texID = pTexture->Regist(TEXTURE[TEXTURE_START]);
+		m_pStart->BindTexture(texID);
+
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID);
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, start::SIZE.y);	// 縦幅を元にサイズ計算
+		m_pStart->SetSize(size);
+		m_pStart->SetSizeOrigin(size);
 
 		// 位置を設定
 		m_pStart->SetPosition(start::POS);
-
-		// 大きさを設定
-		m_pStart->SetSize(start::SIZE);
 
 		// 色を設定
 		m_pStart->SetColor(select::DEFAULT_COL);
@@ -324,13 +368,17 @@ HRESULT CEntryRuleManager::Init()
 		}
 
 		// テクスチャを登録・割当
-		m_pControl->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_CONTROL]));
+		int texID = pTexture->Regist(TEXTURE[TEXTURE_CONTROL]);
+		m_pControl->BindTexture(texID);
+
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID);
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, control::SIZE.y);	// 縦幅を元にサイズ計算
+		m_pControl->SetSize(size);
+		m_pControl->SetSizeOrigin(size);
 
 		// 位置を設定
 		m_pControl->SetPosition(control::POS);
-
-		// 大きさを設定
-		m_pControl->SetSize(control::SIZE);
 
 		// 色を設定
 		m_pControl->SetColor(MyLib::color::White(0.0f));
@@ -355,10 +403,16 @@ HRESULT CEntryRuleManager::Init()
 		}
 
 		// テクスチャを登録・割当
-		m_pLife->BindTexture(pTexture->Regist(TEXTURE[TEXTURE_LIFE]));
+		int texID = pTexture->Regist(TEXTURE[TEXTURE_LIFE]);
+		m_pLife->BindTexture(texID);
 
-		// 大きさを設定
-		m_pLife->SetSize(life::SIZE);
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID); 
+		size.y *= (1.0f / (float)life::PART.y);
+
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, life::SIZE.y);	// 縦幅を元にサイズ計算
+		m_pLife->SetSize(size);
+		m_pLife->SetSizeOrigin(size);
 
 		// 色を設定
 		m_pLife->SetColor(select::DEFAULT_COL);
@@ -444,6 +498,9 @@ HRESULT CEntryRuleManager::Uninit()
 	// フェードの終了
 	SAFE_UNINIT(m_pFade);
 
+	// 背景の終了
+	SAFE_UNINIT(m_pBG);
+
 	return S_OK;
 }
 
@@ -452,6 +509,23 @@ HRESULT CEntryRuleManager::Uninit()
 //============================================================
 void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// フェードスクロール
+	D3DXVECTOR2* pTex = m_pFade->GetTex();
+	
+	static float scrollX = 0.00038f;
+	static float scrollY = 0.001f;
+
+	ImGui::DragFloat("scrollX", &scrollX, 0.00001f, 0.0f, 0.0f, "%.8f");
+	scrollY = scrollX * UtilFunc::Calculation::AspectRatio(D3DXVECTOR2(640.0f, 360.0f));
+
+	for (int i = 0; i < 4; i++)
+	{
+		pTex[i].x += scrollX;
+		pTex[i].y -= scrollY;
+	}
+
+
+
 	// フェード中の場合抜ける
 	if (GET_MANAGER->GetFade()->GetState() != CFade::STATE_NONE) { return; }
 
@@ -719,6 +793,7 @@ void CEntryRuleManager::UpdateFadeIn()
 	SetAlphaUI(fAlphaFade * 2.0f, false);
 
 	// 透明度を反映
+	m_pBG->SetAlpha(fAlphaFade);
 	m_pFade->SetAlpha(fAlphaFade);
 }
 
@@ -745,6 +820,7 @@ void CEntryRuleManager::UpdateFadeOut()
 	SetAlphaUI(fAlphaFade * 2.0f, true);
 
 	// 透明度を反映
+	m_pBG->SetAlpha(fAlphaFade);
 	m_pFade->SetAlpha(fAlphaFade);
 }
 
@@ -857,11 +933,13 @@ void CEntryRuleManager::Select()
 
 			// 大きさを変更
 			sizeSelect = select::SIZE_RULE;
+			sizeSelect.x *= 0.5f;
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
 				// 矢印の位置を変更
-				MyLib::Vector3 setpos = MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f);
+				MyLib::Vector3 setpos = posSelect;
+				setpos += (m_apArrow[i]->GetDirection() == CArrowUI::EDirection::DIRECTION_L) ? -arrow::SPACE : arrow::SPACE;
 				m_apArrow[i]->SetPosition(setpos);
 				m_apArrow[i]->SetOriginPosition(setpos);
 
@@ -877,6 +955,7 @@ void CEntryRuleManager::Select()
 
 			// 大きさを変更
 			sizeSelect = select::SIZE_START;
+			sizeSelect.x *= 0.75f;
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
@@ -906,14 +985,15 @@ void CEntryRuleManager::Select()
 
 			// 大きさを変更
 			sizeSelect = select::SIZE_RULE;
+			sizeSelect.x *= 0.5f;
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
 				// 矢印の位置を変更
-				MyLib::Vector3 setpos = MyLib::Vector3(arrow::POS.x + (arrow::SPACE.x * (float)i), arrow::POS.y + rule::SPACE.y * (float)m_nSelect, 0.0f);
+				MyLib::Vector3 setpos = posSelect;
+				setpos += (m_apArrow[i]->GetDirection() == CArrowUI::EDirection::DIRECTION_L) ? -arrow::SPACE : arrow::SPACE;
 				m_apArrow[i]->SetPosition(setpos);
 				m_apArrow[i]->SetOriginPosition(setpos);
-
 
 				// 自動描画をONにする
 				m_apArrow[i]->SetEnableDisp(true);
@@ -927,6 +1007,7 @@ void CEntryRuleManager::Select()
 
 			// 大きさを変更
 			sizeSelect = select::SIZE_START;
+			sizeSelect.x *= 0.75f;
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 

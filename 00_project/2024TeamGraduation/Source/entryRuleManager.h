@@ -102,6 +102,7 @@ public:
 	static HRESULT LoadSetting(SRule* pRule);	// ゲーム設定読込
 
 private:
+	
 	// メンバ関数
 	void UpdateFadeIn();	// フェードイン更新
 	void UpdateFadeOut();	// フェードアウト更新
@@ -122,6 +123,7 @@ private:
 	CObject2D*	m_pSelect;		// 選択の情報
 	CObject2D*	m_pStart;		// 開始ボタンの情報
 	CObject2D*	m_pControl;		// 操作表示の情報
+	CObject2D*	m_pBG;			// 背景の情報
 	CObject2D*	m_pFade;		// フェードの情報
 	CEntry_Dressup* m_pParent;	// 親の情報
 	EState	m_state;			// 状態

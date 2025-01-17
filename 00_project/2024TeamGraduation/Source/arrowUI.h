@@ -74,7 +74,8 @@ public:
 	
 	// その他
 	void SetSizeByWidth(const float width);								// 横幅からサイズ設定
-	inline void SetValueFloat(float value) { m_fValueFloat = value; }	// ふわふわ量設定
+	inline void SetValueFloat(float value)	{ m_fValueFloat = value; }	// ふわふわ量設定
+	EDirection GetDirection()				{ return m_direction; }		// 方向
 
 	//=============================
 	// 静的メンバ関数

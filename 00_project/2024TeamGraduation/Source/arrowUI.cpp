@@ -237,6 +237,10 @@ void CArrowUI::SetSizeByWidth(const float width)
 	CTexture* pTexture = CTexture::GetInstance();
 	MyLib::Vector2 size = pTexture->GetImageSize(GetIdxTexture());
 
+	// 分割数で割る
+	size.x *= (1.0f / (float)GetDivisionU());
+	size.y *= (1.0f / (float)GetDivisionV());
+
 	// 縦幅を元にサイズ計算
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, width);
 	SetSize(size);

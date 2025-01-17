@@ -37,9 +37,11 @@ public:
 	//--------------------------
 	// パターン
 	//--------------------------
-	void SetDivisionU(int div);				// U分割数設定
-	void SetDivisionV(int div);				// V分割数設定
-	void SetDivisionUV(int divU, int divV);	// UV分割数設定
+	void SetDivisionU(int div);					// U分割数設定
+	int GetDivisionU() { return m_nDivisionU; }	// Uの分割数
+	void SetDivisionV(int div);					// V分割数設定
+	int GetDivisionV() { return m_nDivisionV; }	// Uの分割数
+	void SetDivisionUV(int divU, int divV);		// UV分割数設定
 
 	//--------------------------
 	// アニメーション関連
