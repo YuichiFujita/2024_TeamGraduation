@@ -12,6 +12,7 @@
 #include "objectChara.h"
 #include "object2D_Anim.h"
 #include "number.h"
+#include "transUI.h"
 
 //==========================================================================
 // 定数定義
@@ -21,7 +22,7 @@ namespace
 	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
-	const int PRIORITY = 7;	// 優先順位
+	const int PRIORITY = 5;	// 優先順位
 
 	namespace pad
 	{
@@ -63,18 +64,13 @@ namespace
 		const std::string TEXTURE = "data\\TEXTURE\\number\\number000.png";	// 数字テクスチャ
 		const float WIDTH = 200.0f;	// 横幅
 	}
-
-	namespace allready
-	{
-		const std::string TEXTURE = "data\\TEXTURE\\entry\\allReady.png";	// 数字テクスチャ
-	}
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CEntry_SetUpTeam::CEntry_SetUpTeam() : CEntryScene(),
-	m_pAllReady	(nullptr)	// 準備完了済み情報
+	m_pTransUI	(nullptr)	// 遷移UI情報
 {
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
@@ -117,13 +113,6 @@ HRESULT CEntry_SetUpTeam::Init()
 	// 前回のセットアップ読込 // TODO：初期情報の書き出しをCManager破棄時に呼び出し（このままだと前回の誰かの設定がそのままになる）
 	Load();
 
-	// 準備完了表示の生成
-	if (FAILED(CreateAllReady()))
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
 	// チーム人数の生成
 	if (FAILED(CreateNumInTeam()))
 	{ // 生成に失敗した場合
@@ -133,6 +122,13 @@ HRESULT CEntry_SetUpTeam::Init()
 
 	// コントローラーUIの生成
 	if (FAILED(CreatePadUI()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 遷移UIの生成
+	if (FAILED(CreateTransUI()))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -178,34 +174,6 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 
 	// 着せ替え遷移
 	TransDressUp(bAllReady);
-}
-
-//==========================================================================
-// 準備完了表示の生成処理
-//==========================================================================
-HRESULT CEntry_SetUpTeam::CreateAllReady()
-{
-	// 準備完了表示の生成
-	m_pAllReady = CObject2D::Create(PRIORITY);
-	if (m_pAllReady == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
-	// 位置/大きさを設定
-	m_pAllReady->SetPosition(VEC3_SCREEN_CENT);
-	m_pAllReady->SetSize(MyLib::Vector2(100.0f, 100.0f));
-
-	// テクスチャの割当
-	CTexture* pTexture = CTexture::GetInstance();
-	int nTexID = pTexture->Regist(allready::TEXTURE);
-	m_pAllReady->BindTexture(nTexID);
-
-	// 自動描画をOFFにする
-	m_pAllReady->SetEnableDisp(false);
-
-	return S_OK;
 }
 
 //==========================================================================
@@ -272,24 +240,40 @@ HRESULT CEntry_SetUpTeam::CreatePadUI()
 
 		// 自動再生をOFFにする
 		m_apPadUI[i]->SetEnableAutoPlay(false);
-
+		
 		// 自動描画をOFFにする
 		m_apPadUI[i]->SetEnableDisp(false);
-
+		
 		// テクスチャの割当
 		CTexture* pTexture = CTexture::GetInstance();
 		int nTexID = pTexture->Regist(pad::TEXTURE);
 		m_apPadUI[i]->BindTexture(nTexID);
-
+		
 		// テクスチャパターンの設定
 		m_apPadUI[i]->SetPatternAnim(i);
-
+		
 		// 横幅を元にサイズを設定
 		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::WIDTH);
 		size.y *= (float)pad::PTRN.x;
 		m_apPadUI[i]->SetSize(size);
 		m_apPadUI[i]->SetSizeOrigin(m_apPadUI[i]->GetSize());
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// 遷移UIの生成処理
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreateTransUI()
+{
+	// 遷移UIの生成
+	m_pTransUI = CTransUI::Create();
+	if (m_pTransUI == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -338,8 +322,8 @@ void CEntry_SetUpTeam::FillAI()
 //==========================================================================
 void CEntry_SetUpTeam::KillUI()
 {
-	// 準備完了表示の削除
-	SAFE_KILL(m_pAllReady);
+	// 遷移UIの削除
+	SAFE_KILL(m_pTransUI);
 
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
@@ -371,8 +355,8 @@ void CEntry_SetUpTeam::PosAdjUI(const bool bAllReady, const float fDeltaTime, co
 	// コントローラーUI位置補正
 	PosAdjPadUI();
 
-	// 準備完了表示の自動描画フラグを設定
-	m_pAllReady->SetEnableDisp(bAllReady);
+	// 遷移表示のON/OFF切り替え
+	m_pTransUI->SetEnableDispUI(bAllReady);
 }
 
 //==========================================================================
@@ -668,8 +652,7 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 //==========================================================================
 void CEntry_SetUpTeam::TransDressUp(const bool bAllReady)
 {
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (bAllReady && pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X))
+	if (m_pTransUI->UpdateDecide())
 	{ // 全員の準備が完了している且つ、操作が行われた場合
 
 		// 空きメンバーのAI埋め

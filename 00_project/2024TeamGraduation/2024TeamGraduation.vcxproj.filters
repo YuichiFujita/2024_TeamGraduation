@@ -818,6 +818,9 @@
     <ClCompile Include="Source\dressup_face_Mii.cpp">
       <Filter>character\dressup</Filter>
     </ClCompile>
+    <ClCompile Include="Source\transUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1497,6 +1500,9 @@
     </ClInclude>
     <ClInclude Include="Source\dressup_face_Mii.h">
       <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\transUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

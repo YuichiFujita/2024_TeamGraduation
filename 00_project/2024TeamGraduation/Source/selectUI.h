@@ -64,10 +64,7 @@ private:
 		SELECT_MAX			// この列挙型の総数
 	};
 
-	//=============================
-	// 関数リスト
-	//=============================
-	// 選択関数
+	// 選択関数リスト
 	typedef void(CSelectUI::*SELECT_FUNC)(const float, const float, const float);
 	static SELECT_FUNC m_SelectFuncList[];	// 関数のリスト
 

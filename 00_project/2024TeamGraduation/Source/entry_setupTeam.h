@@ -21,6 +21,7 @@ class CObjectChara;
 class CObject2D;
 class CObject2D_Anim;
 class CNumber;
+class CTransUI;
 
 //==========================================================================
 // クラス定義
@@ -81,9 +82,9 @@ private:
 	//-----------------------------
 	// 生成
 	//-----------------------------
-	HRESULT CreateAllReady();	// 準備完了表示の生成
 	HRESULT CreateNumInTeam();	// チーム人数の生成
 	HRESULT CreatePadUI();		// コントローラーUIの生成
+	HRESULT CreateTransUI();	// 遷移UIの生成
 
 	//-----------------------------
 	// 削除
@@ -126,7 +127,7 @@ private:
 	//-----------------------------
 	CObject2D_Anim* m_apPadUI[CGameManager::MAX_PLAYER];		// コントローラーUI情報
 	CNumber* m_apNumInTeam[CGameManager::ETeamSide::SIDE_MAX];	// チーム人数情報
-	CObject2D* m_pAllReady;	// 準備完了済み情報
+	CTransUI* m_pTransUI;	// 遷移UI情報
 
 	//-----------------------------
 	// セットアップ情報
