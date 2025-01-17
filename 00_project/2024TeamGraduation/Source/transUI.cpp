@@ -16,7 +16,9 @@
 //************************************************************
 namespace
 {
-	const int PRIORITY = 6;	// UIの優先順位
+	const int	PRIORITY	= 6;		// UIの優先順位
+	const float	MOVE_TIME	= 2.0f;		// 移動時間
+	const float	MIN_ALPHA	= 0.35f;	// 最小透明度
 
 	namespace bg
 	{
@@ -325,7 +327,32 @@ void CTransUI::UpdateSpawnString(const float fDeltaTime, const float fDeltaRate,
 //============================================================
 void CTransUI::UpdateDispON(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	float fAlphaStr = 0.0f;	// 文字透明度
 
+	// 経過時間を加算
+	m_fCurTime += fDeltaTime * fSlowRate;
+	if (m_fCurTime < MOVE_TIME * 0.5f)
+	{ // 経過時間が半分未満の場合
+
+		// 文字を透明度を計算
+		fAlphaStr = UtilFunc::Correction::EasingEaseIn(string::DEST_ALPHA, MIN_ALPHA, 0.0f, MOVE_TIME * 0.5f, m_fCurTime);
+	}
+	else
+	{ // 経過時間が半分以上の場合
+
+		// 文字を透明度を計算
+		fAlphaStr = UtilFunc::Correction::EasingEaseOut(MIN_ALPHA, string::DEST_ALPHA, MOVE_TIME * 0.5f, MOVE_TIME, m_fCurTime);
+	}
+
+	if (m_fCurTime > MOVE_TIME)
+	{ // 経過しきった場合
+
+		// 経過時間分減算
+		m_fCurTime -= MOVE_TIME;
+	}
+
+	// 文字の透明度を設定
+	m_pString->SetAlpha(fAlphaStr);
 }
 
 //============================================================
