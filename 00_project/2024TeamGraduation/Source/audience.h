@@ -120,6 +120,9 @@ protected:
 	virtual void SetMotion(const int nMotion) = 0;	// モーション設定
 	virtual void EndSettingSpawn() = 0;				// スポーン終了時の設定
 
+	// 更新
+	virtual void UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;	// ペンライトの更新
+
 	//=============================
 	// メンバ関数
 	//=============================

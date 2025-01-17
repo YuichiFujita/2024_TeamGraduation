@@ -28,7 +28,7 @@ MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	# [5]手(右)
 MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x	# [6]左腕(上)
 MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	# [7]左腕(下)
 MODEL_FILENAME = data/MODEL/audience/Mii/Hand_L.x	# [8]手(左)
-MODEL_FILENAME = data/MODEL/audience/hair/suiren.x	# [9]髪
+MODEL_FILENAME = data/MODEL/audience/hair/asuka.x	# [9]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報

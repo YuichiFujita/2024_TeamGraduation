@@ -64,6 +64,7 @@ CAudienceAnim::CAudienceAnim(EObjType type, CGameManager::ETeamSide team) : CAud
 	m_pFrontAnimChara	(nullptr),			// 表面キャラクター情報
 	m_pBackAnimChara	(nullptr),			// 裏面キャラクター情報
 	m_pLight			(nullptr),			// ペンライト情報
+	m_pLightBlur		(nullptr),			// ペンライトのブラー
 	m_idolMotion		(MOTION_IDOL_U),	// 待機モーション
 	m_jumpMotion		(MOTION_IDOL_U),	// ジャンプモーション
 	m_moveMotion		(MOTION_IDOL_U)		// 移動モーション
@@ -130,6 +131,13 @@ HRESULT CAudienceAnim::Init()
 
 	// ペンライトの生成
 	if (FAILED(CreatePenLight()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// ペンライトのブラー生成
+	if (FAILED(CreatePenLightBlur()))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -235,6 +243,19 @@ void CAudienceAnim::Update(const float fDeltaTime, const float fDeltaRate, const
 }
 
 //==========================================================================
+// ペンライトの更新
+//==========================================================================
+void CAudienceAnim::UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_pLight == nullptr) return;
+	if (m_pFrontAnimChara == nullptr || m_pBackAnimChara == nullptr) return;
+
+	// ライトの位置を頭の上にする
+	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+	m_pLightBlur->SetPosition(m_pLight->GetPosition());
+}
+
+//==========================================================================
 // 描画処理
 //==========================================================================
 void CAudienceAnim::Draw()
@@ -277,6 +298,7 @@ int CAudienceAnim::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, c
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 移動モーションを返す
 	return m_moveMotion;
@@ -292,6 +314,7 @@ int CAudienceAnim::UpdateNormal(const float fDeltaTime, const float fDeltaRate, 
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 待機モーションを返す
 	return m_idolMotion;
@@ -307,6 +330,7 @@ int CAudienceAnim::UpdateJump(const float fDeltaTime, const float fDeltaRate, co
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// ジャンプモーションを返す
 	return m_jumpMotion;
@@ -322,9 +346,11 @@ int CAudienceAnim::UpdateSpecial(const float fDeltaTime, const float fDeltaRate,
 
 	// ライトの自動描画をオンにする
 	m_pLight->SetEnableDisp(true);
+	m_pLightBlur->SetEnableDisp(true);
 
 	// ライトの位置を頭の上にする
 	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+	m_pLightBlur->SetPosition(m_pLight->GetPosition());
 
 	// ジャンプモーションを返す
 	return m_jumpMotion;
@@ -340,6 +366,7 @@ int CAudienceAnim::UpdateDespawn(const float fDeltaTime, const float fDeltaRate,
 
 	// ライトの自動描画をオフにする
 	m_pLight->SetEnableDisp(false);
+	m_pLightBlur->SetEnableDisp(false);
 
 	// 移動モーションを返す
 	return m_moveMotion;
@@ -436,6 +463,34 @@ HRESULT CAudienceAnim::CreatePenLight()
 	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
 #endif
 
+	return S_OK;
+}
+
+//==========================================================================
+// ペンライトのブラー生成
+//==========================================================================
+HRESULT CAudienceAnim::CreatePenLightBlur()
+{
+	// ペンライトの生成
+	m_pLightBlur = CEffect3D::Create(
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),	// 位置
+		MyLib::Vector3(0.0f, 0.0f, 0.0f),	// 移動量
+		D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),	// 色
+		200.0f,								// 半径
+		0,									// 寿命
+		CEffect3D::MOVEEFFECT_NONE,			// 移動の種類
+		CEffect3D::TYPE_POINT);				// エフェクトの種類
+	if (m_pLightBlur == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 自動描画フラグをオフにする
+	m_pLightBlur->SetEnableDisp(false);
+
+	// 寿命削除OFF
+	m_pLightBlur->SetEnableDeleteLife(false);
 	return S_OK;
 }
 

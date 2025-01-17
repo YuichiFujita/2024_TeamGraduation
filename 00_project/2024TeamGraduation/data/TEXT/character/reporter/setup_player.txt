@@ -19,21 +19,21 @@ NUM_MODEL = 17
 #------------------------------------------------------------------------------
 # ÉÇÉfÉãÉtÉ@ÉCÉãñº
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/player/normal/00_waist.x	# [0]çò
-MODEL_FILENAME = data/MODEL/player/normal/01_body.x		# [1]ëÃ
-MODEL_FILENAME = data/MODEL/player/normal/02_head.x		# [2]ì™
-MODEL_FILENAME = data/MODEL/player/normal/03_armUP_R.x	# [3]âEòr(è„)
-MODEL_FILENAME = data/MODEL/player/normal/04_armDW_R.x	# [4]âEòr(â∫)
-MODEL_FILENAME = data/MODEL/player/normal/05_hand_R.x	# [5]âEéË
-MODEL_FILENAME = data/MODEL/player/normal/06_armUP_L.x	# [6]ç∂òr(è„)
-MODEL_FILENAME = data/MODEL/player/normal/07_armDW_L.x	# [7]ç∂òr(â∫)
-MODEL_FILENAME = data/MODEL/player/normal/08_hand_L.x	# [8]ç∂éË
-MODEL_FILENAME = data/MODEL/player/normal/09_legUP_R.x	# [9]âEãr(è„)
-MODEL_FILENAME = data/MODEL/player/normal/10_legDW_R.x	# [10]âEãr(â∫)
-MODEL_FILENAME = data/MODEL/player/normal/11_shoes_R.x	# [11]âEë´
-MODEL_FILENAME = data/MODEL/player/normal/12_legUP_L.x	# [12]ç∂ãr(è„)
-MODEL_FILENAME = data/MODEL/player/normal/13_legDW_L.x	# [13]ç∂ãr(â∫)
-MODEL_FILENAME = data/MODEL/player/normal/14_shoes_L.x	# [14]ç∂ë´
+MODEL_FILENAME = data/MODEL/player/commentator/00_waist.x	# [0]çò
+MODEL_FILENAME = data/MODEL/player/commentator/01_body.x		# [1]ëÃ
+MODEL_FILENAME = data/MODEL/player/commentator/02_head.x		# [2]ì™
+MODEL_FILENAME = data/MODEL/player/commentator/03_armUP_R.x	# [3]âEòr(è„)
+MODEL_FILENAME = data/MODEL/player/commentator/04_armDW_R.x	# [4]âEòr(â∫)
+MODEL_FILENAME = data/MODEL/player/commentator/05_hand_R.x	# [5]âEéË
+MODEL_FILENAME = data/MODEL/player/commentator/06_armUP_L.x	# [6]ç∂òr(è„)
+MODEL_FILENAME = data/MODEL/player/commentator/07_armDW_L.x	# [7]ç∂òr(â∫)
+MODEL_FILENAME = data/MODEL/player/commentator/08_hand_L.x	# [8]ç∂éË
+MODEL_FILENAME = data/MODEL/player/commentator/09_legUP_R.x	# [9]âEãr(è„)
+MODEL_FILENAME = data/MODEL/player/commentator/10_legDW_R.x	# [10]âEãr(â∫)
+MODEL_FILENAME = data/MODEL/player/commentator/11_shoes_R.x	# [11]âEë´
+MODEL_FILENAME = data/MODEL/player/commentator/12_legUP_L.x	# [12]ç∂ãr(è„)
+MODEL_FILENAME = data/MODEL/player/commentator/13_legDW_L.x	# [13]ç∂ãr(â∫)
+MODEL_FILENAME = data/MODEL/player/commentator/14_shoes_L.x	# [14]ç∂ë´
 MODEL_FILENAME = data/MODEL/player/hair/mohikan.x		# [15]îØ
 MODEL_FILENAME = data/MODEL/player/accessory/sukautare00.x	# [16]ÉAÉNÉZÉTÉäÅ[
 

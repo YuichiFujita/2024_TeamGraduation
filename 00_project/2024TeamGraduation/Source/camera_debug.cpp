@@ -296,6 +296,8 @@ void CCamera_Debug::UpdateGUI()
 		MyLib::Vector3 posROrigin = m_pCamera->GetPositionROrigin();
 		float distanceDest = m_pCamera->GetDistanceDest();
 		float distanceOrigin = m_pCamera->GetDistanceOrigin();
+		float viewAngle = m_pCamera->GetViewAngle();
+		float viewAngleDest = m_pCamera->GetDestViewAngle();
 		
 		ImGui::Text("[rot] Origin: %.2f %.2f %.2f", rotOrigin.x, rotOrigin.y, rotOrigin.z);
 		ImGui::Text("[rot] Dest: %.2f %.2f %.2f", rotDest.x, rotDest.y, rotDest.z);
@@ -303,6 +305,8 @@ void CCamera_Debug::UpdateGUI()
 		ImGui::Text("[posR] Dest: %.2f %.2f %.2f", posRDest.x, posRDest.y, posRDest.z);
 		ImGui::Text("[distance] Origin: %.2f", distanceOrigin);
 		ImGui::Text("[distance] Dest: %.2f", distanceDest);
+		ImGui::Text("[viewAngle] Normal: %.2f", viewAngle);
+		ImGui::Text("[viewAngle] Dest: %.2f", viewAngleDest);
 
 	}
 }

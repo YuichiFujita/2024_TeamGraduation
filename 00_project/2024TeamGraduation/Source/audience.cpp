@@ -211,6 +211,9 @@ void CAudience::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// モーションを設定
 	SetMotion(nMotion);
+
+	// ペンライトの更新
+	UpdatePenlight(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
