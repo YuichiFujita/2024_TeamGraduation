@@ -482,7 +482,7 @@ void CEntry_SetUpTeam::KillUI()
 	SAFE_KILL(m_pTransUI);
 
 	// îwåiÇÃçÌèú
-	SAFE_KILL(m_pTransUI);
+	SAFE_KILL(m_pBG);
 
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // É`Å[ÉÄêîï™åJÇËï‘Ç∑
