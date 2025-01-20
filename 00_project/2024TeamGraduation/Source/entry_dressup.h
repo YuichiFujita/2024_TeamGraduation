@@ -66,6 +66,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
+	bool TransSetting();								// 着せ替え遷移
 	void SetState(const EState state);					// 状態設定
 	inline EState GetState() const	{ return m_state; }	// 状態取得
 	void SetDressUIReady(const int nPlayerIdx, const bool bReady);			// 着せ替えUI準備完了フラグの設定
@@ -77,8 +78,10 @@ public:
 	inline int GetNumPlayer() const	{ return (int)m_vecDressInfo.size(); }	// プレイヤー数取得
 	MyLib::Vector3 GetNameUIPosition(const CGameManager::ETeamSide team);	// 名前UI位置取得
 	MyLib::Vector2 GetNameUISize(const CGameManager::ETeamSide team);		// 名前UI大きさ取得
-	MyLib::Vector3 GetBackUIPosition();	// 戻るUI位置取得
-	MyLib::Vector2 GetBackUISize();		// 戻るUI大きさ取得
+	MyLib::Vector3 GetBackUIPosition();		// 戻るUI位置取得
+	MyLib::Vector2 GetBackUISize();			// 戻るUI大きさ取得
+	MyLib::Vector3 GetEnterUIPosition();	// 決定UI位置取得
+	MyLib::Vector2 GetEnterUISize();		// 決定UI大きさ取得
 	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
 
 private:
@@ -86,7 +89,6 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void TransSetting();	// 着せ替え遷移
 	bool IsAllReady();		// 準備全完了フラグ取得
 	void Save();			// セーブ
 	void Load();			// ロード

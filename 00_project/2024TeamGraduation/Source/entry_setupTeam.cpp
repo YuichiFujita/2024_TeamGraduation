@@ -26,7 +26,7 @@ namespace
 
 	namespace pad
 	{
-		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker000.png";	// コントローラーUIテクスチャ
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker001.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
 		const float WIDTH = 25.0f;	// 横幅
 

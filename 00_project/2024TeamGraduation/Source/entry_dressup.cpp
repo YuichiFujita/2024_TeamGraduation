@@ -288,9 +288,6 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 	switch (m_state)
 	{ // 状態ごとの処理
 	case EState::STATE_DRESSUP:
-
-		// ゲーム設定遷移
-		TransSetting();
 		break;
 
 	case EState::STATE_SETTING:
@@ -400,8 +397,8 @@ bool CEntry_Dressup::IsSelectOK(const int nPadIdx, const int nPlayerIdx) const
 	{ // 要素数分繰り返す
 
 		// 既に自分以外のユーザーが選択中の場合選択不可
-		if (rSelect->GetSelectIdx()	== nPlayerIdx
-		&&  rSelect->GetPadIdx()	!= nPadIdx) { return false; }
+		if (rSelect->GetSelectIdx().x == nPlayerIdx
+		&&  rSelect->GetPadIdx()	  != nPadIdx) { return false; }
 	}
 
 	return true;
@@ -472,19 +469,35 @@ MyLib::Vector2 CEntry_Dressup::GetBackUISize()
 }
 
 //==========================================================================
+// 決定UI位置取得
+//==========================================================================
+MyLib::Vector3 CEntry_Dressup::GetEnterUIPosition()
+{
+	// ポリゴンの位置を返す
+	return m_pEnter->GetPosition();
+}
+
+//==========================================================================
+// 決定UI大きさ取得
+//==========================================================================
+MyLib::Vector2 CEntry_Dressup::GetEnterUISize()
+{
+	// ポリゴンの大きさを返す
+	return m_pEnter->GetSize();
+}
+
+//==========================================================================
 // ゲーム設定遷移
 //==========================================================================
-void CEntry_Dressup::TransSetting()
+bool CEntry_Dressup::TransSetting()
 {
 	// 準備完了できていない場合抜ける
-	if (!IsAllReady()) { return; }
+	if (!IsAllReady()) { return false; }
 
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X))
-	{
-		// ゲーム設定状態に遷移
-		SetState(EState::STATE_SETTING);
-	}
+	// ゲーム設定状態に遷移
+	SetState(EState::STATE_SETTING);
+
+	return true;
 }
 
 //==========================================================================
