@@ -25,6 +25,7 @@ namespace
 	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
+	const int PRIORITY = 6;	// 優先順位
 
 	namespace ui
 	{
@@ -52,8 +53,14 @@ namespace
 
 		namespace back
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(280.0f, 640.0f, 0.0f);	// 戻る位置
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);		// 戻る大きさ
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 420.0f, 640.0f, 0.0f);	// 位置
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
+		}
+
+		namespace enter
+		{
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 420.0f, 640.0f, 0.0f);	// 位置
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
 		}
 	}
 }
@@ -64,6 +71,7 @@ namespace
 CEntry_Dressup::CEntry_Dressup() : CEntryScene(),
 	m_pRuleManager	(nullptr),		// ルールマネージャー
 	m_pBack			(nullptr),		// 戻る情報
+	m_pEnter		(nullptr),		// 決定情報
 	m_state			(STATE_DRESSUP)	// 状態
 {
 	// メンバ変数をクリア
@@ -202,7 +210,7 @@ HRESULT CEntry_Dressup::Init()
 	}
 
 	// 戻るの生成
-	m_pBack = CObject2D::Create(6);
+	m_pBack = CObject2D::Create(PRIORITY);
 	if (m_pBack == nullptr)
 	{ // 生成に失敗した場合
 
@@ -215,6 +223,21 @@ HRESULT CEntry_Dressup::Init()
 
 	// 大きさを設定
 	m_pBack->SetSize(ui::back::SIZE);
+
+	// 決定の生成
+	m_pEnter = CObject2D::Create(PRIORITY);
+	if (m_pEnter == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// 位置を設定
+	m_pEnter->SetPosition(ui::enter::POS);
+
+	// 大きさを設定
+	m_pEnter->SetSize(ui::enter::SIZE);
 
 	return S_OK;
 }
@@ -250,6 +273,9 @@ void CEntry_Dressup::Uninit()
 
 	// 戻るの終了
 	SAFE_UNINIT(m_pBack);
+
+	// 決定の終了
+	SAFE_UNINIT(m_pEnter);
 
 	delete this;
 }

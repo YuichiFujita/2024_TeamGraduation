@@ -98,8 +98,9 @@ private:
 	std::vector<CDressupUI*> m_vecDressInfo;			// 着せ替え情報
 	std::vector<CSelectUI*> m_vecSelect;				// 選択情報
 	CEntryRuleManager* m_pRuleManager;					// ルールマネージャー
-	CObject2D* m_pBack;	// 戻る情報
-	EState m_state;		// 状態
+	CObject2D* m_pBack;		// 戻る情報
+	CObject2D* m_pEnter;	// 決定情報
+	EState m_state;			// 状態
 };
 
 #endif
