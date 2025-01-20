@@ -52,7 +52,7 @@ public:
 	};
 
 	// コンストラクタ
-	CDressupUI(CEntry_Dressup* pParent, const int nPlayerIdx);
+	CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx);
 
 	// デストラクタ
 	~CDressupUI() override;
@@ -70,9 +70,10 @@ public:
 	// 静的メンバ関数
 	static CDressupUI* Create	// 生成
 	( // 引数
-		CEntry_Dressup* pParent,	// 親クラス情報
-		const int nPlayerIdx,		// プレイヤーインデックス
-		const MyLib::Vector3& rPos	// 原点位置
+		CEntry_Dressup* pParent,			// 親クラス情報
+		const CPlayer::EFieldArea typeArea,	// プレイヤーポジション
+		const int nPlayerIdx,				// プレイヤーインデックス
+		const MyLib::Vector3& rPos			// 原点位置
 	);
 
 	// メンバ関数
@@ -120,7 +121,6 @@ private:
 	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報
 	CObject2D_Anim* m_pPlayerFrame;	// プレイヤーフレーム情報
 	CObject2D* m_pPlayerUI;			// プレイヤーUI情報
-	const int m_nPlayerIdx;			// プレイヤーインデックス
 	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)
 	int m_nPadIdx;					// 操作権インデックス
 	bool m_bReady;					// 準備完了フラグ
@@ -130,6 +130,8 @@ private:
 	CDressup* m_pFace;				// 顔着せ替え
 	EEditType m_typeEdit;			// エディットする種類
 	EChangeType m_typeChange;		// 変更する種類
+	const int m_nPlayerIdx;					// プレイヤーインデックス
+	const CPlayer::EFieldArea m_typeArea;	// プレイヤーポジション
 };
 
 #endif	// _DRESSUP_UI_H_

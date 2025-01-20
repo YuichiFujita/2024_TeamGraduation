@@ -77,14 +77,13 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 //============================================================
 //	コンストラクタ
 //============================================================
-CDressupUI::CDressupUI(CEntry_Dressup* pParent, const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
+CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
 	m_pParent		(pParent),		// 親クラス情報
 	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
 	m_pChangeIcon	(nullptr),		// 変更種類アイコン情報
 	m_pReadyCheck	(nullptr),		// 準備完了チェック情報
 	m_pPlayerFrame	(nullptr),		// プレイヤーフレーム情報
 	m_pPlayerUI		(nullptr),		// プレイヤーUI情報
-	m_nPlayerIdx	(nPlayerIdx),	// プレイヤーインデックス
 	m_nOrdinalAI	(-1),			// 自身が生成された順番 (AIのみ)
 	m_nPadIdx		(-1),			// 操作権インデックス
 	m_bReady		(false),		// 準備完了フラグ
@@ -93,7 +92,9 @@ CDressupUI::CDressupUI(CEntry_Dressup* pParent, const int nPlayerIdx) : CObject(
 	m_pAccessory	(nullptr),		// アクセ着せ替え
 	m_pFace			(nullptr),		// 顔着せ替え
 	m_typeEdit		(EEditType::EDIT_PROCESS),	// エディットする種類
-	m_typeChange	(EChangeType::TYPE_HAIR)	// 変更する種類
+	m_typeChange	(EChangeType::TYPE_HAIR),	// 変更する種類
+	m_nPlayerIdx	(nPlayerIdx),				// プレイヤーインデックス
+	m_typeArea		(typeArea)					// プレイヤーポジション
 {
 
 }
@@ -158,8 +159,9 @@ void CDressupUI::Uninit()
 	else
 	{ // チームセットアップ情報が破棄されていない場合
 
-		// 破棄したプレイヤーがAIの場合はAI総数を減算
-		if (pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
+		// 破棄したプレイヤーが内野且つAIの場合はAI総数を減算
+		if (m_typeArea == CPlayer::EFieldArea::FIELD_IN
+		&&  pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx) <= -1) { m_nNumAI--; }
 	}
 
 	// レンダーテクスチャの破棄
@@ -288,13 +290,14 @@ void CDressupUI::SetPosition(const MyLib::Vector3& pos)
 //============================================================
 CDressupUI *CDressupUI::Create
 (
-	CEntry_Dressup* pParent,	// 親クラス情報
-	const int nPlayerIdx,		// プレイヤーインデックス
-	const MyLib::Vector3 &rPos	// 原点位置
+	CEntry_Dressup* pParent,			// 親クラス情報
+	const CPlayer::EFieldArea typeArea,	// プレイヤーポジション
+	const int nPlayerIdx,				// プレイヤーインデックス
+	const MyLib::Vector3& rPos			// 原点位置
 )
 {
 	// 着せ替えUIの生成
-	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, nPlayerIdx);
+	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, typeArea, nPlayerIdx);
 	if (pDressupUI == nullptr)
 	{ // 生成に失敗した場合
 
@@ -566,8 +569,24 @@ HRESULT CDressupUI::CreatePlayerFrame()
 	// 自動再生をOFFにする
 	m_pPlayerFrame->SetEnableAutoPlay(false);
 
-	// テクスチャパターンの初期化
-	m_pPlayerFrame->SetPatternAnim(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// テクスチャパターンの初期化
+		m_pPlayerFrame->SetPatternAnim(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+		break;
+	}
+	case CPlayer::FIELD_OUT:
+	{
+		// テクスチャパターンの初期化
+		m_pPlayerFrame->SetPatternAnim(-1);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
@@ -621,29 +640,48 @@ HRESULT CDressupUI::CreateSetup()
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
-	// エントリーインデックスを取得
-	const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx);
-	CGameManager::ETeamSide side;
-	if (nPadIdx > -1)
-	{ // ユーザーの場合
+	CGameManager::ETeamSide side;	// チーム
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// エントリーインデックスを取得
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx);
+		if (nPadIdx > -1)
+		{ // ユーザーの場合
 
-		// エントリーインデックスからチームサイドを取得
-		side = pSetupTeam->GetTeamSide(nPadIdx);
+			// エントリーインデックスからチームサイドを取得
+			side = pSetupTeam->GetTeamSide(nPadIdx);
+		}
+		else
+		{ // AIの場合
+
+			// 自身のAI生成順を保存
+			m_nOrdinalAI = m_nNumAI;
+
+			// AI生成順からチームサイドを取得
+			side = pSetupTeam->GetTeamSideAI(m_nOrdinalAI);
+
+			// 準備完了済みにする
+			m_bReady = true;
+
+			// AI生成数を加算
+			m_nNumAI++;
+		}
+		break;
 	}
-	else
-	{ // AIの場合
-
-		// 自身のAI生成順を保存
-		m_nOrdinalAI = m_nNumAI;
-
-		// AI生成順からチームサイドを取得
-		side = pSetupTeam->GetTeamSideAI(m_nOrdinalAI);
+	case CPlayer::FIELD_OUT:
+	{
+		// 外野のチームを指定
+		side = (CGameManager::ETeamSide)(m_nPlayerIdx / (CPlayerManager::OUT_MAX / 2));
 
 		// 準備完了済みにする
 		m_bReady = true;
-
-		// AI生成数を加算
-		m_nNumAI++;
+		break;
+	}
+	default:
+		assert(false);
+		break;
 	}
 
 	// プレイヤー生成
@@ -667,8 +705,24 @@ HRESULT CDressupUI::CreateSetup()
 	// 元の位置設定
 	m_pPlayer->CObject::SetOriginPosition(VEC3_ZERO);
 
-	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// インデックスの上書き
+		m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+		break;
+	}
+	case CPlayer::FIELD_OUT:
+	{
+		// インデックスの上書き
+		m_pPlayer->SetMyPlayerIdx(-1);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 
 	// 髪着せ替え生成
 	m_pHair = CDressup::Create
@@ -772,10 +826,6 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 {
 	// 着せ替え状態ではない場合抜ける
 	if (m_pParent->GetState() != CEntry_Dressup::EState::STATE_DRESSUP) { return; }
-
-	// チームセットアップ情報の取得
-	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
-	if (pSetupTeam == nullptr) { return; }
 
 	//--------------------------
 	// デバッグ完了操作
