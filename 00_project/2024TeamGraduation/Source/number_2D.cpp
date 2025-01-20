@@ -31,7 +31,7 @@ CNumber2D::~CNumber2D()
 HRESULT CNumber2D::Init()
 {
 	// ¶¬ˆ—
-	m_pObj2D = CObject2D_Anim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
+	m_pObj2D = CObject2D_Anim::Create(MyLib::Vector3(), 10, 1, 1.0f, false, GetPriority());
 	
 	// Ž©“®Ä¶’âŽ~
 	m_pObj2D->SetEnableAutoPlay(false);

@@ -64,6 +64,7 @@ public:
 	void Uninit() override;		// 終了
 	void Kill() override;		// 削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	void SetPosition(const MyLib::Vector3& pos) override;	// 位置設定
 
 	//=============================
 	// メンバ関数
@@ -73,9 +74,15 @@ public:
 	inline EState GetState() const { return m_state; }	// 状態取得
 	
 	// その他
-	void SetSizeByWidth(const float width);								// 横幅からサイズ設定
-	inline void SetValueFloat(float value)	{ m_fValueFloat = value; }	// ふわふわ量設定
-	EDirection GetDirection()				{ return m_direction; }		// 方向
+	inline void SetOffset(const MyLib::Vector3& pos)		{ m_offset = pos; }				// オフセット設定
+	inline MyLib::Vector3 GetOffset()						{ return m_offset; }			// オフセット取得
+	inline void SetOffsetOrigin(const MyLib::Vector3& pos)	{ m_offsetOrigin = pos; }		// 元のオフセット設定
+	inline MyLib::Vector3 GetOffsetOrigin()					{ return m_offsetOrigin; }		// 元のオフセット取得
+	void SetSizeByWidth(const float width);													// 横幅からサイズ設定
+	inline void SetSizeWidthOrigin(const float width)		{ m_fSizeWidthOrigin = width; }	// 元の幅のサイズ設定
+	inline float GetSizeWidthOrigin()						{ return m_fSizeWidthOrigin; }	// 元の幅のサイズ取得
+	inline void SetValueFloat(float value)					{ m_fValueFloat = value; }		// ふわふわ量設定
+	EDirection GetDirection()								{ return m_direction; }			// 方向
 
 	//=============================
 	// 静的メンバ関数
@@ -108,8 +115,13 @@ private:
 	float m_fStateTime;	// 状態タイマー
 
 	// その他
-	EDirection m_direction;	// 方向
-	float m_fValueFloat;	// ふわふわ量
+	MyLib::Vector3 m_offset;		// オフセット
+	MyLib::Vector3 m_offsetOrigin;	// 元のオフセット
+	EDirection m_direction;		// 方向
+	float m_fValueFloat;		// ふわふわ量
+	float m_fSpace;				// 間隔
+	float m_fSizeWidth;			// 幅のサイズ
+	float m_fSizeWidthOrigin;	// 元の幅のサイズ
 };
 
 #endif	// _ARROW_UI_H_

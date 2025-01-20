@@ -286,6 +286,7 @@
     <ClCompile Include="Source\object_circlegauge2D.cpp" />
     <ClCompile Include="Source\optionMenu.cpp" />
     <ClCompile Include="Source\option_BBS.cpp" />
+    <ClCompile Include="Source\padUI.cpp" />
     <ClCompile Include="Source\particle.cpp" />
     <ClCompile Include="Source\pause.cpp" />
     <ClCompile Include="Source\pause_game.cpp" />
@@ -518,6 +519,7 @@
     <ClInclude Include="Source\object_circlegauge2D.h" />
     <ClInclude Include="Source\optionMenu.h" />
     <ClInclude Include="Source\option_BBS.h" />
+    <ClInclude Include="Source\padUI.h" />
     <ClInclude Include="Source\particle.h" />
     <ClInclude Include="Source\pause.h" />
     <ClInclude Include="Source\pause_game.h" />

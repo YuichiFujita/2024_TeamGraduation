@@ -939,9 +939,8 @@ void CEntryRuleManager::Select()
 
 				// –îˆó‚ÌˆÊ’u‚ð•ÏX
 				MyLib::Vector3 setpos = posSelect;
-				setpos += (m_apArrow[i]->GetDirection() == CArrowUI::EDirection::DIRECTION_L) ? -arrow::SPACE : arrow::SPACE;
-				m_apArrow[i]->SetPosition(setpos);
-				m_apArrow[i]->SetOriginPosition(setpos);
+				m_apArrow[i]->SetPosition(posSelect);
+				m_apArrow[i]->SetOriginPosition(posSelect);
 
 				// Ž©“®•`‰æ‚ðON‚É‚·‚é
 				m_apArrow[i]->SetEnableDisp(true);
@@ -991,9 +990,8 @@ void CEntryRuleManager::Select()
 
 				// –îˆó‚ÌˆÊ’u‚ð•ÏX
 				MyLib::Vector3 setpos = posSelect;
-				setpos += (m_apArrow[i]->GetDirection() == CArrowUI::EDirection::DIRECTION_L) ? -arrow::SPACE : arrow::SPACE;
-				m_apArrow[i]->SetPosition(setpos);
-				m_apArrow[i]->SetOriginPosition(setpos);
+				m_apArrow[i]->SetPosition(posSelect);
+				m_apArrow[i]->SetOriginPosition(posSelect);
 
 				// Ž©“®•`‰æ‚ðON‚É‚·‚é
 				m_apArrow[i]->SetEnableDisp(true);

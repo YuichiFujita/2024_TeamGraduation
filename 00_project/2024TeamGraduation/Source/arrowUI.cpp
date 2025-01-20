@@ -16,7 +16,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE = "data\\TEXTURE\\entry\\Arrow_Twin.png";	// テクスチャ
+	const std::string TEXTURE = "data\\TEXTURE\\entry\\Arrow_Twin_Team.png";	// テクスチャ
 	const float DISTANCE_SELECTMOVE = 15.0f;	// 選択時移動量
 	const float VALUE_FLOAT = 3.0f;				// ふわふわ量
 
@@ -44,7 +44,8 @@ CArrowUI::CArrowUI(int nPriority) : CObject2D_Anim(nPriority),
 	m_state			(EState::STATE_NONE),		// 状態
 	m_fStateTime	(0.0f),						// 状態タイマー
 	m_direction		(EDirection::DIRECTION_L),	// 方向
-	m_fValueFloat	(VALUE_FLOAT)				// ふわふわ量
+	m_fValueFloat	(VALUE_FLOAT),				// ふわふわ量
+	m_fSizeWidth	(0.0f)						// 幅のサイズ
 {
 
 }
@@ -74,10 +75,12 @@ CArrowUI* CArrowUI::Create(
 	if (pObj != nullptr)
 	{
 		// 引数情報
-		pObj->m_direction = dir;		// 方向
-		pObj->SetPosition(pos);			// 位置
-		pObj->SetOriginPosition(pos);	// 原点位置
-		pObj->SetColor(color);			// 色
+		pObj->m_direction = dir;			// 方向
+		pObj->SetPosition(pos);				// 位置
+		pObj->SetOriginPosition(pos);		// 原点位置
+		pObj->SetColor(color);				// 色
+		pObj->m_fSizeWidth = width;			// 幅のサイズ
+		pObj->SetSizeWidthOrigin(width);	// 元の幅のサイズ
 
 		// クラスの初期化
 		if (FAILED(pObj->Init()))
@@ -87,7 +90,7 @@ CArrowUI* CArrowUI::Create(
 		}
 
 		// サイズ設定
-		pObj->SetSizeByWidth(width);	// サイズ
+		pObj->SetSizeByWidth(pObj->m_fSizeWidth);	// サイズ
 	}
 
 	return pObj;
@@ -233,6 +236,9 @@ void CArrowUI::SetState(EState state)
 //========================================================================================
 void CArrowUI::SetSizeByWidth(const float width)
 {
+	// 幅のサイズ設定
+	m_fSizeWidth = width;
+
 	// 画像サイズ取得
 	CTexture* pTexture = CTexture::GetInstance();
 	MyLib::Vector2 size = pTexture->GetImageSize(GetIdxTexture());
@@ -244,4 +250,25 @@ void CArrowUI::SetSizeByWidth(const float width)
 	// 縦幅を元にサイズ計算
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, width);
 	SetSize(size);
+}
+
+//========================================================================================
+// 位置設定
+//========================================================================================
+void CArrowUI::SetPosition(const MyLib::Vector3& pos)
+{
+	// 矢印の向きに同期
+	MyLib::Vector3 setpos = pos;
+	switch (m_direction)
+	{
+	case CArrowUI::EDirection::DIRECTION_L:
+		setpos.x -= m_offset.x;
+		setpos.y += m_offset.y;
+		break;
+
+	case CArrowUI::EDirection::DIRECTION_R:
+		setpos += m_offset;
+		break;
+	}
+	CObject::SetPosition(setpos);
 }
