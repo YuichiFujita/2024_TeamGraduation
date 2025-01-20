@@ -42,9 +42,12 @@ public:
 	//--------------------------
 	// 位置
 	//--------------------------
-	virtual void SetPosition(const MyLib::Vector3& pos) override		{ m_pObjBillboard->SetPosition(pos); }	// 位置設定
-	virtual void SetOldPosition(const MyLib::Vector3& pos) override		{ m_pObjBillboard->SetPosition(pos); }	// 過去の位置設定
-	virtual void SetOriginPosition(const MyLib::Vector3& pos) override	{ m_pObjBillboard->SetPosition(pos); }	// 元の位置設定
+	virtual void SetPosition(const MyLib::Vector3& pos) override		{ m_pObjBillboard->SetPosition(pos); }				// 位置設定
+	virtual MyLib::Vector3 GetPosition() override						{ return m_pObjBillboard->GetPosition(); }			// 位置取得
+	virtual void SetOldPosition(const MyLib::Vector3& pos) override		{ m_pObjBillboard->SetPosition(pos); }				// 過去の位置設定
+	virtual MyLib::Vector3 GetOldPosition() override					{ return m_pObjBillboard->GetOldPosition(); }		// 過去の位置取得
+	virtual void SetOriginPosition(const MyLib::Vector3& pos) override	{ m_pObjBillboard->SetPosition(pos); }				// 元の位置設定
+	virtual MyLib::Vector3 GetOriginPosition() override					{ return m_pObjBillboard->GetOriginPosition(); }	// 元の位置取得
 
 	//--------------------------
 	// 向き

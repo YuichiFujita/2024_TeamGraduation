@@ -44,8 +44,11 @@ public:
 	// 位置
 	//--------------------------
 	virtual void SetPosition(const MyLib::Vector3& pos) = 0;		// 位置設定
+	virtual MyLib::Vector3 GetPosition() = 0;						// 位置取得
 	virtual void SetOldPosition(const MyLib::Vector3& pos) = 0;		// 過去の位置設定
+	virtual MyLib::Vector3 GetOldPosition() = 0;					// 過去の位置取得
 	virtual void SetOriginPosition(const MyLib::Vector3& pos) = 0;	// 元の位置設定
+	virtual MyLib::Vector3 GetOriginPosition() = 0;					// 元のの位置取得
 
 	//--------------------------
 	// 向き

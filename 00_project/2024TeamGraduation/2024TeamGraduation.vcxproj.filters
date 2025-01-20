@@ -821,6 +821,9 @@
     <ClCompile Include="Source\transUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\padUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1502,6 +1505,9 @@
       <Filter>character\dressup</Filter>
     </ClInclude>
     <ClInclude Include="Source\transUI.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\padUI.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

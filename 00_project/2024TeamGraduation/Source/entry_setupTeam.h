@@ -22,6 +22,7 @@ class CObject2D;
 class CObject2D_Anim;
 class CNumber;
 class CTransUI;
+class CPadUI;
 
 //==========================================================================
 // クラス定義
@@ -85,6 +86,8 @@ private:
 	HRESULT CreateNumInTeam();	// チーム人数の生成
 	HRESULT CreatePadUI();		// コントローラーUIの生成
 	HRESULT CreateTransUI();	// 遷移UIの生成
+	HRESULT CreateBG();			// 背景の生成
+	HRESULT CreateTeamSideUI();	// チームサイドUIの生成
 
 	//-----------------------------
 	// 削除
@@ -97,6 +100,7 @@ private:
 	//-----------------------------
 	void PosAdjUI(const bool bAllReady, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// UI位置補正
 	void PosAdjPadUI();	// コントローラーUI位置補正
+	void PosAdjPadUIToNumIn(const std::vector<CPadUI*>& vecPadUI, CGameManager::ETeamSide side);	// 内側にいる人数をもとにコントローラーUI位置補正
 
 	//-----------------------------
 	// プレイヤー操作
@@ -105,6 +109,11 @@ private:
 	void ChangeMaxPlayer();	// プレイヤー最大数変更
 	void TransDressUp(const bool bAllReady);	// 着せ替え遷移
 	void DeleteEntry(int* pEntryIdx);			// エントリー解除
+
+	//-----------------------------
+	// 更新
+	//-----------------------------
+	void UpdateNumInUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チーム人数の更新
 
 	//-----------------------------
 	// プレイヤーフラグ
@@ -125,9 +134,11 @@ private:
 	//-----------------------------
 	// UI情報
 	//-----------------------------
-	CObject2D_Anim* m_apPadUI[CGameManager::MAX_PLAYER];		// コントローラーUI情報
+	CPadUI* m_apPadUI[mylib_const::MAX_PLAYER];		// コントローラーUI情報
 	CNumber* m_apNumInTeam[CGameManager::ETeamSide::SIDE_MAX];	// チーム人数情報
 	CTransUI* m_pTransUI;	// 遷移UI情報
+	CObject2D* m_pBG;		// 背景情報
+	CObject2D_Anim* m_apTeamSideUI[CGameManager::ETeamSide::SIDE_MAX];	// チームサイドUI情報
 
 	//-----------------------------
 	// セットアップ情報
@@ -137,6 +148,11 @@ private:
 	int m_nMaxChangeIdx[CGameManager::ETeamSide::SIDE_MAX];	// 最大数変更するインデックス
 	int m_nPlayerNum[CGameManager::ETeamSide::SIDE_MAX];	// プレイヤーの数
 	int m_nEntryIdx[mylib_const::MAX_PLAYER];				// エントリーのインデックス
+
+	//-----------------------------
+	// その他
+	//-----------------------------
+	float m_fTimeNumInTeam[CGameManager::ETeamSide::SIDE_MAX];	// チーム人数のタイマー
 };
 
 #endif

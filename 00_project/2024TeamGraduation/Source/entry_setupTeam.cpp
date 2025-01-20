@@ -13,6 +13,7 @@
 #include "object2D_Anim.h"
 #include "number.h"
 #include "transUI.h"
+#include "padUI.h"
 
 //==========================================================================
 // 定数定義
@@ -26,43 +27,65 @@ namespace
 
 	namespace pad
 	{
-		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker000.png";	// コントローラーUIテクスチャ
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker001.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
-		const float WIDTH = 25.0f;	// 横幅
+		const float WIDTH = 45.0f;	// 横幅
+		const MyLib::Vector3 ARROWSPACE_NUMBER = MyLib::Vector3(60.0f, 0.0f, 0.0f);	// 数字部分の空白
+		const float ARROWWIDTH_NUMBER = 20.0f;	// 数字部分の矢印サイズ
 
 		namespace none
 		{
-			const MyLib::Vector3 POS = VEC3_SCREEN_CENT;	// 中心位置
-			const float OFFSET_Y = 60.0f;	// Y座標オフセット
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, 550.0f, 0.0f);	// 中心位置
+			const float OFFSET_Y = 50.0f;	// Y座標オフセット
 		}
 
 		namespace left
 		{
 			namespace up
 			{
-				const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 120.0f, 0.0f);	// 左上位置
+				const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 120.0f, 386.0f, 0.0f);	// 左上位置
 			}
 
-			const MyLib::Vector3 POS = MyLib::Vector3(up::POS.x, VEC3_SCREEN_CENT.y, 0.0f);	// 左中心位置
-			const float OFFSET_X = 60.0f;	// X座標オフセット
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 550.0f, 0.0f);	// 左中心位置
+			const float OFFSET_X = 70.0f;	// X座標オフセット
 		}
 
 		namespace right
 		{
 			namespace up
 			{
-				const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 120.0f, 0.0f);	// 右上位置
+				const MyLib::Vector3 POS = MyLib::Vector3(left::up::POS.x + 640.0f, 386.0f, 0.0f);	// 右上位置
 			}
 
-			const MyLib::Vector3 POS = MyLib::Vector3(up::POS.x, VEC3_SCREEN_CENT.y, 0.0f);	// 右中心位置
-			const float OFFSET_X = 60.0f;	// X座標オフセット
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 550.0f, 0.0f);	// 右中心位置
+			const float OFFSET_X = 70.0f;	// X座標オフセット
 		}
+		const MyLib::Vector3 OFFSET = MyLib::Vector3(70.0f, 70.0f, 0.0f);	// 中心位置
 	}
 
 	namespace num
 	{
-		const std::string TEXTURE = "data\\TEXTURE\\number\\number000.png";	// 数字テクスチャ
+		const std::string TEXTURE = "data\\TEXTURE\\number\\school.png";	// 数字テクスチャ
 		const float WIDTH = 200.0f;	// 横幅
+		const float ALPHARATE_MAX = 1.0f;	// 不透明度割合の最大値
+		const float ALPHARATE_MIN = 0.2f;	// 不透明度割合の最大値
+		const float SCALERATE_MAX = 1.0f;	// 拡大割合の最大値
+		const float SCALERATE_MIN = 0.95f;	// 拡大割合の最小値
+	}
+
+	namespace teamside
+	{
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\team.png";	// 数字テクスチャ
+		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(1, 2);	// テクスチャ分割数
+		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 310.0f, 0.0f);	// 中心位置
+		const float WIDTH = 120.0f;		// 横幅
+	}
+
+	namespace bg
+	{
+		const std::string TEXTURE = "data\\TEXTURE\\entry\\board.png";	// 数字テクスチャ
+		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 360.0f, 0.0f);	// 中心位置
+		const float WIDTH = 640.0f;		// 横幅
 	}
 }
 
@@ -70,15 +93,18 @@ namespace
 // コンストラクタ
 //==========================================================================
 CEntry_SetUpTeam::CEntry_SetUpTeam() : CEntryScene(),
-	m_pTransUI	(nullptr)	// 遷移UI情報
+	m_pTransUI	(nullptr),	// 遷移UI情報
+	m_pBG		(nullptr)	// 背景情報
 {
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
-		m_vecAddIdx[i].clear();		// 追加されたインデックス
-		m_apNumInTeam[i] = nullptr;	// チーム人数情報
-		m_nMaxChangeIdx[i] = -1;	// 最大数変更するインデックス
-		m_nPlayerNum[i] = 1;		// プレイヤーの数
+		m_apTeamSideUI[i] = nullptr;	// チームサイドUI情報
+		m_vecAddIdx[i].clear();			// 追加されたインデックス
+		m_apNumInTeam[i] = nullptr;		// チーム人数情報
+		m_nMaxChangeIdx[i] = -1;		// 最大数変更するインデックス
+		m_nPlayerNum[i] = 1;			// プレイヤーの数
+		m_fTimeNumInTeam[i] = 0.0f;		// チーム人数のタイマー
 	}
 
 	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
@@ -86,14 +112,14 @@ CEntry_SetUpTeam::CEntry_SetUpTeam() : CEntryScene(),
 
 		m_TeamSide[i].team = CGameManager::ETeamSide::SIDE_NONE;	// チームサイド
 		m_TeamSide[i].nPadIdx = -1;	// 操作権インデックス
-		m_apPadUI[i] = nullptr;		// コントローラーUI情報
 	}
 
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド認識の最大数分繰り返す
 
-		m_TeamSide[i].nPadIdx = i;	// 操作権インデックス
-		m_nEntryIdx[i] = -1;		// エントリーのインデックス
+		m_apPadUI[i] = nullptr;			// コントローラーUI情報
+		m_TeamSide[i].nPadIdx = i;		// 操作権インデックス
+		m_nEntryIdx[i] = -1;			// エントリーのインデックス
 	}
 }
 
@@ -112,6 +138,14 @@ HRESULT CEntry_SetUpTeam::Init()
 {
 	// 前回のセットアップ読込 // TODO：初期情報の書き出しをCManager破棄時に呼び出し（このままだと前回の誰かの設定がそのままになる）
 	Load();
+
+
+	// 背景の生成
+	if (FAILED(CreateBG()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
 
 	// チーム人数の生成
 	if (FAILED(CreateNumInTeam()))
@@ -134,11 +168,183 @@ HRESULT CEntry_SetUpTeam::Init()
 		return E_FAIL;
 	}
 
+	// チームサイドUIの生成
+	if (FAILED(CreateTeamSideUI()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// 追加されたインデックスリセット // TODO：毎回リセットしちゃうから要検討
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
 		m_vecAddIdx[i].clear();
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// チーム人数の生成処理
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreateNumInTeam()
+{
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		// チーム人数の生成
+		m_apNumInTeam[i] = CNumber::Create(CMultiNumber::EObjType::OBJTYPE_2D, PRIORITY);
+		if (m_apNumInTeam[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 位置の設定
+		m_apNumInTeam[i]->SetPosition(MyLib::Vector3(390.0f + (640.0f * (float)i), 386.0f, 0.0f));	// TODO：初期生成位置の調整
+
+		// テクスチャの割当
+		CTexture* pTexture = CTexture::GetInstance();
+		int nTexID = pTexture->Regist(num::TEXTURE);
+		m_apNumInTeam[i]->BindTexture(nTexID);
+
+		// 数字の設定
+		m_apNumInTeam[i]->SetNum(m_nPlayerNum[i]);
+
+		// 横幅を元にサイズを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, num::WIDTH);
+		size.x /= 10.0f;
+		m_apNumInTeam[i]->SetSize(size);
+		m_apNumInTeam[i]->SetSizeOrigin(m_apNumInTeam[i]->GetSize());
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// コントローラーUIの生成処理
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreatePadUI()
+{
+	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	{ // チーム合計のプレイヤー総数分繰り返す
+
+		// コントローラーUIの生成
+		m_apPadUI[i] = CPadUI::Create
+		( // 引数
+			MyLib::Vector3(VEC3_SCREEN_CENT.x, 100.0f + (50.0f * (float)i), 0.0f),	// 位置
+			pad::WIDTH,		// 横幅
+			i,				// テクスチャ縦分割数
+			PRIORITY		// 優先順位
+		);
+		if (m_apPadUI[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 自動描画をOFFにする
+		m_apPadUI[i]->SetEnableDisp(false);
+
+		// テクスチャパターンの設定
+		m_apPadUI[i]->SetPatternAnim(i);
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// 遷移UIの生成処理
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreateTransUI()
+{
+	// 遷移UIの生成
+	m_pTransUI = CTransUI::Create();
+	if (m_pTransUI == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// 背景の生成
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreateBG()
+{
+	// 遷移UIの生成
+	m_pBG = CObject2D::Create(PRIORITY);
+	if (m_pBG == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 位置設定
+	m_pBG->SetPosition(bg::POS);
+
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = pTexture->Regist(bg::TEXTURE);
+	m_pBG->BindTexture(nTexID);
+
+	// 横幅を元にサイズを設定
+	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, bg::WIDTH);
+	m_pBG->SetSize(size);
+	m_pBG->SetSizeOrigin(m_pBG->GetSize());
+
+	return S_OK;
+}
+
+//==========================================================================
+// チームサイドUIの生成
+//==========================================================================
+HRESULT CEntry_SetUpTeam::CreateTeamSideUI()
+{
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		// 位置の設定
+		MyLib::Vector3 setpos = teamside::POS;
+		setpos.x += ((CGameManager::ETeamSide)(i) == CGameManager::ETeamSide::SIDE_LEFT) ? -320.0f : 320.0f;
+
+		// チーム人数の生成
+		m_apTeamSideUI[i] = CObject2D_Anim::Create( // 引数
+			setpos,				// 位置
+			teamside::PTRN.x,	// テクスチャ横分割数
+			teamside::PTRN.y,	// テクスチャ縦分割数
+			0.0f,				// 再生時間
+			false,				// 自動破棄
+			PRIORITY			// 優先順位
+		);
+		if (m_apTeamSideUI[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 自分サイドのパターンに変更
+		m_apTeamSideUI[i]->SetPatternAnim(i);
+
+		// 自動再生をOFFにする
+		m_apTeamSideUI[i]->SetEnableAutoPlay(false);
+
+		// テクスチャの割当
+		CTexture* pTexture = CTexture::GetInstance();
+		int nTexID = pTexture->Regist(teamside::TEXTURE);
+		m_apTeamSideUI[i]->BindTexture(nTexID);
+
+		// 横幅を元にサイズを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, teamside::WIDTH);
+		size.y /= (float)teamside::PTRN.y;	// 分割数で割る
+		m_apTeamSideUI[i]->SetSize(size);
+		m_apTeamSideUI[i]->SetSizeOrigin(m_apTeamSideUI[i]->GetSize());
 	}
 
 	return S_OK;
@@ -174,109 +380,59 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 
 	// 着せ替え遷移
 	TransDressUp(bAllReady);
+
+	// チーム人数の更新
+	UpdateNumInUI(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
-// チーム人数の生成処理
+// チーム人数の更新
 //==========================================================================
-HRESULT CEntry_SetUpTeam::CreateNumInTeam()
+void CEntry_SetUpTeam::UpdateNumInUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
+		
+		// チーム人数のタイマー
+		m_fTimeNumInTeam[i] += fDeltaTime * fSlowRate;
 
-		// チーム人数の生成
-		m_apNumInTeam[i] = CNumber::Create(CMultiNumber::EObjType::OBJTYPE_2D, PRIORITY);
-		if (m_apNumInTeam[i] == nullptr)
-		{ // 生成に失敗した場合
-
-			return E_FAIL;
+#if 0
+		// 操作権を持っている場合最大値
+		const int nUserIdx = m_nMaxChangeIdx[i];	// ユーザーインデックス
+		if (nUserIdx > -1)
+		{
+			m_fTimeNumInTeam[i] = 2.0f;
 		}
+#endif
 
-		// 位置の設定
-		m_apNumInTeam[i]->SetPosition(MyLib::Vector3(320.0f + (640.0f * (float)i), 120.0f, 0.0f));	// TODO：初期生成位置の調整
+		// nullは次へ
+		if (m_apNumInTeam[i] == nullptr) continue;
 
-		// テクスチャの割当
-		CTexture* pTexture = CTexture::GetInstance();
-		int nTexID = pTexture->Regist(num::TEXTURE);
-		m_apNumInTeam[i]->BindTexture(nTexID);
+		// 色取得
+		D3DXCOLOR col = m_apNumInTeam[i]->GetColor();
+		MyLib::Vector2 size = m_apNumInTeam[i]->GetSize(), sizeOrigin = m_apNumInTeam[i]->GetSizeOrigin();
 
-		// 数字の設定
-		m_apNumInTeam[i]->SetNum(m_nPlayerNum[i]);
-
-		// 横幅を元にサイズを設定
-		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-		size = UtilFunc::Transformation::AdjustSizeByWidth(size, num::WIDTH);
-		size.x /= 10.0f;
-		m_apNumInTeam[i]->SetSize(size);
-		m_apNumInTeam[i]->SetSizeOrigin(m_apNumInTeam[i]->GetSize());
-	}
-
-	return S_OK;
-}
-
-//==========================================================================
-// コントローラーUIの生成処理
-//==========================================================================
-HRESULT CEntry_SetUpTeam::CreatePadUI()
-{
-	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
-	{ // チーム合計のプレイヤー総数分繰り返す
-
-		// コントローラーUIの生成
-		m_apPadUI[i] = CObject2D_Anim::Create
-		( // 引数
-			MyLib::Vector3(VEC3_SCREEN_CENT.x, 100.0f + (300.0f * (float)i), 0.0f),	// 位置	// TODO：初期生成位置の調整
-			pad::PTRN.x,	// テクスチャ横分割数
-			pad::PTRN.y,	// テクスチャ縦分割数
-			0.0f,			// 再生時間
-			false,			// 自動破棄
-			PRIORITY		// 優先順位
-		);
-		if (m_apPadUI[i] == nullptr)
-		{ // 生成に失敗した場合
-
-			return E_FAIL;
+		// 不透明度とスケール変更
+		if (m_fTimeNumInTeam[i] <= 1.0f)
+		{
+			col.a = UtilFunc::Correction::EasingEaseIn(num::ALPHARATE_MIN, num::ALPHARATE_MAX, 0.0f, 1.0f, m_fTimeNumInTeam[i]);
 		}
+		else
+		{
+			col.a = UtilFunc::Correction::EasingEaseOut(num::ALPHARATE_MAX, num::ALPHARATE_MIN, 1.0f, 2.0f, m_fTimeNumInTeam[i]);
+		}
+		m_apNumInTeam[i]->SetColor(col);
 
-		// 自動再生をOFFにする
-		m_apPadUI[i]->SetEnableAutoPlay(false);
-		
-		// 自動描画をOFFにする
-		m_apPadUI[i]->SetEnableDisp(false);
-		
-		// テクスチャの割当
-		CTexture* pTexture = CTexture::GetInstance();
-		int nTexID = pTexture->Regist(pad::TEXTURE);
-		m_apPadUI[i]->BindTexture(nTexID);
-		
-		// テクスチャパターンの設定
-		m_apPadUI[i]->SetPatternAnim(i);
-		
-		// 横幅を元にサイズを設定
-		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::WIDTH);
-		size.y *= (float)pad::PTRN.x;
-		m_apPadUI[i]->SetSize(size);
-		m_apPadUI[i]->SetSizeOrigin(m_apPadUI[i]->GetSize());
+		// スケール設定
+		float scaleRate = UtilFunc::Transformation::ValueToRate(col.a, num::ALPHARATE_MIN, num::ALPHARATE_MAX);
+		scaleRate = num::SCALERATE_MIN + (num::SCALERATE_MAX - num::SCALERATE_MIN) * scaleRate;
+		m_apNumInTeam[i]->SetSize(sizeOrigin * scaleRate);
+
+		if (m_fTimeNumInTeam[i] >= 2.0f)
+		{
+			m_fTimeNumInTeam[i] = 0.f;
+		}
 	}
-
-	return S_OK;
-}
-
-//==========================================================================
-// 遷移UIの生成処理
-//==========================================================================
-HRESULT CEntry_SetUpTeam::CreateTransUI()
-{
-	// 遷移UIの生成
-	m_pTransUI = CTransUI::Create();
-	if (m_pTransUI == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
-	return S_OK;
 }
 
 //==========================================================================
@@ -325,11 +481,15 @@ void CEntry_SetUpTeam::KillUI()
 	// 遷移UIの削除
 	SAFE_KILL(m_pTransUI);
 
+	// 背景の削除
+	SAFE_KILL(m_pTransUI);
+
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
 		// チーム人数の削除
 		SAFE_KILL(m_apNumInTeam[i]);
+		SAFE_KILL(m_apTeamSideUI[i]);
 	}
 
 	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
@@ -364,9 +524,9 @@ void CEntry_SetUpTeam::PosAdjUI(const bool bAllReady, const float fDeltaTime, co
 //==========================================================================
 void CEntry_SetUpTeam::PosAdjPadUI()
 {
-	std::vector<CObject2D_Anim*> vecNone;	// チーム指定なし配列
-	std::vector<CObject2D_Anim*> vecLeft;	// 左チーム配列
-	std::vector<CObject2D_Anim*> vecRight;	// 右チーム配列
+	std::vector<CPadUI*> vecNone;	// チーム指定なし配列
+	std::vector<CPadUI*> vecLeft;	// 左チーム配列
+	std::vector<CPadUI*> vecRight;	// 右チーム配列
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド認識の最大数分繰り返す
 
@@ -398,9 +558,9 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 	}
 
 	// 配列内要素をソートする
-	std::sort(vecNone.begin(),  vecNone.end(),  [](CObject2D_Anim* p1, CObject2D_Anim* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
-	std::sort(vecLeft.begin(),  vecLeft.end(),  [](CObject2D_Anim* p1, CObject2D_Anim* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
-	std::sort(vecRight.begin(), vecRight.end(), [](CObject2D_Anim* p1, CObject2D_Anim* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
+	std::sort(vecNone.begin(),  vecNone.end(),  [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
+	std::sort(vecLeft.begin(),  vecLeft.end(),  [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
+	std::sort(vecRight.begin(), vecRight.end(), [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
 
 	// チーム指定なしの位置補正
 	const int nNumNone = (int)vecNone.size();	// 要素数
@@ -422,42 +582,10 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 	}
 
 	// 左チームの位置補正
-	const int nNumLeft = (int)vecLeft.size();	// 要素数
-	int nLoopLeft = 0;	// ループ数
-	for (auto& rLeft : vecLeft)
-	{ // 指定なし選択中の要素数分繰り返す
-
-		MyLib::Vector3 posLeft = rLeft->GetPosition();	// 位置
-
-		// オフセットを与えた位置を計算
-		posLeft.x = pad::left::POS.x - (pad::left::OFFSET_X * (float)(nNumLeft - 1)) * 0.5f + (pad::left::OFFSET_X * (float)nLoopLeft);
-		posLeft.y = pad::left::POS.y;
-
-		// 位置を反映
-		rLeft->SetPosition(posLeft);
-
-		// ループ回数を加算
-		nLoopLeft++;
-	}
+	PosAdjPadUIToNumIn(vecLeft, CGameManager::ETeamSide::SIDE_LEFT);
 
 	// 右チームの位置補正
-	const int nNumRight = (int)vecRight.size();	// 要素数
-	int nLoopRight = 0;	// ループ数
-	for (auto& rRight : vecRight)
-	{ // 指定なし選択中の要素数分繰り返す
-
-		MyLib::Vector3 posRight = rRight->GetPosition();	// 位置
-
-		// オフセットを与えた位置を計算
-		posRight.x = pad::right::POS.x - (pad::right::OFFSET_X * (float)(nNumRight - 1)) * 0.5f + (pad::right::OFFSET_X * (float)nLoopRight);
-		posRight.y = pad::right::POS.y;
-
-		// 位置を反映
-		rRight->SetPosition(posRight);
-
-		// ループ回数を加算
-		nLoopRight++;
-	}
+	PosAdjPadUIToNumIn(vecRight, CGameManager::ETeamSide::SIDE_RIGHT);
 
 	// 左チーム人数調整の位置補正
 	const int nLeftUpIdx = m_nMaxChangeIdx[CGameManager::ETeamSide::SIDE_LEFT];		// 左チーム人数調整パッドインデックス
@@ -466,6 +594,13 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 
 		// 位置を反映
 		m_apPadUI[nLeftUpIdx]->SetPosition(pad::left::up::POS);
+
+		// 矢印の位置は数字にする
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			m_apPadUI[nLeftUpIdx]->GetArrowUI(i)->SetPosition(m_apNumInTeam[CGameManager::ETeamSide::SIDE_LEFT]->GetPosition());
+			m_apPadUI[nLeftUpIdx]->GetArrowUI(i)->SetOriginPosition(m_apNumInTeam[CGameManager::ETeamSide::SIDE_LEFT]->GetPosition());
+		}
 	}
 
 	// 右チーム人数調整の位置補正
@@ -475,6 +610,98 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 
 		// 位置を反映
 		m_apPadUI[nRightUpIdx]->SetPosition(pad::right::up::POS);
+
+		// 矢印の位置は数字にする
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			m_apPadUI[nRightUpIdx]->GetArrowUI(i)->SetPosition(m_apNumInTeam[CGameManager::ETeamSide::SIDE_RIGHT]->GetPosition());
+			m_apPadUI[nRightUpIdx]->GetArrowUI(i)->SetOriginPosition(m_apNumInTeam[CGameManager::ETeamSide::SIDE_RIGHT]->GetPosition());
+		}
+	}
+}
+
+//==========================================================================
+// 内側にいる人数をもとにコントローラーUI位置補正
+//==========================================================================
+void CEntry_SetUpTeam::PosAdjPadUIToNumIn(const std::vector<CPadUI*>& vecPadUI, CGameManager::ETeamSide side)
+{
+	// 左チームの位置補正
+	const int nNumLeft = (int)vecPadUI.size();	// 要素数
+
+	MyLib::Vector3 setpos;	// 設定位置
+	switch (side)
+	{
+	case CGameManager::SIDE_LEFT:
+		setpos = pad::left::POS;
+		break;
+
+	case CGameManager::SIDE_RIGHT:
+		setpos = pad::right::POS;
+		break;
+	}
+
+	if (nNumLeft == 1)
+	{// 1のとき中心
+		vecPadUI[0]->SetPosition(setpos);
+	}
+	else if (nNumLeft == 2)
+	{// 2
+
+		// 左にずらす
+		setpos.x -= pad::OFFSET.x;
+		for (int i = 0; i < nNumLeft; i++)
+		{
+			vecPadUI[i]->SetPosition(setpos);
+
+			// 右にずらす
+			setpos.x += pad::OFFSET.x * 2.0f;
+		}
+
+	}
+	else if (nNumLeft == 3)
+	{// 3
+
+		// 左にずらす
+		setpos.x -= pad::OFFSET.x;
+		setpos.y -= pad::OFFSET.y * 0.5f;
+		for (int i = 0; i < 2; i++)
+		{
+			vecPadUI[i]->SetPosition(setpos);
+
+			// 右にずらす
+			if (i == 0)
+			{
+				setpos.x += pad::OFFSET.x * 2.0f;
+			}
+		}
+
+		// 最後の位置
+		setpos.x -= pad::OFFSET.x * 1.0f;
+		setpos.y += pad::OFFSET.y;
+		vecPadUI[2]->SetPosition(setpos);
+
+	}
+	else if (nNumLeft == 4)
+	{// 4
+
+		// 左にずらす
+		setpos.x -= pad::OFFSET.x;
+		setpos.y -= pad::OFFSET.y * 0.5f;
+		for (int i = 0; i < 4; i++)
+		{
+			vecPadUI[i]->SetPosition(setpos);
+
+			if (i == 1)
+			{// 右端
+				setpos.x -= pad::OFFSET.x * 2.0f;
+				setpos.y += pad::OFFSET.y;
+			}
+			else
+			{
+				// 設定位置ずらす
+				setpos.x += pad::OFFSET.x * 2.0f;
+			}
+		}
 	}
 }
 
@@ -530,6 +757,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// 準備完了配列からイテレーターを削除
 				m_vecAddIdx[m_TeamSide[nUserIdx].team].erase(itr);
+
+				// キャンセル
+				m_apPadUI[nUserIdx]->Cancel();
 				break;
 			}
 			else
@@ -556,6 +786,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// 左に移動
 				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
+				m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
 			}
 			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
 				 &&  m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_RIGHT)
@@ -563,6 +794,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// 右に移動
 				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
+				m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_R);
 			}
 		}
 
@@ -579,6 +811,15 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 			// 自分のサイドを変更する用インデックス保持
 			m_nMaxChangeIdx[nSide] = nUserIdx;
+
+			// 矢印を数字用にする
+			CArrowUI* pArrow = nullptr;
+			for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+			{
+				pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
+				pArrow->SetOffset(pad::ARROWSPACE_NUMBER);
+				pArrow->SetSizeByWidth(pad::ARROWWIDTH_NUMBER);
+			}
 		}
 
 		//--------------------------
@@ -595,6 +836,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// 準備完了配列に追加
 				m_vecAddIdx[nSide].push_back(nUserIdx);
+
+				// 決定
+				m_apPadUI[nUserIdx]->Decide();
 			}
 		}
 	}
@@ -624,12 +868,18 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 
 			// チーム人数を減算
 			m_nPlayerNum[nSide]--;
+
+			// 左に移動
+			m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx))
 		{ // 加算操作が行われた場合
 
 			// チーム人数を加算
 			m_nPlayerNum[nSide]++;
+
+			// 左に移動
+			m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_R);
 		}
 
 		// チーム人数を補正
@@ -640,6 +890,15 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nUserIdx))
 		{ // 下移動操作が行われた場合
+
+			// 矢印の間隔をコントローラー用にする
+			CArrowUI* pArrow = nullptr;
+			for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+			{
+				pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
+				pArrow->SetOffset(pArrow->GetOffsetOrigin());
+				pArrow->SetSizeByWidth(pArrow->GetSizeWidthOrigin());
+			}
 
 			// 変更操作権を初期化
 			m_nMaxChangeIdx[nSide] = -1;

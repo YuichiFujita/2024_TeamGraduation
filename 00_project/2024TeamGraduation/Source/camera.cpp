@@ -93,7 +93,7 @@ namespace
 		{
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// NONE
 			MyLib::Vector3(0.0f, 50.0f, 0.0f),	// タイトル
-			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// エントリー
+			MyLib::Vector3(0.0f, 173.33f, -770.77f),	// エントリー
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// チュートリアル
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ゲーム
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// リザルト
@@ -104,7 +104,7 @@ namespace
 		{
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// NONE
 			MyLib::Vector3(0.0f, 0.0f, -0.15f),	// タイトル
-			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// エントリー
+			MyLib::Vector3(0.0f, 0.0f, -0.04f),	// エントリー
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// チュートリアル
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// ゲーム
 			MyLib::Vector3(0.0f, 0.0f, 0.0f),	// リザルト

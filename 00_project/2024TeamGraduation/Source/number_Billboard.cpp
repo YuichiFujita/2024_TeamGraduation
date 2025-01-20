@@ -31,7 +31,7 @@ CNumberBillboard::~CNumberBillboard()
 HRESULT CNumberBillboard::Init()
 {
 	// ¶¬ˆ—
-	m_pObjBillboard = CObjectBillboardAnim::Create(GetPosition(), 10, 1, 1.0f, false, GetPriority());
+	m_pObjBillboard = CObjectBillboardAnim::Create(MyLib::Vector3(), 10, 1, 1.0f, false, GetPriority());
 	
 	// Ž©“®Ä¶’âŽ~
 	m_pObjBillboard->SetEnableAutoPlay(false);
