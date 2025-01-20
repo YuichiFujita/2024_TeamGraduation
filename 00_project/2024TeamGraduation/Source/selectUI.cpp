@@ -27,7 +27,7 @@ namespace
 	{
 		CGameManager::SIDE_MAX,		// 名前
 		-1,							// 着せ替え
-		CPlayer::FIELD_MAX,			// ポジション
+		CGameManager::SIDE_MAX,		// ポジション
 		CEntry_Dressup::TRANS_MAX,	// 遷移
 	};
 
@@ -308,19 +308,26 @@ void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	switch (m_select.x)
 	{ // X選択ごとの処理
-	case CPlayer::FIELD_IN:		// 内野
+	case CGameManager::SIDE_LEFT:	// 左チーム
 
 		// UI情報を反映
 		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_IN));
 		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_IN) + 10.0f);
 		break;
 
-	case CPlayer::FIELD_OUT:	// 外野
+	case CGameManager::SIDE_RIGHT:	// 右チーム
 
 		// UI情報を反映
 		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_OUT));
 		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_OUT) + 10.0f);
 		break;
+	}
+
+	// 決定の更新
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	{
+		// 着せ替えUIのポジション変更
+		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);
 	}
 }
 
@@ -539,7 +546,7 @@ void CSelectUI::UpdateSelectPlayer()
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
 	{
-		const int nNumPlayer = pDressup->GetNumPlayer();	// プレイヤー数
+		const int nNumPlayer = pDressup->GetNumDressUI();	// プレイヤー数
 		int nLoop = 0;	// ループ回数
 		do {
 			// 左に選択をずらす
@@ -553,7 +560,7 @@ void CSelectUI::UpdateSelectPlayer()
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
-		const int nNumPlayer = pDressup->GetNumPlayer();	// プレイヤー数
+		const int nNumPlayer = pDressup->GetNumDressUI();	// プレイヤー数
 		int nLoop = 0;	// ループ回数
 		do {
 			// 右に選択をずらす
@@ -631,7 +638,7 @@ int CSelectUI::GetNumSelectX(const int nSelectY) const
 		if (pDressup == nullptr) { assert(false); return -1; }		// 着せ替えシーンがない場合抜ける
 
 		// プレイヤー数を返す
-		return pDressup->GetNumPlayer();
+		return pDressup->GetNumDressUI();
 	}
 	case SELECT_NAME:
 	case SELECT_AREA:

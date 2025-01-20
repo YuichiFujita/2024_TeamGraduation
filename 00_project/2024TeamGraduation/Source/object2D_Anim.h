@@ -46,6 +46,7 @@ public:
 	//--------------------------
 	// アニメーション関連
 	//--------------------------
+	void AddPatternAnim() { m_nPatternAnim = (m_nPatternAnim + 1) % (m_nDivisionU * m_nDivisionV); }	// アニメーションパターン加算
 	void SetPatternAnim(int nPattern)	{ m_nPatternAnim = nPattern; }	// アニメーションパターン設定
 	int GetPatternAnim() const			{ return m_nPatternAnim; }		// アニメーションパターン取得
 

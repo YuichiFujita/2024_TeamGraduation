@@ -1051,6 +1051,9 @@ CGameManager::ETeamSide CEntry_SetUpTeam::GetTeamSideAI(int nOccurIdx)
 	for (int i = 0; i < CGameManager::MAX_PLAYER; i++)
 	{ // チーム合計のプレイヤー総数分繰り返す
 
+		// チーム指定がない次へ
+		if (m_TeamSide[i].team == CGameManager::SIDE_NONE) { continue; }
+
 		// AIではない場合次へ
 		if (m_TeamSide[i].nPadIdx > -1) { continue; }
 

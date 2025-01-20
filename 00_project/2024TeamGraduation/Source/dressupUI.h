@@ -86,6 +86,7 @@ public:
 	int GetFaceNowIdx() const;					// 顔のインデックス番号取得
 	CPlayer::EBody GetBodyType() const;			// 体型取得
 	CPlayer::EHandedness GetHandedness() const;	// 利き手取得
+	inline CPlayer::EFieldArea GetArea() const	{ return m_typeArea; }		// プレイヤーポジション取得
 	inline int GetPadIdx() const				{ return m_nPadIdx; }		// 操作権インデックス取得
 	inline EEditType GetTypeEdit() const		{ return m_typeEdit; }		// エディット種類取得
 	inline EChangeType GetTypeChange() const	{ return m_typeChange; }	// 変更種類取得
