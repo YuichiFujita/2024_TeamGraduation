@@ -60,6 +60,7 @@ private:
 	{
 		SELECT_NAME = 0,	// 名前
 		SELECT_DRESSUP,		// 着せ替え
+		SELECT_AREA,		// ポジション
 		SELECT_TRANS,		// 遷移
 		SELECT_MAX			// この列挙型の総数
 	};
@@ -71,6 +72,7 @@ private:
 	// メンバ関数
 	void UpdateName(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 名前の更新
 	void UpdateDressup(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 着せ替えの更新
+	void UpdateArea(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ポジションの更新
 	void UpdateTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 遷移の更新
 	HRESULT CreateUI();			// UI生成
 	void UpdateSelect();		// 選択更新

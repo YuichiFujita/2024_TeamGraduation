@@ -15,6 +15,7 @@
 #include "dressupUI.h"
 #include "selectUI.h"
 #include "object2D.h"
+#include "object2D_Anim.h"
 #include "entryRuleManager.h"
 
 //==========================================================================
@@ -31,19 +32,28 @@ namespace
 	{
 		namespace left
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y - 40.0f, 0.0f);	// 左中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y - 80.0f, 0.0f);	// 左中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
 		}
 
 		namespace right
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y - 40.0f, 0.0f);	// 右中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y - 80.0f, 0.0f);	// 右中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
+		}
+
+		namespace area
+		{
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 240.0f, 570.0f, 0.0f);	// 左位置
+			const std::string TEXTURE	= "data\\TEXTURE\\entry\\area.png";		// 変更種類アイコンテクスチャ
+			const MyLib::Vector3 OFFSET	= MyLib::Vector3(480.0f, 0.0f, 0.0f);	// オフセット
+			const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(1, 2);	// テクスチャ分割数
+			const float WIDTH			= 60.0f;	// 横幅
 		}
 
 		namespace name
 		{
-			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 75.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 75.0f, 0.0f) };	// 原点位置
+			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 60.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 60.0f, 0.0f) };	// 原点位置
 			const char*	FONT		= "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
 			const bool	ITALIC		= false;					// イタリック
 			const float	HEIGHT		= 42.0f;					// 文字縦幅
@@ -53,13 +63,13 @@ namespace
 
 		namespace back
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 420.0f, 640.0f, 0.0f);	// 位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 440.0f, 655.0f, 0.0f);	// 位置
 			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
 		}
 
 		namespace enter
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 420.0f, 640.0f, 0.0f);	// 位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 440.0f, 655.0f, 0.0f);	// 位置
 			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
 		}
 	}
@@ -70,12 +80,13 @@ namespace
 //==========================================================================
 CEntry_Dressup::CEntry_Dressup() : CEntryScene(),
 	m_pRuleManager	(nullptr),		// ルールマネージャー
-	m_pBack			(nullptr),		// 戻る情報
-	m_pEnter		(nullptr),		// 決定情報
 	m_state			(STATE_DRESSUP)	// 状態
 {
 	// メンバ変数をクリア
-	memset(&m_apTeamName[0], 0, sizeof(m_apTeamName));	// チーム名情報
+	memset(&m_apTeamName[0], 0, sizeof(m_apTeamName));		// チーム名情報
+	memset(&m_apDressInfo[0], 0, sizeof(m_apDressInfo));	// 外野着せ替え情報
+	memset(&m_apAreaUI[0], 0, sizeof(m_apAreaUI));			// ポジション変更UI情報
+	memset(&m_apTransUI[0], 0, sizeof(m_apTransUI));		// 遷移UI情報
 }
 
 //==========================================================================
@@ -115,7 +126,7 @@ HRESULT CEntry_Dressup::Init()
 		nCurLeft++;
 
 		// 着せ替えUIの生成
-		CDressupUI* pDressup = CDressupUI::Create(this, nPlayerIdx, posUI);
+		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
@@ -159,7 +170,7 @@ HRESULT CEntry_Dressup::Init()
 		nCurRight++;
 
 		// 着せ替えUIの生成
-		CDressupUI* pDressup = CDressupUI::Create(this, nPlayerIdx, posUI);
+		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
@@ -186,6 +197,36 @@ HRESULT CEntry_Dressup::Init()
 		}
 	}
 
+	for (int nPlayerIdx = 0; nPlayerIdx < CPlayerManager::OUT_MAX; nPlayerIdx++)
+	{ // 外野人数分繰り返す
+
+		int nMaxTeam = CPlayerManager::OUT_MAX / 2;	// チームごとの外野人数
+		MyLib::Vector3 posUI;	// UI位置
+		if (nPlayerIdx < nMaxTeam)
+		{
+			// UIの位置を計算
+			posUI = ui::left::POS;
+			posUI.x = ui::left::POS.x - (ui::left::OFFSET_X * (float)(nMaxTeam - 1)) * 0.5f + (ui::left::OFFSET_X * (float)nPlayerIdx);
+		}
+		else
+		{
+			// UIの位置を計算
+			posUI = ui::right::POS;
+			posUI.x = ui::right::POS.x - (ui::right::OFFSET_X * (float)(nMaxTeam - 1)) * 0.5f + (ui::right::OFFSET_X * (float)(nPlayerIdx - nMaxTeam));
+		}
+
+		// 着せ替えUIの生成
+		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI);
+		if (m_apDressInfo[nPlayerIdx] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 自動描画をOFFにする
+		m_apDressInfo[nPlayerIdx]->SetEnableDisp(false);
+	}
+
 	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
@@ -194,7 +235,7 @@ HRESULT CEntry_Dressup::Init()
 		( // 引数
 			ui::name::FONT,		// フォントパス
 			ui::name::ITALIC,	// イタリック
-			L"ここにチーム名",	// 指定文字列
+			L"ここにチーム名",	// 指定文字列	// TODO：ランダムに名前設定
 			ui::name::POS[i],	// 原点位置
 			ui::name::HEIGHT,	// 文字縦幅
 			ui::name::ALIGN_X,	// 横配置
@@ -209,9 +250,45 @@ HRESULT CEntry_Dressup::Init()
 		}
 	}
 
-	// 戻るの生成
-	m_pBack = CObject2D::Create(PRIORITY);
-	if (m_pBack == nullptr)
+	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
+	{ // チーム数分繰り返す
+
+		// ポジション変更UIの生成
+		m_apAreaUI[i] = CObject2D_Anim::Create
+		( // 引数
+			ui::area::POS + (ui::area::OFFSET * i),	// 位置
+			ui::area::PTRN.x,	// テクスチャ横分割数
+			ui::area::PTRN.y,	// テクスチャ縦分割数
+			0.0f,				// 待機時間
+			false,				// 自動破棄
+			PRIORITY			// 優先順位
+		);
+		if (m_apAreaUI[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// 自動再生をOFFにする
+		m_apAreaUI[i]->SetEnableAutoPlay(false);
+
+		// テクスチャの割当
+		CTexture* pTexture = CTexture::GetInstance();
+		int nTexID = CTexture::GetInstance()->Regist(ui::area::TEXTURE);
+		m_apAreaUI[i]->BindTexture(nTexID);
+
+		// 横幅を元にサイズを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, ui::area::WIDTH);
+		size.x *= ui::area::PTRN.y;
+		m_apAreaUI[i]->SetSize(size);
+		m_apAreaUI[i]->SetSizeOrigin(m_apAreaUI[i]->GetSize());
+	}
+
+	// 戻るボタンの生成
+	m_apTransUI[TRANS_BACK] = CObject2D::Create(PRIORITY);
+	if (m_apTransUI[TRANS_BACK] == nullptr)
 	{ // 生成に失敗した場合
 
 		assert(false);
@@ -219,14 +296,14 @@ HRESULT CEntry_Dressup::Init()
 	}
 
 	// 位置を設定
-	m_pBack->SetPosition(ui::back::POS);
+	m_apTransUI[TRANS_BACK]->SetPosition(ui::back::POS);
 
 	// 大きさを設定
-	m_pBack->SetSize(ui::back::SIZE);
+	m_apTransUI[TRANS_BACK]->SetSize(ui::back::SIZE);
 
-	// 決定の生成
-	m_pEnter = CObject2D::Create(PRIORITY);
-	if (m_pEnter == nullptr)
+	// 進むボタンの生成
+	m_apTransUI[TRANS_NEXT] = CObject2D::Create(PRIORITY);
+	if (m_apTransUI[TRANS_NEXT] == nullptr)
 	{ // 生成に失敗した場合
 
 		assert(false);
@@ -234,10 +311,10 @@ HRESULT CEntry_Dressup::Init()
 	}
 
 	// 位置を設定
-	m_pEnter->SetPosition(ui::enter::POS);
+	m_apTransUI[TRANS_NEXT]->SetPosition(ui::enter::POS);
 
 	// 大きさを設定
-	m_pEnter->SetSize(ui::enter::SIZE);
+	m_apTransUI[TRANS_NEXT]->SetSize(ui::enter::SIZE);
 
 	return S_OK;
 }
@@ -249,6 +326,13 @@ void CEntry_Dressup::Uninit()
 {
 	// エントリールールの破棄
 	SAFE_REF_RELEASE(m_pRuleManager);
+
+	for (int nPlayerIdx = 0; nPlayerIdx < CPlayerManager::OUT_MAX; nPlayerIdx++)
+	{ // 外野人数分繰り返す
+
+		// 着せ替えUIの終了
+		SAFE_UNINIT(m_apDressInfo[nPlayerIdx]);
+	}
 
 	for (auto& rInfo : m_vecDressInfo)
 	{ // 要素数分繰り返す
@@ -269,13 +353,17 @@ void CEntry_Dressup::Uninit()
 
 		// チーム名の終了
 		SAFE_UNINIT(m_apTeamName[i]);
+
+		// ポジション変更UIの終了
+		SAFE_UNINIT(m_apAreaUI[i]);
 	}
 
-	// 戻るの終了
-	SAFE_UNINIT(m_pBack);
+	for (int i = 0; i < TRANS_MAX; i++)
+	{ // 遷移ボタンの総数分繰り返す
 
-	// 決定の終了
-	SAFE_UNINIT(m_pEnter);
+		// 遷移UIの終了
+		SAFE_UNINIT(m_apTransUI[i]);
+	}
 
 	delete this;
 }
@@ -451,39 +539,39 @@ MyLib::Vector2 CEntry_Dressup::GetNameUISize(const CGameManager::ETeamSide team)
 }
 
 //==========================================================================
-// 戻るUI位置取得
+// ポジション変更UI位置取得
 //==========================================================================
-MyLib::Vector3 CEntry_Dressup::GetBackUIPosition()
+MyLib::Vector3 CEntry_Dressup::GetAreaUIPosition(const CPlayer::EFieldArea area)
 {
 	// ポリゴンの位置を返す
-	return m_pBack->GetPosition();
+	return m_apAreaUI[area]->GetPosition();
 }
 
 //==========================================================================
-// 戻るUI大きさ取得
+// ポジション変更UI大きさ取得
 //==========================================================================
-MyLib::Vector2 CEntry_Dressup::GetBackUISize()
+MyLib::Vector2 CEntry_Dressup::GetAreaUISize(const CPlayer::EFieldArea area)
 {
 	// ポリゴンの大きさを返す
-	return m_pBack->GetSize();
+	return m_apAreaUI[area]->GetSize();
 }
 
 //==========================================================================
-// 決定UI位置取得
+// 遷移UI位置取得
 //==========================================================================
-MyLib::Vector3 CEntry_Dressup::GetEnterUIPosition()
+MyLib::Vector3 CEntry_Dressup::GetTransUIPosition(const ETrans trans)
 {
 	// ポリゴンの位置を返す
-	return m_pEnter->GetPosition();
+	return m_apTransUI[trans]->GetPosition();
 }
 
 //==========================================================================
-// 決定UI大きさ取得
+// 遷移UI大きさ取得
 //==========================================================================
-MyLib::Vector2 CEntry_Dressup::GetEnterUISize()
+MyLib::Vector2 CEntry_Dressup::GetTransUISize(const ETrans trans)
 {
 	// ポリゴンの大きさを返す
-	return m_pEnter->GetSize();
+	return m_apTransUI[trans]->GetSize();
 }
 
 //==========================================================================

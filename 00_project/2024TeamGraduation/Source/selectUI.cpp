@@ -21,14 +21,14 @@
 //************************************************************
 namespace
 {
-	const int PRIO_BG = 4;	// 背景の優先順位
-	const int PRIO_UI = 6;	// UIの優先順位
-
+	const int PRIO_BG = 4;		// 背景の優先順位
+	const int PRIO_UI = 6;		// UIの優先順位
 	const int NUM_SELECTX[] =	// X選択肢数
 	{
-		2,	// 名前
-		-1,	// 着せ替え
-		2,	// 遷移
+		CGameManager::SIDE_MAX,		// 名前
+		-1,							// 着せ替え
+		CPlayer::FIELD_MAX,			// ポジション
+		CEntry_Dressup::TRANS_MAX,	// 遷移
 	};
 
 	namespace pad
@@ -55,6 +55,7 @@ CSelectUI::SELECT_FUNC CSelectUI::m_SelectFuncList[] =
 {
 	&CSelectUI::UpdateName,		// 名前の更新
 	&CSelectUI::UpdateDressup,	// 着せ替えの更新
+	&CSelectUI::UpdateArea,		// ポジションの更新
 	&CSelectUI::UpdateTrans,	// 遷移の更新
 };
 
@@ -286,6 +287,44 @@ void CSelectUI::UpdateDressup(const float fDeltaTime, const float fDeltaRate, co
 }
 
 //============================================================
+//	ポジションの更新処理
+//============================================================
+void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
+	// 選択操作ができない場合抜ける
+	if (!IsSelectOK()) { return; }
+
+	// X選択の更新
+	UpdateSelectX(m_select.y);
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
+	switch (m_select.x)
+	{ // X選択ごとの処理
+	case CPlayer::FIELD_IN:		// 内野
+
+		// UI情報を反映
+		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_IN));
+		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_IN) + 10.0f);
+		break;
+
+	case CPlayer::FIELD_OUT:	// 外野
+
+		// UI情報を反映
+		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_OUT));
+		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_OUT) + 10.0f);
+		break;
+	}
+}
+
+//============================================================
 //	遷移の更新処理
 //============================================================
 void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -307,11 +346,11 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	switch (m_select.x)
 	{ // X選択ごとの処理
-	case 0:	// 戻る選択
+	case CEntry_Dressup::TRANS_BACK:	// 戻る選択
 
 		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetBackUIPosition());
-		m_pFrame->SetSize(pDressup->GetBackUISize() + 10.0f);
+		m_pFrame->SetPosition(pDressup->GetTransUIPosition(CEntry_Dressup::TRANS_BACK));
+		m_pFrame->SetSize(pDressup->GetTransUISize(CEntry_Dressup::TRANS_BACK) + 10.0f);
 
 		// 決定の更新
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
@@ -321,11 +360,11 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 		}
 		break;
 
-	case 1:	// 進む選択
+	case CEntry_Dressup::TRANS_NEXT:	// 進む選択
 
 		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetEnterUIPosition());
-		m_pFrame->SetSize(pDressup->GetEnterUISize() + 10.0f);
+		m_pFrame->SetPosition(pDressup->GetTransUIPosition(CEntry_Dressup::TRANS_NEXT));
+		m_pFrame->SetSize(pDressup->GetTransUISize(CEntry_Dressup::TRANS_NEXT) + 10.0f);
 
 		// 決定の更新
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
@@ -542,7 +581,7 @@ void CSelectUI::SetPositionRelative()
 		m_pPadUI->SetEnableDisp(true);
 
 		// コントローラーUIの位置設定
-		m_pPadUI->SetPosition(posThis + MyLib::Vector3(0.0f, -155.0f, 0.0f));
+		m_pPadUI->SetPosition(posThis + MyLib::Vector3(0.0f, -140.0f, 0.0f));
 
 		// フレームの位置設定
 		m_pFrame->SetPosition(posThis + MyLib::Vector3(0.0f, 55.0f, 0.0f));
@@ -595,6 +634,7 @@ int CSelectUI::GetNumSelectX(const int nSelectY) const
 		return pDressup->GetNumPlayer();
 	}
 	case SELECT_NAME:
+	case SELECT_AREA:
 	case SELECT_TRANS:
 	{
 		// 定数を返す
