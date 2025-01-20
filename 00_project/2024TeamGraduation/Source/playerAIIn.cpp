@@ -171,7 +171,7 @@ CPlayer::SHitInfo CPlayerAIIn::Hit(CBall* pBall)
 
 	if (hitInfo.eHit == CPlayer::EHit::HIT_CATCH) { // キャッチ状態
 		// 投げモード
-		m_pAIControl->SetMode(CPlayerAIControl::EMode::MODE_ATTACK);
+		m_pAIControl->SetMode(CPlayerAIControlMode::EMode::MODE_ATTACK);
 	}
 
 	return hitInfo;

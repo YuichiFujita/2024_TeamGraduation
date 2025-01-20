@@ -150,6 +150,15 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="player\playerAI\left">
+      <UniqueIdentifier>{6a9d5906-f398-4f2c-8066-3e852c34e26c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player\playerAI\right">
+      <UniqueIdentifier>{b5ec8045-94ae-4069-bcf9-fa754a676e06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player\playerAI\mode">
+      <UniqueIdentifier>{8be23441-a77b-47ff-aa84-d24ceb2b8404}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\blackframe.cpp">
@@ -701,12 +710,6 @@
     <ClCompile Include="Source\catchSpecial.cpp">
       <Filter>player\catch</Filter>
     </ClCompile>
-    <ClCompile Include="Source\playerAIcontrol_left.cpp">
-      <Filter>player\playerAI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\playerAIcontrol_right.cpp">
-      <Filter>player\playerAI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\playerManager.cpp">
       <Filter>player\playerManager</Filter>
     </ClCompile>
@@ -823,6 +826,30 @@
     </ClCompile>
     <ClCompile Include="Source\padUI.cpp">
       <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_leftAttack.cpp">
+      <Filter>player\playerAI\left</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_leftDefense.cpp">
+      <Filter>player\playerAI\left</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_rightAttack.cpp">
+      <Filter>player\playerAI\right</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_rightDefense.cpp">
+      <Filter>player\playerAI\right</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_defense.cpp">
+      <Filter>player\playerAI\mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_idle.cpp">
+      <Filter>player\playerAI\mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_mode.cpp">
+      <Filter>player\playerAI\mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_attack.cpp">
+      <Filter>player\playerAI\mode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1387,12 +1414,6 @@
     <ClInclude Include="Source\catchSpecial.h">
       <Filter>player\catch</Filter>
     </ClInclude>
-    <ClInclude Include="Source\playerAIcontrol_left.h">
-      <Filter>player\playerAI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\playerAIcontrol_right.h">
-      <Filter>player\playerAI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\playerManager.h">
       <Filter>player\playerManager</Filter>
     </ClInclude>
@@ -1509,6 +1530,30 @@
     </ClInclude>
     <ClInclude Include="Source\padUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_leftAttack.h">
+      <Filter>player\playerAI\left</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_leftDefense.h">
+      <Filter>player\playerAI\left</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_rightAttack.h">
+      <Filter>player\playerAI\right</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_rightDefense.h">
+      <Filter>player\playerAI\right</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_defense.h">
+      <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_idle.h">
+      <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_mode.h">
+      <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_attack.h">
+      <Filter>player\playerAI\mode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

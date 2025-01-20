@@ -272,30 +272,30 @@ void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDe
 	if (pCameraMotion->GetNowTriggerIdx() <= 0) { return; }		// トリガーが次に行くまで待機
 
 	// モーションのドア開ける瞬間
-	CMotion* pMotion = m_listLeft.GetData(0)->GetMotion();
-	if (pMotion->GetType() == CPlayer::EMotion::MOTION_DOOR &&
-		pMotion->IsImpactFrame(pMotion->GetInfo()))
-	{
-		// ドアを開放する
-		CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
-		pManager->SetEnableOpen(true, 0.2f);
-	}
+	//CMotion* pMotion = m_listLeft.GetData(0)->GetMotion();
+	//if (pMotion->GetType() == CPlayer::EMotion::MOTION_DOOR &&
+	//	pMotion->IsImpactFrame(pMotion->GetInfo()))
+	//{
+	//	// ドアを開放する
+	//	CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
+	//	pManager->SetEnableOpen(true, 0.2f);
+	//}
 
 	// 経過時間を加算
-	m_fCurTime += fDeltaTime * fSlowRate;
-	if (m_fCurTime >= TIME_END)
-	{ // 経過しきった場合
+	//m_fCurTime += fDeltaTime * fSlowRate;
+	//if (m_fCurTime >= TIME_END)
+	//{ // 経過しきった場合
 
-		// 待機時間を初期化
-		m_fCurTime = 0.0f;
+	//	// 待機時間を初期化
+	//	m_fCurTime = 0.0f;
 
-		// Z軸移動状態にする
-		m_state = EState::STATE_WALK_Z;
+	//	// Z軸移動状態にする
+	//	m_state = EState::STATE_WALK_Z;
 
-		// 歩かせる
-		m_listLeft.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
-		m_listRight.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
-	}
+	//	// 歩かせる
+	//	m_listLeft.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
+	//	m_listRight.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
+	//}
 }
 
 //============================================================
