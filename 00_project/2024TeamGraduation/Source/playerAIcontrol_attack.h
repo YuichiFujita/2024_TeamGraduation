@@ -25,6 +25,21 @@ class CPlayerAIControlAttack : public CPlayerAIControlMode
 {
 public:
 
+	enum EATTACKMODE			// 攻撃モード
+	{
+		ATTACKMODE_PREPARATION = 0,		// 準備
+		ATTACKMODE_ATTACK,				// 攻撃
+		ATTACKMODE_MAX
+	};
+
+	enum EATTACKPREPATARION		// 準備
+	{
+		ATTACKPREPATARION_NONE = 0,
+		ATTACKPREPATARION_GO,
+		ATTACKPREPATARION_LEAVE,
+		ATTACKPREPATARION_MAX
+	};
+
 	enum  EThrowType			// 投げタイプ
 	{
 		THROWTYPE_NONE = 0,		// なし
@@ -57,19 +72,20 @@ public:
 	// 設定・取得
 	void SetThrowFlag(EThrowFlag Throw) { m_eThrowFlag = Throw; }			// 投げ設定
 	EThrowFlag GetThrowFlag() { return m_eThrowFlag; }						// 取得
+	void SetAttackMode(EATTACKMODE mode) { m_eAttackMode = mode; }			// 攻撃モード設定
+	EATTACKMODE GetAttackMode() { return m_eAttackMode; }					// 取得
 
 protected:
 	//=============================
 	// 仮想・純粋関数
 	//=============================
-	virtual void AttackDash(CPlayer* pTarget) {};	// 走り投げ
 
 	//=============================
 	// メンバ関数
 	//=============================
 	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
 	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
-	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
+	void SeeTarget(MyLib::Vector3 pos);							// ターゲットをみる
 
 	//=============================
 	// 設定・取得関数
@@ -81,6 +97,12 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
+	typedef void(CPlayerAIControlAttack::* ATTACKMODE_FUNC)();
+	static ATTACKMODE_FUNC m_AttackModeFunc[];		// 攻撃モード
+
+	typedef void(CPlayerAIControlAttack::* PREPARATION_FUNC)();
+	static PREPARATION_FUNC m_PreparationFunc[];		// 準備
+
 	typedef void(CPlayerAIControlAttack::* THROWTYPE_FUNC)();
 	static THROWTYPE_FUNC m_ThrowTypeFunc[];		// 投げるタイプ関数
 
@@ -90,6 +112,15 @@ private:
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
+	// 攻撃モード
+	void AttackModePreparation();
+	void AttackModeAttack();
+
+	// 準備
+	void PreparationNone() {};
+	void PreparationGo();
+	virtual void PreparationLeave() = 0;
+
 	// 投げタイプ
 	void ThrowTypeNone() {};		// なし
 	void ThrowTypeNormal();			// 通常
@@ -105,8 +136,11 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void UpdateThrowFlag();			// 投げフラグ
-	void UpdateThrowType();			// 投げ種類
+	void UpdateAttack();
+	void UpdateThrow();			// 投げ
+
+	void AttackDash(CPlayer* pTarget);	// 走り投げ
+	void AttackDashJump(CPlayer* pTarget);	// 走り投げ
 
 	//=============================
 	// メンバ変数
@@ -115,8 +149,10 @@ private:
 	//-----------------------------
 	// 列挙
 	//-----------------------------
-	EThrowType m_eThrowType;		// 投げ種類
-	EThrowFlag m_eThrowFlag;		// 投げフラグ
+	EATTACKMODE m_eAttackMode;			// 攻撃モード
+	EATTACKPREPATARION m_ePreparation;	// 準備
+	EThrowType m_eThrowType;			// 投げ種類
+	EThrowFlag m_eThrowFlag;			// 投げフラグ
 
 	//-----------------------------
 	// 構造体

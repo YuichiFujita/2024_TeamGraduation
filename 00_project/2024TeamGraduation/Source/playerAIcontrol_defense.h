@@ -143,7 +143,7 @@ private:
 	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void SetActionTimer(int nMin, int nMax);	// 行動タイマー
 
-	void Cancel();
+	bool IsCancel();
 
 	//=============================
 	// メンバ変数

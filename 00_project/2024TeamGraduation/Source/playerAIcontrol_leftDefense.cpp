@@ -107,7 +107,7 @@ void CPlayerAIControlLeftDefense::MoveRandom()
 	if (!action.bSet) {
 		// ˆÊ’u‚Ìİ’è
 		// xÀ•W
-		float fRand = (float)UtilFunc::Transformation::Random((int)posSafeMin.x, (int)posSafeMax.x);
+		float fRand = (float)UtilFunc::Transformation::Random((int)posSafeMax.x, (int)posSafeMin.x);
 		action.pos.x = fRand;
 		// zÀ•W
 		fRand = (float)UtilFunc::Transformation::Random((int)posSafeMin.z, (int)posSafeMax.z);

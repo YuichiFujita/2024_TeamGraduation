@@ -74,26 +74,20 @@ CPlayerAIControlMode* CPlayerAIControlMode::Create(CPlayer* player, EMode mode)
 		switch (mode)
 		{
 		case EMode::MODE_IDLE:
-			//pObj = DEBUG_NEW CPlayerAIControlIdle;
-			pObj = CPlayerAIControlAttack::Create(player);
+			pObj = CPlayerAIControlIdle::Create(player);
 			break;
 
 		case EMode::MODE_ATTACK:
-			//pObj = DEBUG_NEW CPlayerAIControlAttack;
 			pObj = CPlayerAIControlAttack::Create(player);
 			break;
 
 		case EMode::MODE_DEFENCE:
-			//pObj = DEBUG_NEW CPlayerAIControlDefense;
 			pObj = CPlayerAIControlDefense::Create(player);
 			break;
 
 		default:
 			break;
 		}
-
-		pObj->m_pAI = player;
-		pObj->m_eMode = mode;
 
 		// ƒNƒ‰ƒX‚Ì‰Šú‰»
 		if (FAILED(pObj->Init()))
@@ -103,6 +97,10 @@ CPlayerAIControlMode* CPlayerAIControlMode::Create(CPlayer* player, EMode mode)
 			SAFE_UNINIT(pObj);
 			return nullptr;
 		}
+
+		// î•ñ‚ÌÝ’è(‰Šú‰»‚ÌŒã‚É’u‚­)
+		pObj->m_pAI = player;
+		pObj->m_eMode = mode;
 	}
 
 	return pObj;
@@ -113,6 +111,7 @@ CPlayerAIControlMode* CPlayerAIControlMode::Create(CPlayer* player, EMode mode)
 //================================================================================
 HRESULT CPlayerAIControlMode::Init()
 {
+	m_eMode = EMode::MODE_IDLE;
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
 

@@ -18,14 +18,30 @@
 // player関連
 #include "playerBase.h"
 #include "playerStatus.h"
+#include "playerAIcontrol.h"
 #include "playerAIcontrol_action.h"
 #include "playerAIcontrol_move.h"
 #include "playerManager.h"
 #include "playerAIcontrol_rightAttack.h"
 #include "playerAIcontrol_leftAttack.h"
 
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
+CPlayerAIControlAttack::ATTACKMODE_FUNC CPlayerAIControlAttack::m_AttackModeFunc[] =	// 攻撃モード関数
+{
+	&CPlayerAIControlAttack::AttackModePreparation,		// 準備
+	&CPlayerAIControlAttack::AttackModeAttack,			// 攻撃
+};
 
-CPlayerAIControlAttack::THROWFLAG_FUNC CPlayerAIControlAttack::m_ThrowTypeFunc[] =	// 投げフラグ関数
+CPlayerAIControlAttack::PREPARATION_FUNC CPlayerAIControlAttack::m_PreparationFunc[] =	// 攻撃モード関数
+{
+	&CPlayerAIControlAttack::PreparationNone,			// なし
+	& CPlayerAIControlAttack::PreparationGo,			// なし
+	&CPlayerAIControlAttack::PreparationLeave,			// 離れる
+};
+
+CPlayerAIControlAttack::THROWTYPE_FUNC CPlayerAIControlAttack::m_ThrowTypeFunc[] =	// 投げフラグ関数
 {
 	&CPlayerAIControlAttack::ThrowTypeNone,
 	&CPlayerAIControlAttack::ThrowTypeNormal,
@@ -107,6 +123,8 @@ HRESULT CPlayerAIControlAttack::Init()
 	CPlayerAIControlMode::Init();
 
 	// 値のクリア
+	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
+	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
 	m_eThrowType = EThrowType::THROWTYPE_NONE;
 	m_eThrowFlag = EThrowFlag::THROW_NONE;
 
@@ -125,6 +143,76 @@ void CPlayerAIControlAttack::Uninit()
 // 更新処理
 //==========================================================================
 void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	//SeeTarget();
+
+	// 投げ種類の更新
+	(this->*(m_AttackModeFunc[m_eAttackMode]))();
+
+	// 親クラスの更新（最後尾に設置）
+	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//================================================================================
+// 攻撃モード：準備
+//================================================================================
+void CPlayerAIControlAttack::AttackModePreparation()
+{
+	if (m_ePreparation == EATTACKPREPATARION::ATTACKPREPATARION_NONE)
+	{
+		int n = rand() % 2;
+
+		switch (n)
+		{
+		case 0:	// 通常
+			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_GO;
+			break;
+
+		case 1:	// ジャンプ
+			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_LEAVE;
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
+	}
+
+	// 準備の更新
+	(this->*(m_PreparationFunc[m_ePreparation]))();
+}
+
+//================================================================================
+// 準備：直ぐ
+//================================================================================
+void CPlayerAIControlAttack::PreparationGo()
+{
+	m_eAttackMode = EATTACKMODE::ATTACKMODE_ATTACK;
+}
+
+#if 0	// オーバーライド
+//================================================================================
+// 準備：離れる
+//================================================================================
+void CPlayerAIControlAttack::PreparationLeave()
+{
+
+}
+#endif
+
+//================================================================================
+// 攻撃モード：攻撃
+//================================================================================
+void CPlayerAIControlAttack::AttackModeAttack()
+{
+	// 攻撃更新
+	UpdateAttack();
+}
+
+//================================================================================
+// 攻撃更新
+//================================================================================
+void CPlayerAIControlAttack::UpdateAttack()
 {
 	// AIの取得
 	CPlayer* pAI = GetPlayer();
@@ -165,22 +253,136 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 	}
 
 	// 投げの更新
-	UpdateThrowType();
-
-	// 投げフラグの更新
-	UpdateThrowFlag();
-
-	// 親クラスの更新（最後尾に設置）
-	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
+	UpdateThrow();
 }
 
 //================================================================================
-// 投げタイプ
+// 投げ更新
 //================================================================================
-void CPlayerAIControlAttack::UpdateThrowType()
+void CPlayerAIControlAttack::UpdateThrow()
 {
 	// 投げ種類の更新
 	(this->*(m_ThrowTypeFunc[m_eThrowType]))();
+
+	// 投げ更新
+	(this->*(m_ThrowFlagFunc[m_eThrowFlag]))();
+}
+
+//================================================================================
+// ダッシュ投げ
+//================================================================================
+void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget)
+{
+	// ターゲットの取得
+	if (!pTarget) return;
+	MyLib::Vector3 posTarget = pTarget->GetPosition();
+
+	// 自分の情報
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+	MyLib::Vector3 posMy = pMy->GetPosition();
+
+	// ラインの位置
+	MyLib::Vector3 linePos = { 0.0f, posMy.y, posMy.z };
+
+	// ラインとの距離
+	float distanceLine = 0.0f;
+	float distanceTarget = 0.0f;
+	float JUMP_LENGTH_TARGET = 100.0f;
+	float JUMP_LENGTH_LINE = 200.0f;
+
+	// ターゲットのエリアの取得
+	CGameManager::ETeamSide side = pMy->GetTeam();
+
+	if (pTarget)
+	{// ターゲットがいた場合
+		distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
+		distanceLine = posMy.DistanceXZ(linePos);	// 自分と中心線との距離
+	}
+	else
+	{
+		return;
+	}
+
+	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
+	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
+
+		// 走る
+		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
+
+		// 相手の位置に近づく
+		if (Approatch(posTarget, JUMP_LENGTH_LINE))
+		{// 範囲内の場合
+			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
+		}
+
+		return;
+	}
+
+	SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+}
+
+//================================================================================
+// ダッシュジャンプ投げ
+//================================================================================
+void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
+{
+	// ターゲットの取得
+	if (!pTarget) return;
+	MyLib::Vector3 posTarget = pTarget->GetPosition();
+
+	// 自分の情報
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+	MyLib::Vector3 posMy = pMy->GetPosition();
+
+	// ラインの位置
+	MyLib::Vector3 linePos = { 0.0f, posMy.y, posMy.z };
+
+	// ラインとの距離
+	float distanceLine = 0.0f;
+	float distanceTarget = 0.0f;
+	float JUMP_LENGTH_TARGET = 500.0f;
+	float JUMP_LENGTH_LINE = 300.0f;
+
+	// ターゲットのエリアの取得
+	CGameManager::ETeamSide side = pMy->GetTeam();
+
+	if (pTarget)
+	{// ターゲットがいた場合
+		distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
+		distanceLine = posMy.DistanceXZ(linePos);	// 自分と中心線との距離
+	}
+	else
+	{
+		return;
+	}
+
+	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
+	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
+
+		// 走る
+		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
+
+		// 相手の位置に近づく
+		if (Approatch(posTarget, JUMP_LENGTH_LINE))
+		{// 範囲内の場合
+			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
+		}
+
+		return;
+	}
+
+	if (distanceTarget > JUMP_LENGTH_TARGET/* && distanceLine > JUMP_LENGTH_LINE*/)
+	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
+		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
+	}
+
+	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
+	{
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
+		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -202,7 +404,7 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 	CPlayer* pTartget = GetThrowTarget();
 
 	// 走り投げ
-	AttackDash(pTartget);
+	AttackDashJump(pTartget);
 }
 
 //--------------------------------------------------------------------------
@@ -211,15 +413,6 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 void CPlayerAIControlAttack::ThrowTypeSpecial()
 {
 	m_eThrowFlag = EThrowFlag::THROW_SPECIAL;
-}
-
-//================================================================================
-// 投げフラグの更新処理
-//================================================================================
-void CPlayerAIControlAttack::UpdateThrowFlag()
-{
-	// 投げ更新
-	(this->*(m_ThrowFlagFunc[m_eThrowFlag]))();
 }
 
 //--------------------------------------------------------------------------

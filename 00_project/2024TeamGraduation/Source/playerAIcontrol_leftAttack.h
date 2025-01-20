@@ -38,7 +38,7 @@ private:
 	//=============================
 	// ƒƒ“ƒoŠÖ”
 	//=============================
-	void AttackDash(CPlayer* pTarget) override;
+	void PreparationLeave() override;
 
 	//=============================
 	// ƒƒ“ƒo•Ï”

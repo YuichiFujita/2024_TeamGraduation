@@ -61,6 +61,9 @@ namespace
 	const float JUMP_RATE = 1.0f;				// ジャンプの割合(高さ)
 }
 
+//==========================================================================
+// 関数ポインタ
+//==========================================================================
 CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	// キャッチ関数
 {
 	&CPlayerAIControlDefense::MoveIdle,				// なし
@@ -171,6 +174,11 @@ void CPlayerAIControlDefense::Update(const float fDeltaTime, const float fDeltaR
 //================================================================================
 void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボールの取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (pBall == nullptr) return;	// ボールねぇぞ
+	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
+
 	// 持ち主情報取得
 	CPlayer* pPlayer = GetBallOwner();
 
@@ -197,12 +205,46 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 
 	case EActionStatus::ACTIONSTATUS_ACTION:		// 行動
 
+		if (pBall->GetTarget() == GetPlayer() &&	// ターゲットが自分
+			m_eAction == EAction::RNDOM)			// 行動がランダム
+		{
+			m_eAction = EAction::LEAVE;
+
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
+
+			break;
+		}
+
+		if (!IsLineOverBall() &&							// 線を超えていない
+			stateBall == CBall::EState::STATE_FREE ||		// フリー
+			stateBall == CBall::EState::STATE_PASS ||		// パス
+			stateBall == CBall::EState::STATE_HOM_PASS ||	// ホーミングパス
+			stateBall == CBall::EState::STATE_LAND)			// 床に事がっている
+		{
+			m_eAction = EAction::CHASE_BALL;
+
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
+		}
+
 		// アクション種類更新
 		(this->*(m_ActionFunc[m_eAction]))();
 
 		break;
 
 	case EActionStatus::ACTIONSTATUS_COOLDOWN:	// クールダウン
+
+		if (IsCancel())
+		{
+			// アクション状態：アクション
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
+
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
+
+			return;
+		}
 
 		// アクションタイマーの設定
 		SetActionTimer(1, 5);
@@ -455,48 +497,6 @@ void CPlayerAIControlDefense::MoveDodge()
 //--------------------------------------------------------------------------
 void CPlayerAIControlDefense::MoveSupport()
 {
-	// ボールの取得
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall == nullptr) return;	// ボールねぇぞ
-
-	// AIの取得
-	CPlayer* pAI = GetPlayer();
-	if (!pAI) return;
-
-	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
-
-
-	// リバウンドを取る
-	if (stateBall == CBall::EState::STATE_REBOUND)
-	{// ボール状態がリバウンドの場合
-
-		//if (IsLineOverBall()) return;	// ボールが線を超えている
-
-		// 位置の取得
-		MyLib::Vector3 posBall = pBall->GetPosition();		// ボール
-		MyLib::Vector3 posEnd = pBall->GetPosPassEnd();		// ボールのパス終了位置
-		MyLib::Vector3 posMy = pAI->GetPosition();		// 自分の位置
-
-		// 終了位置のx,zを参照した位置の設定
-		MyLib::Vector3 pos = { posEnd.x, posMy.y, posEnd.z };
-
-		// ボールとの距離
-		float distance = posMy.DistanceXZ(posBall);
-
-		// 行動状態：走る
-		//m_eMoveFlag = EMoveFlag::MOVEFLAG_DASH;
-
-		// ボールの方へ行く
-		//if (Approatch(pos, CATCH_JUMP_LENGTH) || distance < CATCH_JUMP_LENGTH)
-		//{// 終了位置に近づけた||ボールとの距離が範囲内の場合
-
-		//	 行動：何もしない
-		//	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
-		//}
-
-		return;
-	}
-
 	//// 体力の少ない味方をカバー
 	//int nLife = pAI->GetLife();
 
@@ -701,12 +701,6 @@ void CPlayerAIControlDefense::MoveRight()
 //==========================================================================
 void CPlayerAIControlDefense::UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_sAction.bCancel)
-	{
-		// 行動の構造体初期化
-		ZeroMemory(&m_sAction, sizeof(m_sAction));
-	}
-
 	if (m_sAction.bSet)
 	{
 		// タイマーのカウントダウン
@@ -750,20 +744,30 @@ void CPlayerAIControlDefense::SetActionTimer(int nMin, int nMax)
 //==========================================================================
 // 行動キャンセル
 //==========================================================================
-void CPlayerAIControlDefense::Cancel()
+bool CPlayerAIControlDefense::IsCancel()
 {
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall == nullptr) return;	// ボールねぇぞ
+	if (pBall == nullptr) return false;	// ボールねぇぞ
 	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
 
-
 	if (!IsLineOverBall() &&							// 線を超えていない
+		!IsPicksUpBall() &&								// 自分より近いプレイヤーがいない
 		stateBall == CBall::EState::STATE_LAND)			// 床に事がっている
 	{
-		// ボールを追う
-		m_eAction = EAction::CHASE_BALL;
+		return true;
 	}
+
+	// 自分の情報取得
+	CPlayer* pPlayer = GetPlayer();
+	if (!pPlayer) return false;
+
+	if (pBall->GetTarget() == pPlayer)
+	{// ターゲットが自分の場合
+		return true;
+	}
+
+	return false;
 }
 
 //==========================================================================
@@ -880,8 +884,19 @@ bool CPlayerAIControlDefense::Approatch(MyLib::Vector3 targetPos, float distance
 //==========================================================================
 void CPlayerAIControlDefense::UpdateSee()
 {
+	//CBall* pBall = CGameManager::GetInstance()->GetBall();
+	//if (!pBall) return;
+
+	//CPlayer* pPlayer = pBall->GetPlayer();
+
+	//if (pPlayer)
+	//{
+	//	// 
+	//	SeeTarget(pPlayer->GetPosition());
+	//}
+
 	// ボールを見る
-	SeeBall();
+	//SeeBall();
 }
 
 //==========================================================================
@@ -1096,7 +1111,7 @@ bool CPlayerAIControlDefense::IsPicksUpBall()
 
 		if (pPlayer == pAI) continue;		// 自分の場合
 		if (pPlayer->GetTeam() != typeTeam) continue;		// チームが違う場合
-		if ((pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) &&
+		if ((pPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) ||
 			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
 		{// 外野&&ユーザー&&自分の場合
 			continue;

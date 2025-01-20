@@ -90,70 +90,20 @@ void CPlayerAIControlRightAttack::Update(const float fDeltaTime, const float fDe
 }
 
 //==========================================================================
-// 走り投げ
+// 攻撃準備：離れる
 //==========================================================================
-void CPlayerAIControlRightAttack::AttackDash(CPlayer* pTarget)
+void CPlayerAIControlRightAttack::PreparationLeave()
 {
-	// ターゲットの取得
-	if (!pTarget) return;
-	MyLib::Vector3 posTarget = pTarget->GetPosition();
+	// 歩く
+	SetMoveFlag(CPlayerAIControlMode::EMoveFlag::MOVEFLAG_WALK);
 
-	// 自分の情報
-	CPlayer* pMy = GetPlayer();
-	if (!pMy) return;
-	MyLib::Vector3 posMy = pMy->GetPosition();
-
-	// ラインの位置
-	MyLib::Vector3 linePos = { 0.0f, posMy.y, posMy.z };
-
-	// ラインとの距離
-	float distanceLine = 0.0f;
-	float distanceTarget = 0.0f;
-	float JUMP_LENGTH_TARGET = 500.0f;
-	float JUMP_LENGTH_LINE = 300.0f;
-
-	// ターゲットのエリアの取得
-	CGameManager::ETeamSide side = pMy->GetTeam();
-
-	if (pTarget)
-	{// ターゲットがいた場合
-		distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
-		distanceLine = posMy.DistanceXZ(linePos);	// 自分と中心線との距離
-	}
-	else
+	// 近づく
+	if (Approatch({ 500.0f, GetPlayer()->GetPosition().y, GetPlayer()->GetPosition().z }, 50.0f))
 	{
-		return;
-	}
+		// 待機
+		SetMoveFlag(CPlayerAIControlMode::EMoveFlag::MOVEFLAG_IDLE);
 
-	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
-	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
-
-		// 走る
-		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
-
-		// 相手の位置に近づく
-		if (Approatch(posTarget, JUMP_LENGTH_LINE))
-		{// 範囲内の場合
-			//SetForcibly(EMoveForcibly::FORCIBLY_NONE);	// 強制行動：なし
-			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
-		}
-
-		return;
-	}
-
-	if (distanceTarget > JUMP_LENGTH_TARGET)
-	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
-		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
-	}
-	else
-	{
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
-		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
-	}
-
-	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
-	{
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
-		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+		// 攻撃モード：攻撃
+		SetAttackMode(EATTACKMODE::ATTACKMODE_ATTACK);
 	}
 }
