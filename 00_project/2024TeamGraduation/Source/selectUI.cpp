@@ -327,7 +327,7 @@ void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const
 	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 	{
 		// 着せ替えUIのポジション変更
-		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);
+		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);	// TODO：変更時に総数よりでかいやつ選択してると壊れる
 	}
 }
 
@@ -452,7 +452,11 @@ void CSelectUI::UpdateSelect()
 		if (m_select.y <= 0) { return; }
 
 		// Y移動時のX補正位置の取得
-		m_select.x = GetMoveYSelectX(m_select.y - 1);
+		int nSelectX = GetMoveYSelectX(m_select.y - 1);
+		if (nSelectX == -1) { return; }
+
+		// X選択位置を補正
+		m_select.x = nSelectX;
 
 		// 上に移動
 		m_select.y--;
@@ -463,7 +467,11 @@ void CSelectUI::UpdateSelect()
 		if (m_select.y >= SELECT_MAX - 1) { return; }
 
 		// Y移動時のX補正位置の取得
-		m_select.x = GetMoveYSelectX(m_select.y + 1);
+		int nSelectX = m_select.x = GetMoveYSelectX(m_select.y + 1);
+		if (nSelectX == -1) { return; }
+
+		// X選択位置を補正
+		m_select.x = nSelectX;
 
 		// 下に移動
 		m_select.y++;
@@ -661,6 +669,46 @@ int CSelectUI::GetMoveYSelectX(const int nNextSelectY)
 	const int nCurNumX = GetNumSelectX(m_select.y);		// 現在のX選択数
 	const int nNextNumX = GetNumSelectX(nNextSelectY);	// 次のX選択数
 	const float fCurRate = (float)m_select.x / (float)nCurNumX;	// 選択割合
+
+	if (nNextSelectY == SELECT_DRESSUP)
+	{ // 次の選択が着せ替えの場合
+
+		// 着せ替えシーンの取得
+		CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+		if (pEntry == nullptr) { assert(false); return -1; }		// エントリーモードがない場合抜ける
+		CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+		if (pEntryScene == nullptr) { assert(false); return -1; }	// エントリーシーンがない場合抜ける
+		CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+		if (pDressup == nullptr) { assert(false); return -1; }		// 着せ替えシーンがない場合抜ける
+
+		int nNumDressUI = pDressup->GetNumDressUI();
+		switch ((int)((float)CGameManager::SIDE_MAX * fCurRate))
+		{ // チームごとの処理
+		case CGameManager::SIDE_LEFT:
+
+			for (int i = 0; i < nNumDressUI; i++)
+			{ // 着せ替えUI数分左から繰り返す
+
+				// 選択可能な着せ替えUIがあった場合返す
+				if (pDressup->IsSelectOK(m_nPadIdx, i)) { return i; }
+			}
+			return -1;
+
+		case CGameManager::SIDE_RIGHT:
+
+			for (int i = nNumDressUI - 1; i >= 0; i--)
+			{ // 着せ替えUI数分右から繰り返す
+
+				// 選択可能な着せ替えUIがあった場合返す
+				if (pDressup->IsSelectOK(m_nPadIdx, i)) { return i; }
+			}
+			return -1;
+
+		default:
+			assert(false);
+			break;
+		}
+	}
 
 	// 次のX選択位置を返す
 	return (int)((float)nNextNumX * fCurRate);

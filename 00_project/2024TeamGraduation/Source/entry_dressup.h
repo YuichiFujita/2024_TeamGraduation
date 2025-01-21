@@ -91,10 +91,12 @@ public:
 	MyLib::Vector2 GetAreaUISize(const CPlayer::EFieldArea area);			// ポジション変更UI大きさ取得
 	MyLib::Vector3 GetTransUIPosition(const ETrans trans);					// 遷移UI位置取得
 	MyLib::Vector2 GetTransUISize(const ETrans trans);						// 遷移UI大きさ取得
-	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
+	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team)	{ return m_apTeamName[team]; }	// 名前文字列ポインタ取得
 
-	int GetNumDressUI() const;									// 表示着せ替えUI数取得
-	void ChangeDressUIArea(const CGameManager::ETeamSide team);	// 着せ替えUIのポジション変更
+	int GetNumDressUI() const;										// 表示着せ替えUI数取得 (全着せ替えUI)
+	int GetNumDressUI(const CGameManager::ETeamSide team) const;	// 表示着せ替えUI数取得 (チーム別着せ替えUI)
+	void ChangeDressUIArea(const CGameManager::ETeamSide team);		// 着せ替えUIのポジション変更
+	bool IsTeamReady(const CPlayer::EFieldArea area, const CGameManager::ETeamSide team);	// チームの準備全完了確認
 
 private:
 
@@ -102,6 +104,7 @@ private:
 	// メンバ関数
 	//=============================
 	CDressupUI* GetPtrDressUI(const int nIdx) const;	// 着せ替えUI取得
+	int GetIdxDressUI(const CDressupUI* pUI) const;		// X選択インデックス取得
 	bool IsAllReady();	// 準備全完了フラグ取得
 	void Save();		// セーブ
 	void Load();		// ロード
