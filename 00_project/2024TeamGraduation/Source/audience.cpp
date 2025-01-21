@@ -33,8 +33,8 @@ namespace
 	const float TIME_DESPAWN	 = 3.2f;	// 退場時間
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
-	const float RATE_HIGH = 0.1f;	// ハイポリ比率
-	const float RATE_LOW  = 0.2f;	// ローポリ比率
+	const float RATE_HIGH = 0.05f;	// ハイポリ比率
+	const float RATE_LOW  = 0.125f;	// ローポリ比率
 #else
 	const float RATE_HIGH = 0.12f;	// ハイポリ比率
 	const float RATE_LOW = 0.28f;	// ローポリ比率
