@@ -22,23 +22,23 @@ namespace
 
 	namespace bg
 	{
-		const MyLib::Vector3 INIT_POS = MyLib::Vector3(-VEC3_SCREEN_SIZE.x, 400.0f, 0.0f);		// 初期位置
+		const char* TEXTURE = "data\\TEXTURE\\entry\\PressStart_BG.png";	// 操作表記の背景
+		const MyLib::Vector3 INIT_POS = MyLib::Vector3(-VEC3_SCREEN_SIZE.x, 360.0f, 0.0f);		// 初期位置
 		const MyLib::Vector3 DEST_POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, INIT_POS.y, 0.0f);	// 目標位置
-		const MyLib::Vector2 SIZE = MyLib::Vector2(VEC3_SCREEN_SIZE.x, 80.0f);	// 大きさ
-		const D3DXCOLOR COL = MyLib::color::Black(0.6f);	// 色
-		const float MOVE_TIME = 0.15f;	// 移動時間
+		const float MOVE_TIME = 0.35f;	// 移動時間
+		const float WIDTH = 450.0f;		// 横幅
 	}
 
 	namespace string
 	{
 		const char* TEXTURE	= "data\\TEXTURE\\entry\\PressStart.png";	// 操作表記テクスチャ
-		const float HEIGHT	= 55.0f;	// 縦幅
+		const float HEIGHT	= 150.0f;	// 縦幅
 		const float INIT_ALPHA	= 0.0f;	// 初期透明度
 		const float DEST_ALPHA	= 1.0f;	// 目標透明度
 		const float MOVE_TIME	= 0.4f;	// 移動時間
 		const float WAIT_TIME	= 0.4f;	// 待機時間
 		const MyLib::Vector2 INIT_SIZE = MyLib::Vector2(0.0f, 0.0f);	// 初期大きさ
-		const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, 400.0f, 0.0f);	// 位置
+		const MyLib::Vector3 POS = MyLib::Vector3(610.0f, 450.0f, 0.0f);	// 位置
 	}
 }
 
@@ -276,7 +276,7 @@ void CTransUI::UpdateSpawnBG(const float fDeltaTime, const float fDeltaRate, con
 	m_fCurTime += fDeltaTime * fSlowRate;
 
 	// 背景の位置を移動
-	MyLib::Vector3 posBG = UtilFunc::Correction::EasingCubicIn(bg::INIT_POS, bg::DEST_POS, 0.0f, bg::MOVE_TIME, m_fCurTime);
+	MyLib::Vector3 posBG = UtilFunc::Correction::EaseOutBack(bg::INIT_POS, bg::DEST_POS, 0.0f, bg::MOVE_TIME, m_fCurTime);
 	m_pBG->SetPosition(posBG);
 
 	if (m_fCurTime >= bg::MOVE_TIME)
@@ -405,6 +405,8 @@ bool CTransUI::IsDispTransState()
 //============================================================
 HRESULT CTransUI::CreateUI()
 {
+	CTexture* pTexture = CTexture::GetInstance();	// テクスチャ情報
+
 	// 背景の生成
 	m_pBG = CObject2D::Create(PRIORITY);
 	if (m_pBG == nullptr)
@@ -413,11 +415,14 @@ HRESULT CTransUI::CreateUI()
 		return E_FAIL;
 	}
 
-	// 大きさの設定
-	m_pBG->SetSize(bg::SIZE);
+	// テクスチャの割当
+	int texID = pTexture->Regist(bg::TEXTURE);
+	m_pBG->BindTexture(texID);
 
-	// 色の設定
-	m_pBG->SetColor(bg::COL);
+	// 横幅を元にサイズ計算
+	MyLib::Vector2 size = pTexture->GetImageSize(texID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, bg::WIDTH);
+	m_pBG->SetSize(size);
 
 	// 文字の生成
 	m_pString = CObject2D::Create(PRIORITY);
@@ -428,7 +433,6 @@ HRESULT CTransUI::CreateUI()
 	}
 
 	// テクスチャの割当
-	CTexture* pTexture = CTexture::GetInstance();	// テクスチャ情報
 	m_pString->BindTexture(pTexture->Regist(string::TEXTURE));
 
 	// 位置の設定
