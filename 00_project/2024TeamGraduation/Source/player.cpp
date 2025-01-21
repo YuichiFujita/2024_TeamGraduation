@@ -470,6 +470,7 @@ HRESULT CPlayer::Init()
 	// チームごとのユニフォームにする
 	if (m_pDressUp_Uniform != nullptr)
 	{
+		assert(m_typeTeam != CGameManager::SIDE_NONE);
 		m_pDressUp_Uniform->SetNowIdx((int)m_typeTeam);
 		m_pDressUp_Uniform->ReRegist();
 	}
