@@ -5,11 +5,11 @@
 // 
 //=============================================================================
 
-#ifndef _PLAYERAICONTROL_LEFT_H_
-#define _PLAYERAICONTROL_LEFT_H_	// 二重インクルード防止
+#ifndef _PLAYERAICONTROL_RIGHTATTACK_H_
+#define _PLAYERAICONTROL_RIGHTATTACK_H_	// 二重インクルード防止
 
 #include "player.h"
-#include "playerAIcontrol.h"
+#include "playerAIcontrol_attack.h"
 
 //==========================================================================
 // 前方宣言
@@ -21,31 +21,38 @@ class CPlayer;
 //==========================================================================
 // プレイヤーコントロールクラス定義
 //==========================================================================
-class CPlayerAIControlLeft : public CPlayerAIControl
+class CPlayerAIControlRightAttack : public CPlayerAIControlAttack
 {
 public:
 
+	enum  EThrowType			// 投げタイプ
+	{
+		THROWTYPE_NONE = 0,		// なし
+		THROWTYPE_NORMAL,		// 通常
+		THROWTYPE_JUMP,			// ジャンプ
+		THROWTYPE_SPECIAL,		// スペシャル
+		//THROWTYPE_PASS,			// パス
+		THROWTYPE_MAX
+	};
+
+public:
+
 	// コンストラクタ
-	CPlayerAIControlLeft();
+	CPlayerAIControlRightAttack();
+	
+	// 生成
+	static CPlayerAIControlRightAttack* Create();
 
-	static CPlayerAIControlLeft* Create(CPlayer* player);
-
-	virtual HRESULT Init() override;
-	virtual void Uninit() override;
-	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
+	// メンバ関数
+	HRESULT Init();
+	void Uninit();
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 private:
 	//=============================
 	// メンバ関数
 	//=============================
-
-	// オーバーライド
-	bool IsLineOverBall() override;				// 線超え判定(ボール)
-	bool IsLineOverPlayer() override;			// 線越え判定(プレイヤー)
-	void AttackDash(CPlayer* pTarget) override;	// 走り投げ
-	void ForciblyReturn() override;				// 
-	virtual void MoveRetreat() override;		// 
-	void MoveRandom() override;					// ランダム移動
+	void PreparationLeave() override;
 
 	//=============================
 	// メンバ変数
