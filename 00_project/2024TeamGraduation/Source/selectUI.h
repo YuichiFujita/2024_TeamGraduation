@@ -83,7 +83,7 @@ private:
 	void UpdateSelectPlayer();	// 選択プレイヤー更新
 	void SetPositionRelative();	// 相対位置設定
 	bool IsSelectOK() const;	// 選択操作可能かの確認
-
+	void SetWidthPadUI(const float fWidth);			// パッドUI大きさ設定
 	int GetNumSelectX(const int nSelectY) const;	// X選択肢数取得
 	int GetMoveYSelectX(const int nNextSelectY);	// Y移動時のX補正位置取得
 	void UpdateSelectX(const int nSelectY);			// X選択更新
