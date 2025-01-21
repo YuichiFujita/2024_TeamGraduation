@@ -19,7 +19,7 @@ CHARACTERSET
 		PARENT = -1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 16.00 0.00
+		POS = 0.00 37.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -29,7 +29,7 @@ CHARACTERSET
 		PARENT = 0
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 0.00 0.00
+		POS = 0.00 1.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -39,7 +39,7 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 40.50 0.00
+		POS = 0.00 31.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -49,57 +49,57 @@ CHARACTERSET
 		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -9.50 29.50 0.00
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 4
-		PARENT = 3
+		PARENT = 1
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -9.00 0.00 0.00
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 5
-		PARENT = 4
+		PARENT = 0
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = -18.50 0.00 0.00
+		POS = -5.50 -7.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 6
-		PARENT = 1
+		PARENT = 7
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 9.50 29.50 0.00
+		POS = 0.00 -14.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 7
-		PARENT = 6
+		PARENT = 0
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 9.00 0.00 0.00
+		POS = 5.50 -7.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 8
-		PARENT = 7
+		PARENT = 9
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 18.50 0.00 0.00
+		POS = 0.00 -14.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -109,7 +109,7 @@ CHARACTERSET
 		PARENT = 2
 		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
 		INVERSE = -1					# îΩì]êÊ
-		POS = 0.00 -1.50 -11.00
+		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET

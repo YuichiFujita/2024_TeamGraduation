@@ -281,7 +281,7 @@ int CAudienceHighPoly::UpdateSpecial(const float fDeltaTime, const float fDeltaR
 	m_pLightBlur->SetPosition(m_pLight->GetPosition());
 
 	// ジャンプモーションを返す
-	return EMotion::MOTION_JUMP;
+	return EMotion::MOTION_SPECIAL;
 }
 
 //==========================================================================
@@ -351,8 +351,59 @@ void CAudienceHighPoly::SetMotion(const int nMotion)
 	if (nAnimMotion != nMotion)
 	{ // 現在のモーションが再生中のモーションと一致しない場合
 
-		// 現在のモーションの設定
-		pMotion->Set(nMotion);
+		switch (nMotion)
+		{
+		case EMotion::MOTION_SPAWN:
+		case EMotion::MOTION_JUMP:
+		case EMotion::MOTION_DESPAWN:
+		case EMotion::MOTION_SPECIAL:
+		{
+			// 設定するモーションの情報取得
+			const CMotion::Info& info = pMotion->GetInfo(nMotion);
+
+			// 開始キー
+			int nStartKey = 0;
+			if (rand() % 2 == 0)
+			{
+				nStartKey = info.nNumKey / 2;
+			}
+
+			// 開始フレーム
+			float fFrame = (float)(rand() % info.aKey[nStartKey].nFrame);
+
+			// 現在のモーションの設定
+			pMotion->Set(nMotion, nStartKey, true, fFrame);
+		}
+		break;
+
+		case EMotion::MOTION_DEF:
+		{
+			// ニブイチで逆
+			int nSetMotion = nMotion;
+			if (rand() % 2 == 0)
+			{
+				nSetMotion = EMotion::MOTION_DEF_INV;
+			}
+
+			// 設定するモーションの情報取得
+			const CMotion::Info& info = pMotion->GetInfo(nSetMotion);
+
+			// 開始キー
+			int nStartKey = rand() % info.nNumKey;
+
+			// 開始フレーム
+			float fFrame = (float)(rand() % info.aKey[nStartKey].nFrame);
+
+			// 現在のモーションの設定
+			pMotion->Set(nSetMotion, nStartKey, true, fFrame);
+		}
+			break;
+
+		default:
+			// 現在のモーションの設定
+			pMotion->Set(nMotion);
+			break;
+		}
 	}
 }
 
@@ -418,7 +469,7 @@ HRESULT CAudienceHighPoly::CreateCharacter(const MyLib::Vector3& rPos, const MyL
 	m_pChara->SetScale(1.0f + UtilFunc::Transformation::Random(0, 250) * 0.001f);
 
 	// モーションの設定
-	m_pChara->GetMotion()->Set(EMotion::MOTION_SPAWN);
+	SetMotion(EMotion::MOTION_SPAWN);
 
 	// ハイポリキャラの自動更新/自動描画/自動破棄をしない種類にする
 	m_pChara->SetType(CObject::TYPE::TYPE_NONE);
