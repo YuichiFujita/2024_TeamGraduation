@@ -35,7 +35,9 @@ namespace
 	{
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\playerMarker001.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(4, 1);	// テクスチャ分割数
-		const float WIDTH = 55.0f;	// 横幅
+		const float NAME_WIDTH = 22.0f;		// 名前選択時の横幅
+		const float DRESS_WIDTH = 55.0f;	// 着せ替え時の横幅
+		const float OTHER_WIDTH = 18.0f;	// 他選択時の横幅
 	}
 
 	namespace frame
@@ -233,10 +235,6 @@ void CSelectUI::UpdateName(const float fDeltaTime, const float fDeltaRate, const
 	// X選択肢をチームインデックスにする
 	m_select.x = m_team;
 
-	// UI情報を反映
-	m_pFrame->SetPosition(pDressup->GetNameUIPosition(m_team));
-	m_pFrame->SetSize(pDressup->GetNameUISize(m_team) + 10.0f);
-
 	// 選択操作ができない場合抜ける
 	if (!IsSelectOK()) { return; }
 
@@ -305,29 +303,12 @@ void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const
 	// X選択の更新
 	UpdateSelectX(m_select.y);
 
-	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	switch (m_select.x)
-	{ // X選択ごとの処理
-	case CGameManager::SIDE_LEFT:	// 左チーム
-
-		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_IN));
-		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_IN) + 10.0f);
-		break;
-
-	case CGameManager::SIDE_RIGHT:	// 右チーム
-
-		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetAreaUIPosition(CPlayer::FIELD_OUT));
-		m_pFrame->SetSize(pDressup->GetAreaUISize(CPlayer::FIELD_OUT) + 10.0f);
-		break;
-	}
-
 	// 決定の更新
+	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 	{
 		// 着せ替えUIのポジション変更
-		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);	// TODO：変更時に総数よりでかいやつ選択してると壊れる
+		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);
 	}
 }
 
@@ -354,11 +335,7 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 	switch (m_select.x)
 	{ // X選択ごとの処理
 	case CEntry_Dressup::TRANS_BACK:	// 戻る選択
-
-		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetTransUIPosition(CEntry_Dressup::TRANS_BACK));
-		m_pFrame->SetSize(pDressup->GetTransUISize(CEntry_Dressup::TRANS_BACK) + 10.0f);
-
+	{
 		// 決定の更新
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 		{
@@ -366,19 +343,19 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 			pEntry->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
 		}
 		break;
-
+	}
 	case CEntry_Dressup::TRANS_NEXT:	// 進む選択
-
-		// UI情報を反映
-		m_pFrame->SetPosition(pDressup->GetTransUIPosition(CEntry_Dressup::TRANS_NEXT));
-		m_pFrame->SetSize(pDressup->GetTransUISize(CEntry_Dressup::TRANS_NEXT) + 10.0f);
-
+	{
 		// 決定の更新
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 		{
 			// ゲーム設定遷移
 			pDressup->TransSetting();
 		}
+		break;
+	}
+	default:
+		assert(false);
 		break;
 	}
 }
@@ -428,7 +405,7 @@ HRESULT CSelectUI::CreateUI()
 
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::WIDTH);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::OTHER_WIDTH);
 	size.y *= (float)pad::PTRN.x;
 	m_pPadUI->SetSize(size);
 	m_pPadUI->SetSizeOrigin(m_pPadUI->GetSize());
@@ -448,12 +425,23 @@ void CSelectUI::UpdateSelect()
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
 	if (pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
 	{
+		// 着せ替えシーンの取得
+		CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+		if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+		CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+		if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+		CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+		if (pDressup == nullptr) { assert(false); return; }			// 着せ替えシーンがない場合抜ける
+
 		// これ以上上に行けない場合抜ける
 		if (m_select.y <= 0) { return; }
 
-		// Y移動時のX補正位置の取得
+		// Y移動時のX補正位置が取得できない場合抜ける
 		int nSelectX = GetMoveYSelectX(m_select.y - 1);
 		if (nSelectX == -1) { return; }
+
+		// 誰かが名前にいる場合抜ける
+		if (m_select.y - 1 == SELECT_NAME && !pDressup->IsNameSelectOK(m_team)) { return; }
 
 		// X選択位置を補正
 		m_select.x = nSelectX;
@@ -564,7 +552,7 @@ void CSelectUI::UpdateSelectPlayer()
 			nLoop++;
 			if (nLoop >= nNumPlayer) { break; }
 
-		} while (!pDressup->IsSelectOK(m_nPadIdx, m_select.x));
+		} while (!pDressup->IsDressSelectOK(m_nPadIdx, m_select.x));
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
@@ -578,7 +566,7 @@ void CSelectUI::UpdateSelectPlayer()
 			nLoop++;
 			if (nLoop >= nNumPlayer) { break; }
 
-		} while (!pDressup->IsSelectOK(m_nPadIdx, m_select.x));
+		} while (!pDressup->IsDressSelectOK(m_nPadIdx, m_select.x));
 	}
 }
 
@@ -587,27 +575,101 @@ void CSelectUI::UpdateSelectPlayer()
 //============================================================
 void CSelectUI::SetPositionRelative()
 {
-	// 自身の位置を取得
-	MyLib::Vector3 posThis = GetPosition();
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return; }		// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { return; }						// 着せ替えシーンがない場合抜ける
 
-	if (m_select.y == SELECT_DRESSUP)
+	switch (m_select.y)
+	{ // 縦選択ごとの処理
+	case SELECT_NAME:
 	{
-		// コントローラーUIの自動描画をONにする
-		m_pPadUI->SetEnableDisp(true);
+		// フレーム情報の設定
+		MyLib::Vector3 posName = pDressup->GetNameUIPosition(m_team);	// 名前の位置
+		m_pFrame->SetPosition(posName);									// 位置設定
+		m_pFrame->SetSize(pDressup->GetNameUISize(m_team) + 10.0f);		// 大きさ設定
+
+		// コントローラーUIの位置設定
+		m_pPadUI->SetPosition(posName + MyLib::Vector3(0.0f, -60.0f, 0.0f));
+
+		// コントローラーUIの大きさ設定
+		CTexture* pTexture = CTexture::GetInstance();								// テクスチャ情報
+		MyLib::Vector2 size = pTexture->GetImageSize(m_pPadUI->GetIdxTexture());	// テクスチャ大きさ
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::NAME_WIDTH);	// 横幅調整
+		size.y *= (float)pad::PTRN.x;												// 縦幅調整
+		m_pPadUI->SetSize(size);													// 大きさ反映
+		break;
+	}
+	case SELECT_DRESSUP:
+	{
+		MyLib::Vector3 posThis = GetPosition();	// 自身の位置
+
+		// フレーム情報の設定
+		m_pFrame->SetPosition(posThis + MyLib::Vector3(0.0f, 55.0f, 0.0f));	// 位置設定
+		m_pFrame->SetSize(frame::dressup::SIZE);							// 大きさ設定
 
 		// コントローラーUIの位置設定
 		m_pPadUI->SetPosition(posThis + MyLib::Vector3(0.0f, -140.0f, 0.0f));
 
-		// フレームの位置設定
-		m_pFrame->SetPosition(posThis + MyLib::Vector3(0.0f, 55.0f, 0.0f));
-
-		// フレームの大きさ設定
-		m_pFrame->SetSize(frame::dressup::SIZE);
+		// コントローラーUIの大きさ設定
+		CTexture* pTexture = CTexture::GetInstance();								// テクスチャ情報
+		MyLib::Vector2 size = pTexture->GetImageSize(m_pPadUI->GetIdxTexture());	// テクスチャ大きさ
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::DRESS_WIDTH);	// 横幅調整
+		size.y *= (float)pad::PTRN.x;												// 縦幅調整
+		m_pPadUI->SetSize(size);													// 大きさ反映
+		break;
 	}
-	else
+	case SELECT_AREA:
 	{
-		// コントローラーUIの自動描画をOFFにする
-		m_pPadUI->SetEnableDisp(false);
+		// フレーム情報の設定
+		const MyLib::Vector3 posArea = pDressup->GetAreaUIPosition((CPlayer::EFieldArea)m_select.x);	// ポジションUI位置
+		const MyLib::Vector2 sizeArea = pDressup->GetAreaUISize((CPlayer::EFieldArea)m_select.x);		// ポジションUI大きさ
+		m_pFrame->SetPosition(posArea);			// 位置設定
+		m_pFrame->SetSize(sizeArea + 10.0f);	// 大きさ設定
+
+		// コントローラーUIの位置設定
+		const float	fHalfWidthPad = m_pPadUI->GetSize().x;			// パッド横幅
+		const float	fMaxWidth = sizeArea.x * 2.0f - fHalfWidthPad;	// 使用横幅
+		const int	nPadIdx = std::abs(m_nPadIdx + (-(mylib_const::MAX_PLAYER - 1) * m_select.x));	// 計算用パッドインデックス
+		const float	fOffset = (fMaxWidth / (float)mylib_const::MAX_PLAYER) * nPadIdx - (fMaxWidth * 0.5f) + fHalfWidthPad;	// 位置オフセット
+		m_pPadUI->SetPosition(posArea + MyLib::Vector3(fOffset, -58.0f, 0.0f));
+
+		// コントローラーUIの大きさ設定
+		CTexture* pTexture = CTexture::GetInstance();								// テクスチャ情報
+		MyLib::Vector2 size = pTexture->GetImageSize(m_pPadUI->GetIdxTexture());	// テクスチャ大きさ
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::OTHER_WIDTH);	// 横幅調整
+		size.y *= (float)pad::PTRN.x;												// 縦幅調整
+		m_pPadUI->SetSize(size);
+		break;
+	}
+	case SELECT_TRANS:
+	{
+		// フレーム情報の設定
+		const MyLib::Vector3 posTrans = pDressup->GetTransUIPosition((CEntry_Dressup::ETrans)m_select.x);	// 遷移UI位置
+		const MyLib::Vector2 sizeTrans = pDressup->GetTransUISize((CEntry_Dressup::ETrans)m_select.x);		// 遷移UI大きさ
+		m_pFrame->SetPosition(posTrans);		// 位置設定
+		m_pFrame->SetSize(sizeTrans + 10.0f);	// 大きさ設定
+
+		// コントローラーUIの位置設定
+		const float fSide = (m_select.x == 0) ? 1.0f : -1.0f;	// オフセット開始方向
+		const float fWidthPad = (m_pPadUI->GetSize().x * 2.0f);	// パッド横幅
+		const float fOffset = (fWidthPad * m_nPadIdx) - sizeTrans.x + (fWidthPad * 0.5f);	// パッド位置オフセット
+		m_pPadUI->SetPosition(posTrans + MyLib::Vector3(fOffset * fSide, -58.0f, 0.0f));	// パッド位置反映
+
+		// コントローラーUIの大きさ設定
+		CTexture* pTexture = CTexture::GetInstance();								// テクスチャ情報
+		MyLib::Vector2 size = pTexture->GetImageSize(m_pPadUI->GetIdxTexture());	// テクスチャ大きさ
+		size = UtilFunc::Transformation::AdjustSizeByWidth(size, pad::OTHER_WIDTH);	// 横幅調整
+		size.y *= (float)pad::PTRN.x;												// 縦幅調整
+		m_pPadUI->SetSize(size);
+		break;
+	}
+	default:
+		assert(false);
+		break;
 	}
 }
 
@@ -690,7 +752,7 @@ int CSelectUI::GetMoveYSelectX(const int nNextSelectY)
 			{ // 着せ替えUI数分左から繰り返す
 
 				// 選択可能な着せ替えUIがあった場合返す
-				if (pDressup->IsSelectOK(m_nPadIdx, i)) { return i; }
+				if (pDressup->IsDressSelectOK(m_nPadIdx, i)) { return i; }
 			}
 			return -1;
 
@@ -700,7 +762,7 @@ int CSelectUI::GetMoveYSelectX(const int nNextSelectY)
 			{ // 着せ替えUI数分右から繰り返す
 
 				// 選択可能な着せ替えUIがあった場合返す
-				if (pDressup->IsSelectOK(m_nPadIdx, i)) { return i; }
+				if (pDressup->IsDressSelectOK(m_nPadIdx, i)) { return i; }
 			}
 			return -1;
 

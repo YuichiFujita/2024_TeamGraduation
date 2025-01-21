@@ -45,10 +45,10 @@ namespace
 		namespace area
 		{
 			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 240.0f, 570.0f, 0.0f);	// 左位置
-			const std::string TEXTURE	= "data\\TEXTURE\\entry\\area.png";		// 変更種類アイコンテクスチャ
+			const std::string TEXTURE	= "data\\TEXTURE\\entry\\inout.png";	// 変更種類アイコンテクスチャ
 			const MyLib::Vector3 OFFSET	= MyLib::Vector3(480.0f, 0.0f, 0.0f);	// オフセット
 			const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(1, 2);	// テクスチャ分割数
-			const float WIDTH			= 60.0f;	// 横幅
+			const float WIDTH			= 40.0f;	// 横幅
 		}
 
 		namespace name
@@ -487,9 +487,9 @@ void CEntry_Dressup::SetDressUIControl(const int nPadIdx, const int nPlayerIdx)
 }
 
 //==========================================================================
-// 選択可能かの確認
+// 着せ替えUI選択可能かの確認
 //==========================================================================
-bool CEntry_Dressup::IsSelectOK(const int nPadIdx, const int nPlayerIdx) const
+bool CEntry_Dressup::IsDressSelectOK(const int nPadIdx, const int nPlayerIdx) const
 {
 	// 自分以外のユーザーの着せ替えUIの場合選択不可
 	const int nSelectPadIdx = GetPtrDressUI(nPlayerIdx)->GetMyPlayerIdx();	// 選択予定先の操作権インデックス
@@ -752,6 +752,48 @@ void CEntry_Dressup::ChangeDressUIArea(const CGameManager::ETeamSide team)
 }
 
 //==========================================================================
+// 遷移UI選択数取得
+//==========================================================================
+int CEntry_Dressup::GetTransUINumSelect(const int nSelectX) const
+{
+	int nNumSelect = 0;	// 選択数
+	for (auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		MyLib::PosGrid2 select = rSelect->GetSelectIdx();	// 選択インデックス
+		if (select.y == CSelectUI::SELECT_TRANS && select.x == nSelectX)
+		{ // 誰かが遷移を選択している場合
+
+			// 選択数の加算
+			nNumSelect++;
+		}
+	}
+
+	return nNumSelect;
+}
+
+//==========================================================================
+// ポジション変更UI選択数取得
+//==========================================================================
+int CEntry_Dressup::GetAreaUINumSelect(const int nSelectX) const
+{
+	int nNumSelect = 0;	// 選択数
+	for (auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		MyLib::PosGrid2 select = rSelect->GetSelectIdx();	// 選択インデックス
+		if (select.y == CSelectUI::SELECT_AREA && select.x == nSelectX)
+		{ // 誰かが遷移を選択している場合
+
+			// 選択数の加算
+			nNumSelect++;
+		}
+	}
+
+	return nNumSelect;
+}
+
+//==========================================================================
 // チームの準備全完了確認
 //==========================================================================
 bool CEntry_Dressup::IsTeamReady(const CPlayer::EFieldArea area, const CGameManager::ETeamSide team)
@@ -797,6 +839,25 @@ bool CEntry_Dressup::IsTeamReady(const CPlayer::EFieldArea area, const CGameMana
 		assert(false);
 		return false;
 	}
+}
+
+//==========================================================================
+// 名前選択可能かの確認
+//==========================================================================
+bool CEntry_Dressup::IsNameSelectOK(const CGameManager::ETeamSide team) const
+{
+	for (auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		MyLib::PosGrid2 select = rSelect->GetSelectIdx();	// 選択インデックス
+		if (select.y == CSelectUI::SELECT_NAME && select.x == team)
+		{ // 誰かが名前を選択している場合
+
+			return false;
+		}
+	}
+
+	return true;
 }
 
 //==========================================================================
