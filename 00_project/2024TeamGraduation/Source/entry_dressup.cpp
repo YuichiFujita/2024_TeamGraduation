@@ -145,6 +145,36 @@ HRESULT CEntry_Dressup::Init()
 		m_apAreaUI[i]->SetSizeOrigin(m_apAreaUI[i]->GetSize());
 	}
 
+	// 戻るボタンの生成
+	m_apTransUI[TRANS_BACK] = CObject2D::Create(PRIORITY);
+	if (m_apTransUI[TRANS_BACK] == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// 位置を設定
+	m_apTransUI[TRANS_BACK]->SetPosition(ui::back::POS);
+
+	// 大きさを設定
+	m_apTransUI[TRANS_BACK]->SetSize(ui::back::SIZE);
+
+	// 進むボタンの生成
+	m_apTransUI[TRANS_NEXT] = CObject2D::Create(PRIORITY);
+	if (m_apTransUI[TRANS_NEXT] == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// 位置を設定
+	m_apTransUI[TRANS_NEXT]->SetPosition(ui::enter::POS);
+
+	// 大きさを設定
+	m_apTransUI[TRANS_NEXT]->SetSize(ui::enter::SIZE);
+
 	int nCurLeft = 0;	// 現在の左プレイヤー数
 	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
 	for (int nPlayerIdx = 0; nPlayerIdx < CGameManager::MAX_PLAYER; nPlayerIdx++)
@@ -299,36 +329,6 @@ HRESULT CEntry_Dressup::Init()
 			return E_FAIL;
 		}
 	}
-
-	// 戻るボタンの生成
-	m_apTransUI[TRANS_BACK] = CObject2D::Create(PRIORITY);
-	if (m_apTransUI[TRANS_BACK] == nullptr)
-	{ // 生成に失敗した場合
-
-		assert(false);
-		return E_FAIL;
-	}
-
-	// 位置を設定
-	m_apTransUI[TRANS_BACK]->SetPosition(ui::back::POS);
-
-	// 大きさを設定
-	m_apTransUI[TRANS_BACK]->SetSize(ui::back::SIZE);
-
-	// 進むボタンの生成
-	m_apTransUI[TRANS_NEXT] = CObject2D::Create(PRIORITY);
-	if (m_apTransUI[TRANS_NEXT] == nullptr)
-	{ // 生成に失敗した場合
-
-		assert(false);
-		return E_FAIL;
-	}
-
-	// 位置を設定
-	m_apTransUI[TRANS_NEXT]->SetPosition(ui::enter::POS);
-
-	// 大きさを設定
-	m_apTransUI[TRANS_NEXT]->SetSize(ui::enter::SIZE);
 
 	return S_OK;
 }
