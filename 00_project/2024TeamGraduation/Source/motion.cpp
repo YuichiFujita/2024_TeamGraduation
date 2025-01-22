@@ -532,20 +532,20 @@ void CMotion::UpdateEntityPosition(
 
 		// 元の位置取得
 		MyLib::Vector3 posOrigin = m_pObjChara->GetOriginPosition();
-		posOrigin *= m_pObjChara->GetScale();
 
 		// パーツの位置取得
 		MyLib::Vector3 posParts = m_ppModel[i]->GetPosition();
 		MyLib::Vector3 posPartsOld = m_ppModel[i]->GetPosition();
 
 		// 目標の位置との差分を求める
-		float posDiffX = nowInfo.aKey[nNextKey].aParts[i].pos.x -
+		MyLib::Vector3 destpos = nowInfo.aKey[nNextKey].aParts[i].pos;
+		float posDiffX = destpos.x -
 			m_pPartsOld[i].pos.x;
 
-		float posDiffY = nowInfo.aKey[nNextKey].aParts[i].pos.y -
+		float posDiffY = destpos.y -
 			m_pPartsOld[i].pos.y;
 
-		float posDiffZ = nowInfo.aKey[nNextKey].aParts[i].pos.z -
+		float posDiffZ = destpos.z -
 			m_pPartsOld[i].pos.z;
 
 		// 親のYを補正
@@ -553,7 +553,7 @@ void CMotion::UpdateEntityPosition(
 			m_pPartsOld[i].pos.y + (posDiffY * ratio);
 		
 		// スケール分移動
-		posParts.y *= m_pObjChara->GetScale();
+		//posParts.y *= m_pObjChara->GetScale();
 
 		// 位置設定
 		m_ppModel[i]->SetPosition(posParts + posOrigin);
@@ -742,12 +742,12 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 
 			if (nCntParts == 0)
 			{// 親はキャラクターの位置にする
-				m_pPartsOld[nCntParts].pos = m_ppModel[nCntParts]->GetPosition() - m_pObjChara->GetOriginPosition() * m_pObjChara->GetScale();
+				m_pPartsOld[nCntParts].pos = m_ppModel[nCntParts]->GetPosition() - m_pObjChara->GetOriginPosition();
 
 				if (m_vecInfo[m_nOldType].nMove == IDX_VISUALMOVE)
 				{
 					m_pPartsOld[nCntParts].pos = nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos;
-					m_ppModel[nCntParts]->SetPosition(m_ppModel[nCntParts]->GetOriginPosition() * m_pObjChara->GetScale() + nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos);
+					m_ppModel[nCntParts]->SetPosition(m_ppModel[nCntParts]->GetOriginPosition() + nowInfo.aKey[m_nPatternKey].aParts[nCntParts].pos);
 				}
 			}
 			else

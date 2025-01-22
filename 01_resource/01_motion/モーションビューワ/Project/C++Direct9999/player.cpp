@@ -2540,5 +2540,5 @@ void CPlayer::Draw(void)
 		nNowParts = -1;
 	}
 
-	CObjectChara::Draw(nNowParts, 0.6f);
+	CObjectChara::Draw(nNowParts, 1.0f);
 }

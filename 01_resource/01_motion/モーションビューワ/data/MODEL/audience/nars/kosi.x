@@ -280,7 +280,7 @@ Mesh {
  3;61,78,62;;
  
  MeshMaterialList {
-  9;
+  10;
   64;
   8,
   8,
@@ -402,6 +402,12 @@ Mesh {
    TextureFilename {
     "C:\\Users\\student\\Downloads\\Mobile - Miitomo - Default Mii\\Mii (Default)\\msk_h.png";
    }
+  }
+  Material {
+   0.702745;0.702745;0.702745;1.000000;;
+   5.000000;
+   0.000000;0.000000;0.000000;;
+   0.000000;0.000000;0.000000;;
   }
   Material {
    1.000000;1.000000;1.000000;1.000000;;

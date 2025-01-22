@@ -26,6 +26,19 @@ class CPlayerDressUP : public CPlayer
 public:
 
 	//=============================
+	// 列挙型定義
+	//=============================
+	// モーション列挙
+	enum EMotion
+	{
+		MOTION_DEF = 0,	// ニュートラルモーション
+		MOTION_WAIT01,	// 待機
+		MOTION_WAIT02,	// 待機
+		MOTION_WAIT03,	// 待機
+		MOTION_MAX
+	};
+
+	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
 	CPlayerDressUP(const CGameManager::ETeamSide typeTeam, const CPlayer::EFieldArea typeArea, const CPlayer::EBaseType typeBase, int nPriority = mylib_const::PRIORITY_DEFAULT);
