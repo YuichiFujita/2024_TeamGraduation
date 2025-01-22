@@ -269,36 +269,31 @@ HRESULT CPlayerManager::Init()
 }
 
 //==========================================================================
-// プレイヤー生成
+// 外野プレイヤー生成
 //==========================================================================
-HRESULT CPlayerManager::CreatePlayer()
+HRESULT CPlayerManager::CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info)
 {
-	// 読み込んだ情報をもとにプレイヤー生成
-	int nMaxLeft = static_cast<int>(m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size());	// 左チーム人数
-	int nMaxRight = static_cast<int>(m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size());	// 右チーム人数
-	int nCntLeft = 0, nCntRight = 0;	// 人数カウント
-	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
+	// プレイヤー生成
+	CPlayer* pPlayer = CPlayer::Create
+	(
+		MyLib::Vector3(), 				// 位置
+		team,							// チームサイド
+		CPlayer::EFieldArea::FIELD_OUT,	// ポジション
+		CPlayer::EBaseType::TYPE_AI,	// ベースタイプ
+		info.eBody,						// 体系
+		info.eHanded					// 利き手
+	);
+	if (pPlayer == nullptr)
 	{
-		// 左のプレイヤー生成
-		if (j < nMaxLeft)
-		{
-			// 左チームプレイヤー生成
-			CreateLeftPlayer(nCntLeft, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
-
-			// 左人数加算
-			nCntLeft++;
-		}
-
-		// 右のプレイヤー生成
-		if (j < nMaxRight)
-		{
-			// 右チームプレイヤー生成
-			CreateRightPlayer(nCntRight, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
-
-			// 右人数加算
-			nCntRight++;
-		}
+		return E_FAIL;
 	}
+
+	// インデックス反映
+	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+
+	// ドレスアップ反映
+	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
+
 	return S_OK;
 }
 

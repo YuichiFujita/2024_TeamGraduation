@@ -179,11 +179,12 @@ protected:
 	// メンバ関数
 	//=============================
 	// 生成
-	virtual HRESULT CreatePlayer();	// プレイヤー生成
-	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);						// 左のプレイヤー生成
-	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 左のプレイヤー生成(位置あり)
-	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);						// 右のプレイヤー生成
-	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 右のプレイヤー生成(位置あり)
+	virtual HRESULT CreatePlayer() = 0;	// プレイヤー生成
+	virtual HRESULT CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info);	// 外野プレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);							// 左のプレイヤー生成
+	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);		// 左のプレイヤー生成(位置あり)
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);							// 右のプレイヤー生成
+	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);		// 右のプレイヤー生成(位置あり)
 
 	//=============================
 	// 静的メンバ変数

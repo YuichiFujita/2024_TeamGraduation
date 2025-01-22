@@ -79,6 +79,112 @@ HRESULT CPlayerManager_Result::Init()
 }
 
 //==========================================================================
+// プレイヤー生成
+//==========================================================================
+HRESULT CPlayerManager_Result::CreatePlayer()
+{
+	//----------------------------------------------------------------------
+	// プレイヤー内野生成
+	//----------------------------------------------------------------------
+	std::vector<LoadInfo> vecInLeftInfo		= GetLoadInInfo(CGameManager::ETeamSide::SIDE_LEFT);	// 左内野情報
+	std::vector<LoadInfo> vecInRightInfo	= GetLoadInInfo(CGameManager::ETeamSide::SIDE_RIGHT);	// 右内野情報
+
+	// 読み込んだ情報をもとにプレイヤー生成
+	int nInMaxLeft = static_cast<int>(vecInLeftInfo.size());	// 左チーム人数
+	int nInMaxRight = static_cast<int>(vecInRightInfo.size());	// 右チーム人数
+	int nCntLeft = 0, nCntRight = 0;	// 人数カウント
+	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
+	{
+		if (j < nInMaxLeft)
+		{
+			// 左チームプレイヤー生成
+			if (FAILED(CreateLeftPlayer(nCntLeft, vecInLeftInfo[j])))
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 左人数加算
+			nCntLeft++;
+		}
+
+		if (j < nInMaxRight)
+		{
+			// 右チームプレイヤー生成
+			if (FAILED(CreateRightPlayer(nCntRight, vecInRightInfo[j])))
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 右人数加算
+			nCntRight++;
+		}
+	}
+
+	//----------------------------------------------------------------------
+	// プレイヤー外野生成
+	//----------------------------------------------------------------------
+	std::vector<LoadInfo> vecOutLeftInfo	= GetLoadOutInfo(CGameManager::ETeamSide::SIDE_LEFT);	// 左外野情報
+	std::vector<LoadInfo> vecOutRightInfo	= GetLoadOutInfo(CGameManager::ETeamSide::SIDE_RIGHT);	// 右外野情報
+
+	// プレイヤー外野生成 (左サイド)
+	for (const auto& rOutLeft : vecOutLeftInfo)
+	{ // 左外野人数分繰り返す
+
+		// 左チーム外野プレイヤー生成
+		if (FAILED(CreateOutPlayer(CGameManager::ETeamSide::SIDE_LEFT, rOutLeft)))
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+	}
+
+	// プレイヤー外野生成 (右サイド)
+	for (const auto& rOutRight : vecOutRightInfo)
+	{ // 右外野人数分繰り返す
+
+		// 右チーム外野プレイヤー生成
+		if (FAILED(CreateOutPlayer(CGameManager::ETeamSide::SIDE_RIGHT, rOutRight)))
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
+// 外野プレイヤー生成
+//==========================================================================
+HRESULT CPlayerManager_Result::CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info)
+{
+	// プレイヤー生成
+	CPlayer* pPlayer = CPlayer::Create
+	(
+		MyLib::Vector3(), 				// 位置
+		team,							// チームサイド
+		CPlayer::EHuman::HUMAN_RESULT,	// 人
+		info.eBody,						// 体型
+		info.eHanded,					// 利き手
+		CPlayer::EFieldArea::FIELD_OUT	// ポジション
+	);
+	if (pPlayer == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	// インデックス反映
+	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+
+	// ドレスアップ反映
+	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
+
+	return S_OK;
+}
+
+//==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
 HRESULT CPlayerManager_Result::CreateLeftPlayer(int i, const LoadInfo& info)
@@ -137,55 +243,6 @@ HRESULT CPlayerManager_Result::CreateRightPlayer(int i, const LoadInfo& info)
 //==========================================================================
 void CPlayerManager_Result::InitPlayer()
 {
-	//----------------------------------------------------------------------
-	// プレイヤー外野生成
-	//----------------------------------------------------------------------
-	int nHalfMax = EOutPos::OUT_MAX / 2;	// チームごとの外野総数
-
-	// プレイヤー外野生成 (右サイド)
-#if 1
-	for (int i = 0; i < nHalfMax; i++)
-	{ // チームごとの外野人数分繰り返す
-
-		// 右チームの外野プレイヤー生成
-		CPlayer* pOutRight= CPlayer::Create
-		(
-			VEC3_ZERO,
-			CGameManager::ETeamSide::SIDE_RIGHT,
-			CPlayer::EHuman::HUMAN_RESULT,
-			CPlayer::BODY_NORMAL,
-			CPlayer::HAND_R,
-			CPlayer::EFieldArea::FIELD_OUT
-		);
-		if (pOutRight == nullptr)
-		{ // 生成に失敗した場合
-
-			assert(false);
-		}
-	}
-
-	// プレイヤー外野生成 (左サイド)
-	for (int i = 0; i < nHalfMax; i++)
-	{ // チームごとの外野人数分繰り返す
-
-		// 左チームの外野プレイヤー生成
-		CPlayer* pOutLeft = CPlayer::Create
-		(
-			VEC3_ZERO,
-			CGameManager::ETeamSide::SIDE_LEFT,
-			CPlayer::EHuman::HUMAN_RESULT,
-			CPlayer::BODY_NORMAL,
-			CPlayer::HAND_R,
-			CPlayer::EFieldArea::FIELD_OUT
-		);
-		if (pOutLeft == nullptr)
-		{ // 生成に失敗した場合
-
-			assert(false);
-		}
-	}
-#endif
-
 	// 位置
 	MyLib::Vector3 pos = VEC3_ZERO;
 
