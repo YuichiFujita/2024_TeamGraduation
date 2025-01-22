@@ -970,19 +970,20 @@ void CEntry_Dressup::Save()
 	CPlayerManager* pPlayerMgr = CPlayerManager::GetInstance();
 
 	// 読み込み情報
-	std::vector<CPlayerManager::LoadInfo> vecSaveInfo[CGameManager::ETeamSide::SIDE_MAX];
+	std::vector<CPlayerManager::LoadInfo> vecInSaveInfo[CGameManager::ETeamSide::SIDE_MAX];
+	std::vector<CPlayerManager::LoadInfo> vecOutSaveInfo[CGameManager::ETeamSide::SIDE_MAX];
 
 	// 今回のサイズ
 	int size = static_cast<int>(m_vecDressInfo.size());
 	for (int i = 0; i < size; i++)
 	{
 		// 自身の操作するインデックス番号取得
-		int nPadIdx = m_vecDressInfo[i]->GetPadIdx();
+		int nPadIdx = m_vecDressInfo[i]->GetMyPlayerIdx();
 		CGameManager::ETeamSide side = m_vecDressInfo[i]->GetTeam();
 
 		// 読み込み情報
-		vecSaveInfo[side].emplace_back();
-		CPlayerManager::LoadInfo* pLoadInfo = &vecSaveInfo[side].back();
+		vecInSaveInfo[side].emplace_back();
+		CPlayerManager::LoadInfo* pLoadInfo = &vecInSaveInfo[side].back();
 		pLoadInfo->nControllIdx = nPadIdx;									// 自身の操作するインデックス番号取得
 		pLoadInfo->nHair = m_vecDressInfo[i]->GetHairNowIdx();				// 髪のインデックス番号
 		pLoadInfo->nAccessory = m_vecDressInfo[i]->GetAccessoryNowIdx();	// アクセのインデックス番号
@@ -991,10 +992,32 @@ void CEntry_Dressup::Save()
 		pLoadInfo->eHanded = m_vecDressInfo[i]->GetHandedness();			// 利き手
 	}
 
-	// TODO：外野も保存
+	for (int i = 0; i < CPlayerManager::OUT_MAX; i++)
+	{ // 外野人数分繰り返す
+
+		// 自身の操作するインデックス番号取得
+		int nPadIdx = m_apDressInfo[i]->GetMyPlayerIdx();
+		CGameManager::ETeamSide side = m_apDressInfo[i]->GetTeam();
+
+		// 読み込み情報
+		vecOutSaveInfo[side].emplace_back();
+		CPlayerManager::LoadInfo* pLoadInfo = &vecOutSaveInfo[side].back();
+		pLoadInfo->nControllIdx = nPadIdx;								// 自身の操作するインデックス番号取得
+		pLoadInfo->nHair = m_apDressInfo[i]->GetHairNowIdx();			// 髪のインデックス番号
+		pLoadInfo->nAccessory = m_apDressInfo[i]->GetAccessoryNowIdx();	// アクセのインデックス番号
+		pLoadInfo->nFace = m_apDressInfo[i]->GetFaceNowIdx();			// 顔のインデックス番号
+		pLoadInfo->eBody = m_apDressInfo[i]->GetBodyType();				// 体型
+		pLoadInfo->eHanded = m_apDressInfo[i]->GetHandedness();			// 利き手
+	}
 
 	// セーブ処理
-	pPlayerMgr->Save(vecSaveInfo[CGameManager::ETeamSide::SIDE_LEFT], vecSaveInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	pPlayerMgr->Save
+	(
+		vecInSaveInfo[CGameManager::ETeamSide::SIDE_LEFT],
+		vecInSaveInfo[CGameManager::ETeamSide::SIDE_RIGHT],
+		vecOutSaveInfo[CGameManager::ETeamSide::SIDE_LEFT],
+		vecOutSaveInfo[CGameManager::ETeamSide::SIDE_RIGHT]
+	);
 
 	// ゲーム設定の保存
 	assert(m_pRuleManager != nullptr);

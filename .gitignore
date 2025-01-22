@@ -402,3 +402,4 @@ FodyWeavers.xsd
 *.ini
 /00_project/2024TeamGraduation/data/TEXT/result/teamStatus.txt
 /00_project/2024TeamGraduation/2024TeamGraduation.exe
+/00_project/2024TeamGraduation/data/TEXT/playerManager/playerInfo.txt

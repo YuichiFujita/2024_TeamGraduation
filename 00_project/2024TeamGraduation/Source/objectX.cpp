@@ -42,6 +42,7 @@ CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, lay
 	m_nIdxXFile = 0;							// Xファイルのインデックス番号
 	m_pShadow = nullptr;						// 影の情報
 	m_bShadow = false;							// 影を使っているかどうか
+	m_bUpdateMtx = false;						// マトリックス更新するかどうか
 	m_pCollisionLineBox = nullptr;				// 当たり判定ボックス
 }
 
@@ -542,7 +543,11 @@ void CObjectX::Draw()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	// ワールドマトリックスの計算処理
-	CalWorldMtx();
+	if (m_bUpdateMtx)
+	{
+		CalWorldMtx();
+	}
+	m_bUpdateMtx = true;
 
 	// ワールドマトリックスの設定
 	D3DXMATRIX mtx = m_mtxWorld.ConvertD3DXMATRIX();

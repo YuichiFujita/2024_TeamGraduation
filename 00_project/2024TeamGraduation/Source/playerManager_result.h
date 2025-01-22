@@ -43,6 +43,8 @@ private:
 	// メンバ関数
 	//=============================
 	// 生成
+	virtual HRESULT CreatePlayer() override;	// プレイヤー生成
+	virtual HRESULT CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info) override;	// 外野プレイヤー生成
 	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info) override;		// 左のプレイヤー生成
 	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info) override;	// 右のプレイヤー生成
 

@@ -9,6 +9,7 @@
 #include "manager.h"
 #include "renderer.h"
 #include "objectX.h"
+#include "model.h"
 #include "dressup.h"
 
 //==========================================================================
@@ -64,7 +65,8 @@ CAudienceHighPoly::CAudienceHighPoly(EObjType type, CGameManager::ETeamSide team
 	m_pChara		(nullptr),	// キャラクター情報
 	m_pLight		(nullptr),	// ペンライト情報
 	m_pLightBlur	(nullptr),	// ペンライトのブラー
-	m_pDressUp_Hair	(nullptr)	// ドレスアップ(髪)
+	m_pDressUp_Hair	(nullptr),	// ドレスアップ(髪)
+	m_nIdxLightHand	(UtilFunc::Transformation::Random(3, 4))	// ライト持つ手のインデックス
 {
 }
 
@@ -197,7 +199,31 @@ void CAudienceHighPoly::UpdatePenlight(const float fDeltaTime, const float fDelt
 	if (m_pLight == nullptr) return;
 
 	// ライトの位置を頭の上にする
-	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+
+
+	// 判定するパーツ取得
+	CModel* pModel = m_pChara->GetModel(m_nIdxLightHand);
+
+	// 判定するパーツのマトリックス取得
+	MyLib::Matrix mtxModel = pModel->GetWorldMtx();
+
+	// マトリックス更新しない
+	m_pLight->SetEnableUpdateMtx(false);
+
+	// ペンライトのマトリックス計算
+	MyLib::Vector3 pos = m_pLight->GetPosition();
+	MyLib::Vector3 rot = m_pLight->GetRotation();
+	MyLib::Matrix mtxTrans;	// 計算用マトリックス宣言
+
+	// オフセットを反映する
+	mtxTrans.Translation(MyLib::Vector3((m_nIdxLightHand == 3) ? -40.0f : 40.0f, m_pLight->GetVtxMax().y, 0.0f));
+	mtxModel.Multiply(mtxTrans, mtxModel);
+
+	// 縦スケール縮小
+	m_pLight->SetWorldMtx(mtxModel);
+
+	// ライトの位置設定
+	m_pLight->SetPosition(mtxModel.GetWorldPosition());	// TODO：後で振ったりさせる
 	m_pLightBlur->SetPosition(m_pLight->GetPosition());
 }
 

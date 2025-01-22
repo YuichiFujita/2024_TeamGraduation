@@ -115,14 +115,21 @@ public:
 	bool IsUserChange() const { return m_bUserChange; }	// ユーザー変更操作フラグ取得
 	
 	// ファイル関連
-	static void Save(const std::vector<LoadInfo>& LeftInfo, const std::vector<LoadInfo>& RightInfo);			// セーブ処理
+	static void Save	// セーブ処理
+	( // 引数
+		const std::vector<LoadInfo>& inLeftInfo,
+		const std::vector<LoadInfo>& inRightInfo,
+		const std::vector<LoadInfo>& outLeftInfo,
+		const std::vector<LoadInfo>& outRightInfo
+	);
 
 	//=============================
 	// 静的メンバ関数
 	//=============================
 	static CPlayerManager* Create(EType type);	// 生成
 	static CPlayerManager* GetInstance() { return m_pInstance; }	// インスタンス取得
-	static std::vector<LoadInfo> GetLoadInfo(CGameManager::ETeamSide side) { return m_vecLoadInfo[side]; }	// 読み込み情報
+	static std::vector<LoadInfo> GetLoadInInfo(CGameManager::ETeamSide side) { return m_vecInLoadInfo[side]; }		// 内野読み込み情報
+	static std::vector<LoadInfo> GetLoadOutInfo(CGameManager::ETeamSide side) { return m_vecOutLoadInfo[side]; }	// 外野読み込み情報
 
 private:
 
@@ -152,7 +159,7 @@ private:
 	// ファイル関連
 	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
 	static void Load();
-	static void LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer);	// プレイヤー情報読み込み
+	static void LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer, std::vector<LoadInfo>* pInfo);	// プレイヤー情報読み込み
 
 	//=============================
 	// メンバ変数
@@ -163,7 +170,8 @@ private:
 	bool m_bUserChange;						// ユーザー変更操作フラグ
 
 	// ファイル関連
-	static std::vector<LoadInfo> m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 読み込み情報
+	static std::vector<LoadInfo> m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 内野読み込み情報
+	static std::vector<LoadInfo> m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_MAX];	// 外野読み込み情報
 
 protected:
 
@@ -171,11 +179,12 @@ protected:
 	// メンバ関数
 	//=============================
 	// 生成
-	virtual HRESULT CreatePlayer();	// プレイヤー生成
-	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);						// 左のプレイヤー生成
-	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 左のプレイヤー生成(位置あり)
-	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);						// 右のプレイヤー生成
-	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);	// 右のプレイヤー生成(位置あり)
+	virtual HRESULT CreatePlayer() = 0;	// プレイヤー生成
+	virtual HRESULT CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info);	// 外野プレイヤー生成
+	virtual HRESULT CreateLeftPlayer(int i, const LoadInfo& info);							// 左のプレイヤー生成
+	HRESULT CreateLeftPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);		// 左のプレイヤー生成(位置あり)
+	virtual HRESULT CreateRightPlayer(int i, const LoadInfo& info);							// 右のプレイヤー生成
+	HRESULT CreateRightPlayer(int i, const LoadInfo& info, const MyLib::Vector3& pos);		// 右のプレイヤー生成(位置あり)
 
 	//=============================
 	// 静的メンバ変数
