@@ -186,7 +186,7 @@ CPlayer::STATE_END_FUNC CPlayer::m_StateEndFunc[] =	// 状態終了関数
 	nullptr,							// スペシャルキャッチ
 	nullptr,							// スペシャル
 	nullptr,							// コート越え
-	nullptr,							// コートに戻る
+	&CPlayer::StateEndOutCourt_Return,	// コート越えから戻る
 	nullptr,							// 相手コートに侵入トス
 	&CPlayer::StateEndInvade_Return,	// 相手コート侵入から戻る
 };
@@ -826,6 +826,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 //==========================================================================
 void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// コートの中心に戻り中
+	if (m_state == EState::STATE_OUTCOURT_RETURN)	return;
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)	return;
@@ -2119,6 +2122,10 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
+	// 移動不可
+	m_bPossibleMove = false;
+	m_bPossibleAction = false;
+
 	CMotion* pMotion = GetMotion();
 	MyAssert::CustomAssert(pMotion != nullptr,"モーションisどこ？");
 
@@ -2336,6 +2343,16 @@ void CPlayer::StateEndDeadAfter()
 }
 
 //==========================================================================
+// [終了] コート越えから戻る
+//==========================================================================
+void CPlayer::StateEndOutCourt_Return()
+{
+	// フラグ解除解除
+	m_bPossibleMove = true;
+	m_bPossibleAction = true;
+}
+
+//==========================================================================
 // [終了] 相手コート侵入から戻る
 //==========================================================================
 void CPlayer::StateEndInvade_Return()
@@ -2434,7 +2451,7 @@ void CPlayer::Draw()
 //==========================================================================
 void CPlayer::SetState(EState state)
 {
-	// 状態更新
+	// 状態終了
 	if (m_StateEndFunc[m_state] != nullptr)
 	{
 		(this->*(m_StateEndFunc[m_state]))();
@@ -2763,6 +2780,7 @@ void CPlayer::Debug()
 		CPlayer::EAction action = m_pActionPattern->GetAction();
 		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 
+#if 1
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -2791,6 +2809,12 @@ void CPlayer::Debug()
 		{
 			ImGui::Text("InputAngle : [error]");
 		}
+#else
+		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
+		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
+		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
+		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
+#endif
 
 #if 0
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
