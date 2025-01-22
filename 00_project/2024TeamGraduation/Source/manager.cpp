@@ -42,7 +42,7 @@ namespace
 
 #if _DEBUG
 #ifdef ENTRYSTART
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_ENTRY;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #else
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #endif
