@@ -67,6 +67,7 @@ public:
 		EFKLABEL_SANDSMOKE,				// 砂煙
 		EFKLABEL_JO,					// ジョー
 		EFKLABEL_WINREFEREE,			// 審判
+		EFKLABEL_SPOTLIGHT,				// スポットライト
 		EFKLABEL_MAX
 	};
 	

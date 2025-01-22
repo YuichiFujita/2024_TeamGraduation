@@ -49,6 +49,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/sandsmoke.efkefc",					// 砂煙
 	"data/Effekseer/joji.efkefc",						// ジョー
 	"data/Effekseer/winReferee.efkefc",					// 審判
+	"data/Effekseer/spotlight.efkefc",					// スポットライト
 };
 CMyEffekseer* CMyEffekseer::m_pMyEffekseer = nullptr;	// 自身のポインタ
 
