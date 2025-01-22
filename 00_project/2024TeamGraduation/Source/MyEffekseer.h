@@ -66,6 +66,7 @@ public:
 		EFKLABEL_LOGO_ALWAYS,			// ÉçÉS(èÌÇ…èoåª)
 		EFKLABEL_SANDSMOKE,				// çªâå
 		EFKLABEL_JO,					// ÉWÉáÅ[
+		EFKLABEL_WINREFEREE,			// êRîª
 		EFKLABEL_MAX
 	};
 	
