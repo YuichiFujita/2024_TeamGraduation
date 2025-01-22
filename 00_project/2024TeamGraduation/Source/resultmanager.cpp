@@ -18,6 +18,7 @@
 #include "resultCrown.h"
 #include "playerReferee_result.h"
 #include "winteamResult.h"
+#include "gymDoor.h"
 
 //==========================================================================
 // 定数定義
@@ -38,6 +39,14 @@ namespace
 		MyLib::Vector3(-900.0f, 0.0f, 0.0f),	// 左
 		MyLib::Vector3(+900.0f, 0.0f, 0.0f),	// 右
 	};
+}
+
+// ドッジボールコート情報
+namespace Gym
+{
+	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
+	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+	const MyLib::Vector3 POS[] = { POS_LEFT, POS_RIGHT };	// ドア位置
 }
 
 // 状態時間
@@ -226,6 +235,18 @@ HRESULT CResultManager::Init()
 
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create(CPlayerManager::EType::TYPE_RESULT);
+
+	for (int i = 0; i < CGameManager::EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア生成
+		CGymDoor* pGymDoor = CGymDoor::Create(Gym::POS[i]);
+		if (pGymDoor == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+	}
 
 	// 観客生成
 	CreateAudience();

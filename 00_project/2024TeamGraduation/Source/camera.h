@@ -204,9 +204,16 @@ public:
 	inline CCameraMotion* GetCameraMotion() { return m_pCameraMotion; }	// カメラモーションポインタ取得
 
 	//-----------------------------
+	// ライト
+	//-----------------------------
+	void SetLightDiffuse(const D3DXCOLOR& rCol);	// ライト拡散光設定
+	D3DXCOLOR GetLightDiffuse() const;				// ライト拡散光取得
+	D3DXCOLOR GetDestLightDiffuse() const;			// ライト目標拡散光取得
+	inline void SetEnableLight(bool bLight) { m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
+
+	//-----------------------------
 	// フラグ
 	//-----------------------------
-	inline void SetEnableLight(bool bLight)	{ m_pLight->SetEnableLight(bLight); }	// ライトフラグの設定
 	inline void SetEnableMotion(bool frag)	{ m_bMotion = frag; }	// モーション中判定設定
 	inline bool IsMotion()					{ return m_bMotion; }	// モーション中判定取得
 	
