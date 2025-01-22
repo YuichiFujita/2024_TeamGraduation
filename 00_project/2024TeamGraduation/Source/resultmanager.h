@@ -17,6 +17,7 @@
 // 前方宣言
 //==========================================================================
 class CPlayerReferee_Result;
+class CWinTeamResult;
 
 //==========================================================================
 // 名前空間
@@ -134,6 +135,7 @@ private:
 	CResultCrown* m_pCrown;										// 王冠モデル
 	CEffekseerObj* m_pEfkConfetti;								// 紙吹雪エフェクシア
 	CPlayerReferee_Result* m_pReferee;							// 審判
+	CWinTeamResult* m_pWinTeam;									// 勝利チーム
 
 	//-----------------------------
 	// 状態

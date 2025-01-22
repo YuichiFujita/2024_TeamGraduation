@@ -17,6 +17,7 @@
 #include "3D_effect.h"
 #include "resultCrown.h"
 #include "playerReferee_result.h"
+#include "winteamResult.h"
 
 //==========================================================================
 // 定数定義
@@ -176,6 +177,7 @@ CResultManager::CResultManager()
 	m_pCrown = nullptr;												// 王冠モデル
 	m_pEfkConfetti = nullptr;										// 紙吹雪エフェクシア
 	m_pReferee = nullptr;											// 審判
+	m_pWinTeam = nullptr;											// 勝利チーム
 }
 
 //==========================================================================
@@ -536,6 +538,10 @@ void CResultManager::StateStartPrelude()
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamPreludeWin);
 
+	// 勝利チーム
+	SAFE_KILL(m_pWinTeam);
+	m_pWinTeam = CWinTeamResult::Create(m_teamPreludeWin);
+
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -562,6 +568,9 @@ void CResultManager::StateStartCharmContestReady()
 
 	// 王冠削除
 	SAFE_KILL(m_pCrown);
+
+	// 勝利チーム
+	m_pWinTeam->SetState(CWinTeamResult::EState::STATE_FADEOUT);
 
 	// ポリゴン生成
 	CreatePolygon(EState::STATE_CONTEST_READY);
@@ -598,6 +607,9 @@ void CResultManager::StateStartCharmContest()
 	// モデル生成
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamContestWin);
+
+	// 勝利チーム
+	m_pWinTeam = CWinTeamResult::Create(m_teamContestWin);
 
 	// エフェクシア生成
 	CreateEffect();
