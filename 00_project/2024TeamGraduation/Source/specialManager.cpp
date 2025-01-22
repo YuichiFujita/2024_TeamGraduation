@@ -22,6 +22,7 @@
 #include "cutin.h"
 #include "audience.h"
 #include "gymWallManager.h"
+#include "spotlight.h"
 
 //************************************************************
 //	定数宣言
@@ -77,6 +78,8 @@ CSpecialManager* CSpecialManager::m_pInstance = nullptr;	// 自身のインスタンス
 //	コンストラクタ
 //============================================================
 CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(PRIORITY),
+	m_pAttackLight	(nullptr),		// 攻撃プレイヤーを照らすライト
+	m_pTargetLight	(nullptr),		// 標的プレイヤーを照らすライト
 	m_pAttackPlayer	(pAttack),		// 攻撃プレイヤー
 	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
 	m_pCutIn		(nullptr),		// カットイン情報
@@ -86,14 +89,6 @@ CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(P
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState)   == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_aFuncUpdateSpecial) == CBall::SPECIAL_MAX,         "ERROR : Special Count Mismatch");
-
-	// メンバ変数をクリア
-	for (int i = 0; i < NUM_LIGHT; i++)
-	{ // ライト数分繰り返す
-
-		m_apAttackLight[i] = nullptr;	// 攻撃プレイヤーを照らすライト
-		m_apTargetLight[i] = nullptr;	// 標的プレイヤーを照らすライト
-	}
 }
 
 //============================================================
@@ -119,36 +114,20 @@ HRESULT CSpecialManager::Init(void)
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
 
-	for (int i = 0; i < NUM_LIGHT; i++)
-	{ // ライト数分繰り返す
+	// 攻撃プレイヤーを照らすライトの生成
+	m_pAttackLight = CSpotLight::Create();
+	if (m_pAttackLight == nullptr)
+	{ // 生成に失敗した場合
 
-		// 攻撃プレイヤーを照らすライトの生成
-		m_apAttackLight[i] = CLightPoint::Create();
-		if (m_apAttackLight[i] == nullptr)
-		{ // 生成に失敗した場合
+		return E_FAIL;
+	}
 
-			return E_FAIL;
-		}
+	// 標的プレイヤーを照らすライトの生成
+	m_pTargetLight = CSpotLight::Create();
+	if (m_pTargetLight == nullptr)
+	{ // 生成に失敗した場合
 
-		// 拡散光を設定
-		m_apAttackLight[i]->SetDiffuse(MyLib::color::White());
-
-		// 光源範囲を設定
-		m_apAttackLight[i]->SetRange(LIGHT_RANGE);
-
-		// 標的プレイヤーを照らすライトの生成
-		m_apTargetLight[i] = CLightPoint::Create();
-		if (m_apTargetLight[i] == nullptr)
-		{ // 生成に失敗した場合
-
-			return E_FAIL;
-		}
-
-		// 拡散光を設定
-		m_apTargetLight[i]->SetDiffuse(MyLib::color::White());
-
-		// 光源範囲を設定
-		m_apTargetLight[i]->SetRange(LIGHT_RANGE);
+		return E_FAIL;
 	}
 
 	// カットインの生成
@@ -185,15 +164,11 @@ HRESULT CSpecialManager::Init(void)
 //============================================================
 void CSpecialManager::Uninit(void)
 {
-	for (int i = 0; i < NUM_LIGHT; i++)
-	{ // ライト数分繰り返す
+	// 攻撃プレイヤーを照らすライトの終了
+	SAFE_UNINIT(m_pAttackLight);
 
-		// 攻撃プレイヤーを照らすライトの終了
-		SAFE_UNINIT(m_apAttackLight[i]);
-
-		// 標的プレイヤーを照らすライトの終了
-		SAFE_UNINIT(m_apTargetLight[i]);
-	}
+	// 標的プレイヤーを照らすライトの終了
+	SAFE_UNINIT(m_pTargetLight);
 
 	// オブジェクトを破棄
 	Release();
@@ -556,25 +531,15 @@ void CSpecialManager::SetPlayerHypePosition(const bool bInverse)
 //============================================================
 void CSpecialManager::SetLightPosition()
 {
-	float fRot = 0.0f;
-	for (int i = 0; i < NUM_LIGHT; i++)
-	{ // ライト数分繰り返す
+	// 攻撃プレイヤーの位置に移動
+	if (m_pAttackLight != nullptr)
+	{
+		m_pAttackLight->SetLightPosition(m_pAttackPlayer->GetPosition());
+	}
 
-		MyLib::Vector3 posOffset = MyLib::Vector3(sinf(fRot) * 80.0f, 160.0f, cosf(fRot) * 80.0f);
-
-		// 攻撃プレイヤーの位置に移動
-		if (m_apAttackLight[i] != nullptr)
-		{
-			m_apAttackLight[i]->SetPosition(m_pAttackPlayer->GetPosition() + posOffset);
-		}
-
-		// 標的プレイヤーの位置に移動
-		if (m_apTargetLight[i] != nullptr)
-		{
-			m_apTargetLight[i]->SetPosition(m_pTargetPlayer->GetPosition() + posOffset);
-		}
-
-		// 向きを加算
-		fRot += HALF_PI;
+	// 標的プレイヤーの位置に移動
+	if (m_pTargetLight != nullptr)
+	{
+		m_pTargetLight->SetLightPosition(m_pTargetPlayer->GetPosition());
 	}
 }
