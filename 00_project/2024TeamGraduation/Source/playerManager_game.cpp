@@ -172,32 +172,3 @@ void CPlayerManager_Game::Uninit()
 	// 自身のインスタンスの破棄
 	SAFE_DELETE(m_pInstance);
 }
-
-//==========================================================================
-// 外野プレイヤー生成
-//==========================================================================
-HRESULT CPlayerManager_Game::CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info)
-{
-	// プレイヤー生成
-	CPlayer* pPlayer = CPlayer::Create
-	(
-		MyLib::Vector3(), 				// 位置
-		team,							// チームサイド
-		CPlayer::EFieldArea::FIELD_OUT,	// ポジション
-		CPlayer::EBaseType::TYPE_AI,	// ベースタイプ
-		info.eBody,						// 体系
-		info.eHanded					// 利き手
-	);
-	if (pPlayer == nullptr)
-	{
-		return E_FAIL;
-	}
-
-	// インデックス反映
-	pPlayer->SetMyPlayerIdx(info.nControllIdx);
-
-	// ドレスアップ反映
-	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
-
-	return S_OK;
-}
