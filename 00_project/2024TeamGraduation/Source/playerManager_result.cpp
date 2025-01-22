@@ -389,7 +389,6 @@ void CPlayerManager_Result::InitPlayer()
 		outRightList[i]->SetRotation(setrot);
 	}
 
-
 }
 
 //==========================================================================

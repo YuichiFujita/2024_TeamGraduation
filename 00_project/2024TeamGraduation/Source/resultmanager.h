@@ -11,11 +11,12 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-//#include "constans.h"
-//#include "instantfade.h"
-//#include "scene.h"
-
 #include "gameManager.h"
+
+//==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayerReferee_Result;
 
 //==========================================================================
 // 名前空間
@@ -60,6 +61,7 @@ public:
 
 	virtual HRESULT Init();
 	virtual void Uninit();
+	virtual void Kill();	// 動的削除処理
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	//=============================
@@ -131,6 +133,7 @@ private:
 	CObject3D* m_pText;											// 勝利チーム用3Dポリゴン
 	CResultCrown* m_pCrown;										// 王冠モデル
 	CEffekseerObj* m_pEfkConfetti;								// 紙吹雪エフェクシア
+	CPlayerReferee_Result* m_pReferee;							// 審判
 
 	//-----------------------------
 	// 状態

@@ -331,6 +331,7 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
     <ClCompile Include="Source\playerReferee.cpp" />
+    <ClCompile Include="Source\playerReferee_result.cpp" />
     <ClCompile Include="Source\playerResult.cpp" />
     <ClCompile Include="Source\playerSpawn.cpp" />
     <ClCompile Include="Source\playerSpawnManager.cpp" />
@@ -570,6 +571,7 @@
     <ClInclude Include="Source\playerPosAdj_none.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
     <ClInclude Include="Source\playerReferee.h" />
+    <ClInclude Include="Source\playerReferee_result.h" />
     <ClInclude Include="Source\playerResult.h" />
     <ClInclude Include="Source\playerSpawn.h" />
     <ClInclude Include="Source\playerSpawnManager.h" />

@@ -851,6 +851,9 @@
     <ClCompile Include="Source\playerAIcontrol_attack.cpp">
       <Filter>player\playerAI\mode</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerReferee_result.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1554,6 +1557,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIcontrol_attack.h">
       <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerReferee_result.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

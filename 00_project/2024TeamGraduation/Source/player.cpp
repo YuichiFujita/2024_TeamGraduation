@@ -37,6 +37,7 @@
 #include "playerDressup.h"
 #include "playerSpawn.h"
 #include "playerReferee.h"
+#include "playerReferee_Result.h"
 #include "playerResult.h"
 #include "playerAIIn.h"
 #include "playerAIOut.h"
@@ -345,6 +346,10 @@ CPlayer* CPlayer::Create
 
 	case EHuman::HUMAN_REFEREE:
 		pPlayer = DEBUG_NEW CPlayerReferee;
+		break;
+
+	case EHuman::HUMAN_REFEREE_RESULT:
+		pPlayer = DEBUG_NEW CPlayerReferee_Result;
 		break;
 
 	case EHuman::HUMAN_RESULT:

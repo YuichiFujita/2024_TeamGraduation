@@ -81,12 +81,15 @@ private:
 	typedef void(CPlayerReferee::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 
+protected:
+
 	//=============================
 	// オーバーライド関数
 	//=============================
-	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 状態更新
-	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 状態更新
+	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 
+private:
 	//=============================
 	// メンバ関数
 	//=============================
