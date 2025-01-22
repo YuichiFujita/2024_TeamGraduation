@@ -216,18 +216,20 @@ void CObjectCircleGauge2D::SetVtx()
 	// 頂点座標の設定
 	for (int i = 0; i < m_nNumVertex - 1; i++)
 	{
+		int nNowIdx = (m_nNumVertex - 1) - i;
+
 		// 今回の向き
-		float fRot = fRotDivision * i;
+		float fRot = fRotDivision * nNowIdx;
 		
 		if (!bEnd)
 		{// 終端じゃない
 
 			// 前回のインデックス番号
-			int nIdx = i - 1;
+			int nIdx = nNowIdx - 1;
 			UtilFunc::Transformation::ValueNormalize(nIdx, m_nNumVertex, 0);
 
 			// 今回分の向き
-			float fRotDiff = (fRotDivision * i) - (fRotDivision * nIdx);
+			float fRotDiff = (fRotDivision * nNowIdx) - (fRotDivision * nIdx);
 
 			// 今までの分から今回分引く
 			fOldRot -= fRotDiff;
@@ -235,7 +237,7 @@ void CObjectCircleGauge2D::SetVtx()
 			if (fOldRot < 0.0f)
 			{
 				// 最後の向き割り出し
-				fEndRot = (fRotDivision * i) + fOldRot;
+				fEndRot = (fRotDivision * nNowIdx) + fOldRot;
 
 				// 割合
 				float fRate = (fEndRot - (fRotDivision * nIdx)) / fRotDivision;
@@ -247,8 +249,8 @@ void CObjectCircleGauge2D::SetVtx()
 					0.0f);
 
 				MyLib::Vector3 p2 = MyLib::Vector3(
-					pos.x + cosf(D3DX_PI * -0.5f + (fRotDivision * i) + rot.z) * m_fSize,
-					pos.y + sinf(D3DX_PI * -0.5f + (fRotDivision * i) + rot.z) * m_fSize,
+					pos.x + cosf(D3DX_PI * -0.5f + (fRotDivision * nNowIdx) + rot.z) * m_fSize,
+					pos.y + sinf(D3DX_PI * -0.5f + (fRotDivision * nNowIdx) + rot.z) * m_fSize,
 					0.0f);
 
 				// 辺上の位置取得(2D)

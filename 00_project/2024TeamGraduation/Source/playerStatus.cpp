@@ -116,7 +116,37 @@ void CPlayerStatus::CreateLifeGuge()
 	}
 
 	// 色設定
-	m_pLifeGauge->SetColor(MyLib::color::Cyan());
+	m_pLifeGauge->SetColor(MyLib::color::Green());
+
+
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = pTexture->Regist("data\\TEXTURE\\GRADATION\\black_04.jpg");
+	m_pLifeGauge->BindTexture(nTexID);
+
+	// ゲージフレーム生成
+	CreateGaugeFrame();
+
+}
+
+//==========================================================================
+// ゲージフレーム生成
+//==========================================================================
+void CPlayerStatus::CreateGaugeFrame()
+{
+	// ゲージフレーム
+	m_pGaugeFrame = CObject2D::Create(m_pLifeGauge->GetPriority());
+
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = pTexture->Regist("data\\TEXTURE\\player\\gauge.png");
+	m_pGaugeFrame->BindTexture(nTexID);
+
+	// 位置設定
+	m_pGaugeFrame->SetPosition(m_pLifeGauge->GetPosition());
+
+	// サイズ設定
+	m_pGaugeFrame->SetSize(MyLib::Vector2(LifeGauge::SIZE * 1.25f));
 }
 
 //==========================================================================
