@@ -2,30 +2,104 @@
 # チーム情報
 #==============================================================================
 #------------------------------------------------------------------------------
-# チーム0
+# 左チーム
 #------------------------------------------------------------------------------
 SETTEAM
-	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
-		ACCESSORY = 0
-		FACE = 0
-		BODY = 0
-		HANDED = 0
-	END_SETPLAYER
+	# 内野チーム
+	SETIN
 
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 0
+			HANDED = 0
+		END_SETPLAYER
+
+	END_SETIN
+
+	# 外野チーム
+	SETOUT
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 2
+			HANDED = 0
+		END_SETPLAYER
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 0
+			HANDED = 0
+		END_SETPLAYER
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 0
+			HANDED = 0
+		END_SETPLAYER
+
+	END_SETOUT
 END_SETTEAM
+
 #------------------------------------------------------------------------------
-# チーム1
+# 右チーム
 #------------------------------------------------------------------------------
 SETTEAM
-	SETPLAYER
-		ID_CONTROLL = -1
-		HAIR = 0
-		ACCESSORY = 0
-		FACE = 0
-		BODY = 0
-		HANDED = 0
-	END_SETPLAYER
+	# 内野チーム
+	SETIN
 
+		SETPLAYER
+			ID_CONTROLL = 1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 0
+			HANDED = 0
+		END_SETPLAYER
+
+	END_SETIN
+
+	# 外野チーム
+	SETOUT
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 0
+			HANDED = 0
+		END_SETPLAYER
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 2
+			HANDED = 0
+		END_SETPLAYER
+
+		SETPLAYER
+			ID_CONTROLL = -1
+			HAIR = 0
+			ACCESSORY = 0
+			FACE = 0
+			BODY = 1
+			HANDED = 0
+		END_SETPLAYER
+
+	END_SETOUT
 END_SETTEAM
+

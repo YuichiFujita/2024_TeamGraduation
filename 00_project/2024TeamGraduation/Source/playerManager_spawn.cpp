@@ -46,11 +46,84 @@ HRESULT CPlayerManager_Spawn::Init()
 }
 
 //==========================================================================
+// プレイヤー生成
+//==========================================================================
+HRESULT CPlayerManager_Spawn::CreatePlayer()
+{
+	std::vector<LoadInfo> vecInLeftInfo		= GetLoadInInfo(CGameManager::ETeamSide::SIDE_LEFT);	// 左内野情報
+	std::vector<LoadInfo> vecInRightInfo	= GetLoadInInfo(CGameManager::ETeamSide::SIDE_RIGHT);	// 右内野情報
+	std::vector<LoadInfo> vecOutLeftInfo	= GetLoadOutInfo(CGameManager::ETeamSide::SIDE_LEFT);	// 左外野情報
+	std::vector<LoadInfo> vecOutRightInfo	= GetLoadOutInfo(CGameManager::ETeamSide::SIDE_RIGHT);	// 右外野情報
+
+	// 読み込んだ情報をもとにプレイヤー生成
+	int nInMaxLeft = static_cast<int>(vecInLeftInfo.size());	// 左チーム人数
+	int nInMaxRight = static_cast<int>(vecInRightInfo.size());	// 右チーム人数
+	int nCntLeft = 0, nCntRight = 0;	// 人数カウント
+	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
+	{
+		if (j < nInMaxLeft)
+		{
+			// 左チームプレイヤー生成
+			if (FAILED(CreateLeftPlayer(nCntLeft, vecInLeftInfo[j])))
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 左人数加算
+			nCntLeft++;
+		}
+
+		if (j < nInMaxRight)
+		{
+			// 右チームプレイヤー生成
+			if (FAILED(CreateRightPlayer(nCntRight, vecInRightInfo[j])))
+			{ // 生成に失敗した場合
+
+				return E_FAIL;
+			}
+
+			// 右人数加算
+			nCntRight++;
+		}
+	}
+
+	for (const auto& rOutLeft : vecOutLeftInfo)
+	{ // 左外野人数分繰り返す
+
+		// 左チームプレイヤー生成
+		if (FAILED(CreateLeftPlayer(nCntLeft, rOutLeft)))
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 左人数加算
+		nCntLeft++;
+	}
+
+	for (const auto& rOutRight : vecOutRightInfo)
+	{ // 右外野人数分繰り返す
+
+		// 右チームプレイヤー生成
+		if (FAILED(CreateRightPlayer(nCntRight, rOutRight)))
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 右人数加算
+		nCntRight++;
+	}
+
+	return S_OK;
+}
+
+//==========================================================================
 // 左のプレイヤー生成
 //==========================================================================
 HRESULT CPlayerManager_Spawn::CreateLeftPlayer(int i, const LoadInfo& info)
 {
-	
 	// プレイヤー生成
 	MyLib::Vector3 offset = MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET * (float)i);
 	CPlayer* pPlayer = CPlayer::Create
