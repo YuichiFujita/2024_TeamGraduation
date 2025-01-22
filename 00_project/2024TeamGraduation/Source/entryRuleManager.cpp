@@ -34,6 +34,7 @@ namespace
 		"data\\TEXTURE\\entry\\B_Back.png",			// 操作表示テクスチャ
 		"data\\TEXTURE\\entry\\Arrow_Twin.png",		// 矢印テクスチャ
 		"data\\TEXTURE\\entry\\flame_choice.png",	// 選択テクスチャ
+		"data\\TEXTURE\\entry\\infinity.png",		// 時間∞テクスチャ
 	};
 
 	const std::string SET_PATH = "data\\TEXT\\entry\\game_setting.txt";
@@ -55,7 +56,7 @@ namespace
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::RULE_MAX);	// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(320.0f, 150.0f, 0.0f);		// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 75.0f);	// 大きさ
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(588.0f, 75.0f);			// 大きさ
 		const MyLib::Vector3	SPACE	= MyLib::Vector3(0.0f, 200.0f, 0.0f);		// 空白
 	}
 
@@ -63,17 +64,21 @@ namespace
 	namespace start
 	{
 		const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x, 595.0f, 0.0f);	// 位置
-		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 90.0f);			// 大きさ
+		const MyLib::Vector2 SIZE	= MyLib::Vector2(484.0f, 90.0f);					// 大きさ
 	}
 
 	// タイム情報
 	namespace time
 	{
 		const MyLib::Vector3 POS		= MyLib::Vector3(930.0f, 150.0f, 0.0f);	// タイマー位置
-		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(30.0f, 30.0f);			// タイマー数字大きさ
-		const MyLib::Vector2 PART_SIZE	= MyLib::Vector2(30.0f, 40.0f);			// タイマー区切り大きさ
-		const MyLib::Vector2 VAL_SPACE	= MyLib::Vector2(40.0f, 0.0f);			// タイマー数字空白
-		const MyLib::Vector2 PART_SPACE	= MyLib::Vector2(60.0f, 0.0f);			// タイマー区切り空白
+		const MyLib::Vector2 VAL_SIZE	= MyLib::Vector2(30.0f, 28.0f);			// タイマー数字大きさ
+		const MyLib::Vector2 PART_SIZE	= MyLib::Vector2(30.0f, 18.0f);			// タイマー区切り大きさ
+		const MyLib::Vector2 VAL_SPACE	= MyLib::Vector2(53.0f, 0.0f);			// タイマー数字空白
+		const MyLib::Vector2 PART_SPACE	= MyLib::Vector2(35.0f, 0.0f);			// タイマー区切り空白
+		const float INF_HEIGHT	= 55.0f;	// ∞UIの縦幅
+		const float MOVE_TIME	= 30.0f;	// 時間変更量
+		const float MIN_TIME	= 60.0f;	// 最小時間
+		const float MAX_TIME	= 180.0f;	// 最大時間
 	}
 
 	// 体力情報
@@ -81,7 +86,7 @@ namespace
 	{
 		const MyLib::PosGrid2	PART	= MyLib::PosGrid2(1, CEntryRuleManager::LIFE_MAX);				// テクスチャ分割数
 		const MyLib::Vector3	POS		= MyLib::Vector3(930.0f, time::POS.y + rule::SPACE.y, 0.0f);	// 位置
-		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 65.0f);							// 大きさ
+		const MyLib::Vector2	SIZE	= MyLib::Vector2(444.0f, 65.0f);								// 大きさ
 	}
 
 	// 選択情報
@@ -142,6 +147,7 @@ static_assert(NUM_ARRAY(TEXTURE) == CEntryRuleManager::TEXTURE_MAX, "ERROR : Tex
 CEntryRuleManager::CEntryRuleManager(CEntry_Dressup* pParent) :
 	m_pLife		 (nullptr),		// 体力の情報
 	m_pTime		 (nullptr),		// 時間の情報
+	m_pTimeInf	 (nullptr),		// 時間∞の情報
 	m_pSelect	 (nullptr),		// 選択の情報
 	m_pStart	 (nullptr),		// 開始ボタンの情報
 	m_pControl	 (nullptr),		// 操作表示の情報
@@ -179,6 +185,7 @@ HRESULT CEntryRuleManager::Init()
 	memset(&m_apArrow[0], 0, sizeof(m_apArrow));			// 矢印の情報
 	m_pLife		 = nullptr;			// 体力の情報
 	m_pTime		 = nullptr;			// 時間の情報
+	m_pTimeInf	 = nullptr;			// 時間∞の情報
 	m_pSelect	 = nullptr;			// 選択の情報
 	m_pStart	 = nullptr;			// 開始ボタンの情報
 	m_pControl	 = nullptr;			// 操作表示の情報
@@ -433,8 +440,8 @@ HRESULT CEntryRuleManager::Init()
 		( // 引数
 			0.0f,				// 表示時間
 			time::POS,			// 位置
-			time::VAL_SIZE,		// 数字の大きさ
-			time::PART_SIZE,	// 区切りの大きさ
+			time::VAL_SIZE.y,	// 数字の大きさ
+			time::PART_SIZE.y,	// 区切りの大きさ
 			time::VAL_SPACE,	// 数字の空白
 			time::PART_SPACE	// 区切りの空白
 		);
@@ -444,6 +451,30 @@ HRESULT CEntryRuleManager::Init()
 			assert(false);
 			return E_FAIL;
 		}
+	}
+
+	// 時間∞の生成
+	{
+		m_pTimeInf = CObject2D::Create(PRIORITY);
+		if (m_pTimeInf == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// テクスチャを登録・割当
+		int texID = pTexture->Regist(TEXTURE[TEXTURE_TIME_INF]);
+		m_pTimeInf->BindTexture(texID);
+
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID);
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, time::INF_HEIGHT);	// 縦幅を元にサイズ計算
+		m_pTimeInf->SetSize(size);
+		m_pTimeInf->SetSizeOrigin(size);
+
+		// 位置を設定
+		m_pTimeInf->SetPosition(time::POS);
 	}
 
 	// UIの透明度の設定
@@ -463,6 +494,9 @@ HRESULT CEntryRuleManager::Init()
 
 	// 時間を設定
 	m_pTime->SetTime(rule.fTime);
+
+	// 時間表示の更新
+	UpdateTimeUI();
 
 	return S_OK;
 }
@@ -501,6 +535,9 @@ HRESULT CEntryRuleManager::Uninit()
 	// 時間の終了
 	SAFE_UNINIT(m_pTime);
 
+	// 時間∞の終了
+	SAFE_UNINIT(m_pTimeInf);
+
 	// フェードの終了
 	SAFE_UNINIT(m_pFade);
 
@@ -529,8 +566,6 @@ void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, c
 		pTex[i].x += scrollX;
 		pTex[i].y -= scrollY;
 	}
-
-
 
 	// フェード中の場合抜ける
 	if (GET_MANAGER->GetFade()->GetState() != CFade::STATE_NONE) { return; }
@@ -590,41 +625,6 @@ void CEntryRuleManager::Update(const float fDeltaTime, const float fDeltaRate, c
 		assert(false);
 		break;
 	}
-
-	// TODO：自動
-#if 0
-	for (int i = 0; i < RULE_MAX; i++)
-	{ // ルールの総数分繰り返す
-
-		// ルールタイトルの更新
-		m_apRuleTitle[i]->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	for (int i = 0; i < MAX_RULE_ARROW; i++)
-	{ // 矢印の総数分繰り返す
-
-		// 矢印の更新
-		m_apArrow[i]->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	// 選択の更新
-	m_pSelect->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 開始ボタンの更新
-	m_pStart->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 操作表示の更新
-	m_pControl->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 時間の更新
-	m_pTime->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// 体力の更新
-	m_pLife->Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// フェードの更新
-	m_pFade->Update(fDeltaTime, fDeltaRate, fSlowRate);
-#endif
 }
 
 //============================================================
@@ -907,15 +907,41 @@ void CEntryRuleManager::UpdateArrow()
 }
 
 //============================================================
+//	時間表示の更新処理
+//============================================================
+void CEntryRuleManager::UpdateTimeUI()
+{
+	float fCurTime = m_pTime->GetTime();	// 時間
+	if (UtilFunc::Calculation::IsNearlyTarget(fCurTime, 0.0f, 0.1f))
+	{ // 時間が無限の場合
+
+		// 時間の自動描画をOFFにする
+		m_pTime->SetEnableDisp(false);
+
+		// 時間∞の自動描画をONにする
+		m_pTimeInf->SetEnableDisp(true);
+	}
+	else
+	{ // 時間が有限の場合
+
+		// 時間の自動描画をONにする
+		m_pTime->SetEnableDisp(true);
+
+		// 時間∞の自動描画をOFFにする
+		m_pTimeInf->SetEnableDisp(false);
+	}
+}
+
+//============================================================
 //	選択操作処理
 //============================================================
 void CEntryRuleManager::Select()
 {
 	CObject *apSelect[MAX_SELECT] =	// 選択オブジェクト
 	{
-		m_pTime,	// 時間
-		m_pLife,	// 体力
-		m_pStart	// 開始ボタン
+		GetTimeUI(),	// 時間
+		m_pLife,		// 体力
+		m_pStart		// 開始ボタン
 	};
 	CInputKeyboard* pKey = GET_INPUTKEY;	// キーボード
 	CInputGamepad* pPad = GET_INPUTPAD;		// パッド
@@ -1059,9 +1085,6 @@ void CEntryRuleManager::Decide()
 
 		case SELECT_GAME:
 
-			// ルール変更反映
-			SetRule();
-
 			// 終了状態に戻る
 			m_pParent->SetState(CEntry_Dressup::EState::STATE_END);
 
@@ -1108,13 +1131,8 @@ void CEntryRuleManager::ChangeRule()
 		{ // 選択ごとの処理
 		case RULE_TIME:
 		{
-			float fCurTime = m_pTime->GetTime();	// 時間
-
-			// 時間を減算
-			m_pTime->SetTime(fCurTime - 15.0f);
-
-			// サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			// 時間の減算
+			AddTime(-time::MOVE_TIME);
 			break;
 		}
 		case RULE_LIFE:
@@ -1147,13 +1165,8 @@ void CEntryRuleManager::ChangeRule()
 		{ // 選択ごとの処理
 		case RULE_TIME:
 		{
-			float fCurTime = m_pTime->GetTime();	// 時間
-
-			// 時間を減算
-			m_pTime->SetTime(fCurTime + 15.0f);
-
-			// サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			// 時間の加算
+			AddTime(time::MOVE_TIME);
 			break;
 		}
 		case RULE_LIFE:
@@ -1180,24 +1193,86 @@ void CEntryRuleManager::ChangeRule()
 }
 
 //============================================================
-//	ルール変更反映処理
+//	時間表示UIの取得処理
 //============================================================
-void CEntryRuleManager::SetRule()
+CObject* CEntryRuleManager::GetTimeUI()
 {
-	// TODO：外部ファイルに書き出す
-#if 0
-	// ポインタを宣言
-	CRetentionManager *pRetention = CManager::GetInstance()->GetRetentionManager();	// データ保存情報
+	float fCurTime = m_pTime->GetTime();	// 時間
+	if (UtilFunc::Calculation::IsNearlyTarget(fCurTime, 0.0f, 0.1f))
+	{ // 時間が無限の場合
 
-	// 勝利ポイント数を設定
-	pRetention->SetWinPoint(m_pWinPoint->GetNum());
+		return m_pTimeInf;
+	}
+	else
+	{ // 時間が有限の場合
 
-	// 撃破条件を設定
-	pRetention->SetKillState((CRetentionManager::EKill)m_pKill->GetPattern());
+		return m_pTime;
+	}
+}
 
-	// 勝利条件を設定
-	pRetention->SetWinState((CRetentionManager::EWin)m_pWin->GetPattern());
-#endif
+//============================================================
+//	時間加算処理
+//============================================================
+void CEntryRuleManager::AddTime(const float fAddTime)
+{
+	float fCurTime = m_pTime->GetTime();	// 時間
+	if (UtilFunc::Calculation::IsNearlyTarget(fCurTime, 0.0f, 0.1f))
+	{ // 時間が無限の場合
+
+		if (fAddTime < 0.0f)
+		{ // 時間を減らす場合
+
+			// 最大時間に補正
+			fCurTime = time::MAX_TIME;
+
+			// 増減成功サウンドの再生
+			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		}
+		else
+		{ // 時間を増やす場合
+
+			// 増減失敗サウンドの再生
+			PLAY_SOUND(CSound::LABEL_SE_BOUND_HIGH);
+		}
+	}
+	else
+	{ // 時間が有限の場合
+
+		// 時間を加算
+		fCurTime += fAddTime;
+
+		// 時間を補正
+		if (fCurTime > time::MAX_TIME)
+		{ // 最大時間を上回った場合
+
+			// 無限時間にする
+			fCurTime = 0.0f;
+
+			// 増減成功サウンドの再生
+			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		}
+		else if (fCurTime < time::MIN_TIME)
+		{ // 最小時間を下回った場合
+
+			// 最小時間に補正
+			fCurTime = time::MIN_TIME;
+
+			// 増減失敗サウンドの再生
+			PLAY_SOUND(CSound::LABEL_SE_BOUND_HIGH);
+		}
+		else
+		{ // 補正がない場合
+
+			// 増減成功サウンドの再生
+			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		}
+	}
+
+	// 時間を減算
+	m_pTime->SetTime(fCurTime);
+
+	// 時間表示の更新
+	UpdateTimeUI();
 }
 
 //============================================================
@@ -1232,7 +1307,7 @@ void CEntryRuleManager::SetEnableDispUI(const bool bDisp)
 	m_pLife->SetEnableDisp(bDisp);
 
 	// 時間の描画を設定
-	m_pTime->SetEnableDisp(bDisp);
+	GetTimeUI()->SetEnableDisp(bDisp);
 }
 
 //============================================================
@@ -1255,6 +1330,7 @@ void CEntryRuleManager::SetAlphaUI(const float fAlpha, const bool bFadeOut)
 
 	// 時間の透明度を設定
 	m_pTime->SetAlpha(fAlpha);
+	m_pTimeInf->SetAlpha(fAlpha);
 
 	if (bFadeOut)
 	{ // フェードアウト時の場合

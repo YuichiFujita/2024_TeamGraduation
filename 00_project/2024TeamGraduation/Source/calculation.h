@@ -1142,7 +1142,8 @@ namespace UtilFunc	// 便利関数
 		*/
 		inline bool IsNearlyTarget(float value, float target, float range)
 		{
-			if (abs(value) <= range + target)
+			if (abs(value) <= target + range &&
+				abs(value) >= target - range)
 			{
 				return true;
 			}

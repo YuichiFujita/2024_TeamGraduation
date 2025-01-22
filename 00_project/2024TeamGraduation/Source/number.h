@@ -83,7 +83,8 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	virtual void BindTexture(int nIdxTexture) = 0;						// テクスチャ割り当て
+	virtual void BindTexture(int nIdxTexture) = 0;				// テクスチャ割当
+	virtual int GetIdxTexture() { assert(false); return -1; }	// テクスチャインデックス取得
 
 	//=============================
 	// 静的メンバ関数

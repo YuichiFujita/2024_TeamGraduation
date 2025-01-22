@@ -19,7 +19,7 @@
 //************************************************************
 namespace
 {
-	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\school02.png";	// 数字テクスチャ
+	const char *TEXTURE_NUM = "data\\TEXTURE\\number\\school03.png";	// 数字テクスチャ
 	const char *TEXTURE_PART = "data\\TEXTURE\\timepart000.png";		// 区切りテクスチャ
 	const int PRIORITY = 6;	// タイムUIの優先順位
 }
@@ -252,8 +252,8 @@ CTimeUI *CTimeUI::Create
 (
 	const float fTime,				// 表示時間
 	const D3DXVECTOR3& rPos,		// 位置
-	const D3DXVECTOR2& rSizeValue,	// 数字の大きさ
-	const D3DXVECTOR2& rSizePart,	// 区切りの大きさ
+	const float fHeightValue,		// 数字の大きさ
+	const float fHeightPart,		// 区切りの大きさ
 	const D3DXVECTOR2& rSpaceValue,	// 数字の空白
 	const D3DXVECTOR2& rSpacePart,	// 区切りの空白
 	const EAlignX alignX,			// 横配置
@@ -291,10 +291,10 @@ CTimeUI *CTimeUI::Create
 		pTimeUI->SetRotation(rRot);
 
 		// 数字の大きさを設定
-		pTimeUI->SetSizeValue(rSizeValue);
+		pTimeUI->SetSizeValue(fHeightValue);
 
 		// 区切りの大きさを設定
-		pTimeUI->SetSizePart(rSizePart);
+		pTimeUI->SetSizePart(fHeightPart);
 
 		// 数字の空白を設定
 		pTimeUI->SetSpaceValue(rSpaceValue);
@@ -326,6 +326,85 @@ void CTimeUI::SetTime(const float fTime)
 
 	// 時間を補正
 	UtilFunc::Transformation::ValueNormalize(m_fTime, timer::TIME_MAX, timer::TIME_MIN);
+}
+
+//============================================================
+//	数字のテクスチャインデックスの設定処理
+//============================================================
+void CTimeUI::BindTextureValue(const int nTexIdx)
+{
+	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
+	{ // 数字の数分繰り返す
+
+		// 数字のテクスチャインデックスを設定
+		assert(m_apValue[nCntValue] != nullptr);
+		m_apValue[nCntValue]->BindTexture(nTexIdx);
+	}
+}
+
+//============================================================
+//	区切りのテクスチャインデックスの設定処理
+//============================================================
+void CTimeUI::BindTexturePart(const int nTexIdx)
+{
+	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
+	{ // 区切りの数分繰り返す
+
+		// 区切りのテクスチャインデックスを設定
+		assert(m_apPart[nCntPart] != nullptr);
+		m_apPart[nCntPart]->BindTexture(nTexIdx);
+	}
+}
+
+//============================================================
+//	数字の大きさの設定処理
+//============================================================
+void CTimeUI::SetSizeValue(const float fHeight)
+{
+	// 縦幅を元にサイズを設定
+	const int nTexID = m_apValue[0]->GetIdxTexture();
+	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(nTexID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, fHeight);
+	size.y *= 10.0f;
+
+	// 設定された数字の大きさを保存
+	m_sizeValue = size;
+
+	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
+	{ // 数字の数分繰り返す
+
+		// 数字の大きさを設定
+		assert(m_apValue[nCntValue] != nullptr);
+		m_apValue[nCntValue]->SetSize(size);
+	}
+
+	// 相対位置の設定
+	SetPositionRelative();
+}
+
+//============================================================
+//	区切りの大きさの設定処理
+//============================================================
+void CTimeUI::SetSizePart(const float fHeight)
+{
+	// 縦幅を元にサイズを設定
+	const int nTexID = m_apPart[0]->GetIdxTexture();
+	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(nTexID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, fHeight);
+
+	// 設定された区切りの大きさを保存
+	m_sizePart = size;
+
+	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
+	{ // 区切りの数分繰り返す
+
+		// 区切りの大きさを設定
+		assert(m_apPart[nCntPart] != nullptr);
+		m_apPart[nCntPart]->SetSize(size);
+	}
+
+	// 相対位置の設定
+	SetPositionRelative();
 }
 
 //============================================================
