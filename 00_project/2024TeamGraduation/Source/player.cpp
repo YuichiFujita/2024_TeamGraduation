@@ -186,7 +186,7 @@ CPlayer::STATE_END_FUNC CPlayer::m_StateEndFunc[] =	// 状態終了関数
 	nullptr,							// スペシャルキャッチ
 	nullptr,							// スペシャル
 	nullptr,							// コート越え
-	nullptr,							// コートに戻る
+	&CPlayer::StateEndOutCourt_Return,	// コート越えから戻る
 	nullptr,							// 相手コートに侵入トス
 	&CPlayer::StateEndInvade_Return,	// 相手コート侵入から戻る
 };
@@ -2122,6 +2122,10 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
+	// 移動不可
+	m_bPossibleMove = false;
+	m_bPossibleAction = false;
+
 	CMotion* pMotion = GetMotion();
 	MyAssert::CustomAssert(pMotion != nullptr,"モーションisどこ？");
 
@@ -2336,6 +2340,16 @@ void CPlayer::StateEndDeadAfter()
 {
 	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
+}
+
+//==========================================================================
+// [終了] コート越えから戻る
+//==========================================================================
+void CPlayer::StateEndOutCourt_Return()
+{
+	// フラグ解除解除
+	m_bPossibleMove = true;
+	m_bPossibleAction = true;
 }
 
 //==========================================================================
