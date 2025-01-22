@@ -235,7 +235,7 @@ void CMyEffekseer::StopAll()
 	// 全て停止
 	m_efkManager->StopAllEffects();
 
-	// 障害物のリスト取得
+	// リスト取得
 	CListManager<CEffekseerObj> list = CEffekseerObj::GetListObj();
 
 	// 先頭を保存
@@ -247,6 +247,10 @@ void CMyEffekseer::StopAll()
 	{
 		(*itr)->Uninit();
 	}
+
+	// マネージャーの更新
+	Effekseer::Manager::UpdateParameter updateParameter;
+	m_efkManager->Update(updateParameter);
 }
 
 //==========================================================================
@@ -291,7 +295,7 @@ void CMyEffekseer::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 void CMyEffekseer::UpdateAll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 障害物のリスト取得
+	// リスト取得
 	CListManager<CEffekseerObj> list = CEffekseerObj::GetListObj();
 
 	// 先頭を保存
