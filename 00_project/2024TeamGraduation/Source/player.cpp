@@ -826,6 +826,9 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 //==========================================================================
 void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// コートの中心に戻り中
+	if (m_state == EState::STATE_OUTCOURT_RETURN)	return;
+
 	// モーション取得
 	CMotion* pMotion = GetMotion();
 	if (pMotion == nullptr)	return;
@@ -2434,7 +2437,7 @@ void CPlayer::Draw()
 //==========================================================================
 void CPlayer::SetState(EState state)
 {
-	// 状態更新
+	// 状態終了
 	if (m_StateEndFunc[m_state] != nullptr)
 	{
 		(this->*(m_StateEndFunc[m_state]))();
@@ -2763,6 +2766,7 @@ void CPlayer::Debug()
 		CPlayer::EAction action = m_pActionPattern->GetAction();
 		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 
+#if 1
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -2791,6 +2795,12 @@ void CPlayer::Debug()
 		{
 			ImGui::Text("InputAngle : [error]");
 		}
+#else
+		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
+		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
+		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
+		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
+#endif
 
 #if 0
 		ImGui::Text("bPossibleMove: [%s]", m_bPossibleMove ? "true" : "false");
