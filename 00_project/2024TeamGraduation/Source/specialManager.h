@@ -19,7 +19,7 @@
 //	前方宣言
 //************************************************************
 class CPlayer;
-class CLightPoint;
+class CSpotLight;
 class CCutIn;
 
 //************************************************************
@@ -82,15 +82,13 @@ private:
 	void UpdateStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル演出更新
 	void UpdateFollowTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従遷移更新
 	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 終了更新
-
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
-
 	void SetPlayerHypePosition(const bool bInverse);	// プレイヤー盛り上げ位置設定
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数
-	CLightPoint* m_apAttackLight[NUM_LIGHT];	// 攻撃プレイヤーを照らすライト
-	CLightPoint* m_apTargetLight[NUM_LIGHT];	// 標的プレイヤーを照らすライト
+	CSpotLight* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
+	CSpotLight* m_pTargetLight;	// 標的プレイヤーを照らすライト
 	CPlayer* m_pAttackPlayer;	// 攻撃プレイヤー
 	CPlayer* m_pTargetPlayer;	// 標的プレイヤー
 	CCutIn* m_pCutIn;	// カットイン情報
