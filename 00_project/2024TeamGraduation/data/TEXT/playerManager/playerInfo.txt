@@ -6,12 +6,12 @@
 #------------------------------------------------------------------------------
 SETTEAM
 	SETPLAYER
-		ID_CONTROLL = -1
+		ID_CONTROLL = 0
 		HAIR = 0
 		ACCESSORY = 0
 		FACE = 0
-		BODY = 0
-		HANDED = 0
+		BODY = 1
+		HANDED = 1
 	END_SETPLAYER
 
 END_SETTEAM
@@ -21,7 +21,7 @@ END_SETTEAM
 SETTEAM
 	SETPLAYER
 		ID_CONTROLL = -1
-		HAIR = 0
+		HAIR = 19
 		ACCESSORY = 0
 		FACE = 0
 		BODY = 0

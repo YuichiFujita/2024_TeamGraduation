@@ -289,9 +289,9 @@ HRESULT CEntryRuleManager::Init()
 			m_apArrow[i] = CArrowUI::Create
 			( // 引数
 				(CArrowUI::EDirection)i,	// 方向
-				arrow::POS + ((float)i * arrow::SPACE),	// 位置
-				arrow::SIZE,							// サイズ
-				MyLib::color::White(0.0f),				// 色
+				arrow::POS,					// 位置
+				arrow::SIZE,				// サイズ
+				MyLib::color::White(0.0f),	// 色
 				PRIORITY		// 優先順位
 			);
 			if (m_apArrow[i] == nullptr)
@@ -300,6 +300,12 @@ HRESULT CEntryRuleManager::Init()
 				assert(false);
 				return E_FAIL;
 			}
+
+			// オフセット設定
+			m_apArrow[i]->SetOffset(arrow::SPACE);
+
+			// 位置再設定
+			m_apArrow[i]->SetPosition(select::POS);
 		}
 	}
 

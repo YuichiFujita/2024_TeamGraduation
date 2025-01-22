@@ -14,7 +14,7 @@ SCRIPT			# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI
 #------------------------------------------------------------------------------
 # ÉÇÉfÉãêî
 #------------------------------------------------------------------------------
-NUM_MODEL = 12
+NUM_MODEL = 10
 
 #------------------------------------------------------------------------------
 # ÉÇÉfÉãÉtÉ@ÉCÉãñº
@@ -22,14 +22,12 @@ NUM_MODEL = 12
 MODEL_FILENAME = data/MODEL/audience/00_waist.x	# [0]çò
 MODEL_FILENAME = data/MODEL/audience/01_body.x	# [1]ëÃ
 MODEL_FILENAME = data/MODEL/audience/02_head.x	# [2]ì™
-MODEL_FILENAME = data/MODEL/audience/03_armUP_R.x	# [3]âEòr(è„)
-MODEL_FILENAME = data/MODEL/audience/04_armDW_R.x	# [4]âEòr(â∫)
-MODEL_FILENAME = data/MODEL/audience/05_armUP_L.x	# [5]ç∂òr(è„)
-MODEL_FILENAME = data/MODEL/audience/06_armDW_L.x	# [6]ç∂òr(â∫)
-MODEL_FILENAME = data/MODEL/audience/07_legUP_R.x	# [7]âEë´(è„)
-MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [8]âEë´(â∫)
-MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [9]ç∂ãr(è„)
-MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [10]ç∂ãr(â∫)
+MODEL_FILENAME = data/MODEL/audience/hand_R.x		# [3]âEòr(è„)
+MODEL_FILENAME = data/MODEL/audience/hand_L.x		# [4]âEòr(â∫)
+MODEL_FILENAME = data/MODEL/audience/07_legUP_R.x	# [5]âEë´(è„)
+MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [6]âEë´(â∫)
+MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [7]ç∂ãr(è„)
+MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [8]ç∂ãr(â∫)
 MODEL_FILENAME = data/MODEL/audience/Mii/suiren.x	# [9]îØ
 
 #------------------------------------------------------------------------------
@@ -61,6 +59,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 0
 		PARENT = -1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 37.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -69,7 +69,9 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 1
 		PARENT = 0
-		POS = 0.00 0.00 0.00
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
+		POS = 0.00 1.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -77,6 +79,8 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 2
 		PARENT = 1
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 31.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -85,31 +89,39 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		POS = -12.00 28.00 0.00
+		SIDE = 1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 4					# îΩì]êÊ
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 4
-		PARENT = 3
-		POS = -11.50 0.00 0.50
+		PARENT = 1
+		SIDE = -1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 3					# îΩì]êÊ
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 5
-		PARENT = 1
-		POS = 12.00 28.00 0.00
+		PARENT = 0
+		SIDE = 1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 7					# îΩì]êÊ
+		POS = -5.50 -7.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 6
-		PARENT = 5
-		POS = 12.50 0.00 0.50
+		PARENT = 7
+		SIDE = 1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 8					# îΩì]êÊ
+		POS = 0.00 -14.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -117,14 +129,18 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 7
 		PARENT = 0
-		POS = -5.50 -7.50 1.00
+		SIDE = -1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 5					# îΩì]êÊ
+		POS = 5.50 -7.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 8
-		PARENT = 7
+		PARENT = 9
+		SIDE = -1					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = 6					# îΩì]êÊ
 		POS = 0.00 -14.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -132,23 +148,9 @@ CHARACTERSET
 
 	PARTSSET
 		INDEX = 9
-		PARENT = 0
-		POS = 5.50 -7.50 1.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 10
-		PARENT = 9
-		POS = 0.00 -14.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 11
 		PARENT = 2
+		SIDE = 0					# îΩì][-1:ç∂ / 0 : íÜâõ / 1 : âE]
+		INVERSE = -1					# îΩì]êÊ
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1

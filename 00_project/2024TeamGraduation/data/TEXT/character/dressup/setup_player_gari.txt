@@ -1,0 +1,277 @@
+#====================================================================================================
+#
+# 『階層モデル』スクリプトファイル [setup_player.txt]
+# Author : 相馬 靜雅
+#
+#====================================================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#==============================================================================
+#
+# セットアップ情報
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+NUM_MODEL = 17
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/player/gari/00_waist.x		# [0]腰
+MODEL_FILENAME = data/MODEL/player/gari/01_body.x		# [1]体
+MODEL_FILENAME = data/MODEL/player/gari/02_head.x		# [2]頭
+MODEL_FILENAME = data/MODEL/player/gari/03_armUP_R.x	# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/player/gari/04_armDW_R.x	# [4]右腕(下)
+MODEL_FILENAME = data/MODEL/player/gari/05_hand_R.x		# [5]右手
+MODEL_FILENAME = data/MODEL/player/gari/06_armUP_L.x	# [6]左腕(上)
+MODEL_FILENAME = data/MODEL/player/gari/07_armDW_L.x	# [7]左腕(下)
+MODEL_FILENAME = data/MODEL/player/gari/08_hand_L.x		# [8]左手
+MODEL_FILENAME = data/MODEL/player/gari/09_legUP_R.x	# [9]右脚(上)
+MODEL_FILENAME = data/MODEL/player/gari/10_legDW_R.x	# [10]右脚(下)
+MODEL_FILENAME = data/MODEL/player/gari/11_shoes_R.x	# [11]右足
+MODEL_FILENAME = data/MODEL/player/gari/12_legUP_L.x	# [12]左脚(上)
+MODEL_FILENAME = data/MODEL/player/gari/13_legDW_L.x	# [13]左脚(下)
+MODEL_FILENAME = data/MODEL/player/gari/14_shoes_L.x	# [14]左足
+MODEL_FILENAME = data/MODEL/player/hair/bobobo.x		# [15]髪
+MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
+
+#------------------------------------------------------------------------------
+# キャラクター情報
+#------------------------------------------------------------------------------
+CHARACTERSET
+
+	SCALE = 1.082		# キャラスケール
+
+	VELOCITY_NORMAL = 1.9	# 通常移動量
+	VELOCITY_RUN = 3.27		# ダッシュ移動量
+	VELOCITY_BLINK = 35.61	# ブリンク移動量s
+	
+	VELOCITY = 1.00	# ブリンク移動量
+	
+	THROWJUMP_STARTMOVE = 3.76		# ジャンプ投げ時の開始上移動量
+	THROWJUMP_UPDATEMOVE = 0.212	# ジャンプ投げ時の常時上移動量
+	
+	JUMP = 12.00		# ジャンプ量
+	RADIUS = 60.00		# 半径
+	HEIGHT = 100.00		# 高さ
+	LIFE = 50			# 体力
+	
+	BALLSTATUSSET
+		THROW_NORMAL = 22.50		#投げ速度(通常)
+		THROW_JUMP = 27.00			#投げ速度(ジャンプ)
+		THROW_SPECIAL = 0.00		#投げ速度(スペシャル)
+		CATCH_RANGE = 160			#キャッチ範囲(度数法)
+		DAMAGE_NORMAL = 10			#ダメージ(通常)
+		DAMAGE_JUMP = 15			#ダメージ(ジャンプ)
+		DAMAGE_SPECIAL = 30			#ダメージ(スペシャル)
+		KNOCKBACK_NORMAL = 80		#ノックバック(通常)
+		KNOCKBACK_JUMP = 100		#ノックバック(ジャンプ)
+		KNOCKBACK_SPECIAL = 150		#ノックバック(スペシャル)
+	END_BALLSTATUSSET
+	
+	CENTERSET
+		PARTS = 0		# 中心にするパーツ
+		OFFSET = 0.00 30.50 0.00		# オフセット位置
+	END_CENTERSET
+	
+	BALLSET
+		PARTS = 5		# 中心にするパーツ
+		OFFSET = -6.50 -4.00 0.00		# オフセット位置
+	END_BALLSET
+
+	PARTSSET
+		INDEX = 0
+		PARENT = -1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 72.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 1
+		PARENT = 0
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 8.50 -0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 2
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 44.50 1.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 3
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -15.00 36.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4
+		PARENT = 3
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -20.50 0.00 1.75
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 5
+		PARENT = 4
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -12.00 -1.00 0.25
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 6
+		PARENT = 1
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 15.00 36.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 7
+		PARENT = 6
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 23.00 0.00 1.75
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 8
+		PARENT = 7
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 11.50 -0.50 0.25
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 9
+		PARENT = 0
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -7.50 -9.00 -0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 10
+		PARENT = 9
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 -31.50 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 11
+		PARENT = 10
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.50 -23.00 0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 12
+		PARENT = 0
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 7.50 -9.00 -0.50
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 13
+		PARENT = 12
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.50 -31.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 14
+		PARENT = 13
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = -0.50 -23.50 1.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 15
+		PARENT = 2
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 16
+		PARENT = 2
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1					# 反転先
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+END_CHARACTERSET
+
+
+#==============================================================================
+#
+# コライダー情報
+#
+#==============================================================================
+COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
+
+#==============================================================================
+#
+# モーション情報
+#
+#==============================================================================
+# モーションファイル名
+#------------------------------------------------------------------------------
+MOTION_FILENAME = data/TEXT/character/dressup/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup01.txt		# 待機
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup02.txt		# 待機
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup03.txt		# 待機
+
+END_SCRIPT		# この行は絶対消さないこと！
+

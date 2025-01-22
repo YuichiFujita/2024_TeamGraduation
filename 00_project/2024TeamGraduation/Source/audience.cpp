@@ -22,19 +22,19 @@
 //==========================================================================
 namespace
 {
-	const int MIN_JUMP = 6;		// 最低ジャンプ量
-	const int MAX_JUMP = 12;	// 最大ジャンプ量
+	const int MIN_JUMP = 5;		// 最低ジャンプ量
+	const int MAX_JUMP = 8;	// 最大ジャンプ量
 	const float	RADIUS_SHADOW	 = 44.0f;	// 影の半径
 	const float	MIN_ALPHA_SHADOW = 0.02f;	// 影の透明度
 	const float	MAX_ALPHA_SHADOW = 0.08f;	// 影の透明度
-	const float GRAVITY_RATE	 = 0.5f;	// 重力にかける割合
+	const float GRAVITY_RATE	 = 0.2f;	// 重力にかける割合
 	const float JUMP_RATE		 = 0.5f;	// ジャンプ力にかける割合
 	const float TIME_SPAWN		 = 2.4f;	// 入場時間
 	const float TIME_DESPAWN	 = 3.2f;	// 退場時間
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
-	const float RATE_HIGH = 0.1f;	// ハイポリ比率
-	const float RATE_LOW  = 0.2f;	// ローポリ比率
+	const float RATE_HIGH = 0.05f;	// ハイポリ比率
+	const float RATE_LOW  = 0.125f;	// ローポリ比率
 #else
 	const float RATE_HIGH = 0.12f;	// ハイポリ比率
 	const float RATE_LOW = 0.28f;	// ローポリ比率
@@ -489,12 +489,6 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 	if (UpdateGravity(&pos, &move, fDeltaTime, fDeltaRate, fSlowRate, GRAVITY_RATE))
 	{ // 着地した場合
 
-		if (bHype)
-		{ // 盛り上がっている場合
-
-			// 縦移動量を与える
-			move.y = m_fJumpLevel * JUMP_RATE;
-		}
 	}
 
 	if (m_fTimeState >= TIME_SPAWN)

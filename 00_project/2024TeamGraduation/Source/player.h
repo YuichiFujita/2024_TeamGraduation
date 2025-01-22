@@ -344,6 +344,7 @@ public:
 	// ドレスアップ用
 	//=============================
 	void BindDressUp(int nHair, int nAccessory, int nFace);	// ドレスアップ割り当て
+	CDressup* GetDressUp_Uniform() { return m_pDressUp_Uniform; }	// ドレスアップ(ユニフォーム)
 
 	//=============================
 	// その他

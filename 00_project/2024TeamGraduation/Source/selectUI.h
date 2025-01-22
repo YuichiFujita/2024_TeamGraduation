@@ -30,6 +30,16 @@ class CEntry_Dressup;	// 着せ替えシーンクラス
 class CSelectUI : public CObject
 {
 public:
+	// 選択列挙
+	enum ESelect
+	{
+		SELECT_NAME = 0,	// 名前
+		SELECT_DRESSUP,		// 着せ替え
+		SELECT_AREA,		// ポジション
+		SELECT_TRANS,		// 遷移
+		SELECT_MAX			// この列挙型の総数
+	};
+
 	// コンストラクタ
 	CSelectUI(CGameManager::ETeamSide team, const int nPlayerIdx, const int nPadIdx);
 
@@ -52,19 +62,11 @@ public:
 	inline void SetSelect(const bool bSelect)	{ m_bSelect = bSelect; }	// 選択操作フラグ設定
 	inline bool IsSelect() const				{ return m_bSelect; }		// 選択操作フラグ取得
 	inline int GetPadIdx() const				{ return m_nPadIdx; }		// 操作権インデックス取得
+	inline void SetSelectIdxX(const int nIdx)	{ m_select.x = nIdx; }		// X選択インデックス設定
+	inline void SetSelectIdxY(const int nIdx)	{ m_select.y = nIdx; }		// Y選択インデックス設定
 	inline MyLib::PosGrid2 GetSelectIdx() const	{ return m_select; }		// 選択インデックス取得
 
 private:
-	// 選択列挙
-	enum ESelect
-	{
-		SELECT_NAME = 0,	// 名前
-		SELECT_DRESSUP,		// 着せ替え
-		SELECT_AREA,		// ポジション
-		SELECT_TRANS,		// 遷移
-		SELECT_MAX			// この列挙型の総数
-	};
-
 	// 選択関数リスト
 	typedef void(CSelectUI::*SELECT_FUNC)(const float, const float, const float);
 	static SELECT_FUNC m_SelectFuncList[];	// 関数のリスト
@@ -81,7 +83,7 @@ private:
 	void UpdateSelectPlayer();	// 選択プレイヤー更新
 	void SetPositionRelative();	// 相対位置設定
 	bool IsSelectOK() const;	// 選択操作可能かの確認
-
+	void SetWidthPadUI(const float fWidth);			// パッドUI大きさ設定
 	int GetNumSelectX(const int nSelectY) const;	// X選択肢数取得
 	int GetMoveYSelectX(const int nNextSelectY);	// Y移動時のX補正位置取得
 	void UpdateSelectX(const int nSelectY);			// X選択更新

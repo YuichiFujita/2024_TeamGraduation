@@ -36,6 +36,7 @@ public:
 	enum EMotion
 	{
 		MOTION_DEF = 0,	// ’Êíó‘Ô
+		MOTION_DEF_INV,	// ’Êíó‘Ô
 		MOTION_SPAWN,	// “üêó‘Ô
 		MOTION_JUMP,	// ·‚èã‚ª‚èó‘Ô
 		MOTION_SPECIAL,	// ƒXƒyƒVƒƒƒ‹ó‘Ô

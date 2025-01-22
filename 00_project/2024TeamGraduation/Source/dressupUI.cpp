@@ -28,13 +28,6 @@ namespace
 	const D3DXCOLOR COL_CHOICE	= MyLib::color::White();				// 選択中色
 	const D3DXCOLOR COL_DEFAULT	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);	// 非選択中色
 
-	namespace change
-	{
-		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(CDressupUI::EChangeType::TYPE_MAX, 1);	// テクスチャ分割数
-		const std::string TEXTURE = "data\\TEXTURE\\entry\\ChangeType000.png";	// 変更種類アイコンテクスチャ
-		const float WIDTH = 500.0f;	// 横幅
-	}
-
 	namespace player
 	{
 		namespace frame
@@ -43,25 +36,46 @@ namespace
 			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame001.png";			// プレイヤーフレームアイコンテクスチャ
 			const float WIDTH = 100.0f;	// 横幅
 		}
-
 		namespace ui
 		{
 			namespace body
 			{
+				D3DXVECTOR2 TEX_POS[] =		// テクスチャ座標
+				{
+					D3DXVECTOR2(0.0f, 0.0f),	// 左上
+					D3DXVECTOR2(1.0f, 0.0f),	// 右上
+					D3DXVECTOR2(0.0f, 1.0f),	// 左下
+					D3DXVECTOR2(1.0f, 1.0f),	// 右下
+				};
 				const float WIDTH = 350.0f;	// 横幅
 			}
-
 			namespace face
 			{
+				D3DXVECTOR2 TEX_POS[] =		// テクスチャ座標
+				{
+					D3DXVECTOR2(0.3f, 0.0f),	// 左上
+					D3DXVECTOR2(0.7f, 0.0f),	// 右上
+					D3DXVECTOR2(0.3f, 0.42f),	// 左下
+					D3DXVECTOR2(0.7f, 0.42f),	// 右下
+				};
 				const float WIDTH = 620.0f;	// 横幅
 			}
 		}
 	}
 
+	namespace change
+	{
+		const MyLib::PosGrid2	PTRN	= MyLib::PosGrid2(CDressupUI::EChangeType::TYPE_MAX, 1);	// テクスチャ分割数
+		const std::string		TEXTURE	= "data\\TEXTURE\\entry\\ChangeType000.png";	// 変更種類アイコンテクスチャ
+		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 175.0f, 0.0f);			// オフセット
+		const float WIDTH = 100.0f;	// 横幅
+	}
+
 	namespace ready
 	{
-		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(1, 2);	// テクスチャ分割数
-		const std::string TEXTURE = "data\\TEXTURE\\entry\\ReadyCheck000.png";	// 準備完了チェックテクスチャ
+		const MyLib::PosGrid2	PTRN	= MyLib::PosGrid2(1, 2);						// テクスチャ分割数
+		const std::string		TEXTURE	= "data\\TEXTURE\\entry\\ReadyCheck000.png";	// 準備完了チェックテクスチャ
+		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 230.0f, 0.0f);			// オフセット
 		const float WIDTH = 100.0f;	// 横幅
 	}
 }
@@ -92,7 +106,7 @@ CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeAr
 	m_pAccessory	(nullptr),		// アクセ着せ替え
 	m_pFace			(nullptr),		// 顔着せ替え
 	m_typeEdit		(EEditType::EDIT_PROCESS),	// エディットする種類
-	m_typeChange	(EChangeType::TYPE_HAIR),	// 変更する種類
+	m_typeChange	(EChangeType::TYPE_BODY),	// 変更する種類
 	m_nPlayerIdx	(nPlayerIdx),				// プレイヤーインデックス
 	m_typeArea		(typeArea)					// プレイヤーポジション
 {
@@ -486,7 +500,7 @@ HRESULT CDressupUI::CreateChangeIcon()
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, change::WIDTH);
-	size.x /= (float)change::PTRN.x;
+	size.y *= (float)change::PTRN.x;
 	m_pChangeIcon->SetSize(size);
 	m_pChangeIcon->SetSizeOrigin(m_pChangeIcon->GetSize());
 
@@ -596,7 +610,7 @@ HRESULT CDressupUI::CreatePlayerFrame()
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::frame::WIDTH);
-	size.y *= player::frame::PTRN.x;
+	size.y *= (float)player::frame::PTRN.x;
 	m_pPlayerFrame->SetSize(size);
 	m_pPlayerFrame->SetSizeOrigin(m_pPlayerFrame->GetSize());
 
@@ -807,10 +821,10 @@ void CDressupUI::SetPositionRelative()
 	MyLib::Vector3 posThis = GetPosition();
 
 	// 変更種類アイコンの位置設定
-	m_pChangeIcon->SetPosition(posThis + MyLib::Vector3(0.0f, 175.0f, 0.0f));
+	m_pChangeIcon->SetPosition(posThis + change::OFFSET);
 
 	// 準備完了チェックの位置設定
-	m_pReadyCheck->SetPosition(posThis + MyLib::Vector3(0.0f, 230.0f, 0.0f));
+	m_pReadyCheck->SetPosition(posThis + ready::OFFSET);
 
 	// プレイヤーフレームの位置設定
 	m_pPlayerFrame->SetPosition(posThis);
@@ -1009,10 +1023,10 @@ void CDressupUI::UpdatePlayerUI()
 
 		// テクスチャ座標の更新
 		std::vector<D3DXVECTOR2> vecTex = m_pPlayerUI->GetVecTexUV();
-		vecTex[0] = D3DXVECTOR2(0.3f, 0.0f);
-		vecTex[1] = D3DXVECTOR2(0.7f, 0.0f);
-		vecTex[2] = D3DXVECTOR2(0.3f, 0.42f);
-		vecTex[3] = D3DXVECTOR2(0.7f, 0.42f);
+		vecTex[0] = player::ui::face::TEX_POS[0];
+		vecTex[1] = player::ui::face::TEX_POS[1];
+		vecTex[2] = player::ui::face::TEX_POS[2];
+		vecTex[3] = player::ui::face::TEX_POS[3];
 		m_pPlayerUI->SetTexUV(vecTex);
 
 		// テクスチャ大きさからの差分を計算
@@ -1030,10 +1044,10 @@ void CDressupUI::UpdatePlayerUI()
 
 		// テクスチャ座標の更新
 		std::vector<D3DXVECTOR2> vecTex = m_pPlayerUI->GetVecTexUV();
-		vecTex[0] = D3DXVECTOR2(0.0f, 0.0f);
-		vecTex[1] = D3DXVECTOR2(1.0f, 0.0f);
-		vecTex[2] = D3DXVECTOR2(0.0f, 1.0f);
-		vecTex[3] = D3DXVECTOR2(1.0f, 1.0f);
+		vecTex[0] = player::ui::body::TEX_POS[0];
+		vecTex[1] = player::ui::body::TEX_POS[1];
+		vecTex[2] = player::ui::body::TEX_POS[2];
+		vecTex[3] = player::ui::body::TEX_POS[3];
 		m_pPlayerUI->SetTexUV(vecTex);
 
 		// 横幅を元に大きさを設定

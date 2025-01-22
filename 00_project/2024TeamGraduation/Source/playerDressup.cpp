@@ -12,13 +12,19 @@
 #include "calculation.h"
 #include "sound.h"
 #include "fade.h"
+#include "dressup_uniform.h"	// ユニフォーム
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	
+	const std::string CHARAFILE[CPlayer::EBody::BODY_MAX] =		// キャラクターファイル
+	{
+		"data\\TEXT\\character\\dressup\\setup_player.txt",
+		"data\\TEXT\\character\\dressup\\setup_player_fat.txt",
+		"data\\TEXT\\character\\dressup\\setup_player_gari.txt",
+	};
 }
 
 //==========================================================================
@@ -51,8 +57,38 @@ CPlayerDressUP::~CPlayerDressUP()
 //==========================================================================
 HRESULT CPlayerDressUP::Init()
 {
-	// 初期化処理
-	CPlayer::Init();
+	// 種類の設定
+	CObject::SetType(CObject::TYPE_PLAYER);
+
+	// キャラ作成
+	HRESULT hr = SetCharacter(CHARAFILE[GetBodyType()]);
+	if (FAILED(hr))
+	{// 失敗していたら
+		return E_FAIL;
+	}
+
+	// カメラの方向向きにする
+	SetRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+
+	// 待機にしておく
+	SetState(EState::STATE_NONE);
+
+	// ドレスアップ生成
+	CreateDressUp();
+
+	// チームごとのユニフォームにする
+	CDressup* pDressUP = GetDressUp_Uniform();
+	if (pDressUP != nullptr)
+	{
+		assert(GetTeam() != CGameManager::SIDE_NONE);
+		pDressUP->SetNowIdx((int)GetTeam());
+		pDressUP->ReRegist();
+	}
+
+	// モーション設定
+	int motionIdx = UtilFunc::Transformation::Random(MOTION_WAIT01, MOTION_WAIT01 + (MOTION_MAX - MOTION_WAIT01));
+	GetMotion()->ResetPose(motionIdx);
+	GetMotion()->Set(motionIdx);
 
 	return S_OK;
 }
