@@ -106,9 +106,10 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	float GetHeight(const MyLib::Vector3& pos, bool& bLand);	// 高さ取得
-	bool IsUseShadow() const { return m_bShadow; }				// 影を使っているかどうか
-	CObjectX* GetObjectX() { return this; }						// オブジェクトXの要素取得
+	float GetHeight(const MyLib::Vector3& pos, bool& bLand);			// 高さ取得
+	bool IsUseShadow() const { return m_bShadow; }						// 影を使っているかどうか
+	void SetEnableUpdateMtx(bool bUpdate) { m_bUpdateMtx = bUpdate; }	// マトリックス更新するかどうか
+	CObjectX* GetObjectX() { return this; }								// オブジェクトXの要素取得
 
 protected:
 	// 仮想関数
@@ -146,6 +147,7 @@ private:
 	std::string m_fileName;		// ファイル名
 	CShadow *m_pShadow;			// 影の情報
 	bool m_bShadow;				// 影を使うかどうか
+	bool m_bUpdateMtx;			// マトリックス更新するかどうか
 	LPD3DXMESH m_pMesh;			// メッシュ(頂点情報)へのポインタ
 	CCollisionLine_Box* m_pCollisionLineBox;	// 当たり判定ボックス
 	static CListManager<CObjectX> m_List;		// リスト

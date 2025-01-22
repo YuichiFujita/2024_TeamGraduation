@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 10
+NUM_MODEL = 11
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -29,6 +29,7 @@ MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [6]右足(下)
 MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [7]左脚(上)
 MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [8]左脚(下)
 MODEL_FILENAME = data/MODEL/audience/Mii/suiren.x	# [9]髪
+MODEL_FILENAME = data/MODEL/penlight.x				# [9]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -151,6 +152,16 @@ CHARACTERSET
 		PARENT = 2
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 10
+		PARENT = 3
+		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = -1				# 反転先
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1

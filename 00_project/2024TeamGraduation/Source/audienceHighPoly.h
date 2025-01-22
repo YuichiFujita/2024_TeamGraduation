@@ -120,6 +120,7 @@ private:
 	CObjectX* m_pLight;			// ペンライト情報
 	CEffect3D* m_pLightBlur;	// ペンライトのブラー
 	CDressup* m_pDressUp_Hair;	// ドレスアップ(髪)
+	const int m_nIdxLightHand;	// ライト持つ手のインデックス
 };
 
 #endif
