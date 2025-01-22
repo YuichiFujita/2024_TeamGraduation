@@ -88,7 +88,7 @@ HRESULT CSpotLight::Init()
 	m_pEffect = CEffekseerObj::Create
 	( // à¯êî
 		CMyEffekseer::EEfkLabel::EFKLABEL_SPOTLIGHT,
-		GetPosition(),
+		VEC3_ZERO,
 		VEC3_ZERO,
 		VEC3_ZERO,
 		17.0f,
