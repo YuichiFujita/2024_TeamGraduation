@@ -17,7 +17,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 10
+NUM_MODEL = 9
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -31,7 +31,6 @@ MODEL_FILENAME = data/MODEL/player/nurse/Hand_R.x	# [5]手(右)
 MODEL_FILENAME = data/MODEL/player/nurse/armUP_L.x	# [6]左腕(上)
 MODEL_FILENAME = data/MODEL/player/nurse/armDW_L.x	# [7]左腕(下)
 MODEL_FILENAME = data/MODEL/player/nurse/Hand_L.x	# [8]手(左)
-MODEL_FILENAME = data/MODEL/player/nurse/cap.x		# [8]手(左)
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -145,16 +144,6 @@ CHARACTERSET
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
 		INVERSE = -1					# 反転先
 		POS = 18.50 0.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-	
-	PARTSSET
-		INDEX = 9
-		PARENT = 2
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 0.00 -1.50 -11.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET

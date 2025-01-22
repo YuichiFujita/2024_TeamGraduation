@@ -43,7 +43,8 @@ CPlayerManager::INFO_FUNC CPlayerManager::m_InfoFuncList[] =
 // Ã“Iƒƒ“ƒo•Ï”
 //==========================================================================
 CPlayerManager* CPlayerManager::m_pInstance = nullptr;	// ©g‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-std::vector<CPlayerManager::LoadInfo> CPlayerManager::m_vecLoadInfo[CGameManager::ETeamSide::SIDE_MAX] = {};	// “Ç‚İ‚İî•ñ
+std::vector<CPlayerManager::LoadInfo> CPlayerManager::m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_MAX] = {};	// “à–ì“Ç‚İ‚İî•ñ
+std::vector<CPlayerManager::LoadInfo> CPlayerManager::m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_MAX] = {};	// ŠO–ì“Ç‚İ‚İî•ñ
 
 //==========================================================================
 // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -55,7 +56,8 @@ CPlayerManager::CPlayerManager() : m_bUserChange(false)	// ƒ†[ƒU[•ÏX‘€ìƒtƒ‰ƒ
 
 	for (int i= 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{
-		m_vecLoadInfo[i].clear();
+		m_vecInLoadInfo[i].clear();
+		m_vecOutLoadInfo[i].clear();
 	}
 }
 
@@ -272,17 +274,16 @@ HRESULT CPlayerManager::Init()
 HRESULT CPlayerManager::CreatePlayer()
 {
 	// “Ç‚İ‚ñ‚¾î•ñ‚ğ‚à‚Æ‚ÉƒvƒŒƒCƒ„[¶¬
-	int nMaxLeft = static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size());		// ¶ƒ`[ƒ€l”
-	int nMaxRight = static_cast<int>(m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size());	// ‰Eƒ`[ƒ€l”
+	int nMaxLeft = static_cast<int>(m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT].size());	// ¶ƒ`[ƒ€l”
+	int nMaxRight = static_cast<int>(m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT].size());	// ‰Eƒ`[ƒ€l”
 	int nCntLeft = 0, nCntRight = 0;	// l”ƒJƒEƒ“ƒg
-	
 	for (int j = 0; j < CGameManager::MAX_SIDEPLAYER; j++)
 	{
 		// ¶‚ÌƒvƒŒƒCƒ„[¶¬
 		if (j < nMaxLeft)
 		{
 			// ¶ƒ`[ƒ€ƒvƒŒƒCƒ„[¶¬
-			CreateLeftPlayer(nCntLeft, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
+			CreateLeftPlayer(nCntLeft, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT][j]);
 
 			// ¶l”‰ÁZ
 			nCntLeft++;
@@ -292,7 +293,7 @@ HRESULT CPlayerManager::CreatePlayer()
 		if (j < nMaxRight)
 		{
 			// ‰Eƒ`[ƒ€ƒvƒŒƒCƒ„[¶¬
-			CreateRightPlayer(nCntRight, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
+			CreateRightPlayer(nCntRight, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT][j]);
 
 			// ‰El”‰ÁZ
 			nCntRight++;
@@ -926,45 +927,132 @@ CPlayerManager::SOutInfo CPlayerManager::GetInfoRightNear()
 //==========================================================================
 // ƒZ[ƒuˆ—
 //==========================================================================
-void CPlayerManager::Save(const std::vector<LoadInfo>& LeftInfo, const std::vector<LoadInfo>& RightInfo)
+void CPlayerManager::Save
+(
+	const std::vector<LoadInfo>& inLeftInfo,
+	const std::vector<LoadInfo>& inRightInfo,
+	const std::vector<LoadInfo>& outLeftInfo,
+	const std::vector<LoadInfo>& outRightInfo
+)
 {
 	// ƒtƒ@ƒCƒ‹‚ğŠJ‚­
 	std::ofstream File(PlayerManager::TEXT_PLAYERINFO);
 	if (!File.is_open()) return;
 
 	// ˆø”î•ñ“n‚·
-	m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT] = LeftInfo;
-	m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT] = RightInfo;
+	m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]		= inLeftInfo;
+	m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]	= inRightInfo;
+	m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]	= outLeftInfo;
+	m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]	= outRightInfo;
 
 	// ƒeƒLƒXƒgƒtƒ@ƒCƒ‹–¼–ÚŸ
 	File << TOP_LINE << std::endl;
 	File << "# ƒ`[ƒ€î•ñ" << std::endl;
 	File << TOP_LINE << std::endl;
 
+#if 0
+	//--------------------------
+	// “à–ì
+	//--------------------------
+	// “à–ìƒ`[ƒ€
+	File << TEXT_LINE << std::endl;
+	File << "# “à–ì" << std::endl;
+	File << TEXT_LINE << std::endl;
+	File << "SETIN" << std::endl;
+
+	// ¶ƒ`[ƒ€
+	File << "\t# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_LEFT << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	File << "\tSETTEAM\n" << std::endl;
+	SavePlayerInfo(&File, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
+	File << "\tEND_SETTEAM\n" << std::endl;
+
+	// ‰Eƒ`[ƒ€
+	File << "\t# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_RIGHT << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	File << "\tSETTEAM\n" << std::endl;
+	SavePlayerInfo(&File, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	File << "\tEND_SETTEAM" << std::endl;
+
+	File << "END_SETIN\n" << std::endl;
+
+	//--------------------------
+	// ŠO–ì
+	//--------------------------
+	// ŠO–ìƒ`[ƒ€
+	File << TEXT_LINE << std::endl;
+	File << "# ŠO–ì" << std::endl;
+	File << TEXT_LINE << std::endl;
+	File << "SETOUT" << std::endl;
+
+	// ¶ƒ`[ƒ€
+	File << "\t# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_LEFT << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	File << "\tSETTEAM\n" << std::endl;
+	SavePlayerInfo(&File, m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
+	File << "\tEND_SETTEAM\n" << std::endl;
+
+	// ‰Eƒ`[ƒ€
+	File << "\t# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_RIGHT << std::endl;
+
+	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
+	File << "\tSETTEAM\n" << std::endl;
+	SavePlayerInfo(&File, m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	File << "\tEND_SETTEAM" << std::endl;
+
+	File << "END_SETOUT\n" << std::endl;
+#else
 	//--------------------------
 	// ¶ƒ`[ƒ€
 	//--------------------------
+	// ‘‚«o‚µŠJn
 	File << TEXT_LINE << std::endl;
-	File << "# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_LEFT << std::endl;
+	File << "# ¶ƒ`[ƒ€" << std::endl;
 	File << TEXT_LINE << std::endl;
 	File << "SETTEAM" << std::endl;
 
-	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
-	SavePlayerInfo(&File, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
-	File << "END_SETTEAM" << std::endl;
+	// “à–ì‘‚«o‚µ
+	File << "\t# “à–ìƒ`[ƒ€" << std::endl;
+	File << "\tSETIN\n" << std::endl;
+	SavePlayerInfo(&File, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
+	File << "\tEND_SETIN\n" << std::endl;
+
+	// ŠO–ì‘‚«o‚µ
+	File << "\t# ŠO–ìƒ`[ƒ€" << std::endl;
+	File << "\tSETOUT\n" << std::endl;
+	SavePlayerInfo(&File, m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_LEFT]);
+	File << "\tEND_SETOUT" << std::endl;
+
+	// ‘‚«o‚µI—¹
+	File << "END_SETTEAM\n" << std::endl;
 
 	//--------------------------
 	// ‰Eƒ`[ƒ€
 	//--------------------------
+	// ‘‚«o‚µŠJn
 	File << TEXT_LINE << std::endl;
-	File << "# ƒ`[ƒ€" << CGameManager::ETeamSide::SIDE_RIGHT << std::endl;
+	File << "# ‰Eƒ`[ƒ€" << std::endl;
 	File << TEXT_LINE << std::endl;
 	File << "SETTEAM" << std::endl;
 
-	// ƒvƒŒƒCƒ„[î•ñƒZ[ƒu
-	SavePlayerInfo(&File, m_vecLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	// “à–ì‘‚«o‚µ
+	File << "\t# “à–ìƒ`[ƒ€" << std::endl;
+	File << "\tSETIN\n" << std::endl;
+	SavePlayerInfo(&File, m_vecInLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	File << "\tEND_SETIN\n" << std::endl;
 
-	File << "END_SETTEAM" << std::endl;
+	// ŠO–ì‘‚«o‚µ
+	File << "\t# ŠO–ìƒ`[ƒ€" << std::endl;
+	File << "\tSETOUT\n" << std::endl;
+	SavePlayerInfo(&File, m_vecOutLoadInfo[CGameManager::ETeamSide::SIDE_RIGHT]);
+	File << "\tEND_SETOUT" << std::endl;
+
+	// ‘‚«o‚µI—¹
+	File << "END_SETTEAM\n" << std::endl;
+#endif
 
 	// ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é
 	File.close();
@@ -977,16 +1065,16 @@ void CPlayerManager::SavePlayerInfo(std::ofstream* File, const std::vector<LoadI
 {
 	for (const auto& info : Info)
 	{
-		(*File) << "\tSETPLAYER" << std::endl;
+		(*File) << "\t\tSETPLAYER" << std::endl;
 
-		(*File) << "\t\tID_CONTROLL = " << info.nControllIdx << std::endl;	// ‘€ì‚·‚éƒCƒ“ƒfƒbƒNƒX”Ô†
-		(*File) << "\t\tHAIR = " << info.nHair << std::endl;				// ”¯’…‚¹‘Ö‚¦
-		(*File) << "\t\tACCESSORY = " << info.nAccessory << std::endl;		// ƒAƒNƒZ’…‚¹‘Ö‚¦
-		(*File) << "\t\tFACE = " << info.nFace << std::endl;				// Šç’…‚¹‘Ö‚¦
-		(*File) << "\t\tBODY = " << info.eBody << std::endl;				// ‘ÌŒ^
-		(*File) << "\t\tHANDED = " << info.eHanded << std::endl;			// —˜‚«è
+		(*File) << "\t\t\tID_CONTROLL = " << info.nControllIdx << std::endl;	// ‘€ì‚·‚éƒCƒ“ƒfƒbƒNƒX”Ô†
+		(*File) << "\t\t\tHAIR = " << info.nHair << std::endl;					// ”¯’…‚¹‘Ö‚¦
+		(*File) << "\t\t\tACCESSORY = " << info.nAccessory << std::endl;		// ƒAƒNƒZ’…‚¹‘Ö‚¦
+		(*File) << "\t\t\tFACE = " << info.nFace << std::endl;					// Šç’…‚¹‘Ö‚¦
+		(*File) << "\t\t\tBODY = " << info.eBody << std::endl;					// ‘ÌŒ^
+		(*File) << "\t\t\tHANDED = " << info.eHanded << std::endl;				// —˜‚«è
 
-		(*File) << "\tEND_SETPLAYER" << std::endl;
+		(*File) << "\t\tEND_SETPLAYER" << std::endl;
 		(*File) << std::endl;
 	}
 }
@@ -1021,25 +1109,57 @@ void CPlayerManager::Load()
 		if (line.find("SETTEAM") != std::string::npos)
 		{// ƒ`[ƒ€î•ñ
 
-			// “Ç‚İ‚İî•ñƒNƒŠƒA
-			m_vecLoadInfo[nTeam].clear();
-
-			int nPlayerNum = 0;	// ƒvƒŒƒCƒ„[”
-
 			while (line.find("END_SETTEAM") == std::string::npos)
 			{// END_SETTEAM‚ª—ˆ‚é‚Ü‚ÅŒJ‚è•Ô‚µ
 
 				// Šm”F‚·‚é
 				std::getline(File, line);
 
-				if (line.find("SETPLAYER") != std::string::npos)
-				{// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+				if (line.find("SETIN") != std::string::npos)
+				{// ƒ`[ƒ€î•ñ
 
-					// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
-					LoadPlayerInfo(&File, nTeam, nPlayerNum);
+					// “Ç‚İ‚İî•ñƒNƒŠƒA
+					m_vecInLoadInfo[nTeam].clear();
+					int nPlayerNum = 0;	// ƒvƒŒƒCƒ„[”
+					while (line.find("END_SETIN") == std::string::npos)
+					{// END_SETIN‚ª—ˆ‚é‚Ü‚ÅŒJ‚è•Ô‚µ
 
-					// ƒvƒŒƒCƒ„[”‰ÁZ
-					nPlayerNum++;
+						// Šm”F‚·‚é
+						std::getline(File, line);
+
+						if (line.find("SETPLAYER") != std::string::npos)
+						{// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+
+							// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+							LoadPlayerInfo(&File, nTeam, nPlayerNum, &m_vecInLoadInfo[nTeam]);
+
+							// ƒvƒŒƒCƒ„[”‰ÁZ
+							nPlayerNum++;
+						}
+					}
+				}
+				else if (line.find("SETOUT") != std::string::npos)
+				{// ƒ`[ƒ€î•ñ
+
+					// “Ç‚İ‚İî•ñƒNƒŠƒA
+					m_vecOutLoadInfo[nTeam].clear();
+					int nPlayerNum = 0;	// ƒvƒŒƒCƒ„[”
+					while (line.find("END_SETOUT") == std::string::npos)
+					{// END_SETOUT‚ª—ˆ‚é‚Ü‚ÅŒJ‚è•Ô‚µ
+
+						// Šm”F‚·‚é
+						std::getline(File, line);
+
+						if (line.find("SETPLAYER") != std::string::npos)
+						{// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+
+							// ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
+							LoadPlayerInfo(&File, nTeam, nPlayerNum, &m_vecOutLoadInfo[nTeam]);
+
+							// ƒvƒŒƒCƒ„[”‰ÁZ
+							nPlayerNum++;
+						}
+					}
 				}
 			}
 
@@ -1057,7 +1177,7 @@ void CPlayerManager::Load()
 //==========================================================================
 // ƒvƒŒƒCƒ„[î•ñ“Ç‚İ‚İ
 //==========================================================================
-void CPlayerManager::LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer)
+void CPlayerManager::LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer, std::vector<LoadInfo>* pInfo)
 {
 	// ƒRƒƒ“ƒg—p
 	std::string hoge;
@@ -1172,5 +1292,5 @@ void CPlayerManager::LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlay
 	}
 
 	// “Ç‚İ‚ñ‚¾î•ñ‚ğŠi”[
-	m_vecLoadInfo[nTeam].push_back(info);
+	pInfo->push_back(info);
 }

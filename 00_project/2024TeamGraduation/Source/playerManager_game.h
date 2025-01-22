@@ -39,7 +39,12 @@ public:
 
 private:
 
+	//=============================
+	// メンバ関数
+	//=============================
+	// 生成
 	HRESULT CreatePlayer() override;	// プレイヤー生成
+	HRESULT CreateOutPlayer(CGameManager::ETeamSide team, const LoadInfo& info);	// 外野プレイヤー生成
 
 };
 
