@@ -79,8 +79,8 @@ public:
 	( // 引数
 		const float fTime,				// 表示時間
 		const D3DXVECTOR3& rPos,		// 位置
-		const D3DXVECTOR2& rSizeValue,	// 数字の大きさ
-		const D3DXVECTOR2& rSizePart,	// 区切りの大きさ
+		const float fHeightValue,		// 数字の大きさ
+		const float fHeightPart,		// 区切りの大きさ
 		const D3DXVECTOR2& rSpaceValue,	// 数字の空白
 		const D3DXVECTOR2& rSpacePart,	// 区切りの空白
 		const EAlignX alignX = XALIGN_CENTER,			// 横配置
@@ -97,6 +97,10 @@ public:
 	virtual int GetMSec(void) const		{ return (int)((DWORD)(m_fTime * 1000.0f) % 1000); }		// ミリ秒取得
 
 	// メンバ関数
+	void BindTextureValue(const int nTexIdx);		// 区切りのテクスチャインデックス設定
+	void BindTexturePart(const int nTexIdx);		// 数字のテクスチャインデックス設定
+	void SetSizeValue(const float fHeight);			// 区切りの大きさ設定
+	void SetSizePart(const float fHeight);			// 数字の大きさ設定
 	void SetSizeValue(const D3DXVECTOR2& rSize);	// 区切りの大きさ設定
 	void SetSizePart(const D3DXVECTOR2& rSize);		// 数字の大きさ設定
 	void SetSpaceValue(const D3DXVECTOR2& rSpace);	// 区切りの空白設定

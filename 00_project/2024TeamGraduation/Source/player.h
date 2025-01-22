@@ -477,12 +477,13 @@ private:
 	void StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 相手コート侵入から戻る
 	
 	//-----------------------------
-	// 状態関数
+	// 状態関数(終了)
 	//-----------------------------
 	void StateEndInvincible();		// 無敵
 	void StateEndDamage();			// ダメージ
 	void StateEndDead();			// 死亡
 	void StateEndDeadAfter();		// 死亡後
+	void StateEndOutCourt_Return();	// コート越えから戻る
 	void StateEndInvade_Return();	// 相手コート侵入から戻る
 
 	//-----------------------------

@@ -37,7 +37,8 @@ public:
 	virtual void Uninit() override;
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	virtual void Draw() override;
-	virtual void Kill();	// 削除
+	virtual void Kill() override;	// 削除
+	void SetEnableDisp(const bool bDisp) override;	// 描画状況設定
 
 	//--------------------------
 	// 位置
@@ -82,7 +83,8 @@ public:
 	//--------------------------
 	// その他
 	//--------------------------
-	virtual void BindTexture(int nIdxTexture) override { m_pObj2D->BindTexture(nIdxTexture); }						// テクスチャ割り当て
+	virtual void BindTexture(int nIdxTexture) override	{ m_pObj2D->BindTexture(nIdxTexture); }	// テクスチャ割当
+	virtual int GetIdxTexture() override				{ return m_pObj2D->GetIdxTexture(); }	// テクスチャインデックス取得
 	void SetVtx();	// 頂点情報設定処理
 	virtual void SetType(const TYPE type) override;		// 種類設定
 

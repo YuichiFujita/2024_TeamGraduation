@@ -45,6 +45,7 @@ public:
 		TEXTURE_CONTROL,		// 操作表示テクスチャ
 		TEXTURE_ARROW,			// 矢印テクスチャ
 		TEXTURE_SELECT,			// 選択テクスチャ
+		TEXTURE_TIME_INF,		// 時間∞テクスチャ
 		TEXTURE_MAX				// この列挙型の総数
 	};
 
@@ -108,10 +109,12 @@ private:
 	void UpdateFadeOut();	// フェードアウト更新
 	void UpdateControl();	// 操作更新
 	void UpdateArrow();		// 矢印更新
+	void UpdateTimeUI();	// 時間表示更新
 	void Select();			// 選択操作
 	void Decide();			// 決定操作
 	void ChangeRule();		// ルール変更操作
-	void SetRule();			// ルール変更反映
+	CObject* GetTimeUI();	// 時間表示UI取得
+	void AddTime(const float fAddTime);		// 時間加算
 	void SetEnableDispUI(const bool bDisp);	// UI描画設定
 	void SetAlphaUI(const float fAlpha, const bool bFadeOut);	// UI透明度設定
 
@@ -120,6 +123,7 @@ private:
 	CArrowUI*	m_apArrow[MAX_RULE_ARROW];		// 矢印の情報
 	CObject2D_Anim*	m_pLife;	// 体力の情報
 	CTimeUI*	m_pTime;		// 時間の情報
+	CObject2D*	m_pTimeInf;		// 時間∞の情報
 	CObject2D*	m_pSelect;		// 選択の情報
 	CObject2D*	m_pStart;		// 開始ボタンの情報
 	CObject2D*	m_pControl;		// 操作表示の情報

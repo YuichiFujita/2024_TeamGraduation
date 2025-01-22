@@ -110,8 +110,8 @@ private:
 	// 状態関数
 	//-----------------------------
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// なし
-	void StateKamehameSucc(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ成功
-	void StateKamehameFail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波？キャッチ失敗
+	void StateKamehameSucc(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// かめはめ波？キャッチ成功
+	void StateKamehameFail(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// かめはめ波？キャッチ失敗
 
 	//-----------------------------
 	// 状態関数
