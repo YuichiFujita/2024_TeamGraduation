@@ -12,6 +12,7 @@
 #include "sound.h"
 #include "MyEffekseer.h"
 #include "camera.h"
+#include "gymDoor.h"
 
 // シーン
 #include "entryscene.h"
@@ -24,6 +25,14 @@ namespace
 {
 	const float TIME_FADELOGO = 0.6f;	// ロゴのフェードアウト時間
 	const char* TEXTURE = "data\\TEXTURE\\title\\title.png";
+}
+
+// ドッジボールコート情報
+namespace Gym
+{
+	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
+	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+	const MyLib::Vector3 POS[] = { POS_LEFT, POS_RIGHT };	// ドア位置
 }
 
 namespace STARTCAMERA
@@ -100,6 +109,18 @@ HRESULT CEntry::Init()
 
 	// エントリーシーン生成
 	m_pEntryScene = CEntryScene::Create(ESceneType::SCENETYPE_SETUPTEAM);
+
+	for (int i = 0; i < CGameManager::EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア生成
+		CGymDoor* pGymDoor = CGymDoor::Create(Gym::POS[i]);
+		if (pGymDoor == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+	}
 
 	// BGM再生
 	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_ENTRY);
