@@ -30,6 +30,7 @@ namespace
 {
 	const int	PRIORITY = 4;			// 優先順位
 	const float	LIGHT_RANGE = 600.0f;	// 光源範囲
+	const float LIGHTUP_TIME = 1.2f;	// 明るくなるまでの時間
 	const MyLib::Vector3 LIGHT_OFFSET = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
 
 	namespace hype
@@ -78,8 +79,6 @@ CSpecialManager* CSpecialManager::m_pInstance = nullptr;	// 自身のインスタンス
 CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(PRIORITY),
 	m_pAttackPlayer	(pAttack),		// 攻撃プレイヤー
 	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
-	m_pAttackLight	(nullptr),		// 攻撃プレイヤーを照らすライト
-	m_pTargetLight	(nullptr),		// 標的プレイヤーを照らすライト
 	m_pCutIn		(nullptr),		// カットイン情報
 	m_state			(STATE_NONE),	// 状態
 	m_fCurTime		(0.0f)			// 現在の待機時間
@@ -87,6 +86,14 @@ CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(P
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState)   == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_aFuncUpdateSpecial) == CBall::SPECIAL_MAX,         "ERROR : Special Count Mismatch");
+
+	// メンバ変数をクリア
+	for (int i = 0; i < NUM_LIGHT; i++)
+	{ // ライト数分繰り返す
+
+		m_apAttackLight[i] = nullptr;	// 攻撃プレイヤーを照らすライト
+		m_apTargetLight[i] = nullptr;	// 標的プレイヤーを照らすライト
+	}
 }
 
 //============================================================
@@ -112,33 +119,37 @@ HRESULT CSpecialManager::Init(void)
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
 
-	// 攻撃プレイヤーを照らすライトの生成
-	m_pAttackLight = CLightPoint::Create();
-	if (m_pAttackLight == nullptr)
-	{ // 生成に失敗した場合
+	for (int i = 0; i < NUM_LIGHT; i++)
+	{ // ライト数分繰り返す
 
-		return E_FAIL;
+		// 攻撃プレイヤーを照らすライトの生成
+		m_apAttackLight[i] = CLightPoint::Create();
+		if (m_apAttackLight[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 拡散光を設定
+		m_apAttackLight[i]->SetDiffuse(MyLib::color::White());
+
+		// 光源範囲を設定
+		m_apAttackLight[i]->SetRange(LIGHT_RANGE);
+
+		// 標的プレイヤーを照らすライトの生成
+		m_apTargetLight[i] = CLightPoint::Create();
+		if (m_apTargetLight[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 拡散光を設定
+		m_apTargetLight[i]->SetDiffuse(MyLib::color::White());
+
+		// 光源範囲を設定
+		m_apTargetLight[i]->SetRange(LIGHT_RANGE);
 	}
-
-	// 拡散光を設定
-	m_pAttackLight->SetDiffuse(MyLib::color::White());
-
-	// 光源範囲を設定
-	m_pAttackLight->SetRange(LIGHT_RANGE);
-
-	// 標的プレイヤーを照らすライトの生成
-	m_pTargetLight = CLightPoint::Create();
-	if (m_pTargetLight == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
-	// 拡散光を設定
-	m_pTargetLight->SetDiffuse(MyLib::color::White());
-
-	// 光源範囲を設定
-	m_pTargetLight->SetRange(LIGHT_RANGE);
 
 	// カットインの生成
 	m_pCutIn = CCutIn::Create();
@@ -152,20 +163,14 @@ HRESULT CSpecialManager::Init(void)
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 
-#if 1
 	// 体育館を暗くする
 	GET_MANAGER->GetLight()->SetEnableBright(false);
-#endif
 
-#if 1
 	// 世界の時を止める
 	GET_MANAGER->SetEnableWorldPaused(true);
-#endif
 
-#if 1
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
-#endif
 
 	// 通常カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
@@ -180,11 +185,15 @@ HRESULT CSpecialManager::Init(void)
 //============================================================
 void CSpecialManager::Uninit(void)
 {
-	// 攻撃プレイヤーを照らすライトの終了
-	SAFE_UNINIT(m_pAttackLight);
+	for (int i = 0; i < NUM_LIGHT; i++)
+	{ // ライト数分繰り返す
 
-	// 標的プレイヤーを照らすライトの終了
-	SAFE_UNINIT(m_pTargetLight);
+		// 攻撃プレイヤーを照らすライトの終了
+		SAFE_UNINIT(m_apAttackLight[i]);
+
+		// 標的プレイヤーを照らすライトの終了
+		SAFE_UNINIT(m_apTargetLight[i]);
+	}
 
 	// オブジェクトを破棄
 	Release();
@@ -409,6 +418,11 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 	if (pCameraMotion->IsFinish())
 	{ // カメラモーションが終わった場合
 
+		// 壁の表示をOFFにする
+		CGameManager* pGameManager = CGameManager::GetInstance();		// ゲームマネージャー
+		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
+		pGymWall->SetIsWall(false);
+
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
@@ -468,16 +482,6 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 		// 終了状態にする
 		m_state = STATE_END;
 	}
-
-#if 0
-	// TODO：投げた瞬間の解除はちょっと...
-	if (m_pAttackPlayer->GetBall() == nullptr)
-	{ // ボールを投げている場合
-
-		// 終了状態にする
-		m_state = STATE_END;
-	}
-#endif
 }
 
 //============================================================
@@ -486,7 +490,7 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 体育館を明るくする
-	GET_MANAGER->GetLight()->SetEnableBright(true);
+	GET_MANAGER->GetLight()->SetEnableBright(true, LIGHTUP_TIME);
 
 	// 攻撃側プレイヤーチームの観客を通常状態にする
 	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetTeam());
@@ -505,10 +509,6 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pSPEffect->FinishSetting();
 	}
-
-	// 壁の表示をOFFにする
-	CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
-	pGymWall->SetIsWall(false);
 
 	// 自身の終了
 	Uninit();
@@ -556,15 +556,25 @@ void CSpecialManager::SetPlayerHypePosition(const bool bInverse)
 //============================================================
 void CSpecialManager::SetLightPosition()
 {
-	if (m_pAttackLight != nullptr)
-	{
-		// 攻撃プレイヤーの位置に移動
-		m_pAttackLight->SetPosition(m_pAttackPlayer->GetPosition() + LIGHT_OFFSET);
-	}
+	float fRot = 0.0f;
+	for (int i = 0; i < NUM_LIGHT; i++)
+	{ // ライト数分繰り返す
 
-	if (m_pAttackLight != nullptr)
-	{
+		MyLib::Vector3 posOffset = MyLib::Vector3(sinf(fRot) * 80.0f, 160.0f, cosf(fRot) * 80.0f);
+
+		// 攻撃プレイヤーの位置に移動
+		if (m_apAttackLight[i] != nullptr)
+		{
+			m_apAttackLight[i]->SetPosition(m_pAttackPlayer->GetPosition() + posOffset);
+		}
+
 		// 標的プレイヤーの位置に移動
-		m_pTargetLight->SetPosition(m_pTargetPlayer->GetPosition() + LIGHT_OFFSET);
+		if (m_apTargetLight[i] != nullptr)
+		{
+			m_apTargetLight[i]->SetPosition(m_pTargetPlayer->GetPosition() + posOffset);
+		}
+
+		// 向きを加算
+		fRot += HALF_PI;
 	}
 }

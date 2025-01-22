@@ -29,6 +29,9 @@ class CCutIn;
 class CSpecialManager : public CObject
 {
 public:
+	// 定数
+	static constexpr int NUM_LIGHT = 4;	// ライト数
+
 	// 状態列挙
 	enum EState
 	{
@@ -86,10 +89,10 @@ private:
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数
-	CPlayer* m_pAttackPlayer;		// 攻撃プレイヤー
-	CPlayer* m_pTargetPlayer;		// 標的プレイヤー
-	CLightPoint* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
-	CLightPoint* m_pTargetLight;	// 標的プレイヤーを照らすライト
+	CLightPoint* m_apAttackLight[NUM_LIGHT];	// 攻撃プレイヤーを照らすライト
+	CLightPoint* m_apTargetLight[NUM_LIGHT];	// 標的プレイヤーを照らすライト
+	CPlayer* m_pAttackPlayer;	// 攻撃プレイヤー
+	CPlayer* m_pTargetPlayer;	// 標的プレイヤー
 	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間

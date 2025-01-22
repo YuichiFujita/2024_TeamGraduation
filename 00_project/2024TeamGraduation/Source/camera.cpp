@@ -35,6 +35,7 @@ namespace
 {
 	const MyLib::Vector3 INIT_VECU = MyLib::Vector3(0.0f, 1.0f, 0.0f);	// 上方向ベクトル初期値
 	const CCamera::SSide INIT_SIDE = CCamera::SSide(0.0f, 0.0f);		// 左右最大位置初期値
+	const D3DXCOLOR COL_LIGHT = D3DXCOLOR(0.6f, 0.6f, 0.6f, 1.0f);		// ライト拡散光
 	const float MIN_NEAR	= 10.0f;		// 手前の描画制限
 	const float MAX_FAR		= 1500000.0f;	// 奥の描画制限
 	const float MIN_DIS		= 50.0f;		// 最少距離
@@ -231,7 +232,7 @@ HRESULT CCamera::Init()
 	m_pLight->SetType(CObject::TYPE::TYPE_NONE);
 
 	// 拡散光の色を設定
-	m_pLight->SetDiffuse(D3DXCOLOR(0.6f, 0.6f, 0.6f, 1.0f));
+	m_pLight->SetDiffuse(COL_LIGHT);
 
 	// カメラモーションの生成
 	m_pCameraMotion = CCameraMotion::Create();
@@ -546,6 +547,30 @@ void CCamera::SetState(const STATE state, const bool bReset)
 
 	// リセットフラグがONならカメラリセット
 	if (bReset) { Reset(); }
+}
+
+//==========================================================================
+// ライト拡散光の設定処理
+//==========================================================================
+void CCamera::SetLightDiffuse(const D3DXCOLOR& rCol)
+{
+	return m_pLight->SetDiffuse(rCol);
+}
+
+//==========================================================================
+// ライト拡散光の取得処理
+//==========================================================================
+D3DXCOLOR CCamera::GetLightDiffuse() const
+{
+	return m_pLight->GetLight().Diffuse;
+}
+
+//==========================================================================
+// ライト目標拡散光の取得処理
+//==========================================================================
+D3DXCOLOR CCamera::GetDestLightDiffuse() const
+{
+	return COL_LIGHT;
 }
 
 //==========================================================================
