@@ -323,6 +323,6 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_grip_front.txt			# 前
 MOTION_FILENAME = data/TEXT/character/player/common/motion_unstable.txt				# おっとっと
 MOTION_FILENAME = data/TEXT/character/player/common/motion_door.txt					# ドア
 MOTION_FILENAME = data/TEXT/character/player/common/motion_bow.txt					# 礼
-
+MOTION_FILENAME = data/TEXT/character/player/common/motion_revive.txt				# 蘇生
 
 END_SCRIPT		# この行は絶対消さないこと！
