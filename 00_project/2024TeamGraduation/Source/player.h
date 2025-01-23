@@ -103,6 +103,7 @@ public:
 		MOTION_UNSTABLE,				// おっとっと
 		MOTION_DOOR,					// ドア開け
 		MOTION_BOW,						// 礼
+		MOTION_REVIVE,					// 蘇生
 		MOTION_MAX
 	};
 
