@@ -138,6 +138,7 @@ private:
 	//=============================
 	void UpdateAttack();
 	void UpdateThrow();			// “Š‚°
+	bool IsCancelJumpAttack();	// ƒLƒƒƒ“ƒZƒ‹
 
 	void AttackDash(CPlayer* pTarget);	// ‘–‚è“Š‚°
 	void AttackDashJump(CPlayer* pTarget);	// ‘–‚è“Š‚°
