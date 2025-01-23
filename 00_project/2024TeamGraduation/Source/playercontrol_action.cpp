@@ -56,9 +56,6 @@ void CPlayerControlAction::Action(CPlayer* player, const float fDeltaTime, const
 		//--------------------------
 		ConditionalAction(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-	Special(player, fDeltaTime, fDeltaRate, fSlowRate);
-	Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -84,6 +81,8 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 		Throw(player, fDeltaTime, fDeltaRate, fSlowRate);
 		Jump(player, fDeltaTime, fDeltaRate, fSlowRate);
 		UserChange(player, fDeltaTime, fDeltaRate, fSlowRate);
+		Special(player, fDeltaTime, fDeltaRate, fSlowRate);
+		Charm(player, fDeltaTime, fDeltaRate, fSlowRate);
 	}
 }
 
