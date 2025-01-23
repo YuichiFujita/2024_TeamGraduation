@@ -171,6 +171,10 @@ void CPlayerStatus::Kill()
 		m_pLifeGauge->Kill();
 		m_pLifeGauge = nullptr;
 	}
+
+	// ÉQÅ[ÉWçÌèú
+	SAFE_KILL(m_pGaugeFrame);
+	SAFE_KILL(m_pLifeGauge_Ground);
 }
 
 //==========================================================================

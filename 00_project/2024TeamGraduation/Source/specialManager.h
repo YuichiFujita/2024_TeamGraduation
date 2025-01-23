@@ -84,8 +84,9 @@ private:
 	void UpdateFollowTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従遷移更新
 	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 終了更新
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
-	void SetPlayerHypePosition(const bool bInverse);	// プレイヤー盛り上げ位置設定
-	void SetLightPosition();	// ライト位置設定
+	MyLib::Vector3 GetDestAttackPosition() const;	// 攻撃プレイヤー目標位置取得
+	void SetPlayerHypePosition();	// プレイヤー盛り上げ位置設定
+	void SetLightPosition();		// ライト位置設定
 
 	// メンバ変数
 	CLightPoint* m_pCenterLight;	// ライト情報
@@ -96,6 +97,11 @@ private:
 	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
+
+	bool m_bJump;		// ジャンプフラグ
+	float m_fJumpTime;	// 現在のジャンプ時間
+	MyLib::Vector3 m_posJumpStart;	// ジャンプ開始位置
+	MyLib::Vector3 m_posJumpEnd;	// ジャンプ終了位置
 };
 
 #endif	// _SPECIAL_MANAGER_H_

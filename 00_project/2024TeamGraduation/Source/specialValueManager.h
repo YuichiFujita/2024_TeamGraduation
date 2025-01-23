@@ -32,6 +32,7 @@ public:
 		ADD_COVERCATCH,		// カバーキャッチ
 		ADD_DODGE,			// 回避
 		ADD_CATCH_SPECIAL,	// スペシャルをキャッチした
+		ADD_REVIVE,			// 蘇生
 		ADD_MAX
 	};
 
@@ -54,7 +55,6 @@ public:
 	static CSpecialValueManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
 private:
-
 
 	//=============================
 	// メンバ変数

@@ -34,11 +34,14 @@ namespace
 	const float LIGHTUP_TIME = 1.2f;	// 明るくなるまでの時間
 	const MyLib::Vector3 LIGHT_POS = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
 
+	const float	JUMP_HEIGHT = 1000.0f;	// ジャンプの最高到達点
+	const float	JUMP_TIME = 1.24f;		// ジャンプ時間
+
 	namespace hype
 	{
 		namespace trans
 		{
-			const float END_TIME = 2.6f;
+			const float END_TIME = 4.2f;
 		}
 	}
 
@@ -107,45 +110,14 @@ HRESULT CSpecialManager::Init(void)
 {
 	// メンバ変数を初期化
 	m_state = STATE_CUTIN;	// 状態
+	m_fJumpTime = 0.0f;		// 現在のジャンプ時間
+	m_bJump = false;		// ジャンプフラグ
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
-
-	// 中心ライトの生成
-	m_pCenterLight = CLightPoint::Create();
-	if (m_pCenterLight == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
-	// 拡散光を設定
-	m_pCenterLight->SetDiffuse(MyLib::color::White());
-
-	// 光源範囲を設定
-	m_pCenterLight->SetRange(LIGHT_RANGE);
-
-	// 位置を設定
-	m_pCenterLight->SetPosition(LIGHT_POS);
-
-	// 攻撃プレイヤーを照らすライトの生成
-	m_pAttackLight = CSpotLight::Create();
-	if (m_pAttackLight == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
-
-	// 標的プレイヤーを照らすライトの生成
-	m_pTargetLight = CSpotLight::Create();
-	if (m_pTargetLight == nullptr)
-	{ // 生成に失敗した場合
-
-		return E_FAIL;
-	}
 
 	// カットインの生成
 	m_pCutIn = CCutIn::Create();
@@ -159,14 +131,14 @@ HRESULT CSpecialManager::Init(void)
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 
-	// 体育館を暗くする
-	GET_MANAGER->GetLight()->SetEnableBright(false);
-
 	// 世界の時を止める
 	GET_MANAGER->SetEnableWorldPaused(true);
 
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
+
+	// ジャンプモーションにする
+	m_pAttackPlayer->SetMotion(CPlayer::EMotion::MOTION_JUMP);
 
 	// 通常カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
@@ -227,6 +199,38 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 			// 各スペシャルごとの更新
 			(this->*(m_aFuncUpdateSpecial[typeSpecial]))(fDeltaTime, fDeltaRate, fSlowRate);
 		}
+	}
+
+	if (m_bJump)
+	{ // ジャンプ中の場合
+
+		// 経過時間を加算
+		m_fJumpTime += fDeltaTime * fSlowRate;
+		if (m_fJumpTime >= JUMP_TIME * 0.5f)
+		{ // 一番てっぺんまで言った場合
+
+			// 経過時間を加速
+			m_fJumpTime += m_fJumpTime * 0.0075f;
+		}
+
+		// 経過時間の割合を計算
+		float fTimeRate = m_fJumpTime / JUMP_TIME;
+		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
+
+		// ジャンプさせる
+		MyLib::Vector3 posPlayer = UtilFunc::Calculation::GetParabola3D(m_posJumpStart, m_posJumpEnd, JUMP_HEIGHT, fTimeRate);
+		if (m_fJumpTime >= JUMP_TIME)
+		{ // 時間が経過しきった場合
+
+			// ジャンプ終了
+			m_bJump = false;
+
+			// ヒーロー着地モーションにする
+			m_pAttackPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND_SP);
+		}
+
+		// 位置を設定
+		m_pAttackPlayer->SetPosition(posPlayer);
 	}
 
 	// ライト位置の設定
@@ -302,9 +306,6 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		// 攻撃側プレイヤーチームの観客を盛り上げる
 		CAudience::SetSpecialAll(m_pAttackPlayer->GetTeam());
 
-		// プレイヤー盛り上げ位置の設定
-		SetPlayerHypePosition(bInverse);
-
 		// 壁の表示をONにする
 		CGameManager* pGameManager = CGameManager::GetInstance();		// ゲームマネージャー
 		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
@@ -314,6 +315,44 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());	// 注視点
 		pCamera->SetOriginRotation(pCamera->GetRotation());		// 向き
 		pCamera->SetDistanceOrigin(pCamera->GetDistance());		// 距離
+
+		{
+			// 中心ライトの生成
+			m_pCenterLight = CLightPoint::Create();
+			if (m_pCenterLight == nullptr)
+			{ // 生成に失敗した場合
+
+			}
+
+			// 拡散光を設定
+			m_pCenterLight->SetDiffuse(MyLib::color::White());
+
+			// 光源範囲を設定
+			m_pCenterLight->SetRange(LIGHT_RANGE);
+
+			// 位置を設定
+			m_pCenterLight->SetPosition(LIGHT_POS);
+
+			// 攻撃プレイヤーを照らすライトの生成
+			m_pAttackLight = CSpotLight::Create();
+			if (m_pAttackLight == nullptr)
+			{ // 生成に失敗した場合
+
+			}
+
+			// 標的プレイヤーを照らすライトの生成
+			m_pTargetLight = CSpotLight::Create();
+			if (m_pTargetLight == nullptr)
+			{ // 生成に失敗した場合
+
+			}
+
+			// 体育館を暗くする
+			GET_MANAGER->GetLight()->SetEnableBright(false);
+
+			// プレイヤー盛り上げ位置の設定
+			SetPlayerHypePosition();
+		}
 
 		// 盛り上がり遷移状態にする
 		m_state = STATE_HYPE_TRANS;
@@ -351,7 +390,7 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 	m_fCurTime += UtilFunc::Correction::EasingQuintOut(0.08f, 0.01f, 0.0f, hype::trans::END_TIME, m_fCurTime);
 
 	// カメラ情報の線形補正
-	posR = UtilFunc::Correction::EasingQuintOut(pCamera->GetPositionROrigin(), key.posRDest + m_pAttackPlayer->GetPosition(), 0.0f, hype::trans::END_TIME, m_fCurTime);
+	posR = UtilFunc::Correction::EasingQuintOut(pCamera->GetPositionROrigin(), key.posRDest + GetDestAttackPosition(), 0.0f, hype::trans::END_TIME, m_fCurTime);
 	rot  = UtilFunc::Correction::EasingQuintOut(pCamera->GetOriginRotation(),  key.rotDest,  0.0f, hype::trans::END_TIME, m_fCurTime);
 	fDis = UtilFunc::Correction::EasingQuintOut(pCamera->GetDistanceOrigin(),  key.distance, 0.0f, hype::trans::END_TIME, m_fCurTime);
 
@@ -367,12 +406,12 @@ void CSpecialManager::UpdateHypeTrans(const float fDeltaTime, const float fDelta
 		m_fCurTime = 0.0f;
 
 		// カメラ情報の補正
-		pCamera->SetPositionR(key.posRDest + m_pAttackPlayer->GetPosition());	// 注視点
+		pCamera->SetPositionR(key.posRDest + GetDestAttackPosition());	// 注視点
 		pCamera->SetRotation(key.rotDest);	// 向き
 		pCamera->SetDistance(key.distance);	// 距離
 
 		// カメラ位置を攻撃プレイヤーの位置にする
-		pCameraMotion->SetPosition(m_pAttackPlayer->GetPosition());
+		pCameraMotion->SetPosition(GetDestAttackPosition());
 
 		// スペシャル盛り上げモーションを設定
 		pCameraMotion->SetMotion(CCameraMotion::MOTION_SPECIAL_HYPE, bInverse, true, true, true);
@@ -529,18 +568,35 @@ void CSpecialManager::UpdateKamehameha(const float fDeltaTime, const float fDelt
 }
 
 //============================================================
+//	攻撃プレイヤー目標位置の取得処理
+//============================================================
+MyLib::Vector3 CSpecialManager::GetDestAttackPosition() const
+{
+	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+	float fOffset = (bInverse) ? 1.0f : -1.0f;	// オフセット方向
+	return MyLib::Vector3(800.0f * fOffset, 0.0f, 0.0f);
+}
+
+//============================================================
 //	プレイヤー盛り上げ位置の設定処理
 //============================================================
-void CSpecialManager::SetPlayerHypePosition(const bool bInverse)
+void CSpecialManager::SetPlayerHypePosition()
 {
+	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	float fOffset = (bInverse) ? 1.0f : -1.0f;	// オフセット方向
 
-	// 攻撃プレイヤーの位置を設定
-	m_pAttackPlayer->SetPosition(MyLib::Vector3(800.0f * fOffset, 0.0f, 0.0f));
+	// ジャンプ開始位置を設定
+	m_posJumpStart = m_pAttackPlayer->GetPosition();
+
+	// ジャンプ終了位置を設定
+	m_posJumpEnd = GetDestAttackPosition();
 
 	// 攻撃プレイヤーの向きを設定
 	m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI * fOffset, 0.0f));
 	m_pAttackPlayer->SetRotDest(HALF_PI * fOffset);
+
+	// ジャンプ中にする
+	m_bJump = true;
 }
 
 //============================================================

@@ -217,6 +217,7 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_fStateTime	(0.0f),			// 状態カウンター
 	m_pThrowLine	(nullptr),		// 投げのライン
 	m_pAura			(nullptr),		// オーラ
+	m_pSPBallet		(nullptr),		// スペシャルの弾
 	m_nDamage		(0),			// ダメージ
 	m_nCoverHeal	(0),			// カバー回復
 	m_fKnockback	(0.0f),			// ノックバック
@@ -356,6 +357,19 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 	// 現在の攻撃種類を更新
 	UpdateTypeAtk();
+
+	// スペシャルエフェクト削除
+	if (m_pSPBallet != nullptr)
+	{
+		m_pSPBallet->SetPosition(GetPosition());
+	}
+
+	if (m_typeAtk != EAttack::ATK_SPECIAL &&
+		m_pSPBallet != nullptr)
+	{
+		m_pSPBallet->SetTrigger(0);
+		m_pSPBallet = nullptr;
+	}
 
 	// 現在のスペシャル種類を更新
 	UpdateTypeSpecial();
@@ -1126,6 +1140,18 @@ void CBall::UpdateSpecialStag(const float fDeltaTime, const float fDeltaRate, co
 
 		// スペシャル投げ
 		ThrowSpecial();
+
+		// 弾部分エフェクト生成
+		if (m_pSPBallet != nullptr)
+		{
+			m_pSPBallet->Uninit();
+			m_pSPBallet = nullptr;
+		}
+		m_pSPBallet = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_BALLET,
+			GetPosition(),
+			MyLib::Vector3(),
+			MyLib::Vector3(),
+			15.0f);
 	}
 }
 
@@ -1286,7 +1312,21 @@ void CBall::UpdateFree(const float fDeltaTime, const float fDeltaRate, const flo
 	UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// 地面の着地
-	UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate);
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// チームコート内になかったら
+		MyLib::Vector3 posCourt;	// コート中心位置
+		MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(m_typeTeam, posCourt);	// コートサイズ
+		MyLib::Vector3 sizeHalfCourt = MyLib::Vector3(sizeCourt.x, 10000.0f, sizeCourt.z);			// コート半分サイズ
+		bool bHit = UtilFunc::Collision::BoxXZ(posCourt, pos, sizeHalfCourt, sizeHalfCourt, VEC3_ZERO, VEC3_ZERO);
+		if (bHit)
+		{ // チームコート内にいない場合
+
+			// 着地遷移
+			Landing();
+		}
+	}
 
 	// プレイヤーとの当たり判定
 	CollisionPlayer(&pos);

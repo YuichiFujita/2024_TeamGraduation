@@ -1485,6 +1485,38 @@ namespace UtilFunc	// 便利関数
 	namespace Collision
 	{
 		/**
+		@brief	XZ平面の矩形の当たり判定
+		@param rCenterPos		[in]	判定位置
+		@param rTargetPos		[in]	判定目標位置
+		@param rCenterSizeUp	[in]	判定大きさ (右/上/後)
+		@param rCenterSizeDown	[in]	判定大きさ (左/下/前)
+		@param rTargetSizeUp	[in]	判定目標大きさ (右/上/後)
+		@param rTargetSizeDown	[in]	判定目標大きさ (左/下/前)
+		@return	当たったかのbool値
+		*/
+		inline bool BoxXZ
+		(
+			const MyLib::Vector3& rCenterPos,		// 判定位置
+			const MyLib::Vector3& rTargetPos,		// 判定目標位置
+			const MyLib::Vector3& rCenterSizeUp,	// 判定大きさ (右/上/後)
+			const MyLib::Vector3& rCenterSizeDown,	// 判定大きさ (左/下/前)
+			const MyLib::Vector3& rTargetSizeUp,	// 判定目標大きさ (右/上/後)
+			const MyLib::Vector3& rTargetSizeDown	// 判定目標大きさ (左/下/前)
+		)
+		{
+			if (rCenterPos.x + rCenterSizeUp.x   > rTargetPos.x - rTargetSizeDown.x
+			&&  rCenterPos.z + rCenterSizeUp.z   > rTargetPos.z - rTargetSizeDown.z
+			&&  rCenterPos.x - rCenterSizeDown.x < rTargetPos.x + rTargetSizeUp.x
+			&&  rCenterPos.z - rCenterSizeDown.z < rTargetPos.z + rTargetSizeUp.z)
+			{ // 判定内の場合
+
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		@brief	1と2の当たり判定(円)(2D)
 		@param	pos1		[in]	対象1の位置
 		@param	pos2		[in]	対象2の位置

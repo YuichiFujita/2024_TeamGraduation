@@ -49,6 +49,7 @@ public:
 		EFKLABEL_CAMEHAME_BRUST,		// ‚©‚ß‚Í‚ß”g(”­ŽË)
 		EFKLABEL_CAMEHAME_FLASH,		// ‚©‚ß‚Í‚ß”g(ƒtƒ‰ƒbƒVƒ…)
 		EFKLABEL_CAMEHAME_BALLAST,		// ‚©‚ß‚Í‚ß”g(‹óŠÔ‚ª‚ê‚«)
+		EFKLABEL_CAMEHAME_BALLET,		// ‚©‚ß‚Í‚ß”g(’e)
 		EFKLABEL_HIT,					// ƒqƒbƒg
 		EFKLABEL_BOUND,					// ƒoƒEƒ“ƒh
 		EFKLABEL_SWEAT,					// Š¾
