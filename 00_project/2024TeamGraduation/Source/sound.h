@@ -47,6 +47,7 @@ public:
 		LABEL_SE_GRIP01,		// グリップ
 		LABEL_SE_GRIP02,		// グリップ
 		LABEL_SE_GRIP03,		// グリップ
+		LABEL_SE_JUMP,			// ジャンプ
 		LABEL_SE_THROW_NORMAL,	// 通常投げ
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
 		LABEL_SE_CATCH,			// キャッチ

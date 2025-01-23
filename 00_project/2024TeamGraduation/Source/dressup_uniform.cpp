@@ -44,6 +44,8 @@ HRESULT CDressup_Uniform::Init()
 	// ‘S‚Ä“Ç‚İ‚İ
 	LoadAllTexture(FOLDERNAME);
 
+	// e‚Ì‰Šú‰»
+	CDressup::Init();
 	return S_OK;
 }
 
