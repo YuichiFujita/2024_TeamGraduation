@@ -137,9 +137,10 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 {
 	if (m_fActionTime >= ActionTime::BLINK)
 	{// ƒuƒŠƒ“ƒNŒo‰ß
-
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
+
+	CMotion* pMotion = m_pPlayer->GetMotion();
 
 	// Ž©•ªƒ{[ƒ‹Ž‚Á‚Ä‚é
 	if (m_pPlayer->GetBall() != nullptr) return;
@@ -150,6 +151,9 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 
 	// UŒ‚ó‘Ô‚Å‚È‚¢orŽ©w
 	if (!pObj->IsAttack() || pObj->GetTypeTeam() == teamPlayer) return;
+
+	// UŒ‚ƒtƒŒ[ƒ€(‰ñ”ð—P—\)‚¶‚á‚È‚¢‚È‚ç‚Í‚¶‚­
+	if (!pMotion->IsAttacking()) return;
 
 	// ”»’è
 	if (UtilFunc::Collision::CollisionCircleCylinder(
