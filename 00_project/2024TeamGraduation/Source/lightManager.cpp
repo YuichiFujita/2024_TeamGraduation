@@ -146,7 +146,7 @@ void CLightManager::Update(const float fDeltaTime, const float fDeltaRate, const
 			MyLib::Vector3 vecStart	= ConvertColorToVector3(m_aColStart[i]);
 			MyLib::Vector3 vecEnd	= ConvertColorToVector3(m_aColEnd[i]);
 			MyLib::Vector3 vecCur	= UtilFunc::Correction::EasingQuintIn(vecStart, vecEnd, m_fStartTime, 0.0f, m_fCurTime);
-			D3DXCOLOR	   colCur	= ConvertVector3ToColor(vecCur, m_colCamEnd.a);
+			D3DXCOLOR	   colCur	= ConvertVector3ToColor(vecCur, m_aColEnd[i].a);
 			m_apLight[i]->SetDiffuse(colCur);
 		}
 	}
