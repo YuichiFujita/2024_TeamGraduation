@@ -188,7 +188,7 @@ void CPlayerControlAction::JumpSetting(CPlayer* player)
 	SetPattern(player, motion, CPlayer::EAction::ACTION_JUMP);
 
 	// サウンド再生
-	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
+	CSound::GetInstance()->PlaySound(CSound::LABEL_SE_JUMP);
 
 	// エフェクト
 	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_JUMP,

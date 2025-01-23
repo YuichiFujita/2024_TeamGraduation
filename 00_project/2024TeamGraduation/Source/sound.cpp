@@ -33,6 +33,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/grip02.wav",0},				// グリップ
 	{ TYPE_SE,"data/SE/grip03.wav",0},				// グリップ
 
+	// ジャンプ
+	{ TYPE_SE,"data/SE/jump.wav",0},				// ジャンプ
+
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ

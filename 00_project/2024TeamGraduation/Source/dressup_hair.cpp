@@ -42,6 +42,8 @@ HRESULT CDressup_Hair::Init()
 	// ‘S‚Ä“Ç‚İ‚İ
 	LoadAllModel(FOLDERNAME);
 
+	// e‚Ì‰Šú‰»
+	CDressup::Init();
 	return S_OK;
 }
 

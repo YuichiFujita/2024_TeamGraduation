@@ -854,6 +854,8 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
 //==========================================================================
 void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType)
 {
+	MyAssert::CustomAssert(side != CGameManager::ETeamSide::SIDE_NONE, "モテたチームisどこ？？");
+
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
 	m_pTeamStatus[side]->AddCharmValue(value);
@@ -875,6 +877,8 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 //==========================================================================
 void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub charmType)
 {
+	MyAssert::CustomAssert(side != CGameManager::ETeamSide::SIDE_NONE, "モテたチームisどこ？？");
+
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
 	m_pTeamStatus[side]->SubCharmValue(value);
@@ -889,6 +893,8 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 //==========================================================================
 void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd ValueType)
 {
+	MyAssert::CustomAssert(side != CGameManager::ETeamSide::SIDE_NONE, "モテたチームisどこ？？");
+
 	// チームステータス
 	float value = CSpecialValueManager::GetInstance()->GetAddValue(ValueType);
 	m_pTeamStatus[side]->AddSpecialValue(value);

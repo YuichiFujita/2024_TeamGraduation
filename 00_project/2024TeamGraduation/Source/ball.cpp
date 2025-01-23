@@ -513,6 +513,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// キャッチしていないボールを投げようとした場合エラー
 	assert(m_state == STATE_CATCH);
 
+	// 投げるプレイヤーのインデックス保存
+	int throwID = pPlayer->GetMyPlayerIdx();
+
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrowTarget();
 	if (m_pTarget != nullptr)
@@ -586,7 +589,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 
 	// 振動
-	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_NORMAL, pPlayer->GetMyPlayerIdx());
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_NORMAL, throwID);
 }
 
 //==========================================================================
@@ -596,6 +599,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 {
 	// キャッチしていないボールを投げようとした場合エラー
 	assert(m_state == STATE_CATCH);
+
+	// 投げるプレイヤーのインデックス保存
+	int throwID = pPlayer->GetMyPlayerIdx();
 
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrowTarget();
@@ -671,7 +677,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_JUMP);
 
 	// 振動
-	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, pPlayer->GetMyPlayerIdx());
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, throwID);
 }
 
 //==========================================================================
