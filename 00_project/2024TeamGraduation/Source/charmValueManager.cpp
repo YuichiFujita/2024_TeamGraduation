@@ -23,6 +23,7 @@ namespace
 		4.0f,	// 回避
 		10.0f,	// スペシャル
 		10.0f,	// スペシャルをキャッチした
+		3.0f,	// 蘇生
 	};
 
 	const float SUBVALUE[CCharmValueManager::ETypeSub::SUB_MAX] =	// 減算量

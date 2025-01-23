@@ -33,6 +33,7 @@ public:
 		ADD_DODGE,			// 回避
 		ADD_SPECIAL,		// スペシャル
 		ADD_CATCH_SPECIAL,	// スペシャルをキャッチ
+		ADD_REVIVE,			// 蘇生
 		ADD_MAX
 	};
 

@@ -1009,6 +1009,15 @@ void CPlayer::Revive()
 		// テクスチャのインデックス割り当て
 		ppModel[i]->SetIdxTexture(vecIdx);
 	}
+
+	// ゲームマネージャ取得
+	CGameManager* pGameMgr = CGameManager::GetInstance();
+
+	// モテ加算
+	pGameMgr->AddCharmValue(m_typeTeam, CCharmValueManager::ETypeAdd::ADD_REVIVE);
+
+	// スペシャル加算
+	pGameMgr->AddSpecialValue(m_typeTeam, CSpecialValueManager::ETypeAdd::ADD_REVIVE);
 }
 
 //==========================================================================
