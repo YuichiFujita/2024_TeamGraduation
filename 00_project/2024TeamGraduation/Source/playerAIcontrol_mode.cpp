@@ -1,7 +1,7 @@
 //=============================================================================
 // 
 //  プレイヤーAIコントロール_移動処理 [playerAIcontrol_move.cpp]
-//  Author : 藤田勇一
+//  Author : Takeru Ogasawara
 // 
 //=============================================================================
 #include "playerAIcontrol_mode.h"
@@ -259,11 +259,27 @@ void CPlayerAIControlMode::ActionFlagJump()
 
 	// ジャンプ：true
 	pControlAIAction->SetIsJump(true);
-	pControlAIAction->SetIsJumpFloat(true);
 
 	// 割合
 	pControlAIAction->SetJumpRate(JUMP_RATE);
 
 	// アクション列挙：なし
 	m_eActionFlag = EActionFlag::ACTION_NONE;
+}
+
+//================================================================================
+// ジャンプ割合設定
+//================================================================================
+void CPlayerAIControlMode::SetjumpRate(float rate)
+{
+	if (rate < 0.0f)
+	{
+		rate = 0.0f;
+	}
+	if (rate > 1.0f)
+	{
+		rate = 1.0f;
+	}
+
+	m_fJumpRate = rate;
 }

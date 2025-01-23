@@ -87,6 +87,13 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 		// 投げる
 		ThrowSetting(player);
 	}
+	else if (m_sFlag.bPass)
+	{
+		m_sFlag.bPass = false;
+
+		// パス
+		SetPattern(player, CPlayer::EMotion::MOTION_THROW_PASS, CPlayer::EAction::ACTION_THROW);
+	}
 }
 
 //==========================================================================
@@ -94,14 +101,15 @@ void CPlayerAIControlAction::Throw(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerAIControlAction::Jump(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	bool bJump = player->IsJump();
-	//if (bJump) return;
-
-	//ジャンプ処理	//TODO: AIでの行動フラグとか使う？
-	if (!bJump && m_sFlag.bJump)
+	//ジャンプ処理
+	if (!player->IsJump() &&		// ジャンプしてない
+		m_sFlag.bJump)				// ジャンプON
 	{
-		// フラグリセット
-		//m_sFlag.bJump = false;
+		// ジャンプOFF
+		m_sFlag.bJump = false;
+
+		// ジャンプ上昇ON
+		m_sFlag.bJumpFloat = true;
 
 		// ジャンプトリガーON
 		SetEnableJumpTrigger(true);
