@@ -19,6 +19,7 @@
 //	前方宣言
 //************************************************************
 class CPlayer;
+class CLightPoint;
 class CSpotLight;
 class CCutIn;
 
@@ -87,10 +88,11 @@ private:
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数
-	CSpotLight* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
-	CSpotLight* m_pTargetLight;	// 標的プレイヤーを照らすライト
-	CPlayer* m_pAttackPlayer;	// 攻撃プレイヤー
-	CPlayer* m_pTargetPlayer;	// 標的プレイヤー
+	CLightPoint* m_pCenterLight;	// ライト情報
+	CSpotLight* m_pAttackLight;		// 攻撃プレイヤーを照らすライト
+	CSpotLight* m_pTargetLight;		// 標的プレイヤーを照らすライト
+	CPlayer* m_pAttackPlayer;		// 攻撃プレイヤー
+	CPlayer* m_pTargetPlayer;		// 標的プレイヤー
 	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
