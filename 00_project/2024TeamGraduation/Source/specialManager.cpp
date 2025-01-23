@@ -32,7 +32,7 @@ namespace
 	const int	PRIORITY = 4;			// 優先順位
 	const float	LIGHT_RANGE = 600.0f;	// 光源範囲
 	const float LIGHTUP_TIME = 1.2f;	// 明るくなるまでの時間
-	const MyLib::Vector3 LIGHT_OFFSET = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
+	const MyLib::Vector3 LIGHT_POS = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
 
 	namespace hype
 	{
@@ -78,6 +78,7 @@ CSpecialManager* CSpecialManager::m_pInstance = nullptr;	// 自身のインスタンス
 //	コンストラクタ
 //============================================================
 CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(PRIORITY),
+	m_pCenterLight	(nullptr),		// ライト情報
 	m_pAttackLight	(nullptr),		// 攻撃プレイヤーを照らすライト
 	m_pTargetLight	(nullptr),		// 標的プレイヤーを照らすライト
 	m_pAttackPlayer	(pAttack),		// 攻撃プレイヤー
@@ -105,14 +106,30 @@ CSpecialManager::~CSpecialManager()
 HRESULT CSpecialManager::Init(void)
 {
 	// メンバ変数を初期化
-	m_state		= STATE_CUTIN;	// 状態
-	m_fCurTime	= 0.0f;			// 現在の待機時間
+	m_state = STATE_CUTIN;	// 状態
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
+
+	// 中心ライトの生成
+	m_pCenterLight = CLightPoint::Create();
+	if (m_pCenterLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 拡散光を設定
+	m_pCenterLight->SetDiffuse(MyLib::color::White());
+
+	// 光源範囲を設定
+	m_pCenterLight->SetRange(LIGHT_RANGE);
+
+	// 位置を設定
+	m_pCenterLight->SetPosition(LIGHT_POS);
 
 	// 攻撃プレイヤーを照らすライトの生成
 	m_pAttackLight = CSpotLight::Create();

@@ -6,6 +6,7 @@
 //==========================================================================
 #include "spotlight.h"
 #include "lightPoint.h"
+#include "EffekseerObj.h"
 
 //==========================================================================
 // 定数定義
@@ -19,7 +20,8 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CSpotLight::CSpotLight() : CObject(PRIORITY, CObject::LAYER::LAYER_DEFAULT)
+CSpotLight::CSpotLight() : CObject(PRIORITY, CObject::LAYER::LAYER_DEFAULT),
+	m_pEffect	(nullptr)	// ライトエフェクト
 {
 	// メンバ変数をクリア
 	for (int i = 0; i < NUM_LIGHT; i++)
@@ -82,6 +84,22 @@ HRESULT CSpotLight::Init()
 		m_apLight[i]->SetRange(LIGHT_RANGE);
 	}
 
+	// エフェクトの生成
+	m_pEffect = CEffekseerObj::Create
+	( // 引数
+		CMyEffekseer::EEfkLabel::EFKLABEL_SPOTLIGHT,
+		VEC3_ZERO,
+		VEC3_ZERO,
+		VEC3_ZERO,
+		17.0f,
+		false
+	);
+	if (m_pEffect == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
 
@@ -99,6 +117,9 @@ void CSpotLight::Uninit()
 		// ライトの終了
 		SAFE_UNINIT(m_apLight[i]);
 	}
+
+	// エフェクトの終了
+	SAFE_UNINIT(m_pEffect);
 }
 
 //==========================================================================
@@ -145,5 +166,8 @@ void CSpotLight::SetLightPosition(const MyLib::Vector3& rPos)
 		// オフセット方向を回転
 		fRot += HALF_PI;
 	}
+
+	// エフェクト位置の設定
+	m_pEffect->SetPosition(rPos);
 }
 

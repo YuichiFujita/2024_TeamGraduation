@@ -5,6 +5,8 @@
 // 
 //==========================================================================
 #include "ballHolderMarker.h"
+#include "manager.h"
+#include "renderer.h"
 #include "gameManager.h"
 #include "player.h"
 #include "object3D.h"
@@ -35,8 +37,8 @@ namespace
 	const float SIZE_OUTCIRCLE = SIZE_CIRCLE * 1.2f;	// 外周円のサイズ
 #endif // ONLY_OUT
 
-	const float SIZE_ARROW = 60.0f;	// 矢印のサイズ
-	float MULTIPLY_SIZE_CIRCLE = 1.2f;			// 円のサイズの倍率
+	const float SIZE_ARROW = 60.0f;		// 矢印のサイズ
+	float MULTIPLY_SIZE_CIRCLE = 1.2f;	// 円のサイズの倍率
 }
 
 namespace Timer
@@ -151,6 +153,9 @@ HRESULT CBallHolderMarker::CreateCircle()
 	m_pCircle->SetSize(size);
 	m_pCircle->SetSizeOrigin(m_pCircle->GetSize());
 
+	// 自動破棄/更新/描画しない種類にする
+	m_pCircle->SetType(CObject::TYPE::TYPE_NONE);
+
 	return S_OK;
 }
 
@@ -181,6 +186,9 @@ HRESULT CBallHolderMarker::CreateOutCircle()
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, SIZE_OUTCIRCLE);
 	m_pOutCircle->SetSize(size);
 	m_pOutCircle->SetSizeOrigin(m_pOutCircle->GetSize());
+
+	// 自動破棄/更新/描画しない種類にする
+	m_pOutCircle->SetType(CObject::TYPE::TYPE_NONE);
 
 	return S_OK;
 }
@@ -219,6 +227,9 @@ HRESULT CBallHolderMarker::CreateArrow()
 	m_pArrow->SetSize(size);
 	m_pArrow->SetSizeOrigin(m_pArrow->GetSize());
 
+	// 自動破棄/更新/描画しない種類にする
+	m_pArrow->SetType(CObject::TYPE::TYPE_NONE);
+
 	return S_OK;
 }
 
@@ -255,7 +266,6 @@ void CBallHolderMarker::Kill()
 void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 #if _DEBUG
-
 	if (ImGui::TreeNode("BallHolderMarker"))
 	{
 		// 周期
@@ -272,8 +282,6 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 		ImGui::TreePop();
 	}
 #endif // _DEBUG
-
-
 
 	// 拡縮の更新
 	UpdateScaling(fDeltaTime, fDeltaTime, fSlowRate);
@@ -294,7 +302,6 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 	// 描画しないときは更新無し
 	if (!bDisp) return;
 
-
 	// プレイヤーの位置に設定
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();
 	pos.y = 2.0f;
@@ -310,10 +317,18 @@ void CBallHolderMarker::Update(const float fDeltaTime, const float fDeltaRate, c
 	rot.z = -m_pPlayer->GetRotation().y + D3DX_PI;
 	UtilFunc::Transformation::RotNormalize(rot.z);
 	m_pArrow->SetRotation(rot);
-
 #else
 	SetEnableDisp(false);
 #endif
+
+	// 円の更新
+	m_pCircle->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 外周円の更新
+	m_pOutCircle->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// 矢印の更新
+	m_pArrow->Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -354,7 +369,32 @@ void CBallHolderMarker::UpdateScaling(const float fDeltaTime, const float fDelta
 //==========================================================================
 void CBallHolderMarker::Draw()
 {
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
 
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを無効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	// 円の描画
+	m_pCircle->Draw();
+
+	// 外周円の描画
+	m_pOutCircle->Draw();
+
+	// 矢印の描画
+	m_pArrow->Draw();
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを有効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 //==========================================================================
