@@ -91,8 +91,7 @@ HRESULT CSpotLight::Init()
 		VEC3_ZERO,
 		VEC3_ZERO,
 		VEC3_ZERO,
-		17.0f,
-		false
+		19.0f
 	);
 	if (m_pEffect == nullptr)
 	{ // 生成に失敗した場合
@@ -119,7 +118,8 @@ void CSpotLight::Uninit()
 	}
 
 	// エフェクトの終了
-	SAFE_UNINIT(m_pEffect);
+	m_pEffect->SetEnableAutoDeath(true);
+	m_pEffect->SetTrigger(0);
 }
 
 //==========================================================================
