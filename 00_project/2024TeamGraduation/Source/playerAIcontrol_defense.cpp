@@ -268,7 +268,8 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 
 	case EActionStatus::ACTIONSTATUS_ACTION:		// çsìÆ
 
-		if (IsCancel())
+		if (IsCancel() &&
+			m_eAction == EAction::RNDOM)
 		{
 			m_eAction = EAction::LEAVE;
 
