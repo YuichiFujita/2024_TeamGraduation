@@ -49,8 +49,8 @@ public:
 		@param	fTime			[in]	開始時間
 		@param	fLimit			[in]	制限時間
 		@param	rPos			[in]	位置
-		@param	rSizeValue		[in]	数字の大きさ
-		@param	rSizePart		[in]	区切りの大きさ
+		@param	fHeightValue	[in]	数字の大きさ
+		@param	fHeightPart		[in]	区切りの大きさ
 		@param	rSpaceValue		[in]	数字の空白
 		@param	rSpacePart		[in]	区切りの空白
 		@param	alignX			[in]	横配置
@@ -64,8 +64,8 @@ public:
 		const float fTime,				// 開始時間
 		const float fLimit,				// 制限時間
 		const D3DXVECTOR3& rPos,		// 位置
-		const D3DXVECTOR2& rSizeValue,	// 数字の大きさ
-		const D3DXVECTOR2& rSizePart,	// 区切りの大きさ
+		const float fHeightValue,		// 数字の大きさ
+		const float fHeightPart,		// 区切りの大きさ
 		const D3DXVECTOR2& rSpaceValue,	// 数字の空白
 		const D3DXVECTOR2& rSpacePart,	// 区切りの空白
 		const EAlignX alignX = XALIGN_CENTER,			// 横配置

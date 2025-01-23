@@ -57,6 +57,20 @@ namespace
 		const MyLib::Vector3 SIZE = MyLib::Vector3(950.0f, 100.0f, 560.0f);	// サイズ
 		const float HALF_DIAGONAL = sqrtf(SIZE.x * SIZE.x + (SIZE.z * 2.0f) * (SIZE.z * 2.0f));	// チーム内コートの対角線
 	}
+
+	// タイマー情報
+	namespace Timer
+	{
+		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 70.0f, 0.0f);	// タイマー位置
+		const MyLib::Vector2 VAL_SIZE = MyLib::Vector2(0.0f, 28.0f);	// タイマー数字大きさ
+		const MyLib::Vector2 PART_SIZE = MyLib::Vector2(0.0f, 18.0f);	// タイマー区切り大きさ
+		const MyLib::Vector2 VAL_SPACE = MyLib::Vector2(53.0f, 0.0f);	// タイマー数字空白
+		const MyLib::Vector2 PART_SPACE = MyLib::Vector2(35.0f, 0.0f);	// タイマー区切り空白
+		const char* TEXTURE_VALUE = "data\\TEXTURE\\number\\AKR.png";	// 数字テクスチャパス
+		const char* TEXTURE_PART = "data\\TEXTURE\\timepart001.png";	// 区切りテクスチャパス
+		const char* TEXTURE_BG = "data\\TEXTURE\\FIELD\\ground.png";	// 背景テクスチャパス
+		const float HEIGHT_BG = 64.0f;									// 背景縦幅
+	}
 }
 
 //==========================================================================
@@ -95,6 +109,7 @@ CGameManager::CGameManager()
 	m_pCharmValueManager = nullptr;		// モテ値マネージャ
 	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
 	m_pTimerUI = nullptr;				// タイマーUI
+	m_pTimerBG = nullptr;				// タイマー背景
 
 	memset(&m_apGymDoor[0], 0, sizeof(m_apGymDoor));		// 体育館のドア
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
@@ -204,8 +219,62 @@ HRESULT CGameManager::Init()
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_FOLLOW);
 #endif
+
 	// チームステータスの生成
 	CreateTeamStatus();
+
+	// 外部ファイルから設定されたタイムを読込
+	CEntryRuleManager::SRule rule;			// ルール
+	CEntryRuleManager::LoadSetting(&rule);	// ルール読込
+	if (rule.fTime > 0.0f)
+	{ // 時間制限が無限じゃない場合
+
+		CTexture* pTexture = CTexture::GetInstance();	// テクスチャ情報
+
+		// タイマーUIの生成
+		m_pTimerUI = CTimerUI::Create
+		( // 引数
+			rule.fTime,			// 開始時間
+			rule.fTime,			// 制限時間
+			Timer::POS,			// 位置
+			Timer::VAL_SIZE.y,	// 数字の大きさ
+			Timer::PART_SIZE.y,	// 区切りの大きさ
+			Timer::VAL_SPACE,	// 数字の空白
+			Timer::PART_SPACE	// 区切りの空白
+		);
+		if (m_pTimerUI == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 数字テクスチャの再割当
+		m_pTimerUI->BindTextureValue(pTexture->Regist(Timer::TEXTURE_VALUE));
+
+		// 区切りテクスチャの再割当
+		m_pTimerUI->BindTexturePart(pTexture->Regist(Timer::TEXTURE_PART));
+
+		// タイマー背景の生成
+		m_pTimerBG = CObject2D::Create();
+		if (m_pTimerBG == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+
+		// 位置を設定
+		m_pTimerBG->SetPosition(Timer::POS);
+
+		// テクスチャを登録・割当
+		int texID = pTexture->Regist(Timer::TEXTURE_BG);
+		m_pTimerBG->BindTexture(texID);
+
+		// 画像比率から大きさを設定
+		MyLib::Vector2 size = pTexture->GetImageSize(texID);
+		size = UtilFunc::Transformation::AdjustSizeByHeight(size, Timer::HEIGHT_BG);
+		m_pTimerBG->SetSize(size);
+		m_pTimerBG->SetSizeOrigin(size);
+	}
 
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
@@ -386,27 +455,11 @@ void CGameManager::StartSetting()
 		// チームステータス
 		CreateTeamStatus();
 
-		// 外部ファイルから設定されたタイムを読込
-		CEntryRuleManager::SRule rule;			// ルール
-		CEntryRuleManager::LoadSetting(&rule);	// ルール読込
-
-		// タイマーの生成
-		m_pTimerUI = CTimerUI::Create
-		( // 引数
-			rule.fTime,
-			rule.fTime,
-			MyLib::Vector3(640.0f, 70.0f, 0.0f),
-			D3DXVECTOR2(40.0f, 40.0f),
-			D3DXVECTOR2(30.0f, 40.0f),
-			D3DXVECTOR2(40.0f, 0.0f),
-			D3DXVECTOR2(60.0f, 0.0f),
-			CTimerUI::EAlignX::XALIGN_CENTER,
-			CTimerUI::EAlignY::YALIGN_CENTER,
-			MyLib::Vector3(0.0f)
-		);
-
 		// タイマーの計測開始
-		m_pTimerUI->Start();
+		if (m_pTimerUI != nullptr)
+		{
+			m_pTimerUI->Start();
+		}
 
 		// メインへ遷移
 		SetSceneType(ESceneType::SCENE_MAIN);

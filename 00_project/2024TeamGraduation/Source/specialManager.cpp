@@ -88,7 +88,11 @@ CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(P
 	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
 	m_pCutIn		(nullptr),		// カットイン情報
 	m_state			(STATE_NONE),	// 状態
-	m_fCurTime		(0.0f)			// 現在の待機時間
+	m_fCurTime		(0.0f),			// 現在の待機時間
+	m_fJumpTime		(0.0f),			// 現在のジャンプ時間
+	m_bJump			(false),		// ジャンプフラグ
+	m_posJumpStart	(VEC3_ZERO),	// ジャンプ開始位置
+	m_posJumpEnd	(VEC3_ZERO)		// ジャンプ終了位置
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState)   == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
@@ -110,8 +114,6 @@ HRESULT CSpecialManager::Init(void)
 {
 	// メンバ変数を初期化
 	m_state = STATE_CUTIN;	// 状態
-	m_fJumpTime = 0.0f;		// 現在のジャンプ時間
-	m_bJump = false;		// ジャンプフラグ
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
@@ -316,43 +318,8 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 		pCamera->SetOriginRotation(pCamera->GetRotation());		// 向き
 		pCamera->SetDistanceOrigin(pCamera->GetDistance());		// 距離
 
-		{
-			// 中心ライトの生成
-			m_pCenterLight = CLightPoint::Create();
-			if (m_pCenterLight == nullptr)
-			{ // 生成に失敗した場合
-
-			}
-
-			// 拡散光を設定
-			m_pCenterLight->SetDiffuse(MyLib::color::White());
-
-			// 光源範囲を設定
-			m_pCenterLight->SetRange(LIGHT_RANGE);
-
-			// 位置を設定
-			m_pCenterLight->SetPosition(LIGHT_POS);
-
-			// 攻撃プレイヤーを照らすライトの生成
-			m_pAttackLight = CSpotLight::Create();
-			if (m_pAttackLight == nullptr)
-			{ // 生成に失敗した場合
-
-			}
-
-			// 標的プレイヤーを照らすライトの生成
-			m_pTargetLight = CSpotLight::Create();
-			if (m_pTargetLight == nullptr)
-			{ // 生成に失敗した場合
-
-			}
-
-			// 体育館を暗くする
-			GET_MANAGER->GetLight()->SetEnableBright(false);
-
-			// プレイヤー盛り上げ位置の設定
-			SetPlayerHypePosition();
-		}
+		// 体育館暗くする
+		SetDarkGym();
 
 		// 盛り上がり遷移状態にする
 		m_state = STATE_HYPE_TRANS;
@@ -607,7 +574,8 @@ void CSpecialManager::SetLightPosition()
 	// 攻撃プレイヤーの位置に移動
 	if (m_pAttackLight != nullptr)
 	{
-		m_pAttackLight->SetLightPosition(m_pAttackPlayer->GetPosition());
+		MyLib::Vector3 posLight = (m_bJump) ? GetDestAttackPosition() : m_pAttackPlayer->GetPosition();
+		m_pAttackLight->SetLightPosition(posLight);
 	}
 
 	// 標的プレイヤーの位置に移動
@@ -615,4 +583,51 @@ void CSpecialManager::SetLightPosition()
 	{
 		m_pTargetLight->SetLightPosition(m_pTargetPlayer->GetPosition());
 	}
+}
+
+//============================================================
+//	体育館の暗くする設定処理
+//============================================================
+HRESULT CSpecialManager::SetDarkGym()
+{
+	// 中心ライトの生成
+	m_pCenterLight = CLightPoint::Create();
+	if (m_pCenterLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 拡散光を設定
+	m_pCenterLight->SetDiffuse(MyLib::color::White());
+
+	// 光源範囲を設定
+	m_pCenterLight->SetRange(LIGHT_RANGE);
+
+	// 位置を設定
+	m_pCenterLight->SetPosition(LIGHT_POS);
+
+	// 攻撃プレイヤーを照らすライトの生成
+	m_pAttackLight = CSpotLight::Create();
+	if (m_pAttackLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 標的プレイヤーを照らすライトの生成
+	m_pTargetLight = CSpotLight::Create();
+	if (m_pTargetLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 体育館を暗くする
+	GET_MANAGER->GetLight()->SetEnableBright(false);
+
+	// プレイヤー盛り上げ位置の設定
+	SetPlayerHypePosition();
+
+	return S_OK;
 }
