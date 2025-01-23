@@ -128,8 +128,8 @@ CTimerUI *CTimerUI::Create
 	const float fTime,				// 開始時間
 	const float fLimit,				// 制限時間
 	const D3DXVECTOR3& rPos,		// 位置
-	const D3DXVECTOR2& rSizeValue,	// 数字の大きさ
-	const D3DXVECTOR2& rSizePart,	// 区切りの大きさ
+	const float fHeightValue,		// 数字の大きさ
+	const float fHeightPart,		// 区切りの大きさ
 	const D3DXVECTOR2& rSpaceValue,	// 数字の空白
 	const D3DXVECTOR2& rSpacePart,	// 区切りの空白
 	const EAlignX alignX,			// 横配置
@@ -170,10 +170,10 @@ CTimerUI *CTimerUI::Create
 		pTimerUI->SetRotation(rRot);
 
 		// 数字の大きさを設定
-		pTimerUI->SetSizeValue(rSizeValue);
+		pTimerUI->SetSizeValue(fHeightValue);
 
 		// 区切りの大きさを設定
-		pTimerUI->SetSizePart(rSizePart);
+		pTimerUI->SetSizePart(fHeightPart);
 
 		// 数字の空白を設定
 		pTimerUI->SetSpaceValue(rSpaceValue);

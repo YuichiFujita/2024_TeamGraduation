@@ -134,7 +134,7 @@ HRESULT CWinTeamResult::CreateAudience()
 {
 	// 観客の生成
 	m_pAudience = CObject2D_Anim::Create(
-		GetPosition(),	// 位置
+		MyLib::Vector3(640.0f, 480.0f, 0.0f),	// 位置
 		2,				// U
 		2,				// V
 		0.1f,			// インターバル
@@ -158,6 +158,9 @@ HRESULT CWinTeamResult::CreateAudience()
 	// 縦幅を元にサイズ計算
 	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 640.0f);
 	m_pAudience->SetSize(size);
+
+	// 不透明度設定
+	m_pAudience->SetAlpha(0.8f);
 
 	return S_OK;
 }

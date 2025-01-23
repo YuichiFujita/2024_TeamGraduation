@@ -66,7 +66,7 @@ namespace
 
 	namespace jump
 	{
-		const float BOUND_SPEED = 16.0f;	// ジャンプ投げバウンド速度
+		const float BOUND_SPEED = 13.0f;	// ジャンプ投げバウンド速度
 		const float REV_HOMING = 0.24f;		// ホーミングの慣性補正係数
 		const float MIN_MOVE_DOWN = -0.25f;	// ジャンプ攻撃の最低下移動量
 		const float OFFSET_TARGET_BACK = 150.0f;	// ターゲットの後ろオフセット
@@ -74,9 +74,9 @@ namespace
 
 	namespace special
 	{
-		const int	TIMING_ATK_IDX = 0;		// スペシャルボールの投げるタイミング
-		const float	THROW_MOVE = 20.0f;		// スペシャル投げ移動速度
-		const float BOUND_SPEED = 14.0f;	// スペシャル投げバウンド速度
+		const int	TIMING_ATK_IDX = 0;	// スペシャルボールの投げるタイミング
+		const float	THROW_MOVE = 20.0f;	// スペシャル投げ移動速度
+		const float BOUND_SPEED = 8.0f;	// スペシャル投げバウンド速度
 	}
 
 	namespace kamehameha
@@ -513,6 +513,9 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	// キャッチしていないボールを投げようとした場合エラー
 	assert(m_state == STATE_CATCH);
 
+	// 投げるプレイヤーのインデックス保存
+	int throwID = pPlayer->GetMyPlayerIdx();
+
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrowTarget();
 	if (m_pTarget != nullptr)
@@ -586,7 +589,7 @@ void CBall::ThrowNormal(CPlayer* pPlayer)
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
 
 	// 振動
-	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_NORMAL, pPlayer->GetMyPlayerIdx());
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_NORMAL, throwID);
 }
 
 //==========================================================================
@@ -596,6 +599,9 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 {
 	// キャッチしていないボールを投げようとした場合エラー
 	assert(m_state == STATE_CATCH);
+
+	// 投げるプレイヤーのインデックス保存
+	int throwID = pPlayer->GetMyPlayerIdx();
 
 	// ホーミング対象の設定
 	m_pTarget = CollisionThrowTarget();
@@ -671,7 +677,7 @@ void CBall::ThrowJump(CPlayer* pPlayer)
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_JUMP);
 
 	// 振動
-	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, pPlayer->GetMyPlayerIdx());
+	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, throwID);
 }
 
 //==========================================================================
@@ -1430,6 +1436,20 @@ void CBall::UpdateDecay(const float fDeltaRate, const float fSlowRate)
 }
 
 //==========================================================================
+// 位置に重力を反映する処理 (上昇のみ)
+//==========================================================================
+void CBall::UpdateUpOnlyGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate)
+{
+	const float fGravity = m_fGravity * fDeltaRate * fSlowRate;
+	if (fGravity > 0.0f)
+	{ // 重力が上方向の場合
+
+		// 位置に重力を反映
+		pPos->y += fGravity;
+	}
+}
+
+//==========================================================================
 // 位置に重力を反映する処理
 //==========================================================================
 void CBall::UpdateGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate)
@@ -1499,21 +1519,9 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 					MyLib::Vector3(),
 					15.0f * UtilFunc::Transformation::Clamp((m_fBouncy / LIMIT_REV_MOVE_EFFECT), 0.0f, 1.0f), true);
 			}
-		}
 
-		// 初速を初期化
-		m_fInitialSpeed = 0.0f;
-
-		// 着地している状態にする
-		m_bLanding = true;
-
-		// サウンド再生
-		// TODO : 値の調整と定数化する
-		if (!UtilFunc::Calculation::IsNearlyTarget(m_fMoveSpeed, 0.0f, 0.75f))
-		{
-			// 割合
-			float ratio = UtilFunc::Transformation::Clamp(fabsf(m_fMoveSpeed) / 5.0f, 0.0f, 1.0f);
-
+			// サウンド再生
+			float ratio = UtilFunc::Transformation::Clamp(UtilFunc::Transformation::ValueToRate(m_fBouncy, 0.0f, 6.0f), 0.0f, 1.0f);	// 割合
 			if (ratio > 0.5f)
 			{
 				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
@@ -1527,6 +1535,15 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_LOW);
 			}
 		}
+
+		// Y移動量を初期化
+		pMove->y = 0.0f;
+
+		// 初速を初期化
+		m_fInitialSpeed = 0.0f;
+
+		// 着地している状態にする
+		m_bLanding = true;
 		return true;
 	}
 

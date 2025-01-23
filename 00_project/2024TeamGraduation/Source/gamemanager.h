@@ -26,6 +26,7 @@ class CTeamStatus;
 class CGymDoor;
 class CGymWallManager;
 class CTimerUI;
+class CObject2D;
 class CCharmManager;
 
 //==========================================================================
@@ -182,6 +183,7 @@ private:
 	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
 	CTimerUI* m_pTimerUI;							// タイマーUI
+	CObject2D* m_pTimerBG;							// タイマー背景
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
