@@ -498,6 +498,7 @@ private:
 	void InitBase(EBaseType type);	// ベース初期化
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
+	void Revive();	// 復活
 	
 	//-----------------------------
 	// サウンド

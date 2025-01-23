@@ -40,17 +40,17 @@ namespace
 	const float	RADIUS_SHADOW = 20.0f;			// 影の半径
 	const float	MIN_ALPHA_SHADOW = 0.32f;		// 影の透明度
 	const float	MAX_ALPHA_SHADOW = 0.48f;		// 影の透明度
-	const float	REV_MOVE = 0.02f;		// 移動量の補正係数
-	const float	REV_INIMOVE = 0.1f;		// 初速の補正係数
-	const float	REV_BOUNCY = 0.58f;		// 跳力の補正係数
-	const float	REV_BOUND_MOVE = 0.2f;	// バウンド時の移動量の補正係数
-	const float	LIMIT_REV_MOVE = 0.1f;	// バウンド時の移動量を補正する最小バウンド量
+	const float	REV_MOVE = 0.02f;				// 移動量の補正係数
+	const float	REV_INIMOVE = 0.1f;				// 初速の補正係数
+	const float	REV_BOUNCY = 0.58f;				// 跳力の補正係数
+	const float	REV_BOUND_MOVE = 0.2f;			// バウンド時の移動量の補正係数
+	const float	LIMIT_REV_MOVE = 0.1f;			// バウンド時の移動量を補正する最小バウンド量
 	const float	LIMIT_REV_MOVE_EFFECT = 0.5f;	// バウンド時のエフェクトを生成する最小バウンド量
-	const float	MAX_DIS = 100000.0f;	// ホーミングする最大距離
-	const int	VIEW_ANGLE = 104;		// 視野角
-	const float	DEST_POSY = 45.0f;		// 通常ボールの目標Y座標
-	const float	REV_POSY = 0.1f;		// 通常ボールの目標Y座標の補正係数
-	const float REV_ROLL = 0.0025f;		// 回転量の補正係数
+	const float	MAX_DIS = 100000.0f;			// ホーミングする最大距離
+	const int	VIEW_ANGLE = 104;				// 視野角
+	const float	DEST_POSY = 45.0f;				// 通常ボールの目標Y座標
+	const float	REV_POSY = 0.1f;				// 通常ボールの目標Y座標の補正係数
+	const float REV_ROLL = 0.0025f;				// 回転量の補正係数
 
 	namespace move
 	{
@@ -87,7 +87,7 @@ namespace
 	namespace rebound
 	{
 #if _DEBUG
-		const float MOVE_UP = 2.0f;	// 上移動量
+		const float MOVE_UP = 10.0f;	// 上移動量
 #else
 		const float MOVE_UP = 2.0f;	// 上移動量
 #endif
