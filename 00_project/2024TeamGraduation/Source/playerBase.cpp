@@ -68,11 +68,9 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
-	if ((stateBall == CBall::STATE_LAND || stateBall == CBall::EState::STATE_SPAWN								// ボールが着地している
-	||  stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()							// フリーボール且つ自チームのボールじゃない
-	||  pBall->IsPass() && (pBall->GetTarget() == m_pPlayer || pBall->GetTypeTeam() != m_pPlayer->GetTeam()))	// パス状態且つターゲットが自分自身か敵チーム
-	&&  state != CPlayer::EState::STATE_INVADE_RETURN)															// コートに戻る状態でないとき(&)
-	{ // 上記の条件の場合
+	
+	if (IsAutoBallCatch(pBall))
+	{ // 自動ボールキャッチが可能な場合
 
 		// ボールをキャッチ
 		pBall->CatchLand(m_pPlayer);
@@ -266,4 +264,30 @@ void CPlayerBase::SetPlayerControlAction(CPlayerControlAction* pControlAction)
 {
 	// 操作クラスの設定
 	m_pControlAction = pControlAction;
+}
+
+//==========================================================================
+// 自動ボールキャッチ可能かの確認
+//==========================================================================
+bool CPlayerBase::IsAutoBallCatch(CBall* pBall) const
+{
+	CBall::EState stateBall = pBall->GetState();	// ボール状態
+	CPlayer::EState state = m_pPlayer->GetState();	// プレイヤー状態
+
+	// 侵入から戻っている場合キャッチ不可
+	if (state == CPlayer::EState::STATE_INVADE_RETURN) { return false; }
+
+	// ボールが開始演出中の場合キャッチ可能
+	if (stateBall == CBall::EState::STATE_SPAWN) { return true; }
+
+	// ボールが着地している場合キャッチ可能
+	if (stateBall == CBall::STATE_LAND) { return true; }
+
+	// フリーボール且つ、自チームのボールじゃない場合キャッチ可能
+	if (stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()) { return true; }
+
+	// パス状態且つターゲットが自分自身か敵チーム
+	if (pBall->IsPass() && (pBall->GetTarget() == m_pPlayer || pBall->GetTypeTeam() != m_pPlayer->GetTeam())) { return true; }
+
+	return false;
 }

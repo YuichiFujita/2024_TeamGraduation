@@ -1312,18 +1312,20 @@ void CBall::UpdateFree(const float fDeltaTime, const float fDeltaRate, const flo
 	UpdateMove(&pos, &vecMove, fDeltaRate, fSlowRate);
 
 	// 地面の着地
-	UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate);
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
 
-	// チームコート内になかったら
-	MyLib::Vector3 posCourt;	// コート中心位置
-	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(m_typeTeam, posCourt);	// コートサイズ
-	MyLib::Vector3 sizeHalfCourt = MyLib::Vector3(sizeCourt.x, 10000.0f, sizeCourt.z);			// コート半分サイズ
-	bool bHit = UtilFunc::Collision::BoxXZ(posCourt, pos, sizeHalfCourt, sizeHalfCourt, VEC3_ZERO, VEC3_ZERO);
-	if (bHit)
-	{ // チームコート内にいない場合
+		// チームコート内になかったら
+		MyLib::Vector3 posCourt;	// コート中心位置
+		MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(m_typeTeam, posCourt);	// コートサイズ
+		MyLib::Vector3 sizeHalfCourt = MyLib::Vector3(sizeCourt.x, 10000.0f, sizeCourt.z);			// コート半分サイズ
+		bool bHit = UtilFunc::Collision::BoxXZ(posCourt, pos, sizeHalfCourt, sizeHalfCourt, VEC3_ZERO, VEC3_ZERO);
+		if (bHit)
+		{ // チームコート内にいない場合
 
-		// 着地遷移
-		Landing();
+			// 着地遷移
+			Landing();
+		}
 	}
 
 	// プレイヤーとの当たり判定
