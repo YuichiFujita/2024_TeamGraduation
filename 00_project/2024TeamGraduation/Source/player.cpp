@@ -981,7 +981,7 @@ void CPlayer::Revive()
 	// 状態変更
 	m_sMotionFrag.bDead = false;
 	SetState(STATE_NONE);
-	SetMotion(MOTION_DEF);
+	SetMotion(MOTION_REVIVE);
 
 	// 操作可能に
 	SetEnableAction(true);
