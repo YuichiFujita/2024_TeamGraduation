@@ -66,7 +66,7 @@ namespace
 //==========================================================================
 CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	// キャッチ関数
 {
-	&CPlayerAIControlDefense::MoveIdle,				// なし
+	&CPlayerAIControlDefense::MoveIdle,					// なし
 	&CPlayerAIControlDefense::MoveDodge,				// 回避
 	&CPlayerAIControlDefense::MoveSupport,				// サポート
 	&CPlayerAIControlDefense::MoveChaseBall,			// ボールを追いかける
@@ -74,7 +74,6 @@ CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	/
 	&CPlayerAIControlDefense::MoveRandom,				// ランダム
 	&CPlayerAIControlDefense::MoveLeave,				// 離れる
 };
-
 
 //==========================================================================
 // コンストラクタ
@@ -256,14 +255,8 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 	{
 	case EActionStatus::ACTIONSTATUS_IDLE:		// 待機
 
-		if (pPlayer)
-		{// ボール所持者がいる
-			Action0();
-		}
-		else
-		{// いない
-			Action1();
-		}
+		// 行うアクションを決める
+		SelectAction();
 
 		if (m_eAction != EAction::IDLE)
 		{
@@ -275,8 +268,7 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 
 	case EActionStatus::ACTIONSTATUS_ACTION:		// 行動
 
-		if (pBall->GetTarget() == GetPlayer() &&	// ターゲットが自分
-			m_eAction == EAction::RNDOM)			// 行動がランダム
+		if (IsCancel())
 		{
 			m_eAction = EAction::LEAVE;
 
@@ -341,7 +333,7 @@ void CPlayerAIControlDefense::Action0()
 //================================================================================
 // アクション決め
 //================================================================================
-void CPlayerAIControlDefense::Action1()
+void CPlayerAIControlDefense::SelectAction()
 {
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
