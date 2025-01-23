@@ -151,6 +151,9 @@ HRESULT CPlayerAIControlDefense::Init()
 //==========================================================================
 void CPlayerAIControlDefense::Uninit()
 {
+	delete this;
+
+	// 親クラスの終了処理
 	CPlayerAIControlMode::Uninit();
 }
 
@@ -159,14 +162,81 @@ void CPlayerAIControlDefense::Uninit()
 //==========================================================================
 void CPlayerAIControlDefense::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 見る
-	//UpdateSee();
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	CPlayer* pPlayer = pBall->GetPlayer();
 
-	// 守りの更新
-	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
+	if (pBall->GetTarget() == GetPlayer())
+	{// ボールのターゲットが自分の場合
+		return;
+	}
+
+	if (pPlayer)
+	{// 味方がボールを持っている場合
+		TeammateBall(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+	else
+	{// 敵がボールを持っている場合
+		TeamEnemyBall(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//================================================================================
+// チームメイトボール
+//================================================================================
+void CPlayerAIControlDefense::TeammateBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	CPlayer* pPlayer = pBall->GetPlayer();
+
+	// チーム
+	CGameManager::ETeamSide side = pPlayer->GetTeam();
+	CGameManager::ETeamSide side1 = GetPlayer()->GetTeam();
+
+	switch (pPlayer->GetAreaType())
+	{// エリア別
+
+	case CPlayer::EFieldArea::FIELD_IN:	// 内野
+
+		if (side == side1)
+		{// 同じチーム
+			MoveRandom();
+		}
+		else
+		{
+			// 守りの更新
+			UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
+		}
+
+		break;
+
+	case CPlayer::EFieldArea::FIELD_OUT:	// 外野
+
+		MoveRandom();
+
+		break;
+
+	default:
+		break;
+	}
+}
+
+//================================================================================
+// 相手チームボール
+//================================================================================
+void CPlayerAIControlDefense::TeamEnemyBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (!IsLineOverBall())
+	{
+		// ボールを追う
+		m_eAction = EAction::CHASE_BALL;
+	}
+
+	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //================================================================================
@@ -216,18 +286,6 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 			break;
 		}
 
-		if (!IsLineOverBall() &&							// 線を超えていない
-			stateBall == CBall::EState::STATE_FREE ||		// フリー
-			stateBall == CBall::EState::STATE_PASS ||		// パス
-			stateBall == CBall::EState::STATE_HOM_PASS ||	// ホーミングパス
-			stateBall == CBall::EState::STATE_LAND)			// 床に事がっている
-		{
-			m_eAction = EAction::CHASE_BALL;
-
-			// 行動の構造体初期化
-			ZeroMemory(&m_sAction, sizeof(m_sAction));
-		}
-
 		// アクション種類更新
 		(this->*(m_ActionFunc[m_eAction]))();
 
@@ -274,7 +332,8 @@ void CPlayerAIControlDefense::Action0()
 	{// ボール持ち主が内野の場合
 		m_eAction = EAction::RNDOM;
 	}
-	else {
+	else
+	{
 		m_eAction = EAction::LEAVE;
 	}
 }
@@ -291,7 +350,6 @@ void CPlayerAIControlDefense::Action1()
 
 	if (IsPassTarget() && stateBall == CBall::EState::STATE_PASS)
 	{// パスが自分に来る&&ボールがパス状態の合
-
 		// 何もしない
 		m_eAction = EAction::IDLE;
 	}
@@ -312,16 +370,6 @@ void CPlayerAIControlDefense::Action1()
 
 			m_eAction = EAction::IDLE;
 		}
-	}
-
-	if (!IsLineOverBall() &&							// 線を超えていない
-		stateBall == CBall::EState::STATE_FREE ||		// フリー
-		stateBall == CBall::EState::STATE_PASS ||		// パス
-		stateBall == CBall::EState::STATE_HOM_PASS ||	// ホーミングパス
-		stateBall == CBall::EState::STATE_LAND)			// 床に事がっている
-	{
-		// ボールを追う
-		m_eAction = EAction::CHASE_BALL;
 	}
 }
 
@@ -430,7 +478,7 @@ void CPlayerAIControlDefense::BallChase()
 
 	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
 	{// ボールがnullptr&&プレイヤーがボールを取っている場合
-		//SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		return;
 	}
 
@@ -450,11 +498,11 @@ void CPlayerAIControlDefense::BallChase()
 	}
 	else {
 		// 行動：歩く
-		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
+		SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 	}
 
 	// 近づく
-	if (Approatch(pBall->GetPosition(), 50.0f))
+	if (Approatch(pBall->GetPosition(), 30.0f))
 	{// 近づけた場合
 		// 行動：止まる
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);

@@ -145,7 +145,7 @@ void CPlayerAIControlRightDefense::MoveRandom()
 	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 
 	// 近づく
-	if (Approatch(action.pos, 10.0f)) {
+	if (Approatch(action.pos, 30.0f)) {
 		action.bSet = false;
 
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
@@ -154,6 +154,66 @@ void CPlayerAIControlRightDefense::MoveRandom()
 
 	// 行動情報の設定
 	SetActionInfo(action);
+}
+
+//==========================================================================
+// ボールを奪う
+//==========================================================================
+void CPlayerAIControlRightDefense::BallSteal()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
+	// 位置の取得
+	MyLib::Vector3 posBall = pBall->GetPosition();		// ボール
+	MyLib::Vector3 posEnd = pBall->GetPosPassEnd();		// ボールのパス終了位置
+	MyLib::Vector3 posMy = pAI->GetPosition();		// 自分の位置
+
+	// 終了位置のx,zを参照した位置の設定
+	MyLib::Vector3 pos = { posEnd.x, posMy.y, posEnd.z };
+
+	if (pos.x < 0)
+	{
+		SetActionStatus(EActionStatus::ACTIONSTATUS_IDLE);
+		return;
+	}
+
+	// パス相手の取得
+	CPlayer* pTarget = pBall->GetTarget();
+	if (pTarget)
+	{
+		// ターゲットとボールの位置
+		float distanth0 = pTarget->GetPosition().DistanceXZ(posBall);
+
+		if (distanth0 < 100.0f)
+		{// ボールとパス先の距離が範囲内ならあきらめる
+			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+			SetActionStatus(EActionStatus::ACTIONSTATUS_IDLE);
+			return;
+		}
+	}
+
+	// ボールとの距離
+	float distance = posMy.DistanceXZ(posBall);
+
+	// 行動状態：走る
+	SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
+
+	// ボールの方へ行く
+	if (Approatch(pos, 100.0f) || distance < 100.0f)
+	{// 終了位置に近づけた||ボールとの距離が範囲内の場合
+
+		if (posBall.y < 140.0f)
+		{// 取れそうな高さに来た！
+			SetActionFlag(EActionFlag::ACTION_JUMP);
+		}
+
+		SetActionStatus(EActionStatus::ACTIONSTATUS_IDLE);
+	}
 }
 
 //==========================================================================

@@ -15,6 +15,7 @@
 // player
 #include "playerAIcontrol_move.h"
 #include "playerAIcontrol_action.h"
+#include "playerAIcontrol_start.h"
 #include "playerAIcontrol_idle.h"
 #include "playerAIcontrol_attack.h"
 #include "playerAIcontrol_defense.h"
@@ -73,6 +74,10 @@ CPlayerAIControlMode* CPlayerAIControlMode::Create(CPlayer* player, EMode mode)
 	{
 		switch (mode)
 		{
+		case EMode::MODE_START:
+			pObj = CPlayerAIControlStart::Create(player);
+			break;
+
 		case EMode::MODE_IDLE:
 			pObj = CPlayerAIControlIdle::Create(player);
 			break;
@@ -114,6 +119,10 @@ HRESULT CPlayerAIControlMode::Init()
 	m_eMode = EMode::MODE_IDLE;
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
+
+	m_sParameter.fDistanse = 300.0f;
+	m_sParameter.fRadius = 30.0f;
+	m_sParameter.fJumpEnd = 130.0f;
 
 	return S_OK;
 }
