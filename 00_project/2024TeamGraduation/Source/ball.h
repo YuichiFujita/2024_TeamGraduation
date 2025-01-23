@@ -181,6 +181,7 @@ private:
 	//--------------------------
 	void UpdateGravity(const float fDeltaRate, const float fSlowRate);	// 重力加算
 	void UpdateDecay(const float fDeltaRate, const float fSlowRate);	// 移動量減速
+	void UpdateUpOnlyGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に重力反映 (上昇のみ)
 	void UpdateGravityPosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に重力反映
 	void UpdateMovePosition(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 位置に移動量反映
 	void UpdateMove(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const float fDeltaRate, const float fSlowRate);	// 移動
