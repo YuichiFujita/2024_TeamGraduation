@@ -61,18 +61,27 @@ void CPlayerStatus::Init()
 	// 体力ゲージ生成
 	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_IN)
 	{// 内野のみ生成
-		CreateLifeGuge();
+
+		// 体力ゲージ生成
+		CreateLifeGuge(&m_pLifeGauge_Ground, false);
+		CreateLifeGuge(&m_pLifeGauge, true);
+
+		// 下地真っ黒
+		m_pLifeGauge_Ground->SetColor(MyLib::color::Black());
+
+		// ゲージフレーム生成
+		CreateGaugeFrame();
 	}
 }
 
 //==========================================================================
 // 体力ゲージ生成
 //==========================================================================
-void CPlayerStatus::CreateLifeGuge()
+void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 {
 	// 体力ゲージ生成
-	m_pLifeGauge = CObjectCircleGauge2D::Create(LifeGauge::DIVISION, LifeGauge::SIZE);
-	m_pLifeGauge->SetType(CObject::TYPE::TYPE_UI);
+	(*pGauge) = CObjectCircleGauge2D::Create(LifeGauge::DIVISION, LifeGauge::SIZE);
+	(*pGauge)->SetType(CObject::TYPE::TYPE_UI);
 
 	// チーム取得
 	CGameManager::ETeamSide teamSide = m_pPlayer->GetTeam();
@@ -90,11 +99,13 @@ void CPlayerStatus::CreateLifeGuge()
 		nNum = m_LifeGaugeListLeft.GetNumAll();
 
 		// 位置設定
-		m_pLifeGauge->SetPosition(LifeGauge::DEFAULTPOS[teamSide] + MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
+		(*pGauge)->SetPosition(LifeGauge::DEFAULTPOS[teamSide] + MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
 
 		// リスト追加
-		m_LifeGaugeListLeft.Regist(m_pLifeGauge);
-
+		if (bAddList)
+		{
+			m_LifeGaugeListLeft.Regist((*pGauge));
+		}
 		break;
 
 	case CGameManager::ETeamSide::SIDE_RIGHT:
@@ -103,11 +114,13 @@ void CPlayerStatus::CreateLifeGuge()
 		nNum = m_LifeGaugeListRight.GetNumAll();
 
 		// 位置設定
-		m_pLifeGauge->SetPosition(LifeGauge::DEFAULTPOS[teamSide] - MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
+		(*pGauge)->SetPosition(LifeGauge::DEFAULTPOS[teamSide] - MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
 
 		// リスト追加
-		m_LifeGaugeListRight.Regist(m_pLifeGauge);
-
+		if (bAddList)
+		{
+			m_LifeGaugeListRight.Regist((*pGauge));
+		}
 		break;
 
 	default:
@@ -116,17 +129,13 @@ void CPlayerStatus::CreateLifeGuge()
 	}
 
 	// 色設定
-	m_pLifeGauge->SetColor(MyLib::color::Green());
+	(*pGauge)->SetColor(MyLib::color::Green());
 
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
 	int nTexID = pTexture->Regist("data\\TEXTURE\\GRADATION\\black_04.jpg");
-	m_pLifeGauge->BindTexture(nTexID);
-
-	// ゲージフレーム生成
-	CreateGaugeFrame();
-
+	(*pGauge)->BindTexture(nTexID);
 }
 
 //==========================================================================
@@ -170,7 +179,7 @@ void CPlayerStatus::Kill()
 void CPlayerStatus::LifeDamage(const int nDmg)
 {
 	// 外野の場合抜ける
-	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) { return; }
+	if (m_pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT) return;
 
 	int nLife = m_pPlayer->GetLife();	// 体力
 	int nLifeOrigin = m_pPlayer->GetLifeOrigin();
