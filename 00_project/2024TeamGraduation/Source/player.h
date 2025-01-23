@@ -218,6 +218,7 @@ public:
 		HUMAN_ENTRY,		// エントリー
 		HUMAN_SPAWN,		// 登場演出
 		HUMAN_REFEREE,		// 体育教師
+		HUMAN_REFEREE_RESULT,		// 体育教師
 		HUMAN_RESULT,		// リザルト
 		HUMAN_MAX			// この列挙型の総数
 	};

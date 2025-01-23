@@ -29,7 +29,7 @@ public:
 		SAMPLE_MAX
 	};
 
-	CGymWall(int nPriority = 6);
+	CGymWall(int nPriority = 3);
 	~CGymWall();
 
 	//=============================

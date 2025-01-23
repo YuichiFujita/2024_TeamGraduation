@@ -20,6 +20,7 @@
 //************************************************************
 class CPlayer;
 class CLightPoint;
+class CSpotLight;
 class CCutIn;
 
 //************************************************************
@@ -29,6 +30,9 @@ class CCutIn;
 class CSpecialManager : public CObject
 {
 public:
+	// 定数
+	static constexpr int NUM_LIGHT = 4;	// ライト数
+
 	// 状態列挙
 	enum EState
 	{
@@ -79,17 +83,16 @@ private:
 	void UpdateStag(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// スペシャル演出更新
 	void UpdateFollowTrans(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従遷移更新
 	void UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 終了更新
-
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
-
 	void SetPlayerHypePosition(const bool bInverse);	// プレイヤー盛り上げ位置設定
 	void SetLightPosition();	// ライト位置設定
 
 	// メンバ変数
+	CLightPoint* m_pCenterLight;	// ライト情報
+	CSpotLight* m_pAttackLight;		// 攻撃プレイヤーを照らすライト
+	CSpotLight* m_pTargetLight;		// 標的プレイヤーを照らすライト
 	CPlayer* m_pAttackPlayer;		// 攻撃プレイヤー
 	CPlayer* m_pTargetPlayer;		// 標的プレイヤー
-	CLightPoint* m_pAttackLight;	// 攻撃プレイヤーを照らすライト
-	CLightPoint* m_pTargetLight;	// 標的プレイヤーを照らすライト
 	CCutIn* m_pCutIn;	// カットイン情報
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間

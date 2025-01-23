@@ -109,6 +109,12 @@ private:
 	void StateDraw(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 引き分け
 
 	//-----------------------------
+	// モーション系関数
+	//-----------------------------
+	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override {}		// 攻撃時処理
+	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override {}	// 攻撃判定中処理
+
+	//-----------------------------
 	// 状態
 	//-----------------------------
 	EState m_state;		// 状態

@@ -304,6 +304,7 @@
     <ClCompile Include="Source\playerAIcontrol_move.cpp" />
     <ClCompile Include="Source\playerAIcontrol_rightAttack.cpp" />
     <ClCompile Include="Source\playerAIcontrol_rightDefense.cpp" />
+    <ClCompile Include="Source\playerAIcontrol_start.cpp" />
     <ClCompile Include="Source\playerAIIn.cpp" />
     <ClCompile Include="Source\playerAIOut.cpp" />
     <ClCompile Include="Source\playerAIOut_control.cpp" />
@@ -331,6 +332,7 @@
     <ClCompile Include="Source\playerPosAdj_none.cpp" />
     <ClCompile Include="Source\playerPosAdj_out.cpp" />
     <ClCompile Include="Source\playerReferee.cpp" />
+    <ClCompile Include="Source\playerReferee_result.cpp" />
     <ClCompile Include="Source\playerResult.cpp" />
     <ClCompile Include="Source\playerSpawn.cpp" />
     <ClCompile Include="Source\playerSpawnManager.cpp" />
@@ -372,6 +374,7 @@
     <ClCompile Include="Source\specialEffect_kamehameha.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
     <ClCompile Include="Source\specialValueManager.cpp" />
+    <ClCompile Include="Source\spotlight.cpp" />
     <ClCompile Include="Source\startText.cpp" />
     <ClCompile Include="Source\stretcher.cpp" />
     <ClCompile Include="Source\string2D.cpp" />
@@ -392,6 +395,7 @@
     <ClCompile Include="Source\transUI.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
     <ClCompile Include="Source\tutoriallogo.cpp" />
+    <ClCompile Include="Source\winteamResult.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -543,6 +547,7 @@
     <ClInclude Include="Source\playerAIcontrol_move.h" />
     <ClInclude Include="Source\playerAIcontrol_rightAttack.h" />
     <ClInclude Include="Source\playerAIcontrol_rightDefense.h" />
+    <ClInclude Include="Source\playerAIcontrol_start.h" />
     <ClInclude Include="Source\playerAIIn.h" />
     <ClInclude Include="Source\playerAIOut.h" />
     <ClInclude Include="Source\playerAIOut_control.h" />
@@ -570,6 +575,7 @@
     <ClInclude Include="Source\playerPosAdj_none.h" />
     <ClInclude Include="Source\playerPosAdj_out.h" />
     <ClInclude Include="Source\playerReferee.h" />
+    <ClInclude Include="Source\playerReferee_result.h" />
     <ClInclude Include="Source\playerResult.h" />
     <ClInclude Include="Source\playerSpawn.h" />
     <ClInclude Include="Source\playerSpawnManager.h" />
@@ -608,6 +614,7 @@
     <ClInclude Include="Source\specialEffect_kamehameha.h" />
     <ClInclude Include="Source\specialManager.h" />
     <ClInclude Include="Source\specialValueManager.h" />
+    <ClInclude Include="Source\spotlight.h" />
     <ClInclude Include="Source\startText.h" />
     <ClInclude Include="Source\stretcher.h" />
     <ClInclude Include="Source\string2D.h" />
@@ -628,6 +635,7 @@
     <ClInclude Include="Source\transUI.h" />
     <ClInclude Include="Source\tutorial.h" />
     <ClInclude Include="Source\tutoriallogo.h" />
+    <ClInclude Include="Source\winteamResult.h" />
     <ClInclude Include="Source\Xload.h" />
   </ItemGroup>
   <ItemGroup>

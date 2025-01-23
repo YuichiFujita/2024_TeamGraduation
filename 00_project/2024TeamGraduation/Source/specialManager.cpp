@@ -22,6 +22,7 @@
 #include "cutin.h"
 #include "audience.h"
 #include "gymWallManager.h"
+#include "spotlight.h"
 
 //************************************************************
 //	定数宣言
@@ -30,7 +31,8 @@ namespace
 {
 	const int	PRIORITY = 4;			// 優先順位
 	const float	LIGHT_RANGE = 600.0f;	// 光源範囲
-	const MyLib::Vector3 LIGHT_OFFSET = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
+	const float LIGHTUP_TIME = 1.2f;	// 明るくなるまでの時間
+	const MyLib::Vector3 LIGHT_POS = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
 
 	namespace hype
 	{
@@ -76,10 +78,11 @@ CSpecialManager* CSpecialManager::m_pInstance = nullptr;	// 自身のインスタンス
 //	コンストラクタ
 //============================================================
 CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(PRIORITY),
-	m_pAttackPlayer	(pAttack),		// 攻撃プレイヤー
-	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
+	m_pCenterLight	(nullptr),		// ライト情報
 	m_pAttackLight	(nullptr),		// 攻撃プレイヤーを照らすライト
 	m_pTargetLight	(nullptr),		// 標的プレイヤーを照らすライト
+	m_pAttackPlayer	(pAttack),		// 攻撃プレイヤー
+	m_pTargetPlayer	(pTarget),		// 標的プレイヤー
 	m_pCutIn		(nullptr),		// カットイン情報
 	m_state			(STATE_NONE),	// 状態
 	m_fCurTime		(0.0f)			// 現在の待機時間
@@ -103,8 +106,7 @@ CSpecialManager::~CSpecialManager()
 HRESULT CSpecialManager::Init(void)
 {
 	// メンバ変数を初期化
-	m_state		= STATE_CUTIN;	// 状態
-	m_fCurTime	= 0.0f;			// 現在の待機時間
+	m_state = STATE_CUTIN;	// 状態
 
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
@@ -112,33 +114,38 @@ HRESULT CSpecialManager::Init(void)
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
 
+	// 中心ライトの生成
+	m_pCenterLight = CLightPoint::Create();
+	if (m_pCenterLight == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 拡散光を設定
+	m_pCenterLight->SetDiffuse(MyLib::color::White());
+
+	// 光源範囲を設定
+	m_pCenterLight->SetRange(LIGHT_RANGE);
+
+	// 位置を設定
+	m_pCenterLight->SetPosition(LIGHT_POS);
+
 	// 攻撃プレイヤーを照らすライトの生成
-	m_pAttackLight = CLightPoint::Create();
+	m_pAttackLight = CSpotLight::Create();
 	if (m_pAttackLight == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
 
-	// 拡散光を設定
-	m_pAttackLight->SetDiffuse(MyLib::color::White());
-
-	// 光源範囲を設定
-	m_pAttackLight->SetRange(LIGHT_RANGE);
-
 	// 標的プレイヤーを照らすライトの生成
-	m_pTargetLight = CLightPoint::Create();
+	m_pTargetLight = CSpotLight::Create();
 	if (m_pTargetLight == nullptr)
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
 	}
-
-	// 拡散光を設定
-	m_pTargetLight->SetDiffuse(MyLib::color::White());
-
-	// 光源範囲を設定
-	m_pTargetLight->SetRange(LIGHT_RANGE);
 
 	// カットインの生成
 	m_pCutIn = CCutIn::Create();
@@ -152,20 +159,14 @@ HRESULT CSpecialManager::Init(void)
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
 	CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 
-#if 1
 	// 体育館を暗くする
 	GET_MANAGER->GetLight()->SetEnableBright(false);
-#endif
 
-#if 1
 	// 世界の時を止める
 	GET_MANAGER->SetEnableWorldPaused(true);
-#endif
 
-#if 1
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
-#endif
 
 	// 通常カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
@@ -409,6 +410,11 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 	if (pCameraMotion->IsFinish())
 	{ // カメラモーションが終わった場合
 
+		// 壁の表示をOFFにする
+		CGameManager* pGameManager = CGameManager::GetInstance();		// ゲームマネージャー
+		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
+		pGymWall->SetIsWall(false);
+
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
@@ -468,16 +474,6 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 		// 終了状態にする
 		m_state = STATE_END;
 	}
-
-#if 0
-	// TODO：投げた瞬間の解除はちょっと...
-	if (m_pAttackPlayer->GetBall() == nullptr)
-	{ // ボールを投げている場合
-
-		// 終了状態にする
-		m_state = STATE_END;
-	}
-#endif
 }
 
 //============================================================
@@ -486,7 +482,7 @@ void CSpecialManager::UpdateFollowTrans(const float fDeltaTime, const float fDel
 void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 体育館を明るくする
-	GET_MANAGER->GetLight()->SetEnableBright(true);
+	GET_MANAGER->GetLight()->SetEnableBright(true, LIGHTUP_TIME);
 
 	// 攻撃側プレイヤーチームの観客を通常状態にする
 	CAudience::SetEnableJumpAll(false, m_pAttackPlayer->GetTeam());
@@ -505,10 +501,6 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 	{
 		pSPEffect->FinishSetting();
 	}
-
-	// 壁の表示をOFFにする
-	CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
-	pGymWall->SetIsWall(false);
 
 	// 自身の終了
 	Uninit();
@@ -556,15 +548,15 @@ void CSpecialManager::SetPlayerHypePosition(const bool bInverse)
 //============================================================
 void CSpecialManager::SetLightPosition()
 {
+	// 攻撃プレイヤーの位置に移動
 	if (m_pAttackLight != nullptr)
 	{
-		// 攻撃プレイヤーの位置に移動
-		m_pAttackLight->SetPosition(m_pAttackPlayer->GetPosition() + LIGHT_OFFSET);
+		m_pAttackLight->SetLightPosition(m_pAttackPlayer->GetPosition());
 	}
 
-	if (m_pAttackLight != nullptr)
+	// 標的プレイヤーの位置に移動
+	if (m_pTargetLight != nullptr)
 	{
-		// 標的プレイヤーの位置に移動
-		m_pTargetLight->SetPosition(m_pTargetPlayer->GetPosition() + LIGHT_OFFSET);
+		m_pTargetLight->SetLightPosition(m_pTargetPlayer->GetPosition());
 	}
 }

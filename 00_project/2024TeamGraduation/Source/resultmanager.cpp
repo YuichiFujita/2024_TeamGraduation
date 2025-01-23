@@ -16,6 +16,9 @@
 #include "object3D.h"
 #include "3D_effect.h"
 #include "resultCrown.h"
+#include "playerReferee_result.h"
+#include "winteamResult.h"
+#include "gymDoor.h"
 
 //==========================================================================
 // 定数定義
@@ -24,7 +27,7 @@ namespace
 {
 	const std::string TEXFILE_PRELUDE = "data\\TEXTURE\\result\\prelude.png";	// 試合に勝利したのは！
 	const std::string TEXFILE_CONTEST = "data\\TEXTURE\\result\\contest.png";	// よりモテたのは！
-	const MyLib::Vector2 SIZE_POLY = MyLib::Vector2(500.0f, 100.0f);		// 3Dポリゴンサイズ
+	const float HEIGHT_POLY = 120.0f;											// 3Dポリゴン位置(y)
 	const float POSY_POLY = 100.0f;											// 3Dポリゴン位置(y)
 
 	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);	// スタート時カメラ向き
@@ -38,12 +41,26 @@ namespace
 	};
 }
 
+// ドッジボールコート情報
+namespace Gym
+{
+	const MyLib::Vector3 POS_LEFT = MyLib::Vector3(-972.85f, 0.0f, 1717.35f);	// ドア左位置
+	const MyLib::Vector3 POS_RIGHT = MyLib::Vector3(972.85f, 0.0f, 1717.35f);	// ドア右位置
+	const MyLib::Vector3 POS[] = { POS_LEFT, POS_RIGHT };	// ドア位置
+}
+
 // 状態時間
 namespace StateTime
 {
 	const float NONE(3.0f);		// なし
 	const float READY(3.0f);	// 準備
 	const float PRELUDE(5.0f);	// 前座
+}
+
+namespace TextTime
+{
+	const float PRELUDE(0.4f);	// 前座
+	const float CONTEST(0.4f);	// モテ
 }
 
 namespace Draw
@@ -60,7 +77,7 @@ namespace Ready
 
 	const float DISTANCE_CAMERA = 1500.0f;
 
-	const float POSY_WORD = 200.0f;	// セリフの高さ
+	const float POSY_WORD = 250.0f;	// セリフの高さ
 }
 
 namespace Prelude
@@ -168,6 +185,8 @@ CResultManager::CResultManager()
 	m_pText = nullptr;												// 勝利チーム用3Dポリゴン
 	m_pCrown = nullptr;												// 王冠モデル
 	m_pEfkConfetti = nullptr;										// 紙吹雪エフェクシア
+	m_pReferee = nullptr;											// 審判
+	m_pWinTeam = nullptr;											// 勝利チーム
 }
 
 //==========================================================================
@@ -217,6 +236,18 @@ HRESULT CResultManager::Init()
 	// プレイヤーマネージャーの生成
 	CPlayerManager::Create(CPlayerManager::EType::TYPE_RESULT);
 
+	for (int i = 0; i < CGameManager::EDoor::DOOR_MAX; i++)
+	{ // ドアの配置数分繰り返す
+
+		// 体育館ドア生成
+		CGymDoor* pGymDoor = CGymDoor::Create(Gym::POS[i]);
+		if (pGymDoor == nullptr)
+		{ // 生成に失敗した場合
+
+			return E_FAIL;
+		}
+	}
+
 	// 観客生成
 	CreateAudience();
 
@@ -227,6 +258,9 @@ HRESULT CResultManager::Init()
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 	pCamera->SetDistance(DISTANCE_CAMERA);
 	pCamera->SetRotation(ROT_CAMERA);
+
+	// 審判生成
+	m_pReferee = CPlayerReferee_Result::Create();
 
 	return S_OK;
 }
@@ -256,6 +290,18 @@ void CResultManager::Uninit()
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;
+}
+
+//==========================================================================
+// 動的削除処理
+//==========================================================================
+void CResultManager::Kill()
+{
+	// 審判削除
+	SAFE_KILL(m_pReferee);
+
+	// 終了処理
+	Uninit();
 }
 
 //==========================================================================
@@ -300,6 +346,9 @@ void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, c
 	if (m_fStateTime >= StateTime::NONE && m_bStateTrans)
 	{
 		SetState(EState::STATE_PRELUDE_READY);
+
+		// 審判喋らせる
+		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
 	}
 }
 
@@ -312,6 +361,8 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 	float END = CameraTime::END_TIME[m_state];
 	
 	// 試合に勝利したチーム！
+	float ratio = UtilFunc::Correction::EaseOutBack(0.0f, 1.0f, 0.0f, TextTime::PRELUDE, m_fStateTime);
+	m_pText->SetSize(m_pText->GetSizeOrigin() * ratio);
 
 	// カメラ補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -339,6 +390,10 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
 			pPlayer->CheckVictoryPrelude();
 		}
+
+		// 勝ったチーム
+		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
+		m_pReferee->SetWinTeam(m_teamPreludeWin);
 
 		// 前座勝敗状態
 		SetState(EState::STATE_PRELUDE);
@@ -380,6 +435,9 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 			pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
 		}
 
+		// 喋らせる
+		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
+
 		SetState(EState::STATE_CONTEST_READY);
 	}
 }
@@ -393,7 +451,8 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 	float END = CameraTime::END_TIME[m_state];
 
 	// モテ勝利したチーム！
-
+	float ratio = UtilFunc::Correction::EaseOutBack(0.0f, 1.0f, 0.0f, TextTime::PRELUDE, m_fStateTime);
+	m_pText->SetSize(m_pText->GetSizeOrigin() * ratio);
 
 	// カメラ補正
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -421,6 +480,10 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
 			pPlayer->CheckVictoryContest();
 		}
+
+		// 勝ったチーム
+		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
+		m_pReferee->SetWinTeam(m_teamContestWin);
 
 		SetState(EState::STATE_CONTEST);
 	}
@@ -462,19 +525,11 @@ void CResultManager::StateStartPreludeReady()
 	// 観客盛り下げ
 	CAudience::SetEnableJumpAll(false, m_teamPreludeWin);
 
-	// ポリゴン生成
+	// 王冠削除
 	SAFE_KILL(m_pCrown);
-	SAFE_KILL(m_pText);
-	m_pText = CObject3D::Create();
-	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
-	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
-	m_pText->SetSize(SIZE_POLY);
 
-	MyLib::Vector3 pos = VEC3_ZERO;
-	pos.y += Ready::POSY_WORD;
-	m_pText->SetPosition(pos);
-
-	m_pText->BindTexture(pTexture->Regist(TEXFILE_PRELUDE));
+	// ポリゴン生成
+	CreatePolygon(EState::STATE_PRELUDE_READY);
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -504,6 +559,10 @@ void CResultManager::StateStartPrelude()
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamPreludeWin);
 
+	// 勝利チーム
+	SAFE_KILL(m_pWinTeam);
+	m_pWinTeam = CWinTeamResult::Create(m_teamPreludeWin);
+
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -528,19 +587,14 @@ void CResultManager::StateStartCharmContestReady()
 	// 観客盛り下げ
 	CAudience::SetEnableJumpAll(false, m_teamPreludeWin);
 
-	// ポリゴン生成
+	// 王冠削除
 	SAFE_KILL(m_pCrown);
-	SAFE_KILL(m_pText);
-	m_pText = CObject3D::Create();
-	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
-	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
-	m_pText->SetSize(SIZE_POLY);
 
-	MyLib::Vector3 pos = VEC3_ZERO;
-	pos.y += Ready::POSY_WORD;
-	m_pText->SetPosition(pos);
+	// 勝利チーム
+	m_pWinTeam->SetState(CWinTeamResult::EState::STATE_FADEOUT);
 
-	m_pText->BindTexture(pTexture->Regist(TEXFILE_CONTEST));
+	// ポリゴン生成
+	CreatePolygon(EState::STATE_CONTEST_READY);
 
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
@@ -574,6 +628,9 @@ void CResultManager::StateStartCharmContest()
 	// モデル生成
 	SAFE_KILL(m_pText);
 	CreateCrown(m_teamContestWin);
+
+	// 勝利チーム
+	m_pWinTeam = CWinTeamResult::Create(m_teamContestWin);
 
 	// エフェクシア生成
 	CreateEffect();
@@ -672,11 +729,6 @@ void CResultManager::CreatePolygon(EState state)
 	m_pText = CObject3D::Create();
 	MyAssert::CustomAssert(m_pText != nullptr, "なんでポリゴン生成できてないんだよ");
 	m_pText->SetType(CObject::TYPE::TYPE_OBJECT3D);
-	m_pText->SetSize(SIZE_POLY);
-
-	MyLib::Vector3 pos = VEC3_ZERO;
-	pos.y += Ready::POSY_WORD;
-	m_pText->SetPosition(pos);
 
 	std::string filepass = TEXFILE_PRELUDE;
 
@@ -693,8 +745,20 @@ void CResultManager::CreatePolygon(EState state)
 	default:
 		break;
 	}
-	
-	m_pText->BindTexture(pTexture->Regist(filepass));
+
+	// テクスチャ割り当て
+	int texID = pTexture->Regist(filepass);
+	m_pText->BindTexture(texID);
+
+	// 縦幅を元にサイズ設定
+	MyLib::Vector2 size = pTexture->GetImageSize(texID);
+	size = UtilFunc::Transformation::AdjustSizeByHeight(size, HEIGHT_POLY);
+	m_pText->SetSize(0.0f);
+	m_pText->SetSizeOrigin(size);
+
+	// 位置設定
+	MyLib::Vector3 pos = MyLib::Vector3(-size.x * 0.5f, Ready::POSY_WORD, 0.0f);
+	m_pText->SetPosition(pos);
 }
 
 //==========================================================================

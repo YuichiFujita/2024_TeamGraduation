@@ -22,16 +22,6 @@ class CPlayer;
 //==========================================================================
 // 定数定義
 //==========================================================================
-namespace playerAIcontrol
-{
-	// 投げ関連
-	const float THROW_JUMP_END = 130.0f;			// ジャンプ投げの最大位置(ジャンプ力MAX：150)
-
-	// 線越え判定(中心(x)からの距離)
-	const float LINE_DISTANCE_OVER = 10.0f;		// 線超え判定の距離
-	const float RETURN_POS = 300.0f;			// 戻る位置
-	const float OK_LENGTH = 50.0f;				// 判定の範囲(目的との距離)
-}
 
 //==========================================================================
 // プレイヤーコントロールクラス定義
@@ -57,11 +47,13 @@ public:
 	CPlayer* GetPlayer() { return m_pAI; }									// 取得
 
 	void SetMode(CPlayerAIControlMode::EMode mode) { m_pAIControlMode->SetMode(mode); }	// モード設定
+	CPlayerAIControlMode::EMode GetMode() { return  m_pAIControlMode->GetMode(); }		// 取得
 
 private:
 	//=============================
 	// メンバ関数
 	//=============================
+	void ModeStart();
 	void ModeManager();
 	void ChangeMode(CPlayer* pPlayer, CPlayerAIControlMode::EMode mode);
 
@@ -70,6 +62,8 @@ private:
 	//=============================
 	CPlayer* m_pAI;							// 自分情報
 	CPlayerAIControlMode* m_pAIControlMode;	// モード
+
+	bool m_bStart;
 };
 
 #endif

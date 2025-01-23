@@ -851,6 +851,18 @@
     <ClCompile Include="Source\playerAIcontrol_attack.cpp">
       <Filter>player\playerAI\mode</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerReferee_result.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\winteamResult.cpp">
+      <Filter>mode\result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\spotlight.cpp">
+      <Filter>ingame\special</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_start.cpp">
+      <Filter>player\playerAI\mode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1553,6 +1565,18 @@
       <Filter>player\playerAI\mode</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerAIcontrol_attack.h">
+      <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerReferee_result.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\winteamResult.h">
+      <Filter>mode\result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\spotlight.h">
+      <Filter>ingame\special</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_start.h">
       <Filter>player\playerAI\mode</Filter>
     </ClInclude>
   </ItemGroup>

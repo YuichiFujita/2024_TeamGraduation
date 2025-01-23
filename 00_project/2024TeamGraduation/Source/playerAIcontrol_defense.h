@@ -24,8 +24,14 @@ class CPlayer;
 class CPlayerAIControlDefense : public CPlayerAIControlMode
 {
 public: 
+	enum EFlow				// 流れ
+	{
+		FLOW_START = 0,
+		FLOW_GAME,
+		FLOW_MAX
+	};
 
-	enum EActionStatus
+	enum EActionStatus		// アクション状態
 	{
 		ACTIONSTATUS_IDLE = 0,
 		ACTIONSTATUS_ACTION,
@@ -79,6 +85,7 @@ protected:
 	//=============================
 	virtual bool IsLineOverBall() { return false; }				// 線超え判定(ボール)
 	virtual bool IsLineOverPlayer() { return false; };			// 線越え判定(プレイヤー)
+	virtual void BallSteal() = 0;		// ボールを奪う
 
 	//=============================
 	// メンバ関数
@@ -126,8 +133,8 @@ private:
 	void MoveDodge();				// 回避
 	void MoveSupport();				// サポート
 	void MoveChaseBall();			// ボールを追いかける
-	virtual void MoveRetreat() {};	// 後退
-	virtual void MoveRandom() {};	// ランダム
+	virtual void MoveRetreat() = 0;	// 後退
+	virtual void MoveRandom() = 0;	// ランダム
 	void MoveLeave();				// 離れる
 
 	//=============================
@@ -136,8 +143,9 @@ private:
 	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
 	void Action0();			// アクション
 	void Action1();			// アクション
+	void TeammateBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
+	void TeamEnemyBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 相手チームボール
 
-	void BallSteal();		// ボールを奪う
 	void BallChase();		// ボールを追う
 
 	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
@@ -153,6 +161,7 @@ private:
 	//-----------------------------
 	// 列挙型
 	//-----------------------------
+	EFlow m_eFlow;					// 流れ
 	EAction m_eAction;				// アクション
 	EActionStatus m_eActionStatus;	// アクション状態
 
