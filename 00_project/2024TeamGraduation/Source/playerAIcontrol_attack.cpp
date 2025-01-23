@@ -154,15 +154,14 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 	{// ターゲットが設定されていない場合
 		m_pTarget = GetThrowTarget();
 	}
-	else {
-		return;
+	else
+	{
+		// 見る
+		SeeTarget(m_pTarget->GetPosition());
+
+		// 投げ種類の更新
+		(this->*(m_AttackModeFunc[m_eAttackMode]))();
 	}
-
-	// 見る
-	SeeTarget(m_pTarget->GetPosition());
-
-	// 投げ種類の更新
-	(this->*(m_AttackModeFunc[m_eAttackMode]))();
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);

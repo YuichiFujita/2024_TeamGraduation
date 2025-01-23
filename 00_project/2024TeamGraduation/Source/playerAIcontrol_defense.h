@@ -142,7 +142,7 @@ private:
 	//=============================
 	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
 	void Action0();			// アクション
-	void Action1();			// アクション
+	void SelectAction();			// アクション
 	void TeammateBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
 	void TeamEnemyBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 相手チームボール
 
