@@ -165,57 +165,66 @@ void CPlayerAIControlDefense::Update(const float fDeltaTime, const float fDeltaR
 	if (!pBall) return;
 	CPlayer* pPlayer = pBall->GetPlayer();
 
-	if (pBall->GetTarget() == GetPlayer())
-	{// ボールのターゲットが自分の場合
-		return;
-	}
-
 	if (pPlayer)
 	{// 味方がボールを持っている場合
-		TeammateBall(fDeltaTime, fDeltaRate, fSlowRate);
+		PlayerBall(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 	else
-	{// 敵がボールを持っている場合
-		TeamEnemyBall(fDeltaTime, fDeltaRate, fSlowRate);
+	{// 誰もボールを持っていない
+		NotPlayerBall(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// 守りの更新
+	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //================================================================================
-// チームメイトボール
+// プレイヤーがボールを持っている
 //================================================================================
-void CPlayerAIControlDefense::TeammateBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボール情報の取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall) return;
-	CPlayer* pPlayer = pBall->GetPlayer();
+	CPlayer* pPlayer = pBall->GetPlayer();	// ボールからプレイヤー情報を取得
 
 	// チーム
-	CGameManager::ETeamSide side = pPlayer->GetTeam();
-	CGameManager::ETeamSide side1 = GetPlayer()->GetTeam();
+	CGameManager::ETeamSide sideBall = pPlayer->GetTeam();			// ボール持ち主のチーム取得
+	CGameManager::ETeamSide sideMy = GetPlayer()->GetTeam();		// 自分のチーム取得
 
 	switch (pPlayer->GetAreaType())
 	{// エリア別
 
 	case CPlayer::EFieldArea::FIELD_IN:	// 内野
 
-		if (side == side1)
+		if (sideBall == sideMy)
 		{// 同じチーム
-			MoveRandom();
+
+			if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
+
+			m_eAction = EAction::RNDOM;
+
+			// アクション状態：アクション
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
 		}
 		else
-		{
-			// 守りの更新
-			UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
+		{// 行うアクションを決める
+			SelectAction();
 		}
 
 		break;
 
 	case CPlayer::EFieldArea::FIELD_OUT:	// 外野
 
-		MoveRandom();
+		if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
+
+		m_eAction = EAction::RNDOM;
+
+		// アクション状態：アクション
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
 
 		break;
 
@@ -225,17 +234,50 @@ void CPlayerAIControlDefense::TeammateBall(const float fDeltaTime, const float f
 }
 
 //================================================================================
-// 相手チームボール
+// 誰もボールを持っていない
 //================================================================================
-void CPlayerAIControlDefense::TeamEnemyBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlDefense::NotPlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!IsLineOverBall())
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	CBall::EState stateBall = pBall->GetState();
+
+	if (!IsLineOverBall() &&					// 自陣にある
+		stateBall == CBall::EState::STATE_LAND ||	// 転がっている
+		stateBall == CBall::EState::STATE_FREE)		// 触れて取れる状態
 	{
 		// ボールを追う
 		m_eAction = EAction::CHASE_BALL;
+
+		// アクション状態：アクション
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
+
+		return;
 	}
 
-	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
+	if (IsPassTarget() &&							// 巣が自分に来る
+		stateBall == CBall::EState::STATE_PASS)		// ボールがパス状態
+	{
+		// 何もしない
+		m_eAction = EAction::IDLE;
+
+		// アクション状態：待機
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
+
+		return;
+	}
+
+	if (pBall->GetTarget() == GetPlayer())
+	{// ボールのターゲットが自分の場合
+
+		// 何もしない
+		m_eAction = EAction::IDLE;
+
+		// アクション状態：待機
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
+
+		return;
+	}
 }
 
 //================================================================================
@@ -243,26 +285,15 @@ void CPlayerAIControlDefense::TeamEnemyBall(const float fDeltaTime, const float 
 //================================================================================
 void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// ボールの取得
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall == nullptr) return;	// ボールねぇぞ
-	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
-
-	// 持ち主情報取得
-	CPlayer* pPlayer = GetBallOwner();
-
 	switch (m_eActionStatus)
 	{
 	case EActionStatus::ACTIONSTATUS_IDLE:		// 待機
 
-		// 行うアクションを決める
-		SelectAction();
+		// 行動フラグ：待機
+		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 
-		if (m_eAction != EAction::IDLE)
-		{
-			// アクション状態：アクション
-			m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
-		}
+		// アクションフラグ：なし
+		SetActionFlag(EActionFlag::ACTION_NONE);
 
 		break;
 
@@ -314,38 +345,11 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 //================================================================================
 // アクション決め
 //================================================================================
-void CPlayerAIControlDefense::Action0()
-{
-	// 持ち主情報取得
-	CPlayer* pPlayer = GetBallOwner();
-
-	CPlayer::EFieldArea area = pPlayer->GetAreaType();
-
-	if (area == CPlayer::EFieldArea::FIELD_IN)
-	{// ボール持ち主が内野の場合
-		m_eAction = EAction::RNDOM;
-	}
-	else
-	{
-		m_eAction = EAction::LEAVE;
-	}
-}
-
-//================================================================================
-// アクション決め
-//================================================================================
 void CPlayerAIControlDefense::SelectAction()
 {
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;	// ボールねぇぞ
-	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
-
-	if (IsPassTarget() && stateBall == CBall::EState::STATE_PASS)
-	{// パスが自分に来る&&ボールがパス状態の合
-		// 何もしない
-		m_eAction = EAction::IDLE;
-	}
 
 	// AIの取得
 	CPlayer* pAI = GetPlayer();
@@ -353,16 +357,18 @@ void CPlayerAIControlDefense::SelectAction()
 
 	if (pBall->GetTarget() == pAI)
 	{// ターゲットが自分
-		float distanceBall = GetDistanceBall();		// ボールとの距離
 
-		if (distanceBall > 300.0f) {
-			// 後退(安全地帯へ)
-			m_eAction = EAction::RNDOM;
-		}
-		else {
+		m_eAction = EAction::LEAVE;
+	}
+	else
+	{
+		m_eAction = EAction::RNDOM;
+	}
 
-			m_eAction = EAction::IDLE;
-		}
+	if (m_eAction != EAction::IDLE)
+	{
+		// アクション状態：アクション
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
 	}
 }
 
