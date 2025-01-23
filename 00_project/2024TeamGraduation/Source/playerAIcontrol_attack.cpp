@@ -174,22 +174,16 @@ void CPlayerAIControlAttack::AttackModePreparation()
 {
 	if (m_ePreparation == EATTACKPREPATARION::ATTACKPREPATARION_NONE)
 	{
-		//int n = rand() % 2;
-		int n = 1;
+		// 自分とターゲットとの距離を算出
+		float fDistance = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-		switch (n)
+		if (fDistance < 100.0f)
 		{
-		case 0:	// 直ぐ
-			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_GO;
-			break;
-
-		case 1:	// 離れる
 			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_LEAVE;
-			break;
-
-		default:
-			assert(false);
-			break;
+		}
+		else
+		{
+			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_GO;
 		}
 	}
 
@@ -233,12 +227,19 @@ void CPlayerAIControlAttack::UpdateAttack()
 	CPlayer* pAI = GetPlayer();
 	if (!pAI) return;
 
-	// 取得
-	CGameManager* pGameManager = CGameManager::GetInstance();	// ゲームマネージャ
-	CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(pAI->GetTeam());	// 自分のチーム情報
-
 	if (m_eThrowType == EThrowType::THROWTYPE_NONE)
 	{
+		// スペシャルゲージの取得
+		CGameManager* pGameManager = CGameManager::GetInstance();						// ゲームマネージャ
+		CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(pAI->GetTeam());			// 自分チームのスペシャル情報
+		CTeamStatus* pTeamStatus1 = pGameManager->GetTeamStatus(m_pTarget->GetTeam());	// 相手チームのスペシャル情報
+
+		float fSpecialValue = pTeamStatus->GetSpecialValue();
+		float fSpecialValue1 = pTeamStatus1->GetSpecialValue();
+
+
+
+
 		if (pTeamStatus->IsMaxSpecial())
 		{// ゲージが溜まっていたら
 			// スペシャル投げ
@@ -246,9 +247,9 @@ void CPlayerAIControlAttack::UpdateAttack()
 		}
 		else
 		{// 投げろフラグがオンだったら
-			int n = 1;
+			//int n = 1;
 			// 今はランダムで決定
-			//int n = rand() % 2;
+			int n = rand() % 2;
 
 			switch (n)
 			{
