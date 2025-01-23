@@ -69,6 +69,7 @@ public:
 		MOTION_JUMP,					// ジャンプ
 		MOTION_JUMP_BALL,				// ジャンプ(ボール所持)
 		MOTION_LAND,					// 着地
+		MOTION_LAND_SP,					// 着地(スペシャル)
 		MOTION_CATCH_STANCE,			// キャッチの構え
 		MOTION_CATCH_STANCE_JUMP,		// キャッチの構え(ジャンプ)
 		MOTION_CATCH_NORMAL,			// キャッチ(通常)

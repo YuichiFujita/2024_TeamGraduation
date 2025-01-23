@@ -254,6 +254,7 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_dodge.txt				# 回避成
 MOTION_FILENAME = data/TEXT/character/player/common/motion_jump.txt					# ジャンプ
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_jump_ball.txt			# ジャンプ(ボール所持)
 MOTION_FILENAME = data/TEXT/character/player/common/motion_land.txt					# 着地
+MOTION_FILENAME = data/TEXT/character/player/common/motion_landSP.txt				# 着地(スペシャル)
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance.txt		# キャッチ構え
 MOTION_FILENAME = data/TEXT/character/player/lefthand/motion_catch_stance_jump.txt	# キャッチ構え
 MOTION_FILENAME = data/TEXT/character/player/common/motion_catch_normal.txt			# 通常キャッチ(通常)
