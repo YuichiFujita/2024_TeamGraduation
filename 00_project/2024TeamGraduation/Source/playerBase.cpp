@@ -61,19 +61,11 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	hitInfo.eHit = CPlayer::HIT_NONE;
 	hitInfo.bHit = false;
 
-	if (m_pPlayer->GetMotionFrag().bDead)
-	{ // 死亡状態ならすり抜け
-
-		hitInfo.bHit = true;
-		return hitInfo;
-	}
-
 	if (action == CPlayer::EAction::ACTION_DODGE)
 	{ // 回避行動中ならすり抜け
 
 		return hitInfo;
 	}
-
 	
 	if (IsAutoBallCatch(pBall))
 	{ // 自動ボールキャッチが可能な場合
@@ -106,7 +98,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		// カバーキャッチ時の設定
 		m_pPlayer->CoverCatchSetting(pBall);
-
 		return hitInfo;
 	}
 
@@ -115,6 +106,13 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	
 	// 味方のボールならすり抜ける
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
+
+	// 死亡状態ならすり抜け
+	if (m_pPlayer->GetMotionFrag().bDead)
+	{
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_pPlayer->GetDamageInfo().bReceived)
@@ -132,7 +130,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
-
 		return hitInfo;
 	}
 
@@ -140,7 +137,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	hitInfo.bHit = true;
 
 	if (state == CPlayer::EState::STATE_INVADE_RETURN)
-	{// コートから戻っているとき
+	{ // コートから戻っているとき
 			
 		// モテ減少
 		CGameManager* pGameMgr = CGameManager::GetInstance();
