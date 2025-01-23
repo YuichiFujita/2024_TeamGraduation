@@ -1,60 +1,33 @@
-//=============================================================================
+//==========================================================================
 // 
 //  ロード画面処理 [loadscreen.cpp]
 //  Author : 相馬靜雅
+//  Adder  : 藤田勇一
 // 
-//=============================================================================
+//==========================================================================
 #include "loadscreen.h"
 #include "manager.h"
 #include "renderer.h"
 #include "texture.h"
-#include "object2D.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const int NUM_STRING = 10;	// NOWLOADINGの文字数
-	const std::string TEXPATH[NUM_STRING] =
-	{
-		"data\\TEXTURE\\load\\n.png",
-		"data\\TEXTURE\\load\\o.png",
-		"data\\TEXTURE\\load\\w.png",
-		"data\\TEXTURE\\load\\l.png",
-		"data\\TEXTURE\\load\\o.png",
-		"data\\TEXTURE\\load\\a.png",
-		"data\\TEXTURE\\load\\d.png",
-		"data\\TEXTURE\\load\\i.png",
-		"data\\TEXTURE\\load\\mini_n.png",
-		"data\\TEXTURE\\load\\g.png",
-	};
-	const std::string TEXTURE_CYLINDER = "data\\TEXTURE\\load\\cylinder.png";
-	const MyLib::Vector3 STR_DEFPOS = MyLib::Vector3(150.0f, 300.0f, 0.0f);	// 基点の位置
-	const MyLib::Vector3 DEFAULTPOS_CYLINDER = MyLib::Vector3(-300.0f, 600.0f, 0.0f);	// 基点の位置
-	const float STR_HEIGHT = 100.0f;		// 文字列の高さ
-	const float CYLINDER_HEIGHT = 100.0f;	// 筒の高さ
+	const char* TEXTURE_FILE	= "data\\TEXTURE\\loading000.tga";	// ロード画面テクスチャ
+	const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(12, 4);			// テクスチャ分割数
+	const int	PRIORITY	= 7;		// ローディングの優先順位
+	const int	ANIM_WAIT	= 2;		// アニメーションの変更フレーム
+	const float	FADE_LEVEL	= 0.05f;	// フェードのα値の加減量
 }
-
-
-//==========================================================================
-// 静的メンバ変数宣言
-//==========================================================================
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CLoadScreen::CLoadScreen()
+CLoadScreen::CLoadScreen() : m_pLoad(nullptr)
 {
-	// 値のクリア
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		m_apObj2D[i] = nullptr;
-	}
 
-	// 筒
-	m_pCylinder = nullptr;
-	m_fBobbingTime = 0.0f;		// ぷかぷかタイマー
 }
 
 //==========================================================================
@@ -71,19 +44,19 @@ CLoadScreen::~CLoadScreen()
 CLoadScreen* CLoadScreen::Create()
 {
 	// メモリの確保
-	CLoadScreen* pFade = DEBUG_NEW CLoadScreen;
-
-	if (pFade != nullptr)
-	{// メモリの確保が出来ていたら
+	CLoadScreen* pScreen = DEBUG_NEW CLoadScreen;
+	if (pScreen != nullptr)
+	{ // メモリ確保に成功した場合
 
 		// 初期化処理
-		if (FAILED(pFade->Init()))
-		{// 失敗していたら
+		if (FAILED(pScreen->Init()))
+		{ // 生成に失敗した場合
+
 			return nullptr;
 		}
 	}
 
-	return pFade;
+	return pScreen;
 }
 
 //==========================================================================
@@ -91,60 +64,38 @@ CLoadScreen* CLoadScreen::Create()
 //==========================================================================
 HRESULT CLoadScreen::Init()
 {
-	
-	MyLib::Vector3 pos = STR_DEFPOS;
-	CTexture* pTex = CTexture::GetInstance();
+	CTexture* pTexture = CTexture::GetInstance();	// テクスチャ情報
 
-	// 文字生成
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		m_apObj2D[i] = CObject2D::Create();
-		m_apObj2D[i]->SetType(CObject::TYPE::TYPE_NONE);
-		m_apObj2D[i]->SetPosition(pos);
-		m_apObj2D[i]->SetOriginPosition(pos);
+	// ロード画面の生成
+	m_pLoad = CObject2D_Anim::Create
+	( // 引数
+		VEC3_SCREEN_CENT,	// 位置
+		PTRN.x,	// テクスチャ横分割数
+		PTRN.y,	// テクスチャ縦分割数
+		0.029f,	// 待機時間
+		false,	// 自動破棄
+		6		// 優先順位
+	);
+	if (m_pLoad == nullptr)
+	{ // 生成に失敗した場合
 
-		// テクスチャ割り当て
-		int nIdx = pTex->Regist(TEXPATH[i]);
-		m_apObj2D[i]->BindTexture(nIdx);
-
-		// サイズ変更
-		D3DXVECTOR2 size = UtilFunc::Transformation::AdjustSizeByHeight(pTex->GetImageSize(nIdx), STR_HEIGHT);
-		m_apObj2D[i]->SetSize(size);
-
-		// 生成位置ずらす
-		pos.x += size.x * 2.0f;
-
-		if (i == 2)
-		{// NOWとLoadingの間
-			pos.x += size.x * 2;
-		}
+		assert(false);
+		return E_FAIL;
 	}
 
-	// 筒生成
-	CreateCylinder();
+	// テクスチャの割当
+	m_pLoad->BindTexture(pTexture->Regist(TEXTURE_FILE));
+
+	// 種類指定なしにする
+	m_pLoad->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 自動再生をONにする
+	m_pLoad->SetEnableAutoPlay(true);
+
+	// 大きさの設定
+	m_pLoad->SetSize(VEC2_SCREEN_SIZE * 0.5f);
 
 	return S_OK;
-}
-
-//==========================================================================
-// 筒生成
-//==========================================================================
-void CLoadScreen::CreateCylinder()
-{
-	// 筒生成
-	m_pCylinder = CObject2D::Create();
-	m_pCylinder->SetType(CObject::TYPE::TYPE_NONE);
-	m_pCylinder->SetPosition(DEFAULTPOS_CYLINDER);
-	m_pCylinder->SetOriginPosition(DEFAULTPOS_CYLINDER);
-
-	// テクスチャ割り当て
-	int nIdx = CTexture::GetInstance()->Regist(TEXTURE_CYLINDER);
-	m_pCylinder->BindTexture(nIdx);
-
-	// サイズ変更
-	D3DXVECTOR2 size = UtilFunc::Transformation::AdjustSizeByHeight(CTexture::GetInstance()->GetImageSize(nIdx), CYLINDER_HEIGHT);
-	m_pCylinder->SetSize(size);
-
 }
 
 //==========================================================================
@@ -152,21 +103,8 @@ void CLoadScreen::CreateCylinder()
 //==========================================================================
 void CLoadScreen::Uninit()
 {
-
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		if (m_apObj2D[i] == nullptr)
-		{
-			m_apObj2D[i]->Uninit();
-			m_apObj2D[i] = nullptr;
-		}
-	}
-
-	if (m_pCylinder != nullptr)
-	{
-		m_pCylinder->Uninit();
-		m_pCylinder = nullptr;
-	}
+	// ロード画面の終了
+	SAFE_UNINIT(m_pLoad);
 }
 
 //==========================================================================
@@ -174,22 +112,8 @@ void CLoadScreen::Uninit()
 //==========================================================================
 void CLoadScreen::Kill()
 {
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		if (m_apObj2D[i] != nullptr)
-		{
-			m_apObj2D[i]->Uninit();
-			delete m_apObj2D[i];
-			m_apObj2D[i] = nullptr;
-		}
-	}
-
-	if (m_pCylinder != nullptr)
-	{
-		m_pCylinder->Uninit();
-		delete m_pCylinder;
-		m_pCylinder = nullptr;
-	}
+	// ロード画面の削除
+	SAFE_KILL(m_pLoad);
 }
 
 //==========================================================================
@@ -197,105 +121,8 @@ void CLoadScreen::Kill()
 //==========================================================================
 void CLoadScreen::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// 文字生成
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		if (m_apObj2D[i] == nullptr) continue;
-
-		// アドレス渡し
-		CObject2D* pObj2D = m_apObj2D[i];
-
-		// 情報取得
-		MyLib::Vector3 pos = pObj2D->GetPosition(), move = pObj2D->GetMove(), rot = pObj2D->GetRotation();
-		MyLib::Vector3 posOrigin = pObj2D->GetOriginPosition();
-		pos.y += move.y * fDeltaRate * fSlowRate;
-		move.y += 0.15f * fDeltaRate * fSlowRate;
-
-		// 回転
-		rot.z = UtilFunc::Correction::EasingEaseIn(0.0f, D3DX_PI * -0.5f, posOrigin.y, posOrigin.y - 200.0f, pos.y);
-
-		if (posOrigin.y <= pos.y)
-		{// 着地
-			move.y = 0.0f;
-			pos.y = posOrigin.y;
-		}
-
-		// 情報設定
-		pObj2D->SetPosition(pos);
-		pObj2D->SetMove(move);
-		pObj2D->SetRotation(rot);
-
-		// 更新処理
-		pObj2D->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	// 筒の動き
-	MoveCylinder(fDeltaTime, fDeltaRate, fSlowRate);
-	if (m_pCylinder != nullptr)
-	{
-		m_pCylinder->Update(fDeltaTime, fDeltaRate, fSlowRate);
-	}
-
-	// 文字との判定
-	CollisionText();
-}
-
-//==========================================================================
-// 文字との判定
-//==========================================================================
-void CLoadScreen::CollisionText()
-{
-	if (m_pCylinder == nullptr) return;
-
-	// 位置取得
-	MyLib::Vector3 pos = m_pCylinder->GetPosition();
-
-	MyLib::Vector3 textpos;
-	D3DXVECTOR2 textsize;
-	for (const auto& text : m_apObj2D)
-	{
-		// 情報取得
-		textpos = text->GetPosition();
-		textsize = text->GetSize();
-
-		if (pos.x >= textpos.x - textsize.x &&
-			pos.x <= textpos.x + textsize.x &&
-			textpos.IsNearlyTargetY(text->GetOriginPosition().y, 0.1f))
-		{// 判定 && 着地
-
-			// 吹上げ
-			text->SetMove(MyLib::Vector3(0.0f, -5.0f, 0.0f));
-
-		}
-	}
-
-}
-
-//==========================================================================
-// 筒の動き
-//==========================================================================
-void CLoadScreen::MoveCylinder(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	if (m_pCylinder == nullptr) return;
-
-	// 位置取得
-	MyLib::Vector3 pos = m_pCylinder->GetPosition(), posOrigin = m_pCylinder->GetOriginPosition();
-
-	// 横移動
-	pos.x += 5.0f;
-
-	// ぷかぷか
-	m_fBobbingTime += fDeltaTime * fSlowRate;
-	pos.y = posOrigin.y + sinf(D3DX_PI * (m_fBobbingTime / 0.8f)) * 10.0f;
-
-	// 折り返し
-	if (pos.x >= 1280.0f + m_pCylinder->GetSize().x)
-	{
-		pos.x = -100.0f;
-	}
-
-	// 位置設定
-	m_pCylinder->SetPosition(pos);
+	// ロード画面の更新
+	m_pLoad->Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -303,17 +130,6 @@ void CLoadScreen::MoveCylinder(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 void CLoadScreen::Draw()
 {
-	// 文字描画
-	for (int i = 0; i < NUM_STRING; i++)
-	{
-		if (m_apObj2D[i] != nullptr)
-		{
-			m_apObj2D[i]->Draw();
-		}
-	}
-
-	if (m_pCylinder != nullptr)
-	{
-		m_pCylinder->Draw();
-	}
+	// ロード画面の描画
+	m_pLoad->Draw();
 }
