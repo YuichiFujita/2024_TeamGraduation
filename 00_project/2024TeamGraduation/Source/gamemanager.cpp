@@ -331,6 +331,12 @@ void CGameManager::Uninit()
 	CPlayerManager* pManager = CPlayerManager::GetInstance();
 	SAFE_UNINIT(pManager);
 
+	// タイマーUI
+	SAFE_UNINIT(m_pTimerUI);
+
+	// タイマー背景
+	SAFE_UNINIT(m_pTimerBG);
+
 	// モテマネージャ
 	SAFE_UNINIT(m_pCharmManager);
 
