@@ -137,6 +137,9 @@ HRESULT CSpecialManager::Init(void)
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
 
+	// ジャンプモーションにする
+	m_pAttackPlayer->SetMotion(CPlayer::EMotion::MOTION_JUMP);
+
 	// 通常カメラの設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 	pCamera->SetState(CCamera::STATE_NONE, false);
@@ -221,6 +224,9 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 
 			// ジャンプ終了
 			m_bJump = false;
+
+			// ヒーロー着地モーションにする
+			m_pAttackPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND_SP);
 		}
 
 		// 位置を設定
