@@ -860,6 +860,9 @@
     <ClCompile Include="Source\spotlight.cpp">
       <Filter>ingame\special</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerAIcontrol_start.cpp">
+      <Filter>player\playerAI\mode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1572,6 +1575,9 @@
     </ClInclude>
     <ClInclude Include="Source\spotlight.h">
       <Filter>ingame\special</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerAIcontrol_start.h">
+      <Filter>player\playerAI\mode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

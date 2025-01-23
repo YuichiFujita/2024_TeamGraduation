@@ -123,6 +123,8 @@ HRESULT CPlayerAIControlAttack::Init()
 	CPlayerAIControlMode::Init();
 
 	// 値のクリア
+	m_pTarget = nullptr;
+
 	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
 	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
 	m_eThrowType = EThrowType::THROWTYPE_NONE;
@@ -136,6 +138,8 @@ HRESULT CPlayerAIControlAttack::Init()
 //==========================================================================
 void CPlayerAIControlAttack::Uninit()
 {
+	delete this;
+
 	CPlayerAIControlMode::Uninit();
 }
 
@@ -144,10 +148,20 @@ void CPlayerAIControlAttack::Uninit()
 //==========================================================================
 void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//SeeTarget();
+	if (IsStop()) return;
 
-	// 投げ種類の更新
-	(this->*(m_AttackModeFunc[m_eAttackMode]))();
+	if (!m_pTarget)
+	{// ターゲットが設定されていない場合
+		m_pTarget = GetThrowTarget();
+	}
+	else
+	{
+		// 見る
+		SeeTarget(m_pTarget->GetPosition());
+
+		// 投げ種類の更新
+		(this->*(m_AttackModeFunc[m_eAttackMode]))();
+	}
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -160,15 +174,16 @@ void CPlayerAIControlAttack::AttackModePreparation()
 {
 	if (m_ePreparation == EATTACKPREPATARION::ATTACKPREPATARION_NONE)
 	{
-		int n = rand() % 2;
+		//int n = rand() % 2;
+		int n = 1;
 
 		switch (n)
 		{
-		case 0:	// 通常
+		case 0:	// 直ぐ
 			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_GO;
 			break;
 
-		case 1:	// ジャンプ
+		case 1:	// 離れる
 			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_LEAVE;
 			break;
 
@@ -231,9 +246,9 @@ void CPlayerAIControlAttack::UpdateAttack()
 		}
 		else
 		{// 投げろフラグがオンだったら
-			//int n = 1;
+			int n = 1;
 			// 今はランダムで決定
-			int n = rand() % 2;
+			//int n = rand() % 2;
 
 			switch (n)
 			{
@@ -311,7 +326,7 @@ void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget)
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
-		if (Approatch(posTarget, JUMP_LENGTH_LINE))
+		if (Approatch(posTarget, GetParameter().fRadius))
 		{// 範囲内の場合
 			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
 		}
@@ -343,7 +358,7 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 	float distanceLine = 0.0f;
 	float distanceTarget = 0.0f;
 	float JUMP_LENGTH_TARGET = 500.0f;
-	float JUMP_LENGTH_LINE = 300.0f;
+	float JUMP_LENGTH_LINE = 100.0f;
 
 	// ターゲットのエリアの取得
 	CGameManager::ETeamSide side = pMy->GetTeam();
@@ -364,23 +379,24 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 		// 走る
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
+
 		// 相手の位置に近づく
-		if (Approatch(posTarget, JUMP_LENGTH_LINE))
+		if (Approatch(posTarget, GetParameter().fRadius))
 		{// 範囲内の場合
-			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
+			//SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
 		}
 
 		return;
 	}
 
-	if (distanceTarget > JUMP_LENGTH_TARGET/* && distanceLine > JUMP_LENGTH_LINE*/)
+	/*if (distanceTarget > JUMP_LENGTH_TARGET)*/
 	{// ターゲットとの距離が範囲以上&&中央線との距離が範囲内の場合
 		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 	}
 
-	if (pMy->GetPosition().y >= playerAIcontrol::THROW_JUMP_END)	// 高さによって変わる
+	if (pMy->GetPosition().y >= GetParameter().fJumpEnd)	// 高さによって変わる
 	{
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
+		//SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
 	}
 }
@@ -401,10 +417,8 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 	// その場なのか歩くのか走るのか
 	//m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
 
-	CPlayer* pTartget = GetThrowTarget();
-
 	// 走り投げ
-	AttackDashJump(pTartget);
+	AttackDashJump(m_pTarget);
 }
 
 //--------------------------------------------------------------------------
@@ -597,9 +611,6 @@ CPlayer* CPlayerAIControlAttack::GetBallOwner()
 	pTarget = pBall->GetPlayer();
 	if (!pTarget) return nullptr;
 
-	// 見る
-	SeeTarget(pTarget->GetPosition());
-
 	return pTarget;
 }
 
@@ -608,8 +619,11 @@ CPlayer* CPlayerAIControlAttack::GetBallOwner()
 //==========================================================================
 CPlayer* CPlayerAIControlAttack::GetThrowTarget()
 {
-	CPlayer* pTarget = nullptr;	// 目標ターゲット
+	CPlayer* pTarget = nullptr;			// 最終的なターゲット
+	CPlayer* pTargetLength = nullptr;	// 距離ターゲットの保存用
+	CPlayer* pTargetLife = nullptr;		// 体力ターゲットの保存用
 	float fMinDis = 1000000.0f;	// 近いプレイヤー
+	int nMinLife = 1000000;
 
 	// AIの取得
 	CPlayer* pAI = GetPlayer();
@@ -626,19 +640,31 @@ CPlayer* CPlayerAIControlAttack::GetThrowTarget()
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
 	while (list.ListLoop(itr))
 	{ // リスト内の要素数分繰り返す
-
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
-		// 同じチーム||外野の場合
-		if ((typeTeam == pPlayer->GetTeam()) ||
-			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
-		{
+
+		if (typeTeam == pPlayer->GetTeam() ||
+			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT||
+			pPlayer->GetMotionFrag().bDead)
+		{// 同じチーム||外野||死亡している場合
 			continue;
 		}
 
 		// 敵との距離を求める
 		float fLength = Mypos.DistanceXZ(posPlayer);
+
+		int nLife = pPlayer->GetLife();
+
+		if (nLife < nMinLife)
+		{// より体力の少ないプレイヤーがいた場合
+
+			// 最小体力の更新
+			nMinLife = nLife;
+
+			// ターゲットを更新
+			pTargetLife = pPlayer;
+		}
 
 		if (fLength < fMinDis)
 		{ // より近い相手プレイヤーがいた場合
@@ -647,11 +673,19 @@ CPlayer* CPlayerAIControlAttack::GetThrowTarget()
 			fMinDis = fLength;
 
 			// ターゲットを更新
-			pTarget = pPlayer;
-
-			// 見る
-			SeeTarget(pTarget->GetPosition());
+			pTargetLength = pPlayer;
 		}
+	}
+
+	int i = rand() % 2;
+
+	if (i == 0)
+	{
+		pTarget = pTargetLife;
+	}
+	else
+	{
+		pTarget = pTargetLength;
 	}
 
 	return pTarget;
@@ -669,4 +703,22 @@ void CPlayerAIControlAttack::SeeTarget(MyLib::Vector3 pos)
 	// 向き設定
 	float angle = pAI->GetPosition().AngleXZ(pos);
 	pAI->SetRotDest(angle);
+}
+
+//================================================================================
+// 行動してはいけない判定
+//================================================================================
+bool CPlayerAIControlAttack::IsStop()
+{
+	CPlayer* pPlayer = GetPlayer();
+	CPlayer::EState state = pPlayer->GetState();
+
+	if (state == CPlayer::EState::STATE_CATCH_NORMAL ||
+		state == CPlayer::EState::STATE_CATCH_JUST ||
+		state == CPlayer::EState::STATE_CATCH_SPECIAL)
+	{
+		return true;
+	}
+
+	return false;
 }
