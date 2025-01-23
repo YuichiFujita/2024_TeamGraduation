@@ -135,23 +135,15 @@ void CPlayerAction::ActionUnstable(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//ダメージ受付しない時間設定
-	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();
-	
 	if (m_fActionTime >= ActionTime::BLINK)
 	{// ブリンク経過
-
-		DmgInfo.fReceiveTime = 0.0f;
-		m_pPlayer->SetDamageInfo(DmgInfo);
-
 		SetAction(CPlayer::EAction::ACTION_NONE);
 	}
 
+	CMotion* pMotion = m_pPlayer->GetMotion();
+
 	// 自分ボール持ってる
 	if (m_pPlayer->GetBall() != nullptr) return;
-
-	DmgInfo.fReceiveTime = 1.0f;
-	m_pPlayer->SetDamageInfo(DmgInfo);
 
 	//回避判定
 	CBall* pObj = CGameManager::GetInstance()->GetBall();
@@ -159,6 +151,9 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 
 	// 攻撃状態でないor自陣
 	if (!pObj->IsAttack() || pObj->GetTypeTeam() == teamPlayer) return;
+
+	// 攻撃フレーム(回避猶予)じゃないならはじく
+	if (!pMotion->IsAttacking()) return;
 
 	// 判定
 	if (UtilFunc::Collision::CollisionCircleCylinder(
