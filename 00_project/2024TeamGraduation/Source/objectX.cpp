@@ -42,7 +42,7 @@ CObjectX::CObjectX(int nPriority, CObject::LAYER layer) : CObject(nPriority, lay
 	m_nIdxXFile = 0;							// Xファイルのインデックス番号
 	m_pShadow = nullptr;						// 影の情報
 	m_bShadow = false;							// 影を使っているかどうか
-	m_bUpdateMtx = false;						// マトリックス更新するかどうか
+	m_bUpdateMtx = true;						// マトリックス更新するかどうか
 	m_pCollisionLineBox = nullptr;				// 当たり判定ボックス
 }
 

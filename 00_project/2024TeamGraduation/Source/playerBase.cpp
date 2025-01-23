@@ -61,9 +61,15 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	hitInfo.eHit = CPlayer::HIT_NONE;
 	hitInfo.bHit = false;
 
-	if (m_pPlayer->GetMotionFrag().bDead ||
-		action == CPlayer::EAction::ACTION_DODGE)
-	{ // €–Só‘Ôor‰ñ”ğs“®’†‚È‚ç‚·‚è”²‚¯
+	if (m_pPlayer->GetMotionFrag().bDead)
+	{ // €–Só‘Ô‚È‚ç‚·‚è”²‚¯
+
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
+
+	if (action == CPlayer::EAction::ACTION_DODGE)
+	{ // ‰ñ”ğs“®’†‚È‚ç‚·‚è”²‚¯
 
 		return hitInfo;
 	}

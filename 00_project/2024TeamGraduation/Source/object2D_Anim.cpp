@@ -120,7 +120,7 @@ void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, cons
 	if (m_bAutoPlay)
 	{
 		// カウントを更新
-		m_fTimerAnim += fDeltaTime * fDeltaRate * fSlowRate;
+		m_fTimerAnim += fDeltaTime * fSlowRate;
 
 		// パターン更新
 		if (m_fTimerAnim >= m_fIntervalAnim)

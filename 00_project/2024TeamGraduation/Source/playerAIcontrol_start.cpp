@@ -105,17 +105,18 @@ void CPlayerAIControlStart::Update(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAIControlStart::Gooooo()
 {
-	if (IsPicksUpBall())
-	{// 自分より近いプレイヤーがいた場合
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+
+	if (!pBall)
+	{// ボールがない場合
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		SetActionFlag(EActionFlag::ACTION_NONE);
 		SetMode(EMode::MODE_IDLE);
 		return;
 	}
 
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall)
-	{// ボールがない場合
+	if (IsPicksUpBall())
+	{// 自分より近いプレイヤーがいた場合
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		SetActionFlag(EActionFlag::ACTION_NONE);
 		SetMode(EMode::MODE_IDLE);
@@ -131,9 +132,33 @@ void CPlayerAIControlStart::Gooooo()
 		return;
 	}
 
+	// ボールを見る
+	SeeBall();
+
 	SetActionFlag(EActionFlag::ACTION_JUMP);
 	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 }
+
+//==========================================================================
+// ボールを見る
+//==========================================================================
+void CPlayerAIControlStart::SeeBall()
+{
+	// ボール情報の取得
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
+	// ボールとの角度
+	float angle = pAI->GetPosition().AngleXZ(pBall->GetPosition());
+
+	// 角度の設定
+	pAI->SetRotDest(angle);
+}
+
 
 //==========================================================================
 // 誰がボールを取りに行きますか？

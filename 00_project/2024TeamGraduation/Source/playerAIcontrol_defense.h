@@ -141,10 +141,9 @@ private:
 	// メンバ関数
 	//=============================
 	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
-	void Action0();			// アクション
 	void SelectAction();			// アクション
-	void TeammateBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
-	void TeamEnemyBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 相手チームボール
+	void PlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
+	void NotPlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
 
 	void BallChase();		// ボールを追う
 
