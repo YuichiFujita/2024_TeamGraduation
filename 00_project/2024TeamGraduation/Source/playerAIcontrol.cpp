@@ -69,7 +69,9 @@ CPlayerAIControl* CPlayerAIControl::Create(CPlayer* player)
 HRESULT CPlayerAIControl::Init()
 {
 	// モード生成
-	m_pAIControlMode = CPlayerAIControlMode::Create(m_pAI, CPlayerAIControlMode::EMode::MODE_IDLE);
+	m_pAIControlMode = CPlayerAIControlMode::Create(m_pAI, CPlayerAIControlMode::EMode::MODE_START);
+
+	m_bStart = false;
 
 	return S_OK;
 }
@@ -79,9 +81,11 @@ HRESULT CPlayerAIControl::Init()
 //==========================================================================
 void CPlayerAIControl::Uninit()
 {
-	if (!m_pAIControlMode) return;
-	m_pAIControlMode->Uninit();
-	m_pAIControlMode = nullptr;
+	if (m_pAIControlMode)
+	{
+		m_pAIControlMode->Uninit();
+		m_pAIControlMode = nullptr;
+	}
 }
 
 //==========================================================================
@@ -89,12 +93,53 @@ void CPlayerAIControl::Uninit()
 //==========================================================================
 void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// モード管理
-	ModeManager();
+	if (!m_pAIControlMode) return;
 
-	if (m_pAIControlMode)
+	if (m_pAIControlMode->GetMode() != CPlayerAIControlMode::EMode::MODE_START)
 	{
-		m_pAIControlMode->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		// モード管理
+		ModeManager();
+	}
+	
+	// モード更新
+	m_pAIControlMode->Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// スタート
+//==========================================================================
+void CPlayerAIControl::ModeStart()
+{
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	MyLib::Vector3 posBall = pBall->GetPosition();
+
+	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
+	MyLib::Vector3 myPos = m_pAI->GetPosition();
+
+	float fMyLength = myPos.DistanceXZ(posBall);
+
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
+
+		if (typeTeam != pPlayer->GetTeam() ||
+			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT)
+		{// 同じチームではない||外野の場合
+			continue;
+		}
+
+		// ボールとの距離
+		float fLength = pPlayer->GetPosition().DistanceXZ(posBall);
+
+		if (fLength < fMyLength)
+		{ // より近い相手プレイヤーがいた場合
+
+			m_bStart = true;
+		}
 	}
 }
 
@@ -103,8 +148,6 @@ void CPlayerAIControl::Update(const float fDeltaTime, const float fDeltaRate, co
 //==========================================================================
 void CPlayerAIControl::ModeManager()
 {
-	if (!m_pAIControlMode) return;
-
 	CPlayerAIControlMode::EMode modeCurrent, mode;
 	modeCurrent = m_pAIControlMode->GetMode();
 	mode = modeCurrent;
@@ -120,11 +163,11 @@ void CPlayerAIControl::ModeManager()
 	{// ボールを持っているのが自分だった場合
 		mode = CPlayerAIControlMode::EMode::MODE_ATTACK;	// 投げ
 	}
-	else if (pBall->GetPlayer() == nullptr || pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() != m_pAI->GetTeam())
+	else if (pBall->GetPlayer() == nullptr || pBall->GetPlayer() != nullptr)
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		mode = CPlayerAIControlMode::EMode::MODE_DEFENCE;	// キャッチ
 	}
-	else if (pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())
+	else /*if (pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())*/
 	{// ボールが取得されていない場合||自分とボールを持っているチームが同じ場合
 		mode = CPlayerAIControlMode::EMode::MODE_IDLE;	// 待機
 	}

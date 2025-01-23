@@ -142,9 +142,12 @@ private:
 	void AttackDash(CPlayer* pTarget);	// ‘–‚è“Š‚°
 	void AttackDashJump(CPlayer* pTarget);	// ‘–‚è“Š‚°
 
+	bool IsStop();
+
 	//=============================
 	// ƒƒ“ƒo•Ï”
 	//=============================
+	CPlayer* m_pTarget;
 
 	//-----------------------------
 	// —ñ‹“

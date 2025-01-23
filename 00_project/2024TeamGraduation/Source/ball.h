@@ -251,6 +251,7 @@ private:
 	float m_fBallAngle;		// 回転角度
 	CEffekseerObj* m_pThrowLine;	// 投げのライン
 	CEffekseerObj* m_pAura;			// オーラ
+	CEffekseerObj* m_pSPBallet;		// スペシャルの弾
 };
 
 #endif

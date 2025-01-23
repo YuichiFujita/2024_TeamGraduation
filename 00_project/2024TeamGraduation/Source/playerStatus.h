@@ -47,7 +47,7 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void CreateLifeGuge();		// 体力ゲージ生成
+	void CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList);	// 体力ゲージ生成
 	void CreateGaugeFrame();	// ゲージフレーム生成
 
 	//=============================
@@ -55,6 +55,7 @@ private:
 	//=============================
 	CPlayer* m_pPlayer;					// プレイヤーのポインタ
 	CObjectCircleGauge2D* m_pLifeGauge;	// 体力ゲージ
+	CObjectCircleGauge2D* m_pLifeGauge_Ground;	// 体力ゲージの下地
 	CObject2D* m_pGaugeFrame;			// ゲージフレーム
 	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListLeft;	// 左体力ゲージのリスト
 	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListRight;	// 右体力ゲージのリスト

@@ -974,6 +974,44 @@ int CPlayer::GetNumUser()
 }
 
 //==========================================================================
+// 復活
+//==========================================================================
+void CPlayer::Revive()
+{
+	// 状態変更
+	m_sMotionFrag.bDead = false;
+	SetState(STATE_NONE);
+	SetMotion(MOTION_DEF);
+
+	// 操作可能に
+	SetEnableAction(true);
+	SetEnableMove(true);
+
+	// スポットライト削除
+	if (m_pEfkDeadAfter != nullptr)
+	{// 死亡後エフェクト
+		m_pEfkDeadAfter->SetTrigger(0);
+		m_pEfkDeadAfter->SetEnableAutoDeath(true);
+		m_pEfkDeadAfter = nullptr;
+	}
+
+	// モデル取得
+	CModel** ppModel = GetModel();
+	int nNumModel = GetNumModel();	// モデル数
+
+	for (int i = 0; i < nNumModel; i++)
+	{
+		if (ppModel[i] == nullptr) continue;
+
+		// テクスチャインデックス番号取得
+		std::vector<int> vecIdx = ppModel[i]->GetIdxTexture();
+
+		// テクスチャのインデックス割り当て
+		ppModel[i]->SetIdxTexture(vecIdx);
+	}
+}
+
+//==========================================================================
 // モーション別更新処理
 //==========================================================================
 void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -1783,17 +1821,23 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 	if (pCoverPlayer == nullptr) return;
 
 	// 死んでいない味方回復
-	if (!pCoverPlayer->GetMotionFrag().bDead &&
-		m_typeTeam == pCoverPlayer->m_typeTeam)
+	if (m_typeTeam == pCoverPlayer->m_typeTeam)
 	{
+		// 味方回復
 		pCoverPlayer->GetStatus()->LifeHeal(pBall->GetCoverHeal());
+
+		// 死んでいたら復活
+		if (pCoverPlayer->GetMotionFrag().bDead)
+		{
+			pCoverPlayer->Revive();
+		}
 	}
 
 	// 演出
 	CEffect3D::Create(
 		GetPosition(),
 		MyLib::Vector3(0.0f, 0.0f, 0.0f),
-		D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f),
+		MyLib::Color(0.3f, 0.3f, 1.0f, 1.0f),
 		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
 	// 攻撃キャッチ処理
@@ -1947,7 +1991,6 @@ void CPlayer::StateDead(const float fDeltaTime, const float fDeltaRate, const fl
 
 	// 死亡状態をキャンセル不能にする
 	SetEnableMove(false);
-	//m_sMotionFrag.bDead = true;
 
 	if (m_fStateTime >= StateTime::DEAD)
 	{

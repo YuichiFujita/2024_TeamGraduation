@@ -44,6 +44,7 @@ private:
 	bool IsLineOverPlayer() override;			// 線越え判定(プレイヤー)
 	void MoveRetreat() override;				// 後退
 	void MoveRandom() override;					// ランダム
+	void BallSteal() override;
 
 	//=============================
 	// メンバ関数
