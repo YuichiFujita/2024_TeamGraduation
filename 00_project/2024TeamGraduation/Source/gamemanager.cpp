@@ -61,14 +61,16 @@ namespace
 	// タイマー情報
 	namespace Timer
 	{
-		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 70.0f, 0.0f);	// タイマー位置
-		const MyLib::Vector2 VAL_SIZE = MyLib::Vector2(0.0f, 28.0f);	// タイマー数字大きさ
-		const MyLib::Vector2 PART_SIZE = MyLib::Vector2(0.0f, 18.0f);	// タイマー区切り大きさ
-		const MyLib::Vector2 VAL_SPACE = MyLib::Vector2(53.0f, 0.0f);	// タイマー数字空白
-		const MyLib::Vector2 PART_SPACE = MyLib::Vector2(35.0f, 0.0f);	// タイマー区切り空白
+		const float RATE = 0.7f;
+		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 80.0f, 0.0f);	// タイマー位置
+		const MyLib::Vector3 POS_BG = Timer::POS + MyLib::Vector3(0.0f, -20.0f, 0.0f);	// タイマー位置
+		const MyLib::Vector2 VAL_SIZE = MyLib::Vector2(0.0f, 28.0f) * RATE;	// タイマー数字大きさ
+		const MyLib::Vector2 PART_SIZE = MyLib::Vector2(0.0f, 18.0f) * RATE;	// タイマー区切り大きさ
+		const MyLib::Vector2 VAL_SPACE = MyLib::Vector2(53.0f, 0.0f) * RATE;	// タイマー数字空白
+		const MyLib::Vector2 PART_SPACE = MyLib::Vector2(35.0f, 0.0f) * RATE;	// タイマー区切り空白
 		const char* TEXTURE_VALUE = "data\\TEXTURE\\number\\AKR.png";	// 数字テクスチャパス
 		const char* TEXTURE_PART = "data\\TEXTURE\\timepart001.png";	// 区切りテクスチャパス
-		const char* TEXTURE_BG = "data\\TEXTURE\\FIELD\\ground.png";	// 背景テクスチャパス
+		const char* TEXTURE_BG = "data\\TEXTURE\\timer\\bg.png";		// 背景テクスチャパス
 		const float HEIGHT_BG = 64.0f;									// 背景縦幅
 	}
 }
@@ -254,6 +256,9 @@ HRESULT CGameManager::Init()
 		// 区切りテクスチャの再割当
 		m_pTimerUI->BindTexturePart(pTexture->Regist(Timer::TEXTURE_PART));
 
+		// 色設定
+		m_pTimerUI->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+
 		// タイマー背景の生成
 		m_pTimerBG = CObject2D::Create();
 		if (m_pTimerBG == nullptr)
@@ -263,7 +268,7 @@ HRESULT CGameManager::Init()
 		}
 
 		// 位置を設定
-		m_pTimerBG->SetPosition(Timer::POS);
+		m_pTimerBG->SetPosition(Timer::POS_BG);
 
 		// テクスチャを登録・割当
 		int texID = pTexture->Regist(Timer::TEXTURE_BG);
