@@ -123,7 +123,11 @@ HRESULT CPlayerAIControlAttack::Init()
 	CPlayerAIControlMode::Init();
 
 	// 値のクリア
+	m_nLevel = 0;
+
 	m_pTarget = nullptr;
+
+	ZeroMemory(&m_sTimig, sizeof(m_sTimig));
 
 	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
 	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
@@ -138,8 +142,7 @@ HRESULT CPlayerAIControlAttack::Init()
 //==========================================================================
 void CPlayerAIControlAttack::Uninit()
 {
-	delete this;
-
+	// 親クラスの終了処理
 	CPlayerAIControlMode::Uninit();
 }
 
@@ -152,19 +155,23 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 
 	if (!m_pTarget)
 	{// ターゲットが設定されていない場合
-		m_pTarget = GetThrowTarget();
+		m_pTarget = GetThrowTarget();		// ターゲットの取得
 	}
 	else
 	{
 		if (m_ePreparation != EATTACKPREPATARION::ATTACKPREPATARION_LEAVE)
-		{
+		{// 離れる状態以外の場合
 			// 見る
 			SeeTarget(m_pTarget->GetPosition());
 		}
+		
+		// タイマー更新
+		UpdateActionTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
 		// 投げ種類の更新
 		(this->*(m_AttackModeFunc[m_eAttackMode]))();
 	}
+	SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -176,7 +183,8 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 void CPlayerAIControlAttack::AttackModePreparation()
 {
 	if (m_ePreparation == EATTACKPREPATARION::ATTACKPREPATARION_NONE)
-	{
+	{// 準備状態が設定されていない場合
+
 		// 自分とターゲットとの距離を算出
 		float fDistance = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
@@ -240,19 +248,17 @@ void CPlayerAIControlAttack::UpdateAttack()
 		float fSpecialValue = pTeamStatus->GetSpecialValue();
 		float fSpecialValue1 = pTeamStatus1->GetSpecialValue();
 
-
-
-
 		if (pTeamStatus->IsMaxSpecial())
 		{// ゲージが溜まっていたら
 			// スペシャル投げ
 			m_eThrowType = EThrowType::THROWTYPE_SPECIAL;
 		}
 		else
-		{// 投げろフラグがオンだったら
-			int n = 1;
+		{
+			//int n = 1;
+
 			// 今はランダムで決定
-			//int n = rand() % 2;
+			int n = rand() % 2;
 
 			switch (n)
 			{
@@ -285,6 +291,98 @@ void CPlayerAIControlAttack::UpdateThrow()
 
 	// 投げ更新
 	(this->*(m_ThrowFlagFunc[m_eThrowFlag]))();
+}
+
+//--------------------------------------------------------------------------
+// 通常投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowTypeNormal()
+{
+	//m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+
+	AttackNormal(m_pTarget);
+}
+
+//--------------------------------------------------------------------------
+// ジャンプ投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowTypeJump()
+{
+	// 走り投げ
+	AttackDashJump(m_pTarget);
+
+	//AttackJump(m_pTarget);
+}
+
+//--------------------------------------------------------------------------
+// スペシャル投げ
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowTypeSpecial()
+{
+	m_eThrowFlag = EThrowFlag::THROW_SPECIAL;
+}
+
+//--------------------------------------------------------------------------
+// 投げる
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowFlag()
+{
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// 投げる
+	pControlAIAction->SetIsThrow(true);
+
+	// 投げ状態：無
+	m_eThrowFlag = EThrowFlag::THROW_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
+}
+
+//--------------------------------------------------------------------------
+// パス
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowFlagPass()
+{
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// パス
+	pControlAIAction->SetIsPass(true);
+
+	// 投げ状態：無
+	m_eThrowFlag = EThrowFlag::THROW_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
+}
+
+//--------------------------------------------------------------------------
+// スペシャル
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowFlagSpecial()
+{
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// スペシャル投げ
+	pControlAIAction->SetIsSpecial(true);
+
+	// 投げなし
+	m_eThrowFlag = EThrowFlag::THROW_NONE;
+	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //================================================================================
@@ -323,6 +421,36 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 }
 
 //================================================================================
+// ノーマル投げ
+//================================================================================
+void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget)
+{
+	SetActionTimer(0, 5);
+}
+
+//================================================================================
+// ジャンプ投げ
+//================================================================================
+void CPlayerAIControlAttack::AttackJump(CPlayer* pTarget)
+{
+	// 自分の情報
+	CPlayer* pMy = GetPlayer();
+	if (!pMy) return;
+	MyLib::Vector3 posMy = pMy->GetPosition();
+
+	// アクション：跳ぶ
+	SetActionFlag(EActionFlag::ACTION_JUMP);
+
+	float rate = GetJumpRate();
+	float rateMax = GetMaxjumpRate();
+
+	if (rateMax >= rate)	// 高さによって変わる
+	{
+		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+	}
+}
+
+//================================================================================
 // ダッシュ投げ
 //================================================================================
 void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget)
@@ -358,9 +486,9 @@ void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget)
 		return;
 	}
 
-	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
-	{// 自分とターゲットの距離が700.0f以上&&中央線との距離が範囲以上の場合
-
+	if (distanceTarget > JUMP_LENGTH_TARGET &&	// ターゲットとの距離が数値より遠い
+		distanceLine > JUMP_LENGTH_LINE)		// 中央線との距離が数値より遠い
+	{
 		// 走る
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
@@ -433,109 +561,10 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 	}
 
-	//if (IsCancelJumpAttack())
-	//{// キャンセル判断
-	//	m_eThrowType = EThrowType::THROWTYPE_NONE;
-	//	SetThrowFlag(EThrowFlag::THROW_NONE);
-	//	return;
-	//}
-
 	if (pMy->GetPosition().y >= GetParameter().fJumpEnd)	// 高さによって変わる
 	{
-		//SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
-		SetThrowFlag(EThrowFlag::THROW_NORMAL);		// 投げ：投げる
+		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
 	}
-}
-
-//--------------------------------------------------------------------------
-// 通常投げ
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeNormal()
-{
-	m_eThrowFlag = EThrowFlag::THROW_NORMAL;
-}
-
-//--------------------------------------------------------------------------
-// ジャンプ投げ
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeJump()
-{
-	// その場なのか歩くのか走るのか
-	//m_eMoveFlag = EMoveFlag::MOVEFLAG_WALK;
-
-	// 走り投げ
-	AttackDashJump(m_pTarget);
-}
-
-//--------------------------------------------------------------------------
-// スペシャル投げ
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeSpecial()
-{
-	m_eThrowFlag = EThrowFlag::THROW_SPECIAL;
-}
-
-//--------------------------------------------------------------------------
-// 投げる
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowFlag()
-{
-	// AIの取得
-	CPlayer* pAI = GetPlayer();
-	if (!pAI) return;
-
-	// AIコントロール情報の取得
-	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
-	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
-
-	// 投げる
-	pControlAIAction->SetIsThrow(true);
-
-	// 投げ状態：無
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
-}
-
-//--------------------------------------------------------------------------
-// パス
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowFlagPass()
-{
-	// AIの取得
-	CPlayer* pAI = GetPlayer();
-	if (!pAI) return;
-
-	// AIコントロール情報の取得
-	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
-	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
-
-	// パス
-	pControlAIAction->SetIsPass(true);
-
-	// 投げ状態：無
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
-}
-
-//--------------------------------------------------------------------------
-// スペシャル
-//--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowFlagSpecial()
-{
-	// AIの取得
-	CPlayer* pAI = GetPlayer();
-	if (!pAI) return;
-
-	// AIコントロール情報の取得
-	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
-	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
-
-	// スペシャル投げ
-	pControlAIAction->SetIsSpecial(true);
-
-	// 投げなし
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //==========================================================================
@@ -780,4 +809,43 @@ bool CPlayerAIControlAttack::IsStop()
 	}
 
 	return false;
+}
+
+//==========================================================================
+// 更新：アクションタイマー
+//==========================================================================
+void CPlayerAIControlAttack::UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_sTimig.bSet)
+	{
+		// タイマーのカウントダウン
+		m_sTimig.fTimer -= fDeltaTime * fDeltaRate * fSlowRate;
+
+		if (m_sTimig.fTimer <= 0.0f)
+		{
+			// 行動の構造体初期化
+			ZeroMemory(&m_sTimig, sizeof(m_sTimig));
+
+			// 投げる
+			m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+		}
+	}
+}
+
+//==========================================================================
+// アクション時間の設定
+//==========================================================================
+void CPlayerAIControlAttack::SetActionTimer(int nMin, int nMax)
+{
+	// 角度の設定
+	if (!m_sTimig.bSet)
+	{// 設定されていない場合
+
+		// 行動時間の設定
+		float fRand = (float)UtilFunc::Transformation::Random(nMin, nMax);
+		m_sTimig.fTimer = fRand;
+
+		// 時間設定ON
+		m_sTimig.bSet = true;
+	}
 }

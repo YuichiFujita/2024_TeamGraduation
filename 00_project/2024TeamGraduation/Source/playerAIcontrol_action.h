@@ -59,8 +59,8 @@ public:
 	void SetIsJump(bool bJump) { m_sFlag.bJump = bJump; }					// ジャンプするか設定
 	void SetIsJumpFloat(bool passFloat) { m_sFlag.bJumpFloat = passFloat; }	// じゃんぷを継続するか設定
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }		// スペシャル撃つか設定
-	void SetJumpRate(float rate) { m_fJumpRate = rate; }
-
+	void SetMaxJumpRate(float fMaxRate) { m_fMaxJumpRate = fMaxRate; }		// ジャンプ力割合(最大)設定
+	float GetJumpRate() { return m_fJumpRate; }
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
@@ -90,6 +90,7 @@ private:
 	//=============================
 	float fThrowTime = 0.0f;
 	float m_fJumpTimer;
+	float m_fMaxJumpRate;
 	float m_fJumpRate;
 	SFlag m_sFlag;
 
