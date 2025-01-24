@@ -170,6 +170,9 @@ HRESULT CWinTeamResult::CreateAudience()
 //==========================================================================
 void CWinTeamResult::Uninit()
 {
+	// 観客
+	SAFE_UNINIT(m_pAudience);
+
 	// オブジェクトを破棄
 	Release();
 }

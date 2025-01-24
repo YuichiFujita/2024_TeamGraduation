@@ -287,6 +287,12 @@ void CResultManager::Uninit()
 		m_pEfkConfetti = nullptr;
 	}
 
+	// 審判
+	SAFE_UNINIT(m_pReferee);
+
+	// 勝利チーム
+	SAFE_UNINIT(m_pWinTeam);
+
 	// 自身の開放
 	delete m_pThisPtr;
 	m_pThisPtr = nullptr;

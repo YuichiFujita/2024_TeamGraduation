@@ -47,6 +47,7 @@ public:
 	void Kill() override;		// 削除
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 	void Draw() override;		// 描画
+	void SetEnableDisp(const bool bDisp) override;	// 描画状況設定
 
 	// 静的メンバ関数
 	static CGauge2D* Create	// 生成

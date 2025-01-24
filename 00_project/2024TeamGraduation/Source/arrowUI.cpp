@@ -45,7 +45,8 @@ CArrowUI::CArrowUI(int nPriority) : CObject2D_Anim(nPriority),
 	m_fStateTime	(0.0f),						// 状態タイマー
 	m_direction		(EDirection::DIRECTION_L),	// 方向
 	m_fValueFloat	(VALUE_FLOAT),				// ふわふわ量
-	m_fSizeWidth	(0.0f)						// 幅のサイズ
+	m_fSizeWidth	(0.0f),						// 幅のサイズ
+	m_fSpace		(0.0f)						// 間隔
 {
 
 }

@@ -221,7 +221,8 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_nDamage		(0),			// ダメージ
 	m_nCoverHeal	(0),			// カバー回復
 	m_fKnockback	(0.0f),			// ノックバック
-	m_fBallAngle	(0.0f)			// 回転角度
+	m_fBallAngle	(0.0f),			// 回転角度
+	m_fInitialSpeed	(0.0f)			// 初速
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -904,7 +905,7 @@ void CBall::CalWorldMtx()
 		mtxWorld.Multiply(mtxWorld, mtxScale);
 
 		// 回転角度を回す
-		m_fBallAngle += (m_fInitialSpeed + m_fMoveSpeed) * REV_ROLL;
+		m_fBallAngle += (m_fInitialSpeed + m_fMoveSpeed) * (REV_ROLL * GET_MANAGER->GetDeltaRate() * GET_MANAGER->GetSlowRate());
 
 		// 回転軸を正規化
 		MyLib::Vector3 vecAxis = GetMove();	// 移動ベクトルを取得
