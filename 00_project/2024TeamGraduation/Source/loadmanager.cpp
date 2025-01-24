@@ -155,6 +155,9 @@ void CLoadManager::LoadScene(CScene::MODE mode)
     // ロード処理の開始
 	m_LoadingThread = std::thread(&CLoadManager::LoadInBackground, this);
 
+	// ロード画面のアニメーション再生
+	SetEnableAutoPlay(true);
+
 	// サブスレッドをデタッチ
 	m_LoadingThread.detach();
 }
@@ -212,4 +215,28 @@ void CLoadManager::Draw()
 bool CLoadManager::IsLoadComplete()
 {
 	return m_bLoadComplete;
+}
+
+//==========================================================================
+// ロード画面ループ数取得
+//==========================================================================
+DWORD CLoadManager::GetNumLoop() const
+{
+	return m_pLoadScreen->GetNumLoop();
+}
+
+//==========================================================================
+// ロード画面ループ数リセット
+//==========================================================================
+void CLoadManager::ResetNumLoop()
+{
+	m_pLoadScreen->ResetNumLoop();
+}
+
+//==========================================================================
+// ロード画面自動再生設定
+//==========================================================================
+void CLoadManager::SetEnableAutoPlay(const bool bPlay)
+{
+	m_pLoadScreen->SetEnableAutoPlay(bPlay);
 }

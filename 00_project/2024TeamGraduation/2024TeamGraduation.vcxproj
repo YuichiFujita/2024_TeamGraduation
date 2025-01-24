@@ -251,6 +251,7 @@
     <ClCompile Include="Source\listmanager.cpp" />
     <ClCompile Include="Source\loadmanager.cpp" />
     <ClCompile Include="Source\loadscreen.cpp" />
+    <ClCompile Include="Source\loadtext.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\manager.cpp" />
     <ClCompile Include="Source\map.cpp" />
@@ -494,6 +495,7 @@
     <ClInclude Include="Source\listmanager.h" />
     <ClInclude Include="Source\loadmanager.h" />
     <ClInclude Include="Source\loadscreen.h" />
+    <ClInclude Include="Source\loadtext.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\manager.h" />
     <ClInclude Include="Source\map.h" />
