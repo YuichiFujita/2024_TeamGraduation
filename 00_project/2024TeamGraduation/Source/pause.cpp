@@ -14,6 +14,7 @@
 // 派生クラス
 #include "pause_game.h"
 #include "pause_tutorial.h"
+#include "pause_outgame.h"
 
 //==========================================================================
 // 定数定義
@@ -73,7 +74,7 @@ CPause* CPause::Create(CScene::MODE mode)
 		break;
 
 	default:
-		pFade = DEBUG_NEW CPause_Game;
+		pFade = DEBUG_NEW CPause_OutGame;
 		break;
 	}
 
@@ -174,18 +175,6 @@ void CPause::Kill()
 //==========================================================================
 void CPause::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// キーボード情報取得
-	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
-
-	// ゲームパッド情報取得
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
-
-	if (pKey->GetTrigger(DIK_P) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
-	{// ポーズ
-		m_bPause = !m_bPause;
-	}
-
 	if (!m_bPause)
 	{// ポーズ中じゃなかったら
 		return;

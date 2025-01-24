@@ -291,6 +291,7 @@
     <ClCompile Include="Source\particle.cpp" />
     <ClCompile Include="Source\pause.cpp" />
     <ClCompile Include="Source\pause_game.cpp" />
+    <ClCompile Include="Source\pause_outgame.cpp" />
     <ClCompile Include="Source\pause_tutorial.cpp" />
     <ClCompile Include="Source\player.cpp" />
     <ClCompile Include="Source\playerAction.cpp" />
@@ -535,6 +536,7 @@
     <ClInclude Include="Source\particle.h" />
     <ClInclude Include="Source\pause.h" />
     <ClInclude Include="Source\pause_game.h" />
+    <ClInclude Include="Source\pause_outgame.h" />
     <ClInclude Include="Source\pause_tutorial.h" />
     <ClInclude Include="Source\player.h" />
     <ClInclude Include="Source\playerAction.h" />

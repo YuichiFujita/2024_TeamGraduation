@@ -136,11 +136,7 @@ void CTitle::Uninit()
 //==========================================================================
 void CTitle::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE_NONE)
-	{// フェード中は抜ける
-		return;
-	}
-
+	
 	// 状態更新処理
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
 }

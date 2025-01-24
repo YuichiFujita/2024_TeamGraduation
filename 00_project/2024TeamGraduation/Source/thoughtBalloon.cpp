@@ -221,7 +221,7 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 	( // 引数
 		text::FONT,			// フォントパス
 		text::ITALIC,		// イタリック
-		MyLib::Vector3(640.0f, 360.0f, 0.0f),			// 原点位置
+		MyLib::Vector3(640.0f, 370.0f, 0.0f),			// 原点位置
 		text::WAIT_TIME,	// 文字表示の待機時間
 		text::CHAR_HEIGHT * scale,	// 文字縦幅
 		text::LINE_HEIGHT * scale,	// 行間縦幅

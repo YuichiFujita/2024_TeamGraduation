@@ -352,7 +352,7 @@ void CTitle_ControllWait::UpdateSandSmoke(const float fDeltaTime, const float fD
 //==========================================================================
 void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (GET_MANAGER->GetInstantFade()->GetState() != CInstantFade::EState::STATE_NONE)
+	if (GET_MANAGER->GetInstantFade()->GetState() == CInstantFade::EState::STATE_FADEIN)
 	{// フェード中は抜ける
 		return;
 	}

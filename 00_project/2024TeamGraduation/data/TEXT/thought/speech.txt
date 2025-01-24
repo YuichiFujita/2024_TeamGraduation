@@ -35,7 +35,8 @@ END_TEXT
 
 TEXT_5
 	STR = 観客どころか
-	STR = 敵チームまでもが虜になってるぞ！
+	STR = 敵チームまでもが
+	STR = 虜になってるぞ！
 END_TEXT
 
 TEXT_6

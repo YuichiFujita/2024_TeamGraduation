@@ -866,6 +866,9 @@
     <ClCompile Include="Source\loadtext.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\pause_outgame.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1584,6 +1587,9 @@
     </ClInclude>
     <ClInclude Include="Source\loadtext.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause_outgame.h">
+      <Filter>pause</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
