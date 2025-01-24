@@ -104,6 +104,8 @@ public:
 		MOTION_DOOR,					// ドア開け
 		MOTION_BOW,						// 礼
 		MOTION_REVIVE,					// 蘇生
+		MOTION_CUTIN_L,					// カットイン左
+		MOTION_CUTIN_R,					// カットイン右
 		MOTION_MAX
 	};
 
@@ -556,6 +558,7 @@ private:
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
 	SKnockbackInfo m_sKnockback;	// ノックバックの位置
+	SKnockbackInfo m_sDamageKB;		// ノックバックの位置(ダメージ)
 	
 	//-----------------------------
 	// 行動フラグ

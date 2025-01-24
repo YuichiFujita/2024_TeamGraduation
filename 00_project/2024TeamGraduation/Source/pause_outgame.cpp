@@ -1,10 +1,10 @@
 //==========================================================================
 // 
-//  ゲーム時ポーズ処理 [pause_game.cpp]
+//  アウトゲーム時ポーズ処理 [pause_outgame.cpp]
 //  Author : 相馬靜雅
 // 
 //==========================================================================
-#include "pause_game.h"
+#include "pause_outgame.h"
 #include "manager.h"
 #include "fade.h"
 
@@ -13,13 +13,12 @@
 //==========================================================================
 namespace
 {
-	const char* TEXTURE = "data\\TEXTURE\\pause\\retry.png";	// テクスチャファイル
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CPause_Game::CPause_Game()
+CPause_OutGame::CPause_OutGame()
 {
 
 }
@@ -27,7 +26,7 @@ CPause_Game::CPause_Game()
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CPause_Game::~CPause_Game()
+CPause_OutGame::~CPause_OutGame()
 {
 
 }
@@ -35,14 +34,10 @@ CPause_Game::~CPause_Game()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CPause_Game::Init()
+HRESULT CPause_OutGame::Init()
 {
 	// 初期化処理
 	CPause::Init();
-
-	// テクスチャ切り替え
-	int nTexIdx = CTexture::GetInstance()->Regist(TEXTURE);
-	m_aObject2D[VTX::VTX_RETRY]->BindTexture(nTexIdx);
 
 	return S_OK;
 }
@@ -50,7 +45,7 @@ HRESULT CPause_Game::Init()
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPause_OutGame::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// キーボード情報取得
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
@@ -58,6 +53,7 @@ void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const f
 	// ゲームパッド情報取得
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
+#if _DEBUG
 	if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE)
 	{
 		if (pKey->GetTrigger(DIK_P) ||
@@ -66,6 +62,7 @@ void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const f
 			m_bPause = !m_bPause;
 		}
 	}
+#endif // _DEBUG
 
 	// 親の更新
 	CPause::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -74,11 +71,8 @@ void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const f
 //==========================================================================
 // モード別決定処理
 //==========================================================================
-void CPause_Game::DecideByMode()
+void CPause_OutGame::DecideByMode()
 {
-	// サウンド再生
-	//CSound::GetInstance()->PlaySound(CSound::LABEL_SE_DONE);
-
-	// ゲームをリトライする
-	CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_GAME);
+	// リトライする
+	CManager::GetInstance()->GetFade()->SetFade(CManager::GetInstance()->GetMode());
 }

@@ -1072,25 +1072,16 @@ void CManager::UpdateDeltaRate()
 //==========================================================================
 void CManager::ChangePauseMode(CScene::MODE mode)
 {
-	switch (mode)
+	// íœ
+	if (m_pPause != nullptr)
 	{
-	case CScene::MODE::MODE_GAME:
-
-		// íœ
-		if (m_pPause!= nullptr)
-		{
-			m_pPause->Kill();
-			delete m_pPause;
-			m_pPause = nullptr;
-		}
-
-		// Ä¶¬
-		m_pPause = CPause::Create(mode);
-		break;
-
-	default:
-		break;
+		m_pPause->Kill();
+		delete m_pPause;
+		m_pPause = nullptr;
 	}
+
+	// Ä¶¬
+	m_pPause = CPause::Create(mode);
 }
 
 //==========================================================================

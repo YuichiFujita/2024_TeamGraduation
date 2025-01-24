@@ -29,7 +29,7 @@ namespace
 		"data\\TEXTURE\\title\\BGM.png",		// BGM
 		"data\\TEXTURE\\title\\vib.png",		// バイブレーション
 		"data\\TEXTURE\\title\\back.png",		// 戻る
-		"data\\TEXTURE\\title\\ranking.png",	// ランキング
+		"data\\TEXTURE\\title\\ranking.png",	// リセット
 	};
 	const std::string TEXTURE_NUMBER = "data\\TEXTURE\\number\\school02.png";	// 数字のテクスチャ
 	const std::string TEXTURE_PIN = "data\\TEXTURE\\title\\pin.png";		// ピンのテクスチャ
@@ -49,7 +49,7 @@ namespace
 		45.0f,	// BGM
 		45.0f,	// バイブレーション
 		55.0f,	// 戻る
-		50.0f,	// ランキング
+		50.0f,	// リセット
 	};
 
 	float SIZEHEIGHT_TITLE = 60.0f;	// 見出しの高さサイズ
@@ -64,7 +64,7 @@ namespace
 		MyLib::Vector3(500.0f, 415.0f, 0.0f),	// BGM
 		MyLib::Vector3(500.0f, 620.0f, 0.0f),	// バイブレーション
 		MyLib::Vector3(150.0f, 653.0f, 0.0f),	// 戻る
-		MyLib::Vector3(1000.0f, 560.0f, 0.0f),	// ランキング
+		MyLib::Vector3(1000.0f, 560.0f, 0.0f),	// リセット
 	};
 
 	const float NUMBER_POSITION_X = 730.0f;		// 数字のX軸
@@ -674,6 +674,9 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 
 		// マーカータイマーリセット
 		m_fMarkerTime = 0.0f;
+
+		// 書き音
+		WriteSound();
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, 0) ||
 		pKey->GetTrigger(DIK_S))
@@ -684,15 +687,18 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 
 		// マーカータイマーリセット
 		m_fMarkerTime = 0.0f;
+
+		// 書き音
+		WriteSound();
 	}
 
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
 		pKey->GetTrigger(DIK_A))
 	{// 左
 
-		// ランキングなら過去へ、それ以外は戻るへ
+		// リセットなら過去へ、それ以外は戻るへ
 		ESelect old = m_select;
-		m_select = (m_select == ESelect::SELECT_RANKING) ? m_oldSelect : ESelect::SELECT_BACK;
+		m_select = (m_select == ESelect::SELECT_RESET) ? m_oldSelect : ESelect::SELECT_BACK;
 
 		if (old != m_select)
 		{
@@ -709,9 +715,9 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		pKey->GetTrigger(DIK_D))
 	{// 右
 
-		// 戻るなら過去へ、それ以外はランキングへ
+		// 戻るなら過去へ、それ以外はリセットへ
 		ESelect old = m_select;
-		m_select = (m_select == ESelect::SELECT_BACK) ? m_oldSelect : ESelect::SELECT_RANKING;
+		m_select = (m_select == ESelect::SELECT_BACK) ? m_oldSelect : ESelect::SELECT_RESET;
 		
 		if (old != m_select)
 		{
@@ -735,10 +741,32 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		// 戻るフラグ設定
 		m_bBack = m_select == ESelect::SELECT_BACK;
 
-		if (!m_bBack)
+		switch (m_select)
 		{
+		case COptionMenu::SELECT_MASTERVOLUME:
+		case COptionMenu::SELECT_SE:
+		case COptionMenu::SELECT_BGM:
+		case COptionMenu::SELECT_VIB:
+
 			// 編集状態設定
 			SetState(EState::STATE_EDIT);
+			break;
+
+		case COptionMenu::SELECT_BACK:
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_BACK);
+			break;
+
+		case COptionMenu::SELECT_RESET:
+
+			// リセット
+			Reset();		
+			break;
+
+		default:
+			assert(false);
+			break;
 		}
 	}
 
@@ -800,6 +828,9 @@ void COptionMenu::UpdateSound(const float fDeltaTime, const float fDeltaRate, co
 
 		// 値設定
 		pMultiNum->SetNum(UtilFunc::Transformation::Clamp(num - 5, 0, 100));
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW_DOWN);
 	}
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 		pKey->GetTrigger(DIK_D))
@@ -807,6 +838,9 @@ void COptionMenu::UpdateSound(const float fDeltaTime, const float fDeltaRate, co
 
 		// 値設定
 		pMultiNum->SetNum(UtilFunc::Transformation::Clamp(num + 5, 0, 100));
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW_UP);
 	}
 	num = pMultiNum->GetNum();
 
@@ -844,8 +878,20 @@ void COptionMenu::UpdateVib(const float fDeltaTime, const float fDeltaRate, cons
 		pKey->GetTrigger(DIK_D))
 	{// 左右, 切り替え
 
+		// バイブフラグ
+		bool bVib = pPad->IsEnableVibration();
+
 		// 反転
-		pPad->SetEnableVibration(!pPad->IsEnableVibration());
+		pPad->SetEnableVibration(!bVib);
+
+		// 振動させる
+		if (!bVib)
+		{
+			pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, 0);
+		}
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 	
 	// テクスチャ設定
@@ -1004,6 +1050,45 @@ void COptionMenu::StateEdit(const float fDeltaTime, const float fDeltaRate, cons
 	default:
 		break;
 	}
+
+	// 色更新
+	UpdateColor(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
+// 書き音
+//==========================================================================
+void COptionMenu::WriteSound()
+{
+	if (m_select == ESelect::SELECT_BACK) return;
+
+	// サウンドの再生
+	int soundLabel = UtilFunc::Transformation::Random(CSound::ELabel::LABEL_SE_WRITE01, CSound::ELabel::LABEL_SE_WRITE02);
+	PLAY_SOUND((CSound::ELabel)soundLabel);
+}
+
+//==========================================================================
+// リセット
+//==========================================================================
+void COptionMenu::Reset()
+{
+	// 入力情報取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
+
+	// バイブON
+	pPad->SetEnableVibration(true);
+	pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, 0);
+
+	// 数字リセット
+	m_pNumberMaster->SetNum(50);
+	m_pNumberSE->SetNum(50);
+	m_pNumberBGM->SetNum(50);
+
+	// 1.0fにする
+	CSound* pSound = CSound::GetInstance();
+	pSound->VolumeChange(1.0f);
+	pSound->VolumeChange(CSound::EType::TYPE_SE, 1.0f);
+	pSound->VolumeChange(CSound::EType::TYPE_BGM, 1.0f);
 }
 
 //==========================================================================

@@ -869,6 +869,9 @@
     <ClCompile Include="Source\playerCutIn.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\pause_outgame.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1590,6 +1593,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerCutIn.h">
       <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause_outgame.h">
+      <Filter>pause</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
