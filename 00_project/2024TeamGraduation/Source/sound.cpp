@@ -59,6 +59,17 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル
 	{ TYPE_SE,"data/SE/AI_yomiage.wav",0},			// AI
 
+	// アウトゲーム
+	{ TYPE_SE,"data/SE/outgame/cursor.wav",0},			// カーソル
+	{ TYPE_SE,"data/SE/outgame/write01.wav",0},			// 書き
+	{ TYPE_SE,"data/SE/outgame/write02.wav",0},			// 書き
+	{ TYPE_SE,"data/SE/outgame/arrow.wav",0},			// 矢印
+	{ TYPE_SE,"data/SE/outgame/arrow_up.wav",0},		// 矢印(上げ)
+	{ TYPE_SE,"data/SE/outgame/arrow_down.wav",0},		// 矢印(下げ)
+	{ TYPE_SE,"data/SE/outgame/optionGo.wav",0},		// オプション行く
+	{ TYPE_SE,"data/SE/outgame/optionBack.wav",0},		// オプション戻る
+
+
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
 

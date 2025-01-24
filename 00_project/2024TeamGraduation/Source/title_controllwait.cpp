@@ -374,6 +374,9 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		// マーカータイマーリセット
 		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 		pKey->GetTrigger(DIK_D))
@@ -388,6 +391,9 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		// マーカータイマーリセット
 		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 
 	// 遷移
@@ -432,6 +438,9 @@ void CTitle_ControllWait::Decide()
 
 		// その他へ遷移
 		GET_MANAGER->GetInstantFade()->SetFade(MyLib::color::White(), Timer::State::TRANSITION);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_GO);
 	}
 		break;
 
@@ -610,7 +619,11 @@ void CTitle_ControllWait::StateTransitionMoreSecond(const float fDeltaTime, cons
 		// 向きリセット
 		pCamera->SetOriginRotation(pCamera->GetRotation());
 
+		// 色々に遷移(ラスト)
 		SetState(EState::STATE_TRANSITION_MORE_LAST);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_BACK);
 	}
 }
 

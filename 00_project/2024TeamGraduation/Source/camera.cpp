@@ -484,6 +484,9 @@ void CCamera::Reset()
 //==========================================================================
 void CCamera::ResetByMode(CScene::MODE mode)
 {
+	// カメラモーションリセット
+	m_pCameraMotion->SetFinish(true);
+
 	// 視点情報
 	m_posR = Reset::POSITION[mode];			// 注視点
 	m_rot = Reset::ROTATION[mode];			// 向き

@@ -325,6 +325,8 @@ MOTION_FILENAME = data/TEXT/character/player/common/motion_unstable.txt				# ‚¨‚
 MOTION_FILENAME = data/TEXT/character/player/common/motion_door.txt					# ƒhƒA
 MOTION_FILENAME = data/TEXT/character/player/common/motion_bow.txt					# —ç
 MOTION_FILENAME = data/TEXT/character/player/common/motion_revive.txt				# ‘h¶
+MOTION_FILENAME = data/TEXT/character/player/common/motion_cutinL.txt				# ƒJƒbƒgƒCƒ“L
+MOTION_FILENAME = data/TEXT/character/player/common/motion_cutinR.txt				# ƒJƒbƒgƒCƒ“R
 
 END_SCRIPT		# ‚±‚Ìs‚Íâ‘ÎÁ‚³‚È‚¢‚±‚ÆI
 
