@@ -48,6 +48,30 @@ HRESULT CPause_Game::Init()
 }
 
 //==========================================================================
+// 更新処理
+//==========================================================================
+void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// キーボード情報取得
+	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
+
+	// ゲームパッド情報取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+
+	if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE)
+	{
+		if (pKey->GetTrigger(DIK_P) ||
+			pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
+		{// ポーズ
+			m_bPause = !m_bPause;
+		}
+	}
+
+	// 親の更新
+	CPause::Update(fDeltaTime, fDeltaRate, fSlowRate);
+}
+
+//==========================================================================
 // モード別決定処理
 //==========================================================================
 void CPause_Game::DecideByMode()
