@@ -21,7 +21,7 @@ namespace
 	};
 	const int DIVISION_WIDTH = 4;					// 横分割
 	const int BLOCK_WIDTH = DIVISION_WIDTH + 1;		// 横のブロック
-	const float FRAME_WIDTH = 8.0f;				// 枠の幅
+	const float FRAME_WIDTH = 15.0f;				// 枠の幅
 
 	// インデックスバッファ
 	const WORD IDXBUFF[] =

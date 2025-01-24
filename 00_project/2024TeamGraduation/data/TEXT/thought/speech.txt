@@ -23,7 +23,8 @@ END_TEXT
 
 TEXT_3
 	STR = カッコよすぎる！
-	STR = これで誰もが惚れるのは間違いない！
+	STR = これで誰もが
+	STR = 惚れるのは間違いない！
 END_TEXT
 
 TEXT_4
@@ -50,8 +51,8 @@ END_TEXT
 
 TEXT_8
 	STR = あ…あれは！
-	STR = 既に相手のハートは打ち抜かれている…
-	STR = ひでぶっ！
+	STR = 既に相手のハートは
+	STR = 打ち抜かれている…ひでぶっ！
 END_TEXT
 
 TEXT_9
@@ -66,13 +67,14 @@ END_TEXT
 
 TEXT_11
 	STR = 輝きすぎて目が眩む！
-	STR = これはモテ界の“スペシウム光線”だ！
+	STR = これはモテ界の
+	STR = “スペシウム光線”だ！
 END_TEXT
 
 TEXT_12
 	STR = 惚れた！？
-	STR = 間違いない…今の動き
-	STR = 完全に『ATフィールド』突破！
+	STR = 間違いない…今の動き完全に
+	STR = 『ATフィールド』突破！
 END_TEXT
 
 TEXT_13
@@ -82,11 +84,13 @@ END_TEXT
 
 TEXT_14
 	STR = 全員集合！
-	STR = …いや、全員が惚れて集合しちゃった！
+	STR = …いや、全員が
+	STR = 惚れて集合しちゃった！
 END_TEXT
 
 TEXT_15
-	STR = 魅惑の“ハート波動拳”炸裂！
+	STR = 魅惑の
+	STR = “ハート波動拳”炸裂！
 	STR = KO確定！
 END_TEXT
 
@@ -96,8 +100,8 @@ TEXT_16
 END_TEXT
 
 TEXT_17
-	STR = この動き
-	STR = まさに“モテモテの実”の能力者！
+	STR = この動き、まさに
+	STR = “モテモテの実”の能力者！
 	STR = 魅力が止まらない！
 END_TEXT
 

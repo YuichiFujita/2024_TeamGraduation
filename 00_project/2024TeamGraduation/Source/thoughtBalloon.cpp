@@ -8,6 +8,7 @@
 #include "renderTexture.h"
 #include "balloonFrame.h"
 #include "camera.h"
+#include "loadtext.h"
 
 //==========================================================================
 // 定数定義
@@ -19,8 +20,8 @@ namespace
 		const char*	FONT = "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
 		const int	PRIORITY	= 6;			// テキストの優先順位
 		const bool	ITALIC		= false;		// イタリック
-		const float	CHAR_HEIGHT	= 42.0f;		// 文字縦幅
-		const float	LINE_HEIGHT	= 54.0f;		// 行間縦幅
+		const float	CHAR_HEIGHT	= 36.0f;		// 文字縦幅
+		const float	LINE_HEIGHT	= 90.0f;		// 行間縦幅
 		const float	WAIT_TIME	= 0.045f;		// 文字表示の待機時間
 		const EAlignX ALIGN_X	= XALIGN_CENTER;	// 横配置
 		const EAlignY ALIGN_Y	= YALIGN_CENTER;	// 縦配置
@@ -163,8 +164,26 @@ void CThoughtBalloon::Update(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CThoughtBalloon::Draw()
 {
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを無効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 	// オブジェクトビルボードの描画
 	CObjectBillboard::Draw();
+
+	// アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	// ライティングを有効にする
+	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 //==========================================================================
@@ -219,11 +238,6 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 	// 自動破棄/更新/描画をしない種類に変更
 	m_pText->SetType(CObject::TYPE::TYPE_NONE);
 
-	// 文字列を最後尾に追加
-	m_pText->PushBackString("あいうえお");
-	m_pText->PushBackString("あいうえお");
-	m_pText->PushBackString("あいうえお");
-
 	// 文字送りを開始する
 	m_pText->SetEnableScroll(true);
 
@@ -231,10 +245,10 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 	m_pText->SetColor(MyLib::color::Black());
 
 	// テキストを割当
-	//loadtext::BindText(m_pText, loadtext::LoadText("data\\TEXT\\thought\\speech.txt", TEXT_EXP_NEXT));
+	loadtext::BindText(m_pText, loadtext::LoadText("data\\TEXT\\thought\\speech.txt", UtilFunc::Transformation::Random(0, 18)));
 
 	// 枠の生成
-	MyLib::Vector2 setSize = MyLib::Vector2(m_pText->GetTextWidth() * 1.35f, m_pText->GetTextHeight()) * 1.75f;
+	MyLib::Vector2 setSize = MyLib::Vector2(m_pText->GetTextWidth() * 1.15f, m_pText->GetTextHeight()) * 1.75f;
 	m_pFrame = CBalloonFrame::Create(setSize * scale, m_TeamSide);
 	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
 
