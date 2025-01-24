@@ -41,6 +41,7 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 	ZeroMemory(&m_sFlag, sizeof(m_sFlag));
 	m_fJumpTimer = 0.0f;
 	m_fJumpRate = 0.0f;
+	m_fMaxJumpRate = 0.0f;
 }
 
 //==========================================================================
@@ -138,14 +139,15 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, 
 		//ジャンプ処理
 		m_fJumpTimer += fDeltaTime * fSlowRate;
 		float rate = m_fJumpTimer / TAPTIME;
+		m_fJumpRate = rate;
 		
-		if (m_fJumpRate > rate)
+		if (m_fMaxJumpRate > rate)
 		{
 			// 移動量取得
 			MyLib::Vector3 move = player->GetMove();
 
-			float jumpRatio = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * rate;
-			move.y = player->GetParameter().fVelocityJump * jumpRatio;
+			float jumpRate = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * rate;
+			move.y = player->GetParameter().fVelocityJump * jumpRate;
 
 			// 移動量設定
 			player->SetMove(move);
@@ -155,6 +157,7 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, 
 			// フラグリセット
 			m_sFlag.bJumpFloat = false;
 			m_fJumpTimer = 0.0f;
+			m_fJumpRate = 0.0f;
 
 			// ジャンプトリガーOFF
 			SetEnableJumpTrigger(false);

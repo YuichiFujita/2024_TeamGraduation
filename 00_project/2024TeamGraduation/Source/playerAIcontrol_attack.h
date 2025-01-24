@@ -58,6 +58,15 @@ public:
 		THROW_SPECIAL,			// スペシャル
 	};
 
+private:
+
+	struct STiming
+	{
+		float fTimer;
+		float fPosY;
+		bool bSet;
+	};
+
 public:
 
 	// コンストラクタ
@@ -79,6 +88,7 @@ protected:
 	//=============================
 	// 仮想・純粋関数
 	//=============================
+	virtual void Preparation() = 0;
 
 	//=============================
 	// メンバ関数
@@ -140,8 +150,14 @@ private:
 	void UpdateThrow();			// 投げ
 	bool IsCancelJumpAttack();	// キャンセル
 
-	void AttackDash(CPlayer* pTarget);	// 走り投げ
-	void AttackDashJump(CPlayer* pTarget);	// 走り投げ
+	void AttackNormal(CPlayer* pTarget);
+	void AttackJump(CPlayer* pTarget);
+
+	void AttackDash(CPlayer* pTarget);		// 走り投げ
+	void AttackDashJump(CPlayer* pTarget);	// 走りジャンプ投げ
+
+	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void SetActionTimer(int nMin, int nMax);	// 行動タイマー
 
 	bool IsStop();
 
@@ -149,6 +165,8 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pTarget;
+
+	int m_nLevel;
 
 	//-----------------------------
 	// 列挙
@@ -161,7 +179,7 @@ private:
 	//-----------------------------
 	// 構造体
 	//-----------------------------
-
+	STiming m_sTimig;
 };
 
 #endif

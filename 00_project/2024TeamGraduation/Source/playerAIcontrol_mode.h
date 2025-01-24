@@ -97,7 +97,9 @@ public:
 	void SetParameter(SParameter parameter) { m_sParameter = parameter; }	// パラメータ設定
 	SParameter GetParameter() { return m_sParameter; }						// 取得
 
-	void SetjumpRate(float rate);
+	void SetMaxjumpRate(float rate);										// ジャンプ力割合の設定
+	float GetMaxjumpRate() { return m_fMaxJumpRate; }						// 取得
+	float GetJumpRate();													// ジャンプ力割合の取得
 
 private:
 	//=============================
@@ -134,7 +136,7 @@ private:
 	//=============================
 	CPlayer* m_pAI;					// 自分のポインタ
 
-	float m_fJumpRate;
+	float m_fMaxJumpRate;
 
 	// 列挙
 	EMode m_eMode;					// モードの列挙
