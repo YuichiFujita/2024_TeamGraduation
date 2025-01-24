@@ -47,7 +47,7 @@ namespace
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #endif
 #else	// TODO: ENTRYâÊñ äÆê¨ÇµÇΩÇÁTITLEÇ…Ç∑ÇÈ
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_TITLE;
 #endif
 }
 

@@ -863,6 +863,9 @@
     <ClCompile Include="Source\playerAIcontrol_start.cpp">
       <Filter>player\playerAI\mode</Filter>
     </ClCompile>
+    <ClCompile Include="Source\loadtext.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1578,6 +1581,9 @@
     </ClInclude>
     <ClInclude Include="Source\playerAIcontrol_start.h">
       <Filter>player\playerAI\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\loadtext.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

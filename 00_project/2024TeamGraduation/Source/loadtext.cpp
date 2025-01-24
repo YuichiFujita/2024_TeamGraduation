@@ -44,7 +44,7 @@ void loadtext::LoadVector(std::ifstream* pFile, std::vector<std::wstring>* pVecS
 			std::getline(*pFile, str);		// 一行全て読み込む
 
 			// 文字列を最後尾に追加
-			pVecStr->push_back(useful::MultiByteToWide(str));	// ワイド文字列に変換
+			pVecStr->push_back(UtilFunc::Transformation::MultiByteToWide(str));	// ワイド文字列に変換
 		}
 
 	} while (str != "END_TEXT");	// END_TEXTを読み込むまでループ
