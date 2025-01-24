@@ -31,7 +31,7 @@ namespace
 		const MyLib::PosGrid3 END = MyLib::PosGrid3(0, 100, 100);	// 終了色
 		const float START_ALPHA = 0.7f;	// 開始透明度
 		const float END_ALPHA = 0.1f;	// 終了透明度
-		const float	END_TIME = 1.7f;	// 終了時間
+		const float	END_TIME = 2.7f;	// 終了時間
 	}
 
 	namespace player
