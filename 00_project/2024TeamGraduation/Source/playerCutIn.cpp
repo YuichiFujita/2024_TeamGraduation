@@ -45,13 +45,13 @@ HRESULT CPlayerCutIn::Init()
 	HRESULT hr = CPlayer::Init();
 	if (FAILED(hr)) { return E_FAIL; }
 
-	// TODO：モーション変更
 	// カットインモーションの設定
-	GetMotion()->Set(EMotion::MOTION_WALK_SPAWN);
+	EMotion motion = (GetTeam()) ? EMotion::MOTION_CUTIN_L : EMotion::MOTION_CUTIN_R;
+	GetMotion()->Set(motion);
 
 	// チームに応じて向きを設定
 	const float fRotY = -HALF_PI * 0.25f;
-	SetRotation(MyLib::Vector3(0.0f, fRotY + (HALF_PI * GetTeam()), 0.0f));
+	SetRotation(MyLib::Vector3(0.0f, fRotY + ((HALF_PI * 0.25f) * 2.0f * GetTeam()), 0.0f));
 	return S_OK;
 }
 

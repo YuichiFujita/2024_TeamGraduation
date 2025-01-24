@@ -90,7 +90,7 @@ void CPlayerAIControlLeftAttack::Update(const float fDeltaTime, const float fDel
 }
 
 //==========================================================================
-// UŒ‚€”õ
+// UŒ‚€”õG—£‚ê‚é
 //==========================================================================
 void CPlayerAIControlLeftAttack::PreparationLeave()
 {
@@ -105,5 +105,30 @@ void CPlayerAIControlLeftAttack::PreparationLeave()
 
 		// UŒ‚ƒ‚[ƒhFUŒ‚
 		SetAttackMode(EATTACKMODE::ATTACKMODE_ATTACK);
+	}
+}
+
+//==========================================================================
+// UŒ‚€”õ
+//==========================================================================
+void CPlayerAIControlLeftAttack::Preparation()
+{
+	CPlayer* pPlayer = GetPlayer();
+	if (!pPlayer) return;
+
+	// ƒ‚[ƒVƒ‡ƒ“î•ñ‚ÌŽæ“¾
+	CMotion* pMotion = pPlayer->GetMotion();
+	int nType = pMotion->GetType();
+
+	if (nType == CPlayer::EMotion::MOTION_JUMP_BALL)
+	{// ƒWƒƒƒ“ƒvó‘Ô(ƒ{[ƒ‹ŠŽ)
+
+		// ˆÊ’u‚ÌŽæ“¾
+		MyLib::Vector3 posMy = pPlayer->GetPosition();
+
+		if (posMy.x > 0.0f)
+		{
+
+		}
 	}
 }

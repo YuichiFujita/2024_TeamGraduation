@@ -25,7 +25,8 @@
 //==========================================================================
 namespace
 {
-	const float JUMP_RATE = 1.0f;				// ジャンプの割合(高さ)
+	const float JUMP_RATE_MAX = 1.0f;				// ジャンプの最大
+	const float JUMP_RATE = 1.0f;					// ジャンプ割合
 }
 
 // フラグ
@@ -120,6 +121,8 @@ HRESULT CPlayerAIControlMode::Init()
 	m_eMoveFlag = EMoveFlag::MOVEFLAG_IDLE;
 	m_eActionFlag = EActionFlag::ACTION_NONE;
 
+	m_fMaxJumpRate = JUMP_RATE;
+
 	m_sParameter.fDistanse = 300.0f;
 	m_sParameter.fRadius = 30.0f;
 	m_sParameter.fJumpEnd = 130.0f;
@@ -132,7 +135,10 @@ HRESULT CPlayerAIControlMode::Init()
 //================================================================================
 void CPlayerAIControlMode::Uninit()
 {
-	delete this;
+	if (this)
+	{
+		delete this;
+	}
 }
 
 //================================================================================
@@ -261,7 +267,7 @@ void CPlayerAIControlMode::ActionFlagJump()
 	pControlAIAction->SetIsJump(true);
 
 	// 割合
-	pControlAIAction->SetJumpRate(JUMP_RATE);
+	pControlAIAction->SetMaxJumpRate(m_fMaxJumpRate);
 
 	// アクション列挙：なし
 	m_eActionFlag = EActionFlag::ACTION_NONE;
@@ -270,16 +276,38 @@ void CPlayerAIControlMode::ActionFlagJump()
 //================================================================================
 // ジャンプ割合設定
 //================================================================================
-void CPlayerAIControlMode::SetjumpRate(float rate)
+void CPlayerAIControlMode::SetMaxjumpRate(float rate)
 {
 	if (rate < 0.0f)
 	{
 		rate = 0.0f;
 	}
-	if (rate > 1.0f)
+	if (rate > JUMP_RATE_MAX)
 	{
-		rate = 1.0f;
+		rate = JUMP_RATE_MAX;
 	}
 
-	m_fJumpRate = rate;
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = m_pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	m_fMaxJumpRate = rate;
+
+	// ジャンプ：true
+	pControlAIAction->SetMaxJumpRate(m_fMaxJumpRate);
+}
+
+//================================================================================
+// ジャンプ割合の取得
+//================================================================================
+float CPlayerAIControlMode::GetJumpRate()
+{
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = m_pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// 割合取得
+	float rate = pControlAIAction->GetJumpRate();
+
+	return rate;
 }

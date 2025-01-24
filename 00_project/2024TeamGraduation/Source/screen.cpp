@@ -12,6 +12,8 @@
 #include "renderer.h"
 #include "shader.h"
 #include "shaderMono.h"
+#include "manager.h"
+#include "lightManager.h"
 
 //************************************************************
 //	子クラス [CScreen] のメンバ関数
@@ -176,25 +178,16 @@ CScreen* CScreen::Create(const int nScreenTexIdx)
 }
 
 //============================================================
-//	シェーダーの設定処理 (時間指定)
+//	シェーダーの設定処理
 //============================================================
 void CScreen::SetEnableShader(const bool bShader, const float fTime)
 {
+	// ライトの設定
+	GET_MANAGER->GetLight()->SetEnableBright(bShader);
+
 	// 引数フラグの設定
 	m_bShader = bShader;
 
 	// 経過時間を初期化
 	m_fCurTime = fTime;
-}
-
-//============================================================
-//	シェーダーの設定処理 (切り替え)
-//============================================================
-void CScreen::SetEnableShader(const bool bShader)
-{
-	// 引数フラグの設定
-	m_bShader = bShader;
-
-	// 経過時間を初期化
-	m_fCurTime = 0.0f;
 }
