@@ -51,6 +51,7 @@ public:
 	int GetPatternAnim() const			{ return m_nPatternAnim; }		// アニメーションパターン取得
 	DWORD GetNumLoop() const			{ return m_dwNumLoop; }			// 繰り返し数取得
 	void ResetNumLoop()					{ m_dwNumLoop = 0; }			// 繰り返し数リセット
+	bool IsLoopMoment() const			{ return m_bLoopMoment; }		// 折り返し瞬間フラグ取得
 
 	//--------------------------
 	// その他
@@ -74,6 +75,7 @@ private:
 	bool m_bAutoDeath;		// 自動削除のフラグ
 	bool m_bAutoPlay;		// 自動再生のフラグ
 	bool m_bFinish;			// アニメーションが終わった判定
+	bool m_bLoopMoment;		// 折り返し瞬間フラグ
 };
 
 
