@@ -40,7 +40,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CThoughtBalloon(int nPriority = mylib_const::PRIORITY_DEFAULT);
+	CThoughtBalloon(int nPriority = mylib_const::PRIORITY_ZSORT);
 	~CThoughtBalloon();
 
 	//=============================

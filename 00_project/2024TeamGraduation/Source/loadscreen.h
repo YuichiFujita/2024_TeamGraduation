@@ -36,6 +36,10 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	void Kill();
+	inline bool IsLoopMoment() const	{ return m_pLoad->IsLoopMoment(); }
+	inline DWORD GetNumLoop() const		{ return m_pLoad->GetNumLoop(); }
+	inline void ResetNumLoop()			{ m_pLoad->ResetNumLoop(); }
+	inline void SetEnableAutoPlay(const bool bPlay) { m_pLoad->SetEnableAutoPlay(bPlay); }
 
 	//=============================
 	// 静的メンバ関数
@@ -53,6 +57,7 @@ private:
 	// メンバ変数
 	//=============================
 	CObject2D_Anim* m_pLoad;	// ロード画面情報
+
 };
 
 #endif

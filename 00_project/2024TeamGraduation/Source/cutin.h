@@ -14,6 +14,11 @@
 #include "object2D.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CPlayer;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // カットインクラス
@@ -22,17 +27,9 @@ class CCutIn : public CObject2D
 public:
 
 	//=============================
-	// 状態列挙
+	// コンストラクタ/デストラクタ
 	//=============================
-	enum EState
-	{
-		STATE_NONE = 0,	// なにもない状態
-		STATE_TIME,		// 時間経過状態
-		STATE_END,		// 終了状態
-		STATE_MAX
-	};
-
-	CCutIn();
+	CCutIn(const CPlayer* pAttackPlayer);
 	~CCutIn();
 
 	//=============================
@@ -47,7 +44,7 @@ public:
 	//=============================
 	// 静的メンバ関数
 	//=============================
-	static CCutIn* Create();
+	static CCutIn* Create(const CPlayer* pAttackPlayer);
 
 	//=============================
 	// メンバ関数
@@ -68,6 +65,7 @@ private:
 	void CreateTexture();	// テクスチャ作成
 
 	// その他関数
+	void UpdatePlayerUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// プレイヤーUIの更新
 	void UpdateBlinkColor(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 背景色の更新
 
 	//=============================
@@ -75,6 +73,8 @@ private:
 	//=============================
 	// テクスチャ関連
 	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
+	const CPlayer* m_pAttackPlayer;	// 攻撃プレイヤー情報
+	CPlayer* m_pPlayer;				// プレイヤー情報
 
 	// その他変数
 	CObject2D* m_pBlink;	// 輝き情報

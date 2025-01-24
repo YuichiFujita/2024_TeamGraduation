@@ -36,7 +36,7 @@ public:
 	void Draw();
 	void DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc, ACameraFunc pSetCameraFunc);	// レンダーテクスチャ描画
 	HRESULT CreateRenderTexture();				// レンダーテクスチャー生成
-	void SetEnableShader(const bool bShader);	// スクリーンシェーダーフラグ設定
+	void SetEnableShader(const bool bShader, const float fTime = 0.0f);	// スクリーンシェーダーフラグ設定
 	bool IsShader() const;						// スクリーンシェーダーフラグ取得
 	int GetRenderTextureIndex() const;			// レンダーテクスチャインデックス取得
 	inline LPDIRECT3DDEVICE9 GetDevice() const	{ return m_pD3DDevice; }

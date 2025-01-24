@@ -72,7 +72,7 @@ HRESULT CLoadScreen::Init()
 		VEC3_SCREEN_CENT,	// 位置
 		PTRN.x,	// テクスチャ横分割数
 		PTRN.y,	// テクスチャ縦分割数
-		0.029f,	// 待機時間
+		0.03f,	// 待機時間
 		false,	// 自動破棄
 		6		// 優先順位
 	);

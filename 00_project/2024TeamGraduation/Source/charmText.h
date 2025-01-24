@@ -93,7 +93,6 @@ private:
 	//virtual void EffectChain();				// チェインエフェクト
 
 	// 生成
-	HRESULT CreateFace();	// 顔アイコン生成
 	HRESULT CreateText();	// 文字生成
 
 protected:
@@ -118,7 +117,6 @@ protected:
 	//=============================
 	// メンバ変数
 	//=============================
-	CObjectBillboard* m_pFace;			// 顔アイコン
 	CThoughtBalloon* m_pThoughtBalloon;	// 実況吹き出し
 	EState m_state;			// 状態
 	float m_fStateTime;		// 状態タイマー

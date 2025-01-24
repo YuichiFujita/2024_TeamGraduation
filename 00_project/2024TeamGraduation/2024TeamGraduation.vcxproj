@@ -251,6 +251,7 @@
     <ClCompile Include="Source\listmanager.cpp" />
     <ClCompile Include="Source\loadmanager.cpp" />
     <ClCompile Include="Source\loadscreen.cpp" />
+    <ClCompile Include="Source\loadtext.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\manager.cpp" />
     <ClCompile Include="Source\map.cpp" />
@@ -290,6 +291,7 @@
     <ClCompile Include="Source\particle.cpp" />
     <ClCompile Include="Source\pause.cpp" />
     <ClCompile Include="Source\pause_game.cpp" />
+    <ClCompile Include="Source\pause_outgame.cpp" />
     <ClCompile Include="Source\pause_tutorial.cpp" />
     <ClCompile Include="Source\player.cpp" />
     <ClCompile Include="Source\playerAction.cpp" />
@@ -316,6 +318,7 @@
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerCutIn.cpp" />
     <ClCompile Include="Source\playerDressup.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
@@ -494,6 +497,7 @@
     <ClInclude Include="Source\listmanager.h" />
     <ClInclude Include="Source\loadmanager.h" />
     <ClInclude Include="Source\loadscreen.h" />
+    <ClInclude Include="Source\loadtext.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\manager.h" />
     <ClInclude Include="Source\map.h" />
@@ -533,6 +537,7 @@
     <ClInclude Include="Source\particle.h" />
     <ClInclude Include="Source\pause.h" />
     <ClInclude Include="Source\pause_game.h" />
+    <ClInclude Include="Source\pause_outgame.h" />
     <ClInclude Include="Source\pause_tutorial.h" />
     <ClInclude Include="Source\player.h" />
     <ClInclude Include="Source\playerAction.h" />
@@ -559,6 +564,7 @@
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerCutIn.h" />
     <ClInclude Include="Source\playerDressup.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />

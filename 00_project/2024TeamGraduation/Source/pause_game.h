@@ -23,6 +23,7 @@ public:
 
 	// オーバーライドされた関数
 	HRESULT Init() override;
+	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 
 private:
 	

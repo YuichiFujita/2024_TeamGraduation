@@ -221,12 +221,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
 
-		if (ImGui::Button("CutIn"))
-		{
-			// オーディエンス生成
-			CCutIn::Create();
-		}
-
 #endif
 
 		// ツリー終端
@@ -239,7 +233,7 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Shader : Change"))
 		{
 			// シェーダーフラグの反転
-			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader());
+			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader(), 2.0f);
 		}
 
 		if (ImGui::Button("Camera : Swing"))

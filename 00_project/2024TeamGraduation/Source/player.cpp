@@ -36,6 +36,7 @@
 // 派生先
 #include "playerDressup.h"
 #include "playerSpawn.h"
+#include "playerCutIn.h"
 #include "playerReferee.h"
 #include "playerReferee_Result.h"
 #include "playerResult.h"
@@ -215,6 +216,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	// オブジェクトのパラメータ
 	m_mMatcol = MyLib::Color();			// マテリアルの色
 	m_sKnockback = SKnockbackInfo();	// ノックバック情報
+	m_sDamageKB = SKnockbackInfo();		// ノックバック情報(ダメージ)
 
 	// 行動フラグ
 	m_bPossibleMove = false;		// 行動可能フラグ
@@ -342,6 +344,10 @@ CPlayer* CPlayer::Create
 
 	case EHuman::HUMAN_SPAWN:
 		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
+	case EHuman::HUMAN_CUTIN:
+		pPlayer = DEBUG_NEW CPlayerCutIn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
 	case EHuman::HUMAN_REFEREE:
@@ -1651,8 +1657,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 	MyLib::Vector3 posE = posS;				//終点
 	posE.x += vecBall.x * knockback;
 	posE.z += vecBall.z * knockback;
-	m_sKnockback.posStart = posS;
-	m_sKnockback.posEnd = posE;
+	m_sDamageKB.posStart = posS;
+	m_sDamageKB.posEnd = posE;
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
@@ -1971,7 +1977,7 @@ void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const 
 	// ノックバック
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
-	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT,time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sDamageKB.posStart, m_sDamageKB.posEnd, Knockback::HEIGHT,time);
 	SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::DAMAGE)
@@ -1980,7 +1986,23 @@ void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const 
 		SetEnableMove(true);
 
 		pMotion->ToggleFinish(true);
-		SetState(STATE_INVINCIBLE);
+
+		if (m_Oldstate == STATE_INVADE_TOSS || 
+			m_Oldstate == STATE_INVADE_RETURN)
+		{// 侵入時なら
+			if (m_pBall != nullptr)
+			{
+				SetState(STATE_INVADE_TOSS);
+			}
+			else
+			{
+				SetState(STATE_INVADE_RETURN);
+			}
+		}
+		else
+		{// 無敵
+			SetState(STATE_INVINCIBLE);
+		}
 	}
 }
 
@@ -2291,8 +2313,6 @@ void CPlayer::StateInvade_Toss(const float fDeltaTime, const float fDeltaRate, c
 void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 自陣サイズ取得
-	MyLib::Vector3 posCourt = MyLib::Vector3();
-	MyLib::Vector3 sizeCourt = CGameManager::GetInstance()->GetCourtSize(m_typeTeam, posCourt);
 	MyLib::Vector3 pos = GetPosition();
 
 	// チーム別でラインの位置まで戻す
@@ -2335,7 +2355,6 @@ void CPlayer::StateInvade_Return(const float fDeltaTime, const float fDeltaRate,
 	move.z += cosf(D3DX_PI + rot.y) * GetParameter().fVelocityDash;
 #endif
 	SetMove(move);
-
 
 	// 戻る方向向く
 	float rotDest = pos.AngleXZ(posDest);
@@ -2508,12 +2527,19 @@ void CPlayer::Draw()
 //==========================================================================
 void CPlayer::SetState(EState state)
 {
+	if (state == STATE_INVADE_TOSS ||
+		state == STATE_INVADE_RETURN)
+	{// 侵入時なら
+		int a = 0;
+	}
+
 	// 状態終了
 	if (m_StateEndFunc[m_state] != nullptr)
 	{
 		(this->*(m_StateEndFunc[m_state]))();
 	}
 
+	m_Oldstate = m_state;
 	m_state = state;
 	m_fStateTime = 0.0f;
 }
@@ -2653,6 +2679,20 @@ void CPlayer::DeadCollectSetting()
 		m_pEfkDeadAfter->SetEnableAutoDeath(true);
 		m_pEfkDeadAfter = nullptr;
 	}
+}
+
+//==========================================================================
+// 着せ替え情報コピー
+//==========================================================================
+void CPlayer::CopyDressData(const CPlayer* pCopyPlayer)
+{
+	// ドレスアップ割当
+	BindDressUp
+	( // 引数
+		pCopyPlayer->m_pDressUp_Hair->GetNowIdx(),		// 髪
+		pCopyPlayer->m_pDressUp_Accessory->GetNowIdx(),	// アクセ
+		pCopyPlayer->m_pDressUp_Face->GetNowIdx()		// 顔
+	);
 }
 
 //==========================================================================
@@ -2939,7 +2979,7 @@ void CPlayer::Debug()
 	}
 
 	if (ImGui::Button("Dead"))
-	{// リセット
+	{// 死亡
 		MyLib::HitResult_Character* result = DEBUG_NEW MyLib::HitResult_Character;
 		CBall* pBall = CBall::Create(GetPosition());
 		DeadSetting(result,pBall);
@@ -2947,6 +2987,14 @@ void CPlayer::Debug()
 		pBall->Kill();
 	}
 
+	if (ImGui::Button("Damage"))
+	{// ダメージ
+		CBall* pBall = CBall::Create(GetPosition());
+		DamageSetting(pBall);
+		pBall->Kill();
+	}
+
+#if 0
 	if (ImGui::Button("CatchSpecial"))
 	{// キャッチ時処理(スペシャル)
 		CatchSettingSpecial(false, CBall::ESpecial::SPECIAL_KAMEHAMEHA);
@@ -2964,6 +3012,7 @@ void CPlayer::Debug()
 	{// リセット
 		OutCourtSetting();
 	}
+#endif
 
 	//-----------------------------
 	// ベースのデバッグ表示

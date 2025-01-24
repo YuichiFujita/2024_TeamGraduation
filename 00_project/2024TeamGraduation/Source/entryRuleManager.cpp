@@ -996,7 +996,7 @@ void CEntryRuleManager::Select()
 		}
 
 		// サウンドの再生
-		PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 
 	if (pKey->GetTrigger(DIK_S)
@@ -1047,7 +1047,7 @@ void CEntryRuleManager::Select()
 		}
 
 		// サウンドの再生
-		PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 
 	// 前回の選択要素の色を黒に設定

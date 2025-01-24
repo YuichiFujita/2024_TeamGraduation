@@ -38,12 +38,13 @@ public:
 	static CScreen* Create(const int nScreenTexIdx);	// 生成
 
 	// メンバ関数
-	void SetEnableShader(const bool bShader)	{ m_bShader = bShader; }	// シェーダー設定
-	bool IsShader() const						{ return m_bShader; }		// シェーダー取得
+	void SetEnableShader(const bool bShader, const float fTime = 0.0f);	// シェーダー設定
+	inline bool IsShader() const { return m_bShader; }	// シェーダー取得
 
 private:
 	// メンバ変数
-	bool m_bShader;	// シェーダーフラグ
+	bool m_bShader;		// シェーダーフラグ
+	float m_fCurTime;	// 経過時間
 };
 
 #endif	// _SCREEN_H_
