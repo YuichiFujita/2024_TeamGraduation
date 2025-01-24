@@ -579,6 +579,14 @@ void CManager::Uninit()
 		m_pScene = nullptr;
 	}
 
+	// ロード画面の破棄
+	CLoadManager* pLoadManager = GetLoadManager();
+	if (pLoadManager != nullptr)
+	{
+		// 終了処理
+		pLoadManager->Uninit();
+	}
+
 	// シェーダーの破棄
 	CShader::Release();
 
