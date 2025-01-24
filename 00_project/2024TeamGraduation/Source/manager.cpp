@@ -35,9 +35,9 @@
 namespace
 {
 #if _DEBUG
-	const float MIN_LOOP_LOAD = 0;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 1;	// 必須ロードループ数
 #else
-	const float MIN_LOOP_LOAD = 2;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 2;	// 必須ロードループ数
 #endif
 
 #if _DEBUG
@@ -872,8 +872,10 @@ void CManager::NormalLoad()
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
+
 			if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
-			{
+			{// フェードが終了している場合
+
 				m_bLoadComplete = true;	// ロード完了
 				m_bNowLoading = false;	// ロード中フラグオフ
 			}

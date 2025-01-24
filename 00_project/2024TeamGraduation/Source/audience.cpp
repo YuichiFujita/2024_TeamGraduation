@@ -33,11 +33,16 @@ namespace
 	const float TIME_DESPAWN	 = 3.2f;	// 退場時間
 
 #if _DEBUG	// TODO：ローポリ完成したら見直し
+#if 0	// TODO：ポリゴンのみ
 	const float RATE_HIGH = 0.05f;	// ハイポリ比率
 	const float RATE_LOW  = 0.125f;	// ローポリ比率
 #else
-	const float RATE_HIGH = 0.12f;	// ハイポリ比率
-	const float RATE_LOW = 0.28f;	// ローポリ比率
+	const float RATE_HIGH = 0.0f;	// ハイポリ比率
+	const float RATE_LOW  = 0.0f;	// ローポリ比率
+#endif
+#else
+	const float RATE_HIGH = 0.05f;	// ハイポリ比率
+	const float RATE_LOW  = 0.125f;	// ローポリ比率
 #endif
 	const float RATE_ANIM = 1.0f - (RATE_HIGH + RATE_LOW);	// アニメーション比率
 }

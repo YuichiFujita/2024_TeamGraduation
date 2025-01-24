@@ -177,6 +177,9 @@ void CResultCrown::Uninit()
 		m_pEffect = nullptr;
 	}
 
+	// ロゴ部分
+	SAFE_UNINIT(m_pMain);
+
 	// オブジェクトの破棄
 	Release();
 }
