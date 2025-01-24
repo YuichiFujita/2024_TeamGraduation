@@ -25,6 +25,7 @@ CObject2D_Anim::CObject2D_Anim(int nPriority) : CObject2D(nPriority)
 	m_bAutoDeath = false;	// 自動削除のフラグ
 	m_bAutoPlay = true;		// 自動再生のフラグ
 	m_bFinish = false;		// アニメーションが終わった判定
+	m_bLoopMoment = false;	// 折り返し瞬間フラグ
 }
 
 //==========================================================================
@@ -118,6 +119,9 @@ HRESULT CObject2D_Anim::Init(const int nDivisionU, const int nDivisionV, const f
 //==========================================================================
 void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 折り返し瞬間フラグOFF
+	m_bLoopMoment = false;
+
 	if (m_bAutoPlay)
 	{
 		// カウントを更新
@@ -133,6 +137,9 @@ void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, cons
 
 				// 繰り返し数を加算
 				m_dwNumLoop++;
+
+				// 折り返し瞬間フラグON
+				m_bLoopMoment = true;
 
 				// 終了状態
 				m_bFinish = true;

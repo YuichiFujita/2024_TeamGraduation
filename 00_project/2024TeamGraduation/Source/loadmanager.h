@@ -32,6 +32,7 @@ public:
 	void UnLoad();	// ロード解放
 	void ResetLoad();	// ロードリセット
 	bool IsLoadComplete();	// ロードが完了フラグ取得
+	bool IsLoopMoment() const;	// ロード画面繰り返し瞬間取得
 	DWORD GetNumLoop() const;	// ロード画面ループ数取得
 	void ResetNumLoop();		// ロード画面ループ数リセット
 	void SetEnableAutoPlay(const bool bPlay);	// ロード画面自動再生設定
