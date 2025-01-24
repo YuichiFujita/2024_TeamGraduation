@@ -554,6 +554,7 @@ private:
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
 	SKnockbackInfo m_sKnockback;	// ノックバックの位置
+	SKnockbackInfo m_sDamageKB;		// ノックバックの位置(ダメージ)
 	
 	//-----------------------------
 	// 行動フラグ
