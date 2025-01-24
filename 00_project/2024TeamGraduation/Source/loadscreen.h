@@ -36,8 +36,9 @@ public:
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void Draw();
 	void Kill();
-	inline DWORD GetNumLoop() const	{ return m_pLoad->GetNumLoop(); }
-	inline void ResetNumLoop()		{ m_pLoad->ResetNumLoop(); }
+	inline bool IsLoopMoment() const	{ return m_pLoad->IsLoopMoment(); }
+	inline DWORD GetNumLoop() const		{ return m_pLoad->GetNumLoop(); }
+	inline void ResetNumLoop()			{ m_pLoad->ResetNumLoop(); }
 	inline void SetEnableAutoPlay(const bool bPlay) { m_pLoad->SetEnableAutoPlay(bPlay); }
 
 	//=============================

@@ -55,16 +55,10 @@ HRESULT CCharmText_Left::Init()
 	// 初期化処理
 	CCharmText::Init();
 
-	// 顔の位置
-	if (m_pFace != nullptr)
-	{
-		m_pFace->SetPosition(Position::START);
-	}
-
 	// テキストの位置
 	if (m_pThoughtBalloon != nullptr)
 	{
-		m_pThoughtBalloon->SetPosition(Position::START + MyLib::Vector3(m_pFace->GetSize().x, 0.0f, 0.0f));
+		m_pThoughtBalloon->SetPosition(Position::START);
 		m_pThoughtBalloon->SetAnchorType(CObjectBillboard::EAnchorPoint::LEFT);
 	}
 
@@ -167,9 +161,6 @@ void CCharmText_Left::Update(const float fDeltaTime, const float fDeltaRate, con
 	pos.x -= DISTANCE_XZ * m_nCntUp;
 	pos.z += DISTANCE_XZ * m_nCntUp;
 	pos.y += DISTANCE_UP * m_nCntUp;
-
-	MyLib::Vector2 size = m_pThoughtBalloon->GetSize() * 0.5f;
-	m_pFace->SetPosition(pos + MyLib::Vector3(size.x, -size.y, -50.0f));
 	m_pThoughtBalloon->SetPosition(pos);
 }
 
@@ -186,7 +177,6 @@ void CCharmText_Left::StateFadeIn()
 	SetPosition(pos);
 
 	// 不透明度更新
-	m_pFace->SetAlpha(ratio);
 	m_pThoughtBalloon->SetAlpha(ratio);
 
 	// フェードイン
@@ -215,7 +205,6 @@ void CCharmText_Left::StateFadeOut()
 	SetPosition(pos);
 
 	// 不透明度更新
-	m_pFace->SetAlpha(1.0f - ratio);
 	m_pThoughtBalloon->SetAlpha(1.0f - ratio);
 
 	// フェードアウト

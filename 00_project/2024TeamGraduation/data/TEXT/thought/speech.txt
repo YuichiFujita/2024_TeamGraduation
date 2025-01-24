@@ -1,0 +1,116 @@
+#==============================================================================
+#
+#	イントロ画面テキスト [intro.txt]
+#	Author : 藤田 勇一
+#
+#==============================================================================
+
+TEXT_0
+	STR = おっと！！？
+	STR = これは魅力全開だー！！
+	STR = 観客がざわついているぞ！
+END_TEXT
+
+TEXT_1
+	STR = 今のはまさにヒーロームーブ！
+	STR = みんなが彼に夢中だ！
+END_TEXT
+
+TEXT_2
+	STR = なんて優雅なんだ…
+	STR = その動き、誰もが見惚れる！
+END_TEXT
+
+TEXT_3
+	STR = カッコよすぎる！
+	STR = これで誰もが
+	STR = 惚れるのは間違いない！
+END_TEXT
+
+TEXT_4
+	STR = はい。
+	STR = もう全員落ちましたね！
+	STR = モテすぎ注意報発令中！
+END_TEXT
+
+TEXT_5
+	STR = 観客どころか
+	STR = 敵チームまでもが虜になってるぞ！
+END_TEXT
+
+TEXT_6
+	STR = 体育館の空気が変わった。
+	STR = まるで映画のワンシーンだ！
+END_TEXT
+
+TEXT_7
+	STR = その動き
+	STR = 歴史に残るモテ行動として
+	STR = 語り継がれるだろう…！
+END_TEXT
+
+TEXT_8
+	STR = あ…あれは！
+	STR = 既に相手のハートは
+	STR = 打ち抜かれている…ひでぶっ！
+END_TEXT
+
+TEXT_9
+	STR = 今のは…まさか！
+	STR = “魅惑の界王拳”を使ったのか！？
+END_TEXT
+
+TEXT_10
+	STR = 魅力、倍返しだ！
+	STR = いや…3倍速でカッコいいぞ！
+END_TEXT
+
+TEXT_11
+	STR = 輝きすぎて目が眩む！
+	STR = これはモテ界の
+	STR = “スペシウム光線”だ！
+END_TEXT
+
+TEXT_12
+	STR = 惚れた！？
+	STR = 間違いない…今の動き完全に
+	STR = 『ATフィールド』突破！
+END_TEXT
+
+TEXT_13
+	STR = タカとユージも驚愕！
+	STR = こんなモテ行動、前代未聞だ！
+END_TEXT
+
+TEXT_14
+	STR = 全員集合！
+	STR = …いや、全員が
+	STR = 惚れて集合しちゃった！
+END_TEXT
+
+TEXT_15
+	STR = 魅惑の
+	STR = “ハート波動拳”炸裂！
+	STR = KO確定！
+END_TEXT
+
+TEXT_16
+	STR = これぞ“恋愛ショット”！
+	STR = 会場全員がラブゲーム状態だ！
+END_TEXT
+
+TEXT_17
+	STR = この動き、まさに
+	STR = “モテモテの実”の能力者！
+	STR = 魅力が止まらない！
+END_TEXT
+
+TEXT_18
+	STR = モテ事件、発生！
+	STR = “犯人”は彼だ！
+	STR = そして全員が被害者！
+END_TEXT
+
+TEXT_ELSE
+	STR = 読込エラー
+END_TEXT

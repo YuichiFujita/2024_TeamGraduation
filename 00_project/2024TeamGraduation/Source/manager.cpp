@@ -849,6 +849,9 @@ void CManager::NormalLoad()
 		bool bComplete = pLoadManager->IsLoadComplete();
 
 		if (bComplete
+#ifdef NDEBUG
+		&&  pLoadManager->IsLoopMoment()
+#endif
 		&&  pLoadManager->GetNumLoop() >= MIN_LOOP_LOAD
 		&&  !m_bLoadFadeSet)
 		{// ƒ[ƒhŠ®—¹‚ÌğŒŠ®—¹
