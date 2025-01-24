@@ -36,6 +36,7 @@
 // 派生先
 #include "playerDressup.h"
 #include "playerSpawn.h"
+#include "playerCutIn.h"
 #include "playerReferee.h"
 #include "playerReferee_Result.h"
 #include "playerResult.h"
@@ -342,6 +343,10 @@ CPlayer* CPlayer::Create
 
 	case EHuman::HUMAN_SPAWN:
 		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
+	case EHuman::HUMAN_CUTIN:
+		pPlayer = DEBUG_NEW CPlayerCutIn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
 	case EHuman::HUMAN_REFEREE:
@@ -2653,6 +2658,20 @@ void CPlayer::DeadCollectSetting()
 		m_pEfkDeadAfter->SetEnableAutoDeath(true);
 		m_pEfkDeadAfter = nullptr;
 	}
+}
+
+//==========================================================================
+// 着せ替え情報コピー
+//==========================================================================
+void CPlayer::CopyDressData(const CPlayer* pCopyPlayer)
+{
+	// ドレスアップ割当
+	BindDressUp
+	( // 引数
+		pCopyPlayer->m_pDressUp_Hair->GetNowIdx(),		// 髪
+		pCopyPlayer->m_pDressUp_Accessory->GetNowIdx(),	// アクセ
+		pCopyPlayer->m_pDressUp_Face->GetNowIdx()		// 顔
+	);
 }
 
 //==========================================================================

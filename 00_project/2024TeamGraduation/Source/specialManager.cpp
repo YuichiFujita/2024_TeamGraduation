@@ -122,7 +122,7 @@ HRESULT CSpecialManager::Init(void)
 	SetEnablePosibleMove_WorldPause(true);
 
 	// カットインの生成
-	m_pCutIn = CCutIn::Create();
+	m_pCutIn = CCutIn::Create(m_pAttackPlayer);
 	if (m_pCutIn == nullptr)
 	{ // 生成に失敗した場合
 
@@ -155,6 +155,9 @@ HRESULT CSpecialManager::Init(void)
 //============================================================
 void CSpecialManager::Uninit(void)
 {
+	// ライトの終了
+	SAFE_UNINIT(m_pCenterLight);
+
 	// 攻撃プレイヤーを照らすライトの終了
 	SAFE_UNINIT(m_pAttackLight);
 

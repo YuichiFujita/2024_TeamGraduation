@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "calculation.h"
 #include "renderTexture.h"
+#include "player.h"
 
 //==========================================================================
 // 定数定義
@@ -17,7 +18,6 @@ namespace
 {
 	const std::string TEXTURE_BLINK_BG = "data\\TEXTURE\\cutin\\blink000.jpg";	// 背景テクスチャ
 	const int	PRIORITY = 7;		// 優先順位
-	const float	END_TIME = 1.2f;	// 終了時間
 
 	namespace bg
 	{
@@ -31,17 +31,41 @@ namespace
 		const MyLib::PosGrid3 END = MyLib::PosGrid3(0, 100, 100);	// 終了色
 		const float START_ALPHA = 0.7f;	// 開始透明度
 		const float END_ALPHA = 0.1f;	// 終了透明度
+		const float	END_TIME = 1.7f;	// 終了時間
+	}
+
+	namespace player
+	{
+		namespace l
+		{
+			const MyLib::Vector3 START	= MyLib::Vector3(VEC3_SCREEN_CENT.x - VEC3_SCREEN_SIZE.x, VEC3_SCREEN_CENT.y, 0.0f);	// 開始位置
+			const MyLib::Vector3 MIDDLE	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 350.0f, VEC3_SCREEN_CENT.y, 0.0f);				// 中間位置
+			const MyLib::Vector3 END	= MyLib::Vector3(VEC3_SCREEN_CENT.x + VEC3_SCREEN_SIZE.x, VEC3_SCREEN_CENT.y, 0.0f);	// 終了位置
+		}
+		namespace r
+		{
+			const MyLib::Vector3 START	= MyLib::Vector3(VEC3_SCREEN_CENT.x + VEC3_SCREEN_SIZE.x, VEC3_SCREEN_CENT.y, 0.0f);	// 開始位置
+			const MyLib::Vector3 MIDDLE	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 350.0f, VEC3_SCREEN_CENT.y, 0.0f);				// 中間位置
+			const MyLib::Vector3 END	= MyLib::Vector3(VEC3_SCREEN_CENT.x - VEC3_SCREEN_SIZE.x, VEC3_SCREEN_CENT.y, 0.0f);	// 終了位置
+		}
+		const MyLib::Vector3 START[]	= { l::START, r::START, };	// 開始位置
+		const MyLib::Vector3 MIDDLE[]	= { l::MIDDLE, r::MIDDLE };	// 中間位置
+		const MyLib::Vector3 END[]		= { l::END, r::END, };		// 終了位置
+		const float HALF_TIME	= blink::END_TIME * 0.3f;	// 中間時間
+		const float END_TIME	= blink::END_TIME - 0.45f;	// 終了時間
 	}
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CCutIn::CCutIn() : CObject2D(PRIORITY),
-	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
-	m_pBlink		(nullptr),		// 輝き情報
-	m_pPlayer2D		(nullptr),		// プレイヤーテクスチャ情報
-	m_fBlinkTime	(0.0f)			// 背景輝きカウンター
+CCutIn::CCutIn(const CPlayer* pAttackPlayer) : CObject2D(PRIORITY),
+	m_pAttackPlayer	(pAttackPlayer),	// 攻撃プレイヤー情報
+	m_pRenderScene	(nullptr),			// シーンレンダーテクスチャ
+	m_pPlayer		(nullptr),			// プレイヤー情報
+	m_pBlink		(nullptr),			// 輝き情報
+	m_pPlayer2D		(nullptr),			// プレイヤーテクスチャ情報
+	m_fBlinkTime	(0.0f)				// 背景輝きカウンター
 {
 
 }
@@ -57,10 +81,10 @@ CCutIn::~CCutIn()
 //==========================================================================
 // 生成処理
 //==========================================================================
-CCutIn* CCutIn::Create()
+CCutIn* CCutIn::Create(const CPlayer* pAttackPlayer)
 {
 	// メモリの確保
-	CCutIn* pObj = DEBUG_NEW CCutIn;
+	CCutIn* pObj = DEBUG_NEW CCutIn(pAttackPlayer);
 	if (pObj != nullptr)
 	{
 		// クラスの初期化
@@ -130,8 +154,17 @@ HRESULT CCutIn::Init()
 //==========================================================================
 void CCutIn::Uninit()
 {
+	// シーンレンダーテクスチャの破棄
+	SAFE_REF_RELEASE(m_pRenderScene);
+
+	// プレイヤーの終了
+	SAFE_UNINIT(m_pPlayer);
+
 	// 輝きの終了
 	SAFE_UNINIT(m_pBlink);
+
+	// プレイヤーテクスチャの終了
+	SAFE_UNINIT(m_pPlayer2D);
 
 	// 終了処理
 	CObject2D::Uninit();
@@ -142,11 +175,17 @@ void CCutIn::Uninit()
 //==========================================================================
 void CCutIn::Kill()
 {
+	// プレイヤーの削除
+	SAFE_KILL(m_pPlayer);
+
 	// 輝きの削除
 	SAFE_KILL(m_pBlink);
 
+	// プレイヤーテクスチャの削除
+	SAFE_KILL(m_pPlayer2D);
+
 	// 削除処理
-	CObject2D::Kill();
+	CCutIn::Uninit();
 }
 
 //==========================================================================
@@ -154,17 +193,17 @@ void CCutIn::Kill()
 //==========================================================================
 void CCutIn::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 経過時間を加算
+	m_fBlinkTime += fDeltaTime * fSlowRate;
+
+	// プレイヤーUIの更新
+	UpdatePlayerUI(fDeltaTime, fDeltaRate, fSlowRate);
+
 	// 背景色の更新
 	UpdateBlinkColor(fDeltaTime, fDeltaRate, fSlowRate);
 
-#if 0
-	// TODO
-	if (IsEnd())
-	{
-		Uninit();
-		return;
-	}
-#endif
+	// プレイヤーの更新
+	m_pPlayer->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 輝きの更新
 	m_pBlink->Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -203,7 +242,7 @@ void CCutIn::Draw()
 bool CCutIn::IsEnd() const
 {
 	// 経過時間が終了時間を超えているかを返す
-	return (m_fBlinkTime >= END_TIME);
+	return (m_fBlinkTime >= blink::END_TIME);
 }
 
 //==========================================================================
@@ -216,7 +255,7 @@ HRESULT CCutIn::CreateRenderTexture()
 	( // 引数
 		CRenderTextureManager::LAYER_BALLOON,		// 描画順レイヤー
 		std::bind(&CCutIn::CreateTexture, this),	// テクスチャ作成関数ポインタ
-		std::bind(&CCamera::SetCamera, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
+		std::bind(&CCamera::SetCameraCutIn, GET_MANAGER->GetCamera())	// カメラ設定関数ポインタ
 	);
 	if (m_pRenderScene == nullptr)
 	{ // 生成に失敗した場合
@@ -233,6 +272,32 @@ HRESULT CCutIn::CreateRenderTexture()
 //==========================================================================
 HRESULT CCutIn::CreateTextureObject()
 {
+	const CGameManager::ETeamSide team = m_pAttackPlayer->GetTeam();			// 攻撃プレイヤーチーム
+	const CPlayer::EBody body = m_pAttackPlayer->GetBodyType();					// 攻撃プレイヤー体型
+	const CPlayer::EHandedness handedness = m_pAttackPlayer->GetHandedness();	// 攻撃プレイヤー利き手
+
+	// プレイヤーの生成
+	m_pPlayer = CPlayer::Create
+	( // 引数
+		VEC3_ZERO,						// 位置
+		team,							// チーム
+		CPlayer::EHuman::HUMAN_CUTIN,	// 人
+		body,							// 体系
+		handedness						// 利き手
+	);
+	if (m_pPlayer == nullptr)
+	{ // 生成に失敗した場合
+
+		assert(false);
+		return E_FAIL;
+	}
+
+	// プレイヤー着せ替え情報をコピー
+	m_pPlayer->CopyDressData(m_pAttackPlayer);
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
+
 	return S_OK;
 }
 
@@ -247,6 +312,7 @@ HRESULT CCutIn::CreateObject2D()
 	{ // 生成に失敗した場合
 
 		assert(false);
+		return E_FAIL;
 	}
 
 	// 自動破棄/更新/描画をしない種類にする
@@ -263,16 +329,18 @@ HRESULT CCutIn::CreateObject2D()
 	m_pBlink->BindTexture(CTexture::GetInstance()->Regist(TEXTURE_BLINK_BG));
 
 	// プレイヤーテクスチャ貼り付け用ポリゴンの生成
+	CGameManager::ETeamSide team = m_pAttackPlayer->GetTeam();	// チーム
 	m_pPlayer2D = CObject2D::Create(PRIORITY);
 	if (m_pPlayer2D == nullptr)
 	{ // 生成に失敗した場合
 
 		assert(false);
+		return E_FAIL;
 	}
 
 	// 位置/大きさを設定
-	m_pPlayer2D->SetPosition(VEC3_SCREEN_CENT);	// 画面中心にする
-	m_pPlayer2D->SetSize(VEC2_SCREEN_SIZE);		// 画面全体にする
+	m_pPlayer2D->SetPosition(player::START[team]);	// 画面中心にする
+	m_pPlayer2D->SetSize(VEC2_SCREEN_SIZE);			// 画面全体にする
 
 	// プレイヤーのレンダーテクスチャインデックスを設定
 	assert(m_pRenderScene != nullptr);	// 先レンダーテクスチャ生成して
@@ -286,7 +354,28 @@ HRESULT CCutIn::CreateObject2D()
 //==========================================================================
 void CCutIn::CreateTexture()
 {
+	// プレイヤーの描画
+	m_pPlayer->Draw();
+}
 
+//==========================================================================
+// プレイヤーUIの更新処理
+//==========================================================================
+void CCutIn::UpdatePlayerUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	CGameManager::ETeamSide team = m_pAttackPlayer->GetTeam();	// チーム
+	if (m_fBlinkTime < player::HALF_TIME)
+	{ // 中間以前の場合
+
+		m_pPlayer2D->SetPosition(UtilFunc::Correction::EasingCubicOut(player::START[team], player::MIDDLE[team], 0.0f, player::HALF_TIME, m_fBlinkTime));
+		m_pPlayer2D->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+	else
+	{ // 中間以降の場合
+
+		m_pPlayer2D->SetPosition(UtilFunc::Correction::EaseInExpo(player::MIDDLE[team], player::END[team], player::HALF_TIME, player::END_TIME, m_fBlinkTime));
+		m_pPlayer2D->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
 }
 
 //==========================================================================
@@ -300,17 +389,14 @@ void CCutIn::UpdateBlinkColor(const float fDeltaTime, const float fDeltaRate, co
 	float fAlphaBG = 0.0f;					// 現在時の背景透明度
 	float fAlphaBlink = 0.0f;				// 現在時の輝き透明度
 
-	// 経過時間を加算
-	m_fBlinkTime += fDeltaTime * fSlowRate;
-
 	// 現在の背景HSV色を線形補完
-	current = UtilFunc::Correction::EasingLinear(start, end, 0.0f, END_TIME, m_fBlinkTime);
+	current = UtilFunc::Correction::EasingLinear(start, end, 0.0f, blink::END_TIME, m_fBlinkTime);
 
 	// 現在の背景透明度を線形補完
-	fAlphaBG = UtilFunc::Correction::EaseInExpo(bg::START_ALPHA, bg::END_ALPHA, 0.0f, END_TIME, m_fBlinkTime);
+	fAlphaBG = UtilFunc::Correction::EaseInExpo(bg::START_ALPHA, bg::END_ALPHA, 0.0f, blink::END_TIME, m_fBlinkTime);
 
 	// 現在の透明度を線形補完
-	fAlphaBlink = UtilFunc::Correction::EaseInExpo(blink::START_ALPHA, blink::END_ALPHA, 0.0f, END_TIME, m_fBlinkTime);
+	fAlphaBlink = UtilFunc::Correction::EaseInExpo(blink::START_ALPHA, blink::END_ALPHA, 0.0f, blink::END_TIME, m_fBlinkTime);
 
 	// 背景の色情報をHSVからRGBに変換し反映
 	D3DXCOLOR colRGB = UtilFunc::Transformation::HSVtoRGB(current.x, current.y, current.z);	// RGB色情報

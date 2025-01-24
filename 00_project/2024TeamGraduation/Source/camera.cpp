@@ -49,6 +49,14 @@ namespace
 		const float VIEW_ANGLE		= D3DXToRadian(45.0f);					// 視野角
 	}
 
+	namespace cutin
+	{
+		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 100.0f, -400.0f);	// 視点
+		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 100.0f, 0.0f);	// 注視点
+		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
+		const float VIEW_ANGLE		= D3DXToRadian(45.0f);					// 視野角
+	}
+
 	namespace none
 	{
 		const MyLib::Vector3 INIT_POSR	= VEC3_ZERO;		// 注視点の初期値
@@ -441,6 +449,52 @@ void CCamera::SetCameraDressup()
 
 	// スポットライトベクトルの更新
 	UpdateSpotLightVec(dressup::POSR, dressup::POSV);
+}
+
+//==========================================================================
+// カメラの設定処理 (カットイン)
+//==========================================================================
+void CCamera::SetCameraCutIn()
+{
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// ビューポートの設定
+	pDevice->SetViewport(&m_viewport);
+
+	// プロジェクションマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxProjection);
+
+	// プロジェクションマトリックスの作成
+	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
+	D3DXMatrixPerspectiveFovLH
+	(
+		&m_mtxProjection,	// プロジェクションマトリックス
+		cutin::VIEW_ANGLE,	// 視野角
+		fAspect,	// アスペクト比
+		MIN_NEAR,	// 手前の描画制限
+		MAX_FAR		// 奥の描画制限
+	);
+
+	// プロジェクションマトリックスの設定
+	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
+
+	// ビューマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxView);
+
+	// ビューマトリックスの作成
+	D3DXMatrixLookAtLH
+	(
+		&m_mtxView,		// ビューマトリックス
+		&cutin::POSV,	// 視点
+		&cutin::POSR,	// 注視点
+		&cutin::VECU	// 上方向ベクトル
+	);
+
+	// ビューマトリックスの設定
+	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+
+	// スポットライトベクトルの更新
+	UpdateSpotLightVec(cutin::POSR, cutin::POSV);
 }
 
 //==========================================================================

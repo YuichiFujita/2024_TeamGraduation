@@ -139,6 +139,7 @@ public:
 	//-----------------------------
 	void SetCamera();							// カメラ設定 (通常)
 	void SetCameraDressup();					// カメラ設定 (着せ替え)
+	void SetCameraCutIn();						// カメラ設定 (カットイン)
 	void ResetByMode(CScene::MODE mode);		// モード別リセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void ResetSwing();							// カメラ揺れリセット

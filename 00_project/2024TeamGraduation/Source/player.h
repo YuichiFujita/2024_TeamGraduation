@@ -216,13 +216,14 @@ public:
 	// 人間列挙
 	enum EHuman
 	{
-		HUMAN_NONE = -1,	// 指定なし
-		HUMAN_ENTRY,		// エントリー
-		HUMAN_SPAWN,		// 登場演出
-		HUMAN_REFEREE,		// 体育教師
-		HUMAN_REFEREE_RESULT,		// 体育教師
-		HUMAN_RESULT,		// リザルト
-		HUMAN_MAX			// この列挙型の総数
+		HUMAN_NONE = -1,		// 指定なし
+		HUMAN_ENTRY,			// エントリー
+		HUMAN_SPAWN,			// 登場演出
+		HUMAN_CUTIN,			// カットイン
+		HUMAN_REFEREE,			// 体育教師
+		HUMAN_REFEREE_RESULT,	// 体育教師
+		HUMAN_RESULT,			// リザルト
+		HUMAN_MAX				// この列挙型の総数
 	};
 
 	//=============================
@@ -360,8 +361,8 @@ public:
 	EFieldArea GetAreaType() const { return m_typeArea; }				// ポジション取得
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }		// チームサイド取得
 	EState GetState() { return m_state; }								// 状態取得
-	EBody GetBodyType() { return m_BodyType; }							// 体型取得
-	EHandedness GetHandedness() { return m_Handedness; }				// 利き手取得
+	EBody GetBodyType() const { return m_BodyType; }					// 体型取得
+	EHandedness GetHandedness() const { return m_Handedness; }			// 利き手取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }				// 自分のインデックス設定
 	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }				// 自分のインデックス取得
 	int GetPositionIdx() const { return m_nPosIdx; }					// 自分のポジション別インデックス取得
@@ -379,6 +380,7 @@ public:
 	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);			// 未来位置計算
 	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
 	void DeadCollectSetting();											// 死亡回収時処理
+	void CopyDressData(const CPlayer* pCopyPlayer);						// 着せ替え情報コピー
 
 	//=============================
 	// 静的メンバ関数
