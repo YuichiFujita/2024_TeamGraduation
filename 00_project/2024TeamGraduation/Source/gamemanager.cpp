@@ -1269,5 +1269,19 @@ void CGameManager::Debug()
 		SetSceneType(ESceneType::SCENE_END);
 	}
 
+	// Œx‰ú(L)
+	if (ImGui::Button("(Caution: L)"))
+	{
+		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
+		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_LEFT);
+	}
+
+	// Œx‰ú(R)
+	if (ImGui::Button("(Caution: R)"))
+	{
+		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
+		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_RIGHT);
+	}
+
 #endif
 }
