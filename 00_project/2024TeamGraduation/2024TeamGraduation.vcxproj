@@ -318,6 +318,7 @@
     <ClCompile Include="Source\playercontrol.cpp" />
     <ClCompile Include="Source\playercontrol_action.cpp" />
     <ClCompile Include="Source\playercontrol_move.cpp" />
+    <ClCompile Include="Source\playerCutIn.cpp" />
     <ClCompile Include="Source\playerDressup.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
@@ -563,6 +564,7 @@
     <ClInclude Include="Source\playercontrol.h" />
     <ClInclude Include="Source\playercontrol_action.h" />
     <ClInclude Include="Source\playercontrol_move.h" />
+    <ClInclude Include="Source\playerCutIn.h" />
     <ClInclude Include="Source\playerDressup.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />

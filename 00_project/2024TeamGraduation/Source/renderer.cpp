@@ -375,10 +375,10 @@ void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawF
 //============================================================
 //	スクリーンシェーダーフラグの設定処理
 //============================================================
-void CRenderer::SetEnableShader(const bool bShader)
+void CRenderer::SetEnableShader(const bool bShader, const float fTime)
 {
 	// シェーダーフラグの設定
-	m_pDrawScreen->SetEnableShader(bShader);
+	m_pDrawScreen->SetEnableShader(bShader, fTime);
 }
 
 //============================================================

@@ -866,6 +866,9 @@
     <ClCompile Include="Source\loadtext.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerCutIn.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
     <ClCompile Include="Source\pause_outgame.cpp">
       <Filter>pause</Filter>
     </ClCompile>
@@ -1587,6 +1590,9 @@
     </ClInclude>
     <ClInclude Include="Source\loadtext.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerCutIn.h">
+      <Filter>player</Filter>
     </ClInclude>
     <ClInclude Include="Source\pause_outgame.h">
       <Filter>pause</Filter>
