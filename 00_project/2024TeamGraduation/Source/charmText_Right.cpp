@@ -20,8 +20,8 @@ namespace
 
 namespace Position
 {
-	const MyLib::Vector3 START(400.0f, 200.0f, 900.0f);						// 開始位置
-	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(150.0f, 150.0f, 0.0f);	// フェードイン位置
+	const MyLib::Vector3 START(450.0f, 180.0f, 900.0f);						// 開始位置
+	const MyLib::Vector3 FADEIN = START + MyLib::Vector3(100.0f, 100.0f, 0.0f);	// フェードイン位置
 	const MyLib::Vector3 FADEOUT = FADEIN + MyLib::Vector3(100.0f, 100.0f, 0.0f);					// 終了位置
 	const MyLib::Vector3 OFFSET_ICON = MyLib::Vector3(40.0f, 0.0f, 0.0f);	// テキストのオフセット位置
 }
@@ -55,17 +55,11 @@ HRESULT CCharmText_Right::Init()
 	// 初期化処理
 	CCharmText::Init();
 
-	// 顔の位置
-	if (m_pFace != nullptr)
-	{
-		m_pFace->SetPosition(Position::START);
-	}
-
 	// テキストの位置
 	if (m_pThoughtBalloon != nullptr)
 	{
 		m_pThoughtBalloon->SetAnchorType(CObjectBillboard::EAnchorPoint::RIGHT);
-		m_pThoughtBalloon->SetPosition(Position::START - m_pFace->GetSize().x);
+		m_pThoughtBalloon->SetPosition(Position::START);
 	}
 
 	const int nNumAll = m_List.GetNumAll();	// リスト内要素数
@@ -157,9 +151,6 @@ void CCharmText_Right::Update(const float fDeltaTime, const float fDeltaRate, co
 	pos.x += DISTANCE_XZ * m_nCntUp;
 	pos.z += DISTANCE_XZ * m_nCntUp;
 	pos.y += DISTANCE_UP * m_nCntUp;
-
-	MyLib::Vector2 size = m_pThoughtBalloon->GetSize() * 0.5f;
-	m_pFace->SetPosition(pos + MyLib::Vector3(-size.x, -size.y, -50.0f));
 	m_pThoughtBalloon->SetPosition(pos);
 }
 
@@ -176,7 +167,6 @@ void CCharmText_Right::StateFadeIn()
 	SetPosition(pos);
 
 	// 不透明度更新
-	m_pFace->SetAlpha(ratio);
 	m_pThoughtBalloon->SetAlpha(ratio);
 
 	// フェードイン
@@ -205,7 +195,6 @@ void CCharmText_Right::StateFadeOut()
 	SetPosition(pos);
 
 	// 不透明度更新
-	m_pFace->SetAlpha(1.0f - ratio);
 	m_pThoughtBalloon->SetAlpha(1.0f - ratio);
 
 	// フェードアウト

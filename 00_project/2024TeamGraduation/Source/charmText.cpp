@@ -110,40 +110,6 @@ HRESULT CCharmText::Init()
 		return E_FAIL;
 	}
 
-	// 顔アイコン生成
-	if (FAILED(CreateFace()))
-	{
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
-//==========================================================================
-// 顔アイコン生成
-//==========================================================================
-HRESULT CCharmText::CreateFace()
-{
-	// 生成処理
-	m_pFace = CObjectBillboard::Create(GetPriority());
-	if (m_pFace == nullptr) return E_FAIL;
-
-	// オブジェクトの種類設定
-	m_pFace->CObject::SetType(CObject::TYPE::TYPE_OBJECTBILLBOARD);
-
-	// テクスチャ設定
-	CTexture* pTexture = CTexture::GetInstance();
-	int texID = CTexture::GetInstance()->Regist(TEXTURE_FACE);
-	m_pFace->BindTexture(texID);
-
-	// サイズ設定
-	MyLib::Vector2 size = CTexture::GetInstance()->GetImageSize(texID);
-
-	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, SIZE_FACE);
-	m_pFace->SetSize(MyLib::Vector2());
-	m_pFace->SetSizeOrigin(size);
-
 	return S_OK;
 }
 
@@ -187,13 +153,6 @@ void CCharmText::Uninit()
 //==========================================================================
 void CCharmText::Kill()
 {
-	// 顔アイコン
-	if (m_pFace != nullptr)
-	{
-		m_pFace->Kill();
-		m_pFace = nullptr;
-	}
-
 	// 実況吹き出し
 	if (m_pThoughtBalloon != nullptr)
 	{
@@ -233,13 +192,7 @@ void CCharmText::StateFadeIn()
 {
 	// サイズ更新
 	MyLib::Vector2 size, sizeOrigin;
-	// 顔
-	{
-		sizeOrigin = m_pFace->GetSizeOrigin();
-		size.x = UtilFunc::Correction::EasingQuintOut(sizeOrigin.x * 0.0f, sizeOrigin.x, 0.0f, STATETIME_FADEIN, m_fStateTime);
-		size.y = UtilFunc::Correction::EasingQuintOut(sizeOrigin.y * 0.0f, sizeOrigin.y, 0.0f, STATETIME_FADEIN, m_fStateTime);
-		m_pFace->SetSize(size);
-	}
+	
 	{// テキスト
 		sizeOrigin = m_pThoughtBalloon->GetSizeOrigin();
 		size.x = UtilFunc::Correction::EasingQuintOut(sizeOrigin.x * 0.0f, sizeOrigin.x, 0.0f, STATETIME_FADEIN, m_fStateTime);
@@ -313,7 +266,6 @@ void CCharmText::SetEnableDisp(bool bDisp)
 	CObject::SetEnableDisp(bDisp);
 
 	// 描画状況設定
-	m_pFace->SetEnableDisp(bDisp);
 	m_pThoughtBalloon->SetEnableDisp(bDisp);
 }
 

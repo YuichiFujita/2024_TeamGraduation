@@ -16,8 +16,8 @@ namespace
 {
 	const std::string TEXTURE[CGameManager::ETeamSide::SIDE_MAX] =	// テクスチャ
 	{
-		"data\\TEXTURE\\speech\\balloon_left.png",
 		"data\\TEXTURE\\speech\\balloon_right.png",
+		"data\\TEXTURE\\speech\\balloon_left.png",
 	};
 	const int DIVISION_WIDTH = 4;					// 横分割
 	const int BLOCK_WIDTH = DIVISION_WIDTH + 1;		// 横のブロック
@@ -37,6 +37,11 @@ namespace
 	};
 
 	const int NUM_INDICES = 24; // インデックスの個数
+	
+	namespace tail
+	{
+		const float DISTANCE_X = 100.0f;	// Xの距離
+	}
 }
 
 //==========================================================================
@@ -149,7 +154,8 @@ void CBalloonFrame::CreateTail()
 	m_pTail->SetColor(MyLib::color::White());
 
 	// 位置設定
-	m_pTail->SetPosition(GetPosition() + MyLib::Vector3(0.0f, m_pFillPoly->GetSize().y - FRAME_WIDTH * 0.5f, 0.0f));
+	float x = (m_TeamSide == CGameManager::ETeamSide::SIDE_RIGHT) ? -tail::DISTANCE_X : tail::DISTANCE_X;
+	m_pTail->SetPosition(GetPosition() + MyLib::Vector3(x, m_pFillPoly->GetSize().y - FRAME_WIDTH * 0.5f, 0.0f));
 
 	// サイズ設定
 	m_pTail->SetSize(MyLib::Vector2(150.0f));

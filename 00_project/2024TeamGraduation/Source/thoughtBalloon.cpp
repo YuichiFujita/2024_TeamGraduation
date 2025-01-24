@@ -22,9 +22,10 @@ namespace
 		const float	CHAR_HEIGHT	= 42.0f;		// 文字縦幅
 		const float	LINE_HEIGHT	= 54.0f;		// 行間縦幅
 		const float	WAIT_TIME	= 0.045f;		// 文字表示の待機時間
-		const EAlignX ALIGN_X	= XALIGN_LEFT;	// 横配置
-		const EAlignY ALIGN_Y	= YALIGN_TOP;	// 縦配置
+		const EAlignX ALIGN_X	= XALIGN_CENTER;	// 横配置
+		const EAlignY ALIGN_Y	= YALIGN_CENTER;	// 縦配置
 	}
+	const float DEFAULTSCALE = 1.25f;	// 吹き出し全体のスケール
 }
 
 //==========================================================================
@@ -193,15 +194,18 @@ HRESULT CThoughtBalloon::CreateRenderTexture()
 //==========================================================================
 HRESULT CThoughtBalloon::CreateTextureObject()
 {
+	// 設定する助０る
+	const float scale = DEFAULTSCALE;
+
 	// テキストの生成
 	m_pText = CScrollText2D::Create
 	( // 引数
 		text::FONT,			// フォントパス
 		text::ITALIC,		// イタリック
-		VEC3_ZERO,			// 原点位置
+		MyLib::Vector3(640.0f, 360.0f, 0.0f),			// 原点位置
 		text::WAIT_TIME,	// 文字表示の待機時間
-		text::CHAR_HEIGHT,	// 文字縦幅
-		text::LINE_HEIGHT,	// 行間縦幅
+		text::CHAR_HEIGHT * scale,	// 文字縦幅
+		text::LINE_HEIGHT * scale,	// 行間縦幅
 		text::ALIGN_X,		// 横配置
 		text::ALIGN_Y		// 縦配置
 	);
@@ -223,9 +227,15 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 	// 文字送りを開始する
 	m_pText->SetEnableScroll(true);
 
+	// 黒文字
+	m_pText->SetColor(MyLib::color::Black());
+
+	// テキストを割当
+	//loadtext::BindText(m_pText, loadtext::LoadText("data\\TEXT\\thought\\speech.txt", TEXT_EXP_NEXT));
 
 	// 枠の生成
-	m_pFrame = CBalloonFrame::Create(MyLib::Vector2(300.0f, 140.0f), m_TeamSide);
+	MyLib::Vector2 setSize = MyLib::Vector2(m_pText->GetTextWidth() * 1.35f, m_pText->GetTextHeight()) * 1.75f;
+	m_pFrame = CBalloonFrame::Create(setSize * scale, m_TeamSide);
 	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
 
 	return S_OK;
