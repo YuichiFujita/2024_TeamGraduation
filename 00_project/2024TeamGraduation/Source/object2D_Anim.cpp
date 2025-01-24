@@ -14,6 +14,7 @@
 //==========================================================================
 CObject2D_Anim::CObject2D_Anim(int nPriority) : CObject2D(nPriority)
 {
+	m_dwNumLoop = 0;		// 繰り返し数
 	m_fTimerAnim = 0.0f;	// アニメーションのカウンター
 	m_fIntervalAnim = 0.0f;	// アニメーションのインターバル
 	m_nPatternAnim = 0;		// アニメーションのパターン
@@ -130,8 +131,12 @@ void CObject2D_Anim::Update(const float fDeltaTime, const float fDeltaRate, cons
 			if (m_nPatternAnim == 0)
 			{ // パターンが一周した時
 
+				// 繰り返し数を加算
+				m_dwNumLoop++;
+
 				// 終了状態
 				m_bFinish = true;
+
 				if (m_bAutoDeath)
 				{
 					// オブジェクト破棄

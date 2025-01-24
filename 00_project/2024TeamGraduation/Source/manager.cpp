@@ -35,9 +35,9 @@
 namespace
 {
 #if _DEBUG
-	const float TIME_LOAD = 2.0f;	// 必須ロード時間
+	const float MIN_LOOP_LOAD = 0;	// 必須ロードループ数
 #else
-	const float TIME_LOAD = 2.0f;	// 必須ロード時間
+	const float MIN_LOOP_LOAD = 2;	// 必須ロードループ数
 #endif
 
 #if _DEBUG
@@ -54,10 +54,10 @@ namespace
 //==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
-CManager *CManager::m_pManager = nullptr;		// マネージャのオブジェクト
-bool CManager::m_bDisp_ImGui = false;			// ImGuiの描画判定
+CManager *CManager::m_pManager = nullptr;	// マネージャのオブジェクト
+bool CManager::m_bDisp_ImGui = false;		// ImGuiの描画判定
 bool CManager::m_bDisp_BoxColliders = true;	// 当たり判定ボックスの描画判定
-bool CManager::m_bDisp_CheckPoint = true;		// チェックポイントの描画判定
+bool CManager::m_bDisp_CheckPoint = true;	// チェックポイントの描画判定
 
 //==========================================================================
 // コンストラクタ
@@ -836,6 +836,8 @@ void CManager::NormalLoad()
 	if (m_bNowLoading)
 	{// ロード中
 
+		CLoadManager* pLoadManager = GetLoadManager();	// ロードマネージャー
+
 		if (!m_bLoadComplete)
 		{// ロードが完了していない
 
@@ -844,15 +846,17 @@ void CManager::NormalLoad()
 		}
 
 		// ロード完了フラグ取得
-		bool bComplete = GetLoadManager()->IsLoadComplete();
+		bool bComplete = pLoadManager->IsLoadComplete();
 
-		if (bComplete &&
-			m_fLoadTimer >= TIME_LOAD &&
-			!m_bLoadFadeSet)
+		if (bComplete
+		&&  pLoadManager->GetNumLoop() >= MIN_LOOP_LOAD
+		&&  !m_bLoadFadeSet)
 		{// ロード完了の条件完了
 
 			CManager::GetInstance()->GetInstantFade()->SetFade();
 			m_bLoadFadeSet = true;	// フェードのセットフラグ
+			pLoadManager->SetEnableAutoPlay(false);
+			pLoadManager->ResetNumLoop();
 		}
 
 		if (m_bLoadFadeSet)
@@ -867,7 +871,7 @@ void CManager::NormalLoad()
 		// ロードマネージャの更新
 		if (!m_bLoadComplete)
 		{
-			GetLoadManager()->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
+			pLoadManager->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
 		}
 	}
 
