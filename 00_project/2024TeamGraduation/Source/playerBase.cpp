@@ -57,6 +57,8 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// プレイヤー行動状態
 	CBallStatus::SBallParameter ballParameter = m_pPlayer->GetBallParameter();	// ボールステータス
 
+	float fCatchRange = UtilFunc::Transformation::RadianChangeToDegree(ballParameter.fCatchRange);		// キャッチ範囲
+
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
 	hitInfo.eHit = CPlayer::HIT_NONE;
@@ -123,7 +125,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	if (m_pPlayer->GetMotionFrag().bCatch
-	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, ballParameter.fCatchRange))	// TODO：160はボールステータスに変更
+	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, fCatchRange))
 	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理
