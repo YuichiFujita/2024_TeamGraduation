@@ -20,7 +20,7 @@ namespace LifeGauge
 {
 	const int DIVISION = 32;	// 分割数
 	const float SIZE = 40.0f;	// サイズ
-	const float DISTANCE = 100.0f;	// 間隔
+	const float DISTANCE = 120.0f;	// 間隔
 	const MyLib::Vector3 DEFAULTPOS[CGameManager::ETeamSide::SIDE_MAX] =
 	{
 		MyLib::Vector3(60.0f, 80.0f, 0.0f),	// 左サイド

@@ -2850,6 +2850,7 @@ void CPlayer::Debug()
 		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
 		ImGui::Text("bDash : [%d]", m_bDash);
 		ImGui::Text("bBrake : [%d]", m_bBrake);
+		ImGui::Text("bJump : [%d]", m_bJump);
 		ImGui::Text("EscapeTime : [%.2f]", m_fEscapeTime);
 		ImGui::Text("bDead : [%s]", (m_sMotionFrag.bDead ? "true" : "false"));
 

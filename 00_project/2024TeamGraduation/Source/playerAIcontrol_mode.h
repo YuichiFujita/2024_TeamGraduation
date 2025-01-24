@@ -97,6 +97,8 @@ public:
 	void SetParameter(SParameter parameter) { m_sParameter = parameter; }	// パラメータ設定
 	SParameter GetParameter() { return m_sParameter; }						// 取得
 
+	void SetjumpRate(float rate);
+
 private:
 	//=============================
 	// 関数リスト
@@ -131,6 +133,8 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pAI;					// 自分のポインタ
+
+	float m_fJumpRate;
 
 	// 列挙
 	EMode m_eMode;					// モードの列挙

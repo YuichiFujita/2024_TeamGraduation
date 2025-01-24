@@ -91,8 +91,8 @@ CManager::CManager()
 	m_bDisp_UI = true;				// UIの表示
 	m_bWindowed = true;				// ウィンドウモードか
 	m_bWorldPaused = false;			// 世界のポーズ判定
-	m_dwOldTime = 0;				// 前回の処理開始時刻
-	m_dwCurTime = 0;				// 今回の処理開始時刻
+	m_dwOldTime = timeGetTime();	// 前回の処理開始時刻
+	m_dwCurTime = m_dwOldTime;		// 今回の処理開始時刻
 	m_fDeltaTime = 0.0f;			// 経過時間
 	m_fDeltaRate = 0.0f;			// 経過時間の割合
 	m_fSlowRate = 1.0f;				// 速度低下の割合

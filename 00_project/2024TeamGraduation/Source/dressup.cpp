@@ -95,6 +95,8 @@ CDressup* CDressup::Create(EType type, CObjectChara* pObjChara, int nSwitchType)
 //==========================================================================
 HRESULT CDressup::Init()
 {
+	// Š„‚è“–‚Ä
+	ReRegist();
 	return S_OK;
 }
 

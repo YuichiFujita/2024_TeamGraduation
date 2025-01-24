@@ -42,6 +42,9 @@ HRESULT CDressup_Accessory::Init()
 	// ‘S‚Ä“Ç‚İ‚İ
 	LoadAllModel(FOLDERNAME);
 
+	// e‚Ì‰Šú‰»
+	CDressup::Init();
+
 	return S_OK;
 }
 
