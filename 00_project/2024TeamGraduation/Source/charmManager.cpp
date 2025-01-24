@@ -199,8 +199,12 @@ void CCharmManager::LongHold(CPlayer* pPlayer, const float fDeltaTime, const flo
 
 	CGameManager* pGameMgr = CGameManager::GetInstance();
 
-	// 加算
-	fHaveTime += fDeltaTime * fSlowRate;
+	if (pGameMgr->GetType() != CGameManager::ESceneType::SCENE_SPECIAL)
+	{// スペシャル中以外なら
+
+		// 加算
+		fHaveTime += fDeltaTime * fSlowRate;
+	}
 
 	if (fHaveTime > TIME_HAVE_LONG)
 	{// モテダウン
