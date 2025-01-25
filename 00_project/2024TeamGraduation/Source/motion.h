@@ -11,6 +11,7 @@
 //==========================================================================
 // インクルードファイル
 //==========================================================================
+#include "motionManager.h"
 #include "gamemanager.h"
 #include "constans.h"
 
@@ -29,100 +30,25 @@ class CMotion
 public:
 
 	//=============================
-	// 構造体定義
+	// コンストラクタ, デストラクタ
 	//=============================
-	// 揃え情報
-	struct AlignInfo
-	{
-		int nFrame;				// このフレーム
-		int nExtensionFrame;	// 猶予フレーム
-		bool bSet;				// 設定時
-
-		// コンストラクタ
-		AlignInfo() : nFrame(0), nExtensionFrame(0), bSet(false) {}
-	};
-
-	// 判定の構造体
-	struct AttackInfo
-	{
-		int nCollisionNum;		// 当たり判定のパーツ番号
-		float fRangeSize;		// 判定のサイズ
-		MyLib::Vector3 Offset;	// 判定のオフセット
-		int nMinCnt;			// 判定の最低カウント
-		int nMaxCnt;			// 判定の最大カウント
-		float fCntRatio;		// 判定カウントの割合
-		int nDamage;			// ダメージ
-		int nInpactCnt;			// 衝撃のカウント
-		bool bInpactAct;		// 衝撃カウントの行動をしたか
-		bool bInpactActSet;		// 衝撃カウントの行動設定したか
-		bool bAtkking;			// 攻撃フラグ
-		bool bEndAtk;			// 攻撃の終了フラグ
-		AlignInfo AlignInfo;	// 揃え情報
-	};
-
-	// パーツ情報
-	struct Parts
-	{
-		MyLib::Vector3 rot;			// 向き
-		MyLib::Vector3 rotDest;		// 目標の向き
-		MyLib::Vector3 pos;			// 位置
-		MyLib::Vector3 posDest;		// 目標の位置
-		MyLib::Vector3 posOrigin;	// 位置の原点
-		MyLib::Vector3 scale;		// スケール
-
-		Parts() : scale(1.0f) {}
-	};
-
-	// キー情報
-	struct Key
-	{
-		std::vector<Parts> aParts;	// パーツ情報
-		int nFrame;					// 再生フレーム
-		float fRotMove;				// 移動の向き
-	};
-
-	// 全体の情報
-	struct Info
-	{
-		std::vector<Key> aKey;	// キー情報
-		int nNumKey;			// キーの数
-		int nLoop;				// ループ判定
-		int nMove;				// 移動判定
-		bool bSpecial;			// スペシャル判定
-		int nNumAttackInfo;		// 攻撃情報の数
-		int nCancelableFrame;	// キャンセル可能フレーム
-		int nCombolableFrame;	// コンボ可能フレーム
-		std::vector<AttackInfo> AttackInfo;	// 当たり判定用
-
-		// コンストラクタ
-		Info() : bSpecial(false), nCancelableFrame(-1), nCombolableFrame(-1) {}
-	};
-
-	// 読み込み情報保存情報
-	struct SLoadInfo
-	{
-		std::vector<int> vecDefaultIdx;							// デフォルトのインデックス
-		std::vector<std::string> sTextFile;						// テキストファイル名
-		int nNumLoad;											// 読み込んだ数
-		std::vector<int> nNumLoadData;							// モーション毎のデータ数
-		std::vector<std::vector<CMotion::Info>> vecLoadData;	// モーションの読み込み情報
-	};
-
 	CMotion();
 	~CMotion();
 
-	HRESULT Init();
+	//=============================
+	// メンバ関数
+	//=============================
+	HRESULT Init(const std::string& file);
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-	static CMotion* Create(const std::string& file, CObjectChara* pObjChara);
 
 	//--------------------------
 	// 再生中情報
 	//--------------------------
-	Info GetInfo()			{ return m_vecInfo[m_nType]; }	// 情報取得
-	Info GetInfo(int type)	{ return m_vecInfo[type]; }		// 情報取得
-	std::vector<AttackInfo> GetAttackInfo() { return m_vecInfo[m_nType].AttackInfo; }	// 攻撃情報取得
+	CMotionManager::Info GetInfo()			{ return m_vecInfo[m_nType]; }	// 情報取得
+	CMotionManager::Info GetInfo(int type)	{ return m_vecInfo[type]; }		// 情報取得
+	std::vector<CMotionManager::AttackInfo> GetAttackInfo() { return m_vecInfo[m_nType].AttackInfo; }	// 攻撃情報取得
 	int GetType()			{ return m_nType; }				// 現在のモーションタイプ取得
 	int GetOldType()		{ return m_nOldType; }			// 前回のモーションタイプ取得
 	float GetAllCount()		{ return m_fAllFrame; }		// 全てのカウント取得
@@ -145,9 +71,9 @@ public:
 	inline bool IsGetCombiable() { return m_bCombiable; }				// コンボ可能の判定取得
 	inline bool IsAttacking() { return m_bAttaking; }					// 攻撃判定中フラグ取得
 	inline bool IsSpecial() { return m_vecInfo[m_nType].bSpecial; }		// スペシャル判定取得
-	bool IsImpactFrame(const Info& info);								// 指定した種類の情報が衝撃カウントか
+	bool IsImpactFrame(const CMotionManager::Info& info);								// 指定した種類の情報が衝撃カウントか
 	bool IsImpactFrame(int nCntAtk);									// 指定したインデックスの情報が衝撃カウントか
-	bool IsAlignFrame(const Info& info);								// 指定した情報がフレーム内
+	bool IsAlignFrame(const CMotionManager::Info& info);								// 指定した情報がフレーム内
 
 	//--------------------------
 	// 設定
@@ -155,12 +81,17 @@ public:
 	void Set(int nType, int nStartKey = 0, bool bBlend = true, float fCntFrame = 0.0f);	// モーションの設定処理
 	void ResetPose(int nType);	// ポーズのリセット
 
-	MyLib::Vector3 GetAttackPosition(CModel** ppModel, AttackInfo attackInfo);	// 攻撃の位置取得
-	MyLib::Vector3 GetAttackPosition(CModel* pModel, AttackInfo attackInfo);	// 攻撃の位置取得
+	MyLib::Vector3 GetAttackPosition(CModel** ppModel, CMotionManager::AttackInfo attackInfo);	// 攻撃の位置取得
+	MyLib::Vector3 GetAttackPosition(CModel* pModel, CMotionManager::AttackInfo attackInfo);	// 攻撃の位置取得
 	
-	Parts GetPartsOld(int nParts) { return m_pPartsOld[nParts]; }				// 過去のパーツ情報取得
-	void SetPartsOld(int nParts, Parts parts) { m_pPartsOld[nParts] = parts; }	// 過去のパーツ情報設定
+	CMotionManager::Parts GetPartsOld(int nParts) { return m_pPartsOld[nParts]; }				// 過去のパーツ情報取得
+	void SetPartsOld(int nParts, CMotionManager::Parts parts) { m_pPartsOld[nParts] = parts; }	// 過去のパーツ情報設定
 	void SetModel(CModel** pModel, int nNumModel);	// モーションをするモデルの登録
+
+	//=============================
+	// 静的メンバ関数
+	//=============================
+	static CMotion* Create(const std::string& file, CObjectChara* pObjChara);
 
 private:
 
@@ -177,15 +108,15 @@ private:
 	// メンバ関数
 	void ReadText(const std::string& file);
 	void LoadMotion(const std::string& file, int nMotion);
-	void UpdateRotation(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// 向きの更新
-	void UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, float ratio);	// スケールの更新
-	void UpdatePosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 位置更新
-	void UpdateEntityPosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 本体ごと位置更新
-	void UpdateVisualPosition(int i, const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 見た目のみ位置更新
+	void UpdateRotation(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio);	// 向きの更新
+	void UpdateScale(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio);	// スケールの更新
+	void UpdatePosition(int i, const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 位置更新
+	void UpdateEntityPosition(int i, const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 本体ごと位置更新
+	void UpdateVisualPosition(int i, const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 見た目のみ位置更新
 
 	// メンバ変数
-	std::vector<Info> m_vecInfo;	// モーションの情報
-	Parts* m_pPartsOld;	// 過去の情報
+	std::vector<CMotionManager::Info> m_vecInfo;	// モーションの情報
+	CMotionManager::Parts* m_pPartsOld;	// 過去の情報
 	int m_nType;				// 現在のモーションの種類
 	int m_nOldType;				// 前回のモーションの種類
 	bool m_bLoop;				// ループするかどうか
@@ -204,7 +135,6 @@ private:
 	int m_nNumModel;					// パーツの総数
 	int m_nNumMotion;					// モーションの総数
 	std::vector<int> m_vecDefaultIdx;	// デフォルトのインデックス
-	static SLoadInfo m_LoadInfo;		// 読み込みデータ
 };
 
 #endif

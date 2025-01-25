@@ -435,7 +435,7 @@ void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDelt
 			CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
 
 			// 歩きモーション設定
-			CMotion::Info info = pItrPlayer->GetMotion()->GetInfo(CPlayer::EMotion::MOTION_WALK);	// モーション情報
+			CMotionManager::Info info = pItrPlayer->GetMotion()->GetInfo(CPlayer::EMotion::MOTION_WALK);	// モーション情報
 			int nKey = rand() % info.nNumKey;														// 開始キー
 			float fFrame = (float)(rand() % info.aKey[nKey].nFrame);								// 開始フレーム
 			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_WALK, nKey, true, fFrame);		// モーション設定
@@ -448,7 +448,7 @@ void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDelt
 			CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
 
 			// 歩きモーション設定
-			CMotion::Info info = pItrPlayer->GetMotion()->GetInfo(CPlayer::EMotion::MOTION_WALK);	// モーション情報
+			CMotionManager::Info info = pItrPlayer->GetMotion()->GetInfo(CPlayer::EMotion::MOTION_WALK);	// モーション情報
 			int nKey = rand() % info.nNumKey;														// 開始キー
 			float fFrame = (float)(rand() % info.aKey[nKey].nFrame);								// 開始フレーム
 			pItrPlayer->GetMotion()->Set(CPlayer::EMotion::MOTION_WALK, nKey, true, fFrame);		// モーション設定

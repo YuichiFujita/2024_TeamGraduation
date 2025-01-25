@@ -256,7 +256,7 @@ void CPlayerReferee::StateReturn(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CPlayerReferee::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CPlayerReferee::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();

@@ -179,7 +179,7 @@ void CSample_Character::Update(const float fDeltaTime, const float fDeltaRate, c
 //==========================================================================
 // UŒ‚ˆ—
 //==========================================================================
-void CSample_Character::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CSample_Character::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// ƒ‚[ƒVƒ‡ƒ“æ“¾
 	CMotion* pMotion = GetMotion();
@@ -204,7 +204,7 @@ void CSample_Character::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // UŒ‚”»’è’†ˆ—
 //==========================================================================
-void CSample_Character::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CSample_Character::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	if (ATKInfo.fRangeSize == 0.0f) return;
 

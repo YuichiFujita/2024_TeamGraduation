@@ -21,11 +21,6 @@ namespace
 }
 
 //==========================================================================
-// 静的メンバ変数宣言
-//==========================================================================
-CMotion::SLoadInfo CMotion::m_LoadInfo = {};	// 読み込みデータ
-
-//==========================================================================
 // コンストラクタ
 //==========================================================================
 CMotion::CMotion()
@@ -76,8 +71,7 @@ CMotion* CMotion::Create(const std::string& file, CObjectChara* pObjChara)
 		pMotion->m_pObjChara = pObjChara;
 
 		// 初期化処理
-		pMotion->Init();
-		pMotion->ReadText(file);
+		pMotion->Init(file);
 	}
 
 	return pMotion;
@@ -86,7 +80,7 @@ CMotion* CMotion::Create(const std::string& file, CObjectChara* pObjChara)
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CMotion::Init()
+HRESULT CMotion::Init(const std::string& file)
 {
 	m_nType = 0;			// 現在のモーションの種類
 	m_bLoop = false;		// ループするかどうか
@@ -100,6 +94,19 @@ HRESULT CMotion::Init()
 	m_fSlowFactor = 1.0f;	// 遅延係数
 	m_pPartsOld = nullptr;
 	m_vecDefaultIdx.push_back(0);	// デフォルトのインデックス
+
+	// モーション読み込み
+	CMotionManager* pMotionManager = CMotionManager::GetInstance();
+	if (pMotionManager == nullptr)
+	{// 要素ない場合生成
+		CMotionManager::Create();
+	}
+	const CMotionManager::SLoadInfo& loadInfo = pMotionManager->Load(file);
+
+	// 読み込み情報取得
+	m_vecDefaultIdx = loadInfo.vecDefaultIdx;						// デフォルトのインデックス
+	m_vecInfo = loadInfo.vecLoadData;								// モーション情報
+	m_nNumMotion = static_cast<int>(loadInfo.vecLoadData.size());	// モーション数
 
 	return S_OK;
 }
@@ -129,12 +136,12 @@ void CMotion::SetModel(CModel** pModel, int nNumModel)
 	// モデルの総数
 	m_nNumModel = nNumModel;
 
-	m_pPartsOld = DEBUG_NEW Parts[m_nNumModel];
+	m_pPartsOld = DEBUG_NEW CMotionManager::Parts[m_nNumModel];
 	if (m_pPartsOld == nullptr)
 	{
 		return;
 	}
-	memset(m_pPartsOld, 0, sizeof(Parts) * m_nNumModel);
+	memset(m_pPartsOld, 0, sizeof(CMotionManager::Parts) * m_nNumModel);
 }
 
 //==========================================================================
@@ -143,8 +150,8 @@ void CMotion::SetModel(CModel** pModel, int nNumModel)
 void CMotion::ResetPose(int nType)
 {
 	// パーツ情報
-	const Info& info = m_vecInfo[nType];
-	const Key& keyInfo = info.aKey[0];
+	const CMotionManager::Info& info = m_vecInfo[nType];
+	const CMotionManager::Key& keyInfo = info.aKey[0];
 
 	int partsSize = static_cast<int>(info.aKey[0].aParts.size());
 	for (int nCntParts = 0; nCntParts < m_nNumModel; nCntParts++)
@@ -193,7 +200,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 	}
 
 	// 再生中の情報
-	Info& nowInfo = m_vecInfo[m_nType];
+	CMotionManager::Info& nowInfo = m_vecInfo[m_nType];
 
 	// 攻撃判定中フラグリセット
 	m_bAttaking = false;
@@ -243,7 +250,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 
 	// 再生中のキー
-	const Key& nowKey = nowInfo.aKey[m_nPatternKey];
+	const CMotionManager::Key& nowKey = nowInfo.aKey[m_nPatternKey];
 
 	// 再生フレーム保存
 	int nMaxFrame = nowKey.nFrame;
@@ -278,8 +285,8 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		if (i >= m_nNumModel) continue;
 
 		// 現在のパーツ情報
-		const Parts& nowParts = nowKey.aParts[i];
-		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
+		const CMotionManager::Parts& nowParts = nowKey.aParts[i];
+		const CMotionManager::Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
 
 		// モデルがなかったら戻る
 		if (m_ppModel[i] == nullptr) continue;
@@ -424,7 +431,7 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 //==========================================================================
 // 向きの更新
 //==========================================================================
-void CMotion::UpdateRotation(int i, const Parts& nowParts, const Parts& nextParts, float ratio)
+void CMotion::UpdateRotation(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio)
 {
 	
 	//--------------------------
@@ -457,7 +464,7 @@ void CMotion::UpdateRotation(int i, const Parts& nowParts, const Parts& nextPart
 //==========================================================================
 // スケールの更新
 //==========================================================================
-void CMotion::UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, float ratio)
+void CMotion::UpdateScale(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio)
 {
 	//--------------------------
 	// スケール
@@ -490,7 +497,7 @@ void CMotion::UpdateScale(int i, const Parts& nowParts, const Parts& nextParts, 
 //==========================================================================
 void CMotion::UpdatePosition(
 	int i, 
-	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, 
 	float ratio, int nMaxFrame,
 	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -509,7 +516,7 @@ void CMotion::UpdatePosition(
 //==========================================================================
 void CMotion::UpdateEntityPosition(
 	int i, 
-	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, 
 	float ratio, int nMaxFrame,
 	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -608,7 +615,7 @@ void CMotion::UpdateEntityPosition(
 //==========================================================================
 void CMotion::UpdateVisualPosition(
 	int i, 
-	const Info& nowInfo, const Parts& nowParts, const Parts& nextParts, 
+	const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, 
 	float ratio, int nMaxFrame,
 	const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
@@ -694,7 +701,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 	m_bAttaking = false;		// 攻撃判定中フラグ
 
 	// 現在の情報
-	Info& nowInfo = m_vecInfo[m_nType];
+	CMotionManager::Info& nowInfo = m_vecInfo[m_nType];
 
 	for (int nCntKey = 0; nCntKey < nStartKey; nCntKey++)
 	{
@@ -799,7 +806,7 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 
 
 	// 再生中のキー
-	const Key& nowKey = nowInfo.aKey[m_nPatternKey];
+	const CMotionManager::Key& nowKey = nowInfo.aKey[m_nPatternKey];
 
 	// 再生フレーム保存
 	int nMaxFrame = nowKey.nFrame;
@@ -834,8 +841,8 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 		if (i >= m_nNumModel) continue;
 
 		// 現在のパーツ情報
-		const Parts& nowParts = nowKey.aParts[i];
-		const Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
+		const CMotionManager::Parts& nowParts = nowKey.aParts[i];
+		const CMotionManager::Parts& nextParts = nowInfo.aKey[nNextKey].aParts[i];
 
 		// モデルがなかったら戻る
 		if (m_ppModel[i] == nullptr) continue;
@@ -860,10 +867,10 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 //==========================================================================
 // 指定した情報が衝撃カウントか
 //==========================================================================
-bool CMotion::IsImpactFrame(const Info& info)
+bool CMotion::IsImpactFrame(const CMotionManager::Info& info)
 {
 	// 攻撃情報のコンテナ
-	const std::vector<AttackInfo>& vecAtkInfo = info.AttackInfo;
+	const std::vector<CMotionManager::AttackInfo>& vecAtkInfo = info.AttackInfo;
 
 	for (const auto& atkInfo : vecAtkInfo)
 	{
@@ -882,7 +889,7 @@ bool CMotion::IsImpactFrame(const Info& info)
 bool CMotion::IsImpactFrame(int nCntAtk)
 {
 	// 攻撃情報のコンテナ
-	const std::vector<AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
+	const std::vector<CMotionManager::AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
 
 	// 範囲外
 	if (static_cast<int>(vecAtkInfo.size()) <= nCntAtk) return false;
@@ -893,15 +900,15 @@ bool CMotion::IsImpactFrame(int nCntAtk)
 //==========================================================================
 // 指定した情報がフレーム内
 //==========================================================================
-bool CMotion::IsAlignFrame(const Info& info)
+bool CMotion::IsAlignFrame(const CMotionManager::Info& info)
 {
 	// 攻撃情報のコンテナ
-	const std::vector<AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
+	const std::vector<CMotionManager::AttackInfo>& vecAtkInfo = m_vecInfo[m_nType].AttackInfo;
 
 	for (const auto& atkInfo : vecAtkInfo)
 	{
 		// 揃え情報
-		const AlignInfo& align = atkInfo.AlignInfo;
+		const CMotionManager::AlignInfo& align = atkInfo.AlignInfo;
 
 		// フレーム外で戻る
 		if (!align.bSet) continue;
@@ -915,7 +922,7 @@ bool CMotion::IsAlignFrame(const Info& info)
 //==========================================================================
 // 攻撃の位置取得
 //==========================================================================
-MyLib::Vector3 CMotion::GetAttackPosition(CModel** ppModel, AttackInfo attackInfo)
+MyLib::Vector3 CMotion::GetAttackPosition(CModel** ppModel, CMotionManager::AttackInfo attackInfo)
 {
 	D3DXMATRIX mtxTrans;	// 計算用マトリックス宣言
 
@@ -937,7 +944,7 @@ MyLib::Vector3 CMotion::GetAttackPosition(CModel** ppModel, AttackInfo attackInf
 //==========================================================================
 // 攻撃の位置取得
 //==========================================================================
-MyLib::Vector3 CMotion::GetAttackPosition(CModel* pModel, AttackInfo attackInfo)
+MyLib::Vector3 CMotion::GetAttackPosition(CModel* pModel, CMotionManager::AttackInfo attackInfo)
 {
 	D3DXMATRIX mtxTrans;	// 計算用マトリックス宣言
 
@@ -967,491 +974,4 @@ int CMotion::GetMaxAllCount(int nType)
 		nAllFrame += m_vecInfo[nType].aKey[nCntKey].nFrame;	// 全てのカウントの最大値
 	}
 	return nAllFrame;
-}
-
-//==========================================================================
-// 外部ファイル読み込み
-//==========================================================================
-void CMotion::ReadText(const std::string& file)
-{
-	// 読み込み確認
-	std::vector<std::string>::iterator itr = std::find(m_LoadInfo.sTextFile.begin(), m_LoadInfo.sTextFile.end(), file);
-
-	if (itr != m_LoadInfo.sTextFile.end())
-	{// ファイル名が一致
-
-		// インデックス算出
-		int nIdx = itr - m_LoadInfo.sTextFile.begin();
-
-		// モーション数
-		m_nNumMotion = static_cast<int>(m_LoadInfo.vecLoadData[nIdx].size());
-
-		// モーション情報渡す
-		m_vecInfo = m_LoadInfo.vecLoadData[nIdx];
-
-		// デフォルトモーションインデックス
-		m_vecDefaultIdx = m_LoadInfo.vecDefaultIdx;
-		return;
-	}
-
-	// ファイル名保存
-	m_LoadInfo.sTextFile.push_back(file);
-
-
-	//--------------------------
-	// ファイル読み込み
-	//--------------------------
-	// ファイルを開く
-	std::ifstream File(file);
-	if (!File.is_open())
-	{//ファイルが開けなかった場合
-		return;
-	}
-
-	// 読み込み用変数
-	int nCntFile = 0;	// ファイルの読み込み回数
-	std::vector<std::string> motionFile;	// モーションファイル
-
-	// コメント用
-	std::string hoge;
-
-	// データ読み込み
-	std::string line;
-
-	while (std::getline(File, line))
-	{
-		// コメントはスキップ
-		if (line.empty() ||
-			line[0] == '#')
-		{
-			continue;
-		}
-
-		if (line.find("DEFAULT_ID") != std::string::npos)
-		{// デフォルトモーション読み込み
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			lineStream >>	// 題名
-				hoge >>		// ゴミ
-				hoge;		// ＝
-
-			// 情報渡す
-			int value;
-			while (lineStream >> value)
-			{
-				m_vecDefaultIdx.push_back(value);
-			}
-		}
-
-		if (line.find("MOTION_FILENAME") != std::string::npos)
-		{// モーションファイル名読み込み
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>		// ゴミ
-				hoge >>		// ＝
-				hoge;		// モーションファイル名
-
-			// ファイル名保存
-			motionFile.push_back(hoge);
-		}
-
-		if (line.find("END_SCRIPT") != std::string::npos)
-		{
-			break;
-		}
-	}
-
-	// ファイルを閉じる
-	File.close();
-
-
-	// 読み込みデータ渡す
-	m_LoadInfo.vecLoadData.emplace_back();
-
-	// 要素分繰り返し
-	for (int i = 0; i < static_cast<int>(motionFile.size()); i++)
-	{
-		// モーション読み込み
-		LoadMotion(motionFile[i], i);
-	}
-
-
-	// モーション情報渡す
-	m_vecInfo = m_LoadInfo.vecLoadData[m_LoadInfo.nNumLoad];
-
-	// モーション数
-	m_nNumMotion = static_cast<int>(m_vecInfo.size());
-
-	// 読み込んだ数加算
-	m_LoadInfo.nNumLoad++;
-}
-
-//==========================================================================
-// モーション読み込み
-//==========================================================================
-void CMotion::LoadMotion(const std::string& file, int nIdxMotion)
-{
-	// ファイルを開く
-	std::ifstream File(file);
-	if (!File.is_open())
-	{//ファイルが開けなかった場合
-		return;
-	}
-
-	// 読み込み用データ
-	Info loadInfo;
-
-	// コメント用
-	std::string hoge;
-
-	// データ読み込み
-	std::string line;
-
-	while (std::getline(File, line))
-	{
-		// コメントはスキップ
-		if (line.empty() ||
-			line[0] == '#')
-		{
-			continue;
-		}
-
-		if (line.find("MOTIONSET") != std::string::npos)
-		{// モーション情報の読み込みを開始
-
-			while (line.find("END_MOTIONSET") == std::string::npos)
-			{// END_MOTIONSETが来るまで繰り返し
-
-				// 確認する
-				std::getline(File, line);
-
-				if (line.find("LOOP") != std::string::npos)
-				{// LOOPが来たらループON/OFF読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>			// ゴミ
-						hoge >>			// ＝
-						loadInfo.nLoop;	// ループ0か1
-				}
-				else if (line.find("NUM_KEY") != std::string::npos)
-				{// NUM_KEYが来たらキー数読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>				// ゴミ
-						hoge >>				// ＝
-						loadInfo.nNumKey;	// キー数
-				}
-				else if (line.find("MOVE") != std::string::npos)
-				{// MOVEが来たら移動ON/OFF読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>				// ゴミ
-						hoge >>				// ＝
-						loadInfo.nMove;		// 移動0か1か
-				}
-				else if (line.find("SPECIAL") != std::string::npos)
-				{// SPECIALが来たらON/OFF読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// スペシャル
-					int nSpecial;
-
-					// 情報渡す
-					lineStream >>
-						hoge >>		// ゴミ
-						hoge >>		// ＝
-						nSpecial;	// スペシャル判定
-
-					// スペシャル判定
-					loadInfo.bSpecial = (nSpecial == 1);
-				}
-				else if (line.find("CANCELABLE") != std::string::npos)
-				{// CANCELABLEでキャンセル可能フレーム読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>		// ゴミ
-						hoge >>		// ＝
-						loadInfo.nCancelableFrame;	// キャンセル可能フレーム
-				}
-				else if (line.find("COMBOLABLE") != std::string::npos)
-				{// COMBOLABLEでコンボ可能フレーム読み込み
-
-					// ストリーム作成
-					std::istringstream lineStream(line);
-
-					// 情報渡す
-					lineStream >>
-						hoge >>		// ゴミ
-						hoge >>		// ＝
-						loadInfo.nCombolableFrame;	// コンボ可能フレーム
-				}
-
-
-				//--------------------------
-				// 攻撃情報
-				//--------------------------
-				if (line.find("ATTACKINFO") != std::string::npos)
-				{// ATTACKINFOが来たら
-
-					// 読み込み用変数
-					AttackInfo loadAttackInfo;
-
-					while (line.find("END_ATTACKINFO") == std::string::npos)
-					{// END_ATTACKINFOが来るまで繰り返し
-
-						// 確認する
-						std::getline(File, line);
-
-
-						if (line.find("COLLISIONPARTS") != std::string::npos)
-						{// COLLISIONPARTSが来たらパーツ番号読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.nCollisionNum;	// 判定を取るパーツ番号
-						}
-						else if (line.find("ATTACKRANGE") != std::string::npos)
-						{// ATTACKRANGEが来たら攻撃サイズ読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.fRangeSize;	// 判定のサイズ
-						}
-						else if (line.find("OFFSET") != std::string::npos)
-						{// OFFSETが来たらオフセット読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.Offset.x >> loadAttackInfo.Offset.y >> loadAttackInfo.Offset.z;	// オフセット
-						}
-						else if (line.find("ATTACKCOUNT") != std::string::npos)
-						{// ATTACKCOUNTが来たら攻撃カウント読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.nMinCnt >>
-								loadAttackInfo.nMaxCnt;	// 衝撃のカウント
-						}
-						else if (line.find("INPACTCOUNT") != std::string::npos)
-						{// INPACTCOUNTが来たら衝撃カウント読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.nInpactCnt;	// 衝撃のカウント
-						}
-						else if (line.find("DAMAGE") != std::string::npos)
-						{// DAMAGEが来たら攻撃力読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.nDamage;	// 攻撃力
-						}
-						else if (line.find("ALIGNFRAME") != std::string::npos)
-						{// ALIGNFRAMEが来たら足揃え
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadAttackInfo.AlignInfo.nFrame >>			// 衝撃のフレーム
-								loadAttackInfo.AlignInfo.nExtensionFrame;	// 猶予フレーム
-						}
-					}
-
-					// 攻撃の情報追加
-					loadInfo.AttackInfo.push_back(loadAttackInfo);
-				}
-
-
-				//--------------------------
-				// 各キーの設定
-				//--------------------------
-				if (line.find("KEYSET") != std::string::npos)
-				{// KEYSETでキー情報の読み込み開始
-
-					// 読み込み用データ
-					Key loadKey;
-
-					while (line.find("END_KEYSET") == std::string::npos)
-					{// END_KEYSETが来るまで繰り返し
-
-						// 確認する
-						std::getline(File, line);
-
-
-						if (line.find("FRAME") != std::string::npos)
-						{// FRAMEが来たら再生フレーム数読み込み
-
-							// ストリーム作成
-							std::istringstream lineStream(line);
-
-							// 情報渡す
-							lineStream >>
-								hoge >>			// ゴミ
-								hoge >>			// ＝
-								loadKey.nFrame;	// 再生フレーム
-						}
-
-
-						//--------------------------
-						// パーツの設定
-						//--------------------------
-						if (line.find("PARTS") != std::string::npos)
-						{// PARTSでパーツ情報の読み込み開始
-
-							// 読み込み用データ
-							Parts loadParts;
-
-							while (line.find("END_PARTS") == std::string::npos)
-							{// END_PARTSが来るまで繰り返し
-
-								// 確認する
-								std::getline(File, line);
-
-								if (line.find("POS") != std::string::npos)
-								{// POS
-
-									// ストリーム作成
-									std::istringstream lineStream(line);
-
-									// 情報渡す
-									lineStream >>
-										hoge >>			// ゴミ
-										hoge >>			// ＝
-										loadParts.pos.x >> loadParts.pos.y >> loadParts.pos.z;	// 位置
-								}
-								else if (line.find("ROT") != std::string::npos)
-								{// ROT
-
-									// ストリーム作成
-									std::istringstream lineStream(line);
-
-									// 情報渡す
-									lineStream >>
-										hoge >>			// ゴミ
-										hoge >>			// ＝
-										loadParts.rot.x >> loadParts.rot.y >> loadParts.rot.z;	// 向き
-								}
-								else if (line.find("SCALE") != std::string::npos)
-								{// SCALE
-
-									// ストリーム作成
-									std::istringstream lineStream(line);
-
-									// 情報渡す
-									lineStream >>
-										hoge >>			// ゴミ
-										hoge >>			// ＝
-										loadParts.scale.x >> loadParts.scale.y >> loadParts.scale.z;	// スケール
-								}
-
-							}// END_PARTSのかっこ
-
-							// パーツデータ追加
-							loadKey.aParts.push_back(loadParts);
-						}
-
-					}// END_KEYSETのかっこ
-
-					// キーデータ追加
-					loadInfo.aKey.push_back(loadKey);
-				}
-
-			}// END_MOTIONSETのかっこ
-		}
-
-		if (line.find("END_SCRIPT") != std::string::npos)
-		{
-			break;
-		}
-	}
-
-	// ファイルを閉じる
-	File.close();
-
-
-	//-----------------------------
-	// 読み込み後の計算
-	//-----------------------------
-	// キーの数
-	loadInfo.nNumKey = static_cast<int>(loadInfo.aKey.size());
-
-	// 攻撃情報の数
-	loadInfo.nNumAttackInfo = static_cast<int>(loadInfo.AttackInfo.size());
-
-	for (int i = 0; i < loadInfo.nNumKey; i++)
-	{
-		// 1つ前のキーインデックス
-		int nBeforeCnt = UtilFunc::Transformation::Clamp(i - 1, 0, loadInfo.nNumKey);
-
-		// 1つ前の位置
-		float PosX = loadInfo.aKey[nBeforeCnt].aParts[0].pos.x;
-		float PosZ = loadInfo.aKey[nBeforeCnt].aParts[0].pos.z;
-
-		// 向きを求める
-		loadInfo.aKey[i].fRotMove = atan2f(
-			(PosX - loadInfo.aKey[i].aParts[0].pos.x),
-			(PosZ - loadInfo.aKey[i].aParts[0].pos.z));
-	}
-
-	// 読み込みデータ渡す
-	m_LoadInfo.vecLoadData.back().push_back(loadInfo);
-
 }

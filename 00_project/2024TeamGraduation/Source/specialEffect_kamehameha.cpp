@@ -7,6 +7,8 @@
 #include "specialEffect_kamehameha.h"
 #include "player.h"
 #include "sound.h"
+#include "manager.h"
+#include "renderer.h"
 
 //==========================================================================
 // 定数定義
@@ -138,7 +140,7 @@ void CSpecialEffect_Kamehame::UpdateWind(const float fDeltaTime, const float fDe
 //==========================================================================
 // 発射
 //==========================================================================
-void CSpecialEffect_Kamehame::Trigger_Brust(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Trigger_Brust(CMotionManager::AttackInfo ATKInfo)
 {
 	// かめはめ波のエネルギー部分削除
 	if (m_pEnergy != nullptr)
@@ -161,12 +163,15 @@ void CSpecialEffect_Kamehame::Trigger_Brust(CMotion::AttackInfo ATKInfo)
 		MyLib::Vector3(0.0f, pPlayer->GetRotation().y, 0.0f),
 		MyLib::Vector3(),
 		20.0f, true);
+
+	// 白黒
+	GET_RENDERER->SetEnableShader(true, 0.1f);
 }
 
 //==========================================================================
 // 構え
 //==========================================================================
-void CSpecialEffect_Kamehame::Trigger_Stance(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Trigger_Stance(CMotionManager::AttackInfo ATKInfo)
 {
 	// プレイヤー取得
 	CPlayer* pPlayer = GetPlayer();
@@ -182,7 +187,7 @@ void CSpecialEffect_Kamehame::Trigger_Stance(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // かめはめ波の中心(開始)生成時
 //==========================================================================
-void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotionManager::AttackInfo ATKInfo)
 {
 	// プレイヤー取得
 	CPlayer* pPlayer = GetPlayer();
@@ -220,7 +225,7 @@ void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // チャージ開始時
 //==========================================================================
-void CSpecialEffect_Kamehame::Trigger_ChargeStart(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Trigger_ChargeStart(CMotionManager::AttackInfo ATKInfo)
 {
 	// プレイヤー取得
 	CPlayer* pPlayer = GetPlayer();
@@ -261,7 +266,7 @@ void CSpecialEffect_Kamehame::Trigger_ChargeStart(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // チャージ開始
 //==========================================================================
-void CSpecialEffect_Kamehame::Progress_ChargeStart(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Progress_ChargeStart(CMotionManager::AttackInfo ATKInfo)
 {
 	if (m_pEnergy == nullptr) return;
 
@@ -277,7 +282,7 @@ void CSpecialEffect_Kamehame::Progress_ChargeStart(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // チャージ中
 //==========================================================================
-void CSpecialEffect_Kamehame::Progress_Chargeing(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Progress_Chargeing(CMotionManager::AttackInfo ATKInfo)
 {
 	if (m_pEnergy == nullptr) return;
 
@@ -296,7 +301,7 @@ void CSpecialEffect_Kamehame::Progress_Chargeing(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // 凝縮
 //==========================================================================
-void CSpecialEffect_Kamehame::Progress_Condense(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Progress_Condense(CMotionManager::AttackInfo ATKInfo)
 {
 	if (m_pEnergy == nullptr) return;
 
@@ -315,7 +320,7 @@ void CSpecialEffect_Kamehame::Progress_Condense(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // 発射へ遷移
 //==========================================================================
-void CSpecialEffect_Kamehame::Progress_TransBrust(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Progress_TransBrust(CMotionManager::AttackInfo ATKInfo)
 {
 	// 風生成停止
 	m_bWindCreate = false;
@@ -334,7 +339,7 @@ void CSpecialEffect_Kamehame::Progress_TransBrust(CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // 発射
 //==========================================================================
-void CSpecialEffect_Kamehame::Progress_Brust(CMotion::AttackInfo ATKInfo)
+void CSpecialEffect_Kamehame::Progress_Brust(CMotionManager::AttackInfo ATKInfo)
 {
 	
 }

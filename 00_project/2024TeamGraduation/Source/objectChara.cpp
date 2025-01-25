@@ -231,7 +231,7 @@ void CObjectChara::MotionInProgressAction()
 	if (m_pMotion == nullptr) return;
 
 	// î•ñæ“¾
-	std::vector<CMotion::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
+	std::vector<CMotionManager::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
 	if (attackInfo.empty()) return;
 
 	// UŒ‚ˆ—
@@ -262,7 +262,7 @@ void CObjectChara::MotionInProgressAction()
 //==========================================================================
 // UŒ‚ˆ—
 //==========================================================================
-void CObjectChara::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CObjectChara::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// •Ší‚ÌˆÊ’u
 	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), ATKInfo);
@@ -271,7 +271,7 @@ void CObjectChara::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // UŒ‚”»’è’†ˆ—
 //==========================================================================
-void CObjectChara::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CObjectChara::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// •Ší‚ÌˆÊ’u
 	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), ATKInfo);

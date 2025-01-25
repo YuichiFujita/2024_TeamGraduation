@@ -262,6 +262,7 @@
     <ClCompile Include="Source\meshwall.cpp" />
     <ClCompile Include="Source\model.cpp" />
     <ClCompile Include="Source\motion.cpp" />
+    <ClCompile Include="Source\motionManager.cpp" />
     <ClCompile Include="Source\multinumber.cpp" />
     <ClCompile Include="Source\myassert.cpp" />
     <ClCompile Include="Source\MyEffekseer.cpp" />
@@ -508,6 +509,7 @@
     <ClInclude Include="Source\meshwall.h" />
     <ClInclude Include="Source\model.h" />
     <ClInclude Include="Source\motion.h" />
+    <ClInclude Include="Source\motionManager.h" />
     <ClInclude Include="Source\multinumber.h" />
     <ClInclude Include="Source\myassert.h" />
     <ClInclude Include="Source\MyEffekseer.h" />

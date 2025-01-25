@@ -173,7 +173,7 @@ void CReporter::Update(const float fDeltaTime, const float fDeltaRate, const flo
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CReporter::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CReporter::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -197,7 +197,7 @@ void CReporter::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CReporter::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CReporter::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();

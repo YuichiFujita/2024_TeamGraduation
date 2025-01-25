@@ -165,7 +165,7 @@ void CPlayerResult::StateWin(const float fDeltaTime, const float fDeltaRate, con
 	{// 勝利モーション以外なら勝利にする
 
 		// 勝利モーション設定
-		CMotion::Info info = GetMotion()->GetInfo(EMotion::MOTION_WIN);	// モーション情報
+		CMotionManager::Info info = GetMotion()->GetInfo(EMotion::MOTION_WIN);	// モーション情報
 		int nKey = rand() % info.nNumKey;														// 開始キー
 		float fFrame = (float)(rand() % info.aKey[nKey].nFrame);								// 開始フレーム
 		pMotion->Set(EMotion::MOTION_WIN, 0, true, fFrame);

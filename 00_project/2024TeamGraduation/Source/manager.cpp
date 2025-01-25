@@ -28,6 +28,7 @@
 #include "characterAnim.h"
 #include "shader.h"
 #include "renderTextureManager.h"
+#include "motionManager.h"
 
 //==========================================================================
 // 定数定義
@@ -312,6 +313,11 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
+	//**********************************
+	// モーション
+	//**********************************
+	CMotionManager::Create();
+
 	// レンダーテクスチャーの生成
 	if (FAILED(m_pRenderer->CreateRenderTexture()))
 	{ // 生成に失敗した場合
@@ -501,6 +507,13 @@ void CManager::Reset(CScene::MODE mode)
 	{
 		m_pCamera->Reset();
 		m_pCamera->ResetByMode(mode);
+	}
+
+	// モーションマネージャーリセット
+	CMotionManager* pMotionMgr = CMotionManager::GetInstance();
+	if (pMotionMgr != nullptr)
+	{
+		pMotionMgr->Reset();
 	}
 }
 
@@ -693,6 +706,14 @@ void CManager::Uninit()
 		m_pPause->Uninit();
 		delete m_pPause;
 		m_pPause = nullptr;
+	}
+
+
+	// モーションマネージャーリセット
+	CMotionManager* pMotionMgr = CMotionManager::GetInstance();
+	if (pMotionMgr != nullptr)
+	{
+		pMotionMgr->Uninit();
 	}
 
 	// ロストするリソース管理マネージャー破棄

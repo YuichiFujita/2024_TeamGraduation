@@ -87,7 +87,7 @@ namespace
 	namespace rebound
 	{
 #if _DEBUG
-		const float MOVE_UP = 2.0f;	// ãˆÚ“®—Ê
+		const float MOVE_UP = 10.0f;	// ãˆÚ“®—Ê
 #else
 		const float MOVE_UP = 2.0f;	// ãˆÚ“®—Ê
 #endif
