@@ -1026,7 +1026,7 @@ void CEntry_Dressup::Save()
 	// ƒQ[ƒ€Ý’è‚Ì•Û‘¶
 	assert(m_pRuleManager != nullptr);
 	CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ƒ‹[ƒ‹
-	CEntryRuleManager::SaveSetting(&rule);
+	CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
 }
 
 //==========================================================================
