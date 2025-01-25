@@ -431,6 +431,9 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
 		pGymWall->SetIsWall(false);
 
+		// 白黒
+		GET_RENDERER->SetEnableShader(true, 0.1f);
+
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
