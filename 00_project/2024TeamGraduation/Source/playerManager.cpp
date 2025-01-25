@@ -546,7 +546,10 @@ void CPlayerManager::ChangeAIToUser(CPlayer* pPlayer)
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
-		
+
+		// 死亡状態の場合次へ
+		if (pItrPlayer->IsDeathState()) { continue; }
+
 		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }
 
@@ -603,6 +606,9 @@ void CPlayerManager::ChangeUserToAI(CPlayer* pPlayer)
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+
+		// 死亡状態の場合次へ
+		if (pItrPlayer->IsDeathState()) { continue; }
 		
 		// 自身と別チームのプレイヤーの場合次へ
 		if (pItrPlayer->GetTeam() != pPlayer->GetTeam()) { continue; }

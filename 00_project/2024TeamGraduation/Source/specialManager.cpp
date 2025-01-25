@@ -603,6 +603,9 @@ void CSpecialManager::SetJumpAttackTeam()
 
 		CPlayer* pPlayer = (*itr);	// ƒvƒŒƒCƒ„[î•ñ
 
+		// Ž€–Só‘Ô‚Ìê‡ŽŸ‚Ö
+		if (pPlayer->IsDeathState()) { continue; }
+
 		// “à–ì‚¶‚á‚È‚¢ê‡ŽŸ‚Ö
 		if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN) { continue; }
 		

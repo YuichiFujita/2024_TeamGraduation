@@ -2705,6 +2705,27 @@ void CPlayer::CopyDressData(const CPlayer* pCopyPlayer)
 }
 
 //==========================================================================
+// 死亡状態かの確認
+//==========================================================================
+bool CPlayer::IsDeathState() const
+{
+	// 各種死亡関連の状態の場合true
+	return (m_state == STATE_DEAD || m_state == STATE_DEAD_AFTER || m_state == STATE_DEAD_CARRY);
+}
+
+//==========================================================================
+// パス可能かの確認
+//==========================================================================
+bool CPlayer::IsPassOK() const
+{
+	// 死亡状態の場合false
+	if (IsDeathState()) { return false; }
+
+	// 各種相手コート関連の状態ではない場合true
+	return (m_state != STATE_OUTCOURT && m_state != STATE_OUTCOURT_RETURN && m_state != STATE_INVADE_TOSS && m_state != STATE_INVADE_RETURN);
+}
+
+//==========================================================================
 // ドレスアップ生成
 //==========================================================================
 void CPlayer::CreateDressUp()

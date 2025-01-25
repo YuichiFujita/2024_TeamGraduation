@@ -383,6 +383,8 @@ public:
 	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
 	void DeadCollectSetting();											// 死亡回収時処理
 	void CopyDressData(const CPlayer* pCopyPlayer);						// 着せ替え情報コピー
+	bool IsDeathState() const;											// 死亡状態かの確認
+	bool IsPassOK() const;												// パス可能かの確認
 
 	//=============================
 	// 静的メンバ関数
