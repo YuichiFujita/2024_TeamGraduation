@@ -98,6 +98,9 @@ private:
 	LPDIRECT3DINDEXBUFFER9 m_pIdxBuff;	// インデックスバッファへのポインタ
 	int m_nTexIdx;						// テクスチャのインデックス番号
 	TYPE m_type;						// メッシュのタイプ
+
+	MyLib::Vector3* m_pPosVtx;			// 計算用の座標
+	MyLib::Vector3* m_pNormalizeNor;	// 計算用のベクトル
 };
 
 

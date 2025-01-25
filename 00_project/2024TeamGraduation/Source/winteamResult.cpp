@@ -170,11 +170,11 @@ HRESULT CWinTeamResult::CreateAudience()
 //==========================================================================
 void CWinTeamResult::Uninit()
 {
+	// 終了処理
+	CObject2D_Anim::Uninit();
+
 	// 観客
 	SAFE_UNINIT(m_pAudience);
-
-	// オブジェクトを破棄
-	Release();
 }
 
 //==========================================================================

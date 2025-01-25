@@ -126,8 +126,8 @@ public:
 	//=============================
 	// ‚»‚Ì‘¼ŠÖ”
 	//=============================
-	void CautionAll(const CGameManager::ETeamSide team);	// Œx‰úˆ—
-	void UnCautionAll(const CGameManager::ETeamSide team);	// Œx‰ú‰ğœˆ—
+	void CautionInAll(const CGameManager::ETeamSide team);	// Œx‰úˆ—
+	void CautionOutAll();	// Œx‰úˆ—
 
 	//=============================
 	// Ã“Iƒƒ“ƒoŠÖ”

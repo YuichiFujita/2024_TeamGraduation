@@ -74,7 +74,7 @@ void CPlayerControlAction::ConditionalAction(CPlayer* player, const float fDelta
 	if (pPlayerAction == nullptr) return; 
 	CPlayer::EAction action = pPlayerAction->GetAction();
 
-	if (action != CPlayer::EAction::ACTION_BLINK ||
+	if (action != CPlayer::EAction::ACTION_BLINK &&
 		action != CPlayer::EAction::ACTION_DODGE)
 	{
 		Catch(player, fDeltaTime, fDeltaRate, fSlowRate);

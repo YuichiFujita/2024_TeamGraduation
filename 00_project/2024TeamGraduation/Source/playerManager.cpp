@@ -1056,7 +1056,7 @@ void CPlayerManager::Save
 //==========================================================================
 // 警戒処理
 //==========================================================================
-void CPlayerManager::CautionAll(const CGameManager::ETeamSide team)
+void CPlayerManager::CautionInAll(const CGameManager::ETeamSide team)
 {
 	CListManager<CPlayer> sampleList = GetInList(team);
 	std::list<CPlayer*>::iterator itr = sampleList.GetEnd();
@@ -1075,27 +1075,30 @@ void CPlayerManager::CautionAll(const CGameManager::ETeamSide team)
 		pObj->SetMotion(CPlayer::EMotion::MOTION_DEF);
 
 		// 操作不可
-		pObj->SetEnableAction(false);
-		pObj->SetEnableMove(false);
+		//pObj->SetEnableAction(false);
+		//pObj->SetEnableMove(false);
 	}
 }
 
 //==========================================================================
-// 警戒解除処理
+// 警戒処理
 //==========================================================================
-void CPlayerManager::UnCautionAll(const CGameManager::ETeamSide team)
+void CPlayerManager::CautionOutAll()
 {
-	CListManager<CPlayer> sampleList = GetInList(team);
-	std::list<CPlayer*>::iterator itr = sampleList.GetEnd();
-	CPlayer* pObj = nullptr;
+	for (int i = 0; i < OUT_MAX; i++)
+	{ // 外野人数分繰り返す
 
-	while (sampleList.ListLoop(itr))
-	{
-		pObj = (*itr);
+		// 地上に張り付ける
+		MyLib::Vector3 pos = m_apOut[i]->GetPosition();
+		pos.y = 0.0f;
+		m_apOut[i]->SetPosition(pos);
 
-		// 操作可能
-		pObj->SetEnableAction(true);
-		pObj->SetEnableMove(true);
+		// 通常モーション
+		m_apOut[i]->SetMotion(CPlayer::EMotion::MOTION_DEF);
+
+		// 操作不可
+		//m_apOut[i]->SetEnableAction(false);
+		//m_apOut[i]->SetEnableMove(false);
 	}
 }
 

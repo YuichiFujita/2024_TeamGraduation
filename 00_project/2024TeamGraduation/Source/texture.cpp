@@ -138,8 +138,6 @@ void CTexture::SearchAllImages(const std::wstring& folderPath)
 
 		FindClose(hFind);
 	}
-
-	int n = 0;
 }
 
 //==========================================================================
@@ -269,9 +267,6 @@ HRESULT CTexture::LoadTex(const std::string& file)
 	// 割り当て
 	m_TexInfo.emplace_back();
 	m_ImageNames.emplace_back();	// 読み込み用文字列
-
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevive = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	// 画像情報の取得
 	D3DXIMAGE_INFO size;	// テクスチャステータス

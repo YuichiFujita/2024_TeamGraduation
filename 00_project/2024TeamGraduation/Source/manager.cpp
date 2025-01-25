@@ -37,7 +37,7 @@ namespace
 #if _DEBUG
 	const int MIN_LOOP_LOAD = 1;	// 必須ロードループ数
 #else
-	const int MIN_LOOP_LOAD = 2;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 3;	// 必須ロードループ数
 #endif
 
 #if _DEBUG

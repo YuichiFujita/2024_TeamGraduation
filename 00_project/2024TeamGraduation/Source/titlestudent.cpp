@@ -152,7 +152,6 @@ HRESULT CTitleStudent::Init()
 
 	// プレイヤー数
 	int size = m_List.GetNumAll();
-	float division = RANGE / size;	// 1分割あたりの向き
 	float fRot = RANGE / (float)(size + 1);
 
 	MyLib::Vector3 setpos, setrot;

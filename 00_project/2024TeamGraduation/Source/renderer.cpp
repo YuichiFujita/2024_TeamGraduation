@@ -316,9 +316,7 @@ HRESULT CRenderer::CreateRenderTexture()
 //============================================================
 void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc, ACameraFunc pSetCameraFunc)
 {
-	CManager *pManager = GET_MANAGER;			// マネージャー
-	CCamera  *pCamera  = pManager->GetCamera();	// カメラ
-
+	CManager *pManager = GET_MANAGER;	// マネージャー
 	D3DVIEWPORT9 viewportDef;	// カメラのビューポート保存用
 	HRESULT hr;	// 異常終了の確認用
 

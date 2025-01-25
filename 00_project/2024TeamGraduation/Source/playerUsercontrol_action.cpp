@@ -47,8 +47,6 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	CMotion* pMotion = player->GetMotion();
-
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{

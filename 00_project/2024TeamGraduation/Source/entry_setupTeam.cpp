@@ -799,7 +799,8 @@ bool CEntry_SetUpTeam::SelectTeam()
 		}
 
 		// 選択チームを保存
-		const int nSide = m_TeamSide[nUserIdx].team;
+		const int nSide = (int)m_TeamSide[nUserIdx].team;
+		assert(nSide > CGameManager::ETeamSide::SIDE_NONE && nSide < CGameManager::ETeamSide::SIDE_MAX);
 
 		//--------------------------
 		// チーム内人数変え
