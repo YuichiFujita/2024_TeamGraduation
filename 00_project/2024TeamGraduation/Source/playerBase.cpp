@@ -64,6 +64,12 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	hitInfo.eHit = CPlayer::HIT_NONE;
 	hitInfo.bHit = false;
 
+	// 死亡状態ならすり抜け
+	if (m_pPlayer->GetMotionFrag().bDead)
+	{
+		return hitInfo;
+	}
+
 	if (action == CPlayer::EAction::ACTION_DODGE)
 	{ // 回避行動中ならすり抜け
 
@@ -109,13 +115,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	
 	// 味方のボールならすり抜ける
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
-
-	// 死亡状態ならすり抜け
-	if (m_pPlayer->GetMotionFrag().bDead)
-	{
-		hitInfo.bHit = true;
-		return hitInfo;
-	}
 
 	// ダメージを受け付けないならすり抜ける
 	if (!m_pPlayer->GetDamageInfo().bReceived)

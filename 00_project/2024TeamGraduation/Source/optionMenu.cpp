@@ -595,6 +595,43 @@ HRESULT COptionMenu::CreateSelectMarker()
 //==========================================================================
 void COptionMenu::Uninit()
 {
+	// ボード削除
+	SAFE_UNINIT(m_pBoard);
+
+	// 紙
+	SAFE_UNINIT(m_pPaper);
+
+	// マーカー
+	SAFE_UNINIT(m_pSelectMarker);
+
+	// 見出し
+	SAFE_UNINIT(m_pTitleSound);
+	SAFE_UNINIT(m_pTitlePad);
+
+	// 選択肢UI削除
+	for (int i = 0; i < ESelect::SELECT_MAX; i++)
+	{
+		SAFE_UNINIT(m_pSelectUI[i]);
+	}
+
+	// 数字削除
+	SAFE_UNINIT(m_pNumberMaster);
+	SAFE_UNINIT(m_pNumberSE);
+	SAFE_UNINIT(m_pNumberBGM);
+
+	// ピン
+	SAFE_UNINIT(m_pPin);
+
+	// デザイン
+	SAFE_UNINIT(m_pDesign_01);
+	SAFE_UNINIT(m_pDesign_02);
+
+	// バイブのフラグ
+	SAFE_UNINIT(m_pVibFrag);
+
+	// 選択肢のマーカー
+	SAFE_UNINIT(m_pSelectMarker);
+
 	// オブジェクトの破棄
 	Release();
 }
@@ -634,6 +671,12 @@ void COptionMenu::Kill()
 	// デザイン
 	SAFE_KILL(m_pDesign_01);
 	SAFE_KILL(m_pDesign_02);
+
+	// バイブのフラグ
+	SAFE_KILL(m_pVibFrag);
+
+	// 選択肢のマーカー
+	SAFE_KILL(m_pSelectMarker);
 
 	// 自身の終了
 	Uninit();

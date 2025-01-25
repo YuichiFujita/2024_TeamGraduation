@@ -259,6 +259,9 @@ HRESULT CGameManager::Init()
 		// 色設定
 		m_pTimerUI->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
+		// タイマーUIの非表示
+		m_pTimerUI->SetEnableDisp(false);
+
 		// タイマー背景の生成
 		m_pTimerBG = CObject2D::Create();
 		if (m_pTimerBG == nullptr)
@@ -279,6 +282,9 @@ HRESULT CGameManager::Init()
 		size = UtilFunc::Transformation::AdjustSizeByHeight(size, Timer::HEIGHT_BG);
 		m_pTimerBG->SetSize(size);
 		m_pTimerBG->SetSizeOrigin(size);
+
+		// タイマー背景の非表示
+		m_pTimerBG->SetEnableDisp(false);
 	}
 
 	// モテマネージャ生成
@@ -603,6 +609,28 @@ void CGameManager::SkipSpawn()
 	for (const auto& door : m_apGymDoor)
 	{
 		door->SetEnableOpen(false);
+	}
+
+	if (m_pTimerUI != nullptr)
+	{ // 生成されている場合
+
+		// タイマーUIの表示
+		m_pTimerUI->SetEnableDisp(true);
+	}
+
+	if (m_pTimerBG != nullptr)
+	{ // 生成されている場合
+
+		// タイマー背景の表示
+		m_pTimerBG->SetEnableDisp(true);
+	}
+
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->SetEnableGaugeDisp(true);
+		}
 	}
 
 	// プレイヤーマネージャーの生成
@@ -949,6 +977,7 @@ void CGameManager::CreateTeamStatus()
 		}
 
 		m_pTeamStatus[i] = CTeamStatus::Create();
+		m_pTeamStatus[i]->SetEnableGaugeDisp(false);
 
 		// チーム設定
 		side = static_cast<ETeamSide>(i);
@@ -1238,6 +1267,20 @@ void CGameManager::Debug()
 	if (ImGui::Button("end"))
 	{
 		SetSceneType(ESceneType::SCENE_END);
+	}
+
+	// 警戒(L)
+	if (ImGui::Button("(Caution: L)"))
+	{
+		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
+		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_LEFT);
+	}
+
+	// 警戒(R)
+	if (ImGui::Button("(Caution: R)"))
+	{
+		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
+		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_RIGHT);
 	}
 
 #endif

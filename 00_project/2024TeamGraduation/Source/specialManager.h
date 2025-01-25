@@ -30,9 +30,6 @@ class CCutIn;
 class CSpecialManager : public CObject
 {
 public:
-	// 定数
-	static constexpr int NUM_LIGHT = 4;	// ライト数
-
 	// 状態列挙
 	enum EState
 	{
@@ -67,6 +64,14 @@ public:
 	static CSpecialManager *Create(CPlayer* pAttack, CPlayer* pTarget);	// 生成
 
 private:
+	// ジャンププレイヤー構造体
+	struct SPlayerJump
+	{
+		CPlayer* pPlayer;				// プレイヤー情報
+		MyLib::Vector3 posJumpStart;	// ジャンプ開始位置
+		MyLib::Vector3 posJumpEnd;		// ジャンプ終了位置
+	};
+
 	// エイリアス定義
 	typedef void (CSpecialManager::*AFuncUpdateState)(const float, const float, const float);	// 状態更新の関数ポインタ型
 	typedef void (CSpecialManager::*AFuncUpdateSpecial)(const float, const float, const float);	// スペシャル更新の関数ポインタ型
@@ -86,6 +91,7 @@ private:
 	void UpdateKamehameha(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// かめはめ波の更新
 	MyLib::Vector3 GetDestAttackPosition() const;	// 攻撃プレイヤー目標位置取得
 	void SetPlayerHypePosition();	// プレイヤー盛り上げ位置設定
+	void SetJumpAttackTeam();		// 攻撃チームのジャンプ設定
 	void SetLightPosition();		// ライト位置設定
 	HRESULT SetDarkGym();			// 体育館暗くする設定
 
@@ -100,8 +106,7 @@ private:
 	float m_fCurTime;	// 現在の待機時間
 	bool m_bJump;		// ジャンプフラグ
 	float m_fJumpTime;	// 現在のジャンプ時間
-	MyLib::Vector3 m_posJumpStart;	// ジャンプ開始位置
-	MyLib::Vector3 m_posJumpEnd;	// ジャンプ終了位置
+	std::vector<SPlayerJump> m_vecJump;	// ジャンププレイヤー情報
 };
 
 #endif	// _SPECIAL_MANAGER_H_

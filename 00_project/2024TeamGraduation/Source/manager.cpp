@@ -36,9 +36,9 @@
 namespace
 {
 #if _DEBUG
-	const float MIN_LOOP_LOAD = 0;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 1;	// 必須ロードループ数
 #else
-	const float MIN_LOOP_LOAD = 2;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 2;	// 必須ロードループ数
 #endif
 
 #if _DEBUG
@@ -592,6 +592,14 @@ void CManager::Uninit()
 		m_pScene = nullptr;
 	}
 
+	// ロード画面の破棄
+	CLoadManager* pLoadManager = GetLoadManager();
+	if (pLoadManager != nullptr)
+	{
+		// 終了処理
+		pLoadManager->Uninit();
+	}
+
 	// シェーダーの破棄
 	CShader::Release();
 
@@ -885,8 +893,10 @@ void CManager::NormalLoad()
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
+
 			if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
-			{
+			{// フェードが終了している場合
+
 				m_bLoadComplete = true;	// ロード完了
 				m_bNowLoading = false;	// ロード中フラグオフ
 			}

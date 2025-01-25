@@ -1054,6 +1054,52 @@ void CPlayerManager::Save
 }
 
 //==========================================================================
+// 警戒処理
+//==========================================================================
+void CPlayerManager::CautionAll(const CGameManager::ETeamSide team)
+{
+	CListManager<CPlayer> sampleList = GetInList(team);
+	std::list<CPlayer*>::iterator itr = sampleList.GetEnd();
+	CPlayer* pObj = nullptr;
+
+	while (sampleList.ListLoop(itr))
+	{
+		pObj = (*itr);
+
+		// 地上に張り付ける
+		MyLib::Vector3 pos = pObj->GetPosition();
+		pos.y = 0.0f;
+		pObj->SetPosition(pos);
+
+		// 通常モーション
+		pObj->SetMotion(CPlayer::EMotion::MOTION_DEF);
+
+		// 操作不可
+		pObj->SetEnableAction(false);
+		pObj->SetEnableMove(false);
+	}
+}
+
+//==========================================================================
+// 警戒解除処理
+//==========================================================================
+void CPlayerManager::UnCautionAll(const CGameManager::ETeamSide team)
+{
+	CListManager<CPlayer> sampleList = GetInList(team);
+	std::list<CPlayer*>::iterator itr = sampleList.GetEnd();
+	CPlayer* pObj = nullptr;
+
+	while (sampleList.ListLoop(itr))
+	{
+		pObj = (*itr);
+
+		// 操作可能
+		pObj->SetEnableAction(true);
+		pObj->SetEnableMove(true);
+	}
+}
+
+//==========================================================================
 // プレイヤー情報セーブ
 //==========================================================================
 void CPlayerManager::SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info)

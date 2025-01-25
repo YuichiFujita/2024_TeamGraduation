@@ -322,7 +322,7 @@ void CPlayerSpawnManager::UpdateWalkAxisZ(const float fDeltaTime, const float fD
 	}
 
 	CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
-	if (pManager->IsOpen() && m_fCurTime >= 1.6f)
+	if (pManager->IsOpen() && m_fCurTime >= 3.6f)
 	{ // ドアが閉じていない場合
 
 		// ドアをゆっくり閉める

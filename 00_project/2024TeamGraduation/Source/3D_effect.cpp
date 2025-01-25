@@ -71,6 +71,7 @@ CEffect3D::CEffect3D(int nPriority) : CObjectBillboard(nPriority)
 	m_bGravity = false;				// 重力のフラグ
 	m_bChaseDest = false;			// 目標の位置へ向かうフラグ
 	m_bDeleteLife = false;			// 寿命で削除
+	m_nParentIdx = 0;				// 親のインデックス番号
 
 	// 総数加算
 	m_nNumAll++;
