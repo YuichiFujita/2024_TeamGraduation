@@ -106,9 +106,9 @@ void CObjectChara::BindObjectData(int nCntData)
 	// ステータス(ボール)生成
 	CreateStatusBall(m_aLoadData[m_nIdxFile].parameterBall);
 
-	CEntryRuleManager::SRule rule;			// ルール
-	CEntryRuleManager::LoadSetting(&rule);	// ルール読込
-	float fMul = MUL_LIFE[rule.life];		// 体力倍率
+	CEntryRuleManager::SRule rule;		// ルール
+	CEntryRuleManager::LoadRule(&rule);	// ルール読込
+	float fMul = MUL_LIFE[rule.life];	// 体力倍率
 
 	// 体力の設定
 	m_nLife = m_aLoadData[m_nIdxFile].parameter.nLife * fMul;

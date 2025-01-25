@@ -17,6 +17,7 @@
 #include "object2D.h"
 #include "object2D_Anim.h"
 #include "entryRuleManager.h"
+#include "loadtext.h"
 
 //==========================================================================
 // 定数定義
@@ -54,11 +55,11 @@ namespace
 		namespace name
 		{
 			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 60.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 60.0f, 0.0f) };	// 原点位置
-			const char*	FONT		= "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
-			const bool	ITALIC		= false;					// イタリック
-			const float	HEIGHT		= 42.0f;					// 文字縦幅
-			const EAlignX ALIGN_X	= XALIGN_CENTER;			// 横配置
-			const D3DXCOLOR COL		= MyLib::color::Black();	// 色
+			const char*	FONT		= "data\\FONT\\チョークS.otf";	// フォントパス
+			const bool	ITALIC		= false;						// イタリック
+			const float	HEIGHT		= 42.0f;						// 文字縦幅
+			const EAlignX ALIGN_X	= XALIGN_CENTER;				// 横配置
+			const D3DXCOLOR COL		= MyLib::color::Black();		// 色
 		}
 
 		namespace back
@@ -315,7 +316,7 @@ HRESULT CEntry_Dressup::Init()
 		( // 引数
 			ui::name::FONT,		// フォントパス
 			ui::name::ITALIC,	// イタリック
-			L"ここにチーム名",	// 指定文字列	// TODO：ランダムに名前設定
+			L"",				// 指定文字列
 			ui::name::POS[i],	// 原点位置
 			ui::name::HEIGHT,	// 文字縦幅
 			ui::name::ALIGN_X,	// 横配置
@@ -328,6 +329,9 @@ HRESULT CEntry_Dressup::Init()
 			assert(false);
 			return E_FAIL;
 		}
+
+		// テキストを割当
+		loadtext::BindString(m_apTeamName[i], loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)));
 	}
 
 	return S_OK;
@@ -1022,7 +1026,7 @@ void CEntry_Dressup::Save()
 	// ゲーム設定の保存
 	assert(m_pRuleManager != nullptr);
 	CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
-	CEntryRuleManager::SaveSetting(&rule);
+	CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
 }
 
 //==========================================================================

@@ -226,8 +226,8 @@ HRESULT CGameManager::Init()
 	CreateTeamStatus();
 
 	// 外部ファイルから設定されたタイムを読込
-	CEntryRuleManager::SRule rule;			// ルール
-	CEntryRuleManager::LoadSetting(&rule);	// ルール読込
+	CEntryRuleManager::SRule rule;		// ルール
+	CEntryRuleManager::LoadRule(&rule);	// ルール読込
 	if (rule.fTime > 0.0f)
 	{ // 時間制限が無限じゃない場合
 

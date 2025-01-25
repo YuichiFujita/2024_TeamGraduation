@@ -81,6 +81,7 @@ private:
 	void ControlSelect();	// 選択操作
 	void UpdateSelect();	// 選択更新
 	void UpdateDecide();	// 決定更新
+	void UpdateChancel();	// キャンセル更新
 	HRESULT ChangeChar(const ETypeChar typeChar);	// 文字変更
 	HRESULT LoadArray(const ETypeChar typeChar);	// 配置読込
 

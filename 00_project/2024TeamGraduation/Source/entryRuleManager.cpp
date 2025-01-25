@@ -482,7 +482,7 @@ HRESULT CEntryRuleManager::Init()
 
 	// ゲーム設定の読込
 	SRule rule;	// ルール
-	if (FAILED(LoadSetting(&rule)))
+	if (FAILED(LoadRule(&rule)))
 	{ // 読込に失敗した場合
 
 		assert(false);
@@ -688,7 +688,7 @@ void CEntryRuleManager::Release(CEntryRuleManager*& prEntryRuleManager)
 //============================================================
 //	ゲーム設定の保存処理
 //============================================================
-HRESULT CEntryRuleManager::SaveSetting(SRule* pRule)
+HRESULT CEntryRuleManager::SaveSetting(const SRule& rRule, const std::string& rNameLeft, const std::string& rNameRight)
 {
 	// ファイルを開く
 	std::ofstream file(SET_PATH);	// ファイルストリーム
@@ -713,9 +713,18 @@ HRESULT CEntryRuleManager::SaveSetting(SRule* pRule)
 	file << "#	ゲーム設定情報" << std::endl;
 	file << "#------------------------------------------------------------------------------" << std::endl;
 	file << "GAMESET" << std::endl;
-	file << "	TIME = " << pRule->fTime << std::endl;
-	file << "	LIFE = " << pRule->life << std::endl;
-	file << "END_GAMESET" << std::endl;
+	file << "	TIME = " << rRule.fTime << std::endl;
+	file << "	LIFE = " << rRule.life << std::endl;
+	file << "END_GAMESET\n" << std::endl;
+
+	// チーム名の書き出し
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "#	チーム名情報" << std::endl;
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "TEAMNAME" << std::endl;
+	file << "	LEFT  = " << rNameLeft << std::endl;
+	file << "	RIGHT = " << rNameRight << std::endl;
+	file << "END_TEAMNAME" << std::endl;
 
 	// ファイルを閉じる
 	file.close();
@@ -726,7 +735,7 @@ HRESULT CEntryRuleManager::SaveSetting(SRule* pRule)
 //============================================================
 //	ゲーム設定の読込処理
 //============================================================
-HRESULT CEntryRuleManager::LoadSetting(SRule* pRule)
+HRESULT CEntryRuleManager::LoadRule(SRule* pRule)
 {
 	// ファイルを開く
 	std::ifstream file(SET_PATH);	// ファイルストリーム
@@ -767,6 +776,55 @@ HRESULT CEntryRuleManager::LoadSetting(SRule* pRule)
 					pRule->life = (ELife)nLife;
 				}
 			} while (str != "END_GAMESET");	// END_GAMESETを読み込むまでループ
+		}
+	}
+
+	// ファイルを閉じる
+	file.close();
+
+	return S_OK;
+}
+
+//============================================================
+//	チーム名の読込処理
+//============================================================
+HRESULT CEntryRuleManager::LoadName(std::string* pNameLeft, std::string* pNameRight)
+{
+	// ファイルを開く
+	std::ifstream file(SET_PATH);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "ゲーム設定の読み込みに失敗！", "警告！", MB_ICONWARNING);
+		return E_FAIL;
+	}
+
+	// ファイルを読込
+	std::string str;	// 読込文字列
+	while (file >> str)
+	{ // ファイルの終端ではない場合ループ
+
+		if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+		else if (str == "TEAMNAME")
+		{
+			do { // END_TEAMNAMEを読み込むまでループ
+
+				// 文字列を読み込む
+				file >> str;
+
+				if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+				else if (str == "LEFT")
+				{
+					file >> str;			// ＝を読込
+					file >> *pNameLeft;		// 左チーム名を読込
+				}
+				else if (str == "RIGHT")
+				{
+					file >> str;			// ＝を読込
+					file >> *pNameRight;	// 右チーム名を読込
+				}
+			} while (str != "END_TEAMNAME");	// END_TEAMNAMEを読み込むまでループ
 		}
 	}
 
