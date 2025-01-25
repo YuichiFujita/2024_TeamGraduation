@@ -1,48 +1,48 @@
 #==============================================================================
 #
-#	ランダムチーム名テキスト [nameTeam.txt]
+#	ランダム二つ名テキスト [hutatuna.txt]
 #	Author : 藤田 勇一
 #
 #==============================================================================
 
 TEXT_0
-	STR = やきとり
+	STR = 疾風の刃
 END_TEXT
 
 TEXT_1
-	STR = つきよみ
+	STR = 雷光の牙
 END_TEXT
 
 TEXT_2
-	STR = なまはげ
+	STR = 鉄壁の盾
 END_TEXT
 
 TEXT_3
-	STR = おにぎり
+	STR = 剛腕の投士
 END_TEXT
 
 TEXT_4
-	STR = かみなり
+	STR = 蒼刃の翼
 END_TEXT
 
 TEXT_5
-	STR = とりてん
+	STR = 烈火の砲手
 END_TEXT
 
 TEXT_6
-	STR = あまてらす
+	STR = 飛燕の影
 END_TEXT
 
 TEXT_7
-	STR = さむらい
+	STR = 白狼の咆哮
 END_TEXT
 
 TEXT_8
-	STR = ミカヅキ
+	STR = 迅影の舞
 END_TEXT
 
 TEXT_9
-	STR = クロカゲ
+	STR = 雷牙の閃き
 END_TEXT
 
 TEXT_ELSE
