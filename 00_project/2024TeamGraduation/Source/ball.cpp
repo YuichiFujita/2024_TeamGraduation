@@ -881,8 +881,11 @@ void CBall::CalWorldMtx()
 		// キャッチ時のマトリックスから位置を反映
 		SetPosition(mtxParts.GetWorldPosition());
 
-		// 影の描画を停止
-		m_pShadow->SetEnableDisp(false);
+		if (m_pShadow != nullptr)
+		{
+			// 影の描画を停止
+			m_pShadow->SetEnableDisp(false);
+		}
 
 		// 回転角度を初期化
 		m_fBallAngle = 0.0f;
@@ -1766,8 +1769,11 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// キャッチしたプレイヤーを所持マーカーに割当
-	m_pHoldMarker->BindPlayer(pPlayer);
+	if (m_pHoldMarker != nullptr)
+	{
+		// キャッチしたプレイヤーを所持マーカーに割当
+		m_pHoldMarker->BindPlayer(pPlayer);
+	}
 
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す

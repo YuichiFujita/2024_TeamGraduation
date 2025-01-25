@@ -21,6 +21,7 @@
 // 前方宣言
 //************************************************************
 class CDressup;			// 着せ替えクラス
+class CBallFake;		// 利き手表示用ボールクラス
 class CObject2D;		// オブジェクト2Dクラス
 class CObject2D_Anim;	// オブジェクト2Dアニメクラス
 class CEntry_Dressup;	// ドレスアップ設定クラス
@@ -125,6 +126,7 @@ private:
 	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)
 	int m_nPadIdx;					// 操作権インデックス
 	bool m_bReady;					// 準備完了フラグ
+	CBallFake* m_pBall;				// ボール
 	CPlayer* m_pPlayer;				// プレイヤー
 	CDressup* m_pHair;				// 髪着せ替え
 	CDressup* m_pAccessory;			// アクセ着せ替え

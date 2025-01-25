@@ -875,6 +875,9 @@
     <ClCompile Include="Source\motionManager.cpp">
       <Filter>character</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ballFake.cpp">
+      <Filter>ingame\ball</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1602,6 +1605,9 @@
     </ClInclude>
     <ClInclude Include="Source\motionManager.h">
       <Filter>character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ballFake.h">
+      <Filter>ingame\ball</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

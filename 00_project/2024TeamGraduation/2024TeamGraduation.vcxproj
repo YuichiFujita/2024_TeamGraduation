@@ -180,6 +180,7 @@
     <ClCompile Include="Source\audienceLowPoly.cpp" />
     <ClCompile Include="Source\audienceLowPoly_result.cpp" />
     <ClCompile Include="Source\ball.cpp" />
+    <ClCompile Include="Source\ballFake.cpp" />
     <ClCompile Include="Source\ballHolderMarker.cpp" />
     <ClCompile Include="Source\ballLandingMarker.cpp" />
     <ClCompile Include="Source\balloonFrame.cpp" />
@@ -424,6 +425,7 @@
     <ClInclude Include="Source\audienceLowPoly.h" />
     <ClInclude Include="Source\audienceLowPoly_result.h" />
     <ClInclude Include="Source\ball.h" />
+    <ClInclude Include="Source\ballFake.h" />
     <ClInclude Include="Source\ballHolderMarker.h" />
     <ClInclude Include="Source\ballLandingMarker.h" />
     <ClInclude Include="Source\balloonFrame.h" />
