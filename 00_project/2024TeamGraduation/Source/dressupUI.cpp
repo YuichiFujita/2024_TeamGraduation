@@ -18,6 +18,7 @@
 #include "entry_dressup.h"
 #include "object2D.h"
 #include "object2D_Anim.h"
+#include "ballFake.h"
 
 //************************************************************
 //	定数宣言
@@ -101,6 +102,7 @@ CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeAr
 	m_nOrdinalAI	(-1),			// 自身が生成された順番 (AIのみ)
 	m_nPadIdx		(-1),			// 操作権インデックス
 	m_bReady		(false),		// 準備完了フラグ
+	m_pBall			(nullptr),		// ボール
 	m_pPlayer		(nullptr),		// プレイヤー
 	m_pHair			(nullptr),		// 髪着せ替え
 	m_pAccessory	(nullptr),		// アクセ着せ替え
@@ -204,6 +206,9 @@ void CDressupUI::Uninit()
 
 	// 顔切り替えの終了
 	SAFE_UNINIT(m_pFace);
+
+	// ボールの終了
+	SAFE_UNINIT(m_pBall);
 
 	// オブジェクトを破棄
 	Release();
@@ -777,6 +782,20 @@ HRESULT CDressupUI::CreateSetup()
 		return E_FAIL;
 	}
 
+	// ボールの生成
+	m_pBall = CBallFake::Create();
+	if (m_pBall == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pBall->SetType(CObject::TYPE::TYPE_NONE);
+
+	// ボールを即キャッチ
+	m_pBall->CatchLand(m_pPlayer);
+
 	return S_OK;
 }
 
@@ -810,6 +829,10 @@ void CDressupUI::CreateTexture()
 	// プレイヤーの描画
 	assert(m_pPlayer != nullptr);
 	m_pPlayer->Draw();
+
+	// ボールの描画
+	assert(m_pBall != nullptr);
+	m_pBall->Draw();
 }
 
 //============================================================
@@ -1228,6 +1251,9 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	m_pHair->ReRegist();
 	m_pAccessory->ReRegist();
 	m_pFace->ReRegist();
+
+	// ボールを即キャッチ
+	m_pBall->CatchLand(m_pPlayer);
 
 	return S_OK;
 }

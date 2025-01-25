@@ -40,9 +40,13 @@ void CPlayerIn::Update(const float fDeltaTime, const float fDeltaRate, const flo
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 
-	// 操作の更新
-	pControlMove->Move(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
-	pControlAction->Action(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+	if (!pPlayer->IsDeathState())
+	{ // 死んでいない場合
+
+		// 操作の更新
+		pControlMove->Move(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+		pControlAction->Action(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// 操作クラスの反映
 	SetPlayerControlMove(pControlMove);

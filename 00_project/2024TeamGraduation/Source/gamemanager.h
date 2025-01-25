@@ -99,6 +99,7 @@ public:
 	void SetSceneType(ESceneType type);					// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
 	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
+	void SetEnableTimerStop(const bool bStop);			// タイマー停止フラグ設定
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }								// 操作のフラグ取得
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得

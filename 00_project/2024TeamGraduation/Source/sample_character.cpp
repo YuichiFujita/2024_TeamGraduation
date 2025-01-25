@@ -215,8 +215,6 @@ void CSample_Character::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int
 
 	// •Ší‚ÌˆÊ’u
 	MyLib::Vector3 weponpos = pMotion->GetAttackPosition(GetModel(), ATKInfo);
-
-	CEffect3D* pEffect = nullptr;
 }
 
 //==========================================================================

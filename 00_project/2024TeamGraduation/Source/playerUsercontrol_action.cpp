@@ -47,8 +47,6 @@ void CPlayerUserControlAction::Catch(CPlayer* player, const float fDeltaTime, co
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	CMotion* pMotion = player->GetMotion();
-
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_B, player->GetMyPlayerIdx()))
 	{
@@ -207,9 +205,16 @@ void CPlayerUserControlAction::UserChange(CPlayer* player, const float fDeltaTim
 	CInputGamepad* pPad = CInputGamepad::GetInstance();				// パッド情報
 	const int nPadIdx = player->GetMyPlayerIdx();					// プレイヤー操作権インデックス
 
+#ifdef _DEBUG
+	// 右スティックのトリガー入力検知フラグ
+	const bool bInput = pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_X)
+					 || pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_Y)
+					 || GET_INPUTKEY->GetTrigger(DIK_C);
+#else
 	// 右スティックのトリガー入力検知フラグ
 	const bool bInput = pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_X)
 					 || pPad->GetRStickTrigger(nPadIdx, CInputGamepad::STICK_AXIS::STICK_Y);
+#endif
 
 	if (bInput && !pPlayerManager->IsUserChange())
 	{ // 右スティックが入力されている且つ、まだ誰も同フレームでこの操作をしていない場合
@@ -236,6 +241,12 @@ void CPlayerUserControlAction::UserChange(CPlayer* player, const float fDeltaTim
 		{ // リスト内の要素数分繰り返す
 
 			CPlayer* pItrPlayer = (*itr);	// プレイヤー情報
+
+			// 自分自身の場合次へ
+			if (player == pItrPlayer) { continue; }
+
+			// 死亡状態の場合次へ
+			if (pItrPlayer->IsDeathState()) { continue; }
 
 			// 既にユーザーの場合次へ
 			if (pItrPlayer->GetBaseType() == CPlayer::EBaseType::TYPE_USER) { continue; }

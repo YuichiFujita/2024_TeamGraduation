@@ -557,7 +557,6 @@ void CTitle_ControllWait::StateTransitionMoreFirst(const float fDeltaTime, const
 	{// 後半へ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// 向きリセット
@@ -613,7 +612,6 @@ void CTitle_ControllWait::StateTransitionMoreSecond(const float fDeltaTime, cons
 	{// ラストへ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// 向きリセット
@@ -647,7 +645,6 @@ void CTitle_ControllWait::StateTransitionMoreLast(const float fDeltaTime, const 
 	{// 操作へ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// オプションメニュー選択できるようにする

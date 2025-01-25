@@ -95,7 +95,7 @@ public:
 	void ThrowNormal(CPlayer* pPlayer);	// 通常投げ
 	void ThrowJump(CPlayer* pPlayer);	// ジャンプ投げ
 	void Special(CPlayer* pPlayer);		// スペシャル発動
-	void Pass(CPlayer* pPlayer);		// パス
+	bool Pass(CPlayer* pPlayer);		// パス
 	void Toss(CPlayer* pPlayer);		// トス
 	MyLib::Vector3 GetPosPassStart() const		{ return m_posPassStart; }	// パス開始位置取得
 	MyLib::Vector3 GetPosPassEnd() const		{ return m_posPassEnd; }	// パス終了位置取得

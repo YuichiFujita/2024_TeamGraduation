@@ -163,9 +163,6 @@ void CSpecialEffect_Kamehame::Trigger_Brust(CMotionManager::AttackInfo ATKInfo)
 		MyLib::Vector3(0.0f, pPlayer->GetRotation().y, 0.0f),
 		MyLib::Vector3(),
 		20.0f, true);
-
-	// ”’•
-	GET_RENDERER->SetEnableShader(true, 0.1f);
 }
 
 //==========================================================================

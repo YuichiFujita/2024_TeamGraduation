@@ -93,9 +93,6 @@ HRESULT CTargetPoint::Init()
 {
 	HRESULT hr;
 
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-
 	// 種類設定
 	SetType(CObject::TYPE_OBJECT3D);
 

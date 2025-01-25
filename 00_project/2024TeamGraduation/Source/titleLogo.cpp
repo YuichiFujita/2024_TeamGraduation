@@ -254,9 +254,6 @@ void CTitleLogo::StateLoop(const float fDeltaTime, const float fDeltaRate, const
 		}
 	}
 
-	// äÑçá
-	float ratio = m_fStateTime / StateTime::LOOP;
-
 	// à íuçXêV
 	MyLib::Vector3 pos = Logo::POS_DEFAULT;
 

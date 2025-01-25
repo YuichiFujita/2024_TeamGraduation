@@ -205,7 +205,6 @@ bool CListManager<T>::ListLoop(Iterator& itr)
 
 	if (itr == m_ListObj.end())
 	{
-		int n = 0;
 		itr = m_ListObj.begin();
 	}
 	else

@@ -165,11 +165,12 @@ void CLightManager::Update(const float fDeltaTime, const float fDeltaRate, const
 void CLightManager::SetEnableBright(const bool bBright, const float fChangeTime)
 {
 	CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
-	int nBright = (bBright) ? 0 : 1;		// ライト配列インデックス
-	const D3DXCOLOR aEndCol[] =		// カメラライト配列
+	int nBright = (bBright) ? 0 : 1;				// ライト配列インデックス
+	const D3DXCOLOR destDiffuse = pCamera->GetDestLightDiffuse();	// 目標拡散光
+	const D3DXCOLOR aEndCol[] =	// カメラライト配列
 	{
-		pCamera->GetDestLightDiffuse(),		// 明るいときの色
-		MyLib::color::Black(aEndCol[0].a),	// 暗いときの色
+		destDiffuse,	// 明るいときの色
+		MyLib::color::Black(destDiffuse.a),	// 暗いときの色
 	};
 
 	if (fChangeTime > 0.0f)

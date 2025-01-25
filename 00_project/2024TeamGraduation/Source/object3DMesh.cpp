@@ -26,20 +26,22 @@ namespace
 //==========================================================================
 CObject3DMesh::CObject3DMesh(int nPriority, const LAYER layer) : CObject3D(nPriority, layer)
 {
-	m_pVtxPos = nullptr;	// 頂点座標
-	m_pVtxNor = nullptr;	// 頂点法線
-	m_pVtxCol = nullptr;	// 頂点カラー
-	m_pVtxTex = nullptr;	// 頂点テクスチャ座標
-	m_nNumIndex = 0;		// インデックス数
-	m_nNumVertex = 0;		// 頂点数
-	m_nWidth = 0;			// 横分割数
-	m_nHeight = 0;			// 縦分割数
-	m_fWidthLen = 0.0f;		// 横の長さ
-	m_fHeightLen = 0.0f;	// 縦の長さ
-	m_pVtxBuff = nullptr;	// 頂点バッファへのポインタ
-	m_pIdxBuff = nullptr;	// インデックスバッファへのポインタ
-	m_nTexIdx = 0;			// テクスチャのインデックス番号
-	m_type = TYPE_FIELD;	// メッシュのタイプ
+	m_pVtxPos = nullptr;		// 頂点座標
+	m_pVtxNor = nullptr;		// 頂点法線
+	m_pVtxCol = nullptr;		// 頂点カラー
+	m_pVtxTex = nullptr;		// 頂点テクスチャ座標
+	m_nNumIndex = 0;			// インデックス数
+	m_nNumVertex = 0;			// 頂点数
+	m_nWidth = 0;				// 横分割数
+	m_nHeight = 0;				// 縦分割数
+	m_fWidthLen = 0.0f;			// 横の長さ
+	m_fHeightLen = 0.0f;		// 縦の長さ
+	m_pVtxBuff = nullptr;		// 頂点バッファへのポインタ
+	m_pIdxBuff = nullptr;		// インデックスバッファへのポインタ
+	m_nTexIdx = 0;				// テクスチャのインデックス番号
+	m_type = TYPE_FIELD;		// メッシュのタイプ
+	m_pPosVtx = nullptr;		// 計算用の座標
+	m_pNormalizeNor = nullptr;	// 計算用のベクトル
 }
 
 //==========================================================================
@@ -161,6 +163,12 @@ HRESULT CObject3DMesh::Init()
 	m_pVtxTex = DEBUG_NEW D3DXVECTOR2[m_nNumVertex];	// 頂点テクスチャ座標
 	memset(m_pVtxCol, 0, sizeof(D3DXVECTOR2) * m_nNumVertex);
 
+	m_pPosVtx = DEBUG_NEW MyLib::Vector3[m_nNumVertex];	// 計算用の座標
+	memset(m_pPosVtx, 0, sizeof(MyLib::Vector3) * m_nNumVertex);
+
+	m_pNormalizeNor = DEBUG_NEW MyLib::Vector3[m_nNumVertex];	// 計算用のベクトル
+	memset(m_pNormalizeNor, 0, sizeof(MyLib::Vector3) * m_nNumVertex);
+
 	 // 頂点座標設定
 	hr = CreateVertex();
 	if (FAILED(hr))
@@ -206,6 +214,12 @@ HRESULT CObject3DMesh::Init(TYPE type)
 
 	m_pVtxTex = DEBUG_NEW D3DXVECTOR2[m_nNumVertex];	// 頂点テクスチャ座標
 	memset(m_pVtxCol, 0, sizeof(D3DXVECTOR2) * m_nNumVertex);
+
+	m_pPosVtx = DEBUG_NEW MyLib::Vector3[m_nNumVertex];	// 計算用の座標
+	memset(m_pPosVtx, 0, sizeof(MyLib::Vector3) * m_nNumVertex);
+
+	m_pNormalizeNor = DEBUG_NEW MyLib::Vector3[m_nNumVertex];	// 計算用のベクトル
+	memset(m_pNormalizeNor, 0, sizeof(MyLib::Vector3) * m_nNumVertex);
 
 	// 頂点座標設定
 	hr = CreateVertex();
@@ -540,6 +554,12 @@ void CObject3DMesh::Uninit()
 		m_pVtxTex = nullptr;
 	}
 
+	// 計算用の座標の破棄
+	SAFE_DEL_ARRAY(m_pPosVtx);
+
+	// 計算用のベクトルの破棄
+	SAFE_DEL_ARRAY(m_pNormalizeNor);
+
 	// 終了処理
 	CObject3D::Uninit();
 }
@@ -782,7 +802,6 @@ void CObject3DMesh::SetInitVtxField()
 //==========================================================================
 void CObject3DMesh::SetVtxField()
 {
-
 	VERTEX_3D *pVtx;	// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -826,7 +845,6 @@ void CObject3DMesh::SetVtxField()
 //==========================================================================
 void CObject3DMesh::SetVtxWall()
 {
-
 	VERTEX_3D *pVtx;	// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -869,9 +887,7 @@ void CObject3DMesh::SetVtxCylinder()
 {
 	D3DXCOLOR col = GetColor();			// 色
 	MyLib::Vector3 pos = GetPosition();	// 位置
-	MyLib::Vector3 posVtx[CAL_VTX];		// 計算用の座標
 	float fRot = (D3DX_PI * 2) / (float)(m_nWidth);	//1つごとの角度を求める
-	MyLib::Vector3 NormalizeNor[CAL_VTX];	// 正規化用
 
 	for (int nCntHeight = 0; nCntHeight < m_nHeight; nCntHeight++)
 	{//縦の頂点数分繰り返す
@@ -880,7 +896,7 @@ void CObject3DMesh::SetVtxCylinder()
 		{//横の頂点数分繰り返す
 
 			// 頂点座標求める
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] = MyLib::Vector3
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] = MyLib::Vector3
 			(
 				sinf(nCntWidth % m_nWidth * fRot) * m_fWidthLen,
 				(m_fHeightLen * m_nHeight) - ((m_fHeightLen * nCntHeight)),
@@ -888,7 +904,7 @@ void CObject3DMesh::SetVtxCylinder()
 			);
 
 			// 頂点座標求める
-			posVtx[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] = MyLib::Vector3
+			m_pPosVtx[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] = MyLib::Vector3
 			(
 				sinf(nCntWidth % m_nWidth * fRot) * m_fWidthLen,
 				(m_fHeightLen * m_nHeight) - ((m_fHeightLen * (nCntHeight + 1))),
@@ -896,12 +912,12 @@ void CObject3DMesh::SetVtxCylinder()
 			);
 
 			// 各頂点から原点を引く
-			NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
-			NormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] = posVtx[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] - pos;
+			m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
+			m_pNormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] = m_pPosVtx[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))] - pos;
 
 			// 出た向きの値を正規化する
-			D3DXVec3Normalize(&NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))],				&NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
-			D3DXVec3Normalize(&NormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))],	&NormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))]);
+			D3DXVec3Normalize(&m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))],				&m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
+			D3DXVec3Normalize(&m_pNormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))],	&m_pNormalizeNor[nCntWidth + (m_nWidth + 1) + (nCntHeight * (m_nWidth + 1))]);
 		}
 	}
 
@@ -918,10 +934,10 @@ void CObject3DMesh::SetVtxCylinder()
 		{// 横の頂点数分繰り返す
 
 			// 頂点座標の設定
-			pVtx[0].pos = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].pos = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 法線ベクトルの設定
-			pVtx[0].nor = NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].nor = m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 頂点カラーの設定
 			pVtx[0].col = col;
@@ -944,15 +960,13 @@ void CObject3DMesh::SetVtxDome()
 {
 	D3DXCOLOR col = GetColor();			// 色
 	MyLib::Vector3 pos = GetPosition();	// 位置
-	MyLib::Vector3 posVtx[CAL_VTX];		// 計算用の座標
-	MyLib::Vector3 NormalizeNor[CAL_VTX];	// 計算用のベクトル
-	float fRotWidth = (D3DX_PI * 2) / (float)(m_nWidth);	// 1つごとの角度を求める, 周囲
+	float fRotWidth = (D3DX_PI * 2) / (float)(m_nWidth);		// 1つごとの角度を求める, 周囲
 	float fRotHeight = (D3DX_PI * 0.5f) / (float)(m_nHeight);	// 1つごとの角度を求める, 高さ
 	float fRotCalW = 0.0f;	// 横の今回の角度
 	float fRotCalH = 0.0f;	// 縦の今回の角度
 
 	// 最後の点
-	posVtx[m_nWidth + (m_nHeight * (m_nWidth + 1))] = MyLib::Vector3(0.0f, m_fHeightLen, 0.0f);
+	m_pPosVtx[m_nWidth + (m_nHeight * (m_nWidth + 1))] = MyLib::Vector3(0.0f, m_fHeightLen, 0.0f);
 
 	for (int nCntHeight = 0; nCntHeight < m_nHeight + 1; nCntHeight++)
 	{// 縦の頂点数分繰り返す
@@ -969,15 +983,15 @@ void CObject3DMesh::SetVtxDome()
 			UtilFunc::Transformation::RotNormalize(fRotCalH);
 
 			// 座標割り出し
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].x = cosf(fRotCalH) * sinf(fRotCalW) * m_fWidthLen;
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].z = cosf(fRotCalH) * cosf(fRotCalW) * m_fWidthLen;
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].y = sinf(fRotCalH) * m_fHeightLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].x = cosf(fRotCalH) * sinf(fRotCalW) * m_fWidthLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].z = cosf(fRotCalH) * cosf(fRotCalW) * m_fWidthLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].y = sinf(fRotCalH) * m_fHeightLen;
 
 			// 各頂点から原点を引く
-			NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
+			m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
 
 			// 出た向きの値を正規化する
-			D3DXVec3Normalize(&NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
+			D3DXVec3Normalize(&m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
 		}
 	}
 	
@@ -994,10 +1008,10 @@ void CObject3DMesh::SetVtxDome()
 		{// 横の頂点数分繰り返す
 
 			// 頂点座標の設定
-			pVtx[0].pos = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].pos = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 法線ベクトルの設定
-			pVtx[0].nor = NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].nor = m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 頂点カラーの設定
 			pVtx[0].col = col;
@@ -1020,9 +1034,6 @@ void CObject3DMesh::SetVtxDonuts()
 {
 	D3DXCOLOR col = GetColor();			// 色
 	MyLib::Vector3 pos = GetPosition();	// 位置
-	MyLib::Vector3 posVtx[CAL_VTX] = {};		// 計算用の座標
-	MyLib::Vector3 NormalizeNor[CAL_VTX] = {};	// 計算用のベクトル
-
 	VERTEX_3D *pVtx;	// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -1039,13 +1050,13 @@ void CObject3DMesh::SetVtxDonuts()
 			pVtx[0].pos = m_pVtxPos[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 各頂点から原点を引く
-			NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
+			m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
 
 			// 出た向きの値を正規化する
-			D3DXVec3Normalize(&NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
+			D3DXVec3Normalize(&m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
 
 			// 法線ベクトルの設定
-			pVtx[0].nor = NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].nor = m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 頂点カラーの設定
 			pVtx[0].col = col;
@@ -1068,14 +1079,11 @@ void CObject3DMesh::SetVtxSphere()
 {
 	D3DXCOLOR col = GetColor();			// 色
 	MyLib::Vector3 pos = GetPosition();	// 位置
-	MyLib::Vector3 posVtx[CAL_VTX];		// 計算用の座標
-	MyLib::Vector3 NormalizeNor[CAL_VTX];	// 計算用のベクトル
 	float fRotWidth = (D3DX_PI * 2) / (float)(m_nWidth);	// 1つごとの角度を求める, 周囲
 	float fRotHeight = (D3DX_PI * 2) / (float)(m_nHeight);	// 1つごとの角度を求める, 高さ
 	float fRotCalW = 0.0f;	// 横の今回の角度
 	float fRotCalH = 0.0f;	// 縦の今回の角度
-
-	VERTEX_3D *pVtx;	// 頂点情報へのポインタ
+	VERTEX_3D *pVtx;		// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -1097,21 +1105,21 @@ void CObject3DMesh::SetVtxSphere()
 			fRotCalW = (float)nCntWidth * fRotWidth;
 
 			// 座標割り出し
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].x = cosf(fRotCalH) * sinf(fRotCalW) * m_fWidthLen;
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].z = cosf(fRotCalH) * cosf(fRotCalW) * m_fWidthLen;
-			posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].y = sinf(fRotCalH) * m_fHeightLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].x = cosf(fRotCalH) * sinf(fRotCalW) * m_fWidthLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].z = cosf(fRotCalH) * cosf(fRotCalW) * m_fWidthLen;
+			m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))].y = sinf(fRotCalH) * m_fHeightLen;
 
 			// 頂点座標の設定
-			pVtx[0].pos = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].pos = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 各頂点から原点を引く
-			NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = posVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
+			m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))] = m_pPosVtx[nCntWidth + (nCntHeight * (m_nWidth + 1))] - pos;
 
 			// 出た向きの値を正規化する
-			D3DXVec3Normalize(&NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
+			D3DXVec3Normalize(&m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))], &m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))]);
 
 			// 法線ベクトルの設定
-			pVtx[0].nor = NormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
+			pVtx[0].nor = m_pNormalizeNor[nCntWidth + (nCntHeight * (m_nWidth + 1))];
 
 			// 頂点カラーの設定
 			pVtx[0].col = col;

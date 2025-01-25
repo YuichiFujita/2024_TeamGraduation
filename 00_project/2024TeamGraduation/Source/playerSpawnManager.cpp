@@ -395,24 +395,27 @@ void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDelt
 		bEndState = true;
 	}
 
-	std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
-	while (m_listLeft.ListLoop(itrLeft))
-	{ // 左チームリスト内の要素数分繰り返す
+	// 回転
+	{
+		std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+		while (m_listLeft.ListLoop(itrLeft))
+		{ // 左チームリスト内の要素数分繰り返す
 
-		CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+			CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
 
-		// 線形補間で回転
-		pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, LEFT_ROTEND, 0.0f, TIME_END, m_fCurTime));
-	}
+			// 線形補間で回転
+			pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, LEFT_ROTEND, 0.0f, TIME_END, m_fCurTime));
+		}
 
-	std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
-	while (m_listRight.ListLoop(itrRight))
-	{ // 右チームリスト内の要素数分繰り返す
+		std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+		while (m_listRight.ListLoop(itrRight))
+		{ // 右チームリスト内の要素数分繰り返す
 
-		CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+			CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
 
-		// 線形補間で回転
-		pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, RIGHT_ROTEND, 0.0f, TIME_END, m_fCurTime));
+			// 線形補間で回転
+			pItrPlayer->SetRotation(UtilFunc::Correction::EasingLinear(VEC3_ZERO, RIGHT_ROTEND, 0.0f, TIME_END, m_fCurTime));
+		}
 	}
 
 	if (bEndState)
@@ -481,36 +484,39 @@ void CPlayerSpawnManager::UpdateWalkAxisX(const float fDeltaTime, const float fD
 		bEndState = true;
 	}
 
-	std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
-	int nCntLeft = 0;	// 左チームループ回数
-	while (m_listLeft.ListLoop(itrLeft))
-	{ // 左チームリスト内の要素数分繰り返す
-
-		CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
-
-		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntLeft);	// Z軸オフセット
-
-		// 線形補間で移動
-		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(LEFT_OLD_POSEND + offset, LEFT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
-
-		// ループ数の加算
-		nCntLeft++;
-	}
-
-	std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
-	int nCntRight = 0;	// 右チームループ回数
-	while (m_listRight.ListLoop(itrRight))
-	{ // 右チームリスト内の要素数分繰り返す
-
-		CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
-
-		MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntRight);	// Z軸オフセット
-
-		// 線形補間で移動
-		pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(RIGHT_OLD_POSEND + offset, RIGHT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
-
-		// ループ数の加算
-		nCntRight++;
+	// 移動
+	{
+		std::list<CPlayer*>::iterator itrLeft = m_listLeft.GetEnd();	// 左チームの最後尾イテレーター
+		int nCntLeft = 0;	// 左チームループ回数
+		while (m_listLeft.ListLoop(itrLeft))
+		{ // 左チームリスト内の要素数分繰り返す
+	
+			CPlayer* pItrPlayer = (*itrLeft);	// プレイヤー情報
+	
+			MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntLeft);	// Z軸オフセット
+	
+			// 線形補間で移動
+			pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(LEFT_OLD_POSEND + offset, LEFT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+	
+			// ループ数の加算
+			nCntLeft++;
+		}
+	
+		std::list<CPlayer*>::iterator itrRight = m_listRight.GetEnd();	// 右チームの最後尾イテレーター
+		int nCntRight = 0;	// 右チームループ回数
+		while (m_listRight.ListLoop(itrRight))
+		{ // 右チームリスト内の要素数分繰り返す
+	
+			CPlayer* pItrPlayer = (*itrRight);	// プレイヤー情報
+	
+			MyLib::Vector3 offset = (MyLib::Vector3(0.0f, 0.0f, ZLINE_OFFSET) * (float)nCntRight);	// Z軸オフセット
+	
+			// 線形補間で移動
+			pItrPlayer->SetPosition(UtilFunc::Correction::EasingLinear(RIGHT_OLD_POSEND + offset, RIGHT_POSEND + offset, 0.0f, TIME_END, m_fCurTime));
+	
+			// ループ数の加算
+			nCntRight++;
+		}
 	}
 
 	if (bEndState)

@@ -23,6 +23,7 @@
 #include "audience.h"
 #include "gymWallManager.h"
 #include "spotlight.h"
+#include "playerManager.h"
 
 //************************************************************
 //	定数宣言
@@ -136,6 +137,9 @@ HRESULT CSpecialManager::Init(void)
 
 	// 世界の時を止める
 	GET_MANAGER->SetEnableWorldPaused(true);
+
+	// タイマー停止
+	CGameManager::GetInstance()->SetEnableTimerStop(true);
 
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
@@ -303,9 +307,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	if (m_pCutIn->IsEnd())
 	{ // カットイン演出が終了した場合
 
-		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
-		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-		bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 
 		// 世界の時はうごきだす
 		GET_MANAGER->SetEnableWorldPaused(false);
@@ -429,6 +431,9 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
 		pGymWall->SetIsWall(false);
 
+		// 白黒
+		GET_RENDERER->SetEnableShader(true, 0.1f);
+
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
@@ -516,6 +521,9 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 		pSPEffect->FinishSetting();
 	}
 
+	// タイマー再開
+	CGameManager::GetInstance()->SetEnableTimerStop(false);
+
 	// 自身の終了
 	Uninit();
 }
@@ -594,6 +602,9 @@ void CSpecialManager::SetJumpAttackTeam()
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		// 死亡状態の場合次へ
+		if (pPlayer->IsDeathState()) { continue; }
 
 		// 内野じゃない場合次へ
 		if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN) { continue; }
@@ -694,6 +705,11 @@ HRESULT CSpecialManager::SetDarkGym()
 
 	// 攻撃チームのジャンプ設定
 	SetJumpAttackTeam();
+
+	// 標的チーム/外野の警戒設定
+	CPlayerManager* pPlayerManager = CPlayerManager::GetInstance();
+	pPlayerManager->CautionInAll(m_pTargetPlayer->GetTeam());
+	pPlayerManager->CautionOutAll();
 
 	return S_OK;
 }

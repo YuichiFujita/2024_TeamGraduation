@@ -761,6 +761,14 @@ void CGameManager::SetSceneType(ESceneType type)
 }
 
 //==========================================================================
+// タイマー停止フラグ設定
+//==========================================================================
+void CGameManager::SetEnableTimerStop(const bool bStop)
+{
+	m_pTimerUI->EnableStop(bStop);
+}
+
+//==========================================================================
 // @brief	コートサイズ取得(チーム)
 // @param	team[in]	取得したいチーム
 // @param	pos[out]	取得したコートの中心点
@@ -897,7 +905,7 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
-	m_pTeamStatus[side]->AddCharmValue(value);
+	m_pTeamStatus[(int)side]->AddCharmValue(value);
 
 	assert(m_pCharmManager != nullptr);
 	if (m_pCharmManager->GetPrisetHypeTime(charmType) > m_pCharmManager->GetHypeTime(side))
@@ -920,7 +928,7 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
-	m_pTeamStatus[side]->SubCharmValue(value);
+	m_pTeamStatus[(int)side]->SubCharmValue(value);
 
 	// 盛り上がり時間の初期化
 	assert(m_pCharmManager != nullptr);
@@ -936,7 +944,7 @@ void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAd
 
 	// チームステータス
 	float value = CSpecialValueManager::GetInstance()->GetAddValue(ValueType);
-	m_pTeamStatus[side]->AddSpecialValue(value);
+	m_pTeamStatus[(int)side]->AddSpecialValue(value);
 }
 
 //==========================================================================
@@ -1273,14 +1281,14 @@ void CGameManager::Debug()
 	if (ImGui::Button("(Caution: L)"))
 	{
 		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
-		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_LEFT);
+		pPlrMgr->CautionInAll(CGameManager::ETeamSide::SIDE_LEFT);
 	}
 
 	// 警戒(R)
 	if (ImGui::Button("(Caution: R)"))
 	{
 		CPlayerManager* pPlrMgr = CPlayerManager::GetInstance();
-		pPlrMgr->CautionAll(CGameManager::ETeamSide::SIDE_RIGHT);
+		pPlrMgr->CautionInAll(CGameManager::ETeamSide::SIDE_RIGHT);
 	}
 
 #endif

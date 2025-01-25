@@ -104,7 +104,7 @@ void PS
 
 	// しきい値
 	float thresholdBlack = 0.16f;	// 黒の範囲 (暗い部分)
-	float thresholdWhite = 0.32f;	// 白の範囲 (明るい部分)
+	float thresholdWhite = 0.22f;	// 白の範囲 (明るい部分)
 	if (fLuminance < thresholdBlack)
 	{
 		// ピクセルの色情報を黒に設定
