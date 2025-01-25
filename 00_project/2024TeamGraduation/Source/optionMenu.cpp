@@ -29,7 +29,7 @@ namespace
 		"data\\TEXTURE\\title\\BGM.png",		// BGM
 		"data\\TEXTURE\\title\\vib.png",		// バイブレーション
 		"data\\TEXTURE\\title\\back.png",		// 戻る
-		"data\\TEXTURE\\title\\ranking.png",	// リセット
+		"data\\TEXTURE\\title\\reset.png",	// リセット
 	};
 	const std::string TEXTURE_NUMBER = "data\\TEXTURE\\number\\school02.png";	// 数字のテクスチャ
 	const std::string TEXTURE_PIN = "data\\TEXTURE\\title\\pin.png";		// ピンのテクスチャ
@@ -49,7 +49,7 @@ namespace
 		45.0f,	// BGM
 		45.0f,	// バイブレーション
 		55.0f,	// 戻る
-		50.0f,	// リセット
+		100.0f,	// リセット
 	};
 
 	float SIZEHEIGHT_TITLE = 60.0f;	// 見出しの高さサイズ
@@ -64,7 +64,7 @@ namespace
 		MyLib::Vector3(500.0f, 415.0f, 0.0f),	// BGM
 		MyLib::Vector3(500.0f, 620.0f, 0.0f),	// バイブレーション
 		MyLib::Vector3(150.0f, 653.0f, 0.0f),	// 戻る
-		MyLib::Vector3(1000.0f, 560.0f, 0.0f),	// リセット
+		MyLib::Vector3(1100.0f, 615.0f, 0.0f),	// リセット
 	};
 
 	const float NUMBER_POSITION_X = 730.0f;		// 数字のX軸
@@ -484,7 +484,7 @@ HRESULT COptionMenu::CreatePin()
 	m_pPin->SetSizeOrigin(size);
 
 	// 位置設定
-	m_pPin->SetPosition(MyLib::Vector3(1150.0f, 650.0f, 0.0f));
+	m_pPin->SetPosition(MyLib::Vector3(1150.0f, 130.0f, 0.0f));
 	return S_OK;
 }
 
@@ -1121,6 +1121,11 @@ void COptionMenu::Reset()
 	// バイブON
 	pPad->SetEnableVibration(true);
 	pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, 0);
+
+	// 表示切替
+	CTexture* pTexture = CTexture::GetInstance();
+	int texID = CTexture::GetInstance()->Regist(TEXTURE_VIB[!pPad->IsEnableVibration()]);
+	m_pVibFrag->BindTexture(texID);
 
 	// 数字リセット
 	m_pNumberMaster->SetNum(50);

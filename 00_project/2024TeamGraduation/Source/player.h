@@ -519,8 +519,8 @@ private:
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
 	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モーション別更新処理
-	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	virtual void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	void CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);	// キャッチ時処理(スペシャル)
 

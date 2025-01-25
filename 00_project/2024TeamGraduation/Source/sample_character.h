@@ -86,8 +86,8 @@ private:
 	// ‚»‚Ì‘¼ŠÖ”
 
 	// ƒ‚[ƒVƒ‡ƒ“ŒnŠÖ”
-	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// UŒ‚ˆ—
-	void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// UŒ‚”»’è’†ˆ—
+	void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// UŒ‚ˆ—
+	void AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;	// UŒ‚”»’è’†ˆ—
 
 	//=============================
 	// ƒƒ“ƒo•Ï”

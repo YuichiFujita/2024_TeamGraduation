@@ -812,7 +812,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// 歩行の情報取得
-	CMotion::Info info = pMotion->GetInfo(motionType);
+	CMotionManager::Info info = pMotion->GetInfo(motionType);
 
 	// 開始キー
 	int nStartKey = 0;
@@ -845,7 +845,7 @@ void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, c
 	if (pMotion == nullptr)	return;
 
 	// 情報取得
-	CMotion::Info info = pMotion->GetInfo();
+	CMotionManager::Info info = pMotion->GetInfo();
 	int nType = pMotion->GetType();
 
 	// 状況別設定
@@ -913,7 +913,7 @@ void CPlayer::UpdateFootLR()
 	if (pMotion == nullptr)	return;
 
 	// 情報取得
-	CMotion::Info info = pMotion->GetInfo();
+	CMotionManager::Info info = pMotion->GetInfo();
 	int nType = pMotion->GetType();
 
 	// 歩き以外は抜ける
@@ -1040,7 +1040,10 @@ void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, con
 	case EMotion::MOTION_SPECIAL:	// スペシャル
 
 		// 更新処理
-		m_pSpecialEffect->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		if (m_pSpecialEffect != nullptr)
+		{
+			m_pSpecialEffect->Update(fDeltaTime, fDeltaRate, fSlowRate);
+		}
 		break;
 
 	default:
@@ -1065,7 +1068,7 @@ void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CPlayer::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -1278,7 +1281,10 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_SPECIAL:
 
 		// トリガー処理
-		m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
+		if (m_pSpecialEffect != nullptr)
+		{
+			m_pSpecialEffect->TriggerMoment(ATKInfo, nCntATK);
+		}
 		break;
 
 	case EMotion::MOTION_DEAD_AFTER:	
@@ -1322,7 +1328,7 @@ void CPlayer::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CPlayer::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -1404,7 +1410,10 @@ void CPlayer::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
 	case EMotion::MOTION_SPECIAL:
 
 		// 進行中処理
-		m_pSpecialEffect->ProgressMoment(ATKInfo, nCntATK);
+		if (m_pSpecialEffect != nullptr)
+		{
+			m_pSpecialEffect->ProgressMoment(ATKInfo, nCntATK);
+		}
 		break;
 
 	default:
@@ -2082,7 +2091,7 @@ void CPlayer::StateCatch_Normal(const float fDeltaTime, const float fDeltaRate, 
 	if (pMotion == nullptr) return;
 
 	// キャンセル可能フレーム取得
-	CMotion::Info motionInfo = pMotion->GetInfo();
+	CMotionManager::Info motionInfo = pMotion->GetInfo();
 	float fCancelableTime = static_cast<float>(motionInfo.nCancelableFrame);
 
 	// TODO : ずざざーとする
