@@ -375,6 +375,7 @@
     <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
+    <ClCompile Include="Source\spawnUI.cpp" />
     <ClCompile Include="Source\specialEffect.cpp" />
     <ClCompile Include="Source\specialEffect_kamehameha.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
@@ -620,6 +621,7 @@
     <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
+    <ClInclude Include="Source\spawnUI.h" />
     <ClInclude Include="Source\specialEffect.h" />
     <ClInclude Include="Source\specialEffect_kamehameha.h" />
     <ClInclude Include="Source\specialManager.h" />

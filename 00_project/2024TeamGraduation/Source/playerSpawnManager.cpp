@@ -14,6 +14,7 @@
 #include "player.h"
 #include "playerManager.h"
 #include "gymWallManager.h"
+#include "spawnUI.h"
 
 //************************************************************
 //	定数宣言
@@ -155,6 +156,20 @@ void CPlayerSpawnManager::Update(const float fDeltaTime, const float fDeltaRate,
 
 		// 各状態ごとの更新
 		(this->*(m_aFuncUpdateState[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
+	CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
+
+	if (pCameraMotion->IsImpactFrame(1))
+	{
+		// 登場演出UIの生成
+		CSpawnUI::Create(CGameManager::ETeamSide::SIDE_RIGHT);
+	}
+	if (pCameraMotion->IsImpactFrame(2))
+	{
+		// 登場演出UIの生成
+		CSpawnUI::Create(CGameManager::ETeamSide::SIDE_LEFT);
 	}
 }
 

@@ -878,6 +878,9 @@
     <ClCompile Include="Source\ballFake.cpp">
       <Filter>ingame\ball</Filter>
     </ClCompile>
+    <ClCompile Include="Source\spawnUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1608,6 +1611,9 @@
     </ClInclude>
     <ClInclude Include="Source\ballFake.h">
       <Filter>ingame\ball</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\spawnUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
