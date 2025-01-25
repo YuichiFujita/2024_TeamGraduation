@@ -36,13 +36,13 @@ namespace
 
 	const char* PATH		= "data\\TEXT\\start.txt";	// テキストパス
 	const int PRIORITY		= 7;	// 優先順位
-	const int MAX_STR_NAME	= 6;	// 名前の最大文字数
+	const int MAX_STR_NAME	= 10;	// 名前の最大文字数
 
 	namespace title
 	{	
-		const char*	FONT	= "data\\FONT\\JFドット東雲ゴシック14.ttf";	// フォントパス
+		const char*	FONT	= "data\\FONT\\チョークS.otf";	// フォントパス
 		const bool	ITALIC	= false;	// イタリック
-		const float	HEIGHT	= 21.0f;	// 文字縦幅
+		const float	HEIGHT	= 28.0f;	// 文字縦幅
 
 		const MyLib::Vector3	POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, 80.0f, 0.0f);	// 位置
 		const MyLib::Vector3	ROT = VEC3_ZERO;		// 向き
@@ -52,11 +52,11 @@ namespace
 	
 	namespace name
 	{
-		const char*	FONT = "data\\FONT\\JFドット東雲ゴシック14.ttf";	// フォントパス
+		const char*	FONT = "data\\FONT\\チョークS.otf";	// フォントパス
 		const bool	ITALIC = false;	// イタリック
-		const float	HEIGHT = 21.0f;	// 文字縦幅
+		const float	HEIGHT = 48.0f;	// 文字縦幅
 
-		const MyLib::Vector3	POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, 155.0f, 0.0f);	// 位置
+		const MyLib::Vector3	POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, 150.0f, 0.0f);	// 位置
 		const MyLib::Vector3	ROT = VEC3_ZERO;		// 向き
 		const D3DXCOLOR	COL = MyLib::color::White();	// 色
 		const EAlignX	ALIGN_X = XALIGN_CENTER;		// 横配置
@@ -66,16 +66,17 @@ namespace
 	{	
 		const MyLib::Vector3 POS[CInputKeyButton::YSELECT_MAX][CInputKeyButton::XSELECT_MAX] =	// 位置配列
 		{
-			{ MyLib::Vector3(180.0f + 145.0f, 530.0f, 0.0f), MyLib::Vector3(440.0f + 145.0f, 530.0f, 0.0f), MyLib::Vector3(750.0f + 145.0f, 530.0f, 0.0f) },
-			{ MyLib::Vector3(220.0f + 145.0f, 630.0f, 0.0f), MyLib::Vector3(460.0f + 145.0f, 630.0f, 0.0f), MyLib::Vector3(700.0f + 145.0f, 630.0f, 0.0f) },
+			{ MyLib::Vector3(180.0f + 145.0f, 560.0f, 0.0f), MyLib::Vector3(440.0f + 145.0f, 560.0f, 0.0f), MyLib::Vector3(770.0f + 145.0f, 560.0f, 0.0f) },
+			{ MyLib::Vector3(220.0f + 145.0f, 630.0f, 0.0f), MyLib::Vector3(460.0f + 145.0f, 630.0f, 0.0f), MyLib::Vector3(720.0f + 145.0f, 630.0f, 0.0f) },
 		};
 
 		const CInputKeyButton::ETypeChar INIT_TYPE = CInputKeyButton::TYPECHAR_HIRAGANA;	// 初期文字セット
 		const MyLib::PosGrid2 INIT_SELECT = MyLib::PosGrid2(0, 2);	// 初期選択位置
 
-		const char*	FONT		= "data\\FONT\\JFドット東雲ゴシック14.ttf";	// フォントパス
+		const char*	FONT		= "data\\FONT\\チョークS.otf";	// フォントパス
 		const bool	ITALIC		= false;	// イタリック
-		const float	HEIGHT		= 21.0f;	// 文字縦幅
+		const float	HEIGHT		= 28.0f;	// 文字縦幅
+		const float	HEIGHT_BIG	= 34.0f;	// 文字縦幅
 		const float	NEXT_TIME	= 0.035f;	// 文字振動の待機時間
 		const float	MOVE		= 1.0f;		// 振動移動量
 		const MyLib::Vector3 ROT	= VEC3_ZERO;				// 向き
@@ -144,21 +145,22 @@ HRESULT CInputKeyButton::Init()
 		return E_FAIL;
 	}
 
+	// 黒板テクスチャを割当
+	CTexture* pTexture = CTexture::GetInstance();
+	m_pBG->BindTexture(pTexture->Regist("data\\TEXTURE\\entry\\blackboard.png"));
+
 	// 位置を設定
 	m_pBG->SetPosition(VEC3_SCREEN_CENT);
 
 	// 大きさを設定
-	m_pBG->SetSize(VEC2_SCREEN_SIZE);
-
-	// 色を設定
-	m_pBG->SetColor(MyLib::color::Black(0.8f));
+	m_pBG->SetSize(VEC2_SCREEN_SIZE * 0.48f);
 
 	// タイトルの生成
 	m_pTitle = CString2D::Create
 	( // 引数
 		title::FONT,		// フォントパス
 		title::ITALIC,		// イタリック
-		L"チーム名を入力",	// 指定文字列	// TODO：ランダムなチーム名
+		L"チーム名",		// 指定文字列
 		title::POS,			// 原点位置
 		title::HEIGHT,		// 文字縦幅
 		title::ALIGN_X,		// 横配置
@@ -210,7 +212,7 @@ HRESULT CInputKeyButton::Init()
 				select::ITALIC,			// イタリック
 				STR_BUTTON[nTextIdx],	// 指定文字列
 				select::POS[i][j],		// 原点位置
-				select::HEIGHT,			// 文字縦幅
+				select::HEIGHT_BIG,		// 文字縦幅
 				select::ALIGN_X,		// 横配置
 				select::ROT,			// 原点向き
 				select::COL_DEFAULT,	// 色
@@ -305,6 +307,9 @@ void CInputKeyButton::Update(const float fDeltaTime, const float fDeltaRate, con
 
 	// 決定の更新
 	UpdateDecide();
+
+	// キャンセルの更新
+	UpdateChancel();
 
 	if (m_pBG != nullptr)
 	{
@@ -428,12 +433,14 @@ void CInputKeyButton::ControlSelect()
 
 				// 列インデックスを小さい方の最大値で補正
 				m_curSelect.x /= m_vecSelect[m_oldSelect.y].size() / XSELECT_MAX;
+				UtilFunc::Transformation::ValueNormalize(m_curSelect.x, (int)(m_vecSelect[m_curSelect.y].size() - 1), 0);
 			}
 			else if (m_vecSelect[m_curSelect.y].size() > m_vecSelect[nPrevSelectY].size())
 			{ // 列が増加した場合
 
 				// 列インデックスを大きい方の最大値で補正
 				m_curSelect.x *= m_vecSelect[m_curSelect.y].size() / XSELECT_MAX;
+				UtilFunc::Transformation::ValueNormalize(m_curSelect.x, (int)(m_vecSelect[m_curSelect.y].size() - 1), 0);
 			}
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
@@ -453,12 +460,14 @@ void CInputKeyButton::ControlSelect()
 
 				// 列インデックスを小さい方の最大値で補正
 				m_curSelect.x /= m_vecSelect[m_oldSelect.y].size() / XSELECT_MAX;
+				UtilFunc::Transformation::ValueNormalize(m_curSelect.x, (int)(m_vecSelect[m_curSelect.y].size() - 1), 0);
 			}
 			else if (m_vecSelect[m_curSelect.y].size() > m_vecSelect[nPrevSelectY].size())
 			{ // 列が増加した場合
 
 				// 列インデックスを大きい方の最大値で補正
 				m_curSelect.x *= m_vecSelect[m_curSelect.y].size() / XSELECT_MAX;
+				UtilFunc::Transformation::ValueNormalize(m_curSelect.x, (int)(m_vecSelect[m_curSelect.y].size() - 1), 0);
 			}
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
@@ -492,10 +501,8 @@ void CInputKeyButton::UpdateDecide()
 {
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
-	if (pKey->GetTrigger(DIK_RETURN) || pKey->GetTrigger(DIK_SPACE)
+	if (pKey->GetTrigger(DIK_RETURN)
 	||  pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
-	||  pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx)
-	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx)
 	||  pPad->GetTrigger(CInputGamepad::BUTTON_Y, m_nPadIdx))
 	{
 		// 選択肢に応じて操作を変更
@@ -569,6 +576,31 @@ void CInputKeyButton::UpdateDecide()
 				break;
 			}
 			break;
+		}
+	}
+}
+
+//============================================================
+//	キャンセルの更新処理
+//============================================================
+void CInputKeyButton::UpdateChancel()
+{
+	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
+	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
+	if (pKey->GetTrigger(DIK_SPACE)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
+	{
+		// 選択肢に応じて操作を変更
+		std::wstring wsName = m_pName->GetWideStr();	// 名前の文字列
+		if (!wsName.empty())
+		{ // 文字がまだある場合
+
+			// 最後尾を一文字削除
+			wsName.erase(wsName.end() - 1);
+
+			// 文字列を再設定
+			m_pName->SetString(wsName);
 		}
 	}
 }
