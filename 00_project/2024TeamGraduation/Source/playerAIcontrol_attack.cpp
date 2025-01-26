@@ -323,9 +323,14 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 void CPlayerAIControlAttack::ThrowTypeJump()
 {
 	// ターゲットとの距離を取得
-	float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+	MyLib::Vector3 pos = pAI->GetPosition();
 
-	if (distanse < 200.0f)
+	float distanse = pAI->GetPosition().DistanceXZ(m_pTarget->GetPosition());
+	float distanseLine = pAI->GetPosition().DistanceXZ({ 0.0f, 0.0f, pos.z });
+
+	if (distanseLine < 300.0f)
 	{
 		// ジャンプ投げ
 		AttackJump(m_pTarget);
@@ -607,7 +612,11 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 //==========================================================================
 void CPlayerAIControlAttack::AttackFeint()
 {
+	// 準備：なし
+	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
 
+	// 攻撃モード：準備
+	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
 }
 
 //==========================================================================

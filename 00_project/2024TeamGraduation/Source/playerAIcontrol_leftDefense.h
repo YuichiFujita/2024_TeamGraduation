@@ -43,7 +43,8 @@ private:
 	void MoveRandom() override;					// ランダム
 	bool IsLineOverBall() override;				// 線超え判定(ボール)
 	bool IsLineOverPlayer() override;			// 線越え判定(プレイヤー)
-	void BallSteal() override;
+	//void BallSteal() override;
+	//void BallChaseRebound() override;
 
 	//=============================
 	// メンバ関数
