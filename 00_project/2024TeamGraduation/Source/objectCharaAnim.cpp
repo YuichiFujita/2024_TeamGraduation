@@ -85,7 +85,7 @@ void CObjectCharaAnim::Draw()
 CObjectCharaAnim* CObjectCharaAnim::Create(const MyLib::Vector3& rPos, const MyLib::Vector3& rRot)
 {
 	// オブジェクトキャラクターアニメーションの生成
-	CObjectCharaAnim* pObjectCharaAnim = new CObjectCharaAnim;
+	CObjectCharaAnim* pObjectCharaAnim = DEBUG_NEW CObjectCharaAnim;
 	if (pObjectCharaAnim == nullptr)
 	{ // 生成に失敗した場合
 

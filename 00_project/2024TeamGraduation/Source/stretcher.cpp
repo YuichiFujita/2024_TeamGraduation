@@ -19,7 +19,8 @@ namespace
 	const char* MODEL = "data\\MODEL\\komono\\stretcher.x";
 	const float VELOCITY_MOVE = 10.0f;	// 移動速度
 	const MyLib::Vector3 STARTPOS = MyLib::Vector3(-3000.0f, 0.0f, 0.0f);	// 開始地点
-	const float DISTANCE_UP = 50.0f;	// 積む間隔
+	const float DEFAUILT_UP = 10.0f;	// デフォの積む間隔
+	const float DISTANCE_UP = 20.0f;	// 積む間隔
 }
 
 namespace StateTime
@@ -60,6 +61,7 @@ CStretcher::CStretcher(int nPriority) : CObjectX(nPriority)
 	m_pRightNurse = nullptr;		// 右の先生
 	m_pShadow = nullptr;			// 影
 	m_bEndSetting = false;			// 終了のセッティング
+	m_bCollectSetting = true;		// 回収のセッティング
 
 }
 
@@ -191,6 +193,7 @@ void CStretcher::Update(const float fDeltaTime, const float fDeltaRate, const fl
 
 	// プレイヤー運搬
 	MyLib::Vector3 pos = GetPosition();
+	pos.y += DEFAUILT_UP;
 	for (const auto& player : m_pCarryPlayer)
 	{
 		player->SetPosition(pos);
@@ -275,6 +278,9 @@ void CStretcher::CollectEndSetting()
 	// 終了のセッティング
 	m_bEndSetting = false;
 
+	// 回収のセッティング
+	m_bCollectSetting = false;
+
 }
 
 //==========================================================================
@@ -348,6 +354,12 @@ void CStretcher::StateGo(const float fDeltaTime, const float fDeltaRate, const f
 void CStretcher::StateCollect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_fStateTime = 0.0f;
+
+	// 回収時設定
+	if (m_bCollectSetting)
+	{
+		CollectSetting();
+	}
 }
 
 //==========================================================================
@@ -415,6 +427,9 @@ void CStretcher::SetState(EState state)
 //==========================================================================
 void CStretcher::CollectSetting()
 {
+	// 回収のセッティング
+	m_bCollectSetting = true;
+
 	// 先頭取得
 	std::vector<CPlayer*>::iterator itr = m_pCollectPlayer.begin();
 	CPlayer* pPlayer = (*itr);
@@ -425,6 +440,7 @@ void CStretcher::CollectSetting()
 
 	// プレイヤー運搬
 	MyLib::Vector3 pos = GetPosition();
+	pos.y += DEFAUILT_UP;
 	for (const auto& player : m_pCarryPlayer)
 	{
 		pos.y += DISTANCE_UP;

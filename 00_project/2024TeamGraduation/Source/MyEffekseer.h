@@ -121,6 +121,7 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void StopAll();	// 全て停止
+	void LoadAll();	// 全読み込み
 
 	Effekseer::EffectRef LoadEffect(std::string efkpath);	// エフェクト読み込み
 	Effekseer::EffectRef LoadEffect(EEfkLabel label);		// エフェクト読み込み

@@ -34,6 +34,7 @@ CObjectChara::CObjectChara(int nPriority) : CObjectHierarchy(nPriority)
 	m_pStatus = nullptr;		// ステータス
 	m_pStatusBall = nullptr;	// ステータス(ボール)
 	m_bInDicision = false;		// 攻撃判定中フラグ
+	m_pMotion = nullptr;		// モーション
 }
 
 //==========================================================================

@@ -284,7 +284,7 @@ CGauge2D* CGauge2D::Create
 )
 {
 	// ƒQ[ƒW2D‚Ì¶¬
-	CGauge2D* pGauge2D = new CGauge2D(fFrame);
+	CGauge2D* pGauge2D = DEBUG_NEW CGauge2D(fFrame);
 	if (pGauge2D == nullptr)
 	{ // ¶¬‚É¸”s‚µ‚½ê‡
 

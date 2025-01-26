@@ -14,6 +14,14 @@
 #include "EffekseerObj.h"
 
 //==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const std::wstring FOLDERNAME = L"data\\Effekseer";	// 読み込むフォルダ名
+}
+
+//==========================================================================
 // 静的メンバ変数宣言
 //==========================================================================
 std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェクトのファイル名
@@ -128,6 +136,9 @@ HRESULT CMyEffekseer::Init()
 
 	// 読み込み情報
 	m_vecLoadInfo.clear();
+
+	// 全読み込み
+	LoadAll();
 
 	return S_OK;
 }
@@ -254,6 +265,42 @@ void CMyEffekseer::StopAll()
 	// マネージャーの更新
 	Effekseer::Manager::UpdateParameter updateParameter;
 	m_efkManager->Update(updateParameter);
+}
+
+//==========================================================================
+// 全読み込み
+//==========================================================================
+void CMyEffekseer::LoadAll()
+{
+	WIN32_FIND_DATAW findFileData;
+	HANDLE hFind = FindFirstFileW(FOLDERNAME.c_str(), &findFileData);
+
+	if (hFind == INVALID_HANDLE_VALUE)
+	{// フォルダが見つからない場合は終了
+		return;
+	}
+
+	do 
+	{
+		if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{// ディレクトリじゃない場合
+
+			// ワイド文字列からマルチバイト文字列に変換する関数
+			std::string fileName = UtilFunc::Transformation::WideToMultiByte((FOLDERNAME + L"\\" + findFileData.cFileName).c_str());
+			if (fileName.find(".efkefc") != std::string::npos)
+			{// [.efkefc]以外は読み込まない
+				
+				// char16_tに変換
+				std::u16string string16t = UtilFunc::Transformation::ConvertUtf8ToUtf16(fileName);
+
+				// 読み込み
+				LoadProcess(string16t);
+			}
+		}
+
+	} while (FindNextFileW(hFind, &findFileData) != 0);	// 終端のフォルダまで確認
+
+	FindClose(hFind);
 }
 
 //==========================================================================
