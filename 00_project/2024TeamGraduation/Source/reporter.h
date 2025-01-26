@@ -76,6 +76,7 @@ public:
 	//=============================
 	// 生成処理
 	static CReporter* Create(const CGameManager::ETeamSide& side);
+	static CListManager<CReporter> GetList(const CGameManager::ETeamSide& side) { return m_List[side]; };	// リスト取得
 
 protected:
 
@@ -130,7 +131,7 @@ private:
 	CGameManager::ETeamSide m_TeamSide;		// チームサイド
 	CShadow* m_pShadow;						// 影
 	CReporterSet* m_pReporterSet;			// 実況セット
-	static CListManager<CReporter> m_List;	// リスト
+	static CListManager<CReporter> m_List[CGameManager::ETeamSide::SIDE_MAX];	// リスト
 };
 
 

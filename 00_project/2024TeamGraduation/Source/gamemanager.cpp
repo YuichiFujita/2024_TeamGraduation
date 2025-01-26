@@ -930,6 +930,15 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 
 	// ÉÇÉeï∂éöê∂ê¨
 	CCharmText::Create(side);
+
+	// é¿ãµé“
+	CListManager<CReporter> list = CReporter::GetList(side);
+	CReporter* pReporter = (*list.GetBegin());
+	if (pReporter != nullptr)
+	{
+		// é¿ãµÉÇÅ[Éh
+		pReporter->SetState(CReporter::EState::STATE_THOUT);
+	}
 }
 
 //==========================================================================
