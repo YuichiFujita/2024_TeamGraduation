@@ -28,6 +28,7 @@ public:
 	{
 		STATE_NONE = 0,	// なにもない
 		STATE_FADEIN,	// フェードイン
+		STATE_WAIT,		// 待機
 		STATE_FADEOUT,	// フェードアウト
 		STATE_MAX
 	};
@@ -69,6 +70,7 @@ private:
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
 	void StateNone() {}		// なにもない
 	void StateFadeIn();		// フェードイン
+	void StateWait();		// 待機
 	void StateFadeOut();	// フェードアウト
 
 	//=============================

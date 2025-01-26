@@ -13,13 +13,18 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE_SAMPLE = "data\\TEXTURE\\visual\\startText.jpg";	// テクスチャのファイル
+	const std::string TEXTURE_SAMPLE = "data\\TEXTURE\\visual\\startText.png";	// テクスチャのファイル
+	const MyLib::Vector3 INIT_POS = MyLib::Vector3(-VEC3_SCREEN_SIZE.x, 360.0f, 0.0f);		// 初期位置
+	const MyLib::Vector3 MIDDLE_POS = MyLib::Vector3(VEC3_SCREEN_CENT.x, INIT_POS.y, 0.0f);	// 中間位置
+	const MyLib::Vector3 DEST_POS = MyLib::Vector3(VEC3_SCREEN_SIZE.x * 2.0f, INIT_POS.y, 0.0f);	// 目標位置
+	const float WIDTH = 380.0f;	// 横幅
 }
 
 namespace StateTime
 {
-	const float FADEIN = 0.3f;	// フェードイン
-	const float FADEOUT = 0.3f;	// フェードアウト
+	const float FADEIN	= 0.4f;	// フェードイン
+	const float WAIT	= 0.9f;	// 待機
+	const float FADEOUT	= 0.4f;	// フェードアウト
 }
 
 //==========================================================================
@@ -29,6 +34,7 @@ CStartText::STATE_FUNC CStartText::m_StateFuncList[] =
 {
 	&CStartText::StateNone,		// なにもない状態
 	&CStartText::StateFadeIn,	// フェードイン状態
+	&CStartText::StateWait,		// 待機状態
 	&CStartText::StateFadeOut,	// フェードアウト状態
 };
 
@@ -87,18 +93,13 @@ HRESULT CStartText::Init()
 	// サイズ設定
 	D3DXVECTOR2 size = CTexture::GetInstance()->GetImageSize(texID);
 
-#if 0	// 横幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 160.0f);
-
-#else	// 縦幅を元にサイズ設定
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, 160.0f);
-#endif
-
+	// 横幅を元にサイズ設定
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, WIDTH);
 	SetSize(size);
 	SetSizeOrigin(size);
 
 	// 画面中央の位置にする
-	SetPosition(MyLib::Vector3(640.0f, 360.0f, 0.0f));
+	SetPosition(INIT_POS);
 
 	// 種類の設定
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
@@ -168,11 +169,23 @@ void CStartText::UpdateState(const float fDeltaTime, const float fDeltaRate, con
 //==========================================================================
 void CStartText::StateFadeIn()
 {
-	// 不透明度割り出し
-	float alpha = UtilFunc::Correction::EasingLinear(0.0f, 1.0f, 0.0f, StateTime::FADEIN, m_fStateTime);
-	SetAlpha(alpha);
+	// 背景の位置を移動
+	MyLib::Vector3 posGameSet = UtilFunc::Correction::EaseOutBack(INIT_POS, MIDDLE_POS, 0.0f, StateTime::FADEIN, m_fStateTime, 1.0f);
+	SetPosition(posGameSet);
 
 	if (m_fStateTime >= StateTime::FADEIN)
+	{
+		// 状態遷移
+		SetState(EState::STATE_WAIT);
+	}
+}
+
+//==========================================================================
+// 待機
+//==========================================================================
+void CStartText::StateWait()
+{
+	if (m_fStateTime >= StateTime::WAIT)
 	{
 		// 状態遷移
 		SetState(EState::STATE_FADEOUT);
@@ -184,11 +197,11 @@ void CStartText::StateFadeIn()
 //==========================================================================
 void CStartText::StateFadeOut()
 {
-	// 不透明度割り出し
-	float alpha = UtilFunc::Correction::EasingLinear(1.0f, 0.0f, 0.0f, StateTime::FADEIN, m_fStateTime);
-	SetAlpha(alpha);
+	// 背景の位置を移動
+	MyLib::Vector3 posGameSet = UtilFunc::Correction::EasingCubicOut(MIDDLE_POS, DEST_POS, 0.0f, StateTime::FADEOUT, m_fStateTime);
+	SetPosition(posGameSet);
 
-	if (m_fStateTime >= StateTime::FADEIN)
+	if (m_fStateTime >= StateTime::FADEOUT)
 	{
 		// 削除
 		Kill();

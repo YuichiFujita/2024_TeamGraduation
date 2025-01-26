@@ -884,6 +884,9 @@
     <ClCompile Include="Source\gameEndManager.cpp">
       <Filter>ingame</Filter>
     </ClCompile>
+    <ClCompile Include="Source\gamesetUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1620,6 +1623,9 @@
     </ClInclude>
     <ClInclude Include="Source\gameEndManager.h">
       <Filter>ingame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gamesetUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

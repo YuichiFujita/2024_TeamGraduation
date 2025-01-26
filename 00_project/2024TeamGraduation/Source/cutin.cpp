@@ -19,7 +19,7 @@ namespace
 	const std::string TEXTURE_BLINK_BG = "data\\TEXTURE\\cutin\\blink000.jpg";	// 背景テクスチャ
 	const int	PRIORITY = 7;		// 優先順位
 
-	namespace bg
+	namespace gameset
 	{
 		const float START_ALPHA = 0.66f;	// 開始透明度
 		const float END_ALPHA = 0.0f;		// 終了透明度
@@ -120,7 +120,7 @@ HRESULT CCutIn::Init()
 	SetSize(VEC2_SCREEN_SIZE);		// 画面全体にする
 
 	// 半透明にする
-	SetAlpha(bg::START_ALPHA);
+	SetAlpha(gameset::START_ALPHA);
 
 	// 世界停止中に動けるようにする
 	SetEnablePosibleMove_WorldPause(true);
@@ -393,7 +393,7 @@ void CCutIn::UpdateBlinkColor(const float fDeltaTime, const float fDeltaRate, co
 	current = UtilFunc::Correction::EasingLinear(start, end, 0.0f, blink::END_TIME, m_fBlinkTime);
 
 	// 現在の背景透明度を線形補完
-	fAlphaBG = UtilFunc::Correction::EaseInExpo(bg::START_ALPHA, bg::END_ALPHA, 0.0f, blink::END_TIME, m_fBlinkTime);
+	fAlphaBG = UtilFunc::Correction::EaseInExpo(gameset::START_ALPHA, gameset::END_ALPHA, 0.0f, blink::END_TIME, m_fBlinkTime);
 
 	// 現在の透明度を線形補完
 	fAlphaBlink = UtilFunc::Correction::EaseInExpo(blink::START_ALPHA, blink::END_ALPHA, 0.0f, blink::END_TIME, m_fBlinkTime);

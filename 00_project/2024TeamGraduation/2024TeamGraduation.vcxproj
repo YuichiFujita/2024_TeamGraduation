@@ -232,6 +232,7 @@
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\gameEndManager.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
+    <ClCompile Include="Source\gamesetUI.cpp" />
     <ClCompile Include="Source\gauge2D.cpp" />
     <ClCompile Include="Source\gymDoor.cpp" />
     <ClCompile Include="Source\gymWall.cpp" />
@@ -482,6 +483,7 @@
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\gameEndManager.h" />
     <ClInclude Include="Source\gamemanager.h" />
+    <ClInclude Include="Source\gamesetUI.h" />
     <ClInclude Include="Source\gauge2D.h" />
     <ClInclude Include="Source\gymDoor.h" />
     <ClInclude Include="Source\gymWall.h" />

@@ -117,9 +117,6 @@ HRESULT CGame::Init()
 	// ボールの生成
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
-	// 体育館を明るくする
-	GET_MANAGER->GetLight()->SetEnableBright(true);
-
 	// クリアの判定
 	SetEnableClear(true);
 

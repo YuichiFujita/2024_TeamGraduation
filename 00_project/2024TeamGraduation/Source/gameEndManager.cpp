@@ -14,6 +14,7 @@
 #include "player.h"
 #include "gamemanager.h"
 #include "lightPoint.h"
+#include "gamesetUI.h"
 
 //************************************************************
 //	定数宣言
@@ -22,6 +23,7 @@ namespace
 {
 	const int	PRIORITY	= 4;		// 優先順位
 	const float	LIGHT_RANGE	= 600.0f;	// 光源範囲
+	const float	WAIT_TIME	= 2.0f;		// 待機時間
 }
 
 //************************************************************
@@ -46,9 +48,17 @@ CGameEndManager* CGameEndManager::m_pInstance = nullptr;	// 自身のインスタンス
 //============================================================
 CGameEndManager::CGameEndManager(CPlayer* pDeathPlayer) : CObject(PRIORITY),
 	m_pDeathPlayer	(pDeathPlayer),	// 死亡プレイヤー
+	m_pGameSetUI	(nullptr),		// ゲームセットUI
 	m_state			(STATE_NONE),	// 状態
 	m_fCurTime		(0.0f)			// 現在の待機時間
 {
+	// メンバ変数をクリア
+	for (int i = 0; i < NUM_LIGHT; i++)
+	{ // ライト数分繰り返す
+
+		m_apLight[i] = nullptr;	// ライト情報
+	}
+
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState) == CGameEndManager::STATE_MAX, "ERROR : State Count Mismatch");
 }
@@ -72,8 +82,8 @@ HRESULT CGameEndManager::Init(void)
 	// 種類をマネージャーにする
 	SetType(CObject::TYPE::TYPE_MANAGER);
 
-	// スロー倍率を設定
-	pManager->SetSlowRate(0.25f);
+	// 世界停止中に動けるようにする
+	SetEnablePosibleMove_WorldPause(true);
 
 	// タイマーを停止
 	pGameManager->SetEnableTimerStop(true);
@@ -81,11 +91,11 @@ HRESULT CGameEndManager::Init(void)
 	// ゲームを終了演出シーンに変更
 	pGameManager->SetSceneType(CGameManager::ESceneType::SCENE_END_STAG);
 
-	// 体育館を暗くする
-	pManager->GetLight()->SetEnableBright(false, 1.5f);
-
 	if (m_pDeathPlayer != nullptr)
 	{ // プレイヤー死亡で終了する場合
+
+		// 初期状態を設定
+		m_state = STATE_LOOK_PLAYER;
 
 		for (int i = 0; i < NUM_LIGHT; i++)
 		{ // ライト数分繰り返す
@@ -105,8 +115,11 @@ HRESULT CGameEndManager::Init(void)
 			m_apLight[i]->SetRange(LIGHT_RANGE);
 		}
 
-		// 初期状態を設定
-		m_state = STATE_LOOK_PLAYER;
+		// スロー倍率を設定
+		pManager->SetSlowRate(0.25f);
+
+		// 体育館を暗くする
+		pManager->GetLight()->SetEnableBright(false, 1.5f);
 
 		// ゲーム終了カメラの設定
 		CCamera* pCamera = pManager->GetCamera();	// カメラ情報
@@ -120,6 +133,18 @@ HRESULT CGameEndManager::Init(void)
 	}
 	else
 	{ // タイマーなどの他要因で終了する場合
+
+		// ゲームセットUIの生成
+		m_pGameSetUI = CGameSetUI::Create();
+		if (m_pGameSetUI == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// 世界の時を止める
+		pManager->SetEnableWorldPaused(true);
 
 		// 初期状態を設定
 		m_state = STATE_GAME_SET;
@@ -258,6 +283,9 @@ void CGameEndManager::UpdateDeathWait(const float fDeltaTime, const float fDelta
 	if (m_pDeathPlayer->GetState() == CPlayer::EState::STATE_DEAD_CARRY)
 	{ // 真っ白に燃え尽きた場合
 
+		// ゲームセットUIの生成
+		m_pGameSetUI = CGameSetUI::Create();
+
 		// 固定カメラの設定
 		pCamera->SetState(CCamera::STATE_NONE, false);
 
@@ -274,7 +302,8 @@ void CGameEndManager::UpdateDeathWait(const float fDeltaTime, const float fDelta
 //============================================================
 void CGameEndManager::UpdateGameSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	{ // 場合
+	if (m_pGameSetUI->IsEnd())
+	{ // UIの演出が終了した場合
 
 		// 待機状態にする
 		m_state = STATE_WAIT;
@@ -288,7 +317,7 @@ void CGameEndManager::UpdateWait(const float fDeltaTime, const float fDeltaRate,
 {
 	// 経過時間を加算
 	m_fCurTime += fDeltaTime * fSlowRate;
-	if (m_fCurTime >= 2.0f)
+	if (m_fCurTime >= WAIT_TIME)
 	{ // 待機終了した場合
 
 		// 待機時間の初期化

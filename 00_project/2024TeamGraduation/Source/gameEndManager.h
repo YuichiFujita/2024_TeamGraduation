@@ -20,6 +20,7 @@
 //************************************************************
 class CLightPoint;
 class CPlayer;
+class CGameSetUI;
 
 //************************************************************
 //	クラス定義
@@ -83,6 +84,7 @@ private:
 	// メンバ変数
 	CLightPoint* m_apLight[NUM_LIGHT];	// ライト情報
 	CPlayer* m_pDeathPlayer;	// 死亡プレイヤー
+	CGameSetUI* m_pGameSetUI;	// ゲームセットUI
 	EState m_state;		// 状態
 	float m_fCurTime;	// 現在の待機時間
 };

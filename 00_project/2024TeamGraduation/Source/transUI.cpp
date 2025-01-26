@@ -20,7 +20,7 @@ namespace
 	const float	MOVE_TIME	= 2.0f;		// 移動時間
 	const float	MIN_ALPHA	= 0.35f;	// 最小透明度
 
-	namespace bg
+	namespace gameset
 	{
 		const char* TEXTURE = "data\\TEXTURE\\entry\\PressStart_BG.png";	// 操作表記の背景
 		const MyLib::Vector3 INIT_POS = MyLib::Vector3(-VEC3_SCREEN_SIZE.x, 360.0f, 0.0f);		// 初期位置
@@ -276,10 +276,10 @@ void CTransUI::UpdateSpawnBG(const float fDeltaTime, const float fDeltaRate, con
 	m_fCurTime += fDeltaTime * fSlowRate;
 
 	// 背景の位置を移動
-	MyLib::Vector3 posBG = UtilFunc::Correction::EaseOutBack(bg::INIT_POS, bg::DEST_POS, 0.0f, bg::MOVE_TIME, m_fCurTime);
+	MyLib::Vector3 posBG = UtilFunc::Correction::EaseOutBack(gameset::INIT_POS, gameset::DEST_POS, 0.0f, gameset::MOVE_TIME, m_fCurTime);
 	m_pBG->SetPosition(posBG);
 
-	if (m_fCurTime >= bg::MOVE_TIME)
+	if (m_fCurTime >= gameset::MOVE_TIME)
 	{ // 経過しきった場合
 
 		// 経過時間を初期化
@@ -369,7 +369,7 @@ void CTransUI::SetDisp(const bool bDisp)
 		sizeDest = UtilFunc::Transformation::AdjustSizeByHeight(sizeDest, string::HEIGHT);		// 画像サイズを縦幅指定で調整
 
 		// 背景の位置の設定
-		m_pBG->SetPosition(bg::DEST_POS);
+		m_pBG->SetPosition(gameset::DEST_POS);
 
 		// 文字の大きさの設定
 		m_pString->SetSize(sizeDest);
@@ -381,7 +381,7 @@ void CTransUI::SetDisp(const bool bDisp)
 	{ // 表示しない場合
 
 		// 背景の位置の設定
-		m_pBG->SetPosition(bg::INIT_POS);
+		m_pBG->SetPosition(gameset::INIT_POS);
 
 		// 文字の大きさの設定
 		m_pString->SetSize(string::INIT_SIZE);
@@ -416,12 +416,12 @@ HRESULT CTransUI::CreateUI()
 	}
 
 	// テクスチャの割当
-	int texID = pTexture->Regist(bg::TEXTURE);
+	int texID = pTexture->Regist(gameset::TEXTURE);
 	m_pBG->BindTexture(texID);
 
 	// 横幅を元にサイズ計算
 	MyLib::Vector2 size = pTexture->GetImageSize(texID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, bg::WIDTH);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, gameset::WIDTH);
 	m_pBG->SetSize(size);
 
 	// 文字の生成

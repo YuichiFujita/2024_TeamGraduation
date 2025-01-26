@@ -20,7 +20,7 @@
 namespace
 {
 	const int PRIORITY = 6;	// UIの優先順位
-	namespace bg
+	namespace gameset
 	{
 		const char* TEXTURE = "data\\TEXTURE\\teamNameGB000.png";	// 背景テクスチャ
 		const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(1, 2);			// テクスチャ分割数
@@ -49,7 +49,7 @@ namespace
 		const char*	FONT	= "data\\FONT\\Kazesawa Bold.ttf";		// フォントパス
 		const bool	ITALIC	= false;	// イタリック
 		const float	HEIGHT	= 40.0f;	// 文字縦幅
-		const float	OFFSET_X[] = { -bg::WIDTH + 30.0f, bg::WIDTH - 30.0f };	// 文字縦幅
+		const float	OFFSET_X[] = { -gameset::WIDTH + 30.0f, gameset::WIDTH - 30.0f };	// 文字縦幅
 
 		namespace two
 		{
@@ -239,10 +239,10 @@ void CSpawnUI::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 	m_fCurTime += fDeltaTime * fSlowRate;
 
 	// 背景の位置を移動
-	MyLib::Vector3 posBG = UtilFunc::Correction::EasingCubicOut(bg::INIT_POS[m_team], bg::DEST_POS[m_team], 0.0f, bg::MOVE_TIME, m_fCurTime);
+	MyLib::Vector3 posBG = UtilFunc::Correction::EasingCubicOut(gameset::INIT_POS[m_team], gameset::DEST_POS[m_team], 0.0f, gameset::MOVE_TIME, m_fCurTime);
 	SetPosition(posBG);
 
-	if (m_fCurTime >= bg::MOVE_TIME + bg::TRANS_TIME)
+	if (m_fCurTime >= gameset::MOVE_TIME + gameset::TRANS_TIME)
 	{ // 経過しきった場合
 
 		// 経過時間を初期化
@@ -312,10 +312,10 @@ void CSpawnUI::UpdateDespawn(const float fDeltaTime, const float fDeltaRate, con
 	m_fCurTime += fDeltaTime * fSlowRate;
 
 	// 背景の位置を移動
-	MyLib::Vector3 posBG = UtilFunc::Correction::EasingCubicIn(bg::DEST_POS[m_team], bg::INIT_POS[m_team], 0.0f, bg::MOVE_TIME, m_fCurTime);
+	MyLib::Vector3 posBG = UtilFunc::Correction::EasingCubicIn(gameset::DEST_POS[m_team], gameset::INIT_POS[m_team], 0.0f, gameset::MOVE_TIME, m_fCurTime);
 	SetPosition(posBG);
 
-	if (m_fCurTime >= bg::MOVE_TIME)
+	if (m_fCurTime >= gameset::MOVE_TIME)
 	{ // 経過しきった場合
 
 		// 経過時間を初期化
@@ -353,8 +353,8 @@ HRESULT CSpawnUI::CreateUI()
 	m_pBG = CObject2D_Anim::Create
 	( // 引数
 		VEC3_ZERO,	// 位置
-		bg::PTRN.x,	// テクスチャ横分割数
-		bg::PTRN.y,	// テクスチャ縦分割数
+		gameset::PTRN.x,	// テクスチャ横分割数
+		gameset::PTRN.y,	// テクスチャ縦分割数
 		0.0f,		// 再生時間
 		false,		// 自動破棄
 		PRIORITY	// 優先順位
@@ -373,13 +373,13 @@ HRESULT CSpawnUI::CreateUI()
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();	// テクスチャ情報
-	int texID = pTexture->Regist(bg::TEXTURE);
+	int texID = pTexture->Regist(gameset::TEXTURE);
 	m_pBG->BindTexture(texID);
 
 	// 横幅を元に大きさ設定
 	MyLib::Vector2 size = pTexture->GetImageSize(texID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, bg::WIDTH);
-	size.y /= (float)bg::PTRN.y;
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, gameset::WIDTH);
+	size.y /= (float)gameset::PTRN.y;
 	m_pBG->SetSize(size);
 
 	// 二つ名の生成

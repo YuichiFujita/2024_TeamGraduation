@@ -32,6 +32,7 @@
 #include "reporter.h"
 #include "resultManager.h"
 #include "gauge2D.h"
+#include "gameEndManager.h"
 
 //==========================================================================
 // 定数定義
@@ -513,7 +514,8 @@ void CGameManager::UpdateLimitTimer()
 	// 終了したら
 	if (m_pTimerUI->IsEnd())
 	{
-		SetSceneType(ESceneType::SCENE_END);
+		// ゲーム終了マネージャーの生成
+		CGameEndManager::Create(nullptr);
 	}
 }
 
