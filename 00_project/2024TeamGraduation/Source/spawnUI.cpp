@@ -80,6 +80,11 @@ CSpawnUI::STATE_FUNC CSpawnUI::m_StateFuncList[] =
 };
 
 //************************************************************
+//	静的メンバ変数宣言
+//************************************************************
+CListManager<CSpawnUI> CSpawnUI::m_list = {};	// リスト
+
+//************************************************************
 //	子クラス [CSpawnUI] のメンバ関数
 //************************************************************
 //============================================================
@@ -120,6 +125,9 @@ HRESULT CSpawnUI::Init()
 	// 種類をオブジェクト2Dにする
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
 
+	// リストに追加
+	m_list.Regist(this);
+
 	return S_OK;
 }
 
@@ -133,6 +141,15 @@ void CSpawnUI::Uninit()
 
 	// 背景の終了
 	SAFE_UNINIT(m_pBG);
+
+	// 二つ名の終了
+	SAFE_UNINIT(m_pHutatuna);
+
+	// チーム名の終了
+	SAFE_UNINIT(m_pTeamName);
+
+	// リストから削除
+	m_list.Delete(this);
 
 	// オブジェクトを破棄
 	Release();

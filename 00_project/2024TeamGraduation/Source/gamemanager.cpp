@@ -33,6 +33,7 @@
 #include "resultManager.h"
 #include "gauge2D.h"
 #include "gameEndManager.h"
+#include "spawnUI.h"
 
 //==========================================================================
 // 定数定義
@@ -617,9 +618,20 @@ void CGameManager::SkipSpawn()
 	// プレイヤー登場演出マネージャーの終了
 	SAFE_KILL(pManager);
 
-	// ドア閉める
+	CListManager<CSpawnUI> list = CSpawnUI::GetList();	// 登場演出UIリスト
+	std::list<CSpawnUI*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CSpawnUI* pUI = (*itr);	// UI情報
+
+		// UIの破棄
+		SAFE_UNINIT(pUI);
+	}
+
 	for (const auto& door : m_apGymDoor)
 	{
+		// ドア閉める
 		door->SetEnableOpen(false);
 	}
 
@@ -641,6 +653,7 @@ void CGameManager::SkipSpawn()
 	{
 		if (m_pTeamStatus[i] != nullptr)
 		{
+			// ゲージの表示
 			m_pTeamStatus[i]->SetEnableGaugeDisp(true);
 		}
 	}
