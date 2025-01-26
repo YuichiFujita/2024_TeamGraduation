@@ -19,11 +19,20 @@
 //==========================================================================
 namespace
 {
-	const std::string CHARAFILE[CPlayer::EBody::BODY_MAX] =		// キャラクターファイル
+	const std::string CHARAFILE[CPlayer::EBody::BODY_MAX][CPlayer::EHandedness::HAND_MAX] =		// キャラクターファイル
 	{
-		"data\\TEXT\\character\\dressup\\setup_player.txt",
-		"data\\TEXT\\character\\dressup\\setup_player_fat.txt",
-		"data\\TEXT\\character\\dressup\\setup_player_gari.txt",
+		{
+			"data\\TEXT\\character\\dressup\\setup_playerR.txt",
+			"data\\TEXT\\character\\dressup\\setup_playerL.txt",
+		},
+		{
+			"data\\TEXT\\character\\dressup\\setup_player_fatR.txt",
+			"data\\TEXT\\character\\dressup\\setup_player_fatL.txt",
+		},
+		{
+			"data\\TEXT\\character\\dressup\\setup_player_gariR.txt",
+			"data\\TEXT\\character\\dressup\\setup_player_gariL.txt",
+		}
 	};
 }
 
@@ -61,7 +70,7 @@ HRESULT CPlayerDressUP::Init()
 	CObject::SetType(CObject::TYPE_PLAYER);
 
 	// キャラ作成
-	HRESULT hr = SetCharacter(CHARAFILE[GetBodyType()]);
+	HRESULT hr = SetCharacter(CHARAFILE[GetBodyType()][GetHandedness()]);
 	if (FAILED(hr))
 	{// 失敗していたら
 		return E_FAIL;
