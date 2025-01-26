@@ -139,7 +139,6 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, 
 		//ƒWƒƒƒ“ƒvˆ—
 		m_fJumpTimer += fDeltaTime * fSlowRate;
 		float rate = m_fJumpTimer / TAPTIME;
-		m_fJumpRate = rate;
 		
 		if (m_fMaxJumpRate > rate)
 		{
@@ -147,8 +146,10 @@ void CPlayerAIControlAction::JumpFloat(CPlayer* player, const float fDeltaTime, 
 			MyLib::Vector3 move = player->GetMove();
 
 			float jumpRate = TAPRATE_MIN + (TAPRATE_MAX - TAPRATE_MIN) * rate;
-			move.y = player->GetParameter().fVelocityJump * jumpRate;
+			m_fJumpRate = jumpRate;
 
+			move.y = player->GetParameter().fVelocityJump * jumpRate;
+		
 			// ˆÚ“®—ÊÝ’è
 			player->SetMove(move);
 		}
