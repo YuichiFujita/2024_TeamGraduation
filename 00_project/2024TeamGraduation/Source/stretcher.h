@@ -117,6 +117,7 @@ private:
 	float m_fWidth;								// 幅
 	MyLib::Vector3 m_startPos;					// 開始位置
 	bool m_bEndSetting;							// 終了のセッティング
+	bool m_bCollectSetting;						// 回収のセッティング
 	static CStretcher* m_pThisPtr;				// 自身のポインタ
 };
 

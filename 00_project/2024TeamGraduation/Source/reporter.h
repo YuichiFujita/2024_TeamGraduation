@@ -35,7 +35,10 @@ public:
 	// モーション列挙
 	enum EMotion
 	{
-		MOTION_DEF = 0,		// ニュートラルモーション
+		MOTION_DEF = 0,		// ニュートラル
+		MOTION_DEF_INV,		// 逆ニュートラル
+		MOTION_THOUT,		// 実況
+		MOTION_WAIT,		// 待機
 		MOTION_MAX
 	};
 
@@ -43,9 +46,8 @@ public:
 	enum EState
 	{
 		STATE_NONE = 0,		// なにもない
-		STATE_GO,			// 向かう
-		STATE_COLLECT,		// 回収
-		STATE_BACK,			// 戻る
+		STATE_THOUT,		// 実況
+		STATE_WAIT,			// 待機
 		STATE_MAX
 	};
 	
@@ -98,15 +100,19 @@ private:
 	//-----------------------------
 	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
 	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// なし
-	void StateGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 向かう
-	void StateCollect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 回収
-	void StateBack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 戻る
+	void StateThout(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 実況
+	void StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 待機
 
 	//-----------------------------
 	// モーション系関数
 	//-----------------------------
 	virtual void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 	virtual void AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+
+	//-----------------------------
+	// その他
+	//-----------------------------
+	void SetDefMotion();	// デフォモーション設定
 
 	//=============================
 	// メンバ変数
@@ -116,6 +122,7 @@ private:
 	//-----------------------------
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
+	float m_fWaitTime;	// 待機時間
 
 	//-----------------------------
 	// その他変数

@@ -42,7 +42,6 @@ public:
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
-
 	//--------------------------
 	// 再生中情報
 	//--------------------------
@@ -70,6 +69,7 @@ public:
 	inline bool IsGetCancelable() { return m_bCancelable; }				// キャンセル可能の判定取得
 	inline bool IsGetCombiable() { return m_bCombiable; }				// コンボ可能の判定取得
 	inline bool IsAttacking() { return m_bAttaking; }					// 攻撃判定中フラグ取得
+	inline bool IsLoopMoment() { return m_bLoopMomnet; }				// ループした瞬間のフラグ取得
 	inline bool IsSpecial() { return m_vecInfo[m_nType].bSpecial; }		// スペシャル判定取得
 	bool IsImpactFrame(const CMotionManager::Info& info);								// 指定した種類の情報が衝撃カウントか
 	bool IsImpactFrame(int nCntAtk);									// 指定したインデックスの情報が衝撃カウントか
@@ -106,8 +106,6 @@ private:
 	};
 
 	// メンバ関数
-	void ReadText(const std::string& file);
-	void LoadMotion(const std::string& file, int nMotion);
 	void UpdateRotation(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio);	// 向きの更新
 	void UpdateScale(int i, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio);	// スケールの更新
 	void UpdatePosition(int i, const CMotionManager::Info& nowInfo, const CMotionManager::Parts& nowParts, const CMotionManager::Parts& nextParts, float ratio, int nMaxFrame, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 位置更新
@@ -129,6 +127,7 @@ private:
 	bool m_bCancelable;			// キャンセル可能か
 	bool m_bCombiable;			// コンボ可能か
 	bool m_bAttaking;			// 攻撃判定中フラグ
+	bool m_bLoopMomnet;			// ループした瞬間
 
 	CObjectChara* m_pObjChara;			// オブジェクトキャラクターのポインタ
 	CModel** m_ppModel;					// モデルのポインタ
