@@ -15,6 +15,7 @@
 #include "gamemanager.h"
 #include "lightPoint.h"
 #include "gamesetUI.h"
+#include "gymWallManager.h"
 
 //************************************************************
 //	定数宣言
@@ -121,6 +122,10 @@ HRESULT CGameEndManager::Init(void)
 		// 体育館を暗くする
 		pManager->GetLight()->SetEnableBright(false, 1.5f);
 
+		// 壁の表示をONにする
+		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
+		pGymWall->SetIsWall(true);
+
 		// ゲーム終了カメラの設定
 		CCamera* pCamera = pManager->GetCamera();	// カメラ情報
 		pCamera->SetState(CCamera::STATE_GAME_END, false);
@@ -165,6 +170,9 @@ void CGameEndManager::Uninit(void)
 		// ライトの終了
 		SAFE_UNINIT(m_apLight[i]);
 	}
+
+	// ゲームセットUIの終了
+	SAFE_UNINIT(m_pGameSetUI);
 
 	// オブジェクトを破棄
 	Release();
@@ -335,9 +343,6 @@ void CGameEndManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 {
 	// ゲームを終了シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_END);
-
-	// 自身の終了
-	Uninit();
 }
 
 //============================================================

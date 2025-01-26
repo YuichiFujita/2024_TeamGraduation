@@ -195,23 +195,18 @@ bool CTransUI::UpdateDecide(const bool bAutoUninit)
 	bool bInput = pPad->GetAllTrigger(CInputGamepad::BUTTON_A)
 			   || pKey->GetTrigger(DIK_RETURN) || pKey->GetTrigger(DIK_SPACE);
 
+	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	{ // パッド数分繰り返す
+
+		// トリガー入力初期化
+		pPad->InitTrigger(i);
+	}
+
 	// キー入力がない場合抜ける
 	if (!bInput) { return false; }
 
 	// 表示されていない場合抜ける
 	if (m_state == STATE_DISP_OFF) { return false; }
-
-	// 演出スキップ
-	if (IsDispTransState())
-	{ // 表示遷移状態の場合
-
-		// UI表示をONにする
-		SetDisp(true);
-
-		// 表示状態にする
-		m_state = STATE_DISP_ON;
-		return false;
-	}
 
 	if (bAutoUninit)
 	{ // 自動破棄が有効の場合

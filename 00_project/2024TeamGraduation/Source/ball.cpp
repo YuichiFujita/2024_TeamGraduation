@@ -1798,8 +1798,11 @@ void CBall::Throw(CPlayer* pPlayer)
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
 
-	// 所持マーカーからプレイヤーを破棄
-	m_pHoldMarker->BindPlayer(nullptr);
+	if (m_pHoldMarker != nullptr)
+	{
+		// 所持マーカーからプレイヤーを破棄
+		m_pHoldMarker->BindPlayer(nullptr);
+	}
 
 	// ボールの移動ベクトルを作成
 	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き
