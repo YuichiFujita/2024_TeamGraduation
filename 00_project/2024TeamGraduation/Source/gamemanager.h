@@ -28,6 +28,7 @@ class CGymWallManager;
 class CTimerUI;
 class CObject2D;
 class CCharmManager;
+class CSkip;
 
 //==========================================================================
 // クラス定義
@@ -185,8 +186,9 @@ private:
 	CCharmManager* m_pCharmManager;					// モテマネージャ
 	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
-	CTimerUI* m_pTimerUI;							// タイマーUI
-	CObject2D* m_pTimerBG;							// タイマー背景
+	CTimerUI* m_pTimerUI;	// タイマーUI
+	CObject2D* m_pTimerBG;	// タイマー背景
+	CSkip* m_pSkip;			// スキップUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
