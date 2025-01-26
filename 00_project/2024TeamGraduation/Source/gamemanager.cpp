@@ -84,7 +84,8 @@ CGameManager::SCENE_FUNC CGameManager::m_SceneFunc[] =	// シーン関数
 	&CGameManager::SceneSpawn,		// 登場演出
 	&CGameManager::SceneStart,		// 開始演出
 	&CGameManager::SceneSpecial,	// スペシャル演出
-	&CGameManager::SceneEnd,		// 終了演出
+	&CGameManager::SceneEndStag,	// 終了演出
+	&CGameManager::SceneEnd,		// 終了
 	&CGameManager::SceneDebug,		// デバッグ
 };
 
@@ -571,6 +572,15 @@ void CGameManager::SceneSpecial()
 //==========================================================================
 // 終了演出
 //==========================================================================
+void CGameManager::SceneEndStag()
+{
+	// 操作出来ない
+	m_bControll = false;
+}
+
+//==========================================================================
+// 終了
+//==========================================================================
 void CGameManager::SceneEnd()
 {
 	// 操作出来ない
@@ -765,6 +775,7 @@ void CGameManager::SetSceneType(ESceneType type)
 //==========================================================================
 void CGameManager::SetEnableTimerStop(const bool bStop)
 {
+	if (m_pTimerUI != nullptr)
 	m_pTimerUI->EnableStop(bStop);
 }
 

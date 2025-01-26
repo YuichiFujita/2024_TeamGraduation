@@ -881,6 +881,9 @@
     <ClCompile Include="Source\spawnUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\gameEndManager.cpp">
+      <Filter>ingame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1614,6 +1617,9 @@
     </ClInclude>
     <ClInclude Include="Source\spawnUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gameEndManager.h">
+      <Filter>ingame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

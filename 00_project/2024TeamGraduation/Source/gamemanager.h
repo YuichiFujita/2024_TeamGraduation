@@ -50,6 +50,7 @@ public:
 		SCENE_SPAWN,	// 登場演出
 		SCENE_START,	// 開始演出
 		SCENE_SPECIAL,	// スペシャル演出
+		SCENE_END_STAG,	// 終了演出
 		SCENE_END,		// 終了
 		SCENE_DEBUG,	// デバッグ
 		SCENE_MAX
@@ -149,7 +150,8 @@ private:
 	void SceneSpawn();		// 登場演出
 	void SceneStart();		// 開始演出
 	void SceneSpecial();	// スペシャル演出
-	void SceneEnd();		// 終了演出
+	void SceneEndStag();	// 終了演出
+	void SceneEnd();		// 終了
 	void SceneDebug();		// デバッグ
 
 	// シーンスキップ

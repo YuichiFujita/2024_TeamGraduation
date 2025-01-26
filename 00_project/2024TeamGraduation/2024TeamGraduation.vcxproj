@@ -230,6 +230,7 @@
     <ClCompile Include="Source\font.cpp" />
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
+    <ClCompile Include="Source\gameEndManager.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
     <ClCompile Include="Source\gauge2D.cpp" />
     <ClCompile Include="Source\gymDoor.cpp" />
@@ -479,6 +480,7 @@
     <ClInclude Include="Source\font.h" />
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
+    <ClInclude Include="Source\gameEndManager.h" />
     <ClInclude Include="Source\gamemanager.h" />
     <ClInclude Include="Source\gauge2D.h" />
     <ClInclude Include="Source\gymDoor.h" />
