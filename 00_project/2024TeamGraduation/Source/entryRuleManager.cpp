@@ -788,7 +788,7 @@ HRESULT CEntryRuleManager::LoadRule(SRule* pRule)
 //============================================================
 //	チーム名の読込処理
 //============================================================
-HRESULT CEntryRuleManager::LoadName(std::string* pNameLeft, std::string* pNameRight)
+HRESULT CEntryRuleManager::LoadName(std::string* pName, CGameManager::ETeamSide team)
 {
 	// ファイルを開く
 	std::ifstream file(SET_PATH);	// ファイルストリーム
@@ -814,15 +814,15 @@ HRESULT CEntryRuleManager::LoadName(std::string* pNameLeft, std::string* pNameRi
 				file >> str;
 
 				if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
-				else if (str == "LEFT")
+				else if (str == "LEFT" && team == CGameManager::ETeamSide::SIDE_LEFT)
 				{
-					file >> str;			// ＝を読込
-					file >> *pNameLeft;		// 左チーム名を読込
+					file >> str;	// ＝を読込
+					file >> *pName;	// 左チーム名を読込
 				}
-				else if (str == "RIGHT")
+				else if (str == "RIGHT" && team == CGameManager::ETeamSide::SIDE_RIGHT)
 				{
-					file >> str;			// ＝を読込
-					file >> *pNameRight;	// 右チーム名を読込
+					file >> str;	// ＝を読込
+					file >> *pName;	// 右チーム名を読込
 				}
 			} while (str != "END_TEAMNAME");	// END_TEAMNAMEを読み込むまでループ
 		}

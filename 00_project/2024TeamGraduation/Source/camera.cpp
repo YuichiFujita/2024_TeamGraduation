@@ -96,6 +96,12 @@ namespace
 		const float DIS = follow::MAX_DIS + 160.0f;		// カメラの距離
 	}
 
+	namespace end
+	{
+		const MyLib::Vector3 ROT = MyLib::Vector3(HALF_PI, 0.0f, 0.0f);	// カメラの向き
+		const float DIS = 360.0f;	// カメラの距離
+	}
+
 	namespace Reset
 	{
 		const MyLib::Vector3 POSITION[CScene::MODE::MODE_MAX] = // 位置
@@ -142,6 +148,7 @@ CCamera::STATE_FUNC CCamera::m_StateFuncList[] =
 	&CCamera::UpdateNoneState,		// 通常カメラ更新
 	&CCamera::UpdateFollowState,	// 追従カメラ更新
 	&CCamera::UpdateOutFieldState,	// 外野カメラ更新
+	&CCamera::UpdateGameEndState,	// ゲーム終了カメラ更新
 };
 
 // リセット関数
@@ -150,6 +157,7 @@ CCamera::RESET_FUNC CCamera::m_ResetFuncList[] =
 	&CCamera::ResetNoneState,		// 通常カメラリセット
 	&CCamera::ResetFollowState,		// 追従カメラリセット
 	&CCamera::ResetOutFieldState,	// 外野カメラリセット
+	nullptr,						// ゲーム終了カメラリセット
 };
 
 //==========================================================================
@@ -892,6 +900,49 @@ void CCamera::UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate
 }
 
 //==========================================================================
+// ゲーム終了状態の更新処理
+//==========================================================================
+void CCamera::UpdateGameEndState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+
+	// 経過時間を加算 (スローはあえて考慮しない)
+	m_gameEndInfo.fCurTime += fDeltaTime;
+	if (m_gameEndInfo.fCurTime >= m_gameEndInfo.fMoveTime)
+	{ // 経過終了した場合
+
+		// 経過時間の補正
+		m_gameEndInfo.fCurTime = m_gameEndInfo.fMoveTime;
+
+		// 終了状態にする
+		m_gameEndInfo.bEnd = true;
+	}
+
+	// 注視点を設定
+	m_posRDest = m_gameEndInfo.pLook->GetPosition() + m_gameEndInfo.offset;
+	m_posR = UtilFunc::Correction::EasingCubicInOut(m_gameEndInfo.start.posR, m_posRDest, 0.0f, m_gameEndInfo.fMoveTime, m_gameEndInfo.fCurTime);
+
+	// 距離を設定
+	m_fDestDistance = end::DIS;
+	m_fDistance = UtilFunc::Correction::EasingCubicInOut(m_gameEndInfo.start.fDistance, m_fDestDistance, 0.0f, m_gameEndInfo.fMoveTime, m_gameEndInfo.fCurTime);
+
+	// 向きを設定
+	m_rotDest = MyLib::Vector3(end::ROT.x, m_gameEndInfo.pLook->GetRotation().y, end::ROT.z);
+	m_rot = UtilFunc::Correction::EasingCubicInOut(m_gameEndInfo.start.rot, m_rotDest, 0.0f, m_gameEndInfo.fMoveTime, m_gameEndInfo.fCurTime);
+
+	// 目標視野角を設定
+	if (m_bMotion) { m_fDestViewAngle = none::INIT_VIEWANGLE; }
+	else { m_fDestViewAngle = follow::INIT_VIEWANGLE; }
+
+	// 現在視野角を慣性補正
+	UtilFunc::Correction::InertiaCorrection(m_fViewAngle, m_fDestViewAngle, follow::REV_VIEWANGLE);
+
+	// 球面座標変換による相対位置の取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
+}
+
+//==========================================================================
 // 通常状態のリセット
 //==========================================================================
 void CCamera::ResetNoneState()
@@ -975,6 +1026,14 @@ void CCamera::ResetOutFieldState()
 
 	// 球面座標変換による相対位置の取得
 	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
+}
+
+//==========================================================================
+// ゲーム終了状態のリセット
+//==========================================================================
+void CCamera::ResetGameEndState()
+{
+	// TODO：つくれ
 }
 
 //==========================================================================
@@ -1358,6 +1417,31 @@ MyLib::Vector3 CCamera::GetScreenPos(const MyLib::Vector3& pos)
 	);
 
 	return screenPos;
+}
+
+//==========================================================================
+// ゲーム終了カメラ情報設定処理
+//==========================================================================
+void CCamera::SetGameEndInfo(CObject* pLook, MyLib::Vector3 offset, const float fMoveTime)
+{
+	// 視認対象の設定
+	m_gameEndInfo.pLook = pLook;
+
+	// 視認対象位置オフセットの設定
+	m_gameEndInfo.offset = offset;
+
+	// 移動時間の設定
+	m_gameEndInfo.fMoveTime = fMoveTime;
+	m_gameEndInfo.fCurTime = 0.0f;
+
+	// 終了状態を解除
+	m_gameEndInfo.bEnd = false;
+
+	// 現在のカメラポイントを保存
+	m_gameEndInfo.start.posR = m_posR;	// 注視点
+	m_gameEndInfo.start.posV = m_posV;	// 視点
+	m_gameEndInfo.start.rot  = m_rot;	// 向き
+	m_gameEndInfo.start.fDistance = m_fDistance;	// 距離
 }
 
 //==========================================================================

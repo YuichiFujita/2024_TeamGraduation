@@ -1,0 +1,50 @@
+#==============================================================================
+#
+#	ランダム二つ名テキスト [hutatuna.txt]
+#	Author : 藤田 勇一
+#
+#==============================================================================
+
+TEXT_0
+	STR = 疾風の刃
+END_TEXT
+
+TEXT_1
+	STR = 雷光の牙
+END_TEXT
+
+TEXT_2
+	STR = 鉄壁の盾
+END_TEXT
+
+TEXT_3
+	STR = 剛腕の投士
+END_TEXT
+
+TEXT_4
+	STR = 蒼刃の翼
+END_TEXT
+
+TEXT_5
+	STR = 烈火の砲手
+END_TEXT
+
+TEXT_6
+	STR = 飛燕の影
+END_TEXT
+
+TEXT_7
+	STR = 白狼の咆哮
+END_TEXT
+
+TEXT_8
+	STR = 迅影の舞
+END_TEXT
+
+TEXT_9
+	STR = 雷牙の閃き
+END_TEXT
+
+TEXT_ELSE
+	STR = 読込エラー
+END_TEXT

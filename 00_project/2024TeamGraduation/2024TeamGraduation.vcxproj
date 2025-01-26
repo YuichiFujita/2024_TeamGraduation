@@ -230,6 +230,7 @@
     <ClCompile Include="Source\font.cpp" />
     <ClCompile Include="Source\fontChar.cpp" />
     <ClCompile Include="Source\game.cpp" />
+    <ClCompile Include="Source\gameEndManager.cpp" />
     <ClCompile Include="Source\gamemanager.cpp" />
     <ClCompile Include="Source\gauge2D.cpp" />
     <ClCompile Include="Source\gymDoor.cpp" />
@@ -375,6 +376,7 @@
     <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
     <ClCompile Include="Source\sound.cpp" />
+    <ClCompile Include="Source\spawnUI.cpp" />
     <ClCompile Include="Source\specialEffect.cpp" />
     <ClCompile Include="Source\specialEffect_kamehameha.cpp" />
     <ClCompile Include="Source\specialManager.cpp" />
@@ -478,6 +480,7 @@
     <ClInclude Include="Source\font.h" />
     <ClInclude Include="Source\fontChar.h" />
     <ClInclude Include="Source\game.h" />
+    <ClInclude Include="Source\gameEndManager.h" />
     <ClInclude Include="Source\gamemanager.h" />
     <ClInclude Include="Source\gauge2D.h" />
     <ClInclude Include="Source\gymDoor.h" />
@@ -620,6 +623,7 @@
     <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />
     <ClInclude Include="Source\sound.h" />
+    <ClInclude Include="Source\spawnUI.h" />
     <ClInclude Include="Source\specialEffect.h" />
     <ClInclude Include="Source\specialEffect_kamehameha.h" />
     <ClInclude Include="Source\specialManager.h" />
