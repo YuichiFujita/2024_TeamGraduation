@@ -14,27 +14,28 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 16
+NUM_MODEL = 17
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MODEL_FILENAME = data/MODEL/player/commentator/00_waist.x	# [0]腰
-MODEL_FILENAME = data/MODEL/player/commentator/01_body.x	# [1]体
-MODEL_FILENAME = data/MODEL/player/commentator/02_head.x	# [2]頭
-MODEL_FILENAME = data/MODEL/player/commentator/03_armUP_R.x	# [3]右腕(上)
-MODEL_FILENAME = data/MODEL/player/commentator/04_armDW_R.x	# [4]右腕(下)
-MODEL_FILENAME = data/MODEL/player/commentator/05_hand_R.x	# [5]右手
-MODEL_FILENAME = data/MODEL/player/commentator/06_armUP_L.x	# [6]左腕(上)
-MODEL_FILENAME = data/MODEL/player/commentator/07_armDW_L.x	# [7]左腕(下)
-MODEL_FILENAME = data/MODEL/player/commentator/08_hand_L.x	# [8]左手
-MODEL_FILENAME = data/MODEL/player/commentator/09_legUP_R.x	# [9]右脚(上)
-MODEL_FILENAME = data/MODEL/player/commentator/10_legDW_R.x	# [10]右脚(下)
-MODEL_FILENAME = data/MODEL/player/commentator/11_shoes_R.x	# [11]右足
-MODEL_FILENAME = data/MODEL/player/commentator/12_legUP_L.x	# [12]左脚(上)
-MODEL_FILENAME = data/MODEL/player/commentator/13_legDW_L.x	# [13]左脚(下)
-MODEL_FILENAME = data/MODEL/player/commentator/14_shoes_L.x	# [14]左足
-MODEL_FILENAME = data/MODEL/player/hair/mohikan.x			# [15]髪
+MODEL_FILENAME = data/MODEL/player/normal/00_waist.x	# [0]腰
+MODEL_FILENAME = data/MODEL/player/normal/01_body.x		# [1]体
+MODEL_FILENAME = data/MODEL/player/normal/02_head.x		# [2]頭
+MODEL_FILENAME = data/MODEL/player/normal/03_armUP_R.x	# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/player/normal/04_armDW_R.x	# [4]右腕(下)
+MODEL_FILENAME = data/MODEL/player/normal/05_hand_R.x	# [5]右手
+MODEL_FILENAME = data/MODEL/player/normal/06_armUP_L.x	# [6]左腕(上)
+MODEL_FILENAME = data/MODEL/player/normal/07_armDW_L.x	# [7]左腕(下)
+MODEL_FILENAME = data/MODEL/player/normal/08_hand_L.x	# [8]左手
+MODEL_FILENAME = data/MODEL/player/normal/09_legUP_R.x	# [9]右脚(上)
+MODEL_FILENAME = data/MODEL/player/normal/10_legDW_R.x	# [10]右脚(下)
+MODEL_FILENAME = data/MODEL/player/normal/11_shoes_R.x	# [11]右足
+MODEL_FILENAME = data/MODEL/player/normal/12_legUP_L.x	# [12]左脚(上)
+MODEL_FILENAME = data/MODEL/player/normal/13_legDW_L.x	# [13]左脚(下)
+MODEL_FILENAME = data/MODEL/player/normal/14_shoes_L.x	# [14]左足
+MODEL_FILENAME = data/MODEL/player/hair/bobobo.x		# [15]髪
+MODEL_FILENAME = data/MODEL/player/accessory/bobobo.x	# [16]アクセサリー
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -81,9 +82,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 0
 		PARENT = -1
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 0.00 73.50 0.00
+		POS = 0.00 66.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -91,8 +90,6 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 1
 		PARENT = 0
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
 		POS = 0.00 0.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -101,9 +98,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 2
 		PARENT = 1
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 0.00 44.00 0.00
+		POS = 0.00 46.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -111,9 +106,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 6					# 反転先
-		POS = -14.00 31.00 1.50
+		POS = -15.00 36.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -121,9 +114,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 4
 		PARENT = 3
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 7					# 反転先
-		POS = -18.50 0.50 -0.25
+		POS = -18.50 0.00 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -131,8 +122,6 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 5
 		PARENT = 4
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 8					# 反転先
 		POS = -14.00 -0.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -141,9 +130,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 6
 		PARENT = 1
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 3					# 反転先
-		POS = 16.00 31.00 1.50
+		POS = 15.00 36.50 1.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -151,9 +138,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 7
 		PARENT = 6
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 4					# 反転先
-		POS = 17.50 0.50 -0.25
+		POS = 18.50 0.00 0.25
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -161,8 +146,6 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 8
 		PARENT = 7
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 5					# 反転先
 		POS = 14.00 -0.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -171,8 +154,6 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 9
 		PARENT = 0
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 12					# 反転先
 		POS = -7.00 -8.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -181,9 +162,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 10
 		PARENT = 9
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 13					# 反転先
-		POS = 0.50 -27.00 0.50
+		POS = -0.50 -26.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -191,9 +170,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 11
 		PARENT = 10
-		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 14					# 反転先
-		POS = 1.00 -30.00 1.00
+		POS = 1.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -201,8 +178,6 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 12
 		PARENT = 0
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 9					# 反転先
 		POS = 7.00 -8.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -211,9 +186,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 13
 		PARENT = 12
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 10					# 反転先
-		POS = 0.00 -27.00 0.00
+		POS = 0.50 -26.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -221,22 +194,27 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 14
 		PARENT = 13
-		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = 11					# 反転先
-		POS = -0.50 -30.00 1.00
+		POS = 1.00 -22.50 1.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
-
+	
 	PARTSSET
 		INDEX = 15
 		PARENT = 2
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
+	
+	PARTSSET
+		INDEX = 16
+		PARENT = 2
+		POS = 0.00 0.00 0.00
+		ROT = 0.00 0.00 0.00
+		START = 1
+	END_PARTSSET
+	
 END_CHARACTERSET
 
 
@@ -253,22 +231,11 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 #
 #==============================================================================
 #------------------------------------------------------------------------------
-#デフォルトモーションのインデックス
-#------------------------------------------------------------------------------
-DEFAULT_ID = 0
-
-#------------------------------------------------------------------------------
-# モーション数
-#------------------------------------------------------------------------------
-NUM_MOTION = 3
-
-#------------------------------------------------------------------------------
 # モーションファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/reporter/motion_def.txt		# デフォルト
-MOTION_FILENAME = data/TEXT/character/reporter/motion_wait.txt	# 台詞
-MOTION_FILENAME = data/TEXT/character/reporter/motion_thought.txt	# 台詞
-
-
+MOTION_FILENAME = data/TEXT/character/dressup/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup01.txt		# 待機
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup02.txt		# 待機
+MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup03.txt		# 待機
 
 END_SCRIPT		# この行は絶対消さないこと！

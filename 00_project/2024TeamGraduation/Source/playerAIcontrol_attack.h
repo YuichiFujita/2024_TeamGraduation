@@ -46,7 +46,7 @@ public:
 		THROWTYPE_NORMAL,		// 通常
 		THROWTYPE_JUMP,			// ジャンプ
 		THROWTYPE_SPECIAL,		// スペシャル
-		//THROWTYPE_PASS,			// パス
+		THROWTYPE_PASS,			// パス
 		THROWTYPE_MAX
 	};
 
@@ -136,6 +136,7 @@ private:
 	void ThrowTypeNormal();			// 通常
 	void ThrowTypeJump();			// ジャンプ
 	void ThrowTypeSpecial();		// スペシャル
+	void ThrowTypePass();			// パス
 	
 	// 投げフラグ
 	void ThrowFlagNone() {};		// なし
@@ -146,20 +147,24 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void UpdateAttack();
-	void UpdateThrow();			// 投げ
-	bool IsCancelJumpAttack();	// キャンセル
+	void UpdateAttack();						// 攻め更新
+	void UpdateThrow();							// 投げ更新
+	bool IsCancelJumpAttack();					// キャンセル
 
-	void AttackNormal(CPlayer* pTarget);
-	void AttackJump(CPlayer* pTarget);
+	// 投げ
+	void AttackNormal(CPlayer* pTarget);		// 通常投げ
+	void AttackDash(CPlayer* pTarget);			// 走り投げ
 
-	void AttackDash(CPlayer* pTarget);		// 走り投げ
-	void AttackDashJump(CPlayer* pTarget);	// 走りジャンプ投げ
+	// ジャンプ
+	void AttackJump(CPlayer* pTarget);			// ジャンプ投げ
+	void AttackDashJump(CPlayer* pTarget);		// 走りジャンプ投げ
 
-	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
-	void SetActionTimer(int nMin, int nMax);	// 行動タイマー
+	void AttackFeint();							// フェイント
 
-	bool IsStop();
+	void UpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void SetAttackTimer(int nMin, int nMax);	// 行動タイマー
+
+	bool IsStop();			// 止める判断
 
 	//=============================
 	// メンバ変数
