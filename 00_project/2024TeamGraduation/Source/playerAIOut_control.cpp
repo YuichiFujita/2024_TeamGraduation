@@ -181,14 +181,14 @@ void CPlayerAIOutControl::ModeThrowManager(const float fDeltaTime, const float f
 
 	if (m_eThrow == EThrow::THROW_NONE)
 	{// タイプ無の場合
-		int n = rand() % 10;
-		//int n = 1;
+		//int n = rand() % 10;
+		////int n = 1;
 
-		if (n < 3)
-		{
-			m_eThrow = EThrow::THROW_NORMAL;
-		}
-		else
+		//if (n < 3)
+		//{
+		//	m_eThrow = EThrow::THROW_NORMAL;
+		//}
+		//else
 		{
 			m_eThrow = EThrow::THROW_PASS;
 		}
@@ -229,6 +229,9 @@ void CPlayerAIOutControl::ThrowPass(const float fDeltaTime, const float fDeltaRa
 	{// フラグがオフの時
 		m_eThrow = EThrow::THROW_NONE;
 	}
+
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
 
 	// パス
 	Pass();
@@ -292,7 +295,7 @@ void CPlayerAIOutControl::AreaCheck()
 
 	// 自分のチームを取得
 	CGameManager::ETeamSide team = m_pAIOut->GetTeam();
-	
+
 	if (team == CGameManager::ETeamSide::SIDE_LEFT)
 	{// 左チーム
 		if (ballPos.x < 0)
@@ -388,28 +391,27 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 	if ((eOutPos == CPlayerManager::EOutPos::OUT_LEFT_FAR) ||
 		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_FAR))
 	{// ポジションが奥
-
-
+		// 向きの設定
+		// なし
 	}
 	else if (
 		(eOutPos == CPlayerManager::EOutPos::OUT_LEFT_NEAR) ||
 		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_NEAR))
 	{// ポジションが手前
-
+		// 向きの設定
 		fDest *= -1.0f;
-
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
 	{// 左
 		if (fAngle > -D3DX_PI * 0.5f)
-		{
+		{// 向きの設定
 			fDest *= -1.0f;
 		}
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
 	{// 右
 		if (fAngle < D3DX_PI * 0.5f)
-		{
+		{// 向きの設定
 			fDest *= -1.0f;
 		}
 	}

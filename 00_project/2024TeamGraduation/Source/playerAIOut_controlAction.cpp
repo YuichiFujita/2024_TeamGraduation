@@ -159,22 +159,7 @@ void CPlayerAIOutControlAction::JumpFloat(CPlayer* player, const float fDeltaTim
 //==========================================================================
 void CPlayerAIOutControlAction::Special(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	//CBall* pBall = player->GetBall();
-	//CGameManager* pGameManager = CGameManager::GetInstance();
-	//CTeamStatus* pTeamStatus = pGameManager->GetTeamStatus(player->GetTeam());
-
-	////スペシャルゲージMAX＋ボール所持か
-	//if (pBall == nullptr || !pTeamStatus->IsMaxSpecial()) return;
-
-	////TODO: フラグか何かで発動操作
-	//if (m_sFlag.bSpecial)
-	//{
-	//	// フラグリセット
-	//	m_sFlag.bSpecial = false;
-
-	//	//発動
-	//	SpecialSetting(player, pBall, pTeamStatus);
-	//}
+	
 }
 
 //==========================================================================

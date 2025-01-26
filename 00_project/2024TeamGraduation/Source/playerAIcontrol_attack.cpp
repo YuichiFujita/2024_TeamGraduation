@@ -47,6 +47,7 @@ CPlayerAIControlAttack::THROWTYPE_FUNC CPlayerAIControlAttack::m_ThrowTypeFunc[]
 	&CPlayerAIControlAttack::ThrowTypeNormal,			// 通常
 	&CPlayerAIControlAttack::ThrowTypeJump,				// ジャンプ
 	&CPlayerAIControlAttack::ThrowTypeSpecial,			// スペシャル
+	&CPlayerAIControlAttack::ThrowTypePass,				// パス
 };
 
 CPlayerAIControlAttack::THROWFLAG_FUNC CPlayerAIControlAttack::m_ThrowFlagFunc[] =	// 投げフラグ関数
@@ -164,14 +165,13 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 			// 見る
 			SeeTarget(m_pTarget->GetPosition());
 		}
-		
+
 		// タイマー更新
-		UpdateActionTimer(fDeltaTime, fDeltaRate, fSlowRate);
+		UpdateAttackTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
 		// 投げ種類の更新
 		(this->*(m_AttackModeFunc[m_eAttackMode]))();
 	}
-	SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 
 	// 親クラスの更新（最後尾に設置）
 	CPlayerAIControlMode::Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -255,10 +255,10 @@ void CPlayerAIControlAttack::UpdateAttack()
 		}
 		else
 		{
-			//int n = 1;
+			//int n = 2;
 
 			// 今はランダムで決定
-			int n = rand() % 2;
+			int n = rand() % 3;
 
 			switch (n)
 			{
@@ -268,6 +268,10 @@ void CPlayerAIControlAttack::UpdateAttack()
 
 			case 1:	// ジャンプ
 				m_eThrowType = EThrowType::THROWTYPE_JUMP;
+				break;
+
+			case 2:	// パス
+				m_eThrowType = EThrowType::THROWTYPE_PASS;
 				break;
 
 			default:
@@ -298,9 +302,19 @@ void CPlayerAIControlAttack::UpdateThrow()
 //--------------------------------------------------------------------------
 void CPlayerAIControlAttack::ThrowTypeNormal()
 {
-	//m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+	// ターゲットとの距離を取得
+	float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-	AttackNormal(m_pTarget);
+	if (distanse < 200.0f)
+	{
+		// 通常投げ
+		AttackNormal(m_pTarget);
+	}
+	else
+	{
+		// 走り投げ
+		AttackDash(m_pTarget);
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -308,18 +322,35 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 //--------------------------------------------------------------------------
 void CPlayerAIControlAttack::ThrowTypeJump()
 {
-	// 走り投げ
-	AttackDashJump(m_pTarget);
+	// ターゲットとの距離を取得
+	float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-	//AttackJump(m_pTarget);
+	if (distanse < 200.0f)
+	{
+		// ジャンプ投げ
+		AttackJump(m_pTarget);
+	}
+	else
+	{
+		// 走りジャンプ投げ
+		AttackDashJump(m_pTarget);
+	}
 }
 
 //--------------------------------------------------------------------------
-// スペシャル投げ
+// スペシャル
 //--------------------------------------------------------------------------
 void CPlayerAIControlAttack::ThrowTypeSpecial()
 {
 	m_eThrowFlag = EThrowFlag::THROW_SPECIAL;
+}
+
+//--------------------------------------------------------------------------
+// パス
+//--------------------------------------------------------------------------
+void CPlayerAIControlAttack::ThrowTypePass()
+{
+	m_eThrowFlag = EThrowFlag::THROW_PASS;
 }
 
 //--------------------------------------------------------------------------
@@ -425,7 +456,8 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 //================================================================================
 void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget)
 {
-	SetActionTimer(0, 5);
+	// 攻撃までの時間を設定
+	SetAttackTimer(0, 5);
 }
 
 //================================================================================
@@ -441,10 +473,13 @@ void CPlayerAIControlAttack::AttackJump(CPlayer* pTarget)
 	// アクション：跳ぶ
 	SetActionFlag(EActionFlag::ACTION_JUMP);
 
-	float rate = GetJumpRate();
-	float rateMax = GetMaxjumpRate();
+	// 行動：止まる
+	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 
-	if (rateMax >= rate)	// 高さによって変わる
+	// ジャンプ割合の取得
+	float rate = GetJumpRate();
+
+	if (rate >= 0.0f)
 	{
 		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
 	}
@@ -565,6 +600,14 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 	{
 		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
 	}
+}
+
+//==========================================================================
+// フェイント
+//==========================================================================
+void CPlayerAIControlAttack::AttackFeint()
+{
+
 }
 
 //==========================================================================
@@ -814,7 +857,7 @@ bool CPlayerAIControlAttack::IsStop()
 //==========================================================================
 // 更新：アクションタイマー
 //==========================================================================
-void CPlayerAIControlAttack::UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CPlayerAIControlAttack::UpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_sTimig.bSet)
 	{
@@ -835,7 +878,7 @@ void CPlayerAIControlAttack::UpdateActionTimer(const float fDeltaTime, const flo
 //==========================================================================
 // アクション時間の設定
 //==========================================================================
-void CPlayerAIControlAttack::SetActionTimer(int nMin, int nMax)
+void CPlayerAIControlAttack::SetAttackTimer(int nMin, int nMax)
 {
 	// 角度の設定
 	if (!m_sTimig.bSet)
