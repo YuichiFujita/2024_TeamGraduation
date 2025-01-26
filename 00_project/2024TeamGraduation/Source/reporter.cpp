@@ -44,7 +44,7 @@ CReporter::STATE_FUNC CReporter::m_StateFunc[] =	// 状態関数
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-CListManager<CReporter> CReporter::m_List = {};	// リスト
+CListManager<CReporter> CReporter::m_List[CGameManager::ETeamSide::SIDE_MAX] = {};	// リスト
 
 //==========================================================================
 // コンストラクタ
@@ -116,7 +116,7 @@ HRESULT CReporter::Init()
 	}
 
 	// リストに割当
-	m_List.Regist(this);
+	m_List[m_TeamSide].Regist(this);
 
 	// 影生成
 	if (m_pShadow == nullptr)
@@ -141,7 +141,7 @@ HRESULT CReporter::Init()
 void CReporter::Uninit()
 {
 	// リストから削除
-	m_List.Delete(this);
+	m_List[m_TeamSide].Delete(this);
 
 	// 終了処理
 	CObjectChara::Uninit();

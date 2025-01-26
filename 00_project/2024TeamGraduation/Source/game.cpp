@@ -217,7 +217,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
-
 #endif
 
 		// ツリー終端
