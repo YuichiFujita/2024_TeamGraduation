@@ -94,7 +94,7 @@ public:
 
 	// コンストラクタ
 	CCharacterStatus(CharParameter status) :
-		m_Parameter(status)					// パラメーター
+		m_Parameter(status)	// パラメーター
 	{}	
 
 	// デストラクタ
@@ -103,7 +103,7 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	CharParameter GetParameter() { return m_Parameter; }					// パラメーター取得
+	CharParameter GetParameter() { return m_Parameter; }	// パラメーター取得
 
 #if _DEBUG
 	void SetParameter(const CharParameter& parameter) { m_Parameter = parameter; }	// パラメーター設定
@@ -114,7 +114,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	CharParameter m_Parameter;			// パラメーター
+	CharParameter m_Parameter;	// パラメーター
 };
 
 #endif

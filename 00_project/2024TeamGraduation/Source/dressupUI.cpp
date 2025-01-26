@@ -1220,6 +1220,9 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	// 元のチームを保存
 	CGameManager::ETeamSide side = m_pPlayer->GetTeam();
 
+	// ボールを投げる
+	m_pBall->Toss(m_pPlayer);
+
 	// プレイヤーの削除
 	SAFE_KILL(m_pPlayer);
 
