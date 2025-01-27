@@ -4734,7 +4734,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\Mii\\outUV08.png";
+    "data\\TEXTURE\\player\\outUV08.png";
    }
   }
   Material {

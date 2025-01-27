@@ -369,6 +369,7 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		m_pSPBallet != nullptr)
 	{
 		m_pSPBallet->SetTrigger(0);
+		m_pSPBallet->SetEnableAutoDeath(true);
 		m_pSPBallet = nullptr;
 	}
 
@@ -2180,8 +2181,7 @@ void CBall::UpdateThrowLine()
 	{// “Š‚°I‚í‚è
 
 		// ’âŽ~
-		m_pThrowLine->SetTrigger(0);
-		m_pThrowLine->SetTrigger(1);
+		m_pThrowLine->Uninit();
 		m_pThrowLine = nullptr;
 	}
 }

@@ -249,7 +249,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.210000;0.210000;0.210000;;
    TextureFilename {
-    "data\\TEXTURE\\charmtext\\window_full.png";
+    "data\\TEXTURE\\title\\maple.jpg";
    }
   }
   Material {
