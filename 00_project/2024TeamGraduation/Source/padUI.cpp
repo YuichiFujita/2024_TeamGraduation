@@ -182,9 +182,6 @@ void CPadUI::Decide()
 {
 	// 決定のパターンに変更
 	SetPatternAnim(GetPatternAnim() + GetDivisionU());
-
-	// 矢印を非表示
-	SetEnableDispArrow(false);
 }
 
 //==========================================================================
@@ -194,9 +191,6 @@ void CPadUI::Cancel()
 {
 	// キャンセルのパターンに変更
 	SetPatternAnim(GetPatternAnim() - GetDivisionU());
-
-	// 矢印を表示
-	SetEnableDispArrow(true);
 }
 
 //==========================================================================

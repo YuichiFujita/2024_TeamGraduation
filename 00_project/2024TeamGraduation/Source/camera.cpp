@@ -510,7 +510,7 @@ void CCamera::SetCameraCutIn()
 //==========================================================================
 void CCamera::Reset()
 {
-	if (m_StateFuncList[m_state] != nullptr)
+	if (m_ResetFuncList[m_state] != nullptr)
 	{ // ó‘ÔƒŠƒZƒbƒgŠÖ”‚ª‚ ‚éê‡
 
 		// ó‘Ô•Êˆ—
