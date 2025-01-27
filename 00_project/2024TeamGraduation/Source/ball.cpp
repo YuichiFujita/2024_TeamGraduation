@@ -1761,6 +1761,9 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチ状態にする
 	SetState(STATE_CATCH);
 
+	// 攻撃種類を破棄
+	m_typeAtk = ATK_NONE;
+
 	// プレイヤーのチームを保存
 	m_typeTeam = pPlayer->GetTeam();
 

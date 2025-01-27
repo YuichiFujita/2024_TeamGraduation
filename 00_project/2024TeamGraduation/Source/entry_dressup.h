@@ -97,6 +97,7 @@ public:
 	int GetTransUINumSelect(const int nSelectX) const;						// 遷移UI選択数取得
 	int GetAreaUINumSelect(const int nSelectX) const;						// ポジション変更UI選択数取得
 	bool IsNameSelectOK(const CGameManager::ETeamSide team) const;			// 名前選択可能かの確認
+	bool IsAreaChangeOK(const CGameManager::ETeamSide team) const;			// ポジション変更可能かの確認
 	bool IsTeamReady(const CPlayer::EFieldArea area, const CGameManager::ETeamSide team);	// チームの準備全完了確認
 	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
 

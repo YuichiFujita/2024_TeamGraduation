@@ -64,14 +64,16 @@ namespace
 
 		namespace back
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 440.0f, 655.0f, 0.0f);	// 位置
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
+			const std::string TEXTURE	= "data\\TEXTURE\\entry\\back.png";	// テクスチャ
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 500.0f, 645.0f, 0.0f);	// 位置
+			const float HEGHT = 55.0f;	// 大きさ
 		}
 
 		namespace enter
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 440.0f, 655.0f, 0.0f);	// 位置
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(180.0f, 45.0f);	// 大きさ
+			const std::string TEXTURE = "data\\TEXTURE\\entry\\next.png";	// テクスチャ
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 500.0f, 645.0f, 0.0f);	// 位置
+			const float HEGHT = 55.0f;	// 大きさ
 		}
 	}
 }
@@ -103,6 +105,8 @@ CEntry_Dressup::~CEntry_Dressup()
 //==========================================================================
 HRESULT CEntry_Dressup::Init()
 {
+	CTexture* pTexture = CTexture::GetInstance();
+
 	// 前回の着せ替え読込
 	Load();
 
@@ -134,7 +138,6 @@ HRESULT CEntry_Dressup::Init()
 		m_apAreaUI[i]->SetEnableAutoPlay(false);
 
 		// テクスチャの割当
-		CTexture* pTexture = CTexture::GetInstance();
 		int nTexID = CTexture::GetInstance()->Regist(ui::area::TEXTURE);
 		m_apAreaUI[i]->BindTexture(nTexID);
 
@@ -155,11 +158,18 @@ HRESULT CEntry_Dressup::Init()
 		return E_FAIL;
 	}
 
+	// テクスチャの割当
+	int nTexBackID = CTexture::GetInstance()->Regist(ui::back::TEXTURE);
+	m_apTransUI[TRANS_BACK]->BindTexture(nTexBackID);
+
 	// 位置を設定
 	m_apTransUI[TRANS_BACK]->SetPosition(ui::back::POS);
 
-	// 大きさを設定
-	m_apTransUI[TRANS_BACK]->SetSize(ui::back::SIZE);
+	// 横幅を元にサイズを設定
+	MyLib::Vector2 sizeBack = pTexture->GetImageSize(nTexBackID);
+	sizeBack = UtilFunc::Transformation::AdjustSizeByHeight(sizeBack, ui::back::HEGHT);
+	m_apTransUI[TRANS_BACK]->SetSize(sizeBack);
+	m_apTransUI[TRANS_BACK]->SetSizeOrigin(m_apTransUI[TRANS_BACK]->GetSize());
 
 	// 進むボタンの生成
 	m_apTransUI[TRANS_NEXT] = CObject2D::Create(PRIORITY);
@@ -170,11 +180,18 @@ HRESULT CEntry_Dressup::Init()
 		return E_FAIL;
 	}
 
+	// テクスチャの割当
+	int nTexNextID = CTexture::GetInstance()->Regist(ui::enter::TEXTURE);
+	m_apTransUI[TRANS_NEXT]->BindTexture(nTexNextID);
+
 	// 位置を設定
 	m_apTransUI[TRANS_NEXT]->SetPosition(ui::enter::POS);
 
-	// 大きさを設定
-	m_apTransUI[TRANS_NEXT]->SetSize(ui::enter::SIZE);
+	// 横幅を元にサイズを設定
+	MyLib::Vector2 sizeNext = pTexture->GetImageSize(nTexNextID);
+	sizeNext = UtilFunc::Transformation::AdjustSizeByHeight(sizeNext, ui::enter::HEGHT);
+	m_apTransUI[TRANS_NEXT]->SetSize(sizeNext);
+	m_apTransUI[TRANS_NEXT]->SetSizeOrigin(m_apTransUI[TRANS_NEXT]->GetSize());
 
 	int nCurLeft = 0;	// 現在の左プレイヤー数
 	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
@@ -648,8 +665,7 @@ int CEntry_Dressup::GetNumDressUI(const CGameManager::ETeamSide team) const
 void CEntry_Dressup::ChangeDressUIArea(const CGameManager::ETeamSide team)
 {
 	// チームの準備が完了していない場合変更不可
-	int nOldArea = m_apAreaUI[team]->GetPatternAnim();	// 元パターン
-	if (!IsTeamReady((CPlayer::EFieldArea)nOldArea, team)) { return; }
+	if (!IsAreaChangeOK(team)) { return; }
 
 	// TODO：ここで現在の選択インデックスが持つDressUIポインタを保存
 	std::map<CSelectUI*, CDressupUI*> mapDressUI;	// 着せ替えUI一時保存マップ
@@ -859,6 +875,34 @@ bool CEntry_Dressup::IsNameSelectOK(const CGameManager::ETeamSide team) const
 
 			return false;
 		}
+	}
+
+	return true;
+}
+
+//==========================================================================
+// ポジション変更可能かの確認
+//==========================================================================
+bool CEntry_Dressup::IsAreaChangeOK(const CGameManager::ETeamSide team) const
+{
+	const int nMaxDressUI = GetNumDressUI(team);		// 着せ替えUI総数
+	const int nSideMax = CPlayerManager::OUT_MAX / 2;	// チームごとの最大人数
+	const int nOffset = nSideMax * (int)team;			// インデックスオフセット
+	for (const auto& rSelect : m_vecSelect)
+	{ // 要素数分繰り返す
+
+		MyLib::PosGrid2 select = rSelect->GetSelectIdx();
+
+		// 既に自分以外のユーザーが選択中の場合選択不可
+		if (select.y != CSelectUI::SELECT_DRESSUP) { continue; }
+
+		// 選択範囲が引数チームじゃない場合次へ
+		if (!(select.x >= nOffset && select.x < nMaxDressUI + nOffset)) { continue; }
+
+		// 操作していない場合次へ
+		if (rSelect->IsSelect()) { continue; }
+
+		return false;
 	}
 
 	return true;
