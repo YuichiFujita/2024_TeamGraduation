@@ -48,7 +48,8 @@ namespace
 					D3DXVECTOR2(0.0f, 1.0f),	// 左下
 					D3DXVECTOR2(1.0f, 1.0f),	// 右下
 				};
-				const float WIDTH = 350.0f;	// 横幅
+				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, 18.0f, 0.0f);	// オフセット
+				const float WIDTH = 325.0f;	// 横幅
 			}
 			namespace face
 			{
@@ -59,6 +60,7 @@ namespace
 					D3DXVECTOR2(0.3f, 0.42f),	// 左下
 					D3DXVECTOR2(0.7f, 0.42f),	// 右下
 				};
+				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -20.0f, 0.0f);	// オフセット
 				const float WIDTH = 620.0f;	// 横幅
 			}
 		}
@@ -852,8 +854,29 @@ void CDressupUI::SetPositionRelative()
 	// プレイヤーフレームの位置設定
 	m_pPlayerFrame->SetPosition(posThis);
 
-	// プレイヤーUIの位置設定
-	m_pPlayerUI->SetPosition(posThis);
+	switch (m_typeChange)
+	{ // 変更種類ごとの処理
+	case EChangeType::TYPE_HAIR:
+	case EChangeType::TYPE_ACCESSORY:
+	case EChangeType::TYPE_FACE:
+	{ // 顔周りの着せ替えの場合
+
+		// プレイヤーUIの位置設定
+		m_pPlayerUI->SetPosition(posThis + player::ui::face::OFFSET);
+		break;
+	}
+	case EChangeType::TYPE_BODY:
+	case EChangeType::TYPE_HANDEDNESS:
+	{ // 体周りの着せ替えの場合
+
+		// プレイヤーUIの位置設定
+		m_pPlayerUI->SetPosition(posThis + player::ui::body::OFFSET);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //============================================================
@@ -1244,8 +1267,24 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	// 種類を自動破棄/更新/描画しないものにする
 	m_pPlayer->SetType(CObject::TYPE::TYPE_NONE);
 
-	// インデックスの上書き
-	m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// インデックスの上書き
+		m_pPlayer->SetMyPlayerIdx(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+		break;
+	}
+	case CPlayer::FIELD_OUT:
+	{
+		// インデックスの上書き
+		m_pPlayer->SetMyPlayerIdx(-1);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 
 	// ドレスアップに再割当
 	m_pHair->BindObjectCharacter(m_pPlayer);

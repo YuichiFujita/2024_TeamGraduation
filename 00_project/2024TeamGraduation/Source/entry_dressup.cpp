@@ -33,21 +33,21 @@ namespace
 	{
 		namespace left
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y - 80.0f, 0.0f);	// 左中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, VEC3_SCREEN_CENT.y - 45.0f, 0.0f);	// 左中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
 		}
 
 		namespace right
 		{
-			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y - 80.0f, 0.0f);	// 右中心位置
+			const MyLib::Vector3 POS = MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, VEC3_SCREEN_CENT.y - 45.0f, 0.0f);	// 右中心位置
 			const float OFFSET_X = 210.0f;	// X座標オフセット
 		}
 
 		namespace area
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 240.0f, 570.0f, 0.0f);	// 左位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 280.0f, 615.0f, 0.0f);	// 左位置
 			const std::string TEXTURE	= "data\\TEXTURE\\entry\\inout.png";	// 変更種類アイコンテクスチャ
-			const MyLib::Vector3 OFFSET	= MyLib::Vector3(480.0f, 0.0f, 0.0f);	// オフセット
+			const MyLib::Vector3 OFFSET	= MyLib::Vector3(560.0f, 0.0f, 0.0f);	// オフセット
 			const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(1, 2);	// テクスチャ分割数
 			const float WIDTH			= 40.0f;	// 横幅
 		}
@@ -65,14 +65,14 @@ namespace
 		namespace back
 		{
 			const std::string TEXTURE	= "data\\TEXTURE\\entry\\back.png";	// テクスチャ
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 500.0f, 645.0f, 0.0f);	// 位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 502.0f, 650.0f, 0.0f);	// 位置
 			const float HEGHT = 55.0f;	// 大きさ
 		}
 
 		namespace enter
 		{
 			const std::string TEXTURE = "data\\TEXTURE\\entry\\next.png";	// テクスチャ
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 500.0f, 645.0f, 0.0f);	// 位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x + 502.0f, 650.0f, 0.0f);	// 位置
 			const float HEGHT = 55.0f;	// 大きさ
 		}
 	}
@@ -314,7 +314,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 
 		// 着せ替えUIの生成
-		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, -1, posUI);
+		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI);
 		if (m_apDressInfo[nPlayerIdx] == nullptr)
 		{ // 生成に失敗した場合
 

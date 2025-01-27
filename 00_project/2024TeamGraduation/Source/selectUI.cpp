@@ -36,7 +36,7 @@ namespace
 		const std::string TEXTURE	= "data\\TEXTURE\\entry\\playerMarker001.png";	// コントローラーUIテクスチャ
 		const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(4, 1);	// テクスチャ分割数
 		const float NAME_WIDTH	= 22.0f;	// 名前選択時の横幅
-		const float DRESS_WIDTH	= 55.0f;	// 着せ替え時の横幅
+		const float DRESS_WIDTH	= 40.0f;	// 着せ替え時の横幅
 		const float OTHER_WIDTH	= 18.0f;	// 他選択時の横幅
 		const MyLib::Vector3 NAME_OFFSET	= MyLib::Vector3(0.0f, -60.0f, 0.0f);	// 名前オフセット
 		const MyLib::Vector3 DRESS_OFFSET	= MyLib::Vector3(0.0f, -140.0f, 0.0f);	// 着せ替えオフセット
@@ -47,22 +47,22 @@ namespace
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\flame_choice.png";	// 背景テクスチャ
 		namespace name
 		{
-			const float PLUS_EDGE = 60.0f;	// フレーム縁取り拡大
+			const float PLUS_EDGE = 45.0f;	// フレーム縁取り拡大
 		}
 		namespace dress
 		{
 			const MyLib::Vector3 OFFSET	= MyLib::Vector3(0.0f, 55.0f, 0.0f);	// オフセット
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(110.0f, 200.0f);		// 大きさ
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(155.0f, 200.0f);		// 大きさ
 		}
 		namespace area
 		{
 			const float PLUS_EDGE	= 35.0f;	// フレーム縁取り拡大
-			const float OFFSET_Y	= -58.0f;	// Yオフセット
+			const float OFFSET_Y	= 46.0f;	// Yオフセット
 		}
 		namespace trans
 		{
 			const float PLUS_EDGE = 35.0f;	// フレーム縁取り拡大
-			const float OFFSET_Y = -58.0f;	// Yオフセット
+			const float OFFSET_Y = 46.0f;	// Yオフセット
 		}
 	}
 }

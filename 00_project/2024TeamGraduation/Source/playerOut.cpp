@@ -76,7 +76,7 @@ bool CPlayerOut::IsCrab()
 	// プレイヤー情報の取得
 	CPlayer* pPlayer = GetPlayer();
 
-	if (!pPlayer/* || !m_bClab*/) return false;
+	if (!pPlayer || !m_bClab) return false;
 
 	// 世界にボールがあるか
 	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報
