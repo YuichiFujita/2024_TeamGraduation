@@ -240,6 +240,9 @@ void CPlayerAIControlDefense::NotPlayerBall(const float fDeltaTime, const float 
 	if (!pBall) return;
 	CBall::EState stateBall = pBall->GetState();
 
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+
 	if (IsPassTarget() &&							// パスが自分に来る
 		stateBall == CBall::EState::STATE_PASS)		// ボールがパス状態
 	{

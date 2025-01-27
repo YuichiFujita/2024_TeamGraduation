@@ -54,7 +54,7 @@ public:
 	{
 		ATTACK_NONE = 0,
 		ATTACK_THROW,
-		ATTACK_JUMP,
+		ATTACK_DASH,
 		ATTACK_MAX
 	};
 
@@ -165,7 +165,7 @@ private:
 
 	// ジャンプ
 	void AttackJump(CPlayer* pTarget);			// ジャンプ投げ
-	void AttackDashJump(CPlayer* pTarget);		// 走りジャンプ投げ
+	void AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse);		// 走りジャンプ投げ
 
 	void AttackFeint();							// フェイント
 

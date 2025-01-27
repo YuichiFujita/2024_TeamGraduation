@@ -273,29 +273,12 @@ void CPlayerUserOutControlMove::BilnkStick(CPlayer* player, const float fDeltaTi
 		// トリガーカウントの設定
 		SetCntTrigger(pCntTrigger);
 
+		// トリガーのインターバル設定
+		SetTriggerInterval(0.0f);
+
 		// ダッシュしている状態にする
 		SetBlink(true);
 	}
-
-	//----------------------------------------------------------------------
-	//	トリガーインターバルの経過
-	//----------------------------------------------------------------------
-	float fTriggerInterval = GetTriggerInterval();	// トリガーインターバル
-
-	// トリガーインターバルの減算
-	fTriggerInterval -= fDeltaTime * fSlowRate;
-	if (fTriggerInterval <= 0.0f)
-	{ // トリガーインターバルが終了した場合
-
-		// トリガーカウントのリセット
-		memset(pCntTrigger, 0, sizeof(pCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
-
-		// トリガーカウントの設定
-		SetCntTrigger(pCntTrigger);
-	}
-
-	// トリガーインターバルの反映
-	SetTriggerInterval(fTriggerInterval);
 }
 
 //==========================================================================

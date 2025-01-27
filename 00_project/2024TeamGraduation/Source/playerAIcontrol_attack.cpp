@@ -259,7 +259,7 @@ void CPlayerAIControlAttack::UpdateAttack()
 			// ターゲットとの距離を取得
 			float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-			if (distanse < 200.0f)
+			/*if (distanse < 200.0f)
 			{
 				m_eThrowType = EThrowType::THROWTYPE_NORMAL;
 			}
@@ -267,7 +267,7 @@ void CPlayerAIControlAttack::UpdateAttack()
 			{
 				m_eThrowType = EThrowType::THROWTYPE_JUMP;
 			}
-			else
+			else*/
 			{
 				m_eThrowType = (EThrowType)UtilFunc::Transformation::Random(EThrowType::THROWTYPE_NORMAL, EThrowType::THROWTYPE_JUMP);
 			}
@@ -300,17 +300,24 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 
 	if (m_eAttackNormal == EAttackNormal::ATTACK_NONE)
 	{// 設定されていない場合
-		m_eAttackNormal = (EAttackNormal)UtilFunc::Transformation::Random(EAttackNormal::ATTACK_THROW, EAttackNormal::ATTACK_JUMP);
+		m_eAttackNormal = (EAttackNormal)UtilFunc::Transformation::Random(EAttackNormal::ATTACK_THROW, EAttackNormal::ATTACK_DASH);
 	}
 
 	switch (m_eAttackNormal)
 	{
 	case EAttackNormal::ATTACK_THROW:	// 通常
+
+		if (distanse > 400.0f)
+		{
+			// 走り投げ
+			AttackDash(m_pTarget);
+			return;
+		}
 		// 通常投げ
 		AttackNormal(m_pTarget);
 		break;
 
-	case EAttackNormal::ATTACK_JUMP:	// ジャンプ
+	case EAttackNormal::ATTACK_DASH:	// ジャンプ
 		// 走り投げ
 		AttackDash(m_pTarget);
 		break;
@@ -336,23 +343,25 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 
 	if (distanseLine < 200.0f )
 	{
-		if (distanse > 500.0f)
+		if (distanse > 750.0f)
 		{
 			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
 			return;
 		}
+
 		// ジャンプ投げ
 		AttackJump(m_pTarget);
 	}
 	else
 	{
-		if (distanse > 500.0f)
+		if (distanse > 750.0f)
 		{
 			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
 			return;
 		}
+
 		// 走りジャンプ投げ
-		AttackDashJump(m_pTarget);
+		AttackDashJump(m_pTarget, 500.0f, 300.0f);
 	}
 }
 
@@ -464,7 +473,7 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget)
 {
 	// 攻撃までの時間を設定
-	SetAttackTimer(0, 3);
+	SetAttackTimer(0, 2);
 }
 
 //================================================================================
@@ -549,7 +558,7 @@ void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget)
 //================================================================================
 // ダッシュジャンプ投げ
 //================================================================================
-void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
+void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse)
 {
 	// ターゲットの取得
 	if (!pTarget) return;
@@ -566,8 +575,6 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 	// ラインとの距離
 	float distanceLine = 0.0f;
 	float distanceTarget = 0.0f;
-	float JUMP_LENGTH_TARGET = 500.0f;
-	float JUMP_LENGTH_LINE = 300.0f;
 
 	// ターゲットのエリアの取得
 	CGameManager::ETeamSide side = pMy->GetTeam();
@@ -582,28 +589,32 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 		return;
 	}
 
-	if (distanceTarget > JUMP_LENGTH_TARGET && distanceLine > JUMP_LENGTH_LINE)
-	{// 
-
+	if (distanceTarget > fTargetDistanse &&		// ターゲットとの距離
+		distanceLine > LineDistanse)			// 線との距離
+	{
 		// 走る
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
-		if (Approatch(posTarget, GetParameter().fRadius))
+		if (Approatch(posTarget, 30.0f))
 		{// 範囲内の場合
-			//SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);			// 行動：止まる
+			// 止まる
+			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		}
 
 		return;
 	}
 
-	if (distanceTarget > JUMP_LENGTH_TARGET ||
-		distanceLine > JUMP_LENGTH_LINE)
+	if (distanceTarget > fTargetDistanse ||
+		distanceLine > LineDistanse)
 	{
 		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 	}
 
-	if (pMy->GetPosition().y >= GetParameter().fJumpEnd)	// 高さによって変わる
+	// ジャンプ割合の取得
+	float rate = GetJumpRate();
+
+	if (rate >= 0.0f)
 	{
 		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
 	}
