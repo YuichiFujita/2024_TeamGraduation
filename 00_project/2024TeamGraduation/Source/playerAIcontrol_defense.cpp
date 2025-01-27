@@ -67,7 +67,6 @@ namespace
 CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	// キャッチ関数
 {
 	&CPlayerAIControlDefense::MoveIdle,					// なし
-	&CPlayerAIControlDefense::MoveDodge,				// 回避
 	&CPlayerAIControlDefense::MoveChaseBall,			// ボールを追いかける
 	&CPlayerAIControlDefense::MoveRetreat,				// 後退
 	&CPlayerAIControlDefense::MoveRandom,				// ランダム
@@ -253,12 +252,28 @@ void CPlayerAIControlDefense::NotPlayerBall(const float fDeltaTime, const float 
 		return;
 	}
 
+	if (IsLineOverBall())
+	{// ボールが相手側にある
+
+		if (m_eActionStatus != EActionStatus::ACTIONSTATUS_COOLDOWN ||
+			m_eAction != EAction::RNDOM)
+		{
+			// ランダム
+			m_eAction = EAction::RNDOM;
+
+			// アクション状態：アクション
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
+
+			return;
+		}
+	}
+
 	if (!IsLineOverBall() &&							// 自陣にある
 		stateBall == CBall::EState::STATE_LAND ||		// 転がっている
 		stateBall == CBall::EState::STATE_FREE ||		// 触れて取れる状態
 		stateBall == CBall::EState::STATE_REBOUND ||	// リバウンド
 		stateBall == CBall::EState::STATE_PASS ||		// パス
-		stateBall == CBall::EState::STATE_HOM_PASS)		
+		stateBall == CBall::EState::STATE_HOM_PASS)		// ホーミングパス
 	{
 		// ボールを追う
 		m_eAction = EAction::CHASE_BALL;
@@ -394,23 +409,19 @@ void CPlayerAIControlDefense::MoveChaseBall()
 
 			if (stateBall == CBall::EState::STATE_PASS ||		// パス
 				stateBall == CBall::EState::STATE_HOM_PASS)		// ホーミングパス
-			{
-				// ボールを奪う
+			{// ボールを奪う
 				BallSteal();
-
 				return;
 			}
 
 			if (stateBall == CBall::EState::STATE_REBOUND)		// リバウンド
 			{// リバウンドを取る
 				BallChaseRebound();
-
 				return;
 			}
 			
 			// キャッチ：取りに行く
 			BallChase();
-
 			return;
 		}
 	}
@@ -468,21 +479,6 @@ void CPlayerAIControlDefense::MoveIdle()
 
 	// アクション状態：なし
 	m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
-}
-
-//--------------------------------------------------------------------------
-// 回避
-//--------------------------------------------------------------------------
-void CPlayerAIControlDefense::MoveDodge()
-{
-	// ボールとの距離
-	float distanceBall = GetDistanceBall();
-
-	// 距離が離れている場合
-	if (distanceBall > 5.0f) return;
-
-	// 行動：ブリンク
-	//m_eMoveFlag = EMoveFlag::MOVEFLAG_BLINK;
 }
 
 //--------------------------------------------------------------------------

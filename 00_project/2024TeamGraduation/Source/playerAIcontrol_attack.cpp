@@ -125,15 +125,16 @@ HRESULT CPlayerAIControlAttack::Init()
 
 	// 値のクリア
 	m_nLevel = 0;
-
+	m_bSet = false;
 	m_pTarget = nullptr;
 
 	ZeroMemory(&m_sTimig, sizeof(m_sTimig));
 
-	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
-	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
+	m_eAttackMode = EAttackMode::ATTACKMODE_PREPARATION;
+	m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_NONE;
 	m_eThrowType = EThrowType::THROWTYPE_NONE;
 	m_eThrowFlag = EThrowFlag::THROW_NONE;
+	m_eAttackNormal = EAttackNormal::ATTACK_NONE;
 
 	return S_OK;
 }
@@ -160,7 +161,7 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 	}
 	else
 	{
-		if (m_ePreparation != EATTACKPREPATARION::ATTACKPREPATARION_LEAVE)
+		if (m_ePreparation != EAttackPrepatarion::ATTACKPREPATARION_LEAVE)
 		{// 離れる状態以外の場合
 			// 見る
 			SeeTarget(m_pTarget->GetPosition());
@@ -182,7 +183,7 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 //================================================================================
 void CPlayerAIControlAttack::AttackModePreparation()
 {
-	if (m_ePreparation == EATTACKPREPATARION::ATTACKPREPATARION_NONE)
+	if (m_ePreparation == EAttackPrepatarion::ATTACKPREPATARION_NONE)
 	{// 準備状態が設定されていない場合
 
 		// 自分とターゲットとの距離を算出
@@ -190,11 +191,11 @@ void CPlayerAIControlAttack::AttackModePreparation()
 
 		if (fDistance < 100.0f)
 		{
-			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_LEAVE;
+			m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_LEAVE;
 		}
 		else
 		{
-			m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_GO;
+			m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_GO;
 		}
 	}
 
@@ -207,7 +208,7 @@ void CPlayerAIControlAttack::AttackModePreparation()
 //================================================================================
 void CPlayerAIControlAttack::PreparationGo()
 {
-	m_eAttackMode = EATTACKMODE::ATTACKMODE_ATTACK;
+	m_eAttackMode = EAttackMode::ATTACKMODE_ATTACK;
 }
 
 #if 0	// オーバーライド
@@ -255,28 +256,20 @@ void CPlayerAIControlAttack::UpdateAttack()
 		}
 		else
 		{
-			//int n = 2;
+			// ターゲットとの距離を取得
+			float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-			// 今はランダムで決定
-			int n = rand() % 3;
-
-			switch (n)
+			if (distanse < 200.0f)
 			{
-			case 0:	// 通常
 				m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-				break;
-
-			case 1:	// ジャンプ
+			}
+			else if (distanse > 500.0f)
+			{
 				m_eThrowType = EThrowType::THROWTYPE_JUMP;
-				break;
-
-			case 2:	// パス
-				m_eThrowType = EThrowType::THROWTYPE_PASS;
-				break;
-
-			default:
-				assert(false);
-				break;
+			}
+			else
+			{
+				m_eThrowType = (EThrowType)UtilFunc::Transformation::Random(EThrowType::THROWTYPE_NORMAL, EThrowType::THROWTYPE_JUMP);
 			}
 		}
 	}
@@ -305,15 +298,26 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 	// ターゲットとの距離を取得
 	float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-	if (distanse < 200.0f)
+	if (m_eAttackNormal == EAttackNormal::ATTACK_NONE)
+	{// 設定されていない場合
+		m_eAttackNormal = (EAttackNormal)UtilFunc::Transformation::Random(EAttackNormal::ATTACK_THROW, EAttackNormal::ATTACK_JUMP);
+	}
+
+	switch (m_eAttackNormal)
 	{
+	case EAttackNormal::ATTACK_THROW:	// 通常
 		// 通常投げ
 		AttackNormal(m_pTarget);
-	}
-	else
-	{
+		break;
+
+	case EAttackNormal::ATTACK_JUMP:	// ジャンプ
 		// 走り投げ
 		AttackDash(m_pTarget);
+		break;
+
+	default:
+		assert(false);
+		break;
 	}
 }
 
@@ -330,13 +334,23 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 	float distanse = pAI->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 	float distanseLine = pAI->GetPosition().DistanceXZ({ 0.0f, 0.0f, pos.z });
 
-	if (distanseLine < 300.0f)
+	if (distanseLine < 200.0f )
 	{
+		if (distanse > 500.0f)
+		{
+			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+			return;
+		}
 		// ジャンプ投げ
 		AttackJump(m_pTarget);
 	}
 	else
 	{
+		if (distanse > 500.0f)
+		{
+			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+			return;
+		}
 		// 走りジャンプ投げ
 		AttackDashJump(m_pTarget);
 	}
@@ -373,10 +387,6 @@ void CPlayerAIControlAttack::ThrowFlag()
 
 	// 投げる
 	pControlAIAction->SetIsThrow(true);
-
-	// 投げ状態：無
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //--------------------------------------------------------------------------
@@ -394,10 +404,6 @@ void CPlayerAIControlAttack::ThrowFlagPass()
 
 	// パス
 	pControlAIAction->SetIsPass(true);
-
-	// 投げ状態：無
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //--------------------------------------------------------------------------
@@ -415,10 +421,6 @@ void CPlayerAIControlAttack::ThrowFlagSpecial()
 
 	// スペシャル投げ
 	pControlAIAction->SetIsSpecial(true);
-
-	// 投げなし
-	m_eThrowFlag = EThrowFlag::THROW_NONE;
-	m_eThrowType = EThrowType::THROWTYPE_NONE;
 }
 
 //================================================================================
@@ -446,7 +448,7 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 			//if (n == 0)
 			{
 				// 離れる
-				m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_LEAVE;
+				m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_LEAVE;
 
 				return true;
 			}
@@ -462,7 +464,7 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget)
 {
 	// 攻撃までの時間を設定
-	SetAttackTimer(0, 5);
+	SetAttackTimer(0, 3);
 }
 
 //================================================================================
@@ -613,10 +615,10 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget)
 void CPlayerAIControlAttack::AttackFeint()
 {
 	// 準備：なし
-	m_ePreparation = EATTACKPREPATARION::ATTACKPREPATARION_NONE;
+	m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_NONE;
 
 	// 攻撃モード：準備
-	m_eAttackMode = EATTACKMODE::ATTACKMODE_PREPARATION;
+	m_eAttackMode = EAttackMode::ATTACKMODE_PREPARATION;
 }
 
 //==========================================================================

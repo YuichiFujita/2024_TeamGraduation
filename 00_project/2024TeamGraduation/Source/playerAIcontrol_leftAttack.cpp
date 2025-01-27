@@ -104,7 +104,7 @@ void CPlayerAIControlLeftAttack::PreparationLeave()
 		SetMoveFlag(CPlayerAIControlMode::EMoveFlag::MOVEFLAG_IDLE);
 
 		// çUåÇÉÇÅ[ÉhÅFçUåÇ
-		SetAttackMode(EATTACKMODE::ATTACKMODE_ATTACK);
+		SetAttackMode(EAttackMode::ATTACKMODE_ATTACK);
 	}
 }
 

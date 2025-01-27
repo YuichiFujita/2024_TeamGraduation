@@ -119,7 +119,6 @@ HRESULT CPlayerAIOutControl::Init()
 {
 	// ’l‚Ì‰Šú‰»
 
-
 	return S_OK;
 }
 
