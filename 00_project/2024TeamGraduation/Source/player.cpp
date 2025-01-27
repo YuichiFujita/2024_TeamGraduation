@@ -32,6 +32,7 @@
 #include "playerMarker.h"
 #include "catchSpecial.h"
 #include "stretcher.h"
+#include "gameEndManager.h"
 
 // 派生先
 #include "playerDressup.h"
@@ -1649,6 +1650,13 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 
 	// 近くのAIに操作権を移し、自身をAIにする
 	CPlayerManager::GetInstance()->ChangeUserToAI(this);
+
+	if (!IsTeamPlayer())
+	{ // チーム内最後のプレイヤーだった場合
+
+		// ゲーム終了マネージャーの生成
+		CGameEndManager::Create(this);
+	}
 }
 
 //==========================================================================
@@ -2723,6 +2731,28 @@ bool CPlayer::IsPassOK() const
 
 	// 各種相手コート関連の状態ではない場合true
 	return (m_state != STATE_OUTCOURT && m_state != STATE_OUTCOURT_RETURN && m_state != STATE_INVADE_TOSS && m_state != STATE_INVADE_RETURN);
+}
+
+//==========================================================================
+// チーム内にまだプレイヤーがいるかの確認
+//==========================================================================
+bool CPlayer::IsTeamPlayer() const
+{
+	// 自分のチームのプレイヤーリスト取得
+	CPlayerManager* pPlayerManager = CPlayerManager::GetInstance();
+	CListManager<CPlayer> list = pPlayerManager->GetInList(m_typeTeam);
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		// 死んでいないプレイヤーがいる場合true
+		if (!pPlayer->IsDeathState()) { return true; }
+	}
+
+	// 全員死んでいる場合false
+	return false;
 }
 
 //==========================================================================

@@ -8,6 +8,7 @@
 #include "player.h"
 #include "playerStatus.h"
 #include "gauge2D.h"
+#include "gameEndManager.h"
 
 //==========================================================================
 // ’è”’è‹`
@@ -163,9 +164,6 @@ bool CTeamStatus::CheckAllDead()
 			return false;
 		}
 	}
-
-	// ŽŽ‡I—¹
-	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_END);
 	return true;
 }
 

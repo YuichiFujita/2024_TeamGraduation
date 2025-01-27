@@ -84,7 +84,8 @@ protected:
 	//=============================
 	virtual bool IsLineOverBall() { return false; }				// 線超え判定(ボール)
 	virtual bool IsLineOverPlayer() { return false; };			// 線越え判定(プレイヤー)
-	virtual void BallSteal() = 0;		// ボールを奪う
+	virtual void BallSteal()/* = 0*/;									// ボールを奪う
+	virtual void BallChaseRebound()/* = 0*/;						// ボールを追う(リバウンド)
 
 	//=============================
 	// メンバ関数

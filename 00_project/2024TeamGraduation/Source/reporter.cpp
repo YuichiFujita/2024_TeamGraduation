@@ -21,9 +21,14 @@ namespace
 	const std::string CHARAFILE = "data\\TEXT\\character\\reporter\\setup_player.txt";	// キャラクターファイル
 	const MyLib::Vector3 DEFAULTPOS[CGameManager::ETeamSide::SIDE_MAX] =
 	{
-		MyLib::Vector3(-200.0f, 0.0f, 900.0f),	// 左
-		MyLib::Vector3(200.0f, 0.0f, 900.0f),	// 右
+		MyLib::Vector3(-200.0f, -17.0f, 909.0f),	// 左
+		MyLib::Vector3(200.0f, -17.0f, 909.0f),	// 右
 	};
+
+	namespace StateTime
+	{
+		const float WAIT = 1.0f;	// 待機
+	}
 }
 
 //==========================================================================
@@ -32,15 +37,14 @@ namespace
 CReporter::STATE_FUNC CReporter::m_StateFunc[] =	// 状態関数
 {
 	&CReporter::StateNone,		// なし
-	&CReporter::StateGo,		// 向かう
-	&CReporter::StateCollect,	// 回収
-	&CReporter::StateBack,		// 戻る
+	&CReporter::StateThout,		// 実況
+	&CReporter::StateWait,		// 待機
 };
 
 //==========================================================================
 // 静的メンバ変数
 //==========================================================================
-CListManager<CReporter> CReporter::m_List = {};	// リスト
+CListManager<CReporter> CReporter::m_List[CGameManager::ETeamSide::SIDE_MAX] = {};	// リスト
 
 //==========================================================================
 // コンストラクタ
@@ -112,7 +116,7 @@ HRESULT CReporter::Init()
 	}
 
 	// リストに割当
-	m_List.Regist(this);
+	m_List[m_TeamSide].Regist(this);
 
 	// 影生成
 	if (m_pShadow == nullptr)
@@ -121,7 +125,12 @@ HRESULT CReporter::Init()
 	}
 
 	// 実況セット
-	m_pReporterSet = CReporterSet::Create(GetPosition(), m_TeamSide);
+	MyLib::Vector3 setpos = GetPosition();
+	setpos.y = 0.0f;
+	m_pReporterSet = CReporterSet::Create(setpos, m_TeamSide);
+
+	// デフォモーション設定
+	SetDefMotion();
 
 	return S_OK;
 }
@@ -132,7 +141,7 @@ HRESULT CReporter::Init()
 void CReporter::Uninit()
 {
 	// リストから削除
-	m_List.Delete(this);
+	m_List[m_TeamSide].Delete(this);
 
 	// 終了処理
 	CObjectChara::Uninit();
@@ -168,6 +177,11 @@ void CReporter::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// 状態更新
 	UpdateState(fDeltaTime, fDeltaRate, fSlowRate);
+
+#if _DEBUG
+	// デバッグ処理
+	Debug();
+#endif
 }
 
 //==========================================================================
@@ -252,31 +266,60 @@ void CReporter::UpdateState(const float fDeltaTime, const float fDeltaRate, cons
 //==========================================================================
 void CReporter::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	// ループした瞬間に待機させる
+	if (pMotion->IsLoopMoment())
+	{
+		SetState(EState::STATE_WAIT);
+		pMotion->Set(EMotion::MOTION_WAIT);
+
+		// 待機時間設定
+		m_fWaitTime = StateTime::WAIT + UtilFunc::Transformation::Random(-4, 4) * 0.1f;
+	}
 }
 
 //==========================================================================
-// 向かう
+// 実況
 //==========================================================================
-void CReporter::StateGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CReporter::StateThout(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
+	// モーション取得
+	CMotion* pMotion = GetMotion();
+	if (pMotion == nullptr) return;
+
+	if (pMotion->GetType() != EMotion::MOTION_THOUT)
+	{// 実況設定
+		pMotion->Set(EMotion::MOTION_THOUT);
+	}
+
+	// 終了時にニュートラルへ
+	if (pMotion->IsFinish())
+	{
+		// 状態設定
+		SetState(EState::STATE_NONE);
+
+		// デフォモーション設定
+		SetDefMotion();
+	}
 }
 
 //==========================================================================
-// 回収
+// 待機
 //==========================================================================
-void CReporter::StateCollect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+void CReporter::StateWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (m_fWaitTime <= m_fStateTime)
+	{// 待機時間終了
 
-}
+		// 状態設定
+		SetState(EState::STATE_NONE);
 
-//==========================================================================
-// 戻る
-//==========================================================================
-void CReporter::StateBack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-
+		// デフォモーション設定
+		SetDefMotion();
+	}
 }
 
 //==========================================================================
@@ -295,4 +338,59 @@ void CReporter::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+}
+
+//==========================================================================
+// デフォモーション設定
+//==========================================================================
+void CReporter::SetDefMotion()
+{
+	// モーション設定
+	CMotion* pMotion = GetMotion();
+	if (pMotion != nullptr)
+	{
+		int setIdx = UtilFunc::Transformation::Random(EMotion::MOTION_DEF, EMotion::MOTION_DEF_INV);
+		pMotion->Set(setIdx);
+	}
+}
+
+//==========================================================================
+// デバッグ処理
+//==========================================================================
+void CReporter::Debug()
+{
+#if _DEBUG
+
+	//-----------------------------
+	// 位置
+	//-----------------------------
+	if (ImGui::TreeNode("SetPosition"))
+	{
+		// 位置取得
+		MyLib::Vector3 pos = GetPosition();
+
+		if (ImGui::Button("Reset"))
+		{// リセット
+			pos = MyLib::Vector3();
+		}
+		ImGui::DragFloat3("pos", (float*)&pos, 1.0f, 0.0f, 0.0f, "%.2f");
+
+		// 位置設定
+		SetPosition(pos);
+		ImGui::TreePop();
+	}
+
+	//-----------------------------
+	// パラメーター
+	//-----------------------------
+	if (ImGui::TreeNode("Parameter"))
+	{
+		// 拡大率の調整
+		float scale = GetScale();
+		ImGui::DragFloat("Scale", &scale, 0.001f, 0.01f, 100.0f, "%.3f");
+		SetScale(scale);
+
+		ImGui::TreePop();
+	}
+#endif
 }

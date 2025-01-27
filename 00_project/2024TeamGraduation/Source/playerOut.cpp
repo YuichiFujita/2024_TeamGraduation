@@ -11,10 +11,6 @@
 #include "playercontrol_action.h"
 #include "playerAction.h"
 
-#include "manager.h"
-#include "camera.h"
-
-
 //==========================================================================
 // コンストラクタ
 //==========================================================================
@@ -80,11 +76,10 @@ bool CPlayerOut::IsCrab()
 	// プレイヤー情報の取得
 	CPlayer* pPlayer = GetPlayer();
 
-	m_bClab = true;
-	if (!pPlayer || !m_bClab) return false;
+	if (!pPlayer/* || !m_bClab*/) return false;
 
 	// ボールを持っていないか
-	//if (pPlayer->GetBall() != nullptr) { return false; }
+	if (pPlayer->GetBall() != nullptr) { return false; }
 
 	// 世界にボールがあるか
 	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報

@@ -379,7 +379,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\nurs\\outUV08.png";
+    "data\\TEXTURE\\player\\outUV08.png";
    }
   }
   Material {
@@ -400,7 +400,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\nurs\\msk_h.png";
+    "data\\TEXTURE\\player\\outUV11.png";
    }
   }
   Material {

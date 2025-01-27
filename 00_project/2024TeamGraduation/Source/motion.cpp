@@ -37,7 +37,8 @@ CMotion::CMotion()
 	m_bFinish = false;		// 終了したかどうか
 	m_bCancelable = false;	// キャンセル可能か
 	m_bCombiable = false;	// コンボ可能か
-	m_bAttaking = false;			// 攻撃判定中フラグ
+	m_bAttaking = false;	// 攻撃判定中フラグ
+	m_bLoopMomnet = false;	// ループした瞬間
 
 	m_pObjChara = nullptr;		// オブジェクトのポインタ
 	m_ppModel = nullptr;		// モデルのポインタ
@@ -204,6 +205,9 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 
 	// 攻撃判定中フラグリセット
 	m_bAttaking = false;
+
+	// ループした瞬間
+	m_bLoopMomnet = false;
 
 	// 攻撃情報の総数取得
 	int nNumAttackInfo = nowInfo.nNumAttackInfo;
@@ -401,7 +405,10 @@ void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float
 		}
 
 		if (m_nPatternKey == 0)
-		{// キーがゼロの時
+		{// 1週した
+
+			// ループした瞬間
+			m_bLoopMomnet = true;	
 
 			// 総フレーム数リセット
 			m_fAllFrame = 0.0f;

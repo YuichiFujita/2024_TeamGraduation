@@ -410,7 +410,7 @@ HRESULT CObject3DAnim::SetMaxPtrn(const int nMaxPtrn)
 	SAFE_DEL_ARRAY(m_pNextTime);
 
 	// パターン変更時間の再生成
-	m_pNextTime = new float[m_nMaxPtrn];
+	m_pNextTime = DEBUG_NEW float[m_nMaxPtrn];
 	if (m_pNextTime == nullptr)
 	{ // 生成に失敗した場合
 

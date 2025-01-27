@@ -41,7 +41,7 @@ MODEL_FILENAME = data/MODEL/player/hair/mohikan.x			# [15]髪
 #------------------------------------------------------------------------------
 CHARACTERSET
 	
-	SCALE = 1.0		# キャラスケール
+	SCALE = 1.2		# キャラスケール
 	
 	VELOCITY_NORMAL = 1.6	# 通常移動量
 	VELOCITY_RUN = 2.67		# ダッシュ移動量
@@ -261,7 +261,9 @@ DEFAULT_ID = 0
 # モーションファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/reporter/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/reporter/motion_def_inv.txt	# 逆デフォルト
 MOTION_FILENAME = data/TEXT/character/reporter/motion_thought.txt	# 台詞
+MOTION_FILENAME = data/TEXT/character/reporter/motion_wait.txt		# 待機
 
 
 

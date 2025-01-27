@@ -332,7 +332,7 @@ HRESULT CString2D::SetString(const std::wstring& rStr)
 	//	V‚µ‚¢•¶š‚ğ¶¬
 	//--------------------------------------------------------
 	// •¶š‚ğŠi”[‚·‚é”z—ñ‚ğ¶¬
-	m_ppChar = new CChar2D*[nCurStrLen];
+	m_ppChar = DEBUG_NEW CChar2D*[nCurStrLen];
 	for (int i = 0; i < nCurStrLen; i++)
 	{ // ¶¬‚·‚é•¶š”•ªŒJ‚è•Ô‚·
 

@@ -81,7 +81,7 @@ namespace
 		const float WIDTH = 120.0f;		// 横幅
 	}
 
-	namespace bg
+	namespace gameset
 	{
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\board.png";	// 数字テクスチャ
 		const MyLib::Vector3 POS = MyLib::Vector3(640.0f, 360.0f, 0.0f);	// 中心位置
@@ -285,16 +285,16 @@ HRESULT CEntry_SetUpTeam::CreateBG()
 	}
 
 	// 位置設定
-	m_pBG->SetPosition(bg::POS);
+	m_pBG->SetPosition(gameset::POS);
 
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
-	int nTexID = pTexture->Regist(bg::TEXTURE);
+	int nTexID = pTexture->Regist(gameset::TEXTURE);
 	m_pBG->BindTexture(nTexID);
 
 	// 横幅を元にサイズを設定
 	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
-	size = UtilFunc::Transformation::AdjustSizeByWidth(size, bg::WIDTH);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, gameset::WIDTH);
 	m_pBG->SetSize(size);
 	m_pBG->SetSizeOrigin(m_pBG->GetSize());
 
@@ -800,7 +800,6 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 		// 選択チームを保存
 		const int nSide = (int)m_TeamSide[nUserIdx].team;
-		assert(nSide > CGameManager::ETeamSide::SIDE_NONE && nSide < CGameManager::ETeamSide::SIDE_MAX);
 
 		//--------------------------
 		// チーム内人数変え

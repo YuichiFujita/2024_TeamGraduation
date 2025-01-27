@@ -385,6 +385,7 @@ public:
 	void CopyDressData(const CPlayer* pCopyPlayer);						// 着せ替え情報コピー
 	bool IsDeathState() const;											// 死亡状態かの確認
 	bool IsPassOK() const;												// パス可能かの確認
+	bool IsTeamPlayer() const;											// チーム内にまだプレイヤーがいるかの確認
 
 	//=============================
 	// 静的メンバ関数

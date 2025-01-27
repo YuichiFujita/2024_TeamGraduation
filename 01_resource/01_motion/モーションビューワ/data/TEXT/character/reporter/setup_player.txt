@@ -260,12 +260,13 @@ DEFAULT_ID = 0
 #------------------------------------------------------------------------------
 # モーション数
 #------------------------------------------------------------------------------
-NUM_MOTION = 2
+NUM_MOTION = 3
 
 #------------------------------------------------------------------------------
 # モーションファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/reporter/motion_def.txt		# デフォルト
+MOTION_FILENAME = data/TEXT/character/reporter/motion_wait.txt	# 台詞
 MOTION_FILENAME = data/TEXT/character/reporter/motion_thought.txt	# 台詞
 
 

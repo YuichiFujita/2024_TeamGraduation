@@ -28,6 +28,7 @@ class CGymWallManager;
 class CTimerUI;
 class CObject2D;
 class CCharmManager;
+class CSkip;
 
 //==========================================================================
 // クラス定義
@@ -50,6 +51,7 @@ public:
 		SCENE_SPAWN,	// 登場演出
 		SCENE_START,	// 開始演出
 		SCENE_SPECIAL,	// スペシャル演出
+		SCENE_END_STAG,	// 終了演出
 		SCENE_END,		// 終了
 		SCENE_DEBUG,	// デバッグ
 		SCENE_MAX
@@ -149,7 +151,8 @@ private:
 	void SceneSpawn();		// 登場演出
 	void SceneStart();		// 開始演出
 	void SceneSpecial();	// スペシャル演出
-	void SceneEnd();		// 終了演出
+	void SceneEndStag();	// 終了演出
+	void SceneEnd();		// 終了
 	void SceneDebug();		// デバッグ
 
 	// シーンスキップ
@@ -184,8 +187,9 @@ private:
 	CCharmManager* m_pCharmManager;					// モテマネージャ
 	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
-	CTimerUI* m_pTimerUI;							// タイマーUI
-	CObject2D* m_pTimerBG;							// タイマー背景
+	CTimerUI* m_pTimerUI;	// タイマーUI
+	CObject2D* m_pTimerBG;	// タイマー背景
+	CSkip* m_pSkip;			// スキップUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス

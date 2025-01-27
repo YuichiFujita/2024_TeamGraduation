@@ -13,7 +13,7 @@
 //************************************************************
 //	インクルードファイル
 //************************************************************
-#include "main.h"
+#include "gamemanager.h"
 
 //************************************************************
 //	マクロ定義
@@ -101,7 +101,7 @@ public:
 	static void Release(CEntryRuleManager*& prEntryRuleManager);	// 破棄
 	static HRESULT SaveSetting(const SRule& rRule, const std::string& rNameLeft, const std::string& rNameRight);	// ゲーム設定保存
 	static HRESULT LoadRule(SRule* pRule);										// ゲーム設定読込
-	static HRESULT LoadName(std::string* pNameLeft, std::string* pNameRight);	// チーム名読込
+	static HRESULT LoadName(std::string* pName, CGameManager::ETeamSide team);	// チーム名読込
 
 private:
 	
