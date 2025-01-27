@@ -34,6 +34,7 @@ public:
 	virtual void InitPosition(const MyLib::Vector3& rPos) override;		// 位置初期化
 	virtual void MotionCrab(int nStartKey) override { assert(false); }	// カニ歩き変化
 	virtual bool IsCrab() override;					// カニ歩き判定
+	virtual bool IsCrabMotion() override;	// カニ歩きモーション判定
 	virtual CPlayerOut* GetPlayerOut() override { return this; }		// 外野プレイヤー取得
 
 	//=============================
