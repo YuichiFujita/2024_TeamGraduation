@@ -25,14 +25,14 @@ class CPlayerAIControlAttack : public CPlayerAIControlMode
 {
 public:
 
-	enum EATTACKMODE			// 攻撃モード
+	enum EAttackMode			// 攻撃モード
 	{
 		ATTACKMODE_PREPARATION = 0,		// 準備
 		ATTACKMODE_ATTACK,				// 攻撃
 		ATTACKMODE_MAX
 	};
 
-	enum EATTACKPREPATARION		// 準備
+	enum EAttackPrepatarion		// 準備
 	{
 		ATTACKPREPATARION_NONE = 0,
 		ATTACKPREPATARION_GO,
@@ -48,6 +48,14 @@ public:
 		THROWTYPE_SPECIAL,		// スペシャル
 		THROWTYPE_PASS,			// パス
 		THROWTYPE_MAX
+	};
+
+	enum EAttackNormal
+	{
+		ATTACK_NONE = 0,
+		ATTACK_THROW,
+		ATTACK_JUMP,
+		ATTACK_MAX
 	};
 
 	enum EThrowFlag				// 投げフラグ
@@ -81,8 +89,8 @@ public:
 	// 設定・取得
 	void SetThrowFlag(EThrowFlag Throw) { m_eThrowFlag = Throw; }			// 投げ設定
 	EThrowFlag GetThrowFlag() { return m_eThrowFlag; }						// 取得
-	void SetAttackMode(EATTACKMODE mode) { m_eAttackMode = mode; }			// 攻撃モード設定
-	EATTACKMODE GetAttackMode() { return m_eAttackMode; }					// 取得
+	void SetAttackMode(EAttackMode mode) { m_eAttackMode = mode; }			// 攻撃モード設定
+	EAttackMode GetAttackMode() { return m_eAttackMode; }					// 取得
 
 protected:
 	//=============================
@@ -170,16 +178,17 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pTarget;
-
+	bool m_bSet;
 	int m_nLevel;
 
 	//-----------------------------
 	// 列挙
 	//-----------------------------
-	EATTACKMODE m_eAttackMode;			// 攻撃モード
-	EATTACKPREPATARION m_ePreparation;	// 準備
+	EAttackMode m_eAttackMode;			// 攻撃モード
+	EAttackPrepatarion m_ePreparation;	// 準備
 	EThrowType m_eThrowType;			// 投げ種類
 	EThrowFlag m_eThrowFlag;			// 投げフラグ
+	EAttackNormal m_eAttackNormal;
 
 	//-----------------------------
 	// 構造体

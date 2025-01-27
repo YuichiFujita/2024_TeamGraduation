@@ -158,6 +158,8 @@ void CPlayerAIControlLeftDefense::MoveRandom()
 	MyLib::Vector3 posSafeMin = { -GetDistance(), 0.0f, -560.0f };
 
 	CPlayerAIControlDefense::SAction action = GetActionInfo();
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
 
 	if (!action.bSet) {
 		// 位置の設定
@@ -171,8 +173,39 @@ void CPlayerAIControlLeftDefense::MoveRandom()
 		action.bSet = true;
 	}
 
-	// 行動：歩き
-	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+	// もくてき位置との距離
+	float distanse = pAI->GetPosition().DistanceXZ(action.pos);
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+
+	CMotion* pMotion = pAI->GetMotion();
+	int nType = pMotion->GetType();
+
+	if (distanse > 300.0f)
+	{
+		if (pBall)
+		{
+			if (!pBall->GetPlayer() &&						// ボール所持者がいない
+				nType != CPlayer::EMotion::MOTION_JUMP)		// ジャンプ中じゃない
+			{
+				// 行動：走り
+				SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
+			}
+			else
+			{
+				// 行動：歩き
+				SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+			}
+		}
+		else
+		{
+			// 行動：歩き
+			SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+		}
+	}
+	else {
+		// 行動：歩き
+		SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
+	}
 
 	// 近づく
 	if (Approatch(action.pos, 30.0f)) {
@@ -319,13 +352,7 @@ bool CPlayerAIControlLeftDefense::IsLineOverBall()
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall) { return bOver; }
 
-	// プレイヤー情報取得
-	CPlayer* pMy = GetPlayer();
-	if (!pMy) return bOver;
-
-	CGameManager::ETeamSide typeTeam = pMy->GetTeam();
-
-	if (pBall->GetPosition().x > 5.0f)
+	if (pBall->GetPosition().x >= 0.0f)
 	{
 		bOver = true;
 	}
