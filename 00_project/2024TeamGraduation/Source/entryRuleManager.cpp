@@ -1014,6 +1014,9 @@ void CEntryRuleManager::Select()
 		// 上に選択をずらす
 		m_nSelect = (m_nSelect + (MAX_SELECT - 1)) % MAX_SELECT;
 
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+
 		if (m_nSelect != SELECT_GAME)
 		{ // 選択がゲーム遷移ではない場合
 
@@ -1061,6 +1064,9 @@ void CEntryRuleManager::Select()
 	||  pKey->GetTrigger(DIK_DOWN)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_DOWN))
 	{ // 下移動の操作が行われた場合
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 
 		// 下に選択をずらす
 		m_nSelect = (m_nSelect + 1) % MAX_SELECT;
@@ -1164,7 +1170,7 @@ void CEntryRuleManager::Decide()
 		m_state = STATE_FADEOUT;
 
 		// サウンドの再生
-		PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 
@@ -1199,7 +1205,7 @@ void CEntryRuleManager::ChangeRule()
 			nLife = (nLife + (CEntryRuleManager::LIFE_MAX - 1)) % CEntryRuleManager::LIFE_MAX;
 
 			// サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 			break;
 		}
 		case SELECT_GAME:
@@ -1233,7 +1239,7 @@ void CEntryRuleManager::ChangeRule()
 			nLife = (nLife + 1) % CEntryRuleManager::LIFE_MAX;
 
 			// サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 			break;
 		}
 		case SELECT_GAME:
@@ -1283,8 +1289,8 @@ void CEntryRuleManager::AddTime(const float fAddTime)
 			// 最大時間に補正
 			fCurTime = time::MAX_TIME;
 
-			// 増減成功サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 		}
 		else
 		{ // 時間を増やす場合
@@ -1321,8 +1327,8 @@ void CEntryRuleManager::AddTime(const float fAddTime)
 		else
 		{ // 補正がない場合
 
-			// 増減成功サウンドの再生
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 		}
 	}
 

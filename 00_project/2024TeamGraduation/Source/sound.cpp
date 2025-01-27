@@ -61,6 +61,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 
 	// アウトゲーム
 	{ TYPE_SE,"data/SE/outgame/cursor.wav",0},			// カーソル
+	{ TYPE_SE,"data/SE/outgame/cancel.wav",0},			// キャンセル
 	{ TYPE_SE,"data/SE/outgame/write01.wav",0},			// 書き
 	{ TYPE_SE,"data/SE/outgame/write02.wav",0},			// 書き
 	{ TYPE_SE,"data/SE/outgame/arrow.wav",0},			// 矢印
@@ -68,6 +69,8 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/arrow_down.wav",0},		// 矢印(下げ)
 	{ TYPE_SE,"data/SE/outgame/optionGo.wav",0},		// オプション行く
 	{ TYPE_SE,"data/SE/outgame/optionBack.wav",0},		// オプション戻る
+	{ TYPE_SE,"data/SE/outgame/join.wav",0},			// 参加
+	{ TYPE_SE,"data/SE/outgame/controllerMove.wav",0},	// コントローラー移動
 
 
 };	// サウンドの情報

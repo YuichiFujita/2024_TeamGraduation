@@ -768,6 +768,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// コントローラーUIの自動描画をONにする
 				m_apPadUI[i]->SetEnableDisp(true);
+
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_JOIN);
 				break;
 			}
 		}
@@ -784,6 +787,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nUserIdx))
 		{ // 離脱操作が行われた場合
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 
 			std::vector<int>::iterator itr;	// 準備完了配列イテレーター
 			if (IsUserReady(nUserIdx, &itr))
@@ -818,6 +824,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 			&&  m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_LEFT)
 			{ // 左端じゃない時に左移動操作が行われた場合
 
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+
 				// 左に移動
 				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
 				m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
@@ -825,6 +834,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
 				 &&  m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_RIGHT)
 			{ // 右端じゃない時に右移動操作が行われた場合
+
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
 
 				// 右に移動
 				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
@@ -845,6 +857,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 			// 自分のサイドを変更する用インデックス保持
 			m_nMaxChangeIdx[nSide] = nUserIdx;
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
 
 			// 矢印を数字用にする
 			CArrowUI* pArrow = nullptr;
@@ -905,6 +920,16 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 
 			// 左に移動
 			m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
+
+			// サウンドの再生
+			if (m_nPlayerNum[nSide] >= 1)
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
+			}
+			else
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+			}
 		}
 		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx))
 		{ // 加算操作が行われた場合
@@ -914,6 +939,16 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 
 			// 左に移動
 			m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_R);
+
+			// サウンドの再生
+			if (m_nPlayerNum[nSide] <= CGameManager::MAX_SIDEPLAYER)
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
+			}
+			else
+			{
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+			}
 		}
 
 		// チーム人数を補正
@@ -924,6 +959,9 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nUserIdx))
 		{ // 下移動操作が行われた場合
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
 
 			// 矢印の間隔をコントローラー用にする
 			CArrowUI* pArrow = nullptr;
