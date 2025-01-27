@@ -33,6 +33,8 @@
 #include "resultManager.h"
 #include "gauge2D.h"
 #include "gameEndManager.h"
+#include "spawnUI.h"
+#include "skip.h"
 
 //==========================================================================
 // 定数定義
@@ -114,6 +116,7 @@ CGameManager::CGameManager()
 	m_pSpecialValueManager = nullptr;	// スぺ値マネージャ
 	m_pTimerUI = nullptr;				// タイマーUI
 	m_pTimerBG = nullptr;				// タイマー背景
+	m_pSkip = nullptr;					// スキップUI
 
 	memset(&m_apGymDoor[0], 0, sizeof(m_apGymDoor));		// 体育館のドア
 	memset(&m_pTeamStatus[0], 0, sizeof(m_pTeamStatus));	// チームステータス
@@ -289,6 +292,16 @@ HRESULT CGameManager::Init()
 		m_pTimerBG->SetEnableDisp(false);
 	}
 
+	// スキップ情報の生成
+	m_pSkip = CSkip::Create();
+	if (m_pSkip == nullptr)
+	{ // 生成に失敗した場合
+
+		// 失敗を返す
+		assert(false);
+		return E_FAIL;
+	}
+
 	// モテマネージャ生成
 	m_pCharmManager = CCharmManager::Create();
 	if (m_pCharmManager == nullptr)
@@ -345,6 +358,9 @@ void CGameManager::Uninit()
 	// タイマー背景
 	SAFE_UNINIT(m_pTimerBG);
 
+	// スキップの破棄
+	SAFE_REF_RELEASE(m_pSkip);
+
 	// モテマネージャ
 	SAFE_UNINIT(m_pCharmManager);
 
@@ -381,6 +397,12 @@ void CGameManager::Update(const float fDeltaTime, const float fDeltaRate, const 
 	{
 		// プレイヤーマネージャー更新
 		pManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	if (m_pSkip != nullptr)
+	{
+		// スキップ情報の更新
+		m_pSkip->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	if (m_pCharmManager != nullptr)
@@ -473,6 +495,7 @@ void CGameManager::StartSetting()
 
 		// チームステータス
 		CreateTeamStatus();
+		StartTeamStatus();
 
 		// タイマーの計測開始
 		if (m_pTimerUI != nullptr)
@@ -542,7 +565,20 @@ void CGameManager::SceneSpawn()
 			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0)
 			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, 0);
 
-	if (bInput || pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
+	if (bInput)
+	{ // 決定の操作が行われた場合
+
+		// スキップ操作を表示させる
+		m_pSkip->SetDisp();
+		if (m_pSkip->IsDisp())
+		{ // スキップ操作が表示されている場合
+
+			// 登場演出のスキップ
+			SkipSpawn();
+		}
+	}
+
+	if (pManager->GetState() == CPlayerSpawnManager::EState::STATE_END)
 	{ // スキップ操作、または登場演出が終わった場合
 
 		// 登場演出のスキップ
@@ -614,12 +650,26 @@ void CGameManager::SkipSpawn()
 	CPlayerSpawnManager* pManager = CPlayerSpawnManager::GetInstance();	// プレイヤー登場演出マネージャー
 	assert(pManager != nullptr);
 
+	// スキップの破棄
+	SAFE_REF_RELEASE(m_pSkip);
+
 	// プレイヤー登場演出マネージャーの終了
 	SAFE_KILL(pManager);
 
-	// ドア閉める
+	CListManager<CSpawnUI> list = CSpawnUI::GetList();	// 登場演出UIリスト
+	std::list<CSpawnUI*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CSpawnUI* pUI = (*itr);	// UI情報
+
+		// UIの破棄
+		SAFE_UNINIT(pUI);
+	}
+
 	for (const auto& door : m_apGymDoor)
 	{
+		// ドア閉める
 		door->SetEnableOpen(false);
 	}
 
@@ -641,6 +691,7 @@ void CGameManager::SkipSpawn()
 	{
 		if (m_pTeamStatus[i] != nullptr)
 		{
+			// ゲージの表示
 			m_pTeamStatus[i]->SetEnableGaugeDisp(true);
 		}
 	}
@@ -990,7 +1041,6 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 	}
 }
 
-
 //==========================================================================
 // チームステータス生成
 //==========================================================================
@@ -1012,6 +1062,20 @@ void CGameManager::CreateTeamStatus()
 		// チーム設定
 		side = static_cast<ETeamSide>(i);
 		m_pTeamStatus[i]->TeamSetting(side);
+	}
+}
+
+//==========================================================================
+// チームステータス開始時
+//==========================================================================
+void CGameManager::StartTeamStatus()
+{
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->SetEnableGaugeDisp(true);
+		}
 	}
 }
 

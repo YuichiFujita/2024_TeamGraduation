@@ -376,6 +376,7 @@
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\shaderMono.cpp" />
     <ClCompile Include="Source\shadow.cpp" />
+    <ClCompile Include="Source\skip.cpp" />
     <ClCompile Include="Source\sound.cpp" />
     <ClCompile Include="Source\spawnUI.cpp" />
     <ClCompile Include="Source\specialEffect.cpp" />
@@ -624,6 +625,7 @@
     <ClInclude Include="Source\shader.h" />
     <ClInclude Include="Source\shaderMono.h" />
     <ClInclude Include="Source\shadow.h" />
+    <ClInclude Include="Source\skip.h" />
     <ClInclude Include="Source\sound.h" />
     <ClInclude Include="Source\spawnUI.h" />
     <ClInclude Include="Source\specialEffect.h" />

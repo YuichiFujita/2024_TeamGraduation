@@ -14,6 +14,7 @@
 //	インクルードファイル
 //************************************************************
 #include "object.h"
+#include "listmanager.h"
 #include "gamemanager.h"
 
 //************************************************************
@@ -45,7 +46,8 @@ public:
 	void SetEnableDisp(const bool bDisp) override;			// 描画状況設定
 
 	// 静的メンバ関数
-	static CSpawnUI* Create(const CGameManager::ETeamSide team);	// 生成
+	static CSpawnUI* Create(const CGameManager::ETeamSide team);		// 生成
+	static inline CListManager<CSpawnUI> GetList() { return m_list; }	// リスト取得
 
 	// メンバ関数
 	inline void SetSpawn() { m_state = STATE_SPAWN; }	// 生成開始設定
@@ -76,10 +78,11 @@ private:
 	HRESULT CreateUI();	// UI生成
 
 	// メンバ変数
+	static CListManager<CSpawnUI> m_list;	// リスト
+	const CGameManager::ETeamSide m_team;	// チーム
 	CObject2D_Anim* m_pBG;			// 背景情報
 	CScrollString2D* m_pHutatuna;	// 二つ名情報
 	CScrollString2D* m_pTeamName;	// チーム名情報
-	const CGameManager::ETeamSide m_team;	// チーム
 	EState m_state;		// 状態
 	float m_fCurTime;	// 経過時間
 };

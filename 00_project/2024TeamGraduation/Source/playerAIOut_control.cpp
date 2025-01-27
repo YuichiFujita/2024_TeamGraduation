@@ -142,6 +142,15 @@ void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate,
 	// モード管理
 	ModeManager();
 
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	
+	if (/*IsPass() &&*/							// パス
+		pBall->GetTarget() == m_pAIOut)		// ターゲットが自分
+	{
+		return;
+	}
+
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 }

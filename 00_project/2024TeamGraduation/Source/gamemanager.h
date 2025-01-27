@@ -28,6 +28,7 @@ class CGymWallManager;
 class CTimerUI;
 class CObject2D;
 class CCharmManager;
+class CSkip;
 
 //==========================================================================
 // クラス定義
@@ -163,6 +164,7 @@ private:
 	void UpdateSpecial();		// スペシャル演出更新
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成
+	void StartTeamStatus();		// チームステータス開始時
 	void Save();				// チームステータス保存
 	void UpdateGaugeTime();		// ゲージ時間更新
 
@@ -185,8 +187,9 @@ private:
 	CCharmManager* m_pCharmManager;					// モテマネージャ
 	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
-	CTimerUI* m_pTimerUI;							// タイマーUI
-	CObject2D* m_pTimerBG;							// タイマー背景
+	CTimerUI* m_pTimerUI;	// タイマーUI
+	CObject2D* m_pTimerBG;	// タイマー背景
+	CSkip* m_pSkip;			// スキップUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス
