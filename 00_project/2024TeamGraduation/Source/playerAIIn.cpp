@@ -42,7 +42,8 @@ CPlayerAIIn::~CPlayerAIIn()
 {
 	if (m_pAIControl)
 	{
-		delete m_pAIControl;
+		m_pAIControl->Uninit();
+		//delete m_pAIControl;
 		m_pAIControl = nullptr;
 	}
 }

@@ -57,10 +57,18 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	CPlayer::EAction action = m_pPlayer->GetActionPattern()->GetAction();	// プレイヤー行動状態
 	CBallStatus::SBallParameter ballParameter = m_pPlayer->GetBallParameter();	// ボールステータス
 
+	float fCatchRange = UtilFunc::Transformation::RadianChangeToDegree(ballParameter.fCatchRange);		// キャッチ範囲
+
 	// ヒット情報の初期化
 	CPlayer::SHitInfo hitInfo;
 	hitInfo.eHit = CPlayer::HIT_NONE;
 	hitInfo.bHit = false;
+
+	// 死亡状態ならすり抜け
+	if (m_pPlayer->GetMotionFrag().bDead)
+	{
+		return hitInfo;
+	}
 
 	if (action == CPlayer::EAction::ACTION_DODGE)
 	{ // 回避行動中ならすり抜け
@@ -68,6 +76,18 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 	
+	// 無敵の場合
+	if (state == CPlayer::EState::STATE_INVINCIBLE)
+	{
+		if (atkBall != CBall::EAttack::ATK_NONE)
+		{// 攻撃状態なら
+			m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
+	
+			hitInfo.bHit = true;
+			return hitInfo;
+		}
+	}
+
 	if (IsAutoBallCatch(pBall))
 	{ // 自動ボールキャッチが可能な場合
 
@@ -108,13 +128,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
-	// 死亡状態ならすり抜け
-	if (m_pPlayer->GetMotionFrag().bDead)
-	{
-		hitInfo.bHit = true;
-		return hitInfo;
-	}
-
 	// ダメージを受け付けないならすり抜ける
 	if (!m_pPlayer->GetDamageInfo().bReceived)
 	{
@@ -123,7 +136,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	}
 
 	if (m_pPlayer->GetMotionFrag().bCatch
-	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, ballParameter.fCatchRange))	// TODO：160はボールステータスに変更
+	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, fCatchRange))
 	{ // キャッチアクション中だった中でも受け付け中の場合
 
 		// キャッチ時処理

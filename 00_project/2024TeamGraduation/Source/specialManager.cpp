@@ -23,6 +23,7 @@
 #include "audience.h"
 #include "gymWallManager.h"
 #include "spotlight.h"
+#include "playerManager.h"
 
 //************************************************************
 //	定数宣言
@@ -34,8 +35,10 @@ namespace
 	const float LIGHTUP_TIME = 1.2f;	// 明るくなるまでの時間
 	const MyLib::Vector3 LIGHT_POS = MyLib::Vector3(0.0f, 160.0f, 0.0f);	// ライトオフセット
 
-	const float	JUMP_HEIGHT = 1000.0f;	// ジャンプの最高到達点
-	const float	JUMP_TIME = 1.24f;		// ジャンプ時間
+	const float	JUMP_HEIGHT = 1000.0f;		// ジャンプの最高到達点
+	const float	JUMP_TIME = 1.24f;			// ジャンプ時間
+	const float	JUMP_OFFSET_TEAM = 150.0f;	// 攻撃プレイヤーチームメンバーのジャンプオフセット
+	const MyLib::Vector3 JUMP_POS_TEAM[] = { MyLib::Vector3(-300.0f, 0.0f, 400.0f), MyLib::Vector3(300.0f, 0.0f, 400.0f) };	// 攻撃プレイヤーチームメンバーのジャンプ位置
 
 	namespace hype
 	{
@@ -91,8 +94,7 @@ CSpecialManager::CSpecialManager(CPlayer* pAttack, CPlayer* pTarget) : CObject(P
 	m_fCurTime		(0.0f),			// 現在の待機時間
 	m_fJumpTime		(0.0f),			// 現在のジャンプ時間
 	m_bJump			(false),		// ジャンプフラグ
-	m_posJumpStart	(VEC3_ZERO),	// ジャンプ開始位置
-	m_posJumpEnd	(VEC3_ZERO)		// ジャンプ終了位置
+	m_vecJump		({})			// ジャンププレイヤー情報
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_aFuncUpdateState)   == CSpecialManager::STATE_MAX, "ERROR : State Count Mismatch");
@@ -122,7 +124,7 @@ HRESULT CSpecialManager::Init(void)
 	SetEnablePosibleMove_WorldPause(true);
 
 	// カットインの生成
-	m_pCutIn = CCutIn::Create();
+	m_pCutIn = CCutIn::Create(m_pAttackPlayer);
 	if (m_pCutIn == nullptr)
 	{ // 生成に失敗した場合
 
@@ -135,6 +137,9 @@ HRESULT CSpecialManager::Init(void)
 
 	// 世界の時を止める
 	GET_MANAGER->SetEnableWorldPaused(true);
+
+	// タイマー停止
+	CGameManager::GetInstance()->SetEnableTimerStop(true);
 
 	// ゲームをスペシャル演出シーンに変更
 	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_SPECIAL);
@@ -155,6 +160,9 @@ HRESULT CSpecialManager::Init(void)
 //============================================================
 void CSpecialManager::Uninit(void)
 {
+	// ライトの終了
+	SAFE_UNINIT(m_pCenterLight);
+
 	// 攻撃プレイヤーを照らすライトの終了
 	SAFE_UNINIT(m_pAttackLight);
 
@@ -219,20 +227,24 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 		float fTimeRate = m_fJumpTime / JUMP_TIME;
 		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
 
-		// ジャンプさせる
-		MyLib::Vector3 posPlayer = UtilFunc::Calculation::GetParabola3D(m_posJumpStart, m_posJumpEnd, JUMP_HEIGHT, fTimeRate);
-		if (m_fJumpTime >= JUMP_TIME)
-		{ // 時間が経過しきった場合
+		for (const auto& rJump : m_vecJump)
+		{ // ジャンプするプレイヤー数分繰り返す
 
-			// ジャンプ終了
-			m_bJump = false;
+			// ジャンプさせる
+			MyLib::Vector3 posPlayer = UtilFunc::Calculation::GetParabola3D(rJump.posJumpStart, rJump.posJumpEnd, JUMP_HEIGHT, fTimeRate);
+			if (m_fJumpTime >= JUMP_TIME)
+			{ // 時間が経過しきった場合
 
-			// ヒーロー着地モーションにする
-			m_pAttackPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND_SP);
+				// ジャンプ終了
+				m_bJump = false;
+
+				// ヒーロー着地モーションにする
+				rJump.pPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND_SP);
+			}
+
+			// 位置を設定
+			rJump.pPlayer->SetPosition(posPlayer);
 		}
-
-		// 位置を設定
-		m_pAttackPlayer->SetPosition(posPlayer);
 	}
 
 	// ライト位置の設定
@@ -295,9 +307,7 @@ void CSpecialManager::UpdateCutIn(const float fDeltaTime, const float fDeltaRate
 	if (m_pCutIn->IsEnd())
 	{ // カットイン演出が終了した場合
 
-		CCamera* pCamera = GET_MANAGER->GetCamera();				// カメラ情報
-		CCameraMotion* pCameraMotion = pCamera->GetCameraMotion();	// カメラモーション情報
-		bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
+		CCamera* pCamera = GET_MANAGER->GetCamera();	// カメラ情報
 
 		// 世界の時はうごきだす
 		GET_MANAGER->SetEnableWorldPaused(false);
@@ -421,6 +431,9 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
 		pGymWall->SetIsWall(false);
 
+		// 白黒
+		GET_RENDERER->SetEnableShader(true, 0.1f);
+
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
@@ -508,6 +521,9 @@ void CSpecialManager::UpdateEnd(const float fDeltaTime, const float fDeltaRate, 
 		pSPEffect->FinishSetting();
 	}
 
+	// タイマー再開
+	CGameManager::GetInstance()->SetEnableTimerStop(false);
+
 	// 自身の終了
 	Uninit();
 }
@@ -551,12 +567,16 @@ void CSpecialManager::SetPlayerHypePosition()
 {
 	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	float fOffset = (bInverse) ? 1.0f : -1.0f;	// オフセット方向
+	SPlayerJump info;
+
+	// プレイヤーを保存
+	info.pPlayer = m_pAttackPlayer;
 
 	// ジャンプ開始位置を設定
-	m_posJumpStart = m_pAttackPlayer->GetPosition();
+	info.posJumpStart = m_pAttackPlayer->GetPosition();
 
 	// ジャンプ終了位置を設定
-	m_posJumpEnd = GetDestAttackPosition();
+	info.posJumpEnd = GetDestAttackPosition();
 
 	// 攻撃プレイヤーの向きを設定
 	m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI * fOffset, 0.0f));
@@ -564,6 +584,60 @@ void CSpecialManager::SetPlayerHypePosition()
 
 	// ジャンプ中にする
 	m_bJump = true;
+
+	// 最後尾に追加
+	m_vecJump.push_back(info);
+}
+
+//============================================================
+//	攻撃チームのジャンプの設定処理
+//============================================================
+void CSpecialManager::SetJumpAttackTeam()
+{
+	int nNumJump = 0;	// ジャンププレイヤー数
+	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
+	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
+	CGameManager::ETeamSide team = m_pAttackPlayer->GetTeam();	// 攻撃プレイヤーチーム
+	while (list.ListLoop(itr))
+	{ // リスト内の要素数分繰り返す
+
+		CPlayer* pPlayer = (*itr);	// プレイヤー情報
+
+		// 死亡状態の場合次へ
+		if (pPlayer->IsDeathState()) { continue; }
+
+		// 内野じゃない場合次へ
+		if (pPlayer->GetAreaType() != CPlayer::EFieldArea::FIELD_IN) { continue; }
+		
+		// 攻撃プレイヤーチームじゃない場合次へ
+		if (pPlayer->GetTeam() != team) { continue; }
+
+		// 攻撃プレイヤーと同一の場合次へ
+		if (pPlayer == m_pAttackPlayer) { continue; }
+
+		// ジャンプするプレイヤーを追加する
+		SPlayerJump info = {};
+
+		// プレイヤーを保存
+		info.pPlayer = pPlayer;
+
+		// ジャンプ開始位置を設定
+		info.posJumpStart = pPlayer->GetPosition();
+
+		// ジャンプ終了位置を設定
+		float fTeam = (team == CGameManager::ETeamSide::SIDE_LEFT) ? 1.0f : -1.0f;	// チームオフセット
+		info.posJumpEnd = JUMP_POS_TEAM[team] + MyLib::Vector3(JUMP_OFFSET_TEAM * fTeam * (float)nNumJump, 0.0f, 0.0f);
+
+		// 最後尾に追加
+		m_vecJump.push_back(info);
+
+		// プレイヤーの向きを設定
+		pPlayer->SetRotation(VEC3_ZERO);
+		pPlayer->SetRotDest(0.0f);
+
+		// ジャンプ人数加算
+		nNumJump++;
+	}
 }
 
 //============================================================
@@ -628,6 +702,14 @@ HRESULT CSpecialManager::SetDarkGym()
 
 	// プレイヤー盛り上げ位置の設定
 	SetPlayerHypePosition();
+
+	// 攻撃チームのジャンプ設定
+	SetJumpAttackTeam();
+
+	// 標的チーム/外野の警戒設定
+	CPlayerManager* pPlayerManager = CPlayerManager::GetInstance();
+	pPlayerManager->CautionInAll(m_pTargetPlayer->GetTeam());
+	pPlayerManager->CautionOutAll();
 
 	return S_OK;
 }

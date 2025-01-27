@@ -209,6 +209,10 @@ void CBalloonFrame::Uninit()
 		m_pIdxBuff = nullptr;
 	}
 
+	// 終了
+	SAFE_UNINIT(m_pFillPoly);
+	SAFE_UNINIT(m_pTail);
+
 	// オブジェクトの破棄
 	Release();
 }

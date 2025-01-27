@@ -119,7 +119,7 @@ void CSpotLight::Uninit()
 
 	// エフェクトの終了
 	m_pEffect->SetEnableAutoDeath(true);
-	m_pEffect->SetTrigger(0);
+	m_pEffect->DeleteLater(0.1f);
 }
 
 //==========================================================================

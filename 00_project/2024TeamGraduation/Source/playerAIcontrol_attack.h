@@ -46,7 +46,7 @@ public:
 		THROWTYPE_NORMAL,		// 通常
 		THROWTYPE_JUMP,			// ジャンプ
 		THROWTYPE_SPECIAL,		// スペシャル
-		//THROWTYPE_PASS,			// パス
+		THROWTYPE_PASS,			// パス
 		THROWTYPE_MAX
 	};
 
@@ -56,6 +56,15 @@ public:
 		THROW_NORMAL,			// 投げ
 		THROW_PASS,				// パス
 		THROW_SPECIAL,			// スペシャル
+	};
+
+private:
+
+	struct STiming
+	{
+		float fTimer;
+		float fPosY;
+		bool bSet;
 	};
 
 public:
@@ -79,6 +88,7 @@ protected:
 	//=============================
 	// 仮想・純粋関数
 	//=============================
+	virtual void Preparation() = 0;
 
 	//=============================
 	// メンバ関数
@@ -126,6 +136,7 @@ private:
 	void ThrowTypeNormal();			// 通常
 	void ThrowTypeJump();			// ジャンプ
 	void ThrowTypeSpecial();		// スペシャル
+	void ThrowTypePass();			// パス
 	
 	// 投げフラグ
 	void ThrowFlagNone() {};		// なし
@@ -136,19 +147,31 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void UpdateAttack();
-	void UpdateThrow();			// 投げ
-	bool IsCancelJumpAttack();	// キャンセル
+	void UpdateAttack();						// 攻め更新
+	void UpdateThrow();							// 投げ更新
+	bool IsCancelJumpAttack();					// キャンセル
 
-	void AttackDash(CPlayer* pTarget);	// 走り投げ
-	void AttackDashJump(CPlayer* pTarget);	// 走り投げ
+	// 投げ
+	void AttackNormal(CPlayer* pTarget);		// 通常投げ
+	void AttackDash(CPlayer* pTarget);			// 走り投げ
 
-	bool IsStop();
+	// ジャンプ
+	void AttackJump(CPlayer* pTarget);			// ジャンプ投げ
+	void AttackDashJump(CPlayer* pTarget);		// 走りジャンプ投げ
+
+	void AttackFeint();							// フェイント
+
+	void UpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void SetAttackTimer(int nMin, int nMax);	// 行動タイマー
+
+	bool IsStop();			// 止める判断
 
 	//=============================
 	// メンバ変数
 	//=============================
 	CPlayer* m_pTarget;
+
+	int m_nLevel;
 
 	//-----------------------------
 	// 列挙
@@ -161,7 +184,7 @@ private:
 	//-----------------------------
 	// 構造体
 	//-----------------------------
-
+	STiming m_sTimig;
 };
 
 #endif

@@ -50,7 +50,7 @@ HRESULT CPlayerSpawn::Init()
 	}
 
 	// モーションの設定
-	CMotion::Info info = GetMotion()->GetInfo(EMotion::MOTION_WALK_SPAWN);	// モーション情報
+	CMotionManager::Info info = GetMotion()->GetInfo(EMotion::MOTION_WALK_SPAWN);	// モーション情報
 	int nKey = rand() % info.nNumKey;										// 開始キー
 	float fFrame = (float)(rand() % info.aKey[nKey].nFrame);				// 開始フレーム
 	GetMotion()->Set(EMotion::MOTION_WALK_SPAWN, nKey, true, fFrame);		// モーション設定

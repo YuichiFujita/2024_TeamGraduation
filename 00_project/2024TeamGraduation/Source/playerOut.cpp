@@ -11,7 +11,6 @@
 #include "playercontrol_action.h"
 #include "playerAction.h"
 
-
 //==========================================================================
 // コンストラクタ
 //==========================================================================
@@ -43,9 +42,13 @@ void CPlayerOut::Update(const float fDeltaTime, const float fDeltaRate, const fl
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerControlAction* pControlAction = GetPlayerControlAction();
 
-	// 操作の更新
-	pControlMove->Move(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
-	pControlAction->Action(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+	if (!pPlayer->IsDeathState())
+	{ // 死んでいない場合
+
+		// 操作の更新
+		pControlMove->Move(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+		pControlAction->Action(pPlayer, fDeltaTime, fDeltaRate, fSlowRate);
+	}
 
 	// 操作クラスの反映
 	SetPlayerControlMove(pControlMove);
@@ -73,7 +76,7 @@ bool CPlayerOut::IsCrab()
 	// プレイヤー情報の取得
 	CPlayer* pPlayer = GetPlayer();
 
-	if (!pPlayer || !m_bClab) return false;
+	if (!pPlayer/* || !m_bClab*/) return false;
 
 	// ボールを持っていないか
 	if (pPlayer->GetBall() != nullptr) { return false; }

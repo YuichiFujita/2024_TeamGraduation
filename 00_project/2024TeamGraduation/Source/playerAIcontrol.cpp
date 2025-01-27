@@ -86,6 +86,8 @@ void CPlayerAIControl::Uninit()
 		m_pAIControlMode->Uninit();
 		m_pAIControlMode = nullptr;
 	}
+
+	delete this;
 }
 
 //==========================================================================
@@ -167,7 +169,7 @@ void CPlayerAIControl::ModeManager()
 	{// ボールが取得されていない場合||自分とボールを持っているチームが違う場合
 		mode = CPlayerAIControlMode::EMode::MODE_DEFENCE;	// キャッチ
 	}
-	else /*if (pBall->GetPlayer() != nullptr && pBall->GetTypeTeam() == m_pAI->GetTeam())*/
+	else
 	{// ボールが取得されていない場合||自分とボールを持っているチームが同じ場合
 		mode = CPlayerAIControlMode::EMode::MODE_IDLE;	// 待機
 	}

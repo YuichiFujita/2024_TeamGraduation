@@ -124,6 +124,12 @@ public:
 	);
 
 	//=============================
+	// ‚»‚Ì‘¼ŠÖ”
+	//=============================
+	void CautionInAll(const CGameManager::ETeamSide team);	// Œx‰úˆ—
+	void CautionOutAll();	// Œx‰úˆ—
+
+	//=============================
 	// Ã“Iƒƒ“ƒoŠÖ”
 	//=============================
 	static CPlayerManager* Create(EType type);	// ¶¬

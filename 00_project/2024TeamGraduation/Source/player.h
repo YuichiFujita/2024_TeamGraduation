@@ -104,6 +104,8 @@ public:
 		MOTION_DOOR,					// ドア開け
 		MOTION_BOW,						// 礼
 		MOTION_REVIVE,					// 蘇生
+		MOTION_CUTIN_L,					// カットイン左
+		MOTION_CUTIN_R,					// カットイン右
 		MOTION_MAX
 	};
 
@@ -216,13 +218,14 @@ public:
 	// 人間列挙
 	enum EHuman
 	{
-		HUMAN_NONE = -1,	// 指定なし
-		HUMAN_ENTRY,		// エントリー
-		HUMAN_SPAWN,		// 登場演出
-		HUMAN_REFEREE,		// 体育教師
-		HUMAN_REFEREE_RESULT,		// 体育教師
-		HUMAN_RESULT,		// リザルト
-		HUMAN_MAX			// この列挙型の総数
+		HUMAN_NONE = -1,		// 指定なし
+		HUMAN_ENTRY,			// エントリー
+		HUMAN_SPAWN,			// 登場演出
+		HUMAN_CUTIN,			// カットイン
+		HUMAN_REFEREE,			// 体育教師
+		HUMAN_REFEREE_RESULT,	// 体育教師
+		HUMAN_RESULT,			// リザルト
+		HUMAN_MAX				// この列挙型の総数
 	};
 
 	//=============================
@@ -360,8 +363,8 @@ public:
 	EFieldArea GetAreaType() const { return m_typeArea; }				// ポジション取得
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }		// チームサイド取得
 	EState GetState() { return m_state; }								// 状態取得
-	EBody GetBodyType() { return m_BodyType; }							// 体型取得
-	EHandedness GetHandedness() { return m_Handedness; }				// 利き手取得
+	EBody GetBodyType() const { return m_BodyType; }					// 体型取得
+	EHandedness GetHandedness() const { return m_Handedness; }			// 利き手取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }				// 自分のインデックス設定
 	int GetMyPlayerIdx() const { return m_nMyPlayerIdx; }				// 自分のインデックス取得
 	int GetPositionIdx() const { return m_nPosIdx; }					// 自分のポジション別インデックス取得
@@ -379,6 +382,10 @@ public:
 	MyLib::Vector3 CalcFuturePosition(const int nFutureFrame);			// 未来位置計算
 	MyLib::Vector3 GetLookOffset() const;								// 未来位置オフセット取得
 	void DeadCollectSetting();											// 死亡回収時処理
+	void CopyDressData(const CPlayer* pCopyPlayer);						// 着せ替え情報コピー
+	bool IsDeathState() const;											// 死亡状態かの確認
+	bool IsPassOK() const;												// パス可能かの確認
+	bool IsTeamPlayer() const;											// チーム内にまだプレイヤーがいるかの確認
 
 	//=============================
 	// 静的メンバ関数
@@ -515,8 +522,8 @@ private:
 	void MotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モーションの設定
 	void DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// デフォルトモーションの設定
 	void UpdateByMotion(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モーション別更新処理
-	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	virtual void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	void CatchSettingSpecial(const bool& bJust, const CBall::ESpecial& typeSpecial);	// キャッチ時処理(スペシャル)
 
@@ -554,6 +561,7 @@ private:
 	//-----------------------------
 	MyLib::Color m_mMatcol;			// マテリアルの色
 	SKnockbackInfo m_sKnockback;	// ノックバックの位置
+	SKnockbackInfo m_sDamageKB;		// ノックバックの位置(ダメージ)
 	
 	//-----------------------------
 	// 行動フラグ

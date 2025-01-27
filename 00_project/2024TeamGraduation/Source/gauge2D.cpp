@@ -197,6 +197,21 @@ void CGauge2D::Draw()
 }
 
 //============================================================
+//	•`‰æó‹µ‚Ìİ’èˆ—
+//============================================================
+void CGauge2D::SetEnableDisp(const bool bDisp)
+{
+	m_pBg->SetEnableDisp(bDisp);
+	m_pBar->SetEnableDisp(bDisp);
+	m_pAssist->SetEnableDisp(bDisp);
+
+	if (m_bDrawFrame)
+	{
+		m_pFrame->SetEnableDisp(bDisp);
+	}
+}
+
+//============================================================
 //	ˆÊ’u‚Ìİ’èˆ—
 //============================================================
 void CGauge2D::SetPosition(const MyLib::Vector3& rPos)
@@ -269,7 +284,7 @@ CGauge2D* CGauge2D::Create
 )
 {
 	// ƒQ[ƒW2D‚Ì¶¬
-	CGauge2D* pGauge2D = new CGauge2D(fFrame);
+	CGauge2D* pGauge2D = DEBUG_NEW CGauge2D(fFrame);
 	if (pGauge2D == nullptr)
 	{ // ¶¬‚É¸”s‚µ‚½ê‡
 

@@ -152,7 +152,6 @@ HRESULT CTitleStudent::Init()
 
 	// プレイヤー数
 	int size = m_List.GetNumAll();
-	float division = RANGE / size;	// 1分割あたりの向き
 	float fRot = RANGE / (float)(size + 1);
 
 	MyLib::Vector3 setpos, setrot;
@@ -239,7 +238,7 @@ void CTitleStudent::Update(const float fDeltaTime, const float fDeltaRate, const
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CTitleStudent::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CTitleStudent::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -263,7 +262,7 @@ void CTitleStudent::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CTitleStudent::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CTitleStudent::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();

@@ -7,6 +7,11 @@
 #ifndef _PRECOMPIRE_H_
 #define _PRECOMPIRE_H_	// 二重インクルード防止
 
+//==========================================================================
+// デバッグexeのデバッグ表示 ON/OFF
+//==========================================================================
+#pragma warning(disable : 26812)	// enumclass警告の削除
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <Windows.h>

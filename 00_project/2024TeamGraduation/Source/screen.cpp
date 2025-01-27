@@ -12,6 +12,8 @@
 #include "renderer.h"
 #include "shader.h"
 #include "shaderMono.h"
+#include "manager.h"
+#include "lightManager.h"
 
 //************************************************************
 //	子クラス [CScreen] のメンバ関数
@@ -19,7 +21,9 @@
 //============================================================
 //	コンストラクタ
 //============================================================
-CScreen::CScreen() : CObject2D(7), m_bShader(false)
+CScreen::CScreen() : CObject2D(7),
+	m_bShader	(false),	// シェーダーフラグ
+	m_fCurTime	(0.0f)		// 経過時間
 {
 
 }
@@ -71,6 +75,20 @@ void CScreen::Uninit()
 //============================================================
 void CScreen::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	const float fOldTime = m_fCurTime;	// 前回時間
+	if (m_fCurTime > 0.0f)
+	{ // 経過しきっていない場合
+
+		// 経過時間を減算
+		m_fCurTime -= fDeltaTime * fSlowRate;
+		if (m_fCurTime <= 0.0f)
+		{ // 経過しきった場合
+
+			// フラグを反転
+			SetEnableShader(!m_bShader);
+		}
+	}
+
 	// オブジェクト2Dの更新
 	CObject2D::Update(fDeltaTime, fDeltaRate, fSlowRate);
 }
@@ -157,4 +175,19 @@ CScreen* CScreen::Create(const int nScreenTexIdx)
 		// 確保したアドレスを返す
 		return pScreen;
 	}
+}
+
+//============================================================
+//	シェーダーの設定処理
+//============================================================
+void CScreen::SetEnableShader(const bool bShader, const float fTime)
+{
+	// ライトの設定
+	GET_MANAGER->GetLight()->SetEnableBright(bShader);
+
+	// 引数フラグの設定
+	m_bShader = bShader;
+
+	// 経過時間を初期化
+	m_fCurTime = fTime;
 }

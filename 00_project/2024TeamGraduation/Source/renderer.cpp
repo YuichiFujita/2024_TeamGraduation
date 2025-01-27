@@ -316,9 +316,7 @@ HRESULT CRenderer::CreateRenderTexture()
 //============================================================
 void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawFunc, ACameraFunc pSetCameraFunc)
 {
-	CManager *pManager = GET_MANAGER;			// マネージャー
-	CCamera  *pCamera  = pManager->GetCamera();	// カメラ
-
+	CManager *pManager = GET_MANAGER;	// マネージャー
 	D3DVIEWPORT9 viewportDef;	// カメラのビューポート保存用
 	HRESULT hr;	// 異常終了の確認用
 
@@ -375,10 +373,10 @@ void CRenderer::DrawRenderTexture(LPDIRECT3DSURFACE9* pSurface, ADrawFunc pDrawF
 //============================================================
 //	スクリーンシェーダーフラグの設定処理
 //============================================================
-void CRenderer::SetEnableShader(const bool bShader)
+void CRenderer::SetEnableShader(const bool bShader, const float fTime)
 {
 	// シェーダーフラグの設定
-	m_pDrawScreen->SetEnableShader(bShader);
+	m_pDrawScreen->SetEnableShader(bShader, fTime);
 }
 
 //============================================================

@@ -44,7 +44,7 @@ public:
 		SELECT_BGM,					// BGM
 		SELECT_VIB,					// バイブレーション
 		SELECT_BACK,				// 戻る
-		SELECT_RANKING,				// ランキング
+		SELECT_RESET,				// リセット
 		SELECT_MAX
 	};
 
@@ -114,6 +114,10 @@ private:
 	HRESULT CreateVibFrag();	// バイブフラグ生成
 	HRESULT CreateDesign(CObject2D** ppObj2D, const std::string& texture, const MyLib::Vector3& pos, const MyLib::Vector3& rot);	// デザイン生成
 	HRESULT CreateSelectMarker();	// 選択肢のマーカー生成
+
+	// その他
+	void WriteSound();	// 書き音
+	void Reset();		// リセット
 
 	//=============================
 	// メンバ変数

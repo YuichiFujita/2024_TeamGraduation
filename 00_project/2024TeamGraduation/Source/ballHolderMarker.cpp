@@ -238,6 +238,15 @@ HRESULT CBallHolderMarker::CreateArrow()
 //==========================================================================
 void CBallHolderMarker::Uninit()
 {
+	// 円
+	SAFE_UNINIT(m_pCircle);
+
+	// 外周円
+	SAFE_UNINIT(m_pOutCircle);
+
+	// 矢印
+	SAFE_UNINIT(m_pArrow);
+
 	// オブジェクトの破棄
 	Release();
 }

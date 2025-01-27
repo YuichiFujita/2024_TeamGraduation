@@ -91,7 +91,7 @@ private:
 	// オーバーライド関数
 	//=============================
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 状態更新
-	void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
 
 	//=============================
 	// メンバ関数

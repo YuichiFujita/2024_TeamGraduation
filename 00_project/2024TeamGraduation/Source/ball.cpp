@@ -221,7 +221,8 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	m_nDamage		(0),			// ダメージ
 	m_nCoverHeal	(0),			// カバー回復
 	m_fKnockback	(0.0f),			// ノックバック
-	m_fBallAngle	(0.0f)			// 回転角度
+	m_fBallAngle	(0.0f),			// 回転角度
+	m_fInitialSpeed	(0.0f)			// 初速
 {
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
@@ -708,27 +709,24 @@ void CBall::Special(CPlayer* pPlayer)
 //==========================================================================
 // パス処理
 //==========================================================================
-void CBall::Pass(CPlayer* pPlayer)
+bool CBall::Pass(CPlayer* pPlayer)
 {
 	// キャッチしていないボールを投げようとした場合エラー
 	assert(m_state == STATE_CATCH);
 
 	// パス対象の設定
 	m_pTarget = CollisionPassTarget();
-	if (m_pTarget != nullptr)
-	{ // ターゲットがいる場合
 
-		MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
-		MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
-		float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
+	// パス対象がいない場合抜ける
+	if (m_pTarget == nullptr) { return false; }
 
-		// 目標向き/向きをボール方向にする
-		m_pPlayer->SetRotDest(fAngleY);
-		m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
-	}
+	MyLib::Vector3 posPlayer = pPlayer->GetPosition();		// ボール過去位置
+	MyLib::Vector3 posTarget = m_pTarget->GetPosition();	// プレイヤー位置
+	float fAngleY = posPlayer.AngleXZ(posTarget);			// ボール方向
 
-	// ターゲットがいない場合エラー
-	assert(m_pTarget != nullptr);
+	// 目標向き/向きをボール方向にする
+	m_pPlayer->SetRotDest(fAngleY);
+	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
 
 	// 投げ処理
 	Throw(pPlayer);
@@ -780,6 +778,8 @@ void CBall::Pass(CPlayer* pPlayer)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
+
+	return true;
 }
 
 //==========================================================================
@@ -881,8 +881,11 @@ void CBall::CalWorldMtx()
 		// キャッチ時のマトリックスから位置を反映
 		SetPosition(mtxParts.GetWorldPosition());
 
-		// 影の描画を停止
-		m_pShadow->SetEnableDisp(false);
+		if (m_pShadow != nullptr)
+		{
+			// 影の描画を停止
+			m_pShadow->SetEnableDisp(false);
+		}
 
 		// 回転角度を初期化
 		m_fBallAngle = 0.0f;
@@ -904,7 +907,7 @@ void CBall::CalWorldMtx()
 		mtxWorld.Multiply(mtxWorld, mtxScale);
 
 		// 回転角度を回す
-		m_fBallAngle += (m_fInitialSpeed + m_fMoveSpeed) * REV_ROLL;
+		m_fBallAngle += (m_fInitialSpeed + m_fMoveSpeed) * (REV_ROLL * GET_MANAGER->GetDeltaRate() * GET_MANAGER->GetSlowRate());
 
 		// 回転軸を正規化
 		MyLib::Vector3 vecAxis = GetMove();	// 移動ベクトルを取得
@@ -1563,6 +1566,9 @@ CPlayer* CBall::CollisionPlayer(MyLib::Vector3* pPos)
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 
+		// 死亡状態の場合次へ
+		if (pPlayer->IsDeathState()) { continue; }
+
 		// 円と円柱の当たり判定
 		bool bHit = UtilFunc::Collision::CollisionCircleCylinder
 		( // 引数
@@ -1616,6 +1622,9 @@ CPlayer* CBall::CollisionThrowTarget(const bool bAbsLock)
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+
+		// 死亡状態の場合次へ
+		if (pPlayer->IsDeathState()) { continue; }
 
 		// 同じチームの場合次へ
 		if (m_typeTeam == pPlayer->GetTeam()) { continue; }
@@ -1671,6 +1680,9 @@ CPlayer* CBall::CollisionPassTarget()
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+
+		// パスできない場合次へ
+		if (!pPlayer->IsPassOK()) { continue; }
 
 		// 違うチームの場合次へ
 		if (m_typeTeam != pPlayer->GetTeam()) { continue; }
@@ -1757,8 +1769,11 @@ void CBall::Catch(CPlayer* pPlayer)
 	// キャッチしたプレイヤーを保存
 	m_pPlayer = pPlayer;
 
-	// キャッチしたプレイヤーを所持マーカーに割当
-	m_pHoldMarker->BindPlayer(pPlayer);
+	if (m_pHoldMarker != nullptr)
+	{
+		// キャッチしたプレイヤーを所持マーカーに割当
+		m_pHoldMarker->BindPlayer(pPlayer);
+	}
 
 #ifdef CHANGE
 	// キャッチしたAIに操作権を移す
@@ -1783,8 +1798,11 @@ void CBall::Throw(CPlayer* pPlayer)
 	// プレイヤーから保存中のボールを破棄
 	pPlayer->SetBall(nullptr);
 
-	// 所持マーカーからプレイヤーを破棄
-	m_pHoldMarker->BindPlayer(nullptr);
+	if (m_pHoldMarker != nullptr)
+	{
+		// 所持マーカーからプレイヤーを破棄
+		m_pHoldMarker->BindPlayer(nullptr);
+	}
 
 	// ボールの移動ベクトルを作成
 	float fRotY = pPlayer->GetRotation().y + D3DX_PI;	// ボールの投げる向き

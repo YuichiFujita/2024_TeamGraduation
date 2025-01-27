@@ -95,7 +95,6 @@ void CRenderTextureManager::Draw()
 	for (int i = 0; i < ELayer::LAYER_MAX; i++)
 	{ // ƒŒƒCƒ„[‚Ì‘”•ªŒJ‚è•Ô‚·
 
-		int nIdxLoop = 0;	// ƒ‹[ƒv”
 		for (auto& rItrRenTex : m_vecRenderTexture[i])
 		{ // ”z—ñ‚Ì—v‘f”•ªŒJ‚è•Ô‚·
 

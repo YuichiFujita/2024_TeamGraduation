@@ -88,13 +88,13 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 	UtilFunc::Transformation::RotNormalize(fRangeZero);
 	if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
 	{// â∫å¸Ç´
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
 	}
 	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
 	{// è„å¸Ç´
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
 		bRot = true;
 		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 	}

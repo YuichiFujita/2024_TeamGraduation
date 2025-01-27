@@ -275,10 +275,10 @@ void CResultManager::Uninit()
 	SAFE_UNINIT(pManager);
 
 	// 王冠
-	m_pCrown = nullptr;
+	SAFE_UNINIT(m_pCrown);
 	
 	// 勝利準備ポリゴン
-	m_pText = nullptr;
+	SAFE_UNINIT(m_pText);
 
 	// エフェクト破棄
 	if (m_pEfkConfetti != nullptr)
@@ -286,6 +286,12 @@ void CResultManager::Uninit()
 		m_pEfkConfetti->SetTrigger(0);
 		m_pEfkConfetti = nullptr;
 	}
+
+	// 審判
+	SAFE_UNINIT(m_pReferee);
+
+	// 勝利チーム
+	SAFE_UNINIT(m_pWinTeam);
 
 	// 自身の開放
 	delete m_pThisPtr;
@@ -520,8 +526,6 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 //==========================================================================
 void CResultManager::StateStartPreludeReady()
 {
-	CTexture* pTexture = CTexture::GetInstance();
-
 	// 観客盛り下げ
 	CAudience::SetEnableJumpAll(false, m_teamPreludeWin);
 
@@ -550,8 +554,6 @@ void CResultManager::StateStartPreludeReady()
 //==========================================================================
 void CResultManager::StateStartPrelude()
 {
-	CTexture* pTexture = CTexture::GetInstance();
-
 	// 観客盛り上げ
 	CAudience::SetEnableJumpAll(true, m_teamPreludeWin);
 
@@ -582,8 +584,6 @@ void CResultManager::StateStartPrelude()
 //==========================================================================
 void CResultManager::StateStartCharmContestReady()
 {
-	CTexture* pTexture = CTexture::GetInstance();
-
 	// 観客盛り下げ
 	CAudience::SetEnableJumpAll(false, m_teamPreludeWin);
 
@@ -615,8 +615,6 @@ void CResultManager::StateStartCharmContestReady()
 //==========================================================================
 void CResultManager::StateStartCharmContest()
 {
-	CTexture* pTexture = CTexture::GetInstance();
-
 	//TAKADA: モテ値出す？
 
 	// 観客NTR
@@ -884,8 +882,6 @@ void CResultManager::LoadTeam(std::ifstream* File, std::string line, int nTeam)
 {
 	// コメント用
 	std::string hoge;
-	int j = 0;	// プレイヤー人数
-
 	while (std::getline(*File, line))
 	{
 		// コメントはスキップ
@@ -980,7 +976,6 @@ void CResultManager::Debug()
 	if (ImGui::TreeNode("State"))
 	{
 		CCamera* pCamera = GET_MANAGER->GetCamera();
-		float fDistance = pCamera->GetDistance();
 
 		// 現在の状態
 		ImGui::Text("state: %s", magic_enum::enum_name(m_state));

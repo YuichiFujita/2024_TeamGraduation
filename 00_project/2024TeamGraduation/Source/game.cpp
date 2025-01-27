@@ -117,9 +117,6 @@ HRESULT CGame::Init()
 	// ボールの生成
 	CBall::Create(MyLib::Vector3(0.0f, 0.0f, 0.0f));
 
-	// 体育館を明るくする
-	GET_MANAGER->GetLight()->SetEnableBright(true);
-
 	// クリアの判定
 	SetEnableClear(true);
 
@@ -220,13 +217,6 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			// オーディエンス生成
 			CCharmText::Create(CGameManager::ETeamSide::SIDE_RIGHT);
 		}
-
-		if (ImGui::Button("CutIn"))
-		{
-			// オーディエンス生成
-			CCutIn::Create();
-		}
-
 #endif
 
 		// ツリー終端
@@ -239,7 +229,7 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 		if (ImGui::Button("Shader : Change"))
 		{
 			// シェーダーフラグの反転
-			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader());
+			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader(), 2.0f);
 		}
 
 		if (ImGui::Button("Camera : Swing"))

@@ -34,6 +34,7 @@ CObjectChara::CObjectChara(int nPriority) : CObjectHierarchy(nPriority)
 	m_pStatus = nullptr;		// ステータス
 	m_pStatusBall = nullptr;	// ステータス(ボール)
 	m_bInDicision = false;		// 攻撃判定中フラグ
+	m_pMotion = nullptr;		// モーション
 }
 
 //==========================================================================
@@ -106,9 +107,9 @@ void CObjectChara::BindObjectData(int nCntData)
 	// ステータス(ボール)生成
 	CreateStatusBall(m_aLoadData[m_nIdxFile].parameterBall);
 
-	CEntryRuleManager::SRule rule;			// ルール
-	CEntryRuleManager::LoadSetting(&rule);	// ルール読込
-	float fMul = MUL_LIFE[rule.life];		// 体力倍率
+	CEntryRuleManager::SRule rule;		// ルール
+	CEntryRuleManager::LoadRule(&rule);	// ルール読込
+	float fMul = MUL_LIFE[rule.life];	// 体力倍率
 
 	// 体力の設定
 	m_nLife = m_aLoadData[m_nIdxFile].parameter.nLife * fMul;
@@ -231,7 +232,7 @@ void CObjectChara::MotionInProgressAction()
 	if (m_pMotion == nullptr) return;
 
 	// 情報取得
-	std::vector<CMotion::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
+	std::vector<CMotionManager::AttackInfo> attackInfo = m_pMotion->GetAttackInfo();
 	if (attackInfo.empty()) return;
 
 	// 攻撃時処理
@@ -262,7 +263,7 @@ void CObjectChara::MotionInProgressAction()
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CObjectChara::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CObjectChara::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// 武器の位置
 	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), ATKInfo);
@@ -271,7 +272,7 @@ void CObjectChara::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CObjectChara::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CObjectChara::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// 武器の位置
 	MyLib::Vector3 weponpos = m_pMotion->GetAttackPosition(GetModel(), ATKInfo);

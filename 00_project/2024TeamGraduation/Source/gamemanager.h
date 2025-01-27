@@ -28,6 +28,7 @@ class CGymWallManager;
 class CTimerUI;
 class CObject2D;
 class CCharmManager;
+class CSkip;
 
 //==========================================================================
 // クラス定義
@@ -50,6 +51,7 @@ public:
 		SCENE_SPAWN,	// 登場演出
 		SCENE_START,	// 開始演出
 		SCENE_SPECIAL,	// スペシャル演出
+		SCENE_END_STAG,	// 終了演出
 		SCENE_END,		// 終了
 		SCENE_DEBUG,	// デバッグ
 		SCENE_MAX
@@ -99,6 +101,7 @@ public:
 	void SetSceneType(ESceneType type);					// シーンの種類設定
 	ESceneType GetType() { return m_SceneType; }		// シーンの種類取得
 	ESceneType GetOldType() { return m_OldSceneType; }	// 前回のシーンの種類取得
+	void SetEnableTimerStop(const bool bStop);			// タイマー停止フラグ設定
 	void SetEnableControll(bool bControll) { m_bControll = bControll; }		// 操作フラグを切り替えする
 	bool IsControll() { return m_bControll; }								// 操作のフラグ取得
 	CGymWallManager* GetGymWallManager() { return m_pGymWallManager; }		// 体育館の壁情報取得
@@ -148,7 +151,8 @@ private:
 	void SceneSpawn();		// 登場演出
 	void SceneStart();		// 開始演出
 	void SceneSpecial();	// スペシャル演出
-	void SceneEnd();		// 終了演出
+	void SceneEndStag();	// 終了演出
+	void SceneEnd();		// 終了
 	void SceneDebug();		// デバッグ
 
 	// シーンスキップ
@@ -160,6 +164,7 @@ private:
 	void UpdateSpecial();		// スペシャル演出更新
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成
+	void StartTeamStatus();		// チームステータス開始時
 	void Save();				// チームステータス保存
 	void UpdateGaugeTime();		// ゲージ時間更新
 
@@ -182,8 +187,9 @@ private:
 	CCharmManager* m_pCharmManager;					// モテマネージャ
 	CCharmValueManager* m_pCharmValueManager;		// モテ値マネージャ
 	CSpecialValueManager* m_pSpecialValueManager;	// スぺ値マネージャ
-	CTimerUI* m_pTimerUI;							// タイマーUI
-	CObject2D* m_pTimerBG;							// タイマー背景
+	CTimerUI* m_pTimerUI;	// タイマーUI
+	CObject2D* m_pTimerBG;	// タイマー背景
+	CSkip* m_pSkip;			// スキップUI
 
 #if _DEBUG
 	CCollisionLine_Box* m_pCourtSizeBox = nullptr;	// コートサイズのボックス

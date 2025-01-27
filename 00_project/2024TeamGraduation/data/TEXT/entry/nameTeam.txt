@@ -1,0 +1,50 @@
+#==============================================================================
+#
+#	ランダムチーム名テキスト [nameTeam.txt]
+#	Author : 藤田 勇一
+#
+#==============================================================================
+
+TEXT_0
+	STR = やきとり
+END_TEXT
+
+TEXT_1
+	STR = つきよみ
+END_TEXT
+
+TEXT_2
+	STR = なまはげ
+END_TEXT
+
+TEXT_3
+	STR = おにぎり
+END_TEXT
+
+TEXT_4
+	STR = かみなり
+END_TEXT
+
+TEXT_5
+	STR = とりてん
+END_TEXT
+
+TEXT_6
+	STR = あまてらす
+END_TEXT
+
+TEXT_7
+	STR = さむらい
+END_TEXT
+
+TEXT_8
+	STR = ミカヅキ
+END_TEXT
+
+TEXT_9
+	STR = クロカゲ
+END_TEXT
+
+TEXT_ELSE
+	STR = 読込エラー
+END_TEXT

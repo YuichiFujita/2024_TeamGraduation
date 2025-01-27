@@ -43,7 +43,6 @@ public:
 	{
 		IDLE = 0,
 		DODGE,					// 回避行動
-		SUPPORT,				// 味方をサポート
 		CHASE_BALL,				// ボールを追いかける
 		RETREAT,				// 後退（安全地帯に移動）
 		RNDOM,					// ランダム
@@ -85,7 +84,8 @@ protected:
 	//=============================
 	virtual bool IsLineOverBall() { return false; }				// 線超え判定(ボール)
 	virtual bool IsLineOverPlayer() { return false; };			// 線越え判定(プレイヤー)
-	virtual void BallSteal() = 0;		// ボールを奪う
+	virtual void BallSteal()/* = 0*/;									// ボールを奪う
+	virtual void BallChaseRebound()/* = 0*/;						// ボールを追う(リバウンド)
 
 	//=============================
 	// メンバ関数
@@ -131,7 +131,6 @@ private:
 	//-----------------------------
 	void MoveIdle();
 	void MoveDodge();				// 回避
-	void MoveSupport();				// サポート
 	void MoveChaseBall();			// ボールを追いかける
 	virtual void MoveRetreat() = 0;	// 後退
 	virtual void MoveRandom() = 0;	// ランダム
@@ -151,6 +150,8 @@ private:
 	void SetActionTimer(int nMin, int nMax);	// 行動タイマー
 
 	bool IsCancel();
+
+	CPlayer* GetTarget();				// 投げるターゲット
 
 	//=============================
 	// メンバ変数

@@ -126,6 +126,9 @@ void CObjectHierarchy::BindObjectData(int nCntData)
 	// ファイルのインデックス番号
 	m_nIdxFile = nCntData;
 
+	// マトリックス計算
+	CalWorldMtx();
+
 	if (!m_apModel.empty())
 	{
 		return;

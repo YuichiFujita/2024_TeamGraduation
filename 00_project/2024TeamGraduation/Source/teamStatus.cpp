@@ -8,6 +8,7 @@
 #include "player.h"
 #include "playerStatus.h"
 #include "gauge2D.h"
+#include "gameEndManager.h"
 
 //==========================================================================
 // 定数定義
@@ -163,9 +164,6 @@ bool CTeamStatus::CheckAllDead()
 			return false;
 		}
 	}
-
-	// 試合終了
-	CGameManager::GetInstance()->SetSceneType(CGameManager::ESceneType::SCENE_END);
 	return true;
 }
 
@@ -208,11 +206,11 @@ void CTeamStatus::InitSpecialInfo()
 	m_sSpecialInfo.pGauge->SetColorFront(MyLib::color::White());
 	m_sSpecialInfo.pGauge->SetColorBack(MyLib::color::Black());
 
-	// 値の初期化
-	ZeroSpecialValue();
-
 	// 上限設定
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
+
+	// 値の初期化
+	ZeroSpecialValue();
 }
 
 //==========================================================================
@@ -230,7 +228,7 @@ void CTeamStatus::SetSpecialValue(float fValue)
 	if (m_sSpecialInfo.pGauge != nullptr)
 	{
 		MyLib::Vector2 size = Special::GAUGE_SIZE;
-		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;
+		float fRad = m_sSpecialInfo.fValue / m_sSpecialInfo.fValueMax;	// TODO：float０割り
 
 		// サイズ設定
 		m_sSpecialInfo.pGauge->SetSizeGaugeRadius(fRad);
@@ -253,6 +251,14 @@ void CTeamStatus::SubSpecialValue(float fValue)
 {
 	m_sSpecialInfo.fValue -= fValue;
 	SetSpecialValue(m_sSpecialInfo.fValue);
+}
+
+//==========================================================================
+// ゲージ描画フラグ設定
+//==========================================================================
+void CTeamStatus::SetEnableGaugeDisp(const bool bDisp)
+{
+	m_sSpecialInfo.pGauge->SetEnableDisp(bDisp);
 }
 
 //==========================================================================

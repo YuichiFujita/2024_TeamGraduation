@@ -35,7 +35,8 @@ END_TEXT
 
 TEXT_5
 	STR = 観客どころか
-	STR = 敵チームまでもが虜になってるぞ！
+	STR = 敵チームまでもが
+	STR = 虜になってるぞ！
 END_TEXT
 
 TEXT_6
@@ -110,6 +111,31 @@ TEXT_18
 	STR = “犯人”は彼だ！
 	STR = そして全員が被害者！
 END_TEXT
+
+TEXT_19
+	STR = 真実はいつもひとつ…
+	STR = そして惚れるのも、
+	STR = いつも彼だ！
+END_TEXT
+
+TEXT_20
+	STR = “世界改変”レベルの魅力だ！
+	STR = 全員が新しい未来に
+	STR = 惹きつけられる！
+END_TEXT
+
+TEXT_21
+	STR = 心がつながる…
+	STR = いや、鍵を開けられたのは
+	STR = 全員のハートだ！
+END_TEXT
+
+TEXT_22
+	STR = 異議なし！！！！
+	STR = 今の動き、完全に
+	STR = 『モテ判決』が下った！
+END_TEXT
+
 
 TEXT_ELSE
 	STR = 読込エラー

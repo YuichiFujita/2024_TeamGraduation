@@ -352,7 +352,7 @@ void CTitle_ControllWait::UpdateSandSmoke(const float fDeltaTime, const float fD
 //==========================================================================
 void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (GET_MANAGER->GetInstantFade()->GetState() != CInstantFade::EState::STATE_NONE)
+	if (GET_MANAGER->GetInstantFade()->GetState() == CInstantFade::EState::STATE_FADEIN)
 	{// フェード中は抜ける
 		return;
 	}
@@ -374,6 +374,9 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		// マーカータイマーリセット
 		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 		pKey->GetTrigger(DIK_D))
@@ -388,6 +391,9 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		// マーカータイマーリセット
 		m_fTimeMarker = 0.0f;
 		SetStateBG(EStateBG::STATEBG_SPAWN);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 
 	// 遷移
@@ -432,6 +438,9 @@ void CTitle_ControllWait::Decide()
 
 		// その他へ遷移
 		GET_MANAGER->GetInstantFade()->SetFade(MyLib::color::White(), Timer::State::TRANSITION);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_GO);
 	}
 		break;
 
@@ -548,7 +557,6 @@ void CTitle_ControllWait::StateTransitionMoreFirst(const float fDeltaTime, const
 	{// 後半へ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// 向きリセット
@@ -604,13 +612,16 @@ void CTitle_ControllWait::StateTransitionMoreSecond(const float fDeltaTime, cons
 	{// ラストへ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// 向きリセット
 		pCamera->SetOriginRotation(pCamera->GetRotation());
 
+		// 色々に遷移(ラスト)
 		SetState(EState::STATE_TRANSITION_MORE_LAST);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_BACK);
 	}
 }
 
@@ -634,7 +645,6 @@ void CTitle_ControllWait::StateTransitionMoreLast(const float fDeltaTime, const 
 	{// 操作へ遷移
 
 		// カメラの初期位置を現在の値に設定
-		CCamera* pCamera = GET_MANAGER->GetCamera();
 		pCamera->SetPositionROrigin(pCamera->GetPositionR());
 
 		// オプションメニュー選択できるようにする

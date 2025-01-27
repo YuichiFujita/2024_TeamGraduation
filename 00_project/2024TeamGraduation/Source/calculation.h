@@ -3334,8 +3334,9 @@ namespace UtilFunc	// 便利関数
 				nRange += 1;
 			}
 
-			if (nMinNum + 1 == nMaxNum || nMaxNum - 1 == nMinNum)
-			{
+			if (nMinNum != 0 &&
+				(nMinNum + 1 == nMaxNum || nMaxNum - 1 == nMinNum))
+			{// 最小値が0以外の時、最小値と最大値の差が1つの場合
 				nRange += 1;
 			}
 

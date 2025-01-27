@@ -16,7 +16,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTURE = "data\\TEXTURE\\entry\\area.png";	// テクスチャ
+	const std::string TEXTURE = "data\\TEXTURE\\result\\team.png";	// テクスチャ
 	const std::string TEXTURE_AUDIENCE = "data\\TEXTURE\\result\\audience.png";	// テクスチャ
 	const MyLib::Vector3 SPAWNPOS_AUDIENCE = MyLib::Vector3(640.0f, 900.0f, 0.0f);
 	const float JUMPVALUE = 50.0f;
@@ -86,7 +86,7 @@ CWinTeamResult* CWinTeamResult::Create(CGameManager::ETeamSide winSIde)
 HRESULT CWinTeamResult::Init()
 {
 	// UV分割数設定
-	SetDivisionUV(1, 2);
+	SetDivisionUV(1, 3);
 
 	//	初期化処理
 	CObject2D_Anim::Init();
@@ -104,7 +104,7 @@ HRESULT CWinTeamResult::Init()
 	SetSizeOrigin(GetSize());
 
 	// パターン設定
-	SetPatternAnim(m_winTeam);
+	SetPatternAnim(m_winTeam + 1);
 
 	// 自動再生をOFFにする
 	SetEnableAutoPlay(false);
@@ -170,8 +170,11 @@ HRESULT CWinTeamResult::CreateAudience()
 //==========================================================================
 void CWinTeamResult::Uninit()
 {
-	// オブジェクトを破棄
-	Release();
+	// 終了処理
+	CObject2D_Anim::Uninit();
+
+	// 観客
+	SAFE_UNINIT(m_pAudience);
 }
 
 //==========================================================================

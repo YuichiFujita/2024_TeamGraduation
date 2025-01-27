@@ -385,7 +385,7 @@ void CAudienceHighPoly::SetMotion(const int nMotion)
 		case EMotion::MOTION_SPECIAL:
 		{
 			// 設定するモーションの情報取得
-			const CMotion::Info& info = pMotion->GetInfo(nMotion);
+			const CMotionManager::Info& info = pMotion->GetInfo(nMotion);
 
 			// 開始キー
 			int nStartKey = 0;
@@ -412,7 +412,7 @@ void CAudienceHighPoly::SetMotion(const int nMotion)
 			}
 
 			// 設定するモーションの情報取得
-			const CMotion::Info& info = pMotion->GetInfo(nSetMotion);
+			const CMotionManager::Info& info = pMotion->GetInfo(nSetMotion);
 
 			// 開始キー
 			int nStartKey = rand() % info.nNumKey;

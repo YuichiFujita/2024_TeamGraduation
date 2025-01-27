@@ -39,6 +39,7 @@ private:
 	// ƒƒ“ƒoŠÖ”
 	//=============================
 	void PreparationLeave() override;
+	void Preparation() override;
 
 	//=============================
 	// ƒƒ“ƒo•Ï”

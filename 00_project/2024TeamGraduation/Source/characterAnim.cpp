@@ -124,7 +124,7 @@ CCharacterAnim::AMotion CCharacterAnim::Regist(const char* pCharaPath)
 CCharacterAnim* CCharacterAnim::Create()
 {
 	// キャラクターアニメーションの生成
-	CCharacterAnim* pCharacter = new CCharacterAnim;
+	CCharacterAnim* pCharacter = DEBUG_NEW CCharacterAnim;
 	if (pCharacter == nullptr)
 	{ // 生成に失敗した場合
 

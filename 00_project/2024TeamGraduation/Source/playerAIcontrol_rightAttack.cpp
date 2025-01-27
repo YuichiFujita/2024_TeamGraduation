@@ -107,3 +107,7 @@ void CPlayerAIControlRightAttack::PreparationLeave()
 		SetAttackMode(EATTACKMODE::ATTACKMODE_ATTACK);
 	}
 }
+
+void CPlayerAIControlRightAttack::Preparation()
+{
+}

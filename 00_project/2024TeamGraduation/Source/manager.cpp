@@ -28,6 +28,7 @@
 #include "characterAnim.h"
 #include "shader.h"
 #include "renderTextureManager.h"
+#include "motionManager.h"
 
 //==========================================================================
 // 定数定義
@@ -35,9 +36,9 @@
 namespace
 {
 #if _DEBUG
-	const float MIN_LOOP_LOAD = 0;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 1;	// 必須ロードループ数
 #else
-	const float MIN_LOOP_LOAD = 2;	// 必須ロードループ数
+	const int MIN_LOOP_LOAD = 3;	// 必須ロードループ数
 #endif
 
 #if _DEBUG
@@ -312,6 +313,11 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
+	//**********************************
+	// モーション
+	//**********************************
+	CMotionManager::Create();
+
 	// レンダーテクスチャーの生成
 	if (FAILED(m_pRenderer->CreateRenderTexture()))
 	{ // 生成に失敗した場合
@@ -502,6 +508,13 @@ void CManager::Reset(CScene::MODE mode)
 		m_pCamera->Reset();
 		m_pCamera->ResetByMode(mode);
 	}
+
+	// モーションマネージャーリセット
+	CMotionManager* pMotionMgr = CMotionManager::GetInstance();
+	if (pMotionMgr != nullptr)
+	{
+		pMotionMgr->Reset();
+	}
 }
 
 //==========================================================================
@@ -577,6 +590,14 @@ void CManager::Uninit()
 		// メモリの開放
 		delete m_pScene;
 		m_pScene = nullptr;
+	}
+
+	// ロード画面の破棄
+	CLoadManager* pLoadManager = GetLoadManager();
+	if (pLoadManager != nullptr)
+	{
+		// 終了処理
+		pLoadManager->Uninit();
 	}
 
 	// シェーダーの破棄
@@ -693,6 +714,14 @@ void CManager::Uninit()
 		m_pPause->Uninit();
 		delete m_pPause;
 		m_pPause = nullptr;
+	}
+
+
+	// モーションマネージャーリセット
+	CMotionManager* pMotionMgr = CMotionManager::GetInstance();
+	if (pMotionMgr != nullptr)
+	{
+		pMotionMgr->Uninit();
 	}
 
 	// ロストするリソース管理マネージャー破棄
@@ -864,8 +893,10 @@ void CManager::NormalLoad()
 
 		if (m_bLoadFadeSet)
 		{// フェードが設定されてる状態
+
 			if (m_pInstantFade->GetState() == CInstantFade::STATE_FADECOMPLETION)
-			{
+			{// フェードが終了している場合
+
 				m_bLoadComplete = true;	// ロード完了
 				m_bNowLoading = false;	// ロード中フラグオフ
 			}
@@ -1072,25 +1103,16 @@ void CManager::UpdateDeltaRate()
 //==========================================================================
 void CManager::ChangePauseMode(CScene::MODE mode)
 {
-	switch (mode)
+	// 削除
+	if (m_pPause != nullptr)
 	{
-	case CScene::MODE::MODE_GAME:
-
-		// 削除
-		if (m_pPause!= nullptr)
-		{
-			m_pPause->Kill();
-			delete m_pPause;
-			m_pPause = nullptr;
-		}
-
-		// 再生成
-		m_pPause = CPause::Create(mode);
-		break;
-
-	default:
-		break;
+		m_pPause->Kill();
+		delete m_pPause;
+		m_pPause = nullptr;
 	}
+
+	// 再生成
+	m_pPause = CPause::Create(mode);
 }
 
 //==========================================================================

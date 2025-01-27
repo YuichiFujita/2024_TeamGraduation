@@ -233,9 +233,6 @@
     <ClCompile Include="Source\tutorial.cpp">
       <Filter>mode\tutorial</Filter>
     </ClCompile>
-    <ClCompile Include="Source\tutoriallogo.cpp">
-      <Filter>mode\tutorial</Filter>
-    </ClCompile>
     <ClCompile Include="Source\input_gamepad.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -866,6 +863,33 @@
     <ClCompile Include="Source\loadtext.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerCutIn.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pause_outgame.cpp">
+      <Filter>pause</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\motionManager.cpp">
+      <Filter>character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ballFake.cpp">
+      <Filter>ingame\ball</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\spawnUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gameEndManager.cpp">
+      <Filter>ingame</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gamesetUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\tutorialscreen.cpp">
+      <Filter>mode\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\skip.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -935,9 +959,6 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="Source\tutorial.h">
-      <Filter>mode\tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\tutoriallogo.h">
       <Filter>mode\tutorial</Filter>
     </ClInclude>
     <ClInclude Include="Source\input_gamepad.h">
@@ -1584,6 +1605,33 @@
     </ClInclude>
     <ClInclude Include="Source\loadtext.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerCutIn.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\pause_outgame.h">
+      <Filter>pause</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\motionManager.h">
+      <Filter>character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ballFake.h">
+      <Filter>ingame\ball</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\spawnUI.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gameEndManager.h">
+      <Filter>ingame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gamesetUI.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tutorialscreen.h">
+      <Filter>mode\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\skip.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

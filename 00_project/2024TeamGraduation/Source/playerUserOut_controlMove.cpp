@@ -195,7 +195,6 @@ void CPlayerUserOutControlMove::BilnkStick(CPlayer* player, const float fDeltaTi
 {
 	// コントロール系の取得
 	CPlayer::EDashAngle holdDashAngle = GetHoldDashAngle();	// ダッシュ方向
-	float fInputInterval = GetInputInterval();	// 入力の受け付け猶予
 	int* pCntTrigger = GetCntTrigger();			// トリガーカウント
 	int nPadIdx = player->GetMyPlayerIdx();		// 操作権インデックス
 

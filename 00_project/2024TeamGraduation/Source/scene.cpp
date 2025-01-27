@@ -5,7 +5,9 @@
 // 
 //=============================================================================
 #include "scene.h"
+#include "manager.h"
 #include "renderer.h"
+#include "lightManager.h"
 #include "calculation.h"
 #include "Xload.h"
 #include "map.h"
@@ -123,6 +125,8 @@ CScene* CScene::Create(CScene::MODE mode)
 //==========================================================================
 HRESULT CScene::Init()
 {
+	CManager* pManager = GET_MANAGER;	// マネージャー
+
 	// エフェクト全て停止
 	CMyEffekseer::GetInstance()->StopAll();
 
@@ -150,6 +154,15 @@ HRESULT CScene::Init()
 #ifdef LOADMAP
 	m_pEditMap = CEdit_Map_Release::Create(MAP_TEXT[m_mode], CManager::BuildMode::MODE_RELEASE);
 #endif
+
+	// 世界の時はうごきだす
+	pManager->SetEnableWorldPaused(false);
+
+	// 体育館を明るくする
+	pManager->GetLight()->SetEnableBright(true);
+
+	// スロー倍率を初期化
+	pManager->SetSlowRate(1.0f);
 
 	return S_OK;
 }

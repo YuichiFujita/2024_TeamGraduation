@@ -111,6 +111,8 @@ void COption_BBS::Uninit()
 	// レンダーテクスチャの破棄
 	SAFE_REF_RELEASE(m_pRenderScene);
 
+	// オプションメニュー
+	SAFE_UNINIT(m_pOptionMenu);
 
 	// オブジェクトXの終了
 	CObjectX::Uninit();

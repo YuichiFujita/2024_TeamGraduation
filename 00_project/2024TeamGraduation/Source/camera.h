@@ -35,6 +35,7 @@ public:
 		STATE_NONE = 0,	// 通常
 		STATE_FOLLOW,	// 追従
 		STATE_OUTFIELD,	// 外野
+		STATE_GAME_END,	// ゲーム終了
 		STATE_MAX
 	};
 
@@ -120,6 +121,30 @@ public:
 		float fDistance;		// 距離
 	};
 
+	// ゲーム終了情報
+	struct SGameEnd
+	{
+		// デフォルトコンストラクタ
+		SGameEnd() :
+			start		({}),			// カメラ遷移開始ポイント情報
+			pLook		(nullptr),		// 注視点対象オブジェクト
+			offset		(VEC3_ZERO),	// オブジェクトオフセット
+			fMoveTime	(0.0f),			// カメラ遷移到達時間
+			fCurTime	(0.0f)			// カメラ遷移タイマー
+		{}
+
+		// デストラクタ
+		~SGameEnd() {}
+
+		// メンバ変数
+		SCameraPoint start;		// カメラ遷移開始ポイント情報
+		CObject* pLook;			// 注視点対象オブジェクト
+		MyLib::Vector3 offset;	// オブジェクトオフセット
+		float fMoveTime;		// カメラ遷移到達時間
+		float fCurTime;			// カメラ遷移タイマー
+		bool bEnd;				// 遷移終了フラグ
+	};
+
 	//-----------------------------
 	// コンストラクタ/デストラクタ
 	//-----------------------------
@@ -139,6 +164,7 @@ public:
 	//-----------------------------
 	void SetCamera();							// カメラ設定 (通常)
 	void SetCameraDressup();					// カメラ設定 (着せ替え)
+	void SetCameraCutIn();						// カメラ設定 (カットイン)
 	void ResetByMode(CScene::MODE mode);		// モード別リセット
 	void SetSwing(const SSwing& swing);			// カメラ揺れ設定
 	void ResetSwing();							// カメラ揺れリセット
@@ -230,6 +256,8 @@ public:
 	//-----------------------------
 	// ゲームカメラ
 	//-----------------------------
+	inline bool IsGameEnd() const { return m_gameEndInfo.bEnd; }		// ゲーム終了カメラ修了確認
+	void SetGameEndInfo(CObject* pLook, MyLib::Vector3 offset, const float fMoveTime);			// ゲーム終了カメラ情報設定
 	SCameraPoint CameraPoint(const STATE state = STATE::STATE_NONE);	// 現在のカメラポイント取得
 	SCameraPoint FollowPoint();		// 現在の追従ポイント取得
 	SCameraPoint OutFieldPoint();	// 現在の外野ポイント取得
@@ -260,11 +288,13 @@ private:
 	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常状態の更新
 	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 追従状態の更新
 	void UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 外野状態の更新
+	void UpdateGameEndState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ゲーム終了状態の更新
 
 	// リセット関数
 	void ResetNoneState();		// 通常状態リセット
 	void ResetFollowState();	// 追従状態リセット
 	void ResetOutFieldState();	// 外野状態リセット
+	void ResetGameEndState();	// ゲーム終了状態リセット
 
 	// ゲームカメラ関数
 	void UpdateFollow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 追従カメラの更新
@@ -314,6 +344,7 @@ private:
 	float m_fEndTime;					// ゲームカメラ状態遷移の終了時間
 	bool b;
 	SCameraPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
+	SGameEnd m_gameEndInfo;				// ゲーム終了カメラ情報
 };
 
 #endif

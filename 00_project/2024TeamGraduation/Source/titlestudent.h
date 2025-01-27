@@ -109,8 +109,8 @@ private:
 	//-----------------------------
 	// モーション系関数
 	//-----------------------------
-	virtual void AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
-	virtual void AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
+	virtual void AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;		// 攻撃時処理
+	virtual void AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK) override;	// 攻撃判定中処理
 
 	// その他
 	void SetRandWarmUp();	// ランダムの準備体操設定

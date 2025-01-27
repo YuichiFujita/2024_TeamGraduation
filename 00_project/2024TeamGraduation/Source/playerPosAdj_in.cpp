@@ -102,7 +102,6 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		{// ‚¨‚Á‚Æ‚Á‚Æ’†‚¶‚á‚È‚¢
 			CheckReturn(pPlayer);
 		}
-
 	}
 }
 

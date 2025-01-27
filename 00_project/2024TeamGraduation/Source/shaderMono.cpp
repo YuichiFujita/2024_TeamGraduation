@@ -154,7 +154,7 @@ CMonoShader* CMonoShader::Create()
 	assert(m_pShader == nullptr);
 
 	// 単色描画シェーダーの生成
-	m_pShader = new CMonoShader;
+	m_pShader = DEBUG_NEW CMonoShader;
 	if (m_pShader == nullptr)
 	{ // 生成に失敗した場合
 

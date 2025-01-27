@@ -160,7 +160,7 @@ void CSchoolNurse::Update(const float fDeltaTime, const float fDeltaRate, const 
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CSchoolNurse::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CSchoolNurse::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
@@ -199,7 +199,7 @@ void CSchoolNurse::AttackAction(CMotion::AttackInfo ATKInfo, int nCntATK)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CSchoolNurse::AttackInDicision(CMotion::AttackInfo ATKInfo, int nCntATK)
+void CSchoolNurse::AttackInDicision(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 {
 	// モーション取得
 	CMotion* pMotion = GetMotion();
