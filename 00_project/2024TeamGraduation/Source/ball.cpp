@@ -87,7 +87,7 @@ namespace
 	namespace rebound
 	{
 #if _DEBUG
-		const float MOVE_UP = 10.0f;	// 上移動量
+		const float MOVE_UP = 2.0f;	// 上移動量
 #else
 		const float MOVE_UP = 2.0f;	// 上移動量
 #endif
@@ -1760,6 +1760,9 @@ void CBall::Catch(CPlayer* pPlayer)
 
 	// キャッチ状態にする
 	SetState(STATE_CATCH);
+
+	// 攻撃種類を破棄
+	m_typeAtk = ATK_NONE;
 
 	// プレイヤーのチームを保存
 	m_typeTeam = pPlayer->GetTeam();

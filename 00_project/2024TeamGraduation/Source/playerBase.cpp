@@ -75,18 +75,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		return hitInfo;
 	}
-	
-	// 無敵の場合
-	if (state == CPlayer::EState::STATE_INVINCIBLE)
-	{
-		if (atkBall != CBall::EAttack::ATK_NONE)
-		{// 攻撃状態なら
-			m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
-	
-			hitInfo.bHit = true;
-			return hitInfo;
-		}
-	}
 
 	if (IsAutoBallCatch(pBall))
 	{ // 自動ボールキャッチが可能な場合
@@ -114,6 +102,14 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		state != CPlayer::EState::STATE_INVADE_RETURN &&
 		state != CPlayer::EState::STATE_DMG)
 	{
+
+		// 無敵の場合
+		if (state == CPlayer::EState::STATE_INVINCIBLE &&
+			pBall->GetCover() == m_pPlayer)
+		{// 自分のリバウンドならすり抜ける
+			return hitInfo;
+		}
+
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
 
@@ -128,13 +124,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
-	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived)
-	{
-		hitInfo.bHit = true;
-		return hitInfo;
-	}
-
 	if (m_pPlayer->GetMotionFrag().bCatch
 	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, fCatchRange))
 	{ // キャッチアクション中だった中でも受け付け中の場合
@@ -144,6 +133,23 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
+		return hitInfo;
+	}
+
+	// 無敵の場合
+	if (state == CPlayer::EState::STATE_INVINCIBLE)
+	{
+		// ダメージモーション
+		m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
+
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
+
+	// ダメージを受け付けないならすり抜ける
+	if (!m_pPlayer->GetDamageInfo().bReceived)
+	{
+		hitInfo.bHit = true;
 		return hitInfo;
 	}
 

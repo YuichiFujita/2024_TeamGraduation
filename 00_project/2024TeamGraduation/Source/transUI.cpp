@@ -10,6 +10,9 @@
 #include "transUI.h"
 #include "manager.h"
 #include "object2D.h"
+#include "entry.h"
+#include "entryscene.h"
+#include "entry_setupTeam.h"
 
 //************************************************************
 //	定数宣言
@@ -190,10 +193,34 @@ bool CTransUI::UpdateDecide(const bool bAutoUninit)
 {
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
+	bool bInput = false;	// 入力フラグ
 
+	// セットアップシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();							// エントリーモード情報
+	if (pEntry == nullptr) { assert(false); return false; }			// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();				// エントリーシーン情報
+	if (pEntryScene == nullptr) { assert(false); return false; }	// エントリーシーンがない場合抜ける
+	CEntry_SetUpTeam* pSetupTeam = pEntryScene->GetSetupTeam();		// セットアップシーン情報
+	if (pSetupTeam == nullptr) { assert(false); return false; }		// セットアップシーンがない場合抜ける
+
+	// エントリー中プレイヤーインデックス取得
+	std::vector<int> vecIdx = pSetupTeam->GetEntryPlayerIdx();
+	for (const auto& rIdx : vecIdx)
+	{
+		// パッド入力結果を保存
+		bInput = (bInput || pPad->GetTrigger(CInputGamepad::BUTTON_A, rIdx));
+	}
+	
+#ifdef _DEBUG
 	// キー入力結果を保存
-	bool bInput = pPad->GetAllTrigger(CInputGamepad::BUTTON_A)
-			   || pKey->GetTrigger(DIK_RETURN) || pKey->GetTrigger(DIK_SPACE);
+	bInput = (bInput || pKey->GetTrigger(DIK_RETURN) || pKey->GetTrigger(DIK_SPACE));
+#endif
+
+	// キー入力がない場合抜ける
+	if (!bInput) { return false; }
+
+	// 表示されていない場合抜ける
+	if (m_state == STATE_DISP_OFF) { return false; }
 
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド数分繰り返す
@@ -201,12 +228,6 @@ bool CTransUI::UpdateDecide(const bool bAutoUninit)
 		// トリガー入力初期化
 		pPad->InitTrigger(i);
 	}
-
-	// キー入力がない場合抜ける
-	if (!bInput) { return false; }
-
-	// 表示されていない場合抜ける
-	if (m_state == STATE_DISP_OFF) { return false; }
 
 	if (bAutoUninit)
 	{ // 自動破棄が有効の場合

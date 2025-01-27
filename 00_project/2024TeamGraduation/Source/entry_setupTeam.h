@@ -70,6 +70,11 @@ public:
 	inline std::vector<int> GetIdxByTeam(CGameManager::ETeamSide side)	{ m_vecAddIdx[side]; }			// チームごとの追加されたインデックス取得
 
 	//-----------------------------
+	// インデックス
+	//-----------------------------
+	std::vector<int> GetEntryPlayerIdx();	// エントリー中プレイヤーインデックス取得
+
+	//-----------------------------
 	// その他
 	//-----------------------------
 	virtual inline CEntry_SetUpTeam* GetSetupTeam() { return this; }	// チーム等の設定取得
@@ -114,13 +119,14 @@ private:
 	// 更新
 	//-----------------------------
 	void UpdateNumInUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チーム人数の更新
+	void UpdatePadUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// パッドUIの更新
 
 	//-----------------------------
 	// プレイヤーフラグ
 	//-----------------------------
 	bool IsUserReady(const int nUserIdx, std::vector<int>::iterator* pItr = nullptr);	// 準備完了フラグ取得
-	bool IsUserTeamSelect(const int nUserIdx);	// チーム選択中フラグ取得
-	bool IsUserMaxChange(const int nUserIdx);	// 最大数変更フラグ取得
+	bool IsUserTeamSelect(const int nUserIdx) const;	// チーム選択中フラグ取得
+	bool IsUserMaxChange(const int nUserIdx) const;		// 最大数変更フラグ取得
 
 	//-----------------------------
 	// 外部ファイル操作
