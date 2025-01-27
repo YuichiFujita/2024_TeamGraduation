@@ -161,6 +161,7 @@ private:
 	void UpdateSpecial();		// スペシャル演出更新
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成
+	void StartTeamStatus();		// チームステータス開始時
 	void Save();				// チームステータス保存
 	void UpdateGaugeTime();		// ゲージ時間更新
 

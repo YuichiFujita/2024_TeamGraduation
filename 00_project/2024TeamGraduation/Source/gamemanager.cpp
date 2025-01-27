@@ -471,6 +471,7 @@ void CGameManager::StartSetting()
 
 		// チームステータス
 		CreateTeamStatus();
+		StartTeamStatus();
 
 		// タイマーの計測開始
 		if (m_pTimerUI != nullptr)
@@ -968,7 +969,6 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 	}
 }
 
-
 //==========================================================================
 // チームステータス生成
 //==========================================================================
@@ -990,6 +990,20 @@ void CGameManager::CreateTeamStatus()
 		// チーム設定
 		side = static_cast<ETeamSide>(i);
 		m_pTeamStatus[i]->TeamSetting(side);
+	}
+}
+
+//==========================================================================
+// チームステータス開始時
+//==========================================================================
+void CGameManager::StartTeamStatus()
+{
+	for (int i = 0; i < ETeamSide::SIDE_MAX; i++)
+	{
+		if (m_pTeamStatus[i] != nullptr)
+		{
+			m_pTeamStatus[i]->SetEnableGaugeDisp(true);
+		}
 	}
 }
 

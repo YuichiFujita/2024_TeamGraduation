@@ -76,6 +76,18 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 	
+	// 無敵の場合
+	if (state == CPlayer::EState::STATE_INVINCIBLE)
+	{
+		if (atkBall != CBall::EAttack::ATK_NONE)
+		{// 攻撃状態なら
+			m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
+	
+			hitInfo.bHit = true;
+			return hitInfo;
+		}
+	}
+
 	if (IsAutoBallCatch(pBall))
 	{ // 自動ボールキャッチが可能な場合
 
