@@ -383,6 +383,9 @@ void CEntry_SetUpTeam::Update(const float fDeltaTime, const float fDeltaRate, co
 
 	// チーム人数の更新
 	UpdateNumInUI(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// パッドUIの更新
+	UpdatePadUI(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //==========================================================================
@@ -432,6 +435,23 @@ void CEntry_SetUpTeam::UpdateNumInUI(const float fDeltaTime, const float fDeltaR
 		{
 			m_fTimeNumInTeam[i] = 0.f;
 		}
+	}
+}
+
+//==========================================================================
+// パッドUIの更新
+//==========================================================================
+void CEntry_SetUpTeam::UpdatePadUI(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	{
+		// 未エントリーの場合次へ
+		const int nUserIdx = m_nEntryIdx[i];	// ユーザーインデックス
+		if (nUserIdx <= -1) { continue; }
+
+		// 準備完了している場合は矢印非表示
+		if (m_apPadUI[nUserIdx] != nullptr)
+		m_apPadUI[nUserIdx]->SetEnableDispArrow(!IsUserReady(nUserIdx));
 	}
 }
 
@@ -557,10 +577,24 @@ void CEntry_SetUpTeam::PosAdjPadUI()
 		}
 	}
 
+	// 比較関数
+	auto func = [](CPadUI* p1, CPadUI* p2)
+	{
+		// プレイヤーインデックス取得
+		int nPlayerIdx1 = p1->GetPatternAnim();
+		if (nPlayerIdx1 >= mylib_const::MAX_PLAYER) { nPlayerIdx1 /= 2; }
+
+		// プレイヤーインデックス取得
+		int nPlayerIdx2 = p1->GetPatternAnim();
+		if (nPlayerIdx2 >= mylib_const::MAX_PLAYER) { nPlayerIdx2 /= 2; }
+
+		return nPlayerIdx1 < nPlayerIdx2;
+	};
+
 	// 配列内要素をソートする
-	std::sort(vecNone.begin(),  vecNone.end(),  [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
-	std::sort(vecLeft.begin(),  vecLeft.end(),  [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
-	std::sort(vecRight.begin(), vecRight.end(), [](CPadUI* p1, CPadUI* p2) { return p1->GetPatternAnim() < p2->GetPatternAnim(); });
+	std::sort(vecNone.begin(),  vecNone.end(),  func);
+	std::sort(vecLeft.begin(),  vecLeft.end(),  func);
+	std::sort(vecRight.begin(), vecRight.end(), func);
 
 	// チーム指定なしの位置補正
 	const int nNumNone = (int)vecNone.size();	// 要素数
@@ -969,7 +1003,7 @@ bool CEntry_SetUpTeam::IsUserReady(const int nUserIdx, std::vector<int>::iterato
 //==========================================================================
 // チーム選択中フラグ取得
 //==========================================================================
-bool CEntry_SetUpTeam::IsUserTeamSelect(const int nUserIdx)
+bool CEntry_SetUpTeam::IsUserTeamSelect(const int nUserIdx) const
 {
 	// 選択中チームの指定があるかを返す
 	return (m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_NONE);
@@ -978,7 +1012,7 @@ bool CEntry_SetUpTeam::IsUserTeamSelect(const int nUserIdx)
 //==========================================================================
 // 最大数変更フラグ取得
 //==========================================================================
-bool CEntry_SetUpTeam::IsUserMaxChange(const int nUserIdx)
+bool CEntry_SetUpTeam::IsUserMaxChange(const int nUserIdx) const
 {
 	// チームが未選択の場合抜ける
 	const int nSide = m_TeamSide[nUserIdx].team;	// 選択チーム
@@ -986,6 +1020,29 @@ bool CEntry_SetUpTeam::IsUserMaxChange(const int nUserIdx)
 
 	// 最大数変更の操作権インデックスが引数ユーザーかを返す
 	return (m_nMaxChangeIdx[nSide] == nUserIdx);
+}
+
+//==========================================================================
+// エントリー中プレイヤーインデックス取得
+//==========================================================================
+std::vector<int> CEntry_SetUpTeam::GetEntryPlayerIdx()
+{
+	std::vector<int> vecIdx;
+	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
+	{ // パッド認識の最大数分繰り返す
+
+		// 未エントリーの場合次へ
+		const int nUserIdx = m_nEntryIdx[i];	// ユーザーインデックス
+		if (nUserIdx <= -1) { continue; }
+
+		// 準備が完了していない場合次へ
+		if (!IsUserReady(nUserIdx)) { continue; }
+
+		// インデックス追加
+		vecIdx.push_back(nUserIdx);
+	}
+
+	return vecIdx;
 }
 
 //==========================================================================
@@ -1288,7 +1345,7 @@ int CEntry_SetUpTeam::PadIdxToEntryIdx(int nPadIdx)
 //==========================================================================
 int CEntry_SetUpTeam::PlayerIdxToPadIdx(int nPlayerIdx)
 {
-	if (nPlayerIdx >= CGameManager::MAX_PLAYER) return -1;
+	if (nPlayerIdx >= CGameManager::MAX_PLAYER || nPlayerIdx <= -1) return -1;
 	return m_TeamSide[nPlayerIdx].nPadIdx;
 }
 

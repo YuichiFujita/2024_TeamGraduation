@@ -297,7 +297,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 
 		// íÖÇπë÷Ç¶UIÇÃê∂ê¨
-		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI);
+		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, -1, posUI);
 		if (m_apDressInfo[nPlayerIdx] == nullptr)
 		{ // ê∂ê¨Ç…é∏îsÇµÇΩèÍçá
 
