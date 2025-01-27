@@ -233,9 +233,6 @@
     <ClCompile Include="Source\tutorial.cpp">
       <Filter>mode\tutorial</Filter>
     </ClCompile>
-    <ClCompile Include="Source\tutoriallogo.cpp">
-      <Filter>mode\tutorial</Filter>
-    </ClCompile>
     <ClCompile Include="Source\input_gamepad.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -887,6 +884,9 @@
     <ClCompile Include="Source\gamesetUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\tutorialscreen.cpp">
+      <Filter>mode\tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -956,9 +956,6 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="Source\tutorial.h">
-      <Filter>mode\tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\tutoriallogo.h">
       <Filter>mode\tutorial</Filter>
     </ClInclude>
     <ClInclude Include="Source\input_gamepad.h">
@@ -1626,6 +1623,9 @@
     </ClInclude>
     <ClInclude Include="Source\gamesetUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tutorialscreen.h">
+      <Filter>mode\tutorial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
