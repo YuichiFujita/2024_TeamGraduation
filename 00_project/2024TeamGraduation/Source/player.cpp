@@ -823,7 +823,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (!m_bDash && m_pBase->IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
+	if (m_pBase->IsCrabMotion())
 	{// カニ歩き
 		GetBase()->MotionCrab(nStartKey);
 	}
