@@ -47,12 +47,12 @@ namespace
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\flame_choice.png";	// 背景テクスチャ
 		namespace name
 		{
-			const float PLUS_EDGE = 45.0f;	// フレーム縁取り拡大
+			const MyLib::Vector3 PLUS_EDGE = MyLib::Vector3(50.0f, 10.0f, 0.0f);	// フレーム縁取り拡大
 		}
 		namespace dress
 		{
 			const MyLib::Vector3 OFFSET	= MyLib::Vector3(0.0f, 55.0f, 0.0f);	// オフセット
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(155.0f, 200.0f);		// 大きさ
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(158.0f, 200.0f);		// 大きさ
 		}
 		namespace area
 		{
@@ -610,9 +610,9 @@ void CSelectUI::SetPositionRelative()
 	case SELECT_NAME:
 	{
 		// フレーム情報の設定
-		MyLib::Vector3 posName = pDressup->GetNameUIPosition(m_team);	// 名前の位置
+		MyLib::Vector3 posName = pDressup->GetNameBGPosition(m_team);	// 名前の位置
 		m_pFrame->SetPosition(posName);									// 位置設定
-		m_pFrame->SetSize(pDressup->GetNameUISize(m_team) + MyLib::Vector3(frame::name::PLUS_EDGE, 0.0f, 0.0f));	// 大きさ設定
+		m_pFrame->SetSize(pDressup->GetNameBGSize(m_team) + frame::name:: PLUS_EDGE);	// 大きさ設定
 
 		// コントローラーUIの位置設定
 		m_pPadUI->SetPosition(posName + pad::NAME_OFFSET);
@@ -644,15 +644,15 @@ void CSelectUI::SetPositionRelative()
 		m_pFrame->SetPosition(posArea);														// 位置設定
 		m_pFrame->SetSize(sizeArea + MyLib::Vector3(frame::area::PLUS_EDGE, 0.0f, 0.0f));	// 大きさ設定
 
+		// コントローラーUIの大きさ設定
+		SetWidthPadUI(pad::OTHER_WIDTH);
+
 		// コントローラーUIの位置設定
 		const float	fHalfWidthPad = m_pPadUI->GetSize().x;			// パッド横幅
 		const float	fMaxWidth = sizeArea.x * 2.0f - fHalfWidthPad;	// 使用横幅
 		const int	nPadIdx = std::abs(m_nPadIdx + (-(mylib_const::MAX_PLAYER - 1) * m_select.x));	// 計算用パッドインデックス
 		const float	fOffset = (fMaxWidth / (float)mylib_const::MAX_PLAYER) * nPadIdx - (fMaxWidth * 0.5f) + fHalfWidthPad;	// 位置オフセット
 		m_pPadUI->SetPosition(posArea + MyLib::Vector3(fOffset, frame::area::OFFSET_Y, 0.0f));
-
-		// コントローラーUIの大きさ設定
-		SetWidthPadUI(pad::OTHER_WIDTH);
 		break;
 	}
 	case SELECT_TRANS:
@@ -663,14 +663,14 @@ void CSelectUI::SetPositionRelative()
 		m_pFrame->SetPosition(posTrans);														// 位置設定
 		m_pFrame->SetSize(sizeTrans + +MyLib::Vector3(frame::trans::PLUS_EDGE, 0.0f, 0.0f));	// 大きさ設定
 
+		// コントローラーUIの大きさ設定
+		SetWidthPadUI(pad::OTHER_WIDTH);
+
 		// コントローラーUIの位置設定
 		const float fSide = (m_select.x == 0) ? 1.0f : -1.0f;	// オフセット開始方向
 		const float fWidthPad = (m_pPadUI->GetSize().x * 2.0f);	// パッド横幅
 		const float fOffset = (fWidthPad * m_nPadIdx) - sizeTrans.x + (fWidthPad * 0.5f);	// パッド位置オフセット
 		m_pPadUI->SetPosition(posTrans + MyLib::Vector3(fOffset * fSide, frame::trans::OFFSET_Y, 0.0f));	// パッド位置反映
-
-		// コントローラーUIの大きさ設定
-		SetWidthPadUI(pad::OTHER_WIDTH);
 		break;
 	}
 	default:

@@ -54,12 +54,19 @@ namespace
 
 		namespace name
 		{
-			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 60.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 60.0f, 0.0f) };	// 原点位置
+			const MyLib::Vector3 POS[] = { MyLib::Vector3(VEC3_SCREEN_CENT.x - 320.0f, 95.0f, 0.0f), MyLib::Vector3(VEC3_SCREEN_CENT.x + 320.0f, 95.0f, 0.0f) };	// 原点位置
 			const char*	FONT		= "data\\FONT\\チョークS.otf";	// フォントパス
 			const bool	ITALIC		= false;						// イタリック
-			const float	HEIGHT		= 42.0f;						// 文字縦幅
+			const float	HEIGHT		= 34.0f;						// 文字縦幅
 			const EAlignX ALIGN_X	= XALIGN_CENTER;				// 横配置
-			const D3DXCOLOR COL		= MyLib::color::Black();		// 色
+			const D3DXCOLOR COL		= MyLib::color::White();		// 色
+
+			namespace bg
+			{
+				const std::string TEXTURE = "data\\TEXTURE\\entry\\blackboard_name.png";	// テクスチャ
+				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -10.0f, 0.0f);	// 原点位置
+				const float	HEIGHT = 50.0f;	// 文字縦幅
+			}
 		}
 
 		namespace back
@@ -86,6 +93,7 @@ CEntry_Dressup::CEntry_Dressup() : CEntryScene(),
 	m_state			(STATE_DRESSUP)	// 状態
 {
 	// メンバ変数をクリア
+	memset(&m_apNameBG[0], 0, sizeof(m_apNameBG));			// チーム名背景情報
 	memset(&m_apTeamName[0], 0, sizeof(m_apTeamName));		// チーム名情報
 	memset(&m_apDressInfo[0], 0, sizeof(m_apDressInfo));	// 外野着せ替え情報
 	memset(&m_apAreaUI[0], 0, sizeof(m_apAreaUI));			// ポジション変更UI情報
@@ -138,15 +146,59 @@ HRESULT CEntry_Dressup::Init()
 		m_apAreaUI[i]->SetEnableAutoPlay(false);
 
 		// テクスチャの割当
-		int nTexID = CTexture::GetInstance()->Regist(ui::area::TEXTURE);
-		m_apAreaUI[i]->BindTexture(nTexID);
+		int nTexAreaID = CTexture::GetInstance()->Regist(ui::area::TEXTURE);
+		m_apAreaUI[i]->BindTexture(nTexAreaID);
 
 		// 横幅を元にサイズを設定
-		MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+		MyLib::Vector2 size = pTexture->GetImageSize(nTexAreaID);
 		size = UtilFunc::Transformation::AdjustSizeByWidth(size, ui::area::WIDTH);
 		size.x *= ui::area::PTRN.y;
 		m_apAreaUI[i]->SetSize(size);
 		m_apAreaUI[i]->SetSizeOrigin(m_apAreaUI[i]->GetSize());
+
+		// チーム名背景情報
+		m_apNameBG[i] = CObject2D::Create(PRIORITY);
+		if (m_apNameBG[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// テクスチャの割当
+		int nTexNameID = CTexture::GetInstance()->Regist(ui::name::bg::TEXTURE);
+		m_apNameBG[i]->BindTexture(nTexNameID);
+
+		// 位置を設定
+		m_apNameBG[i]->SetPosition(ui::name::POS[i] + ui::name::bg::OFFSET);
+
+		// 横幅を元にサイズを設定
+		MyLib::Vector2 sizeBack = pTexture->GetImageSize(nTexNameID);
+		sizeBack = UtilFunc::Transformation::AdjustSizeByHeight(sizeBack, ui::name::bg::HEIGHT);
+		m_apNameBG[i]->SetSize(sizeBack);
+		m_apNameBG[i]->SetSizeOrigin(m_apNameBG[i]->GetSize());
+
+		// チーム名の生成
+		m_apTeamName[i] = CString2D::Create
+		( // 引数
+			ui::name::FONT,		// フォントパス
+			ui::name::ITALIC,	// イタリック
+			L"",				// 指定文字列
+			ui::name::POS[i],	// 原点位置
+			ui::name::HEIGHT,	// 文字縦幅
+			ui::name::ALIGN_X,	// 横配置
+			VEC3_ZERO,			// 原点向き
+			ui::name::COL		// 色
+		);
+		if (m_apTeamName[i] == nullptr)
+		{ // 生成に失敗した場合
+
+			assert(false);
+			return E_FAIL;
+		}
+
+		// テキストを割当
+		loadtext::BindString(m_apTeamName[i], loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)));
 	}
 
 	// 戻るボタンの生成
@@ -325,32 +377,6 @@ HRESULT CEntry_Dressup::Init()
 		m_apDressInfo[nPlayerIdx]->SetEnableDisp(false);
 	}
 
-	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
-	{ // チーム数分繰り返す
-
-		// チーム名の生成
-		m_apTeamName[i] = CString2D::Create
-		( // 引数
-			ui::name::FONT,		// フォントパス
-			ui::name::ITALIC,	// イタリック
-			L"",				// 指定文字列
-			ui::name::POS[i],	// 原点位置
-			ui::name::HEIGHT,	// 文字縦幅
-			ui::name::ALIGN_X,	// 横配置
-			VEC3_ZERO,			// 原点向き
-			ui::name::COL		// 色
-		);
-		if (m_apTeamName[i] == nullptr)
-		{ // 生成に失敗した場合
-
-			assert(false);
-			return E_FAIL;
-		}
-
-		// テキストを割当
-		loadtext::BindString(m_apTeamName[i], loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)));
-	}
-
 	return S_OK;
 }
 
@@ -388,6 +414,9 @@ void CEntry_Dressup::Uninit()
 
 		// チーム名の終了
 		SAFE_UNINIT(m_apTeamName[i]);
+
+		// チーム背景の終了
+		SAFE_UNINIT(m_apNameBG[i]);
 
 		// ポジション変更UIの終了
 		SAFE_UNINIT(m_apAreaUI[i]);
@@ -572,6 +601,24 @@ MyLib::Vector2 CEntry_Dressup::GetNameUISize(const CGameManager::ETeamSide team)
 {
 	// 文字列の大きさを返す
 	return MyLib::Vector2(m_apTeamName[team]->GetStrWidth(), ui::name::HEIGHT);
+}
+
+//==========================================================================
+// 名前BG位置取得
+//==========================================================================
+MyLib::Vector3 CEntry_Dressup::GetNameBGPosition(const CGameManager::ETeamSide team)
+{
+	// 名前BGの位置を返す
+	return m_apNameBG[team]->GetPosition();
+}
+
+//==========================================================================
+// 名前BG大きさ取得
+//==========================================================================
+MyLib::Vector2 CEntry_Dressup::GetNameBGSize(const CGameManager::ETeamSide team)
+{
+	// 名前BGの大きさを返す
+	return m_apNameBG[team]->GetSize();
 }
 
 //==========================================================================
