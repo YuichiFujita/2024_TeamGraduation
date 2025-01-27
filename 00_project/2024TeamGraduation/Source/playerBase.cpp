@@ -124,13 +124,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// 味方のボールならすり抜ける
 	if (m_pPlayer->GetTeam() == sideBall) { return hitInfo; }
 
-	// ダメージを受け付けないならすり抜ける
-	if (!m_pPlayer->GetDamageInfo().bReceived)
-	{
-		hitInfo.bHit = true;
-		return hitInfo;
-	}
-
 	if (m_pPlayer->GetMotionFrag().bCatch
 	&&  UtilFunc::Collision::CollisionViewRange3D(m_pPlayer->GetPosition(), posB, m_pPlayer->GetRotation().y, fCatchRange))
 	{ // キャッチアクション中だった中でも受け付け中の場合
@@ -146,8 +139,16 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	// 無敵の場合
 	if (state == CPlayer::EState::STATE_INVINCIBLE)
 	{
+		// ダメージモーション
 		m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
 
+		hitInfo.bHit = true;
+		return hitInfo;
+	}
+
+	// ダメージを受け付けないならすり抜ける
+	if (!m_pPlayer->GetDamageInfo().bReceived)
+	{
 		hitInfo.bHit = true;
 		return hitInfo;
 	}
