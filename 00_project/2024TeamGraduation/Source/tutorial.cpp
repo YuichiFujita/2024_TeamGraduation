@@ -11,6 +11,7 @@
 #include "sound.h"
 #include "MyEffekseer.h"
 #include "camera.h"
+#include "tutorialscreen.h"
 
 //==========================================================================
 // 定数定義
@@ -25,19 +26,10 @@ namespace
 CTutorial* CTutorial::m_pThisPtr = nullptr;	// 自身のポインタ
 
 //==========================================================================
-// 関数ポインタ
-//==========================================================================
-CTutorial::SCENE_FUNC CTutorial::m_SceneFunc[] =
-{
-	&CTutorial::SceneNone,			// なにもなし
-	&CTutorial::SceneFadeInLogo,	// ロゴフェードイン
-	&CTutorial::SceneFadeOutLoGo,	// ロゴフェードアウト
-};
-
-//==========================================================================
 // コンストラクタ
 //==========================================================================
-CTutorial::CTutorial()
+CTutorial::CTutorial() : 
+	m_pTutorialScreen	(nullptr)	// チュートリアル画面
 {
 	// 値のクリア
 	
@@ -77,6 +69,10 @@ HRESULT CTutorial::Init()
 		return E_FAIL;
 	}
 
+	// 画面生成
+	m_pTutorialScreen = CTutorialScreen::Create();
+	if (m_pTutorialScreen == nullptr) return E_FAIL;
+
 	// 成功
 	return S_OK;
 }
@@ -97,31 +93,18 @@ void CTutorial::Uninit()
 //==========================================================================
 void CTutorial::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	
-}
+	// フェード中の場合抜ける
+	if (GET_MANAGER->GetFade()->GetState() != CFade::STATE_NONE) { return; }
 
-//==========================================================================
-// なにもなし
-//==========================================================================
-void CTutorial::SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	
-}
-
-//==========================================================================
-// ロゴフェードイン
-//==========================================================================
-void CTutorial::SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-
-}
-
-//==========================================================================
-// ロゴフェードアウト
-//==========================================================================
-void CTutorial::SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
-{
-	
+	// 入力情報取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A) ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B) ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_START))
+	{
+		// 遷移
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_TITLE);
+	}
 }
 
 //==========================================================================

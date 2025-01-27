@@ -696,8 +696,10 @@ void COptionMenu::Update(const float fDeltaTime, const float fDeltaRate, const f
 	// オブジェクト更新
 	UpdateObj(fDeltaTime, fDeltaRate, fSlowRate);
 
+#if _DEBUG
 	// デバッグ処理
 	Debug();
+#endif
 }
 
 //==========================================================================
@@ -750,9 +752,6 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 			// マーカータイマーリセット
 			m_fMarkerTime = 0.0f;
 		}
-
-		// マーカータイマーリセット
-		m_fMarkerTime = 0.0f;
 	}
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 		pKey->GetTrigger(DIK_D))

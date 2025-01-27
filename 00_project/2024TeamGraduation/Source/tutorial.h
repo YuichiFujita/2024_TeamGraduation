@@ -14,6 +14,11 @@
 #include "manager.h"
 
 //==========================================================================
+// 前方宣言
+//==========================================================================
+class CTutorialScreen;
+
+//==========================================================================
 // クラス定義
 //==========================================================================
 // チュートリアルクラス
@@ -36,11 +41,6 @@ public:
 	void Draw() override;
 
 	//=============================
-	// メンバ関数
-	//=============================
-	
-
-	//=============================
 	// 静的関数
 	//=============================
 	static CTutorial* GetInstance() { return m_pThisPtr; }	// インスタンス取得
@@ -49,21 +49,9 @@ public:
 private:
 
 	//=============================
-	// 関数ポインタ
-	//=============================
-	typedef void(CTutorial::* SCENE_FUNC)(const float, const float, const float);
-	static SCENE_FUNC m_SceneFunc[];
-
-	//=============================
-	// メンバ関数
-	//=============================
-	void SceneNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// なにもなし
-	void SceneFadeInLogo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードイン
-	void SceneFadeOutLoGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// ロゴフェードアウト
-
-	//=============================
 	// メンバ変数
 	//=============================
+	CTutorialScreen* m_pTutorialScreen;	// チュートリアル画面
 	static CTutorial* m_pThisPtr;		// 自身のポインタ
 };
 
