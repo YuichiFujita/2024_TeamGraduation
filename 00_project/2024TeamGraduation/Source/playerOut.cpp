@@ -78,9 +78,6 @@ bool CPlayerOut::IsCrab()
 
 	if (!pPlayer/* || !m_bClab*/) return false;
 
-	// ボールを持っていないか
-	if (pPlayer->GetBall() != nullptr) { return false; }
-
 	// 世界にボールがあるか
 	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報
 	if (pBall == nullptr) { return false; }

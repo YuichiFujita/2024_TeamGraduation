@@ -40,6 +40,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual CPlayerUserOutControlMove* GetUserOut() override { return this; }
+	virtual void CrabSetting(CPlayer* player) override;				// カニ歩き状態
 
 	//=============================
 	// メンバ関数

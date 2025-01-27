@@ -5,6 +5,8 @@
 // 
 //==========================================================================
 #include "playerUserOut.h"
+#include "manager.h"
+#include "camera.h"
 
 // 使用クラス
 #include "playerUserOut_controlMove.h"
@@ -34,4 +36,100 @@ CPlayerUserOut::CPlayerUserOut(CPlayer* pPlayer, const CGameManager::ETeamSide t
 CPlayerUserOut::~CPlayerUserOut()
 {
 
+}
+
+//==========================================================================
+// カニ歩きモーション設定
+//==========================================================================
+void CPlayerUserOut::MotionCrab(int nStartKey)
+{
+	CPlayer::CRAB_DIRECTION playerDir = CPlayer::CRAB_DIRECTION::CRAB_NONE;
+	CPlayer::CRAB_DIRECTION inputDir = CPlayer::CRAB_DIRECTION::CRAB_NONE;
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	// 向き
+	MyLib::Vector3 rot = GetPlayer()->GetRotation();
+
+	//--------------------------------
+	// プレイヤー方向
+	//--------------------------------
+	bool bRot = false;
+	D3DXCOLOR col = D3DXCOLOR();
+	float fRotY = D3DX_PI * 1.0f + rot.y;
+	UtilFunc::Transformation::RotNormalize(fRotY);
+
+	float fRangeZero = Crab::RANGE_MIN_MAX[0];
+	UtilFunc::Transformation::RotNormalize(fRangeZero);
+	if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+	{// 下向き
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+	{// 上向き
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+	{// 左向き
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+		bRot = true;
+		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+	{// 右向き
+		playerDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+		bRot = true;
+		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	}
+	else
+	{// 抜けちゃった
+		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
+	}
+
+	//--------------------------------
+	// 入力方向
+	//--------------------------------
+	CPlayer::EDashAngle angle = GetPlayerControlMove()->GetInputAngle();
+	if (angle == CPlayer::EDashAngle::ANGLE_MAX) return;
+
+	switch (angle)
+	{
+	case CPlayer::EDashAngle::ANGLE_UP:
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+		break;
+
+	case CPlayer::EDashAngle::ANGLE_DOWN:
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+		break;
+
+	case CPlayer::EDashAngle::ANGLE_RIGHT:
+	case CPlayer::EDashAngle::ANGLE_RIGHTUP:
+	case CPlayer::EDashAngle::ANGLE_RIGHTDW:
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+		break;
+
+	case CPlayer::EDashAngle::ANGLE_LEFT:
+	case CPlayer::EDashAngle::ANGLE_LEFTUP:
+	case CPlayer::EDashAngle::ANGLE_LEFTDW:
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+		break;
+
+	default:
+		break;
+	}
+
+	if (playerDir == CPlayer::CRAB_DIRECTION::CRAB_NONE ||
+		inputDir == CPlayer::CRAB_DIRECTION::CRAB_NONE)
+	{// 判定に引っかかっていない
+		return;
+	}
+
+	// モーション設定
+	GetPlayer()->SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
 }

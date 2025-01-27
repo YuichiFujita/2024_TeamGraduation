@@ -37,6 +37,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual CPlayerUserOut* GetPlayerUserOut() override { return this; }	// ユーザー外野プレイヤー取得
+	virtual void MotionCrab(int nStartKey) override;		// カニ歩き変化
 
 	//=============================
 	// メンバ関数

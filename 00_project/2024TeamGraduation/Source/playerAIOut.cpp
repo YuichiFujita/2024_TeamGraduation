@@ -127,19 +127,19 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 
 	if (!UtilFunc::Collision::CollisionRangeAngle(fDirection, fRangeZero, Crab::RANGE_MIN_MAX[1]))
 	{// â∫å¸Ç´
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;;
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
 	}
 	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
 	{// è„å¸Ç´
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 	}
 	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
 	{// ç∂å¸Ç´
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
 	}
 	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
 	{// âEå¸Ç´
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;;
 	}
 	else
 	{// î≤ÇØÇøÇ·Ç¡ÇΩ
