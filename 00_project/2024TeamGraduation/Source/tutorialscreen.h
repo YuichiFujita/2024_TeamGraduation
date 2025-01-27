@@ -40,8 +40,6 @@ public:
 		TYPE_PASS,			// パス
 		TYPE_CATCH,			// キャッチ
 		TYPE_SP,			// スペシャル
-		TYPE_THROW_JUMP,	// ジャンプ投げ
-		TYPE_THROW_DASH,	// ダッシュ投げ
 		TYPE_JUSTCATCH,		// ジャストキャッチ
 		TYPE_MAX
 	};
@@ -52,6 +50,14 @@ public:
 		STATE_NONE = 0,	// なにもなし
 		STATE_SPAWN,	// 登場
 		STATE_MAX
+	};
+
+	// スクロール方向
+	enum EScrollDir
+	{
+		SCROLL_R = 0,
+		SCROLL_L,
+		SCROLL_MAX
 	};
 
 	//=============================
@@ -93,9 +99,10 @@ private:
 	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 登場
 
 	// 生成
-	HRESULT CreateBG();		// 背景生成
-	HRESULT CreateFade();	// フェード生成
-	HRESULT CreateManual();	// 説明生成
+	HRESULT CreateBG();			// 背景生成
+	HRESULT CreateFade();		// フェード生成
+	HRESULT CreateManual();		// 説明生成
+	HRESULT CreateManualText();	// 説明テキスト生成
 
 	// 更新
 	void UpdateBG(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 背景更新
@@ -109,11 +116,14 @@ private:
 	float m_fStateTime;	// 状態タイマー
 
 	// オブジェクト
-	CObject2D* m_pFade;		// フェードの情報
-	CObject2D* m_pManual;	// 説明の情報
+	CObject2D* m_pFade;			// フェードの情報
+	CObject2D* m_pManual;		// 説明の情報
+	CObject2D* m_pManualText;	// 説明テキストの情報
 
 	// その他
 	EManualType m_ManualType;	// 説明の種類
+	EScrollDir m_scrollDir;		// スクロール方向
+
 };
 
 #endif	// _ARROW_UI_H_

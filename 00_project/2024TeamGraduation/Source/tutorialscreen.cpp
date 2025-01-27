@@ -31,18 +31,21 @@ namespace
 
 	namespace Manual
 	{
+		const std::string TEXTURE = "data\\TEXTURE\\tutorial\\manual.png";	// テクスチャ
+	}
+
+	namespace ManualText
+	{
 		const std::string TEXTURE[CTutorialScreen::EManualType::TYPE_MAX] =	// テクスチャ
 		{
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// 移動
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// ブリンク
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// ジャンプ
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// 投げ
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// パス
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// キャッチ
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// スペシャル
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// ジャンプ投げ
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// ダッシュ投げ
-			"data\\TEXTURE\\entry\\PressStart_BG.png",	// ジャストキャッチ
+			"data\\TEXTURE\\tutorial\\move.png",		// 移動
+			"data\\TEXTURE\\tutorial\\blink.png",		// ブリンク
+			"data\\TEXTURE\\tutorial\\jump.png",		// ジャンプ
+			"data\\TEXTURE\\tutorial\\throw.png",		// 投げ
+			"data\\TEXTURE\\tutorial\\pass.png",		// パス
+			"data\\TEXTURE\\tutorial\\catch.png",		// キャッチ
+			"data\\TEXTURE\\tutorial\\SP.png",			// スペシャル
+			"data\\TEXTURE\\tutorial\\justcatch.png",	// ジャストキャッチ
 		};
 		const float START_X = -640.0f;	// スタート位置(X)
 	}
@@ -69,6 +72,7 @@ CTutorialScreen::CTutorialScreen(int nPriority) : CObject2D(nPriority),
 	m_state			(EState::STATE_NONE),		// 状態
 	m_fStateTime	(0.0f),						// 状態タイマー
 	m_ManualType	(EManualType::TYPE_MOVE),	// 説明の種類
+	m_scrollDir		(EScrollDir::SCROLL_R),		// スクロール方向
 	m_pFade			(nullptr),					// フェード
 	m_pManual		(nullptr)					// 説明
 {
@@ -126,6 +130,12 @@ HRESULT CTutorialScreen::Init()
 
 	// マニュアル生成
 	if (FAILED(CreateManual()))
+	{
+		return E_FAIL;
+	}
+
+	// マニュアルテキスト生成
+	if (FAILED(CreateManualText()))
 	{
 		return E_FAIL;
 	}
@@ -205,8 +215,31 @@ HRESULT CTutorialScreen::CreateManual()
 
 	// テクスチャを登録・割当
 	CTexture* pTexture = CTexture::GetInstance();
-	int texID = pTexture->Regist(Manual::TEXTURE[m_ManualType]);
+	int texID = pTexture->Regist(Manual::TEXTURE);
 	m_pManual->BindTexture(texID);
+
+	return S_OK;
+}
+
+//==========================================================================
+// 説明テキスト生成
+//==========================================================================
+HRESULT CTutorialScreen::CreateManualText()
+{
+	// 生成処理
+	m_pManualText = CObject2D::Create(GetPriority() + 1);
+	if (m_pManualText == nullptr) { return E_FAIL; }
+
+	// 位置を設定
+	m_pManualText->SetPosition(VEC3_SCREEN_CENT);
+
+	// 大きさを設定
+	m_pManualText->SetSize(MyLib::Vector2(640.0f, 360.0f));
+
+	// テクスチャを登録・割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int texID = pTexture->Regist(ManualText::TEXTURE[m_ManualType]);
+	m_pManualText->BindTexture(texID);
 
 	return S_OK;
 }
@@ -279,9 +312,25 @@ void CTutorialScreen::StateNone(const float fDeltaTime, const float fDeltaRate, 
 void CTutorialScreen::StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 位置更新
-	MyLib::Vector3 pos = m_pManual->GetPosition();
-	pos.x = UtilFunc::Correction::EaseOutBack(Manual::START_X, 640.0f, 0.0f, StateTime::SPAWN, m_fStateTime);
-	m_pManual->SetPosition(pos);
+	MyLib::Vector3 pos = m_pManualText->GetPosition();
+	float posDestX = SCREEN_WIDTH;	// 目標のX
+
+	if (m_fStateTime <= StateTime::SPAWN * 0.5f)
+	{
+		posDestX = (m_scrollDir == EScrollDir::SCROLL_R) ? (-640.0f - SCREEN_WIDTH) : (SCREEN_WIDTH + 640.0f);	// 目標のX
+		pos.x = UtilFunc::Correction::EasingEaseIn(m_pManualText->GetOriginPosition().x, posDestX, 0.0f, StateTime::SPAWN * 0.5f, m_fStateTime);
+	}
+	else
+	{
+		float startX = (m_scrollDir == EScrollDir::SCROLL_R) ? (SCREEN_WIDTH + 640.0f) : ManualText::START_X;	// 開始のX
+		pos.x = UtilFunc::Correction::EaseOutBack(startX, 640.0f, StateTime::SPAWN * 0.5f, StateTime::SPAWN, m_fStateTime);
+
+		// テクスチャを登録・割当
+		CTexture* pTexture = CTexture::GetInstance();
+		int texID = pTexture->Regist(ManualText::TEXTURE[m_ManualType]);
+		m_pManualText->BindTexture(texID);
+	}
+	m_pManualText->SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::SPAWN)
 	{
@@ -318,18 +367,28 @@ void CTutorialScreen::ChangeManual()
 	{// 次ページへ
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType + 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
+
+		// 右スクロール
+		m_scrollDir = EScrollDir::SCROLL_R;
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT))
 	{// 前ページへ
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType - 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
+
+		// 左スクロール
+		m_scrollDir = EScrollDir::SCROLL_L;
 	}
 
 	// 変更されていたら状態設定
 	if (bChange &&
 		m_ManualType != oldType)
 	{
+		// 登場
 		SetState(EState::STATE_SPAWN);
+
+		// 元の位置
+		m_pManualText->SetOriginPosition(m_pManualText->GetPosition());
 	}
 }
 
