@@ -31,7 +31,7 @@ CPlayerControlMove::CPlayerControlMove()
 	m_fInputInterval = 0.0f;							// 入力の受け付け猶予
 	m_fTriggerInterval = 0.0f;							// トリガーのインターバル
 	m_bBlink = false;
-	m_pInputAngle = nullptr;					// 現在の入力方向
+	m_InputAngle = CPlayer::EDashAngle::ANGLE_MAX;					// 現在の入力方向
 	m_fInputAngleCtr = 0.0f;					// 現在の入力方向の保持カウンター
 	m_fCrabMoveEasingTime = 0.0f;				// 現在のカニ歩き移動補正値
 }
@@ -41,7 +41,6 @@ CPlayerControlMove::CPlayerControlMove()
 //==========================================================================
 CPlayerControlMove::~CPlayerControlMove()
 {
-	SAFE_DELETE(m_pInputAngle);
 }
 
 //==========================================================================
@@ -104,6 +103,7 @@ void CPlayerControlMove::Move(CPlayer* player, const float fDeltaTime, const flo
 	// 入力方向
 	UpdateInputAngle(player, fDeltaTime, fDeltaRate, fSlowRate);
 
+	player->GetAreaType();
 #if 1
 	// カニ歩き判定
 	if (player->GetBase()->IsCrab())
@@ -173,7 +173,7 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player, const float fDeltaTim
 	// プレイヤーでない
 	if (playerIdx == -1)
 	{
-		SAFE_DELETE(m_pInputAngle);
+		m_InputAngle = CPlayer::EDashAngle::ANGLE_MAX;
 		return;
 	}
 
@@ -277,24 +277,18 @@ void CPlayerControlMove::UpdateInputAngle(CPlayer* player, const float fDeltaTim
 	bool bOld = false;
 
 	// 現在の入力方向設定
-	if (m_pInputAngle != nullptr)
+	if (m_InputAngle != CPlayer::EDashAngle::ANGLE_MAX)
 	{
-		eInputOld = *m_pInputAngle;
+		eInputOld = m_InputAngle;
 		bOld = true;
 
-		delete m_pInputAngle;
-		m_pInputAngle = nullptr;
+		m_InputAngle = CPlayer::EDashAngle::ANGLE_MAX;
 	}
 
 	if (bInput)
 	{
 		// 現在の入力方向設定
-		if (m_pInputAngle == nullptr)
-		{
-			m_pInputAngle = DEBUG_NEW CPlayer::EDashAngle;
-			MyAssert::CustomAssert(m_pInputAngle != nullptr, "なんでnew出来てねぇんだよ");
-		}
-		*m_pInputAngle = eAngle;
+		m_InputAngle = eAngle;
 
 		if (eInputOld != eAngle || !bOld)
 		{// 前回無入力 or 違う入力
