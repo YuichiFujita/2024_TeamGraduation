@@ -174,6 +174,7 @@ void CPlayerUserControlMove::BilnkKey(CPlayer* player, const float fDeltaTime, c
 		fInputInterval = INTERVAL_INPUT;
 	}
 
+	// ‚±‚±ˆá‚¤takada
 	if (fInputInterval > 0.0f && fInputInterval != INTERVAL_INPUT)
 	{// Žó‚¯•t‚¯—P—\’†
 
