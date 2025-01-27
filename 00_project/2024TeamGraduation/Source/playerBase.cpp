@@ -75,18 +75,6 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		return hitInfo;
 	}
-	
-	// 無敵の場合
-	if (state == CPlayer::EState::STATE_INVINCIBLE)
-	{
-		if (atkBall != CBall::EAttack::ATK_NONE)
-		{// 攻撃状態なら
-			m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
-	
-			hitInfo.bHit = true;
-			return hitInfo;
-		}
-	}
 
 	if (IsAutoBallCatch(pBall))
 	{ // 自動ボールキャッチが可能な場合
@@ -114,6 +102,14 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		state != CPlayer::EState::STATE_INVADE_RETURN &&
 		state != CPlayer::EState::STATE_DMG)
 	{
+
+		// 無敵の場合
+		if (state == CPlayer::EState::STATE_INVINCIBLE &&
+			pBall->GetCover() == m_pPlayer)
+		{// 自分のリバウンドならすり抜ける
+			return hitInfo;
+		}
+
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
 
@@ -144,6 +140,15 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 
 		// キャッチ状態
 		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
+		return hitInfo;
+	}
+
+	// 無敵の場合
+	if (state == CPlayer::EState::STATE_INVINCIBLE)
+	{
+		m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
+
+		hitInfo.bHit = true;
 		return hitInfo;
 	}
 
