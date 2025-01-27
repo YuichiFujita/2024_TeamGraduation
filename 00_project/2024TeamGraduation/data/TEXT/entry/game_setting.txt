@@ -16,6 +16,6 @@ END_GAMESET
 #	ƒ`[ƒ€–¼î•ñ
 #------------------------------------------------------------------------------
 TEAMNAME
-	LEFT  = ‚ ‚Ü‚Ä‚ç‚·
+	LEFT  = QQQQQQQQQQ
 	RIGHT = ‚Â‚«‚æ‚Ý
 END_TEAMNAME
