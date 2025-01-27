@@ -2692,8 +2692,7 @@ void CPlayer::DeadCollectSetting()
 {
 	if (m_pEfkDeadAfter != nullptr)
 	{// 死亡後エフェクト
-		m_pEfkDeadAfter->SetTrigger(0);
-		m_pEfkDeadAfter->SetEnableAutoDeath(true);
+		m_pEfkDeadAfter->Uninit();
 		m_pEfkDeadAfter = nullptr;
 	}
 }
