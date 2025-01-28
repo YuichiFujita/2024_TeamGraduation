@@ -1320,6 +1320,19 @@ void CPlayer::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 		}
 		break;
 
+	case EMotion::MOTION_LAND_SP:
+		if (nCntATK == 0)
+		{
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE01);
+		}
+		else if (nCntATK == 1)
+		{
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+		}
+		break;
+
 	default:
 		break;
 	}

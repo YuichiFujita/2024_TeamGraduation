@@ -86,8 +86,14 @@ namespace
 	{
 		const MyLib::PosGrid2	PTRN	= MyLib::PosGrid2(1, 2);						// テクスチャ分割数
 		const std::string		TEXTURE	= "data\\TEXTURE\\entry\\ReadyCheck000.png";	// 準備完了チェックテクスチャ
-		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 222.0f, 0.0f) * MUL;			// オフセット
+		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 222.0f, 0.0f) * MUL;		// オフセット
 		const float WIDTH = 112.0f * MUL;	// 横幅
+	}
+
+	namespace arrow
+	{
+		const float				SIZE = 18.0f;	// 大きさ
+		const MyLib::Vector3	SPACE = MyLib::Vector3(83.0f, 0.0f, 0.0f);	// 空白
 	}
 }
 
@@ -123,7 +129,10 @@ CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeAr
 	m_nPlayerIdx		(nPlayerIdx),				// プレイヤーインデックス
 	m_typeArea			(typeArea)					// プレイヤーポジション
 {
-
+	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+	{
+		m_apArrow[i] = nullptr;	// 矢印の情報
+	}
 }
 
 //============================================================
@@ -491,6 +500,13 @@ HRESULT CDressupUI::CreateUI()
 		return E_FAIL;
 	}
 
+	// 矢印UIの生成
+	if (FAILED(CreateArrowUI()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
 	// 相対位置の設定
 	SetPositionRelative();
 
@@ -743,6 +759,39 @@ HRESULT CDressupUI::CreatePlayerUI()
 }
 
 //============================================================
+// 矢印UIの生成
+//============================================================
+HRESULT CDressupUI::CreateArrowUI()
+{
+	// 位置取得
+	MyLib::Vector3 pos = GetPosition();
+
+	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+	{
+		// 矢印の生成
+		m_apArrow[i] = CArrowUI::Create
+		( // 引数
+			(CArrowUI::EDirection)i,	// 方向
+			pos,						// 位置
+			arrow::SIZE,				// サイズ
+			MyLib::color::White(1.0f),	// 色
+			GetPriority()				// 優先順位
+		);
+
+		if (m_apArrow[i] == nullptr)
+		{ // 生成に失敗した場合
+			return E_FAIL;
+		}
+
+		// オフセット位置設定
+		m_apArrow[i]->SetOffset(arrow::SPACE);
+		m_apArrow[i]->SetOffsetOrigin(m_apArrow[i]->GetOffset());
+	}
+
+	return S_OK;
+}
+
+//============================================================
 // セットアップの生成処理
 //============================================================
 HRESULT CDressupUI::CreateSetup()
@@ -973,6 +1022,39 @@ void CDressupUI::SetPositionRelative()
 		assert(false);
 		break;
 	}
+
+	switch (m_typeEdit)
+	{ // エディット種類ごとの処理
+	case EEditType::EDIT_PROCESS:
+	{
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			// 矢印の生成
+			m_apArrow[i]->SetPosition(m_pPlayerFrame->GetPosition());
+			m_apArrow[i]->SetOriginPosition(m_pPlayerFrame->GetPosition());
+
+			bool bDisp = (m_nPadIdx > -1);
+			m_apArrow[i]->SetEnableDisp(bDisp);
+		}
+		break;
+	}
+	case EEditType::EDIT_CHANGETYPE:
+	{
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			// 矢印の生成
+			m_apArrow[i]->SetPosition(m_pChangeIcon->GetPosition());
+			m_apArrow[i]->SetOriginPosition(m_pChangeIcon->GetPosition());
+
+			bool bDisp = (m_nPadIdx > -1);
+			m_apArrow[i]->SetEnableDisp(bDisp);
+		}
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //============================================================
@@ -1165,6 +1247,20 @@ void CDressupUI::UpdateUI()
 			break;
 		}
 	}
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nPadIdx))
+	{// ループ
+
+		// 右移動
+		SetAction(CArrowUI::EDirection::DIRECTION_R);
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nPadIdx))
+	{// 逆ループ
+
+		// 左移動
+		SetAction(CArrowUI::EDirection::DIRECTION_L);
+	}
 }
 
 //============================================================
@@ -1220,6 +1316,15 @@ void CDressupUI::UpdatePlayerUI()
 		assert(false);
 		break;
 	}
+}
+
+//============================================================
+// アクション設定
+//============================================================
+void CDressupUI::SetAction(CArrowUI::EDirection dir)
+{
+	// 選択時移動
+	m_apArrow[dir]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 }
 
 //============================================================

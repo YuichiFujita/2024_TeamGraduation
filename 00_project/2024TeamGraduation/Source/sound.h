@@ -63,6 +63,12 @@ public:
 		LABEL_SE_SP,			// スペシャル
 		LABEL_SE_SP_JUMP,		// スペシャルジャンプ
 		LABEL_SE_SP_LAND,		// スペシャル着地
+		LABEL_SE_SP_AUDIENCE01,	// スペシャル観客01
+		LABEL_SE_SP_AUDIENCE02,	// スペシャル観客02
+		LABEL_SE_KMHM_START,	// かめはめ開始
+		LABEL_SE_KMHM_CHARGE,	// かめはめチャージ
+		LABEL_SE_KMHM_LOOP,		// かめはめループ
+		LABEL_SE_KMHM_BRUST,	// かめはめ発射
 		LABEL_SE_WHISTLE,		// ホイッスル
 		LABEL_SE_AI,			// AI読みあげ
 		LABEL_SE_CURSOR,		// カーソル
