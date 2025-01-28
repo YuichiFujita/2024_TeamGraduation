@@ -140,6 +140,46 @@ void CCamera::MoveCameraInput(void)
 
 	// スティックでの移動処理
 	MoveCameraStick();
+
+	// キーボード情報取得
+	CInputKeyboard* pKey = CManager::GetInputKeyboard();
+	bool bInput = false;
+
+	if (pKey->GetTrigger(DIK_UP))
+	{
+		bInput = true;
+		m_rot.y = 0.0f;
+	}
+	else if (pKey->GetTrigger(DIK_DOWN))
+	{
+		bInput = true;
+		m_rot.y = D3DX_PI;
+	}
+	else if (pKey->GetTrigger(DIK_LEFT))
+	{
+		bInput = true;
+		m_rot.y = D3DX_PI * 0.5f;
+	}
+	else if (pKey->GetTrigger(DIK_RIGHT))
+	{
+		bInput = true;
+		m_rot.y = -D3DX_PI * 0.5f;
+	}
+
+	if (bInput)
+	{
+		// プレイヤーの情報取得
+		CPlayer* pPlayer = CManager::GetPlayer();
+
+		MyLib::Vector3 posR = pPlayer->GetCenterPosition();
+
+		// 注視点の代入処理
+		m_posV.x = posR.x + cosf(m_rot.z) * sinf(m_rot.y) * -m_fDistance;
+		m_posV.z = posR.z + cosf(m_rot.z) * cosf(m_rot.y) * -m_fDistance;
+		m_posV.y = posR.y + sinf(m_rot.z) * -m_fDistance;
+
+		m_rot.z = 0.0f;
+	}
 }
 
 //==================================================================================

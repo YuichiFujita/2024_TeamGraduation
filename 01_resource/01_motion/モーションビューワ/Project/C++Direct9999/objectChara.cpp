@@ -387,6 +387,49 @@ void CObjectChara::Draw(D3DXCOLOR col)
 	}
 }
 
+//==========================================================================
+// 描画処理
+//==========================================================================
+void CObjectChara::Draw(std::vector<int> nIdx, const D3DXCOLOR& col)
+{
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
+	D3DXMATRIX mtxRot, mtxTrans;	// 計算用マトリックス宣言
+
+	// ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	// 向きを反映する
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
+
+	// 位置を反映する
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+
+	// ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
+
+	// モデルの描画
+	for (int nCntModel = 0; nCntModel < mylib_const::MAX_MODEL; nCntModel++)
+	{
+		if (m_apModel[nCntModel] != NULL)
+		{// NULLじゃなかったら
+
+			if (std::find(nIdx.begin(), nIdx.end(), nCntModel) != nIdx.end())
+			{
+				// パーツごとの描画
+				m_apModel[nCntModel]->Draw(col);
+			}
+			else
+			{
+				// パーツごとの描画
+				m_apModel[nCntModel]->Draw();
+			}
+		}
+	}
+}
 
 //==========================================================================
 // 描画処理
