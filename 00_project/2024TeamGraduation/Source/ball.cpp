@@ -359,18 +359,10 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 	// 現在の攻撃種類を更新
 	UpdateTypeAtk();
 
-	// スペシャルエフェクト削除
+	// スペシャルエフェクト位置設定
 	if (m_pSPBallet != nullptr)
 	{
 		m_pSPBallet->SetPosition(GetPosition());
-	}
-
-	if (m_typeAtk != EAttack::ATK_SPECIAL &&
-		m_pSPBallet != nullptr)
-	{
-		m_pSPBallet->SetTrigger(0);
-		m_pSPBallet->SetEnableAutoDeath(true);
-		m_pSPBallet = nullptr;
 	}
 
 	// 現在のスペシャル種類を更新
@@ -807,6 +799,21 @@ void CBall::Toss(CPlayer* pPlayer)
 
 	// サウンド再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
+}
+
+//==========================================================================
+// スペシャル終了
+//==========================================================================
+void CBall::SpecialEndSetting()
+{
+	// 削除
+	if (m_typeAtk != EAttack::ATK_SPECIAL &&
+		m_pSPBallet != nullptr)
+	{// スペシャル状態解除 && インスタンスがある
+		m_pSPBallet->SetTrigger(0);
+		m_pSPBallet->SetEnableAutoDeath(true);
+		m_pSPBallet = nullptr;
+	}
 }
 
 //==========================================================================

@@ -97,6 +97,7 @@ public:
 	void Special(CPlayer* pPlayer);		// スペシャル発動
 	bool Pass(CPlayer* pPlayer);		// パス
 	void Toss(CPlayer* pPlayer);		// トス
+	void SpecialEndSetting();			// スペシャル終了
 	MyLib::Vector3 GetPosPassStart() const		{ return m_posPassStart; }	// パス開始位置取得
 	MyLib::Vector3 GetPosPassEnd() const		{ return m_posPassEnd; }	// パス終了位置取得
 	CGameManager::ETeamSide GetTypeTeam() const	{ return m_typeTeam; }		// チームサイド取得
