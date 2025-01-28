@@ -42,6 +42,7 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 	m_fJumpTimer = 0.0f;
 	m_fJumpRate = 0.0f;
 	m_fMaxJumpRate = 0.0f;
+	m_fCatchRadius = 0.0f;
 }
 
 //==========================================================================
@@ -56,7 +57,7 @@ void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, cons
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetTeam()) return;
 
-	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 200.0f))
+	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), m_fCatchRadius))
 	{
 		// アクションパターン変更
 		SetPattern(player, CPlayer::EMotion::MOTION_CATCH_STANCE, CPlayer::EAction::ACTION_CATCH);
