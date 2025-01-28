@@ -62,6 +62,7 @@ public:
 		LABEL_SE_WHISTLE,		// ホイッスル
 		LABEL_SE_AI,			// AI読みあげ
 		LABEL_SE_CURSOR,		// カーソル
+		LABEL_SE_CANCEL,		// キャンセル
 		LABEL_SE_WRITE01,		// 書き
 		LABEL_SE_WRITE02,		// 書き
 		LABEL_SE_ARROW,			// 矢印
@@ -69,6 +70,8 @@ public:
 		LABEL_SE_ARROW_DOWN,	// 矢印(下げ)
 		LABEL_SE_OPTION_GO,		// オプション行く
 		LABEL_SE_OPTION_BACK,	// オプション戻る
+		LABEL_SE_JOIN,			// 参加
+		LABEL_SE_CONTROERMOVE,	// コントローラー移動
 		LABEL_MAX
 	};
 
