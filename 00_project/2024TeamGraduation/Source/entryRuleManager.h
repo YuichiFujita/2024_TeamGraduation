@@ -104,7 +104,6 @@ public:
 	static HRESULT LoadName(std::string* pName, CGameManager::ETeamSide team);	// チーム名読込
 
 private:
-	
 	// メンバ関数
 	void UpdateFadeIn();	// フェードイン更新
 	void UpdateFadeOut();	// フェードアウト更新

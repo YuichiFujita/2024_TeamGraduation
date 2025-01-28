@@ -59,7 +59,7 @@ CCharmManager::CCharmManager()
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
 	{ // ƒ`[ƒ€”•ªŒJ‚è•Ô‚·
 
-		m_fHypeTime[i] = 99999999999999999990.0f;	// ·‚èã‚ª‚èŠÔ
+		m_fHypeTime[i] = 0.0f;	// ·‚èã‚ª‚èŠÔ
 	}
 }
 
