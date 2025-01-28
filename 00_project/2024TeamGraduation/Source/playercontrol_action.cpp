@@ -98,6 +98,9 @@ void CPlayerControlAction::SpecialSetting(CPlayer* player, CBall* pBall, CTeamSt
 
 	// アクションパターン変更
 	SetPattern(player, CPlayer::EMotion::MOTION_HYPE, CPlayer::EAction::ACTION_SPECIAL);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP);
 }
 
 //==========================================================================
