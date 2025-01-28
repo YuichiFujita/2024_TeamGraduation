@@ -62,6 +62,14 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/SP.wav",0},					// スペシャル
 	{ TYPE_SE,"data/SE/SP_jump.wav",0},				// スペシャルジャンプ
 	{ TYPE_SE,"data/SE/SP_land.wav",0},				// スペシャル着地
+	{ TYPE_SE,"data/SE/SP_audience01.wav",0},		// スペシャル観客01
+	{ TYPE_SE,"data/SE/SP_audience02.wav",0},		// スペシャル観客02
+
+	// かめはめ波
+	{ TYPE_SE,"data/SE/KMHM_start.wav",0},			// かめはめ開始
+	{ TYPE_SE,"data/SE/KMHM_charge.wav",0},			// かめはめチャージ
+	{ TYPE_SE,"data/SE/KMHM_loop.wav",-1},			// かめはめチャージ
+	{ TYPE_SE,"data/SE/KMHM_brust.wav",0},			// かめはめ発射
 
 	// その他
 	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル
