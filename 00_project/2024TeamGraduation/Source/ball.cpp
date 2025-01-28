@@ -1555,6 +1555,9 @@ bool CBall::UpdateLanding(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const flo
 
 		// 着地している状態にする
 		m_bLanding = true;
+
+		// スペシャルの終了時設定
+		SpecialEndSetting();
 		return true;
 	}
 
