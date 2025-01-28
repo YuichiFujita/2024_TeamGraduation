@@ -15,8 +15,8 @@
 //==========================================================================
 namespace
 {
-	const char*	SETUP_FRONT_TXT	= "data\\CHARACTER\\frisk_front.txt";	// 表面プレイヤーセットアップテキスト
-	const char*	SETUP_BACK_TXT	= "data\\CHARACTER\\frisk_back.txt";	// 裏面プレイヤーセットアップテキスト
+	const char*	SETUP_FRONT_TXT	= "data\\CHARACTER\\suiren_front.txt";	// 表面プレイヤーセットアップテキスト
+	const char*	SETUP_BACK_TXT	= "data\\CHARACTER\\suiren_back.txt";	// 裏面プレイヤーセットアップテキスト
 	const char*	LIGHT_PATH	= "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int	PRIORITY	= mylib_const::PRIORITY_DEFAULT;	// 優先順位
 

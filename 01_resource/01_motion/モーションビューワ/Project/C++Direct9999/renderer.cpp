@@ -165,7 +165,7 @@ void CRenderer::Draw(void)
 	m_pD3DDevice->Clear
 	(	0, NULL,
 		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f),
+		D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
 		1.0f,
 		0
 	);

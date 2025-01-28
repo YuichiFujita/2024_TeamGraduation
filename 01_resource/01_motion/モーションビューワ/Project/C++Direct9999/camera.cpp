@@ -11,6 +11,7 @@
 #include "input.h"
 #include "calculation.h"
 #include "player.h"
+#include "light.h"
 
 //==========================================================================
 // マクロ定義
@@ -125,6 +126,8 @@ void CCamera::Update(void)
 			UpdateState();
 		}
 	}
+
+	UpdateSpotLightVec();
 
 //#ifdef _DEBUG
 //#endif
@@ -694,4 +697,22 @@ D3DXVECTOR3 CCamera::GetRotation(void) const
 void CCamera::EnableChase(void)
 {
 	m_bFollow = m_bFollow ? false : true;
+}
+
+//==========================================================================
+// スポットライトのベクトル更新
+//==========================================================================
+void CCamera::UpdateSpotLightVec()
+{
+	// 方向ベクトル
+	MyLib::Vector3 vec = MyLib::Vector3();
+
+	// 視点から注視点への向き
+	vec = m_posR - m_posV;
+
+	// 正規化
+	D3DXVec3Normalize(&vec, &vec);
+
+	// スポットライトの方向設定
+	CManager::GetLight()->UpdateSpotLightDirection(vec);
 }
