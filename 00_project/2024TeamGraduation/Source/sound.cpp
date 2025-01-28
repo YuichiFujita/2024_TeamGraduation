@@ -36,6 +36,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	// ジャンプ
 	{ TYPE_SE,"data/SE/jump.wav",0},				// ジャンプ
 
+	// 回避
+	{ TYPE_SE,"data/SE/dodge.wav",0},				// 回避
+
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
@@ -55,12 +58,18 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/hit00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/hit01.wav",0},				// ジャンプ投げ
 
+	// スペシャル
+	{ TYPE_SE,"data/SE/SP.wav",0},					// スペシャル
+	{ TYPE_SE,"data/SE/SP_jump.wav",0},				// スペシャルジャンプ
+	{ TYPE_SE,"data/SE/SP_land.wav",0},				// スペシャル着地
+
 	// その他
 	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル
 	{ TYPE_SE,"data/SE/AI_yomiage.wav",0},			// AI
 
 	// アウトゲーム
 	{ TYPE_SE,"data/SE/outgame/cursor.wav",0},			// カーソル
+	{ TYPE_SE,"data/SE/outgame/cancel.wav",0},			// キャンセル
 	{ TYPE_SE,"data/SE/outgame/write01.wav",0},			// 書き
 	{ TYPE_SE,"data/SE/outgame/write02.wav",0},			// 書き
 	{ TYPE_SE,"data/SE/outgame/arrow.wav",0},			// 矢印
@@ -68,6 +77,8 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/arrow_down.wav",0},		// 矢印(下げ)
 	{ TYPE_SE,"data/SE/outgame/optionGo.wav",0},		// オプション行く
 	{ TYPE_SE,"data/SE/outgame/optionBack.wav",0},		// オプション戻る
+	{ TYPE_SE,"data/SE/outgame/join.wav",0},			// 参加
+	{ TYPE_SE,"data/SE/outgame/controllerMove.wav",0},	// コントローラー移動
 
 
 };	// サウンドの情報

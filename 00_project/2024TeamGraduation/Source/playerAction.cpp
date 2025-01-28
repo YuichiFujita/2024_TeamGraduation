@@ -163,6 +163,9 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	{
 		// アクション設定
 		SetAction(CPlayer::EAction::ACTION_DODGE);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DODGE);
 	}
 }
 
@@ -428,5 +431,12 @@ void CPlayerAction::UniqueJumpUpdate(const float fDeltaTime, const float fDeltaR
 //==========================================================================
 void CPlayerAction::Debug()
 {
+	if (ImGui::Button("Dodge"))
+	{
+		// アクション設定
+		SetAction(CPlayer::EAction::ACTION_DODGE);
 
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DODGE);
+	}
 }

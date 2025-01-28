@@ -34,6 +34,7 @@ class CTeamStatus;
 class CObject3D;
 class CResultCrown;
 class CEffekseerObj;
+class CSkip;
 
 //==========================================================================
 // クラス定義
@@ -72,7 +73,8 @@ public:
 	EState GetState() { return m_state; }		// 状態取得
 	CGameManager::ETeamSide GetTeamPreludeWin() { return m_teamPreludeWin; }		// 勝利チーム(前座)
 	CGameManager::ETeamSide GetTeamContestWin() { return m_teamContestWin; }		// 勝利チーム(モテ)
-
+	bool IsSceneTrans() { return m_bSceneTrans; }									// シーン遷移可能フラグ
+	
 	static CResultManager* Create();							// 生成処理
 	static CResultManager* GetInstance() { return m_pThisPtr; }	// インスタンス取得
 
@@ -89,6 +91,9 @@ private:
 
 	typedef void(CResultManager::* STATE_END_FUNC)();
 	static STATE_END_FUNC m_StateEndFunc[];		// 状態終了関数
+
+	typedef void(CResultManager::* STATE_SKIP_FUNC)();
+	static STATE_SKIP_FUNC m_StateSkipFunc[];	// 状態スキップ関数
 
 	//=============================
 	// メンバ関数
@@ -112,6 +117,8 @@ private:
 	void StateEndPrelude();				// [終了]前座勝敗
 	void StateEndCharmContest();		// [終了]モテ勝敗
 
+	void SkipState();	// [スキップ]状態進行
+		
 	//-----------------------------
 	// その他
 	//-----------------------------
@@ -143,6 +150,7 @@ private:
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
 	bool m_bStateTrans;	// 状態遷移可能フラグ(t:不可/f:可)
+	bool m_bSceneTrans;	// シーン遷移可能フラグ
 
 	static CResultManager* m_pThisPtr;							// 自身のポインタ
 };

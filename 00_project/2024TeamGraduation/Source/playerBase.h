@@ -45,7 +45,8 @@ public:
 	// 仮想関数
 	virtual CPlayer::SHitInfo Hit(CBall* pBall);			// ヒット
 	virtual void InitPosition(const MyLib::Vector3& rPos);	// 位置初期化
-	virtual bool IsCrab();	// カニ歩き判定
+	virtual bool IsCrab();			// カニ歩き判定
+	virtual bool IsCrabMotion();	// カニ歩きモーション判定
 	virtual void Debug();	// デバッグ
 	virtual CPlayerIn* GetPlayerIn()			{ return nullptr; }	// 内野プレイヤー取得
 	virtual CPlayerOut* GetPlayerOut()			{ return nullptr; }	// 外野プレイヤー取得
