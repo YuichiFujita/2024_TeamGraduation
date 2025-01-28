@@ -1,36 +1,33 @@
 //=============================================================================
 //
-// 着せ替え(髪)処理 [dressup_hair_Mii.h]
+// 着せ替え(髪)処理 [dressup_hair_MiiLow.h]
 // Author : 相馬靜雅
 //
 //=============================================================================
-#ifndef _DRESSUP_HAIR_MII_H_		// このマクロ定義がされていなかったら
-#define _DRESSUP_HAIR_MII_H_		// 二重インクルード防止のマクロを定義する
+#ifndef _DRESSUP_HAIR_MII_LOW_H_		// このマクロ定義がされていなかったら
+#define _DRESSUP_HAIR_MII_LOW_H_		// 二重インクルード防止のマクロを定義する
 
 //==========================================================================
 // インクルードファイル
 //==========================================================================
-#include "dressup_hair.h"
+#include "dressup_hair_Mii.h"
 
 //==========================================================================
 // クラス定義
 //==========================================================================
 // 着せ替え(髪)クラス
-class CDressup_Hair_Mii : public CDressup_Hair
+class CDressup_Hair_MiiLow : public CDressup_Hair_Mii
 {
 public:
 
-	CDressup_Hair_Mii();
-	~CDressup_Hair_Mii();
+	CDressup_Hair_MiiLow();
+	~CDressup_Hair_MiiLow();
 
 	//=============================
 	// メンバ関数
 	//=============================
 	HRESULT Init() override;	// 初期化
 	void Uninit() override;		// 終了
-
-	// 静的メンバ関数
-	static CDressup_Hair_Mii* Create(CDressup::EType type);	// 生成処理
 
 private:
 

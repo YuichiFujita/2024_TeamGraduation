@@ -20,7 +20,7 @@ namespace
 	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\setup_player.txt";	// プレイヤーセットアップテキスト
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
-	const int ID_HAIR = 11;	// 髪のID
+	const int ID_HAIR = 9;	// 髪のID
 
 	namespace Side
 	{

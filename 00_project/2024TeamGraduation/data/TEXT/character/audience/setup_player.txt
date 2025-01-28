@@ -28,7 +28,7 @@ MODEL_FILENAME = data/MODEL/audience/07_legUP_R.x	# [5]右足(上)
 MODEL_FILENAME = data/MODEL/audience/08_legDW_R.x	# [6]右足(下)
 MODEL_FILENAME = data/MODEL/audience/09_legUP_L.x	# [7]左脚(上)
 MODEL_FILENAME = data/MODEL/audience/10_legDW_L.x	# [8]左脚(下)
-MODEL_FILENAME = data/MODEL/audience/hair_long.x	# [11]髪
+MODEL_FILENAME = data/MODEL/audience/hair_long.x	# [9]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
