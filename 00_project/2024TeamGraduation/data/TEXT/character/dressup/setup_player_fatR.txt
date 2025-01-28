@@ -271,7 +271,6 @@ COLLIDER_FILENAME = data/TEXT/character/player/main_01/sphere_collider.json
 MOTION_FILENAME = data/TEXT/character/dressup/motion_def.txt		# デフォルト
 MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup01.txt		# 待機
 MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup02.txt		# 待機
-MOTION_FILENAME = data/TEXT/character/dressup/motion_dressup03.txt		# 待機
 
 END_SCRIPT		# この行は絶対消さないこと！
 

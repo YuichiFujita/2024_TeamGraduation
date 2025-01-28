@@ -39,20 +39,28 @@ namespace
 		const float DRESS_WIDTH	= 40.0f;	// 着せ替え時の横幅
 		const float OTHER_WIDTH	= 18.0f;	// 他選択時の横幅
 		const MyLib::Vector3 NAME_OFFSET	= MyLib::Vector3(0.0f, -60.0f, 0.0f);	// 名前オフセット
-		const MyLib::Vector3 DRESS_OFFSET	= MyLib::Vector3(0.0f, -140.0f, 0.0f);	// 着せ替えオフセット
+		const MyLib::Vector3 DRESS_OFFSET	= MyLib::Vector3(0.0f, -135.0f, 0.0f);	// 着せ替えオフセット
 	}
 
 	namespace frame
 	{
 		const std::string TEXTURE = "data\\TEXTURE\\entry\\flame_choice.png";	// 背景テクスチャ
+		const D3DXCOLOR COL_DRESS[] =	// 着せ替え選択時の色
+		{
+			D3DXCOLOR(1.0f, 0.9f, 0.9f, 1.0f),	// 1P (赤)
+			D3DXCOLOR(0.9f, 0.9f, 1.0f, 1.0f),	// 2P (青)
+			D3DXCOLOR(1.0f, 1.0f, 0.9f, 1.0f),	// 3P (黄)
+			D3DXCOLOR(0.9f, 1.0f, 0.9f, 1.0f),	// 4P (緑)
+		};
+
 		namespace name
 		{
 			const MyLib::Vector3 PLUS_EDGE = MyLib::Vector3(50.0f, 10.0f, 0.0f);	// フレーム縁取り拡大
 		}
 		namespace dress
 		{
-			const MyLib::Vector3 OFFSET	= MyLib::Vector3(0.0f, 55.0f, 0.0f);	// オフセット
-			const MyLib::Vector2 SIZE	= MyLib::Vector2(158.0f, 200.0f);		// 大きさ
+			const MyLib::Vector3 OFFSET	= MyLib::Vector3(0.0f, 42.5f, 0.0f);	// オフセット
+			const MyLib::Vector2 SIZE	= MyLib::Vector2(130.0f, 164.0f);		// 大きさ
 		}
 		namespace area
 		{
@@ -78,6 +86,11 @@ CSelectUI::SELECT_FUNC CSelectUI::m_SelectFuncList[] =
 	&CSelectUI::UpdateArea,		// ポジションの更新
 	&CSelectUI::UpdateTrans,	// 遷移の更新
 };
+
+//************************************************************
+//	静的メンバ変数宣言
+//************************************************************
+CListManager<CSelectUI> CSelectUI::m_list = {};	// リスト
 
 //************************************************************
 //	子クラス [CSelectUI] のメンバ関数
@@ -121,6 +134,9 @@ HRESULT CSelectUI::Init()
 	// 種類をオブジェクト2Dにする
 	SetType(CObject::TYPE::TYPE_OBJECT2D);
 
+	// リストに追加
+	m_list.Regist(this);
+
 	return S_OK;
 }
 
@@ -137,6 +153,9 @@ void CSelectUI::Uninit()
 
 	// フレームの終了
 	SAFE_UNINIT(m_pFrame);
+
+	// リストから削除
+	m_list.Delete(this);
 
 	// オブジェクトを破棄
 	Release();
@@ -156,6 +175,9 @@ void CSelectUI::Kill()
 //============================================================
 void CSelectUI::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 過去選択インデックスを保存
+	const MyLib::PosGrid2 oldSelect = m_select;
+
 	// 選択の更新
 	UpdateSelect();
 
@@ -167,6 +189,33 @@ void CSelectUI::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 選択別処理
 		(this->*(m_SelectFuncList[m_select.y]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// 着せ替えシーンの取得
+	CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
+	if (pEntry == nullptr) { return; }							// エントリーモードがない場合抜ける
+	CEntryScene* pEntryScene = pEntry->GetEntryScene();			// エントリーシーン情報
+	if (pEntryScene == nullptr) { return; }						// エントリーシーンがない場合抜ける
+	CEntry_Dressup* pDressup = pEntryScene->GetDressupTeam();	// 着せ替えシーン情報
+	if (pDressup == nullptr) { return; }						// 着せ替えシーンがない場合抜ける
+
+	// 選択オブジェクト色設定
+	pDressup->SetSelectObjectColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f), oldSelect);
+
+	// 選択オブジェクト色設定
+	pDressup->SetSelectObjectColor(MyLib::color::White(), m_select);
+
+	if (m_select.y == SELECT_DRESSUP)
+	{ // 着せ替え行の場合
+
+		// 各プレイヤーの色にする
+		m_pFrame->SetColor(frame::COL_DRESS[m_nPadIdx]);
+	}
+	else
+	{ // それ以外の行の場合
+
+		// 白にする
+		m_pFrame->SetColor(MyLib::color::White());
 	}
 }
 
@@ -235,6 +284,24 @@ CSelectUI *CSelectUI::Create(CGameManager::ETeamSide team, const int nPlayerIdx,
 		// 確保したアドレスを返す
 		return pSelectUI;
 	}
+}
+
+//============================================================
+//	フレーム描画状況の設定処理
+//============================================================
+void CSelectUI::SetEnableDispFrame(const bool bDraw)
+{
+	// 描画フラグの設定
+	m_pFrame->SetEnableDisp(bDraw);
+}
+
+//============================================================
+//	フレーム描画状況の取得処理
+//============================================================
+bool CSelectUI::IsDispFrame() const
+{
+	// 描画フラグの取得
+	return m_pFrame->IsDisp();
 }
 
 //============================================================

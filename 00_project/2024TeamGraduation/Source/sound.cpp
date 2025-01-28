@@ -36,6 +36,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	// ジャンプ
 	{ TYPE_SE,"data/SE/jump.wav",0},				// ジャンプ
 
+	// 回避
+	{ TYPE_SE,"data/SE/dodge.wav",0},				// 回避
+
 	// 投げ
 	{ TYPE_SE,"data/SE/throw00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/throw01.wav",0},				// ジャンプ投げ
@@ -54,6 +57,11 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	// ヒット
 	{ TYPE_SE,"data/SE/hit00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/hit01.wav",0},				// ジャンプ投げ
+
+	// スペシャル
+	{ TYPE_SE,"data/SE/SP.wav",0},					// スペシャル
+	{ TYPE_SE,"data/SE/SP_jump.wav",0},				// スペシャルジャンプ
+	{ TYPE_SE,"data/SE/SP_land.wav",0},				// スペシャル着地
 
 	// その他
 	{ TYPE_SE,"data/SE/whistle00.wav",0},			// ホイッスル

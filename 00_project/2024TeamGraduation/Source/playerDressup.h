@@ -34,7 +34,6 @@ public:
 		MOTION_DEF = 0,	// ニュートラルモーション
 		MOTION_WAIT01,	// 待機
 		MOTION_WAIT02,	// 待機
-		MOTION_WAIT03,	// 待機
 		MOTION_MAX
 	};
 
