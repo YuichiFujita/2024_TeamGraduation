@@ -32,33 +32,8 @@
 //==========================================================================
 namespace
 {
-	// 行動タイプ
-	const int MOVETYPE_WAIT_MODE_MAX = 10;		// 待機に入る確率幅 (最低は0固定)
-	const int MOVETYPE_WAIT_MODE_IN = 6;		// 待機に入る確率(この数値以下の場合、待機状態)
-	const int MOVETYPE_WAIT_TIME_MAX = 20;		// 最大：待機時間
-	const int MOVETYPE_WAIT_TIME_MIN = 10;		// 最低：
-	const int MOVETYPE_ATYAKOTYA_TIME_MAX = 10;		// 最大：あっちゃこっちゃ時間
-	const int MOVETYPE_ATYAKOTYA_TIME_MIN = 5;		// 最低：
-	const int MOVETYPE_LEFTRIGHT_TIME_MAX = 10;		// 最大：左右移動時間
-	const int MOVETYPE_LEFTRIGHT_TIME_MIN = 5;		// 最低：
-	const int MOVETYPE_UPDOWN_TIME_MAX = 10;		// 最大：上下移動時間
-	const int MOVETYPE_UPDOWN_TIME_MIN = 5;		// 最低：
-
-	// パス
-	const float STEAL_CANCEL_LENGTH = 100.0f;	// あきらめる距離
-
-	const float MOTIVATION_MAX = 100.0f;		// モチベーション(MAX)
-
 	// 距離間(デフォルト)
-	const float LENGTH_TARGET = 400.0f;		// ターゲットとの距離(デフォルト)
-	const float LENGTH_VALUE = 100.0f;
-
-	const float BALL_DISTANCE = 300.0f;			// 
-
-	const float CATCH_JUMP_LENGTH = 100.0f;
-	const float CATCH_JUMP_HEIGHT = 140.0f;
-
-	const float JUMP_RATE = 1.0f;				// ジャンプの割合(高さ)
+	const float TARGET_DISTANCE = 400.0f;			// 
 }
 
 //==========================================================================
@@ -199,7 +174,7 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 		if (sideBall == sideMy)
 		{// 同じチーム
 
-		// クールダウン中の場合
+			// クールダウン中の場合
 			if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
 
 			m_eAction = EAction::RNDOM;
@@ -209,12 +184,31 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 		}
 		else
 		{// 行うアクションを決める
+
+			if (IsTargetDistanse())
+			{
+				m_eAction = EAction::LEAVE;
+
+				// 行動の構造体初期化
+				ZeroMemory(&m_sAction, sizeof(m_sAction));
+				return;
+			}
+
 			SelectAction();
 		}
 
 		break;
 
 	case CPlayer::EFieldArea::FIELD_OUT:	// 外野
+
+		if (IsTargetDistanse())
+		{
+			m_eAction = EAction::LEAVE;
+
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
+			return;
+		}
 
 		// クールダウン中の場合
 		if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
@@ -335,6 +329,15 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 			// 行動の構造体初期化
 			ZeroMemory(&m_sAction, sizeof(m_sAction));
 
+			return;
+		}
+
+		if (IsTargetDistanse())
+		{
+			m_eAction = EAction::LEAVE;
+
+			// 行動の構造体初期化
+			ZeroMemory(&m_sAction, sizeof(m_sAction));
 			return;
 		}
 
@@ -499,7 +502,7 @@ void CPlayerAIControlDefense::MoveLeave()
 	SetMoveFlag(EMoveFlag::MOVEFLAG_WALK);
 
 	// 離れる
-	if (Leave(pPlayer->GetPosition(), 200.0f))
+	if (Leave(pPlayer->GetPosition(), TARGET_DISTANCE))
 	{
 		// 止まる
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
@@ -967,6 +970,18 @@ void CPlayerAIControlDefense::SeeBall()
 
 	// 角度の設定
 	pAI->SetRotDest(angle);
+}
+
+//==========================================================================
+// ボール持ち主との距離
+//==========================================================================
+bool CPlayerAIControlDefense::IsTargetDistanse()
+{
+	float dis = GetDistanceBallowner();
+
+	if (dis < TARGET_DISTANCE) { return true; }
+
+	return false;
 }
 
 //==========================================================================

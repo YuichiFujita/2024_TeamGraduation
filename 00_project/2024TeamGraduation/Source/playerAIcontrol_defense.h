@@ -64,7 +64,6 @@ public:
 
 	static CPlayerAIControlDefense* Create(CPlayer* player);
 
-
 	HRESULT Init() override;
 	void Uninit();
 	void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
@@ -99,6 +98,8 @@ protected:
 	void UpdateSee();						// 更新
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
+
+	bool IsTargetDistanse();
 
 	//-----------------------------
 	// 設定関数

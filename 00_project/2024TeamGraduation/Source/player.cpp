@@ -265,7 +265,6 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
 
-
 #if _DEBUG	// デバッグ用ID
 	m_nThisDebugID = m_nDebugID;
 	m_nDebugID++;
@@ -1788,29 +1787,10 @@ void CPlayer::DamageSetting(CBall* pBall)
 //==========================================================================
 void CPlayer::CatchSetting(CBall* pBall)
 {
-
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
 
 	// ボールをキャッチ
 	pBall->CatchAttack(this);
-
-	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
-	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
-	
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 入力判定
-	bool bInput = false;
-	EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-	if (angle != EDashAngle::ANGLE_MAX)
-	{// ジャスト範囲方向に入力していたら
-		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-		float fRot = division * angle + D3DX_PI + Camerarot.y;
-		UtilFunc::Transformation::RotNormalize(fRot);
-		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
-	}
 
 	// ジャスト判定
 	bool bJust = false;
@@ -1818,7 +1798,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 #if 0	// 常にジャスト
 	if (m_sMotionFrag.bCatchJust && bInput)
 #else
-	if (m_sMotionFrag.bCatchJust && bInput)
+	if (m_sMotionFrag.bCatchJust && IsInputAngle(pBall))
 #endif
 	{
 		bJust = true;
@@ -2767,6 +2747,34 @@ bool CPlayer::IsTeamPlayer() const
 
 	// 全員死んでいる場合false
 	return false;
+}
+
+//==========================================================================
+// 入力角度があっているかの確認
+//==========================================================================
+bool CPlayer::IsInputAngle(CBall* pBall) const
+{
+	if (GetBaseType() == EBaseType::TYPE_AI) return true;
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	bool bInput = false;
+
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
+	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
+
+	EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+	if (angle != EDashAngle::ANGLE_MAX)
+	{// ジャスト範囲方向に入力していたら
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		float fRot = division * angle + D3DX_PI + Camerarot.y;
+		UtilFunc::Transformation::RotNormalize(fRot);
+		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
+	}
+
+	return bInput;
 }
 
 //==========================================================================

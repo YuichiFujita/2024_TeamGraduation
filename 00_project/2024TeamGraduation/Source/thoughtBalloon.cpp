@@ -17,7 +17,7 @@ namespace
 {
 	namespace text
 	{
-		const char*	FONT = "data\\FONT\\玉ねぎ楷書激無料版v7改.ttf";	// フォントパス
+		const char*	FONT		= "data\\FONT\\Kazesawa Bold.ttf";		// フォントパス
 		const int	PRIORITY	= 6;			// テキストの優先順位
 		const bool	ITALIC		= false;		// イタリック
 		const float	CHAR_HEIGHT	= 36.0f;		// 文字縦幅
@@ -248,7 +248,7 @@ HRESULT CThoughtBalloon::CreateTextureObject()
 	loadtext::BindText(m_pText, loadtext::LoadText("data\\TEXT\\thought\\speech.txt", UtilFunc::Transformation::Random(0, 18)));
 
 	// 枠の生成
-	MyLib::Vector2 setSize = MyLib::Vector2(m_pText->GetTextWidth() * 1.15f, m_pText->GetTextHeight()) * 1.75f;
+	MyLib::Vector2 setSize = MyLib::Vector2(m_pText->GetTextWidth() * 2.0f, m_pText->GetTextHeight() + 50.0f);
 	m_pFrame = CBalloonFrame::Create(setSize * scale, m_TeamSide);
 	m_pFrame->SetType(CObject::TYPE::TYPE_NONE);
 
