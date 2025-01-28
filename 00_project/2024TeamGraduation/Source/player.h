@@ -509,6 +509,7 @@ private:
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
 	void Revive();	// 復活
+	bool IsInputAngle(CBall* pBall) const;
 	
 	//-----------------------------
 	// サウンド
