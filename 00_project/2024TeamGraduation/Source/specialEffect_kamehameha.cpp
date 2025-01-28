@@ -102,6 +102,9 @@ void CSpecialEffect_Kamehame::FinishSetting()
 	m_pBallast->SetTrigger(0);
 	m_pBallast->DeleteLater(1.0f);
 	m_pBallast = nullptr;
+
+	// サウンド停止
+	CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_KMHM_LOOP);
 }
 
 //==========================================================================
@@ -163,6 +166,9 @@ void CSpecialEffect_Kamehame::Trigger_Brust(CMotionManager::AttackInfo ATKInfo)
 		MyLib::Vector3(0.0f, pPlayer->GetRotation().y, 0.0f),
 		MyLib::Vector3(),
 		20.0f, true);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_KMHM_BRUST);
 }
 
 //==========================================================================
@@ -217,6 +223,12 @@ void CSpecialEffect_Kamehame::Trigger_CreateEnergy(CMotionManager::AttackInfo AT
 
 	// 風生成をON
 	m_bWindCreate = true;
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_KMHM_START);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_KMHM_CHARGE);
 }
 
 //==========================================================================
@@ -255,6 +267,12 @@ void CSpecialEffect_Kamehame::Trigger_ChargeStart(CMotionManager::AttackInfo ATK
 		MyLib::Vector3(),
 		MyLib::Vector3(),
 		40.0f, true);
+
+	// サウンド停止
+	CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_KMHM_CHARGE);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_KMHM_LOOP);
 }
 
 
