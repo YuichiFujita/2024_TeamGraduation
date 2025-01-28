@@ -36,6 +36,7 @@ public:
 	enum EMotion
 	{
 		MOTION_DEF = 0,	// 通常状態
+		MOTION_DEF_INV,	// 通常状態
 		MOTION_SPAWN,	// 入場状態
 		MOTION_JUMP,	// 盛り上がり状態
 		MOTION_SPECIAL,	// スペシャル状態
@@ -88,7 +89,7 @@ protected:
 	void SetMotion(const int nMotion) override;	// モーション設定
 	void EndSettingSpawn() override;			// スポーン終了時の設定
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE) override;	// 退場設定
-	virtual bool SetNTR(CGameManager::ETeamSide team) override;									// NTR設定
+	virtual bool SetNTR(CGameManager::ETeamSide team) override;		// NTR設定
 
 	// 更新
 	void UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ペンライトの更新
@@ -120,6 +121,7 @@ private:
 	CEffect3D* m_pLightBlur;	// ペンライトのブラー
 	CDressup* m_pDressUp_Hair;	// ドレスアップ(髪)
 	CDressup* m_pDressUp_Face;	// ドレスアップ(顔)
+	const int m_nIdxLightHand;	// ライト持つ手のインデックス
 };
 
 #endif

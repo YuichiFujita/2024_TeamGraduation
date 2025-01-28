@@ -89,7 +89,7 @@ protected:
 	void SetMotion(const int nMotion) override;	// モーション設定
 	void EndSettingSpawn() override;			// スポーン終了時の設定
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE) override;	// 退場設定
-	virtual bool SetNTR(CGameManager::ETeamSide team) override;									// NTR設定
+	virtual bool SetNTR(CGameManager::ETeamSide team) override;		// NTR設定
 
 	// 更新
 	void UpdatePenlight(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// ペンライトの更新

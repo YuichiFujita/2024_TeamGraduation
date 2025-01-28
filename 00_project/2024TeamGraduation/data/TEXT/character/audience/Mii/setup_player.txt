@@ -136,6 +136,7 @@ NUM_MOTION = 5
 # モデルファイル名
 #------------------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def.txt		# デフォ
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def_Inv.txt	# デフォ
 MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_spawn.txt		# 入場
 MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_jump.txt		# 盛り上がり
 MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_special.txt	# スペシャル
