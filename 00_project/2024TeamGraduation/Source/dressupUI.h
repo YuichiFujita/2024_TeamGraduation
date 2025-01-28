@@ -99,6 +99,7 @@ private:
 	HRESULT CreateChangeIcon();			// 変更種類アイコン生成
 	HRESULT CreateReadyCheck();			// 準備完了チェック生成
 	HRESULT CreatePlayerFrame();		// プレイヤーフレーム生成
+	HRESULT CreatePlayerFrameBG();		// プレイヤーフレーム背景生成
 	HRESULT CreatePlayerUI();			// プレイヤーUI生成
 	HRESULT CreateSetup();				// セットアップ生成
 	HRESULT CreateRenderTexture();		// レンダーテクスチャ生成
@@ -122,6 +123,7 @@ private:
 	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
 	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報
 	CObject2D_Anim* m_pPlayerFrame;	// プレイヤーフレーム情報
+	CObject2D_Anim* m_pPlayerFrameBG;	// プレイヤーフレーム背景情報
 	CObject2D* m_pPlayerUI;			// プレイヤーUI情報
 	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)
 	int m_nPadIdx;					// 操作権インデックス
@@ -133,7 +135,7 @@ private:
 	CDressup* m_pFace;				// 顔着せ替え
 	EEditType m_typeEdit;			// エディットする種類
 	EChangeType m_typeChange;		// 変更する種類
-	const int m_nPlayerIdx;					// プレイヤーインデックス
+	const int m_nPlayerIdx;			// プレイヤーインデックス
 	const CPlayer::EFieldArea m_typeArea;	// プレイヤーポジション
 };
 
