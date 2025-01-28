@@ -83,7 +83,7 @@ CPlayerPosAdjIn::EInputUnstable CPlayerPosAdjInLeft::IsInputLine(CPlayer* pPlaye
 	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
 	// 入力方向を取得
-	CPlayer::EDashAngle* angle = pPlayer->GetBase()->GetPlayerControlMove()->GetInputAngle();
+	CPlayer::EDashAngle angle = pPlayer->GetBase()->GetPlayerControlMove()->GetInputAngle();
 
 	// 右を入力していたらtrue
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, playerIdx) ||
@@ -92,18 +92,18 @@ CPlayerPosAdjIn::EInputUnstable CPlayerPosAdjInLeft::IsInputLine(CPlayer* pPlaye
 	{
 		return CPlayerPosAdjIn::EInputUnstable::INPUT_ENEMY;
 	}
-	else if (angle != nullptr)
+	else if (angle != CPlayer::EDashAngle::ANGLE_MAX)
 	{
-		if (*angle != CPlayer::EDashAngle::ANGLE_RIGHT &&
-			*angle != CPlayer::EDashAngle::ANGLE_RIGHTUP &&
-			*angle != CPlayer::EDashAngle::ANGLE_RIGHTDW)
+		if (angle != CPlayer::EDashAngle::ANGLE_RIGHT &&
+			angle != CPlayer::EDashAngle::ANGLE_RIGHTUP &&
+			angle != CPlayer::EDashAngle::ANGLE_RIGHTDW)
 		{
 			if (!pPlayer->GetBase()->IsCrab())
 			{// カニ歩き以外は向き強制設定
 
 				MyLib::Vector3 rot = pPlayer->GetRotation();
 				float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-				rot.y = division * (*angle) + D3DX_PI + Camerarot.y;
+				rot.y = division * angle + D3DX_PI + Camerarot.y;
 				UtilFunc::Transformation::RotNormalize(rot.y);
 				pPlayer->SetRotation(rot);
 			}

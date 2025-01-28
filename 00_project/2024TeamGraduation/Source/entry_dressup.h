@@ -87,6 +87,8 @@ public:
 	MyLib::Vector3 GetDressUIPosition(const int nPlayerIdx) const;			// 着せ替えUI位置取得
 	MyLib::Vector3 GetNameUIPosition(const CGameManager::ETeamSide team);	// 名前UI位置取得
 	MyLib::Vector2 GetNameUISize(const CGameManager::ETeamSide team);		// 名前UI大きさ取得
+	MyLib::Vector3 GetNameBGPosition(const CGameManager::ETeamSide team);	// 名前BG位置取得
+	MyLib::Vector2 GetNameBGSize(const CGameManager::ETeamSide team);		// 名前BG大きさ取得
 	MyLib::Vector3 GetAreaUIPosition(const CPlayer::EFieldArea area);		// ポジション変更UI位置取得
 	MyLib::Vector2 GetAreaUISize(const CPlayer::EFieldArea area);			// ポジション変更UI大きさ取得
 	MyLib::Vector3 GetTransUIPosition(const ETrans trans);					// 遷移UI位置取得
@@ -115,6 +117,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
+	CObject2D* m_apNameBG[CGameManager::SIDE_MAX];		// チーム名背景情報
 	CString2D* m_apTeamName[CGameManager::SIDE_MAX];	// チーム名情報
 	CDressupUI* m_apDressInfo[CPlayerManager::OUT_MAX];	// 外野着せ替え情報
 	CObject2D_Anim* m_apAreaUI[CGameManager::SIDE_MAX];	// ポジション変更UI情報

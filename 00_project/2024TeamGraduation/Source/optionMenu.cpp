@@ -615,9 +615,9 @@ void COptionMenu::Uninit()
 	}
 
 	// ”šíœ
-	SAFE_UNINIT(m_pNumberMaster);
-	SAFE_UNINIT(m_pNumberSE);
-	SAFE_UNINIT(m_pNumberBGM);
+	SAFE_KILL(m_pNumberMaster);
+	SAFE_KILL(m_pNumberSE);
+	SAFE_KILL(m_pNumberBGM);
 
 	// ƒsƒ“
 	SAFE_UNINIT(m_pPin);

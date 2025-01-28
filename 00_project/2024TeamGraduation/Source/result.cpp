@@ -106,9 +106,11 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 	CInputKeyboard * pKey = CInputKeyboard::GetInstance();
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
-		pKey->GetTrigger(DIK_RETURN))
-	{
+	if (m_pResultManager->IsSceneTrans() && 
+		(pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		pKey->GetTrigger(DIK_RETURN)))
+	{ // ‘JˆÚ‰Â”\‚©‚Âƒ{ƒ^ƒ“‰Ÿ‚³‚ê‚½‚ç
+
 		// ‘JˆÚ
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_TITLE);
 	}
@@ -121,4 +123,3 @@ void CResult::Draw()
 {
 
 }
-

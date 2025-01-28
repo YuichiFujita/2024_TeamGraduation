@@ -823,7 +823,7 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 	}
 
 	// モーション設定
-	if (!m_bDash && m_pBase->IsCrab() && (motionType == MOTION_WALK || motionType == MOTION_WALK_BALL))
+	if (m_pBase->IsCrabMotion())
 	{// カニ歩き
 		GetBase()->MotionCrab(nStartKey);
 	}
@@ -1775,10 +1775,12 @@ void CPlayer::DamageSetting(CBall* pBall)
 //==========================================================================
 void CPlayer::CatchSetting(CBall* pBall)
 {
+
+	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
+
 	// ボールをキャッチ
 	pBall->CatchAttack(this);
 
-	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
 	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
 	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
 	
@@ -1788,11 +1790,11 @@ void CPlayer::CatchSetting(CBall* pBall)
 
 	// 入力判定
 	bool bInput = false;
-	EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-	if (angle != nullptr)
+	EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+	if (angle != EDashAngle::ANGLE_MAX)
 	{// ジャスト範囲方向に入力していたら
 		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-		float fRot = division * (*angle) + D3DX_PI + Camerarot.y;
+		float fRot = division * angle + D3DX_PI + Camerarot.y;
 		UtilFunc::Transformation::RotNormalize(fRot);
 		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
 	}
@@ -2934,7 +2936,7 @@ void CPlayer::Debug()
 		CMotion* motion = GetMotion();
 		CPlayer::EMotion motionType = static_cast<CPlayer::EMotion>(motion->GetType());
 		CPlayer::EAction action = m_pActionPattern->GetAction();
-		CPlayer::EDashAngle* angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+		CPlayer::EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 
 #if 1
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
@@ -2958,9 +2960,9 @@ void CPlayer::Debug()
 		ImGui::Text("typeArea : [%s]", magic_enum::enum_name(m_typeArea));
 
 		ImGui::Text("InputAngleCtr : [%.2f]", m_pBase->GetPlayerControlMove()->GetInputAngleCtr());
-		if (angle != nullptr)
+		if (angle != EDashAngle::ANGLE_MAX)
 		{
-			ImGui::Text("InputAngle : [%s]", magic_enum::enum_name(*angle));
+			ImGui::Text("InputAngle : [%s]", magic_enum::enum_name(angle));
 		}
 		else
 		{

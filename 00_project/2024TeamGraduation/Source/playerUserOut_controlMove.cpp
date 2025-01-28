@@ -288,7 +288,12 @@ void CPlayerUserOutControlMove::Dash(CPlayer* player, const float fDeltaTime, co
 {
 	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
 	bool bDash = IsBlink();	// ダッシュフラグ
-	if (!bDash) { return; }	// ダッシュしていない場合抜ける
+	if (!bDash) 
+	{ 
+		// ダッシュフラグ反映
+		player->SetEnableDash(false);
+		return; // ダッシュしていない場合抜ける
+	}
 
 	int nPadIdx = player->GetMyPlayerIdx();	// 操作権インデックス
 	bool bKeyInput = m_pLeftKey->IsPress(nPadIdx) || m_pRightKey->IsPress(nPadIdx) || m_pLeftKey->IsStickTilt(nPadIdx) || m_pRightKey->IsStickTilt(nPadIdx);	// キー入力検知
@@ -414,4 +419,12 @@ CPlayer::SDashInfo CPlayerUserOutControlMove::Trigger(CPlayer* player, CPlayer::
 	SetTriggerInterval(fTriggerInterval);	// トリガーのインターバル
 
 	return info;
+}
+
+//==========================================================================
+// カニ歩き状態
+//==========================================================================
+void CPlayerUserOutControlMove::CrabSetting(CPlayer* player)
+{
+	return;
 }

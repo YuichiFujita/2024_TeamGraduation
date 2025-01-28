@@ -19,6 +19,7 @@
 #include "playerReferee_result.h"
 #include "winteamResult.h"
 #include "gymDoor.h"
+#include "skip.h"
 
 //==========================================================================
 // 定数定義
@@ -187,6 +188,7 @@ CResultManager::CResultManager()
 	m_pEfkConfetti = nullptr;										// 紙吹雪エフェクシア
 	m_pReferee = nullptr;											// 審判
 	m_pWinTeam = nullptr;											// 勝利チーム
+	m_bSceneTrans = false;											// シーン遷移可能フラグ
 }
 
 //==========================================================================
@@ -340,6 +342,21 @@ void CResultManager::UpdateState(const float fDeltaTime, const float fDeltaRate,
 	if (m_StateFunc[m_state] != nullptr)
 	{
 		(this->*(m_StateFunc[m_state]))(fDeltaTime, fDeltaRate, fSlowRate);
+	}
+
+	// 入力情報の取得
+	CInputKeyboard* pKey = GET_INPUTKEY;
+	CInputGamepad* pPad = GET_INPUTPAD;
+
+	bool bInput = pKey->GetTrigger(DIK_RETURN)
+		|| pKey->GetTrigger(DIK_SPACE)
+		|| pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0);
+
+	if (bInput)
+	{ // 決定の操作が行われた場合
+
+		// 登場演出のスキップ
+		SkipState();
 	}
 }
 
@@ -517,6 +534,9 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 		pCamera->SetPositionR(posR);
 	}
 
+	// シーン遷移可能フラグ
+	m_bSceneTrans = true;
+
 	// 紙吹雪
 
 }
@@ -669,6 +689,19 @@ void CResultManager::StateEndCharmContest()
 	{
 		CAudience::SetEnableJumpAll(false, static_cast<CGameManager::ETeamSide>(i));
 	}
+}
+
+//==========================================================================
+// [スキップ]状態進行
+//==========================================================================
+void CResultManager::SkipState()
+{
+	int nextState = m_state + 1;
+
+	// オーバーしたら抜ける
+	if (nextState >= CResultManager::EState::STATE_MAX)	return;
+
+	SetState(static_cast<CResultManager::EState>(nextState));
 }
 
 //==========================================================================
@@ -1020,6 +1053,11 @@ void CResultManager::Debug()
 
 		// 位置設定
 		ImGui::TreePop();
+	}
+
+	if (ImGui::Button("skip"))
+	{
+		SkipState();
 	}
 
 #endif
