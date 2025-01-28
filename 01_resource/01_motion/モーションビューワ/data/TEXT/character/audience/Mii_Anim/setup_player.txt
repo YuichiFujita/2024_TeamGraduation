@@ -24,7 +24,7 @@ MODEL_FILENAME = data/MODEL/audience/Mii/body.x		# [1]体
 MODEL_FILENAME = data/MODEL/audience/Mii/face.x		# [2]顔
 MODEL_FILENAME = data/MODEL/audience/hand_R.x		# [3]右腕(上)
 MODEL_FILENAME = data/MODEL/audience/hand_L.x		# [4]右腕(下)
-MODEL_FILENAME = data/MODEL/audience/Mii/suiren.x	# [9]髪
+MODEL_FILENAME = data/MODEL/audience/Mii/tuinnteru.x	# [9]髪
 
 #------------------------------------------------------------------------------
 # キャラクター情報

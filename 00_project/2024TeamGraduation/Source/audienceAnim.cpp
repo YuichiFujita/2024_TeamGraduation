@@ -15,8 +15,17 @@
 //==========================================================================
 namespace
 {
-	const char*	SETUP_FRONT_TXT	= "data\\CHARACTER\\suiren_front.txt";	// 表面プレイヤーセットアップテキスト
-	const char*	SETUP_BACK_TXT	= "data\\CHARACTER\\suiren_back.txt";	// 裏面プレイヤーセットアップテキスト
+	const char*	SETUP_FRONT_TXT[] =	// 表面プレイヤーセットアップテキスト
+	{
+		"data\\CHARACTER\\suiren_front.txt",	// スイレンテキスト
+		"data\\CHARACTER\\twintail_front.txt",	// ツインテテキスト
+	};
+	const char*	SETUP_BACK_TXT[] =	// 裏面プレイヤーセットアップテキスト
+	{
+		"data\\CHARACTER\\suiren_back.txt",		// スイレンテキスト
+		"data\\CHARACTER\\twintail_back.txt",	// ツインテテキスト
+	};
+
 	const char*	LIGHT_PATH	= "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int	PRIORITY	= mylib_const::PRIORITY_DEFAULT;	// 優先順位
 
@@ -399,6 +408,8 @@ void CAudienceAnim::SetMotion(const int nMotion)
 //==========================================================================
 HRESULT CAudienceAnim::CreateAnimCharacter(const MyLib::Vector3& rPos)
 {
+	int nRand = UtilFunc::Transformation::Random(0, NUM_ARRAY(SETUP_FRONT_TXT) - 1);	// 使用パスインデックス
+
 	// 表面キャラクターの生成
 	m_pFrontAnimChara = CObjectCharaAnim::Create(rPos);
 	if (m_pFrontAnimChara == nullptr)
@@ -408,7 +419,7 @@ HRESULT CAudienceAnim::CreateAnimCharacter(const MyLib::Vector3& rPos)
 	}
 
 	// キャラクター情報の割当
-	m_pFrontAnimChara->BindCharaData(SETUP_FRONT_TXT);
+	m_pFrontAnimChara->BindCharaData(SETUP_FRONT_TXT[nRand]);
 
 	// モーションの設定
 	m_pFrontAnimChara->SetMotion(m_moveMotion);
@@ -425,7 +436,7 @@ HRESULT CAudienceAnim::CreateAnimCharacter(const MyLib::Vector3& rPos)
 	}
 
 	// キャラクター情報の割当
-	m_pBackAnimChara->BindCharaData(SETUP_BACK_TXT);
+	m_pBackAnimChara->BindCharaData(SETUP_BACK_TXT[nRand]);
 
 	// 向きを反転する
 	m_pBackAnimChara->SetRotation(MyLib::Vector3(0.0f, D3DX_PI, 0.0f));

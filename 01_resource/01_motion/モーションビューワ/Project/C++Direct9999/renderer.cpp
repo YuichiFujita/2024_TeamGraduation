@@ -92,7 +92,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	}
 
 	// レンダーステートの設定
-	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	m_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
