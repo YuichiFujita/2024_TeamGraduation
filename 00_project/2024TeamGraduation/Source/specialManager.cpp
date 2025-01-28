@@ -585,6 +585,9 @@ void CSpecialManager::SetPlayerHypePosition()
 	m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI * fOffset, 0.0f));
 	m_pAttackPlayer->SetRotDest(HALF_PI * fOffset);
 
+	// ジャンプ強制終了
+	m_pAttackPlayer->SetEnableJump(false);
+
 	// ジャンプ中にする
 	m_bJump = true;
 
@@ -640,6 +643,9 @@ void CSpecialManager::SetJumpAttackTeam()
 		// プレイヤーの向きを設定
 		pPlayer->SetRotation(VEC3_ZERO);
 		pPlayer->SetRotDest(0.0f);
+
+		// ジャンプ強制終了
+		pPlayer->SetEnableJump(false);
 
 		// ジャンプ人数加算
 		nNumJump++;
