@@ -7,6 +7,7 @@
 #include "playerStatus.h"
 #include "player.h"
 #include "object_circlegauge2D.h"
+#include "faceUI.h"
 
 //==========================================================================
 // 定数定義
@@ -23,8 +24,8 @@ namespace LifeGauge
 	const float DISTANCE = 120.0f;	// 間隔
 	const MyLib::Vector3 DEFAULTPOS[CGameManager::ETeamSide::SIDE_MAX] =
 	{
-		MyLib::Vector3(60.0f, 80.0f, 0.0f),	// 左サイド
-		MyLib::Vector3(SCREEN_WIDTH - 60.0f, 80.0f, 0.0f),	// 右サイド
+		MyLib::Vector3(60.0f, 70.0f, 0.0f),	// 左サイド
+		MyLib::Vector3(SCREEN_WIDTH - 60.0f, 70.0f, 0.0f),	// 右サイド
 	};
 }
 
@@ -38,8 +39,11 @@ CListManager<CObjectCircleGauge2D> CPlayerStatus::m_LifeGaugeListRight = {};	// 
 // コンストラクタ
 //==========================================================================
 CPlayerStatus::CPlayerStatus(CPlayer* pPlayer) :
-	m_pPlayer		(pPlayer),	// プレイヤーのポインタ
-	m_pLifeGauge	(nullptr)	// 体力ゲージ
+	m_pPlayer			(pPlayer),	// プレイヤーのポインタ
+	m_pLifeGauge		(nullptr),	// 体力ゲージ
+	m_pLifeGauge_Ground	(nullptr),	// 体力ゲージの下地
+	m_pGaugeFrame		(nullptr),	// ゲージフレーム
+	m_pFaceUI			(nullptr)	// プレイヤー顔UI
 {
 	
 }
@@ -63,7 +67,7 @@ void CPlayerStatus::Init()
 	{// 内野のみ生成
 
 		// 体力ゲージ生成
-		CreateLifeGuge(&m_pLifeGauge_Ground, false);
+		MyLib::Vector3 pos = CreateLifeGuge(&m_pLifeGauge_Ground, false);
 		CreateLifeGuge(&m_pLifeGauge, true);
 
 		// 下地真っ黒
@@ -71,13 +75,16 @@ void CPlayerStatus::Init()
 
 		// ゲージフレーム生成
 		CreateGaugeFrame();
+
+		// プレイヤー顔UI生成
+		m_pFaceUI = CFaceUI::Create(m_pPlayer, pos);
 	}
 }
 
 //==========================================================================
 // 体力ゲージ生成
 //==========================================================================
-void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
+MyLib::Vector3 CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 {
 	// 体力ゲージ生成
 	(*pGauge) = CObjectCircleGauge2D::Create(LifeGauge::DIVISION, LifeGauge::SIZE);
@@ -88,10 +95,11 @@ void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 
 	// リスト追加・位置設定
 	int nNum = 0;
+	MyLib::Vector3 pos;
 	switch (teamSide)
 	{
 	case CGameManager::ETeamSide::SIDE_NONE:
-		return;
+		return VEC3_ZERO;
 
 	case CGameManager::ETeamSide::SIDE_LEFT:
 
@@ -99,7 +107,8 @@ void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 		nNum = m_LifeGaugeListLeft.GetNumAll();
 
 		// 位置設定
-		(*pGauge)->SetPosition(LifeGauge::DEFAULTPOS[teamSide] + MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
+		pos = LifeGauge::DEFAULTPOS[teamSide] + MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f);
+		(*pGauge)->SetPosition(pos);
 
 		// リスト追加
 		if (bAddList)
@@ -114,7 +123,8 @@ void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 		nNum = m_LifeGaugeListRight.GetNumAll();
 
 		// 位置設定
-		(*pGauge)->SetPosition(LifeGauge::DEFAULTPOS[teamSide] - MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f));
+		pos = LifeGauge::DEFAULTPOS[teamSide] - MyLib::Vector3(nNum * LifeGauge::DISTANCE, 0.0f, 0.0f);
+		(*pGauge)->SetPosition(pos);
 
 		// リスト追加
 		if (bAddList)
@@ -131,11 +141,12 @@ void CPlayerStatus::CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList)
 	// 色設定
 	(*pGauge)->SetColor(MyLib::color::Green());
 
-
 	// テクスチャの割当
 	CTexture* pTexture = CTexture::GetInstance();
 	int nTexID = pTexture->Regist("data\\TEXTURE\\GRADATION\\black_04.jpg");
 	(*pGauge)->BindTexture(nTexID);
+
+	return pos;
 }
 
 //==========================================================================
@@ -172,9 +183,14 @@ void CPlayerStatus::Kill()
 		m_pLifeGauge = nullptr;
 	}
 
+	// プレイヤー顔UI終了
+	SAFE_KILL(m_pFaceUI);
+
 	// ゲージ削除
 	SAFE_KILL(m_pGaugeFrame);
 	SAFE_KILL(m_pLifeGauge_Ground);
+
+	delete this;
 }
 
 //==========================================================================
@@ -225,4 +241,21 @@ void CPlayerStatus::LifeHeal(const int nHeal)
 	// ゲージの目標値設定
 	float ratio = static_cast<float>(nLife) / static_cast<float>(nLifeOrigin);
 	m_pLifeGauge->SetRateDest(ratio);
+}
+
+//==========================================================================
+//	着せ替え割当
+//==========================================================================
+void CPlayerStatus::BindDressUp(int nHair, int nAccessory, int nFace)
+{
+	// 着せ替え割当
+	m_pFaceUI->BindDressUp(nHair, nAccessory, nFace);
+}
+
+//==========================================================================
+//	自分のインデックス設定
+//==========================================================================
+void CPlayerStatus::SetMyPlayerIdx(int nIdx)
+{
+	m_pFaceUI->SetMyPlayerIdx(nIdx);
 }

@@ -58,6 +58,9 @@ public:
 	MyLib::Vector3 GetVtxMin() const;			// 頂点の最小値取得
 	void SetParent(CModel *pModel);				// 親のポインタ設定
 	CModel* GetParent(){ return m_pParent; }		// 親のポインタ取得
+	inline void SetEnableDisp(const bool bDisp)	{ m_bDisp = bDisp; }	// 描画フラグ設定
+	inline bool IsDisp() const					{ return m_bDisp; }		// 描画フラグ取得
+
 
 	void SetMtxParent(MyLib::Matrix* pMtx);
 
@@ -83,6 +86,7 @@ private:
 	MyLib::Vector3 m_scale;				// スケール
 	MyLib::Vector3 m_scaleOrigin;		// 元のスケール
 	int m_nIdxXFile;					// Xファイルのインデックス番号
+	bool m_bDisp;						// 表示フラグ
 	std::vector<int> m_nIdxTexture;		// テクスチャのインデックス番号
 	CModel *m_pParent;					// 親モデルのポインタ
 	static int m_nNumAll;				// 総数

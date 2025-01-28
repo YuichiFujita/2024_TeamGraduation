@@ -19,6 +19,7 @@
 //==========================================================================
 class CPlayer;
 class CObjectCircleGauge2D;	// 円のゲージ
+class CFaceUI;				// プレイヤー顔UIクラス
 
 //==========================================================================
 // プレイヤーステータスクラス
@@ -41,13 +42,15 @@ public:
 	void BindPlayer(CPlayer* pPlayer)	{ m_pPlayer = pPlayer; }	// プレイヤー割当
 	void LifeDamage(const int nDmg);	// 体力減算
 	void LifeHeal(const int nHeal);		// 体力加算
+	void BindDressUp(int nHair, int nAccessory, int nFace);	// 着せ替え割当
+	void SetMyPlayerIdx(int nIdx);							// 自分のインデックス設定
 
 private:
 
 	//=============================
 	// メンバ関数
 	//=============================
-	void CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList);	// 体力ゲージ生成
+	MyLib::Vector3 CreateLifeGuge(CObjectCircleGauge2D** pGauge, bool bAddList);	// 体力ゲージ生成
 	void CreateGaugeFrame();	// ゲージフレーム生成
 
 	//=============================
@@ -57,6 +60,7 @@ private:
 	CObjectCircleGauge2D* m_pLifeGauge;	// 体力ゲージ
 	CObjectCircleGauge2D* m_pLifeGauge_Ground;	// 体力ゲージの下地
 	CObject2D* m_pGaugeFrame;			// ゲージフレーム
+	CFaceUI* m_pFaceUI;					// プレイヤー顔UI
 	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListLeft;	// 左体力ゲージのリスト
 	static CListManager<CObjectCircleGauge2D> m_LifeGaugeListRight;	// 右体力ゲージのリスト
 

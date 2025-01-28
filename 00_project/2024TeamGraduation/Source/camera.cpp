@@ -52,9 +52,17 @@ namespace
 	namespace cutin
 	{
 		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 100.0f, -400.0f);	// 視点
-		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 100.0f, 0.0f);	// 注視点
-		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);		// 上方向ベクトル
-		const float VIEW_ANGLE		= D3DXToRadian(45.0f);					// 視野角
+		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 100.0f, 0.0f);		// 注視点
+		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);			// 上方向ベクトル
+		const float VIEW_ANGLE		= D3DXToRadian(45.0f);						// 視野角
+	}
+
+	namespace face
+	{
+		const MyLib::Vector3 POSV	= MyLib::Vector3(0.0f, 80.0f, -300.0f);	// 視点
+		const MyLib::Vector3 POSR	= MyLib::Vector3(0.0f, 80.0f, 0.0f);		// 注視点
+		const MyLib::Vector3 VECU	= MyLib::Vector3(0.0f, 1.0f, 0.0f);			// 上方向ベクトル
+		const float VIEW_ANGLE		= D3DXToRadian(45.0f);						// 視野角
 	}
 
 	namespace none
@@ -503,6 +511,64 @@ void CCamera::SetCameraCutIn()
 
 	// スポットライトベクトルの更新
 	UpdateSpotLightVec(cutin::POSR, cutin::POSV);
+}
+
+//==========================================================================
+// カメラの設定処理 (顔)
+//==========================================================================
+void CCamera::SetCameraFace()
+{
+	LPDIRECT3DDEVICE9 pDevice = GET_DEVICE;	// デバイス情報
+
+	// ビューポートの設定
+	pDevice->SetViewport(&m_viewport);
+
+	// プロジェクションマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxProjection);
+
+#if 1
+	// 平行投影でプロジェクションマトリックスを作成
+	D3DXMatrixOrthoLH
+	( // 引数
+		&m_mtxProjection,		// プロジェクションマトリックス
+		(float)SCREEN_WIDTH  * 0.15f,	// 投影する横幅
+		(float)SCREEN_HEIGHT * 0.15f,	// 投影する縦幅
+		MIN_NEAR,		// Z軸の最小値
+		MAX_FAR			// Z軸の最大値
+	);
+#else
+	// プロジェクションマトリックスの作成
+	float fAspect = (float)m_viewport.Width / (float)m_viewport.Height;	// アスペクト比
+	D3DXMatrixPerspectiveFovLH
+	(
+		&m_mtxProjection,	// プロジェクションマトリックス
+		face::VIEW_ANGLE,	// 視野角
+		fAspect,	// アスペクト比
+		MIN_NEAR,	// 手前の描画制限
+		MAX_FAR		// 奥の描画制限
+	);
+#endif
+
+	// プロジェクションマトリックスの設定
+	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
+
+	// ビューマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxView);
+
+	// ビューマトリックスの作成
+	D3DXMatrixLookAtLH
+	(
+		&m_mtxView,		// ビューマトリックス
+		&face::POSV,	// 視点
+		&face::POSR,	// 注視点
+		&face::VECU		// 上方向ベクトル
+	);
+
+	// ビューマトリックスの設定
+	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+
+	// スポットライトベクトルの更新
+	UpdateSpotLightVec(face::POSR, face::POSV);
 }
 
 //==========================================================================

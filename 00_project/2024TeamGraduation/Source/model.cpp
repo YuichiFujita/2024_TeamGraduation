@@ -32,6 +32,7 @@ CModel::CModel(int nPriority)
 	m_scale = mylib_const::DEFAULT_SCALE;			// スケール
 	m_scaleOrigin = mylib_const::DEFAULT_SCALE;			// スケール
 	m_nIdxXFile = 0;								// Xファイルのインデックス番号
+	m_bDisp = true;										// 表示フラグ
 	m_nIdxTexture.clear();							// テクスチャのインデックス番号
 	m_pParent = nullptr;								// 親モデルのポインタ
 	m_nNumAll++;									// 総数加算
@@ -358,18 +359,21 @@ void CModel::Draw()
 	// マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
-	// 頂点数分繰り返し
-	CTexture* pTexture = CTexture::GetInstance();
-	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+	if (m_bDisp)
 	{
-		// マテリアルの設定
-		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+		// 頂点数分繰り返し
+		CTexture* pTexture = CTexture::GetInstance();
+		for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+		{
+			// マテリアルの設定
+			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-		// テクスチャの設定
-		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
+			// テクスチャの設定
+			pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
-		// パーツの描画
-		pXData->pMesh->DrawSubset(nCntMat);
+			// パーツの描画
+			pXData->pMesh->DrawSubset(nCntMat);
+		}
 	}
 
 #if 0
@@ -410,18 +414,21 @@ void CModel::Draw(D3DXCOLOR col)
 	// マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
-	// 頂点数分繰り返し
-	CTexture* pTexture = CTexture::GetInstance();
-	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+	if (m_bDisp)
 	{
-		// マテリアルの設定
-		pDevice->SetMaterial(&matNow.MatD3D);
+		// 頂点数分繰り返し
+		CTexture* pTexture = CTexture::GetInstance();
+		for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+		{
+			// マテリアルの設定
+			pDevice->SetMaterial(&matNow.MatD3D);
 
-		// テクスチャの設定
-		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
+			// テクスチャの設定
+			pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
-		// パーツの描画
-		pXData->pMesh->DrawSubset(nCntMat);
+			// パーツの描画
+			pXData->pMesh->DrawSubset(nCntMat);
+		}
 	}
 
 #if 0
@@ -464,25 +471,28 @@ void CModel::Draw(float fAlpha)
 	// マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
 
-	// 頂点数分繰り返し
-	CTexture* pTexture = CTexture::GetInstance();
-	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+	if (m_bDisp)
 	{
-		// 不透明度設定
-		matNow.MatD3D.Diffuse = D3DXCOLOR(pMat[nCntMat].MatD3D.Diffuse.r, pMat[nCntMat].MatD3D.Diffuse.g, pMat[nCntMat].MatD3D.Diffuse.b, fAlpha);
-		matNow.MatD3D.Ambient = D3DXCOLOR(pMat[nCntMat].MatD3D.Ambient.r, pMat[nCntMat].MatD3D.Ambient.g, pMat[nCntMat].MatD3D.Ambient.b, fAlpha);
-		matNow.MatD3D.Emissive = pMat[nCntMat].MatD3D.Emissive;
-		matNow.MatD3D.Power = pMat[nCntMat].MatD3D.Power;
-		matNow.MatD3D.Specular = pMat[nCntMat].MatD3D.Specular;
+		// 頂点数分繰り返し
+		CTexture* pTexture = CTexture::GetInstance();
+		for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+		{
+			// 不透明度設定
+			matNow.MatD3D.Diffuse = D3DXCOLOR(pMat[nCntMat].MatD3D.Diffuse.r, pMat[nCntMat].MatD3D.Diffuse.g, pMat[nCntMat].MatD3D.Diffuse.b, fAlpha);
+			matNow.MatD3D.Ambient = D3DXCOLOR(pMat[nCntMat].MatD3D.Ambient.r, pMat[nCntMat].MatD3D.Ambient.g, pMat[nCntMat].MatD3D.Ambient.b, fAlpha);
+			matNow.MatD3D.Emissive = pMat[nCntMat].MatD3D.Emissive;
+			matNow.MatD3D.Power = pMat[nCntMat].MatD3D.Power;
+			matNow.MatD3D.Specular = pMat[nCntMat].MatD3D.Specular;
 
-		//マテリアルの設定
-		pDevice->SetMaterial(&matNow.MatD3D);
+			//マテリアルの設定
+			pDevice->SetMaterial(&matNow.MatD3D);
 
-		// テクスチャの設定
-		pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
+			// テクスチャの設定
+			pDevice->SetTexture(0, pTexture->GetAdress(m_nIdxTexture[nCntMat]));
 
-		// パーツの描画
-		pXData->pMesh->DrawSubset(nCntMat);
+			// パーツの描画
+			pXData->pMesh->DrawSubset(nCntMat);
+		}
 	}
 
 #if 0

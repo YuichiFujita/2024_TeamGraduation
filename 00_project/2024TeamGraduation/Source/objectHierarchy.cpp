@@ -403,7 +403,6 @@ void CObjectHierarchy::Draw()
 	for (const auto& model : m_apModel)
 	{
 		if (model == nullptr) continue;
-
 		model->Draw();
 	}
 }
