@@ -458,11 +458,6 @@ HRESULT CAudienceAnim::CreatePenLight()
 	// 自動描画フラグをオフにする
 	m_pLight->SetEnableDisp(false);
 
-	// TODO：スケール調整後で消す
-#if 1
-	m_pLight->SetScale(MyLib::Vector3(1.0f, 0.4f, 1.0f));
-#endif
-
 	return S_OK;
 }
 

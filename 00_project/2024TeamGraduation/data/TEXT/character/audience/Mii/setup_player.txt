@@ -14,7 +14,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 10
+NUM_MODEL = 6
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -22,12 +22,8 @@ NUM_MODEL = 10
 MODEL_FILENAME = data/MODEL/audience/Mii/kosi.x		# [0]腰
 MODEL_FILENAME = data/MODEL/audience/Mii/body.x		# [1]体
 MODEL_FILENAME = data/MODEL/audience/Mii/face.x		# [2]顔
-MODEL_FILENAME = data/MODEL/audience/Mii/armUP_R.x	# [3]右腕(上)
-MODEL_FILENAME = data/MODEL/audience/Mii/armDW_R.x	# [4]右腕(下)
-MODEL_FILENAME = data/MODEL/audience/Mii/Hand_R.x	# [5]手(右)
-MODEL_FILENAME = data/MODEL/audience/Mii/armUP_L.x	# [6]左腕(上)
-MODEL_FILENAME = data/MODEL/audience/Mii/armDW_L.x	# [7]左腕(下)
-MODEL_FILENAME = data/MODEL/audience/Mii/Hand_L.x	# [8]手(左)
+MODEL_FILENAME = data/MODEL/audience/hand_R.x		# [3]右腕(上)
+MODEL_FILENAME = data/MODEL/audience/hand_L.x		# [4]右腕(下)
 MODEL_FILENAME = data/MODEL/audience/hair/asuka.x	# [9]髪
 
 #------------------------------------------------------------------------------
@@ -60,7 +56,7 @@ CHARACTERSET
 		INDEX = 0
 		PARENT = -1
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
+		INVERSE = -1				# 反転先
 		POS = 0.00 16.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -70,7 +66,7 @@ CHARACTERSET
 		INDEX = 1
 		PARENT = 0
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
+		INVERSE = -1				# 反転先
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -80,8 +76,8 @@ CHARACTERSET
 		INDEX = 2
 		PARENT = 1
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 0.00 40.50 0.00
+		INVERSE = -1				# 反転先
+		POS = 0.00 36.50 -4.50
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
@@ -89,68 +85,28 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 3
 		PARENT = 1
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = -9.50 29.50 0.00
+		SIDE = 1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = 4					# 反転先
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 4
-		PARENT = 3
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = -9.00 0.00 0.00
+		PARENT = 1
+		SIDE = -1					# 反転[-1:左 / 0 : 中央 / 1 : 右]
+		INVERSE = 3					# 反転先
+		POS = 0.00 28.50 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 5
-		PARENT = 4
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = -18.50 0.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 6
-		PARENT = 1
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 9.50 29.50 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 7
-		PARENT = 6
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 9.00 0.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-
-	PARTSSET
-		INDEX = 8
-		PARENT = 7
-		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
-		POS = 18.50 0.00 0.00
-		ROT = 0.00 0.00 0.00
-		START = 1
-	END_PARTSSET
-	
-	PARTSSET
-		INDEX = 9
 		PARENT = 2
 		SIDE = 0					# 反転[-1:左 / 0 : 中央 / 1 : 右]
-		INVERSE = -1					# 反転先
+		INVERSE = -1				# 反転先
 		POS = 0.00 0.00 0.00
 		ROT = 0.00 0.00 0.00
 		START = 1
@@ -179,11 +135,11 @@ NUM_MOTION = 5
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def.txt			# デフォ
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_spawn.txt			# 入場
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_jump.txt			# 盛り上がり
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_special.txt			# スペシャル
-MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_despawn.txt			# 退場
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_def.txt		# デフォ
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_spawn.txt		# 入場
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_jump.txt		# 盛り上がり
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_special.txt	# スペシャル
+MOTION_FILENAME = data/TEXT/character/audience/Mii/motion_despawn.txt	# 退場
 
 
 END_SCRIPT		# この行は絶対消さないこと！

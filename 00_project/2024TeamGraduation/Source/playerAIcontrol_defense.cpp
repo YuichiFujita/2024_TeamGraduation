@@ -34,6 +34,11 @@ namespace
 {
 	// 距離間(デフォルト)
 	const float TARGET_DISTANCE = 400.0f;			// 
+
+	// キャッチ半径
+	const float CATCH_RADIUS_JUST = 200.0f;		// ジャストキャッチ(120～250 確定！！)
+	const float CATCH_RADIUS_FAST = 300.0f;		// ジャストキャッチするけどミスる
+	const float CATCH_RADIUS_LATE = 100.0f;		// 速い(ミス)
 }
 
 //==========================================================================
@@ -53,7 +58,12 @@ CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	/
 //==========================================================================
 CPlayerAIControlDefense::CPlayerAIControlDefense()
 {
+	m_eAction = EAction::IDLE;
+	m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
+	m_eCatch = ECatch::CATCH_NORMAL;
 
+	// 構造体の初期化
+	ZeroMemory(&m_sAction, sizeof(m_sAction));
 }
 
 //==========================================================================
@@ -112,7 +122,7 @@ HRESULT CPlayerAIControlDefense::Init()
 	// 構造体の初期化
 	ZeroMemory(&m_sAction, sizeof(m_sAction));
 
-	// 変数の初期化
+	 //変数の初期化
 	m_fDistanse = 200.0f;
 
 	return S_OK;
@@ -144,6 +154,9 @@ void CPlayerAIControlDefense::Update(const float fDeltaTime, const float fDeltaR
 	{// 誰もボールを持っていない
 		NotPlayerBall(fDeltaTime, fDeltaRate, fSlowRate);
 	}
+
+	// キャッチ半径の更新
+	UpdateCatchRadius();
 
 	// 守りの更新
 	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
@@ -359,6 +372,29 @@ void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float 
 		assert(false);
 		break;
 	}
+}
+
+//================================================================================
+// キャッチ半径の更新
+//================================================================================
+void CPlayerAIControlDefense::UpdateCatchRadius()
+{
+	int n = UtilFunc::Transformation::Random(0, 100);
+
+	if (n > 90)
+	{
+		SetCatchRadius(CATCH_RADIUS_JUST);
+		return;
+
+		return;
+	}
+	if (n > 20)
+	{
+		SetCatchRadius(CATCH_RADIUS_FAST);
+		return;
+	}
+
+	SetCatchRadius(CATCH_RADIUS_LATE);
 }
 
 //================================================================================
@@ -682,6 +718,18 @@ void CPlayerAIControlDefense::SetActionTimer(int nMin, int nMax)
 		// 時間設定ON
 		m_sAction.bSet = true;
 	}
+}
+
+void CPlayerAIControlDefense::SetCatchRadius(float fRadius)
+{
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	// 半径の設定
+	pControlAIAction->SetCatchRadius(fRadius);
 }
 
 //==========================================================================
