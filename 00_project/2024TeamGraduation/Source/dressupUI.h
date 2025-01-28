@@ -16,6 +16,7 @@
 #include "object.h"
 #include "player.h"
 #include "gamemanager.h"
+#include "arrowUI.h"
 
 //************************************************************
 // 前方宣言
@@ -101,6 +102,7 @@ private:
 	HRESULT CreatePlayerFrame();		// プレイヤーフレーム生成
 	HRESULT CreatePlayerFrameBG();		// プレイヤーフレーム背景生成
 	HRESULT CreatePlayerUI();			// プレイヤーUI生成
+	HRESULT CreateArrowUI();			// 矢印UIの生成
 	HRESULT CreateSetup();				// セットアップ生成
 	HRESULT CreateRenderTexture();		// レンダーテクスチャ生成
 	void CreateTexture();				// テクスチャ作成
@@ -108,34 +110,36 @@ private:
 	void UpdateControl(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 操作更新
 	void UpdateUI();					// UI更新
 	void UpdatePlayerUI();				// プレイヤーUI更新
-	void ChangeEditType(int nPadIdx);	// エディットする種類変更
-	void ChangeChangeType(int nPadIdx);	// 変更する箇所の種類変更
-	void ChangeBodyType(int nPadIdx);	// 体型変更
-	void ChangeHandedness(int nPadIdx);	// 利き手変更
+	void SetAction(CArrowUI::EDirection dir);	// アクション設定
+	void ChangeEditType(int nPadIdx);			// エディットする種類変更
+	void ChangeChangeType(int nPadIdx);			// 変更する箇所の種類変更
+	void ChangeBodyType(int nPadIdx);			// 体型変更
+	void ChangeHandedness(int nPadIdx);			// 利き手変更
 	HRESULT ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBody body);	// プレイヤー再生成
 
 	// 静的メンバ変数
 	static int m_nNumAI;	// AI総数
 
 	// メンバ変数
-	CEntry_Dressup* m_pParent;		// 親クラス情報
-	CRenderTexture* m_pRenderScene;	// シーンレンダーテクスチャ
-	CObject2D_Anim* m_pChangeIcon;	// 変更種類アイコン情報
-	CObject2D_Anim* m_pReadyCheck;	// 準備完了チェック情報
-	CObject2D_Anim* m_pPlayerFrame;	// プレイヤーフレーム情報
+	CArrowUI* m_apArrow[CArrowUI::EDirection::DIRECTION_MAX];	// 矢印の情報
+	CEntry_Dressup* m_pParent;			// 親クラス情報
+	CRenderTexture* m_pRenderScene;		// シーンレンダーテクスチャ
+	CObject2D_Anim* m_pChangeIcon;		// 変更種類アイコン情報
+	CObject2D_Anim* m_pReadyCheck;		// 準備完了チェック情報
+	CObject2D_Anim* m_pPlayerFrame;		// プレイヤーフレーム情報
 	CObject2D_Anim* m_pPlayerFrameBG;	// プレイヤーフレーム背景情報
-	CObject2D* m_pPlayerUI;			// プレイヤーUI情報
-	int m_nOrdinalAI;				// 自身が生成された順番 (AIのみ)
-	int m_nPadIdx;					// 操作権インデックス
-	bool m_bReady;					// 準備完了フラグ
-	CBallFake* m_pBall;				// ボール
-	CPlayer* m_pPlayer;				// プレイヤー
-	CDressup* m_pHair;				// 髪着せ替え
-	CDressup* m_pAccessory;			// アクセ着せ替え
-	CDressup* m_pFace;				// 顔着せ替え
-	EEditType m_typeEdit;			// エディットする種類
-	EChangeType m_typeChange;		// 変更する種類
-	const int m_nPlayerIdx;			// プレイヤーインデックス
+	CObject2D* m_pPlayerUI;				// プレイヤーUI情報
+	int m_nOrdinalAI;					// 自身が生成された順番 (AIのみ)
+	int m_nPadIdx;						// 操作権インデックス
+	bool m_bReady;						// 準備完了フラグ
+	CBallFake* m_pBall;					// ボール
+	CPlayer* m_pPlayer;					// プレイヤー
+	CDressup* m_pHair;					// 髪着せ替え
+	CDressup* m_pAccessory;				// アクセ着せ替え
+	CDressup* m_pFace;					// 顔着せ替え
+	EEditType m_typeEdit;				// エディットする種類
+	EChangeType m_typeChange;			// 変更する種類
+	const int m_nPlayerIdx;				// プレイヤーインデックス
 	const CPlayer::EFieldArea m_typeArea;	// プレイヤーポジション
 };
 
