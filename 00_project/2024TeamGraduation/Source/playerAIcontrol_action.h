@@ -61,6 +61,7 @@ public:
 	void SetIsSpecial(bool bSpecial) { m_sFlag.bSpecial = bSpecial; }		// スペシャル撃つか設定
 	void SetMaxJumpRate(float fMaxRate) { m_fMaxJumpRate = fMaxRate; }		// ジャンプ力割合(最大)設定
 	float GetJumpRate() { return m_fJumpRate; }
+	void SetCatchRadius(float fRadius) { m_fCatchRadius = fRadius; }
 
 #ifdef _DEBUG
 	void ChangeAutoThrow() { m_bAutoThrow = !m_bAutoThrow; }
@@ -92,6 +93,7 @@ private:
 	float m_fJumpTimer;
 	float m_fMaxJumpRate;
 	float m_fJumpRate;
+	float m_fCatchRadius;
 	SFlag m_sFlag;
 
 };

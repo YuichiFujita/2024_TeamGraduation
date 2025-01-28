@@ -1080,6 +1080,9 @@ void CPlayerManager::CautionInAll(const CGameManager::ETeamSide team)
 		// 通常モーション
 		pObj->SetMotion(CPlayer::EMotion::MOTION_DEF);
 
+		// ジャンプ強制終了
+		pObj->SetEnableJump(false);
+
 		// 操作不可
 		//pObj->SetEnableAction(false);
 		//pObj->SetEnableMove(false);

@@ -273,7 +273,7 @@ void CMyEffekseer::StopAll()
 void CMyEffekseer::LoadAll()
 {
 	WIN32_FIND_DATAW findFileData;
-	HANDLE hFind = FindFirstFileW(FOLDERNAME.c_str(), &findFileData);
+	HANDLE hFind = FindFirstFileW((FOLDERNAME + L"\\*").c_str(), &findFileData);
 
 	if (hFind == INVALID_HANDLE_VALUE)
 	{// フォルダが見つからない場合は終了
