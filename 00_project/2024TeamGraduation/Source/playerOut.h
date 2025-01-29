@@ -31,6 +31,7 @@ public:
 	// オーバーライド関数
 	//=============================
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
+	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;				// ヒット
 	virtual void InitPosition(const MyLib::Vector3& rPos) override;		// 位置初期化
 	virtual void MotionCrab(int nStartKey) override { assert(false); }	// カニ歩き変化
 	virtual bool IsCrab() override;					// カニ歩き判定

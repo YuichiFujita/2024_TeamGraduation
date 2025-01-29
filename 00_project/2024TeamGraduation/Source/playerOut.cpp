@@ -56,6 +56,67 @@ void CPlayerOut::Update(const float fDeltaTime, const float fDeltaRate, const fl
 }
 
 //==========================================================================
+// ヒット
+//==========================================================================
+CPlayer::SHitInfo CPlayerOut::Hit(CBall* pBall)
+{
+	CGameManager::ETeamSide sideBall = pBall->GetTypeTeam();	// ボールチームサイド
+	CBall::EAttack atkBall	= pBall->GetTypeAtk();				// ボール攻撃種類
+	CBall::EState stateBall = pBall->GetState();				// ボール状態
+	MyLib::Vector3 posBall = pBall->GetPosition();				// ボール位置
+	MyLib::HitResult_Character hitresult = {};					// 衝突情報
+	CPlayer* pPlayer = GetPlayer();								// プレイヤー情報
+	CPlayerStatus* pStatus = pPlayer->GetStatus();				// ステータス情報
+	CPlayer::EState state = pPlayer->GetState();				// プレイヤー状態
+	CPlayer::EAction action = pPlayer->GetActionPattern()->GetAction();	// プレイヤー行動状態
+	CBallStatus::SBallParameter ballParameter = pPlayer->GetBallParameter();	// ボールステータス
+	float fCatchRange = UtilFunc::Transformation::RadianChangeToDegree(ballParameter.fCatchRange);	// キャッチ範囲
+
+	// ヒット情報の初期化
+	CPlayer::SHitInfo hitInfo;
+	hitInfo.eHit = CPlayer::HIT_NONE;
+	hitInfo.bHit = false;
+
+	if (IsAutoBallCatch(pBall))
+	{ // 自動ボールキャッチが可能な場合
+
+		// ボールをキャッチ
+		pBall->CatchLand(pPlayer);
+
+		if (pBall->IsLanding())
+		{ // ボールが着地している場合
+
+			// 落ちてるのキャッチ
+			pPlayer->SetMotion(CPlayer::EMotion::MOTION_DROPCATCH_WALK);
+
+			// 投げの猶予設定
+			pPlayer->GetBase()->GetPlayerControlAction()->SetThrowDrop();
+		}
+
+		// キャッチ状態
+		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
+		return hitInfo;
+	}
+
+	// 攻撃状態以外ならすり抜ける
+	if (atkBall == CBall::EAttack::ATK_NONE) { return hitInfo; }
+
+	if (pPlayer->GetMotionFrag().bCatch
+	&&  UtilFunc::Collision::CollisionViewRange3D(pPlayer->GetPosition(), posBall, pPlayer->GetRotation().y, fCatchRange))
+	{ // キャッチアクション中だった中でも受け付け中の場合
+
+		// キャッチ時処理
+		pPlayer->CatchSetting(pBall);
+
+		// キャッチ状態
+		hitInfo.eHit = CPlayer::EHit::HIT_CATCH;
+		return hitInfo;
+	}
+
+	return hitInfo;
+}
+
+//==========================================================================
 // 位置の初期化
 //==========================================================================
 void CPlayerOut::InitPosition(const MyLib::Vector3& /*rPos*/)
