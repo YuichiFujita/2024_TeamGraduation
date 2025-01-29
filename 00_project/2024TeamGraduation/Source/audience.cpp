@@ -235,7 +235,10 @@ void CAudience::Draw()
 void CAudience::SetEnableJump(const bool bJump)
 {
 	// 通常状態でも盛り上がり状態でもスペシャル状態でもない場合抜ける
-	if (m_state != STATE_NORMAL && m_state != STATE_JUMP && m_state != STATE_SPECIAL) { return; }
+	if (m_state != STATE_NORMAL && m_state != STATE_JUMP && m_state != STATE_SPECIAL) 
+	{ 
+		return;
+	}
 
 	if (bJump)
 	{ // 盛り上がる場合
@@ -287,6 +290,16 @@ bool CAudience::SetDespawn(EObjType type)
 }
 
 //==========================================================================
+// NTR設定
+//==========================================================================
+bool CAudience::SetNTR(CGameManager::ETeamSide team)
+{ 
+	m_state = STATE_SPAWN; 
+	m_team = team;
+	return true; 
+}
+
+//==========================================================================
 // 観戦中の人数設定処理
 //==========================================================================
 HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team)
@@ -320,9 +333,9 @@ HRESULT CAudience::SetNumWatch(const int nNumWatch, CGameManager::ETeamSide team
 			CScene::MODE mode = GET_MANAGER->GetMode();
 
 			// 観客を生成
-			if (FAILED(CAudience::Create(type, team, mode)))
+			CAudience* pAudience = CAudience::Create(type, team, mode);
+			if (pAudience == nullptr)
 			{ // 生成に失敗した場合
-
 				return E_FAIL;
 			}
 		}
@@ -473,10 +486,6 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 	{
 		bHype = pCharm->IsHype(GetTeam());
 	}
-	else if (GET_MANAGER->GetScene()->GetMode() == CScene::MODE::MODE_RESULT)
-	{// リザルトは確定盛り上がり
-		bHype = true;
-	}
 
 	// 情報を取得
 	MyLib::Vector3 pos = GetPosition();	// 位置
@@ -505,13 +514,21 @@ int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const
 		// 観戦位置に補正
 		pos.x = m_posWatch.x;
 		pos.z = m_posWatch.z;
+		SetPosition(pos);	// 位置
 
 		// スポーン終了時の設定
 		EndSettingSpawn();
 
 		// 状態を遷移させる
-		if (bHype)	{ m_state = STATE_JUMP; }	// 盛り上がっているなら盛り上がり状態にする
-		else		{ m_state = STATE_NORMAL; }	// それ以外なら通常状態にする
+		if (bHype ||
+			GET_MANAGER->GetScene()->GetMode() == CScene::MODE::MODE_RESULT)
+		{// 盛り上がっているなら盛り上がり状態にする
+			m_state = STATE_JUMP; 
+		}	
+		else		
+		{ // それ以外なら通常状態にする
+			m_state = STATE_NORMAL; 
+		}
 	}
 
 	// 情報を反映
@@ -532,10 +549,6 @@ int CAudience::UpdateNormal(const float fDeltaTime, const float fDeltaRate, cons
 	if (pCharm != nullptr)
 	{
 		bHype = pCharm->IsHype(GetTeam());
-	}
-	else if (GET_MANAGER->GetScene()->GetMode() == CScene::MODE::MODE_RESULT)
-	{// リザルトは確定盛り上がり
-		bHype = true;
 	}
 
 	// 情報を取得
@@ -691,4 +704,13 @@ bool CAudience::UpdateGravity(MyLib::Vector3* pPos, MyLib::Vector3* pMove, const
 	}
 
 	return false;
+}
+
+//==========================================================================
+// 状態管理時間の最大値設定処理
+//==========================================================================
+void CAudience::SetTimeStateByTimeStateMax()
+{
+	m_fTimeState = TIME_SPAWN;
+	UpdateSpawn(0.0f, 0.0f, 1.0f);
 }

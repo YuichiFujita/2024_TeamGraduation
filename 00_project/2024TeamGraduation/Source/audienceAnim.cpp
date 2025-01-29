@@ -519,6 +519,9 @@ void CAudienceAnim::CalcWatchPositionFar()
 	posWatch.z = (float)UtilFunc::Transformation::Random(Far::NEAR_LINE, Far::FAR_LINE);
 	SetWatchPosition(posWatch);
 
+	// 目標の向き設定
+	SetOriginRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+
 	// モーションの設定
 	m_idolMotion = MOTION_IDOL_D;	// 下待機モーション
 	m_jumpMotion = MOTION_JUMP_D;	// 下ジャンプモーション
@@ -540,6 +543,9 @@ void CAudienceAnim::CalcWatchPositionUp()
 	posWatch.z = (float)UtilFunc::Transformation::Random(Up::NEAR_LINE, Up::FAR_LINE);
 	SetWatchPosition(posWatch);
 
+	// 目標の向き設定
+	SetOriginRotation(MyLib::Vector3(0.0f, 0.0f, 0.0f));
+
 	// モーションの設定
 	m_idolMotion = MOTION_IDOL_D;	// 下待機モーション
 	m_jumpMotion = MOTION_JUMP_D;	// 下ジャンプモーション
@@ -557,6 +563,9 @@ void CAudienceAnim::CalcWatchPositionNear()
 	posWatch.y = GetLandY();
 	posWatch.z = (float)UtilFunc::Transformation::Random(Down::NEAR_LINE, Down::FAR_LINE);
 	SetWatchPosition(posWatch);
+
+	// 目標の向き設定
+	SetOriginRotation(MyLib::Vector3(0.0f, D3DX_PI, 0.0f));
 
 	// モーションの設定
 	m_idolMotion = MOTION_IDOL_U;	// 上待機モーション
