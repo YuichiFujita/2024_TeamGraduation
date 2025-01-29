@@ -20,6 +20,7 @@
 #include "fade.h"
 #include "entry.h"
 #include "entry_dressup.h"
+#include "loadtext.h"
 
 //************************************************************
 //	定数宣言
@@ -684,6 +685,30 @@ void CEntryRuleManager::Release(CEntryRuleManager*& prEntryRuleManager)
 
 	// メモリ開放
 	SAFE_DELETE(prEntryRuleManager);
+}
+
+//============================================================
+//	ゲーム設定初期化の保存処理
+//============================================================
+HRESULT CEntryRuleManager::SaveInit()
+{
+	SRule rule;	// ルール
+	rule.fTime = time::MAX_TIME;	// 最大時間
+	rule.life = ELife::LIFE_NORMAL;	// 通常体力
+
+	std::string aTeamName[CGameManager::ETeamSide::SIDE_MAX];	// チーム名
+	for (int team = 0; team < CGameManager::ETeamSide::SIDE_MAX; team++)
+	{ // チーム数分繰り返す
+
+		// ランダムな名前を読込
+		std::wstring wsName = loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)).front();
+
+		// マルチバイト変換
+		aTeamName[team] = UtilFunc::Transformation::WideToMultiByte(wsName);
+	}
+
+	// 初期値の保存
+	return SaveSetting(rule, aTeamName[CGameManager::ETeamSide::SIDE_LEFT], aTeamName[CGameManager::ETeamSide::SIDE_RIGHT]);
 }
 
 //============================================================

@@ -30,6 +30,10 @@
 #include "renderTextureManager.h"
 #include "motionManager.h"
 
+#include "entry_setupTeam.h"
+#include "entry_dressup.h"
+#include "entryRuleManager.h"
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -43,7 +47,7 @@ namespace
 
 #if _DEBUG
 #ifdef ENTRYSTART
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_ENTRY;
 #else
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #endif
@@ -538,6 +542,11 @@ CScene::MODE CManager::GetMode()
 //==========================================================================
 void CManager::Uninit()
 {
+	// エントリー情報の初期化
+	CEntry_SetUpTeam::SaveInit();
+	CEntry_Dressup::SaveInit();
+	CEntryRuleManager::SaveInit();
+
 	if (m_pScene != nullptr)
 	{// メモリの確保が出来ていたら
 

@@ -992,7 +992,7 @@ void CEntry_SetUpTeam::TransDressUp(const bool bAllReady)
 		KillUI();
 
 		// セーブ
-		Save();
+		Save(m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT], m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT]);
 
 		// 着せ替えシーンへ遷移
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
@@ -1088,7 +1088,7 @@ std::vector<int> CEntry_SetUpTeam::GetEntryPlayerIdx()
 //==========================================================================
 // セーブ処理
 //==========================================================================
-void CEntry_SetUpTeam::Save()
+void CEntry_SetUpTeam::Save(std::vector<int>& rVecLeft, std::vector<int>& rVecRight)
 {
 	// ファイルを開く
 	std::ofstream file(TEXTFILE);	// ファイルストリーム
@@ -1115,7 +1115,7 @@ void CEntry_SetUpTeam::Save()
 
 	// 左チームの書き出し
 	file << "	LEFT  = ";
-	for (const int nPadIdx : m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT])
+	for (const int nPadIdx : rVecLeft)
 	{
 		file << nPadIdx << " ";
 	}
@@ -1123,7 +1123,7 @@ void CEntry_SetUpTeam::Save()
 
 	// 右チームの書き出し
 	file << "	RIGHT = ";
-	for (const int nPadIdx : m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT])
+	for (const int nPadIdx : rVecRight)
 	{
 		file << nPadIdx << " ";
 	}
@@ -1175,6 +1175,13 @@ void CEntry_SetUpTeam::Load()
 				}
 			} while (str != "END_TEAMIDX");	// END_TEAMIDXを読み込むまでループ
 		}
+	}
+
+	for (int team = 0; team < CGameManager::ETeamSide::SIDE_MAX; team++)
+	{ // チーム数分繰り返す
+
+		// 最低値に補正
+		if (m_nPlayerNum[team] == 0) { m_nPlayerNum[team]++; }
 	}
 
 	// ファイルを閉じる
@@ -1267,7 +1274,7 @@ void CEntry_SetUpTeam::Debug()
 		//=============================s
 		if (ImGui::Button("Save"))
 		{
-			Save();
+			Save(m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT], m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT]);
 		}
 
 		//=============================
@@ -1348,6 +1355,16 @@ void CEntry_SetUpTeam::Debug()
 
 		ImGui::TreePop();
 	}
+}
+
+//==========================================================================
+// セーブ初期化
+//==========================================================================
+void CEntry_SetUpTeam::SaveInit()
+{
+	// セーブ処理
+	std::vector<int> vec;
+	Save(vec, vec);
 }
 
 //==========================================================================
