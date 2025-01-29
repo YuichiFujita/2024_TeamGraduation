@@ -224,25 +224,18 @@ void CPlayerAIControlLeftDefense::MoveRandom()
 //==========================================================================
 bool CPlayerAIControlLeftDefense::IsLineOverPlayer()
 {
-	bool bOver = false;	// 超えた判定用
-
 	// プレイヤー情報取得
 	CPlayer* pMy = GetPlayer();
-	if (!pMy) return bOver;
+	if (!pMy) return false;
 
 	MyLib::Vector3 myPos = pMy->GetPosition();
 
-	if (myPos.y > 0)
+	if (myPos.y >= 0)
 	{
-		return bOver;
+		return true;
 	}
 
-	//if (myPos.x > -10.0f && GetAction() != EActionFlag::ACTION_JUMP)
-	{// 位置が超えていた&&ジャンプしてない場合
-		bOver = true;
-	}
-
-	return bOver;
+	return false;
 }
 
 //==========================================================================
@@ -250,16 +243,14 @@ bool CPlayerAIControlLeftDefense::IsLineOverPlayer()
 //==========================================================================
 bool CPlayerAIControlLeftDefense::IsLineOverBall()
 {
-	bool bOver = false;	// 超えた判定用
-
 	// ボール情報取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) { return bOver; }
+	if (!pBall) { return false; }
 
 	if (pBall->GetPosition().x >= 0.0f)
 	{
-		bOver = true;
+		return true;
 	}
 
-	return bOver;
+	return false;
 }

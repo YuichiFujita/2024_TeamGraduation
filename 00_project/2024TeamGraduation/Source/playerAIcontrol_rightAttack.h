@@ -52,7 +52,7 @@ private:
 	//=============================
 	// ƒƒ“ƒoŠÖ”
 	//=============================
-	void PreparationLeave() override;
+	void PreparationLeave(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;
 	void Preparation() override;
 
 	//=============================

@@ -32,13 +32,21 @@
 //==========================================================================
 namespace
 {
-	// 距離間(デフォルト)
-	const float TARGET_DISTANCE = 400.0f;			// 
+	// 距離
+	const float TARGET_DISTANCE = 400.0f;		// ターゲット
+	const float STEAL_HEIGHT_JUMP = 140.0f;		// 奪う高さ
 
-	// キャッチ半径
+	// クールダウン
+	const int COOLDOWN_MIN_RANDOM = 1;			// ランダム行動
+	const int COOLDOWN_MAX_RANDOM = 5;			// 
+
+	// キャッチ精度
 	const float CATCH_RADIUS_JUST = 200.0f;		// ジャストキャッチ(120～250 確定！！)
-	const float CATCH_RADIUS_FAST = 300.0f;		// ジャストキャッチするけどミスる
-	const float CATCH_RADIUS_LATE = 100.0f;		// 速い(ミス)
+	const float CATCH_RADIUS_FAST = 300.0f;		// 速い(ジャストする時もある)
+	const float CATCH_RADIUS_LATE = 100.0f;		// 遅い(ミス)
+
+	// 終了半径
+	const float END_RADIUS = 30.0f;
 }
 
 //==========================================================================
@@ -51,6 +59,13 @@ CPlayerAIControlDefense::ACTION_FUNC CPlayerAIControlDefense::m_ActionFunc[] =	/
 	&CPlayerAIControlDefense::MoveRetreat,				// 後退
 	&CPlayerAIControlDefense::MoveRandom,				// ランダム
 	&CPlayerAIControlDefense::MoveLeave,				// 離れる
+};
+
+CPlayerAIControlDefense::ACTIONSTATUS_FUNC CPlayerAIControlDefense::m_ActionStatusFunc[] =	// キャッチ関数
+{
+	&CPlayerAIControlDefense::StatusIdle,
+	&CPlayerAIControlDefense::StatusAction,
+	&CPlayerAIControlDefense::StatusCooldown,
 };
 
 //==========================================================================
@@ -134,7 +149,7 @@ HRESULT CPlayerAIControlDefense::Init()
 void CPlayerAIControlDefense::Uninit()
 {
 	// 親クラスの終了処理
-	CPlayerAIControlMode::Uninit();
+CPlayerAIControlMode::Uninit();
 }
 
 //==========================================================================
@@ -155,8 +170,8 @@ void CPlayerAIControlDefense::Update(const float fDeltaTime, const float fDeltaR
 		NotPlayerBall(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
-	// キャッチ半径の更新
-	UpdateCatchRadius();
+	// キャッチ精度の更新
+	UpdateCatchAccuracy();
 
 	// 守りの更新
 	UpdateDefense(fDeltaTime, fDeltaRate, fSlowRate);
@@ -187,26 +202,22 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 		if (sideBall == sideMy)
 		{// 同じチーム
 
-			// クールダウン中の場合
-			if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
-
-			m_eAction = EAction::RNDOM;
-
-			// アクション状態：アクション
-			m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
+			{// ランダム行動
+				if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;	// クールダウン中は通らない
+				m_eAction = EAction::RNDOM;												// ランダム状態
+				m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;					// アクション状態：アクション
+			}
 		}
 		else
-		{// 行うアクションを決める
+		{// 違うチーム
 
 			if (IsTargetDistanse())
 			{
-				m_eAction = EAction::LEAVE;
-
-				// 行動の構造体初期化
-				ZeroMemory(&m_sAction, sizeof(m_sAction));
+				m_eAction = EAction::LEAVE;					// 離れる状態
+				ZeroMemory(&m_sAction, sizeof(m_sAction));	// 行動の構造体初期化
 				return;
 			}
-
+			// アクション選択
 			SelectAction();
 		}
 
@@ -216,24 +227,21 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 
 		if (IsTargetDistanse())
 		{
-			m_eAction = EAction::LEAVE;
-
-			// 行動の構造体初期化
-			ZeroMemory(&m_sAction, sizeof(m_sAction));
+			m_eAction = EAction::LEAVE;						// 離れる状態
+			ZeroMemory(&m_sAction, sizeof(m_sAction));		// 行動の構造体初期化
 			return;
 		}
 
-		// クールダウン中の場合
-		if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;
-
-		m_eAction = EAction::RNDOM;
-
-		// アクション状態：アクション
-		m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;
+		{// ランダム行動
+			if (m_eActionStatus == EActionStatus::ACTIONSTATUS_COOLDOWN) return;	// クールダウン中は通らない
+			m_eAction = EAction::RNDOM;												// ランダム状態
+			m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;					// アクション状態：アクション
+		}
 
 		break;
 
-	default:
+	default:		// エラー
+		assert(false);
 		break;
 	}
 }
@@ -300,92 +308,101 @@ void CPlayerAIControlDefense::NotPlayerBall(const float fDeltaTime, const float 
 //================================================================================
 void CPlayerAIControlDefense::UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CPlayer* pTarget = nullptr;
+	// アクション状態更新
+	(this->*(m_ActionStatusFunc[m_eActionStatus]))(fDeltaTime, fDeltaRate, fSlowRate);
+}
 
-	switch (m_eActionStatus)
+//==========================================================================
+// 状態：待機
+//==========================================================================
+void CPlayerAIControlDefense::StatusIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 行動フラグ：待機
+	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+
+	// アクションフラグ：なし
+	SetActionFlag(EActionFlag::ACTION_NONE);
+}
+
+//==========================================================================
+// 状態：アクション
+//==========================================================================
+void CPlayerAIControlDefense::StatusAction(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (IsCancel() &&
+		m_eAction == EAction::RNDOM)
 	{
-	case EActionStatus::ACTIONSTATUS_IDLE:		// 待機
+		m_eAction = EAction::LEAVE;
 
-		// 行動フラグ：待機
-		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+		// 行動の構造体初期化
+		ZeroMemory(&m_sAction, sizeof(m_sAction));
+	}
 
-		// アクションフラグ：なし
-		SetActionFlag(EActionFlag::ACTION_NONE);
+	// アクション種類更新
+	(this->*(m_ActionFunc[m_eAction]))();
+}
 
-		break;
+//==========================================================================
+// 状態：クールダウン
+//==========================================================================
+void CPlayerAIControlDefense::StatusCooldown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (IsCancel())
+	{
+		// アクション状態：アクション
+		m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
 
-	case EActionStatus::ACTIONSTATUS_ACTION:		// 行動
+		// 行動の構造体初期化
+		ZeroMemory(&m_sAction, sizeof(m_sAction));
 
-		if (IsCancel() &&
-			m_eAction == EAction::RNDOM)
-		{
-			m_eAction = EAction::LEAVE;
+		return;
+	}
 
-			// 行動の構造体初期化
-			ZeroMemory(&m_sAction, sizeof(m_sAction));
+	// アクションタイマーの設定
+	SetActionTimer(COOLDOWN_MIN_RANDOM, COOLDOWN_MAX_RANDOM);
 
-			break;
-		}
+	// 更新：アクションタイマー
+	UpdateActionTimer(fDeltaTime, fDeltaRate, fSlowRate);
 
-		// アクション種類更新
-		(this->*(m_ActionFunc[m_eAction]))();
+	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 
-		break;
-
-	case EActionStatus::ACTIONSTATUS_COOLDOWN:	// クールダウン
-
-		if (IsCancel())
-		{
-			// アクション状態：アクション
-			m_eActionStatus = EActionStatus::ACTIONSTATUS_IDLE;
-
-			// 行動の構造体初期化
-			ZeroMemory(&m_sAction, sizeof(m_sAction));
-
-			return;
-		}
-
-		if (IsTargetDistanse())
-		{
-			m_eAction = EAction::LEAVE;
-
-			// 行動の構造体初期化
-			ZeroMemory(&m_sAction, sizeof(m_sAction));
-			return;
-		}
-
-		// アクションタイマーの設定
-		SetActionTimer(1, 5);
-
-		// 更新：アクションタイマー
-		UpdateActionTimer(fDeltaTime, fDeltaRate, fSlowRate);
-
-		pTarget = GetTarget();
+	{// ターゲットを見る
+		CPlayer* pTarget = GetTarget();
 		if (!pTarget) return;
-
-		// ターゲットを見る
 		SeeTarget(pTarget->GetPosition());
-
-		break;
-
-	default:
-		assert(false);
-		break;
 	}
 }
 
 //================================================================================
-// キャッチ半径の更新
+// キャッチ精度の更新
 //================================================================================
-void CPlayerAIControlDefense::UpdateCatchRadius()
+void CPlayerAIControlDefense::UpdateCatchAccuracy()
 {
 	int n = UtilFunc::Transformation::Random(0, 100);
+
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+
+	// AIの取得
+	CPlayer* pAI = GetPlayer();
+	if (!pAI) return;
+	// AIコントロール情報の取得
+	CPlayerControlAction* pControlAction = pAI->GetBase()->GetPlayerControlAction();
+	CPlayerAIControlAction* pControlAIAction = pControlAction->GetAI();
+
+	if (pBall->GetTarget() == GetPlayer())
+	{
+		// 投げる
+		pControlAIAction->SetIsCatch(true);
+	}
+	else{
+		// 投げる
+		pControlAIAction->SetIsCatch(false);
+	}
 
 	if (n > 90)
 	{
 		SetCatchRadius(CATCH_RADIUS_JUST);
-		return;
-
 		return;
 	}
 	if (n > 20)
@@ -500,7 +517,7 @@ void CPlayerAIControlDefense::BallChase()
 	SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 	// 近づく
-	if (Approatch(pBall->GetPosition(), 30.0f))
+	if (Approatch(pBall->GetPosition(), END_RADIUS))
 	{// 近づけた場合
 		// 行動：止まる
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
@@ -720,6 +737,9 @@ void CPlayerAIControlDefense::SetActionTimer(int nMin, int nMax)
 	}
 }
 
+//==========================================================================
+// キャッチ精度
+//==========================================================================
 void CPlayerAIControlDefense::SetCatchRadius(float fRadius)
 {
 	CPlayer* pAI = GetPlayer();
@@ -742,9 +762,9 @@ bool CPlayerAIControlDefense::IsCancel()
 	if (pBall == nullptr) return false;	// ボールねぇぞ
 	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
 
-	if (!IsLineOverBall() &&							// 線を超えていない
-		!IsPicksUpBall() &&								// 自分より近いプレイヤーがいない
-		stateBall == CBall::EState::STATE_LAND)			// 床に事がっている
+	if (IsLineOverBall() &&							// 線を超えている
+		!IsPicksUpBall() &&							// 自分より近いプレイヤーがいない
+		stateBall == CBall::EState::STATE_LAND)		// 床にころがっている
 	{
 		return true;
 	}
@@ -756,6 +776,17 @@ bool CPlayerAIControlDefense::IsCancel()
 	if (pBall->GetTarget() == pPlayer)
 	{// ターゲットが自分の場合
 		return true;
+	}
+
+	// ボール情報の取得
+	pPlayer = nullptr;
+	pPlayer = pBall->GetPlayer();	// ボールからプレイヤー情報を取得
+	if (pPlayer)
+	{
+		if (IsTargetDistanse())
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -808,10 +839,10 @@ void CPlayerAIControlDefense::BallSteal()
 	SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 	// ボールの方へ行く
-	if (Approatch(pos, 100.0f) || distance < 100.0f)
+	if (Approatch(pos, END_RADIUS) || distance < 100.0f)
 	{// 終了位置に近づけた||ボールとの距離が範囲内の場合
 
-		if (posBall.y < 140.0f)
+		if (posBall.y < STEAL_HEIGHT_JUMP)
 		{// 取れそうな高さに来た！
 			SetActionFlag(EActionFlag::ACTION_JUMP);
 		}
@@ -840,10 +871,10 @@ void CPlayerAIControlDefense::BallChaseRebound()
 	float distance = posMy.DistanceXZ(posBall);
 
 	// ボールの方へ行く
-	if (Approatch(posBall, 100.0f))
+	if (Approatch(posBall, END_RADIUS))
 	{// 終了位置に近づけた||ボールとの距離が範囲内の場合
 
-		if (posBall.y < 140.0f)
+		if (posBall.y < STEAL_HEIGHT_JUMP)
 		{// 取れそうな高さに来た！
 			SetActionFlag(EActionFlag::ACTION_JUMP);
 		}
@@ -1025,7 +1056,8 @@ void CPlayerAIControlDefense::SeeBall()
 //==========================================================================
 bool CPlayerAIControlDefense::IsTargetDistanse()
 {
-	float dis = GetDistanceBallowner();
+	float dis = 0.0f;
+	if (!IsGetDistanceBallowner(&dis)) { return false; }
 
 	if (dis < TARGET_DISTANCE) { return true; }
 
@@ -1035,24 +1067,25 @@ bool CPlayerAIControlDefense::IsTargetDistanse()
 //==========================================================================
 // ボール持ち主との距離を計算
 //==========================================================================
-float CPlayerAIControlDefense::GetDistanceBallowner()
+bool CPlayerAIControlDefense::IsGetDistanceBallowner(float* dis)
 {
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) return 0.0f;
+	if (!pBall) return false;
 
 	// AIの取得
 	CPlayer* pAI = GetPlayer();
-	if (!pAI) return 0.0f;
+	if (!pAI) return false;
 
 	CPlayer* pPlayer = pBall->GetPlayer();
-	if (!pPlayer) return 0.0f;
-	if (pPlayer->GetTeam() == pAI->GetTeam()) return 0.0f;
+	if (!pPlayer) return false;
+	if (pPlayer->GetTeam() == pAI->GetTeam()) return false;
 
 	// 距離を計算
-	float distance = pAI->GetPosition().DistanceXZ(pPlayer->GetPosition());
+	*dis = pAI->GetPosition().DistanceXZ(pPlayer->GetPosition());
 
 	// 計算結果を返す
-	return distance;
+
+	return true;
 }
 
 //==========================================================================
@@ -1159,16 +1192,6 @@ CPlayer* CPlayerAIControlDefense::GetTarget()
 	if (!pAI) return pTarget;
 	MyLib::Vector3 Mypos = pAI->GetPosition();			// 位置情報の取得
 	CGameManager::ETeamSide teamSide = pAI->GetTeam();	// チームサイドの取得
-
-	// ボール情報の取得
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (pBall) {
-
-		CPlayer* pPlayer = pBall->GetPlayer();
-		if (pPlayer) {
-			if (pPlayer->GetTeam() != teamSide) return pTarget;
-		}
-	}
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
