@@ -117,7 +117,7 @@ protected:
 
 	float GetDistanceBall();				// ボールとの距離
 	float GetDistanceEnemy();				// 敵との距離
-	float GetDistanceBallowner();			// ボール持ち主との距離
+	bool IsGetDistanceBallowner(float* dis);			// ボール持ち主との距離
 
 private:
 
@@ -134,6 +134,9 @@ private:
 	typedef void(CPlayerAIControlDefense::* ACTION_FUNC)();
 	static ACTION_FUNC m_ActionFunc[];				// アクション関数
 
+	typedef void(CPlayerAIControlDefense::* ACTIONSTATUS_FUNC)(const float, const float, const float);
+	static ACTIONSTATUS_FUNC m_ActionStatusFunc[];				// アクション関数
+
 	//-----------------------------
 	// 状態関数
 	//-----------------------------
@@ -143,13 +146,17 @@ private:
 	virtual void MoveRandom() = 0;	// ランダム
 	void MoveLeave();				// 離れる
 
+	void StatusIdle(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 待機
+	void StatusAction(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// アクション
+	void StatusCooldown(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// クールダウン
+
 	//=============================
 	// メンバ関数
 	//=============================
 	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
-	void UpdateCatchRadius();
+	void UpdateCatchAccuracy();
 	void SelectAction();			// アクション
-	void PlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
+	void PlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// チームメイトボール
 	void NotPlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
 
 	void BallChase();		// ボールを追う

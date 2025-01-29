@@ -36,7 +36,7 @@ public:
 	{
 		ATTACKPREPATARION_NONE = 0,		// なし
 		ATTACKPREPATARION_WAIT,			// 待つ
-		ATTACKPREPATARION_GO,			// 行く
+		ATTACKPREPATARION_GO,			// 直ぐ
 		ATTACKPREPATARION_LEAVE,		// 離れる
 		ATTACKPREPATARION_MAX
 	};
@@ -72,7 +72,6 @@ private:
 	struct STiming
 	{
 		float fTimer;
-		float fPosY;
 		bool bSet;
 	};
 
@@ -116,13 +115,13 @@ private:
 	//=============================
 	// 関数リスト
 	//=============================
-	typedef void(CPlayerAIControlAttack::* ATTACKMODE_FUNC)();
+	typedef void(CPlayerAIControlAttack::* ATTACKMODE_FUNC)(const float, const float, const float);
 	static ATTACKMODE_FUNC m_AttackModeFunc[];		// 攻撃モード
 
-	typedef void(CPlayerAIControlAttack::* PREPARATION_FUNC)();
+	typedef void(CPlayerAIControlAttack::* PREPARATION_FUNC)(const float, const float, const float);
 	static PREPARATION_FUNC m_PreparationFunc[];		// 準備
 
-	typedef void(CPlayerAIControlAttack::* THROWTYPE_FUNC)();
+	typedef void(CPlayerAIControlAttack::* THROWTYPE_FUNC)(const float, const float, const float);
 	static THROWTYPE_FUNC m_ThrowTypeFunc[];		// 投げるタイプ関数
 
 	typedef void(CPlayerAIControlAttack::* THROWFLAG_FUNC)();
@@ -132,21 +131,21 @@ private:
 	// 状態関数
 	//-----------------------------
 	// 攻撃モード
-	void AttackModePreparation();
-	void AttackModeAttack();
+	void AttackModePreparation(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void AttackModeAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 
 	// 準備
-	void PreparationNone() {};
-	void PreparationWait();
-	void PreparationGo();
-	virtual void PreparationLeave() = 0;
+	void PreparationNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};
+	void PreparationWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	void PreparationGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	virtual void PreparationLeave(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) = 0;
 
 	// 投げタイプ
-	void ThrowTypeNone() {};		// なし
-	void ThrowTypeNormal();			// 通常
-	void ThrowTypeJump();			// ジャンプ
-	void ThrowTypeSpecial();		// スペシャル
-	void ThrowTypePass();			// パス
+	void ThrowTypeNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) {};		// なし
+	void ThrowTypeNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 通常
+	void ThrowTypeJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ジャンプ
+	void ThrowTypeSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャル
+	void ThrowTypePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// パス
 	
 	// 投げフラグ
 	void ThrowFlagNone() {};		// なし
@@ -157,21 +156,21 @@ private:
 	//=============================
 	// メンバ関数
 	//=============================
-	void UpdateAttack();						// 攻め更新
-	void UpdateThrow();							// 投げ更新
+	void UpdateAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);						// 攻め更新
+	void UpdateThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);						// 投げ更新
 	bool IsCancelJumpAttack();					// キャンセル
 
 	// 投げ
-	void AttackNormal(CPlayer* pTarget);		// 通常投げ
-	void AttackDash(CPlayer* pTarget, float fTargetDis, float fLineDis);			// 走り投げ
+	void AttackNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常投げ
+	void AttackDash(CPlayer* pTarget, float fTargetDis, float fLineDis);											// 走り投げ
 
 	// ジャンプ
-	void AttackJump(CPlayer* pTarget);			// ジャンプ投げ
-	void AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse);		// 走りジャンプ投げ
+	void AttackJump(CPlayer* pTarget);														// ジャンプ投げ
+	void AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse, bool bOver);		// 走りジャンプ投げ
 
 	void AttackFeint();							// フェイント
 
-	void UpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
+	bool IsUpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void SetAttackTimer(int nMin, int nMax);	// 行動タイマー
 
 	bool IsStop();			// 止める判断
@@ -180,8 +179,6 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayer* m_pTarget;
-	bool m_bSet;
-	int m_nLevel;
 
 	//-----------------------------
 	// 列挙

@@ -38,7 +38,7 @@ public:
 		MOTION_IDOL_D,		// 下待機モーション
 		MOTION_JUMP_U,		// 上ジャンプモーション
 		MOTION_JUMP_D,		// 下ジャンプモーション
-		MOTION_MOVE_L,		// 左移動モーションz 
+		MOTION_MOVE_L,		// 左移動モーション
 		MOTION_MOVE_R,		// 右移動モーション
 		MOTION_MAX			// この列挙型の総数
 	};

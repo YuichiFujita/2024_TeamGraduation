@@ -21,7 +21,7 @@ public:
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
-	CObjectCircleGauge2D(int nPriority = 7, const LAYER layer = LAYER::LAYER_2D);
+	CObjectCircleGauge2D(int nPriority = 6, const LAYER layer = LAYER::LAYER_2D);
 	~CObjectCircleGauge2D();
 
 	//=============================

@@ -213,12 +213,12 @@ void CObjectChara::Update(void)
 	// •Ší‚ÌˆÊ’u
 	m_posCenter = D3DXVECTOR3(mtxWepon._41, mtxWepon._42, mtxWepon._43);
 
-	for (int i = 0; i < 5; i++)
-	{
-		CEffect3D::Create(m_posCenter,
-			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-			D3DXCOLOR(0.4f, 1.0f, 0.6f, 1.0f), 5.0f, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-	}
+	//for (int i = 0; i < 5; i++)
+	//{
+	//	CEffect3D::Create(m_posCenter,
+	//		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+	//		D3DXCOLOR(0.4f, 1.0f, 0.6f, 1.0f), 5.0f, 2, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+	//}
 }
 
 //==========================================================================

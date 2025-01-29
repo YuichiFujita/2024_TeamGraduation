@@ -28,7 +28,7 @@ public:
 	D3DXVECTOR3 GetRotation(void) const;		// 向き取得
 	void SetShake(int nTime, float fLength, float fLengthY);	// 振動設定
 	void EnableChase(void);
-
+	void UpdateSpotLightVec();	// ライトのベクトル更新
 
 	D3DXMATRIX	GetViewMtx() { return m_mtxView; };				// ビューマトリックス
 	D3DXMATRIX	GetProjectionMtx() { return m_mtxProjection; }	// プロジェクションマトリックス

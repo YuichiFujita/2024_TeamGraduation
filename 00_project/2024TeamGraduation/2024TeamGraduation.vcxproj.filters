@@ -896,6 +896,12 @@
     <ClCompile Include="Source\cameratrigger_KMHM.cpp">
       <Filter>camera</Filter>
     </ClCompile>
+    <ClCompile Include="Source\playerFaceIcon.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\faceUI.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1644,6 +1650,12 @@
     </ClInclude>
     <ClInclude Include="Source\cameratrigger_KMHM.h">
       <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\playerFaceIcon.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\faceUI.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

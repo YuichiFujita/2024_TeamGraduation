@@ -37,6 +37,7 @@
 // 派生先
 #include "playerDressup.h"
 #include "playerSpawn.h"
+#include "playerFaceIcon.h"
 #include "playerCutIn.h"
 #include "playerReferee.h"
 #include "playerReferee_Result.h"
@@ -264,6 +265,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
 	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
+	m_typeHuman = EHuman::HUMAN_NONE;	// 人
 
 #if _DEBUG	// デバッグ用ID
 	m_nThisDebugID = m_nDebugID;
@@ -346,6 +348,10 @@ CPlayer* CPlayer::Create
 		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
+	case EHuman::HUMAN_FACEICON:
+		pPlayer = DEBUG_NEW CPlayerFaceIcon(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
 	case EHuman::HUMAN_CUTIN:
 		pPlayer = DEBUG_NEW CPlayerCutIn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
@@ -369,6 +375,9 @@ CPlayer* CPlayer::Create
 
 	if (pPlayer != nullptr)
 	{
+		// 人を設定
+		pPlayer->m_typeHuman = typeHuman;
+
 		// 体型を設定
 		pPlayer->m_BodyType = typeBody;
 
@@ -510,7 +519,7 @@ void CPlayer::Uninit()
 	SAFE_DELETE(m_pBase);
 
 	// ステータス
-	SAFE_DELETE(m_pStatus);
+	SAFE_KILL(m_pStatus);
 
 	// マーカー
 	SAFE_UNINIT(m_pMarker);
@@ -1539,13 +1548,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 {
 	MyLib::Vector3 pos = GetPosition();
 	pos.y += 130.0f;
-
-	//演出
-	CEffect3D::Create(
-		pos,
-		MyLib::Vector3(0.0f, 0.0f, 0.0f),
-		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 
 	switch (atkBall)
 	{
@@ -2747,6 +2749,31 @@ bool CPlayer::IsTeamPlayer() const
 
 	// 全員死んでいる場合false
 	return false;
+}
+
+//==========================================================================
+// キャラパス取得
+//==========================================================================
+std::string CPlayer::GetCharaPath(const EBody body, const EHandedness hand)
+{
+	return CHARAFILE[body][hand];
+}
+
+//==========================================================================
+//	着せ替え割当
+//==========================================================================
+void CPlayer::BindDressUpFace(int nHair, int nAccessory, int nFace)
+{
+	// 着せ替え割当
+	m_pStatus->BindDressUp(nHair, nAccessory, nFace);
+}
+
+//==========================================================================
+//	自分のインデックス設定
+//==========================================================================
+void CPlayer::SetMyPlayerIdxFace(int nIdx)
+{
+	m_pStatus->SetMyPlayerIdx(nIdx);
 }
 
 //==========================================================================

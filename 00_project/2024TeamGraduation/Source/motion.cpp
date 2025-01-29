@@ -39,6 +39,7 @@ CMotion::CMotion()
 	m_bCombiable = false;	// コンボ可能か
 	m_bAttaking = false;	// 攻撃判定中フラグ
 	m_bLoopMomnet = false;	// ループした瞬間
+	m_bMotion = true;		// モーション再生フラグ
 
 	m_pObjChara = nullptr;		// オブジェクトのポインタ
 	m_ppModel = nullptr;		// モデルのポインタ
@@ -195,6 +196,8 @@ void CMotion::ResetPose(int nType)
 //==========================================================================
 void CMotion::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	if (!m_bMotion) { return; }
+
 	if (m_vecInfo[0].aKey.size() == 0)
 	{// モーション情報メモリリーク？
 		MyAssert::CustomAssert(false,"観客壊れる可能性あり");
