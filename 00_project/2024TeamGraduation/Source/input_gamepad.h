@@ -117,6 +117,15 @@ public:
 		) : timer(_timer), maxTimer(_maxTimer), startSpeed(_startSpeed), endSpeed(_endSpeed), easeType(_easeType) {}
 	};
 
+	struct SAllTrigger	// ƒgƒŠƒK[
+	{
+		bool bInput;	// “ü—Í”»’è
+		int nID;		// “ü—ÍÒ‚ÌID
+
+		SAllTrigger() : bInput(false), nID(-1) {}
+		SAllTrigger(bool _bInput, int _nID) : bInput(_bInput), nID(_nID) {}
+	};
+
 	CInputGamepad();
 	~CInputGamepad();
 
@@ -140,7 +149,7 @@ public:
 	bool GetRelease(BUTTON nKey, int nCntPlayer);
 	STapInfo GetTap(BUTTON nKey, int nCntPlayer, float tapTime);
 	bool GetAllPress(BUTTON nKey);
-	bool GetAllTrigger(BUTTON nKey);
+	SAllTrigger GetAllTrigger(BUTTON nKey);
 	bool GetAllRepeat(BUTTON nKey);
 	bool GetAllRelease(BUTTON nKey);
 	int GetnCntPad();

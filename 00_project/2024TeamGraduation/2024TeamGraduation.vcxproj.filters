@@ -902,6 +902,9 @@
     <ClCompile Include="Source\faceUI.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\tutorialcheck.cpp">
+      <Filter>mode\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\constans.h">
@@ -1656,6 +1659,9 @@
     </ClInclude>
     <ClInclude Include="Source\faceUI.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\tutorialcheck.h">
+      <Filter>mode\title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

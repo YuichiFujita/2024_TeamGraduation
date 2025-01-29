@@ -13,6 +13,8 @@
 #include "fade.h"
 #include "option_BBS.h"
 #include "camera.h"
+#include "tutorialcheck.h"
+#include "tutorialscreen.h"
 
 //==========================================================================
 // 定数定義
@@ -87,6 +89,21 @@ CTitle_ControllWait::STATE_FUNC CTitle_ControllWait::m_StateFunc[] =	// 状態関数
 	&CTitle_ControllWait::StateTransitionMoreSecond,	// 遷移
 	&CTitle_ControllWait::StateTransitionMoreLast,		// 遷移(ラスト)
 	&CTitle_ControllWait::StateTansitionBack,			// 戻る
+	&CTitle_ControllWait::StateTutorialCheck,			// チュートリアル確認
+	&CTitle_ControllWait::StateTutorial,				// チュートリアル
+};
+
+CTitle_ControllWait::STATESTART_FUNC CTitle_ControllWait::m_StateStartFunc[] =	// 状態開始関数
+{
+	nullptr,											// 待機
+	nullptr,											// 操作
+	nullptr,											// 遷移
+	nullptr,											// 遷移待機
+	nullptr,											// 遷移
+	nullptr,											// 遷移(ラスト)
+	nullptr,											// 戻る
+	&CTitle_ControllWait::StateStartTutorialCheck,		// チュートリアル確認
+	&CTitle_ControllWait::StateStartTutorial,			// チュートリアル
 };
 
 CTitle_ControllWait::STATEBG_FUNC CTitle_ControllWait::m_StateBGFunc[] =	// 状態関数
@@ -112,12 +129,14 @@ CTitle_ControllWait::CTitle_ControllWait() : CTitleScene()
 	m_select = ESelect::SELECT_BATTLE;
 
 	// その他
-	m_pLogo = nullptr;			// ロゴ
-	m_pOptionBBS = nullptr;		// 掲示板
-	m_fTimeMarker = 0.0f;		// マーカーのタイマー
+	m_pLogo = nullptr;				// ロゴ
+	m_pOptionBBS = nullptr;			// 掲示板
+	m_pTutorialCheck = nullptr;		// チュートリアルチェック
+	m_pTutorialScreen = nullptr;	// チュートリアル画面
+	m_fTimeMarker = 0.0f;			// マーカーのタイマー
 	m_fTimeSandSmoke = 0.0f;		// 砂煙のタイマー
 	m_fIntervalSandSmoke = 0.0f;	// 砂煙のインターバル
-	m_vecTitleStudent.clear();	// タイトルの生徒
+	m_vecTitleStudent.clear();		// タイトルの生徒
 
 }
 
@@ -361,7 +380,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, 0) ||
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
 		pKey->GetTrigger(DIK_A))
 	{// 左(逆ループ)
 
@@ -378,7 +397,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		// サウンドの再生
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
+	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
 		pKey->GetTrigger(DIK_D))
 	{// 右(ループ)
 
@@ -397,25 +416,29 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	}
 
 	// 遷移
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+	CInputGamepad::SAllTrigger trigger = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A);
+	if (trigger.bInput ||
 		pKey->GetTrigger(DIK_RETURN))
 	{
 		// 決定時処理
-		Decide();
+		Decide(trigger.nID);
 	}
 }
 
 //==========================================================================
 // 決定
 //==========================================================================
-void CTitle_ControllWait::Decide()
+void CTitle_ControllWait::Decide(int decideIdx)
 {
 	switch (m_select)
 	{
 	case CTitle_ControllWait::SELECT_BATTLE:
 
-		// 遷移
-		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
+		// チュートリアル確認
+		SetState(EState::STATE_TUTORIALCHECK);
+
+		// チュートリアル確認再生成
+		ReCreateTutorialCheck(decideIdx);
 		break;
 
 	case CTitle_ControllWait::SELECT_MORE:
@@ -447,6 +470,18 @@ void CTitle_ControllWait::Decide()
 	default:
 		break;
 	}
+}
+
+//==========================================================================
+// チュートリアル確認再生成
+//==========================================================================
+void CTitle_ControllWait::ReCreateTutorialCheck(int decideIdx)
+{
+	// 削除
+	SAFE_KILL(m_pTutorialCheck);
+
+	// 生成
+	m_pTutorialCheck = CTutorialCheck::Create(decideIdx, this);
 }
 
 //==========================================================================
@@ -694,6 +729,76 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 }
 
 //==========================================================================
+// チュートリアル確認
+//==========================================================================
+void CTitle_ControllWait::StateTutorialCheck(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// インプット情報取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
+
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput)
+	{// ウィンドウ閉じる
+		
+		// チュートリアル確認をフェードアウト
+		if (m_pTutorialCheck != nullptr)
+		{
+			m_pTutorialCheck->SetState(CTutorialCheck::EState::STATE_FADEOUT);
+			m_pTutorialCheck = nullptr;
+		}
+	}
+}
+
+//==========================================================================
+// チュートリアル中
+//==========================================================================
+void CTitle_ControllWait::StateTutorial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// インプット情報取得
+	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
+
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput)
+	{// ウィンドウ閉じる
+
+		// チュートリアルをフェードアウト
+		if (m_pTutorialScreen != nullptr)
+		{
+			m_pTutorialScreen->SetState(CTutorialScreen::EState::STATE_FADEOUT);
+			m_pTutorialScreen = nullptr;
+		}
+
+		// 待機へ設定
+		SetState(EState::STATE_WAIT);
+	}
+}
+
+//==========================================================================
+// [開始]チュートリアル確認
+//==========================================================================
+void CTitle_ControllWait::StateStartTutorialCheck()
+{
+	
+}
+
+//==========================================================================
+// [開始]チュートリアル
+//==========================================================================
+void CTitle_ControllWait::StateStartTutorial()
+{
+	// チュートリアル確認をフェードアウト
+	if (m_pTutorialCheck != nullptr)
+	{
+		m_pTutorialCheck->SetState(CTutorialCheck::EState::STATE_FADEOUT);
+		m_pTutorialCheck = nullptr;
+	}
+
+	// 削除
+	SAFE_KILL(m_pTutorialScreen);
+
+	// チュートリアル画面生成
+	m_pTutorialScreen = CTutorialScreen::Create();
+}
+
+//==========================================================================
 // 出現
 //==========================================================================
 void CTitle_ControllWait::StateBGSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -757,6 +862,12 @@ void CTitle_ControllWait::SetState(EState state)
 {
 	m_state = state;
 	m_fStateTime = 0.0f;
+
+	// 状態開始更新
+	if (m_StateStartFunc[m_state] != nullptr)
+	{
+		(this->*(m_StateStartFunc[m_state]))();
+	}
 }
 
 //==========================================================================

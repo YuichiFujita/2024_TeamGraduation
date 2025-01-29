@@ -582,8 +582,9 @@ bool CInputGamepad::GetAllPress(BUTTON nKey)
 //==========================================================================
 // ゲームパッドのトリガー処理
 //==========================================================================
-bool CInputGamepad::GetAllTrigger(BUTTON nKey)
+CInputGamepad::SAllTrigger CInputGamepad::GetAllTrigger(BUTTON nKey)
 {
+	SAllTrigger info;
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // プレイヤーの総数分繰り返す
 
@@ -591,12 +592,12 @@ bool CInputGamepad::GetAllTrigger(BUTTON nKey)
 		if (GetTrigger(nKey, i))
 		{
 			// 入力情報ありを返す
-			return true;
+			return SAllTrigger(true, i);
 		}
 	}
 
 	// 入力情報無しを返す
-	return false;
+	return info;
 }
 
 //==========================================================================

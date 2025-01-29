@@ -407,6 +407,7 @@
     <ClCompile Include="Source\title_susuru.cpp" />
     <ClCompile Include="Source\transUI.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
+    <ClCompile Include="Source\tutorialcheck.cpp" />
     <ClCompile Include="Source\tutorialscreen.cpp" />
     <ClCompile Include="Source\winteamResult.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
@@ -660,6 +661,7 @@
     <ClInclude Include="Source\title_susuru.h" />
     <ClInclude Include="Source\transUI.h" />
     <ClInclude Include="Source\tutorial.h" />
+    <ClInclude Include="Source\tutorialcheck.h" />
     <ClInclude Include="Source\tutorialscreen.h" />
     <ClInclude Include="Source\winteamResult.h" />
     <ClInclude Include="Source\Xload.h" />
