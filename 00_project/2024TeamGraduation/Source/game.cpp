@@ -232,10 +232,16 @@ void CGame::Update(const float fDeltaTime, const float fDeltaRate, const float f
 			GET_RENDERER->SetEnableShader(!GET_RENDERER->IsShader(), 2.0f);
 		}
 
+		static CCamera::SSwing swingInfo(15.0f, 2.0f, 0.4f);
+
+		ImGui::DragFloat("fShiftLength", &swingInfo.fShiftLength, 1.0f, 0.0f);
+		ImGui::DragFloat("fSubAngle", &swingInfo.fSubAngle, 0.1f, 0.0f);
+		ImGui::DragFloat("fSubLength", &swingInfo.fSubLength, 0.01f, 0.0f);
+
 		if (ImGui::Button("Camera : Swing"))
 		{
 			// ƒJƒƒ‰‚ð“K“–‚É—h‚ç‚·
-			GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(10.0f, 2.0f, 0.6f));
+			GET_MANAGER->GetCamera()->SetSwing(swingInfo);
 		}
 
 		if (ImGui::Button("Room : Bright"))

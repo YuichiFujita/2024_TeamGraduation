@@ -796,16 +796,33 @@ void CGameManager::UpdateTeamStatus()
 //==========================================================================
 void CGameManager::UpdateGaugeTime()
 {
+	float fAddTime = GET_MANAGER->GetDeltaTime() * GET_MANAGER->GetSlowRate();
+
 	// スペシャルゲージの時間更新
 	float fBrightTime = CGauge2D::GetBrightTime();
-	fBrightTime += GET_MANAGER->GetDeltaTime() * GET_MANAGER->GetSlowRate();
+	fBrightTime += fAddTime;
 
 	if (fBrightTime >= CGauge2D::GetBrightTimeEnd())
-	{// ループ
+	{ // ループ
+
 		fBrightTime = 0.0f;
 	}
+
 	CGauge2D::SetBrightTime(fBrightTime);
 	ImGui::Text("fBrightTime : % .2f", fBrightTime);
+
+	// アシストアイコンの時間更新
+	float fAssistTime = CGauge2D::GetAssistTime();
+	fAssistTime += fAddTime;
+
+	if (fAssistTime >= CGauge2D::GetAssistTimeEnd())
+	{ // ループ
+
+		fAssistTime = 0.0f;
+	}
+
+	CGauge2D::SetAssistTime(fAssistTime);
+	ImGui::Text("fAssistTime : % .2f", fAssistTime);
 }
 
 //==========================================================================
@@ -1062,11 +1079,13 @@ void CGameManager::CreateTeamStatus()
 		}
 
 		m_pTeamStatus[i] = CTeamStatus::Create();
-		m_pTeamStatus[i]->SetEnableGaugeDisp(false);
 
 		// チーム設定
 		side = static_cast<ETeamSide>(i);
 		m_pTeamStatus[i]->TeamSetting(side);
+
+		// ゲージ描画をOFFにする
+		m_pTeamStatus[i]->SetEnableGaugeDisp(false);
 	}
 }
 

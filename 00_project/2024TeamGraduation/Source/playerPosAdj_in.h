@@ -49,12 +49,6 @@ public:
 	virtual void UpdateAdjuster(CPlayer* pPlayer) override;	// ’²®
 
 protected:
-
-	//=============================
-	// ’è”
-	//=============================
-	static constexpr float RETURN_DISTANCE = 60.0f;	// –ß‚é‚½‚ß‚ÌŠÔŠu
-
 	//=============================
 	// ƒˆ‰¼‘zŠÖ”
 	//=============================

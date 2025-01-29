@@ -98,9 +98,9 @@ void CTutorial::Update(const float fDeltaTime, const float fDeltaRate, const flo
 
 	// “ü—Íî•ñŽæ“¾
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A) ||
-		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B) ||
-		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_START))
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_START).bInput)
 	{
 		// ‘JˆÚ
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_TITLE);

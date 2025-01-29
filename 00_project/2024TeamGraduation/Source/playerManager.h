@@ -76,6 +76,15 @@ public:
 
 	struct LoadInfo		// 読み込み情報
 	{
+		LoadInfo() :
+			nControllIdx	(-1),	// 操作するインデックス番号
+			eHanded			(CPlayer::EHandedness::HAND_R),	// 利き手
+			eBody			(CPlayer::EBody::BODY_NORMAL),	// 体型
+			nHair			(0),	// 髪
+			nAccessory		(0),	// アクセサリー
+			nFace			(0)		// 顔
+		{}
+
 		int nControllIdx;				// 操作するインデックス番号
 		CPlayer::EHandedness eHanded;	// 利き手
 		CPlayer::EBody eBody;			// 体型
@@ -136,6 +145,9 @@ public:
 	static CPlayerManager* GetInstance() { return m_pInstance; }	// インスタンス取得
 	static std::vector<LoadInfo> GetLoadInInfo(CGameManager::ETeamSide side) { return m_vecInLoadInfo[side]; }		// 内野読み込み情報
 	static std::vector<LoadInfo> GetLoadOutInfo(CGameManager::ETeamSide side) { return m_vecOutLoadInfo[side]; }	// 外野読み込み情報
+	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
+	static void Load();
+	static void LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer, std::vector<LoadInfo>* pInfo);	// プレイヤー情報読み込み
 
 private:
 
@@ -161,11 +173,6 @@ private:
 	SOutInfo GetInfoRightFar();		// 右奥の外野情報取得
 	SOutInfo GetInfoRight();		// 右の外野情報取得
 	SOutInfo GetInfoRightNear();	// 右手前の外野情報取得
-
-	// ファイル関連
-	static void SavePlayerInfo(std::ofstream* File, const std::vector<LoadInfo>& Info);	// プレイヤー情報セーブ
-	static void Load();
-	static void LoadPlayerInfo(std::ifstream* File, int nTeam, int nIdxPlayer, std::vector<LoadInfo>* pInfo);	// プレイヤー情報読み込み
 
 	//=============================
 	// メンバ変数

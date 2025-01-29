@@ -49,6 +49,8 @@ public:
 	{
 		STATE_NONE = 0,	// なにもなし
 		STATE_SPAWN,	// 登場
+		STATE_FADEIN,	// フェードイン
+		STATE_FADEOUT,	// フェードアウト
 		STATE_MAX
 	};
 
@@ -95,8 +97,10 @@ private:
 	//=============================
 	// 状態
 	void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 状態更新
-	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 何もなし
-	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 登場
+	void StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 何もなし
+	void StateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 登場
+	void StateFadeIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// フェードイン
+	void StateFadeOut(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// フェードアウト
 
 	// 生成
 	HRESULT CreateBG();			// 背景生成

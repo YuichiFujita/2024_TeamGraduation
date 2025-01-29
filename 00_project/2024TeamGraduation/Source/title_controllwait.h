@@ -19,6 +19,8 @@
 class CDressup;
 class CTitleStudent;	// タイトルの生徒
 class COption_BBS;
+class CTutorialCheck;
+class CTutorialScreen;
 
 //==========================================================================
 // クラス定義
@@ -33,13 +35,15 @@ public:
 	//=============================
 	enum EState
 	{
-		STATE_WAIT = 0,	// 待機
-		STATE_CONTROLL,	// 操作
+		STATE_WAIT = 0,				// 待機
+		STATE_CONTROLL,				// 操作
 		STATE_TRANSITION_MORE_1st,	// 色々に遷移
 		STATE_TRANSITION_WAIT,		// 遷移待機
 		STATE_TRANSITION_MORE_2nd,	// 色々に遷移
 		STATE_TRANSITION_MORE_LAST,	// 色々に遷移(ラスト)
 		STATE_TRANSITION_BACK,		// 戻る
+		STATE_TUTORIALCHECK,		// チュートリアル確認
+		STATE_TUTORIAL,				// チュートリアル
 		STATE_MAX
 	};
 
@@ -72,6 +76,7 @@ public:
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 
 	void SetState(EState state);		// 状態設定
+	EState GetState() { return m_state; }	// 状態取得
 	void SetStateBG(EStateBG state);		// 状態設定
 
 private:
@@ -82,12 +87,16 @@ private:
 	typedef void(CTitle_ControllWait::* STATE_FUNC)(const float, const float, const float);
 	static STATE_FUNC m_StateFunc[];	// 状態関数
 
+	typedef void(CTitle_ControllWait::* STATESTART_FUNC)();
+	static STATESTART_FUNC m_StateStartFunc[];	// 状態開始関数
+
 	typedef void(CTitle_ControllWait::* STATEBG_FUNC)(const float, const float, const float);
-	static STATEBG_FUNC m_StateBGFunc[];	// 状態関数
+	static STATEBG_FUNC m_StateBGFunc[];	// 背景状態関数
 
 	//=============================
 	// メンバ関数
 	//=============================
+	//--------------------------
 	// 状態関数
 	//--------------------------
 	virtual void UpdateState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 状態更新
@@ -98,6 +107,14 @@ private:
 	void StateTransitionMoreSecond(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 色々に遷移
 	void StateTransitionMoreLast(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 色々に遷移(ラスト)
 	void StateTansitionBack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 戻る
+	void StateTutorialCheck(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// チュートリアル確認
+	void StateTutorial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// チュートリアル
+
+	//--------------------------
+	// 状態開始関数
+	//--------------------------
+	void StateStartTutorialCheck();		// チュートリアル確認
+	void StateStartTutorial();			// チュートリアル
 
 	// 背景状態
 	void StateBGSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 出現
@@ -118,7 +135,8 @@ private:
 	HRESULT CreateBG();		// 背景生成
 
 	// その他
-	void Decide();	// 決定
+	void Decide(int decideIdx);					// 決定
+	void ReCreateTutorialCheck(int decideIdx);	// チュートリアル確認再生成
 
 	//=============================
 	// メンバ変数
@@ -141,11 +159,13 @@ private:
 	//--------------------------
 	// その他
 	//--------------------------
-	CTitleLogo* m_pLogo;		// ロゴ
-	COption_BBS* m_pOptionBBS;	// 掲示板
-	float m_fTimeMarker;		// マーカーのタイマー
-	float m_fTimeSandSmoke;		// 砂煙のタイマー
-	float m_fIntervalSandSmoke;	// 砂煙のインターバル
+	CTitleLogo* m_pLogo;				// ロゴ
+	COption_BBS* m_pOptionBBS;			// 掲示板
+	CTutorialCheck* m_pTutorialCheck;	// チュートリアルチェック
+	CTutorialScreen* m_pTutorialScreen;	// チュートリアル画面
+	float m_fTimeMarker;				// マーカーのタイマー
+	float m_fTimeSandSmoke;				// 砂煙のタイマー
+	float m_fIntervalSandSmoke;			// 砂煙のインターバル
 	std::vector<CTitleStudent*> m_vecTitleStudent;	// タイトルの生徒
 };
 

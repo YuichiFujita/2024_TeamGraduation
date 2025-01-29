@@ -192,6 +192,7 @@
     <ClCompile Include="Source\bindKeyRight.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
+    <ClCompile Include="Source\cameratrigger_KMHM.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
@@ -406,6 +407,7 @@
     <ClCompile Include="Source\title_susuru.cpp" />
     <ClCompile Include="Source\transUI.cpp" />
     <ClCompile Include="Source\tutorial.cpp" />
+    <ClCompile Include="Source\tutorialcheck.cpp" />
     <ClCompile Include="Source\tutorialscreen.cpp" />
     <ClCompile Include="Source\winteamResult.cpp" />
     <ClCompile Include="Source\Xload.cpp" />
@@ -445,6 +447,7 @@
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />
+    <ClInclude Include="Source\cameratrigger_KMHM.h" />
     <ClInclude Include="Source\cameratrigger_pass.h" />
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />
@@ -658,6 +661,7 @@
     <ClInclude Include="Source\title_susuru.h" />
     <ClInclude Include="Source\transUI.h" />
     <ClInclude Include="Source\tutorial.h" />
+    <ClInclude Include="Source\tutorialcheck.h" />
     <ClInclude Include="Source\tutorialscreen.h" />
     <ClInclude Include="Source\winteamResult.h" />
     <ClInclude Include="Source\Xload.h" />

@@ -103,8 +103,22 @@ public:
 	void SetSelectObjectColor(const D3DXCOLOR& rCol, const MyLib::PosGrid2& rSelect);		// 選択オブジェクト色設定
 	bool IsTeamReady(const CPlayer::EFieldArea area, const CGameManager::ETeamSide team);	// チームの準備全完了確認
 	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
+	void Save();	// セーブ
+
+	//=============================
+	// 静的メンバ関数
+	//=============================
+	static void SaveInit();	// セーブ初期化
 
 private:
+
+	// 読込情報構造体
+	struct SLoad
+	{
+		CPlayerManager::LoadInfo aInUser[mylib_const::MAX_PLAYER];	// 内野User着せ替え
+		std::vector<CPlayerManager::LoadInfo> vecInAI;				// 内野AI着せ替え
+		std::vector<CPlayerManager::LoadInfo> aVecOut[CGameManager::ETeamSide::SIDE_MAX];	// 外野着せ替え
+	};
 
 	//=============================
 	// メンバ関数
@@ -112,8 +126,8 @@ private:
 	CDressupUI* GetPtrDressUI(const int nIdx) const;	// 着せ替えUI取得
 	int GetIdxDressUI(const CDressupUI* pUI) const;		// X選択インデックス取得
 	bool IsAllReady();	// 準備全完了フラグ取得
-	void Save();		// セーブ
-	void Load();		// ロード
+	SLoad Load();		// ロード
+	std::vector<CPlayerManager::LoadInfo> LoadPlayer(std::ifstream* pFile, const int nTeam, const char* pEndKey);	// ロードプレイヤー
 
 	//=============================
 	// メンバ変数
