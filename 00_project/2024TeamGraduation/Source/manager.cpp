@@ -47,7 +47,7 @@ namespace
 
 #if _DEBUG
 #ifdef ENTRYSTART
-	const CScene::MODE STARTMODE = CScene::MODE::MODE_ENTRY;
+	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #else
 	const CScene::MODE STARTMODE = CScene::MODE::MODE_GAME;
 #endif
@@ -544,8 +544,10 @@ void CManager::Uninit()
 {
 	// エントリー情報の初期化
 	CEntry_SetUpTeam::SaveInit();
+#ifdef NDEBUG
 	CEntry_Dressup::SaveInit();
 	CEntryRuleManager::SaveInit();
+#endif
 
 	if (m_pScene != nullptr)
 	{// メモリの確保が出来ていたら
