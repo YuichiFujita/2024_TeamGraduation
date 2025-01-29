@@ -108,7 +108,7 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 //============================================================
 //	コンストラクタ
 //============================================================
-CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
+CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx, const CPlayerManager::LoadInfo& info) : CObject(PRIORITY, LAYER::LAYER_2D),
 	m_pParent			(pParent),		// 親クラス情報
 	m_pRenderScene		(nullptr),		// シーンレンダーテクスチャ
 	m_pChangeIcon		(nullptr),		// 変更種類アイコン情報
@@ -127,7 +127,8 @@ CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeAr
 	m_typeEdit			(EEditType::EDIT_PROCESS),	// エディットする種類
 	m_typeChange		(EChangeType::TYPE_BODY),	// 変更する種類
 	m_nPlayerIdx		(nPlayerIdx),				// プレイヤーインデックス
-	m_typeArea			(typeArea)					// プレイヤーポジション
+	m_typeArea			(typeArea),					// プレイヤーポジション
+	m_info				(info)						// 着せ替え情報
 {
 	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
 	{
@@ -232,6 +233,12 @@ void CDressupUI::Uninit()
 
 	// ボールの終了
 	SAFE_UNINIT(m_pBall);
+
+	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+	{
+		// 矢印の終了
+		SAFE_UNINIT(m_apArrow[i]);
+	}
 
 	// オブジェクトを破棄
 	Release();
@@ -338,14 +345,15 @@ void CDressupUI::SetPosition(const MyLib::Vector3& pos)
 //============================================================
 CDressupUI *CDressupUI::Create
 (
-	CEntry_Dressup* pParent,			// 親クラス情報
-	const CPlayer::EFieldArea typeArea,	// プレイヤーポジション
-	const int nPlayerIdx,				// プレイヤーインデックス
-	const MyLib::Vector3& rPos			// 原点位置
+	CEntry_Dressup* pParent,				// 親クラス情報
+	const CPlayer::EFieldArea typeArea,		// プレイヤーポジション
+	const int nPlayerIdx,					// プレイヤーインデックス
+	const MyLib::Vector3& rPos,				// 原点位置
+	const CPlayerManager::LoadInfo& info	// 着せ替え情報
 )
 {
 	// 着せ替えUIの生成
-	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, typeArea, nPlayerIdx);
+	CDressupUI* pDressupUI = DEBUG_NEW CDressupUI(pParent, typeArea, nPlayerIdx, info);
 	if (pDressupUI == nullptr)
 	{ // 生成に失敗した場合
 
@@ -800,6 +808,7 @@ HRESULT CDressupUI::CreateSetup()
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
+#if 0
 	CGameManager::ETeamSide side;	// チーム
 	switch (m_typeArea)
 	{ // ポジションごとの処理
@@ -811,7 +820,7 @@ HRESULT CDressupUI::CreateSetup()
 		{ // ユーザーの場合
 
 			// エントリーインデックスからチームサイドを取得
-			side = pSetupTeam->GetTeamSide(nPadIdx);
+			side = pSetupTeam->GetTeamSide(m_nPlayerIdx);	// TODO/FUJITA：こっちはパッドインデックスからチーム取ってる
 		}
 		else
 		{ // AIの場合
@@ -843,6 +852,42 @@ HRESULT CDressupUI::CreateSetup()
 		assert(false);
 		break;
 	}
+#else
+	CGameManager::ETeamSide side = pSetupTeam->GetTeamSide(m_nPlayerIdx);	// チーム	// TODO/FUJITA：こっちはパッドインデックスからチーム取ってる
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// エントリーインデックスを取得
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx);
+		if (nPadIdx <= -1)
+		{ // AIの場合
+
+			// 自身のAI生成順を保存
+			m_nOrdinalAI = m_nNumAI;
+
+			// 準備完了済みにする
+			m_bReady = true;
+
+			// AI生成数を加算
+			m_nNumAI++;
+		}
+		break;
+	}
+	case CPlayer::FIELD_OUT:
+	{
+		// 外野のチームを指定
+		side = (CGameManager::ETeamSide)(m_nPlayerIdx / (CPlayerManager::OUT_MAX / 2));
+
+		// 準備完了済みにする
+		m_bReady = true;
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
+#endif
 
 	// プレイヤー生成
 	m_pPlayer = CPlayer::Create
@@ -850,8 +895,8 @@ HRESULT CDressupUI::CreateSetup()
 		VEC3_ZERO,	// 位置
 		side,		// チームサイド
 		CPlayer::EHuman::HUMAN_ENTRY,	// ポジション
-		CPlayer::EBody::BODY_NORMAL,	// 体系
-		CPlayer::EHandedness::HAND_R	// 利き手
+		m_info.eBody,	// 体系
+		m_info.eHanded	// 利き手
 	);
 	if (m_pPlayer == nullptr)
 	{ // 生成に失敗した場合
@@ -922,6 +967,14 @@ HRESULT CDressupUI::CreateSetup()
 
 		return E_FAIL;
 	}
+
+	// インデックス割当
+	m_pHair->SetNowIdx(m_info.nHair);
+	m_pAccessory->SetNowIdx(m_info.nAccessory);
+	m_pFace->SetNowIdx(m_info.nFace);
+
+	// ドレスアップ反映
+	m_pPlayer->BindDressUp(m_info.nHair, m_info.nAccessory, m_info.nFace);
 
 	// ボールの生成
 	m_pBall = CBallFake::Create();
@@ -1505,6 +1558,9 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 		assert(false);
 		break;
 	}
+
+	// ドレスアップ反映
+	m_pPlayer->BindDressUp(m_info.nHair, m_info.nAccessory, m_info.nFace);
 
 	// ドレスアップに再割当
 	m_pHair->BindObjectCharacter(m_pPlayer);
