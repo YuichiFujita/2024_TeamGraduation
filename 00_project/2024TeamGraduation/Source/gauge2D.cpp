@@ -125,6 +125,9 @@ HRESULT CGauge2D::Init()
 		return E_FAIL;
 	}
 
+	// 
+	m_pTeamName->SetType(CObject::TYPE::TYPE_UI);
+
 	// ¢ŠE’âŽ~’†‚Å‚à“®‚­I
 	SetEnablePosibleMove_WorldPause(true);
 	m_pBg->SetEnablePosibleMove_WorldPause(true);
