@@ -20,7 +20,7 @@ namespace
 	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\setup_player.txt";	// プレイヤーセットアップテキスト
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
-	const int ID_HAIR = 11;	// 髪のID
+	const int ID_HAIR = 9;	// 髪のID
 
 	namespace Side
 	{
@@ -133,7 +133,7 @@ HRESULT CAudienceHighPoly::Init()
 
 	// ドレスアップ(髪)
 	m_pDressUp_Hair = CDressup::Create(
-		CDressup::EType::TYPE_HAIR_MII,		// 着せ替えの種類
+		CDressup::EType::TYPE_HAIR_MII,	// 着せ替えの種類
 		m_pChara,						// 変更するプレイヤー
 		ID_HAIR);						// 変更箇所のインデックス
 	m_pDressUp_Hair->RandSet();
@@ -197,9 +197,6 @@ void CAudienceHighPoly::UpdatePenlight(const float fDeltaTime, const float fDelt
 {
 	if (m_pChara == nullptr) return;
 	if (m_pLight == nullptr) return;
-
-	// ライトの位置を頭の上にする
-
 
 	// 判定するパーツ取得
 	CModel* pModel = m_pChara->GetModel(m_nIdxLightHand);

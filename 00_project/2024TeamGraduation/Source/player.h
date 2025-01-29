@@ -221,6 +221,7 @@ public:
 		HUMAN_NONE = -1,		// 指定なし
 		HUMAN_ENTRY,			// エントリー
 		HUMAN_SPAWN,			// 登場演出
+		HUMAN_FACEICON,			// 顔アイコン
 		HUMAN_CUTIN,			// カットイン
 		HUMAN_REFEREE,			// 体育教師
 		HUMAN_REFEREE_RESULT,	// 体育教師
@@ -386,6 +387,9 @@ public:
 	bool IsDeathState() const;											// 死亡状態かの確認
 	bool IsPassOK() const;												// パス可能かの確認
 	bool IsTeamPlayer() const;											// チーム内にまだプレイヤーがいるかの確認
+	std::string GetCharaPath(const EBody body, const EHandedness hand);	// キャラパス取得
+	void BindDressUpFace(int nHair, int nAccessory, int nFace);			// 着せ替え割当
+	void SetMyPlayerIdxFace(int nIdx);									// 自分のインデックス設定
 
 	//=============================
 	// 静的メンバ関数
@@ -509,6 +513,7 @@ private:
 	void ResetFrag();	// フラグリセット
 	int GetNumUser();	// ユーザーベースのプレイヤー総数取得
 	void Revive();	// 復活
+	bool IsInputAngle(CBall* pBall) const;
 	
 	//-----------------------------
 	// サウンド
@@ -623,6 +628,7 @@ private:
 	SDamageInfo m_sDamageInfo;	// ダメージ情報
 	EHandedness m_Handedness;	// 利き手
 	EBody m_BodyType;			// 体型
+	EHuman m_typeHuman;			// 人
 	const EFieldArea m_typeArea;				// ポジション
 	const CGameManager::ETeamSide m_typeTeam;	// チームサイド
 	static CListManager<CPlayer> m_List;		// リスト

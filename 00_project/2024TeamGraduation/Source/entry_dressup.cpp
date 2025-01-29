@@ -27,6 +27,7 @@ namespace
 	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
+	const D3DXCOLOR DEF_COL = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);	// デフォルト色
 	const int PRIORITY = 6;	// 優先順位
 
 	namespace ui
@@ -45,7 +46,7 @@ namespace
 
 		namespace area
 		{
-			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 280.0f, 615.0f, 0.0f);	// 左位置
+			const MyLib::Vector3 POS	= MyLib::Vector3(VEC3_SCREEN_CENT.x - 280.0f, 580.0f, 0.0f);	// 左位置
 			const std::string TEXTURE	= "data\\TEXTURE\\entry\\inout.png";	// 変更種類アイコンテクスチャ
 			const MyLib::Vector3 OFFSET	= MyLib::Vector3(560.0f, 0.0f, 0.0f);	// オフセット
 			const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(1, 2);	// テクスチャ分割数
@@ -156,6 +157,9 @@ HRESULT CEntry_Dressup::Init()
 		m_apAreaUI[i]->SetSize(size);
 		m_apAreaUI[i]->SetSizeOrigin(m_apAreaUI[i]->GetSize());
 
+		// 色を設定
+		m_apAreaUI[i]->SetColor(DEF_COL);
+
 		// チーム名背景情報
 		m_apNameBG[i] = CObject2D::Create(PRIORITY);
 		if (m_apNameBG[i] == nullptr)
@@ -178,6 +182,9 @@ HRESULT CEntry_Dressup::Init()
 		m_apNameBG[i]->SetSize(sizeBack);
 		m_apNameBG[i]->SetSizeOrigin(m_apNameBG[i]->GetSize());
 
+		// 色を設定
+		m_apNameBG[i]->SetColor(DEF_COL);
+
 		// チーム名の生成
 		m_apTeamName[i] = CString2D::Create
 		( // 引数
@@ -199,6 +206,9 @@ HRESULT CEntry_Dressup::Init()
 
 		// テキストを割当
 		loadtext::BindString(m_apTeamName[i], loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)));
+
+		// 色を設定
+		m_apTeamName[i]->SetColor(DEF_COL);
 	}
 
 	// 戻るボタンの生成
@@ -223,6 +233,9 @@ HRESULT CEntry_Dressup::Init()
 	m_apTransUI[TRANS_BACK]->SetSize(sizeBack);
 	m_apTransUI[TRANS_BACK]->SetSizeOrigin(m_apTransUI[TRANS_BACK]->GetSize());
 
+	// 色を設定
+	m_apTransUI[TRANS_BACK]->SetColor(DEF_COL);
+
 	// 進むボタンの生成
 	m_apTransUI[TRANS_NEXT] = CObject2D::Create(PRIORITY);
 	if (m_apTransUI[TRANS_NEXT] == nullptr)
@@ -244,6 +257,9 @@ HRESULT CEntry_Dressup::Init()
 	sizeNext = UtilFunc::Transformation::AdjustSizeByHeight(sizeNext, ui::enter::HEGHT);
 	m_apTransUI[TRANS_NEXT]->SetSize(sizeNext);
 	m_apTransUI[TRANS_NEXT]->SetSizeOrigin(m_apTransUI[TRANS_NEXT]->GetSize());
+
+	// 色を設定
+	m_apTransUI[TRANS_NEXT]->SetColor(DEF_COL);
 
 	int nCurLeft = 0;	// 現在の左プレイヤー数
 	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
@@ -440,24 +456,60 @@ void CEntry_Dressup::Update(const float fDeltaTime, const float fDeltaRate, cons
 	switch (m_state)
 	{ // 状態ごとの処理
 	case EState::STATE_DRESSUP:
+	{
+#if 0
+		std::vector<CSelectUI*> vecDisp;
+		for (auto& rSelect : m_vecSelect)
+		{ // 要素数分繰り返す
+			rSelect->SetEnableDispFrame(true);
+		}
+
+		for (auto& rSelect : m_vecSelect)
+		{ // 要素数分繰り返す
+
+			if (!rSelect->IsDispFrame())
+			{
+				continue;
+			}
+
+			for (auto& rPlusSelect : m_vecSelect)
+			{ // 要素数分繰り返す
+
+				if (rSelect == rPlusSelect)
+				{ // 同一の場合次へ
+					continue;
+				}
+
+				if (rSelect->GetSelectIdx() == rPlusSelect->GetSelectIdx())
+				{ // 選択位置が同一の場合
+
+					// 非表示
+					rPlusSelect->SetEnableDispFrame(false);
+
+					// 表示配列追加
+					//vecDisp.push_back(rSelect);
+				}
+			}
+		}
+#endif
 		break;
-
+	}
 	case EState::STATE_SETTING:
-
+	{
 		// ルールマネージャーの更新
 		assert(m_pRuleManager != nullptr);
 		m_pRuleManager->Update(fDeltaTime, fDeltaRate, fSlowRate);
 		break;
-
+	}
 	case EState::STATE_END:
-
+	{
 		// セーブ処理
 		Save();
 
 		// ゲーム画面に遷移する
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_GAME);
 		break;
-
+	}
 	default:
 		assert(false);
 		break;
@@ -858,6 +910,49 @@ int CEntry_Dressup::GetAreaUINumSelect(const int nSelectX) const
 	}
 
 	return nNumSelect;
+}
+
+//==========================================================================
+// 選択オブジェクト色設定
+//==========================================================================
+void CEntry_Dressup::SetSelectObjectColor(const D3DXCOLOR& rCol, const MyLib::PosGrid2& rSelect)
+{
+	assert(rSelect.y > -1 && rSelect.y < CSelectUI::SELECT_MAX);
+	switch (rSelect.y)
+	{ // 縦選択ごとの処理
+	case CSelectUI::SELECT_NAME:
+	{
+		assert(rSelect.x > -1 && rSelect.x < CGameManager::SIDE_MAX);
+		if (m_apTeamName[rSelect.x] != nullptr)
+		m_apTeamName[rSelect.x]->SetColor(rCol);
+		if (m_apNameBG[rSelect.x] != nullptr)
+		m_apNameBG[rSelect.x]->SetColor(rCol);
+		break;
+	}
+	case CSelectUI::SELECT_DRESSUP:
+	{
+		assert(rSelect.x > -1 && rSelect.x < GetNumDressUI());
+		//GetPtrDressUI(rSelect.x)->SetColor(rCol);
+		break;
+	}
+	case CSelectUI::SELECT_AREA:
+	{
+		assert(rSelect.x > -1 && rSelect.x < CGameManager::SIDE_MAX);
+		if (m_apAreaUI[rSelect.x] != nullptr)
+		m_apAreaUI[rSelect.x]->SetColor(rCol);
+		break;
+	}
+	case CSelectUI::SELECT_TRANS:
+	{
+		assert(rSelect.x > -1 && rSelect.x < TRANS_MAX);
+		if (m_apTransUI[rSelect.x] != nullptr)
+		m_apTransUI[rSelect.x]->SetColor(rCol);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //==========================================================================

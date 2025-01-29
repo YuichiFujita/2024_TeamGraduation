@@ -1237,51 +1237,6 @@ void CPlayer::SetPartsRot(void)
 			}
 		}
 
-		if (pInputKeyboard->GetTrigger(DIK_LEFT) == true)
-		{// パーツ切り替え
-			m_nNowMotion = (m_nNowMotion + (nMotionNum - 1)) % nMotionNum;
-
-			// 情報上書き
-			aInfo = m_pMotion->GetInfo(m_nNowMotion);
-
-			for (int nCntParts = 0; nCntParts < nPartsNum; nCntParts++)
-			{
-				// 今回のモデル取得
-				CModel* pModel = GetObjectChara()->GetModel()[nCntParts];
-				if (pModel == NULL)
-				{
-					continue;
-				}
-
-				// 保存されている向きに設定
-				pModel->SetPosition(pModel->GetOriginPotision() + aInfo.aKey[m_nNowKey].aParts[nCntParts].pos);
-				pModel->SetRotation(aInfo.aKey[m_nNowKey].aParts[nCntParts].rot);
-				pModel->SetScale(aInfo.aKey[m_nNowKey].aParts[nCntParts].scale);
-			}
-		}
-		else if (pInputKeyboard->GetTrigger(DIK_RIGHT) == true)
-		{// パーツ切り替え
-			m_nNowMotion = (m_nNowMotion + 1) % nMotionNum;
-
-			// 情報上書き
-			aInfo = m_pMotion->GetInfo(m_nNowMotion);
-
-			for (int nCntParts = 0; nCntParts < nPartsNum; nCntParts++)
-			{
-				// 今回のモデル取得
-				CModel* pModel = GetObjectChara()->GetModel()[nCntParts];
-				if (pModel == NULL)
-				{
-					continue;
-				}
-
-				// 保存されている向きに設定
-				pModel->SetPosition(pModel->GetOriginPotision() + aInfo.aKey[m_nNowKey].aParts[nCntParts].pos);
-				pModel->SetRotation(aInfo.aKey[m_nNowKey].aParts[nCntParts].rot);
-				pModel->SetScale(aInfo.aKey[m_nNowKey].aParts[nCntParts].scale);
-			}
-		}
-
 
 		//***********************
 		// 現在のキー変更
@@ -2540,5 +2495,28 @@ void CPlayer::Draw(void)
 		nNowParts = -1;
 	}
 
-	CObjectChara::Draw(nNowParts, 1.0f);
+	if (ImGui::TreeNode("ColorChange"))
+	{
+		// 色変更
+		static ImVec4 editCol = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+		ImGui::ColorEdit4("color", (float*)&editCol);
+
+		static std::vector<int> vecID = { 1 };
+		static int EditvecID = 0;
+		if (ImGui::Button("Add ID"))
+		{
+			vecID.push_back(0);
+		}
+		ImGui::SliderInt("Edit vecID", &EditvecID, 0, vecID.size() - 1);
+		ImGui::SliderInt("vecID", &vecID[EditvecID], 0, GetNumModel());
+
+		CObjectChara::Draw(vecID, D3DXCOLOR(editCol.x, editCol.y, editCol.z, editCol.w));
+
+		ImGui::TreePop();
+	}
+	else
+	{
+		CObjectChara::Draw();
+	}
+
 }

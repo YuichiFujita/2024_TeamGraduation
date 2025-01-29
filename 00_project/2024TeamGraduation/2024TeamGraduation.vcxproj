@@ -213,6 +213,7 @@
     <ClCompile Include="Source\dressup_accessory.cpp" />
     <ClCompile Include="Source\dressup_face.cpp" />
     <ClCompile Include="Source\dressup_face_Mii.cpp" />
+    <ClCompile Include="Source\dressup_hair_MiiLow.cpp" />
     <ClCompile Include="Source\dressup_hair.cpp" />
     <ClCompile Include="Source\dressup_hair_Mii.cpp" />
     <ClCompile Include="Source\dressup_uniform.cpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="Source\entryscene.cpp" />
     <ClCompile Include="Source\entry_dressup.cpp" />
     <ClCompile Include="Source\entry_setupTeam.cpp" />
+    <ClCompile Include="Source\faceUI.cpp" />
     <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\fog.cpp" />
     <ClCompile Include="Source\font.cpp" />
@@ -324,6 +326,7 @@
     <ClCompile Include="Source\playercontrol_move.cpp" />
     <ClCompile Include="Source\playerCutIn.cpp" />
     <ClCompile Include="Source\playerDressup.cpp" />
+    <ClCompile Include="Source\playerFaceIcon.cpp" />
     <ClCompile Include="Source\playerIn.cpp" />
     <ClCompile Include="Source\playerManager.cpp" />
     <ClCompile Include="Source\playerManager_game.cpp" />
@@ -465,6 +468,7 @@
     <ClInclude Include="Source\dressup_accessory.h" />
     <ClInclude Include="Source\dressup_face.h" />
     <ClInclude Include="Source\dressup_face_Mii.h" />
+    <ClInclude Include="Source\dressup_hair_MiiLow.h" />
     <ClInclude Include="Source\dressup_hair.h" />
     <ClInclude Include="Source\dressup_hair_Mii.h" />
     <ClInclude Include="Source\dressup_uniform.h" />
@@ -477,6 +481,7 @@
     <ClInclude Include="Source\entryscene.h" />
     <ClInclude Include="Source\entry_dressup.h" />
     <ClInclude Include="Source\entry_setupTeam.h" />
+    <ClInclude Include="Source\faceUI.h" />
     <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\fog.h" />
     <ClInclude Include="Source\font.h" />
@@ -576,6 +581,7 @@
     <ClInclude Include="Source\playercontrol_move.h" />
     <ClInclude Include="Source\playerCutIn.h" />
     <ClInclude Include="Source\playerDressup.h" />
+    <ClInclude Include="Source\playerFaceIcon.h" />
     <ClInclude Include="Source\playerIn.h" />
     <ClInclude Include="Source\playerManager.h" />
     <ClInclude Include="Source\playerManager_game.h" />

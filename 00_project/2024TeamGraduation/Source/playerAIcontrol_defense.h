@@ -49,6 +49,14 @@ public:
 		MAX
 	};
 
+	enum ECatch
+	{
+		CATCH_NORMAL = 0,
+		CATCH_JUST,
+		CATCH_LOSS,
+		CATCH_MAX
+	};
+
 	struct SAction {
 		MyLib::Vector3 pos;			// 位置
 		float fTimer;				// タイマー
@@ -63,7 +71,6 @@ public:
 	CPlayerAIControlDefense();
 
 	static CPlayerAIControlDefense* Create(CPlayer* player);
-
 
 	HRESULT Init() override;
 	void Uninit();
@@ -99,6 +106,8 @@ protected:
 	void UpdateSee();						// 更新
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
+
+	bool IsTargetDistanse();
 
 	//-----------------------------
 	// 設定関数
@@ -138,6 +147,7 @@ private:
 	// メンバ関数
 	//=============================
 	void UpdateDefense(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 守り
+	void UpdateCatchRadius();
 	void SelectAction();			// アクション
 	void PlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// チームメイトボール
 	void NotPlayerBall(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 
@@ -146,7 +156,7 @@ private:
 
 	void UpdateActionTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);
 	void SetActionTimer(int nMin, int nMax);	// 行動タイマー
-
+	void SetCatchRadius(float fRadius);
 	bool IsCancel();
 
 	CPlayer* GetTarget();				// 投げるターゲット
@@ -162,6 +172,7 @@ private:
 	EFlow m_eFlow;					// 流れ
 	EAction m_eAction;				// アクション
 	EActionStatus m_eActionStatus;	// アクション状態
+	ECatch m_eCatch;
 
 	//-----------------------------
 	// 構造体

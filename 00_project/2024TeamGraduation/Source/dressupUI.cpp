@@ -28,14 +28,22 @@ namespace
 	const int PRIORITY = 5;	// 着せ替えUIの優先順位
 	const D3DXCOLOR COL_CHOICE	= MyLib::color::White();				// 選択中色
 	const D3DXCOLOR COL_DEFAULT	= D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);	// 非選択中色
+	const float MUL = 0.8f;
 
 	namespace player
 	{
 		namespace frame
 		{
 			const MyLib::PosGrid2 PTRN = MyLib::PosGrid2(mylib_const::MAX_PLAYER + 1, 1);	// テクスチャ分割数
-			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame001.png";			// プレイヤーフレームアイコンテクスチャ
-			const float WIDTH = 100.0f;	// 横幅
+			const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame000.png";			// テクスチャ
+			const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -16.0f, 0.0f) * MUL;			// オフセット
+			const float WIDTH = 118.0f * MUL;	// 横幅
+
+			namespace bg
+			{
+				const std::string TEXTURE = "data\\TEXTURE\\entry\\PlayerFrame001.png";	// テクスチャ
+				const float WIDTH = 118.0f * MUL;	// 横幅
+			}
 		}
 		namespace ui
 		{
@@ -43,25 +51,25 @@ namespace
 			{
 				D3DXVECTOR2 TEX_POS[] =		// テクスチャ座標
 				{
-					D3DXVECTOR2(0.0f, 0.0f),	// 左上
-					D3DXVECTOR2(1.0f, 0.0f),	// 右上
-					D3DXVECTOR2(0.0f, 1.0f),	// 左下
-					D3DXVECTOR2(1.0f, 1.0f),	// 右下
+					D3DXVECTOR2(0.1f, 0.0f),	// 左上
+					D3DXVECTOR2(0.9f, 0.0f),	// 右上
+					D3DXVECTOR2(0.1f, 0.8f),	// 左下
+					D3DXVECTOR2(0.9f, 0.8f),	// 右下
 				};
-				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, 18.0f, 0.0f);	// オフセット
-				const float WIDTH = 325.0f;	// 横幅
+				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -42.0f, 0.0f) * MUL;	// オフセット
+				const float WIDTH = 290.0f * MUL;	// 横幅
 			}
 			namespace face
 			{
 				D3DXVECTOR2 TEX_POS[] =		// テクスチャ座標
 				{
-					D3DXVECTOR2(0.3f, 0.0f),	// 左上
-					D3DXVECTOR2(0.7f, 0.0f),	// 右上
-					D3DXVECTOR2(0.3f, 0.42f),	// 左下
-					D3DXVECTOR2(0.7f, 0.42f),	// 右下
+					D3DXVECTOR2(0.425f, 0.0f),	// 左上
+					D3DXVECTOR2(0.575f, 0.0f),	// 右上
+					D3DXVECTOR2(0.425f, 0.38f),	// 左下
+					D3DXVECTOR2(0.575f, 0.38f),	// 右下
 				};
-				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -20.0f, 0.0f);	// オフセット
-				const float WIDTH = 620.0f;	// 横幅
+				const MyLib::Vector3 OFFSET = MyLib::Vector3(0.0f, -32.0f, 0.0f) * MUL;	// オフセット
+				const float WIDTH = 700.0f * MUL;	// 横幅
 			}
 		}
 	}
@@ -70,16 +78,22 @@ namespace
 	{
 		const MyLib::PosGrid2	PTRN	= MyLib::PosGrid2(CDressupUI::EChangeType::TYPE_MAX, 1);	// テクスチャ分割数
 		const std::string		TEXTURE	= "data\\TEXTURE\\entry\\ChangeType000.png";	// 変更種類アイコンテクスチャ
-		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 175.0f, 0.0f);			// オフセット
-		const float WIDTH = 100.0f;	// 横幅
+		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 175.0f, 0.0f) * MUL;		// オフセット
+		const float WIDTH = 100.0f * MUL;	// 横幅
 	}
 
 	namespace ready
 	{
 		const MyLib::PosGrid2	PTRN	= MyLib::PosGrid2(1, 2);						// テクスチャ分割数
 		const std::string		TEXTURE	= "data\\TEXTURE\\entry\\ReadyCheck000.png";	// 準備完了チェックテクスチャ
-		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 230.0f, 0.0f);			// オフセット
-		const float WIDTH = 100.0f;	// 横幅
+		const MyLib::Vector3	OFFSET	= MyLib::Vector3(0.0f, 222.0f, 0.0f) * MUL;		// オフセット
+		const float WIDTH = 112.0f * MUL;	// 横幅
+	}
+
+	namespace arrow
+	{
+		const float				SIZE = 18.0f;	// 大きさ
+		const MyLib::Vector3	SPACE = MyLib::Vector3(83.0f, 0.0f, 0.0f);	// 空白
 	}
 }
 
@@ -95,26 +109,30 @@ int CDressupUI::m_nNumAI = 0;	// AI総数
 //	コンストラクタ
 //============================================================
 CDressupUI::CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx) : CObject(PRIORITY, LAYER::LAYER_2D),
-	m_pParent		(pParent),		// 親クラス情報
-	m_pRenderScene	(nullptr),		// シーンレンダーテクスチャ
-	m_pChangeIcon	(nullptr),		// 変更種類アイコン情報
-	m_pReadyCheck	(nullptr),		// 準備完了チェック情報
-	m_pPlayerFrame	(nullptr),		// プレイヤーフレーム情報
-	m_pPlayerUI		(nullptr),		// プレイヤーUI情報
-	m_nOrdinalAI	(-1),			// 自身が生成された順番 (AIのみ)
-	m_nPadIdx		(-1),			// 操作権インデックス
-	m_bReady		(false),		// 準備完了フラグ
-	m_pBall			(nullptr),		// ボール
-	m_pPlayer		(nullptr),		// プレイヤー
-	m_pHair			(nullptr),		// 髪着せ替え
-	m_pAccessory	(nullptr),		// アクセ着せ替え
-	m_pFace			(nullptr),		// 顔着せ替え
-	m_typeEdit		(EEditType::EDIT_PROCESS),	// エディットする種類
-	m_typeChange	(EChangeType::TYPE_BODY),	// 変更する種類
-	m_nPlayerIdx	(nPlayerIdx),				// プレイヤーインデックス
-	m_typeArea		(typeArea)					// プレイヤーポジション
+	m_pParent			(pParent),		// 親クラス情報
+	m_pRenderScene		(nullptr),		// シーンレンダーテクスチャ
+	m_pChangeIcon		(nullptr),		// 変更種類アイコン情報
+	m_pReadyCheck		(nullptr),		// 準備完了チェック情報
+	m_pPlayerFrameBG	(nullptr),		// プレイヤーフレーム背景情報
+	m_pPlayerFrame		(nullptr),		// プレイヤーフレーム情報
+	m_pPlayerUI			(nullptr),		// プレイヤーUI情報
+	m_nOrdinalAI		(-1),			// 自身が生成された順番 (AIのみ)
+	m_nPadIdx			(-1),			// 操作権インデックス
+	m_bReady			(false),		// 準備完了フラグ
+	m_pBall				(nullptr),		// ボール
+	m_pPlayer			(nullptr),		// プレイヤー
+	m_pHair				(nullptr),		// 髪着せ替え
+	m_pAccessory		(nullptr),		// アクセ着せ替え
+	m_pFace				(nullptr),		// 顔着せ替え
+	m_typeEdit			(EEditType::EDIT_PROCESS),	// エディットする種類
+	m_typeChange		(EChangeType::TYPE_BODY),	// 変更する種類
+	m_nPlayerIdx		(nPlayerIdx),				// プレイヤーインデックス
+	m_typeArea			(typeArea)					// プレイヤーポジション
 {
-
+	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+	{
+		m_apArrow[i] = nullptr;	// 矢印の情報
+	}
 }
 
 //============================================================
@@ -194,11 +212,14 @@ void CDressupUI::Uninit()
 	// 準備完了チェックの終了
 	SAFE_UNINIT(m_pReadyCheck);
 
-	// プレイヤーフレームの終了
-	SAFE_UNINIT(m_pPlayerFrame);
+	// プレイヤーフレーム背景の終了
+	SAFE_UNINIT(m_pPlayerFrameBG);
 
 	// プレイヤーUIの終了
 	SAFE_UNINIT(m_pPlayerUI);
+
+	// プレイヤーフレームの終了
+	SAFE_UNINIT(m_pPlayerFrame);
 
 	// 髪着せ替えの終了
 	SAFE_UNINIT(m_pHair);
@@ -248,11 +269,14 @@ void CDressupUI::Update(const float fDeltaTime, const float fDeltaRate, const fl
 	// 準備完了チェックの更新
 	m_pReadyCheck->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
-	// プレイヤーフレームの更新
-	m_pPlayerFrame->Update(fDeltaTime, fDeltaRate, fSlowRate);
+	// プレイヤーフレーム背景の更新
+	m_pPlayerFrameBG->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// プレイヤーUIの更新
 	m_pPlayerUI->Update(fDeltaTime, fDeltaRate, fSlowRate);
+
+	// プレイヤーフレームの更新
+	m_pPlayerFrame->Update(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// プレイヤーの更新
 	m_pPlayer->Update(fDeltaTime, fDeltaRate, fSlowRate);
@@ -269,11 +293,14 @@ void CDressupUI::Draw()
 	// 準備完了チェックの描画
 	m_pReadyCheck->Draw();
 
-	// プレイヤーフレームの描画
-	m_pPlayerFrame->Draw();
+	// プレイヤーフレーム背景の描画
+	m_pPlayerFrameBG->Draw();
 
 	// プレイヤーUIの描画
 	m_pPlayerUI->Draw();
+
+	// プレイヤーフレームの描画
+	m_pPlayerFrame->Draw();
 }
 
 //============================================================
@@ -452,8 +479,8 @@ HRESULT CDressupUI::CreateUI()
 		return E_FAIL;
 	}
 
-	// プレイヤーフレームの生成
-	if (FAILED(CreatePlayerFrame()))
+	// プレイヤーフレーム背景の生成
+	if (FAILED(CreatePlayerFrameBG()))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -461,6 +488,20 @@ HRESULT CDressupUI::CreateUI()
 
 	// プレイヤーUIの生成
 	if (FAILED(CreatePlayerUI()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// プレイヤーフレームの生成
+	if (FAILED(CreatePlayerFrame()))
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 矢印UIの生成
+	if (FAILED(CreateArrowUI()))
 	{ // 生成に失敗した場合
 
 		return E_FAIL;
@@ -625,6 +666,71 @@ HRESULT CDressupUI::CreatePlayerFrame()
 }
 
 //============================================================
+// プレイヤーフレーム背景の生成処理
+//============================================================
+HRESULT CDressupUI::CreatePlayerFrameBG()
+{
+	// チームセットアップ情報の取得
+	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
+	if (pSetupTeam == nullptr) { return E_FAIL; }
+
+	// プレイヤーフレーム背景の生成
+	m_pPlayerFrameBG = CObject2D_Anim::Create
+	( // 引数
+		VEC3_ZERO,				// 位置
+		player::frame::PTRN.x,	// テクスチャ横分割数
+		player::frame::PTRN.y,	// テクスチャ縦分割数
+		0.0f,					// 再生時間
+		false,					// 自動破棄
+		PRIORITY				// 優先順位
+	);
+	if (m_pPlayerFrameBG == nullptr)
+	{ // 生成に失敗した場合
+
+		return E_FAIL;
+	}
+
+	// 種類を自動破棄/更新/描画しないものにする
+	m_pPlayerFrameBG->SetType(CObject::TYPE::TYPE_NONE);
+
+	// 自動再生をOFFにする
+	m_pPlayerFrameBG->SetEnableAutoPlay(false);
+
+	switch (m_typeArea)
+	{ // ポジションごとの処理
+	case CPlayer::FIELD_IN:
+	{
+		// テクスチャパターンの初期化
+		m_pPlayerFrameBG->SetPatternAnim(pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx));
+		break;
+	}
+	case CPlayer::FIELD_OUT:
+	{
+		// テクスチャパターンの初期化
+		m_pPlayerFrameBG->SetPatternAnim(-1);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
+
+	// テクスチャの割当
+	CTexture* pTexture = CTexture::GetInstance();
+	int nTexID = CTexture::GetInstance()->Regist(player::frame::bg::TEXTURE);
+	m_pPlayerFrameBG->BindTexture(nTexID);
+
+	// 横幅を元にサイズを設定
+	MyLib::Vector2 size = pTexture->GetImageSize(nTexID);
+	size = UtilFunc::Transformation::AdjustSizeByWidth(size, player::frame::bg::WIDTH);
+	size.y *= (float)player::frame::PTRN.x;
+	m_pPlayerFrameBG->SetSize(size);
+	m_pPlayerFrameBG->SetSizeOrigin(m_pPlayerFrameBG->GetSize());
+
+	return S_OK;
+}
+
+//============================================================
 // プレイヤーUIの生成処理
 //============================================================
 HRESULT CDressupUI::CreatePlayerUI()
@@ -648,6 +754,39 @@ HRESULT CDressupUI::CreatePlayerUI()
 
 	// 元の大きさを設定
 	m_pPlayerUI->SetSizeOrigin(m_pPlayerUI->GetSize());
+
+	return S_OK;
+}
+
+//============================================================
+// 矢印UIの生成
+//============================================================
+HRESULT CDressupUI::CreateArrowUI()
+{
+	// 位置取得
+	MyLib::Vector3 pos = GetPosition();
+
+	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+	{
+		// 矢印の生成
+		m_apArrow[i] = CArrowUI::Create
+		( // 引数
+			(CArrowUI::EDirection)i,	// 方向
+			pos,						// 位置
+			arrow::SIZE,				// サイズ
+			MyLib::color::White(1.0f),	// 色
+			GetPriority()				// 優先順位
+		);
+
+		if (m_apArrow[i] == nullptr)
+		{ // 生成に失敗した場合
+			return E_FAIL;
+		}
+
+		// オフセット位置設定
+		m_apArrow[i]->SetOffset(arrow::SPACE);
+		m_apArrow[i]->SetOffsetOrigin(m_apArrow[i]->GetOffset());
+	}
 
 	return S_OK;
 }
@@ -832,9 +971,14 @@ void CDressupUI::CreateTexture()
 	assert(m_pPlayer != nullptr);
 	m_pPlayer->Draw();
 
-	// ボールの描画
-	assert(m_pBall != nullptr);
-	m_pBall->Draw();
+	if (m_typeChange == TYPE_HANDEDNESS
+	||  m_typeChange == TYPE_BODY)
+	{ // 全身が見える場合
+
+		// ボールの描画
+		assert(m_pBall != nullptr);
+		m_pBall->Draw();
+	}
 }
 
 //============================================================
@@ -852,7 +996,8 @@ void CDressupUI::SetPositionRelative()
 	m_pReadyCheck->SetPosition(posThis + ready::OFFSET);
 
 	// プレイヤーフレームの位置設定
-	m_pPlayerFrame->SetPosition(posThis);
+	m_pPlayerFrame->SetPosition(posThis + player::frame::OFFSET);
+	m_pPlayerFrameBG->SetPosition(posThis + player::frame::OFFSET);
 
 	switch (m_typeChange)
 	{ // 変更種類ごとの処理
@@ -871,6 +1016,39 @@ void CDressupUI::SetPositionRelative()
 
 		// プレイヤーUIの位置設定
 		m_pPlayerUI->SetPosition(posThis + player::ui::body::OFFSET);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
+
+	switch (m_typeEdit)
+	{ // エディット種類ごとの処理
+	case EEditType::EDIT_PROCESS:
+	{
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			// 矢印の生成
+			m_apArrow[i]->SetPosition(m_pPlayerFrame->GetPosition());
+			m_apArrow[i]->SetOriginPosition(m_pPlayerFrame->GetPosition());
+
+			bool bDisp = (m_nPadIdx > -1);
+			m_apArrow[i]->SetEnableDisp(bDisp);
+		}
+		break;
+	}
+	case EEditType::EDIT_CHANGETYPE:
+	{
+		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+		{
+			// 矢印の生成
+			m_apArrow[i]->SetPosition(m_pChangeIcon->GetPosition());
+			m_apArrow[i]->SetOriginPosition(m_pChangeIcon->GetPosition());
+
+			bool bDisp = (m_nPadIdx > -1);
+			m_apArrow[i]->SetEnableDisp(bDisp);
+		}
 		break;
 	}
 	default:
@@ -1020,35 +1198,68 @@ void CDressupUI::UpdateUI()
 	// 変更種類をアイコンに反映
 	m_pChangeIcon->SetPatternAnim(m_typeChange);
 
-	switch (m_typeEdit)
-	{ // エディット種類ごとの処理
-	case EEditType::EDIT_PROCESS:
-	{
-		// 変更種類アイコンの色をグレーにする
-		m_pChangeIcon->SetColor(COL_DEFAULT);
+	if (m_nPadIdx <= -1)
+	{ // 操作権がない場合
 
-		// プレイヤーフレームの色を白にする
-		m_pPlayerFrame->SetColor(COL_CHOICE);
-
-		// プレイヤーUIの色を白にする
-		m_pPlayerUI->SetColor(COL_CHOICE);
-		break;
-	}
-	case EEditType::EDIT_CHANGETYPE:
-	{
 		// 変更種類アイコンの色を白にする
 		m_pChangeIcon->SetColor(COL_CHOICE);
 
-		// プレイヤーフレームの色をグレーにする
-		m_pPlayerFrame->SetColor(COL_DEFAULT);
+		// プレイヤーフレームの色を白にする
+		m_pPlayerFrame->SetColor(COL_CHOICE);
+		m_pPlayerFrameBG->SetColor(COL_CHOICE);
 
-		// プレイヤーUIの色をグレーにする
-		m_pPlayerUI->SetColor(COL_DEFAULT);
-		break;
+		// プレイヤーUIの色を白にする
+		m_pPlayerUI->SetColor(COL_CHOICE);
 	}
-	default:
-		assert(false);
-		break;
+	else
+	{ // 操作権がある場合
+
+		switch (m_typeEdit)
+		{ // エディット種類ごとの処理
+		case EEditType::EDIT_PROCESS:
+		{
+			// 変更種類アイコンの色をグレーにする
+			m_pChangeIcon->SetColor(COL_DEFAULT);
+
+			// プレイヤーフレームの色を白にする
+			m_pPlayerFrame->SetColor(COL_CHOICE);
+			m_pPlayerFrameBG->SetColor(COL_CHOICE);
+
+			// プレイヤーUIの色を白にする
+			m_pPlayerUI->SetColor(COL_CHOICE);
+			break;
+		}
+		case EEditType::EDIT_CHANGETYPE:
+		{
+			// 変更種類アイコンの色を白にする
+			m_pChangeIcon->SetColor(COL_CHOICE);
+
+			// プレイヤーフレームの色をグレーにする
+			m_pPlayerFrame->SetColor(COL_DEFAULT);
+			m_pPlayerFrameBG->SetColor(COL_DEFAULT);
+
+			// プレイヤーUIの色をグレーにする
+			m_pPlayerUI->SetColor(COL_DEFAULT);
+			break;
+		}
+		default:
+			assert(false);
+			break;
+		}
+	}
+
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nPadIdx))
+	{// ループ
+
+		// 右移動
+		SetAction(CArrowUI::EDirection::DIRECTION_R);
+	}
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nPadIdx))
+	{// 逆ループ
+
+		// 左移動
+		SetAction(CArrowUI::EDirection::DIRECTION_L);
 	}
 }
 
@@ -1105,6 +1316,15 @@ void CDressupUI::UpdatePlayerUI()
 		assert(false);
 		break;
 	}
+}
+
+//============================================================
+// アクション設定
+//============================================================
+void CDressupUI::SetAction(CArrowUI::EDirection dir)
+{
+	// 選択時移動
+	m_apArrow[dir]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 }
 
 //============================================================

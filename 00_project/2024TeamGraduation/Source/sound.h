@@ -48,6 +48,7 @@ public:
 		LABEL_SE_GRIP02,		// グリップ
 		LABEL_SE_GRIP03,		// グリップ
 		LABEL_SE_JUMP,			// ジャンプ
+		LABEL_SE_DODGE,			// 回避
 		LABEL_SE_THROW_NORMAL,	// 通常投げ
 		LABEL_SE_THROW_JUMP,	// ジャンプ投げ
 		LABEL_SE_CATCH,			// キャッチ
@@ -59,6 +60,15 @@ public:
 		LABEL_SE_BOUND_REPEAT,	// バウンド(繰り返し)
 		LABEL_SE_HIT_NORMAL,	// ヒット(通常)
 		LABEL_SE_HIT_JUMP,		// ヒット(ジャンプ)
+		LABEL_SE_SP,			// スペシャル
+		LABEL_SE_SP_JUMP,		// スペシャルジャンプ
+		LABEL_SE_SP_LAND,		// スペシャル着地
+		LABEL_SE_SP_AUDIENCE01,	// スペシャル観客01
+		LABEL_SE_SP_AUDIENCE02,	// スペシャル観客02
+		LABEL_SE_KMHM_START,	// かめはめ開始
+		LABEL_SE_KMHM_CHARGE,	// かめはめチャージ
+		LABEL_SE_KMHM_LOOP,		// かめはめループ
+		LABEL_SE_KMHM_BRUST,	// かめはめ発射
 		LABEL_SE_WHISTLE,		// ホイッスル
 		LABEL_SE_AI,			// AI読みあげ
 		LABEL_SE_CURSOR,		// カーソル

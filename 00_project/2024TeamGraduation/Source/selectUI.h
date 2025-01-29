@@ -14,6 +14,7 @@
 //	インクルードファイル
 //************************************************************
 #include "object.h"
+#include "listmanager.h"
 #include "gamemanager.h"
 
 //************************************************************
@@ -57,8 +58,11 @@ public:
 
 	// 静的メンバ関数
 	static CSelectUI* Create(CGameManager::ETeamSide team, const int nPlayerIdx, const int nPadIdx, const MyLib::Vector3& pos);	// 生成
+	static inline CListManager<CSelectUI> GetList() { return m_list; }	// リスト取得
 
 	// メンバ関数
+	void SetEnableDispFrame(const bool bDraw);	// フレーム描画状況設定
+	bool IsDispFrame() const;					// フレーム描画状況取得
 	inline void SetSelect(const bool bSelect)	{ m_bSelect = bSelect; }	// 選択操作フラグ設定
 	inline bool IsSelect() const				{ return m_bSelect; }		// 選択操作フラグ取得
 	inline int GetPadIdx() const				{ return m_nPadIdx; }		// 操作権インデックス取得
@@ -89,12 +93,13 @@ private:
 	void UpdateSelectX(const int nSelectY);			// X選択更新
 
 	// メンバ変数
+	static CListManager<CSelectUI> m_list;	// リスト
+	const CGameManager::ETeamSide m_team;	// チーム
 	CObject2D_Anim* m_pPadUI;	// コントローラーUI情報
 	CObject2D* m_pFrame;		// フレーム情報
 	const int m_nPadIdx;		// 操作権インデックス
 	MyLib::PosGrid2 m_select;	// 選択インデックス
 	bool m_bSelect;				// 選択操作フラグ
-	const CGameManager::ETeamSide m_team;	// チーム
 };
 
 #endif	// _SELECT_UI_H_

@@ -25,12 +25,13 @@ public:
 	//=============================
 	enum EType
 	{
-		TYPE_HAIR = 0,	// 髪
-		TYPE_HAIR_MII,	// 髪(Mii)
-		TYPE_ACCESSORY,	// アクセサリー
-		TYPE_FACE,		// 顔
-		TYPE_FACE_MII,	// 顔(Mii)
-		TYPE_UNIFORM,	// ユニフォーム
+		TYPE_HAIR = 0,		// 髪
+		TYPE_HAIR_MII,		// 髪(Mii)
+		TYPE_HAIR_MIILOW,	// 髪(Mii)(Low)
+		TYPE_ACCESSORY,		// アクセサリー
+		TYPE_FACE,			// 顔
+		TYPE_FACE_MII,		// 顔(Mii)
+		TYPE_UNIFORM,		// ユニフォーム
 		TYPE_MAX
 	};
 

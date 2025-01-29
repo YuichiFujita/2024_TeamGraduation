@@ -34,9 +34,10 @@ public:
 
 	enum EAttackPrepatarion		// 準備
 	{
-		ATTACKPREPATARION_NONE = 0,
-		ATTACKPREPATARION_GO,
-		ATTACKPREPATARION_LEAVE,
+		ATTACKPREPATARION_NONE = 0,		// なし
+		ATTACKPREPATARION_WAIT,			// 待つ
+		ATTACKPREPATARION_GO,			// 行く
+		ATTACKPREPATARION_LEAVE,		// 離れる
 		ATTACKPREPATARION_MAX
 	};
 
@@ -136,6 +137,7 @@ private:
 
 	// 準備
 	void PreparationNone() {};
+	void PreparationWait();
 	void PreparationGo();
 	virtual void PreparationLeave() = 0;
 
@@ -161,7 +163,7 @@ private:
 
 	// 投げ
 	void AttackNormal(CPlayer* pTarget);		// 通常投げ
-	void AttackDash(CPlayer* pTarget);			// 走り投げ
+	void AttackDash(CPlayer* pTarget, float fTargetDis, float fLineDis);			// 走り投げ
 
 	// ジャンプ
 	void AttackJump(CPlayer* pTarget);			// ジャンプ投げ

@@ -240,6 +240,12 @@ void CSpecialManager::Update(const float fDeltaTime, const float fDeltaRate, con
 
 				// ヒーロー着地モーションにする
 				rJump.pPlayer->SetMotion(CPlayer::EMotion::MOTION_LAND_SP);
+
+				// カメラ揺れ
+				GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(15.0f, 2.0f, 0.4f));
+
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_LAND);
 			}
 
 			// 位置を設定
@@ -431,9 +437,6 @@ void CSpecialManager::UpdateStag(const float fDeltaTime, const float fDeltaRate,
 		CGymWallManager* pGymWall = pGameManager->GetGymWallManager();	// 体育館壁マネージャー
 		pGymWall->SetIsWall(false);
 
-		// 白黒
-		GET_RENDERER->SetEnableShader(true, 0.1f);
-
 		// 追従遷移状態にする
 		m_state = STATE_FOLLOW_TRANS;
 	}
@@ -582,11 +585,17 @@ void CSpecialManager::SetPlayerHypePosition()
 	m_pAttackPlayer->SetRotation(MyLib::Vector3(0.0f, HALF_PI * fOffset, 0.0f));
 	m_pAttackPlayer->SetRotDest(HALF_PI * fOffset);
 
+	// ジャンプ強制終了
+	m_pAttackPlayer->SetEnableJump(false);
+
 	// ジャンプ中にする
 	m_bJump = true;
 
 	// 最後尾に追加
 	m_vecJump.push_back(info);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_JUMP);
 }
 
 //============================================================
@@ -634,6 +643,9 @@ void CSpecialManager::SetJumpAttackTeam()
 		// プレイヤーの向きを設定
 		pPlayer->SetRotation(VEC3_ZERO);
 		pPlayer->SetRotDest(0.0f);
+
+		// ジャンプ強制終了
+		pPlayer->SetEnableJump(false);
 
 		// ジャンプ人数加算
 		nNumJump++;

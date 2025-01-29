@@ -21,20 +21,21 @@ TEXTURE_FILENAME = data/TEXTURE/city001.png				# [11]山テクスチャ
 TEXTURE_FILENAME = data/TEXTURE/line.png				# [12]メッシュわかりやす素材
 TEXTURE_FILENAME = data/TEXTURE/glass.jpg				# [13]メッシュわかりやす素材
 TEXTURE_FILENAME = data/TEXTURE/GB.jpg					# [14]グリーンバック
+TEXTURE_FILENAME = data/TEXTURE/clear.png				# [15]透明
 
 #==============================================================================
 # 空情報
 #==============================================================================
-SKYSET
-	TEXTYPE = 10
+#SKYSET
+	TEXTYPE = 15
 	MOVE = 0.0002
 END_SKYSET
 
 #==============================================================================
 # 地面情報
 #==============================================================================
-FIELDSET
-	TEXTYPE = 13
+#FIELDSET
+	TEXTYPE = 15
 	POS = 0 0 0
 	ROT = 0 0 0
 	BLOCK = 50 50

@@ -62,6 +62,7 @@ public:
 	//--------------------------
 	// フラグ
 	//--------------------------
+	inline void SetEnableMotion(const bool bMotion) { m_bMotion = bMotion; }			// モーション再生設定
 	inline int IsGetMove() { return (m_vecInfo[m_nType].nMove == 0) ? 0 : 1; }			// 移動の判定取得
 	inline int IsGetMove(int nType) { return (m_vecInfo[nType].nMove == 0) ? 0 : 1; }	// 移動の判定取得
 	inline bool IsFinish() { return m_bFinish; }						// 終了しているかの判定
@@ -128,6 +129,7 @@ private:
 	bool m_bCombiable;			// コンボ可能か
 	bool m_bAttaking;			// 攻撃判定中フラグ
 	bool m_bLoopMomnet;			// ループした瞬間
+	bool m_bMotion;				// モーション再生フラグ
 
 	CObjectChara* m_pObjChara;			// オブジェクトキャラクターのポインタ
 	CModel** m_ppModel;					// モデルのポインタ

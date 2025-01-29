@@ -108,6 +108,7 @@ public:
 	void Update(void);
 	void Draw(void);
 	void Draw(D3DXCOLOR col);
+	void Draw(std::vector<int> nIdx, const D3DXCOLOR& col);
 	void Draw(int nIdx, float fAlpha);
 
 	void SetmtxWorld(const D3DXMATRIX mtxWorld);
@@ -122,6 +123,8 @@ public:
 	D3DXVECTOR3 GetRotation(void) const;		// Œü‚«æ“¾
 	void SetMove(const D3DXVECTOR3 move);		// ˆÚ“®—Êİ’è
 	D3DXVECTOR3 GetMove(void) const;			// ˆÚ“®—Êæ“¾
+
+	D3DXVECTOR3 GetCenterPosition() { return m_posCenter; }	// ’†SˆÊ’u
 
 	// ƒLƒƒƒ‰î•ñ
 	int GetCenterPartsIdx() { return m_nCenterPartsIdx; }

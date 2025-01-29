@@ -37,6 +37,7 @@
 // 派生先
 #include "playerDressup.h"
 #include "playerSpawn.h"
+#include "playerFaceIcon.h"
 #include "playerCutIn.h"
 #include "playerReferee.h"
 #include "playerReferee_Result.h"
@@ -264,7 +265,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 	m_sDamageInfo = SDamageInfo();		// ダメージ情報
 	m_Handedness = EHandedness::HAND_R;	// 利き手
 	m_BodyType = EBody::BODY_NORMAL;	// 体型
-
+	m_typeHuman = EHuman::HUMAN_NONE;	// 人
 
 #if _DEBUG	// デバッグ用ID
 	m_nThisDebugID = m_nDebugID;
@@ -347,6 +348,10 @@ CPlayer* CPlayer::Create
 		pPlayer = DEBUG_NEW CPlayerSpawn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
 
+	case EHuman::HUMAN_FACEICON:
+		pPlayer = DEBUG_NEW CPlayerFaceIcon(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
+		break;
+
 	case EHuman::HUMAN_CUTIN:
 		pPlayer = DEBUG_NEW CPlayerCutIn(typeTeam, EFieldArea::FIELD_NONE, EBaseType::TYPE_USER);
 		break;
@@ -370,6 +375,9 @@ CPlayer* CPlayer::Create
 
 	if (pPlayer != nullptr)
 	{
+		// 人を設定
+		pPlayer->m_typeHuman = typeHuman;
+
 		// 体型を設定
 		pPlayer->m_BodyType = typeBody;
 
@@ -511,7 +519,7 @@ void CPlayer::Uninit()
 	SAFE_DELETE(m_pBase);
 
 	// ステータス
-	SAFE_DELETE(m_pStatus);
+	SAFE_KILL(m_pStatus);
 
 	// マーカー
 	SAFE_UNINIT(m_pMarker);
@@ -1321,6 +1329,19 @@ void CPlayer::AttackAction(CMotionManager::AttackInfo ATKInfo, int nCntATK)
 		}
 		break;
 
+	case EMotion::MOTION_LAND_SP:
+		if (nCntATK == 0)
+		{
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE01);
+		}
+		else if (nCntATK == 1)
+		{
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -1775,29 +1796,10 @@ void CPlayer::DamageSetting(CBall* pBall)
 //==========================================================================
 void CPlayer::CatchSetting(CBall* pBall)
 {
-
 	CBall::EAttack atkBall = pBall->GetTypeAtk();	// ボール攻撃種類
 
 	// ボールをキャッチ
 	pBall->CatchAttack(this);
-
-	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
-	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
-	
-	// カメラ情報取得
-	CCamera* pCamera = CManager::GetInstance()->GetCamera();
-	MyLib::Vector3 Camerarot = pCamera->GetRotation();
-
-	// 入力判定
-	bool bInput = false;
-	EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
-	if (angle != EDashAngle::ANGLE_MAX)
-	{// ジャスト範囲方向に入力していたら
-		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
-		float fRot = division * angle + D3DX_PI + Camerarot.y;
-		UtilFunc::Transformation::RotNormalize(fRot);
-		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
-	}
 
 	// ジャスト判定
 	bool bJust = false;
@@ -1805,7 +1807,7 @@ void CPlayer::CatchSetting(CBall* pBall)
 #if 0	// 常にジャスト
 	if (m_sMotionFrag.bCatchJust && bInput)
 #else
-	if (m_sMotionFrag.bCatchJust && bInput)
+	if (m_sMotionFrag.bCatchJust && IsInputAngle(pBall))
 #endif
 	{
 		bJust = true;
@@ -2754,6 +2756,59 @@ bool CPlayer::IsTeamPlayer() const
 
 	// 全員死んでいる場合false
 	return false;
+}
+
+//==========================================================================
+// キャラパス取得
+//==========================================================================
+std::string CPlayer::GetCharaPath(const EBody body, const EHandedness hand)
+{
+	return CHARAFILE[body][hand];
+}
+
+//==========================================================================
+//	着せ替え割当
+//==========================================================================
+void CPlayer::BindDressUpFace(int nHair, int nAccessory, int nFace)
+{
+	// 着せ替え割当
+	m_pStatus->BindDressUp(nHair, nAccessory, nFace);
+}
+
+//==========================================================================
+//	自分のインデックス設定
+//==========================================================================
+void CPlayer::SetMyPlayerIdxFace(int nIdx)
+{
+	m_pStatus->SetMyPlayerIdx(nIdx);
+}
+
+//==========================================================================
+// 入力角度があっているかの確認
+//==========================================================================
+bool CPlayer::IsInputAngle(CBall* pBall) const
+{
+	if (GetBaseType() == EBaseType::TYPE_AI) return true;
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	bool bInput = false;
+
+	MyLib::Vector3 posB = pBall->GetPosition();		// ボール位置
+	MyLib::Vector3 pos = GetPosition();				// プレイヤー位置
+
+	EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
+	if (angle != EDashAngle::ANGLE_MAX)
+	{// ジャスト範囲方向に入力していたら
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		float fRot = division * angle + D3DX_PI + Camerarot.y;
+		UtilFunc::Transformation::RotNormalize(fRot);
+		bInput = UtilFunc::Collision::CollisionViewRange3D(pos, posB, fRot, JUST_VIEW);
+	}
+
+	return bInput;
 }
 
 //==========================================================================

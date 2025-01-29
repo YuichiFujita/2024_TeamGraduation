@@ -71,7 +71,7 @@ CCatchSpecial::MOMENTUM_START_FUNC CCatchSpecial::m_MomentumStartFunc[] =	// ¨‚
 	nullptr,								// ‚È‚µ
 	&CCatchSpecial::MomentumStartSlide,		// ƒYƒUƒU
 	nullptr,								// ‘Ï‚¦‚é
-	nullptr,								// Œ‹‰Ê
+	&CCatchSpecial::MomentumStartResult,	// Œ‹‰Ê
 	nullptr,								// I—¹
 };
 
@@ -419,23 +419,12 @@ void CCatchSpecial::MomentumStartSlide()
 }
 
 //==========================================================================
-// [ŠJŽn]Œ‹‰Ê
+// Œ‹‰Ê
 //==========================================================================
 void CCatchSpecial::MomentumStartResult()
 {
-	CPlayer::EMotion motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC;
-
-	if (m_bSuccess)
-	{
-		motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_SUCC;
-	}
-	else
-	{
-		motionType = CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL;
-	}
-
-	// ƒ‚[ƒVƒ‡ƒ“Ý’è
-	m_pPlayer->SetMotion(motionType);
+	// ƒXƒyƒVƒƒƒ‹‚ÌI—¹ŽžÝ’è
+	m_pPlayer->GetBall()->SpecialEndSetting();
 }
 
 //==========================================================================

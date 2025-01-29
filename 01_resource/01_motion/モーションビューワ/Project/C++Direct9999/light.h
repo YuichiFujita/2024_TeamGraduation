@@ -20,16 +20,23 @@ public:
 	CLight();
 	~CLight();
 
-	HRESULT Init(void);
-	void Uninit(void);
-	void Update(void);
+	HRESULT Init();
+	void Uninit();
+	void Update();
 
+	void UpdateSpotLightDirection(MyLib::Vector3 vec);	// スポットライトの向き更新
 private:
 
-	// マクロ定義
-#define MAX_LIGHT	(3)	// ライトの最大数
+	enum TYPE
+	{
+		TYPE_DIRECTIONAL_01 = 0,
+		TYPE_DIRECTIONAL_02,
+		TYPE_DIRECTIONAL_03,
+		TYPE_SPOT_01,
+		TYPE_MAX,
+	};
 	
-	D3DLIGHT9 m_aLight[MAX_LIGHT];		// ライト構造体
+	D3DLIGHT9 m_aLight[TYPE_MAX];		// ライト構造体
 };
 
 #endif

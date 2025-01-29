@@ -296,7 +296,7 @@ HRESULT CEntryRuleManager::Init()
 			m_apArrow[i] = CArrowUI::Create
 			( // 引数
 				(CArrowUI::EDirection)i,	// 方向
-				arrow::POS,					// 位置
+				select::POS,				// 位置
 				arrow::SIZE,				// サイズ
 				MyLib::color::White(0.0f),	// 色
 				PRIORITY		// 優先順位
@@ -313,6 +313,7 @@ HRESULT CEntryRuleManager::Init()
 
 			// 位置再設定
 			m_apArrow[i]->SetPosition(select::POS);
+			m_apArrow[i]->SetOriginPosition(select::POS);
 		}
 	}
 

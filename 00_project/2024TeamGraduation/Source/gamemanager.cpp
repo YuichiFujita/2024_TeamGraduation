@@ -568,13 +568,18 @@ void CGameManager::SceneSpawn()
 	if (bInput)
 	{ // 決定の操作が行われた場合
 
-		// スキップ操作を表示させる
-		m_pSkip->SetDisp();
 		if (m_pSkip->IsDisp())
 		{ // スキップ操作が表示されている場合
 
 			// 登場演出のスキップ
 			SkipSpawn();
+		}
+
+		// すぐFADE_IN通るから処理順下
+		// スキップ操作を表示させる
+		if (m_pSkip != nullptr)
+		{
+			m_pSkip->SetDisp();
 		}
 	}
 

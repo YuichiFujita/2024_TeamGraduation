@@ -161,7 +161,6 @@
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="Imguimanager.cpp" />
-    <ClCompile Include="ImGuizmo.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_demo.cpp" />
@@ -210,7 +209,6 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="Imguimanager.h" />
-    <ClInclude Include="ImGuizmo.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="Libraries\Imgui\imconfig.h" />
     <ClInclude Include="Libraries\Imgui\imgui.h" />

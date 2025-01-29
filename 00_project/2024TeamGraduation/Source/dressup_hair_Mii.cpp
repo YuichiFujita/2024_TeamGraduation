@@ -9,6 +9,7 @@
 #include "game.h"
 #include "input.h"
 #include "objectChara.h"
+#include "dressup_hair_MiiLow.h"
 
 //==========================================================================
 // 定数定義
@@ -32,6 +33,31 @@ CDressup_Hair_Mii::CDressup_Hair_Mii() : CDressup_Hair()
 CDressup_Hair_Mii::~CDressup_Hair_Mii()
 {
 
+}
+
+//==========================================================================
+// 生成処理
+//==========================================================================
+CDressup_Hair_Mii* CDressup_Hair_Mii::Create(CDressup::EType type)
+{
+	// インスタンス生成
+	CDressup_Hair_Mii* pAudience = nullptr;
+
+	switch (type)
+	{
+	case CDressup::EType::TYPE_HAIR_MII:
+		pAudience = DEBUG_NEW CDressup_Hair_Mii;
+		break;
+
+	case CDressup::EType::TYPE_HAIR_MIILOW:
+		pAudience = DEBUG_NEW CDressup_Hair_MiiLow;
+		break;
+
+	default:
+		break;
+	}
+
+	return pAudience;
 }
 
 //==========================================================================

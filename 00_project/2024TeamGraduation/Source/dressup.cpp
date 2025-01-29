@@ -53,7 +53,7 @@ CDressup* CDressup::Create(EType type, CObjectChara* pObjChara, int nSwitchType)
 		break;
 
 	case CDressup::TYPE_HAIR_MII:
-		pObj = DEBUG_NEW CDressup_Hair_Mii;
+		pObj = CDressup_Hair_Mii::Create(type);
 		break;
 
 	case CDressup::TYPE_ACCESSORY:

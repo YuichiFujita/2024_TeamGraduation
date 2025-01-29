@@ -197,7 +197,7 @@ void CSkip::SetDisp()
 bool CSkip::IsDisp()
 {
 	// •\¦ó‹µ‚ğİ’è
-	bool bDisp = (m_state == STATE_DISP);
+	bool bDisp = (m_state == STATE_DISP || m_state == EState::STATE_FADEOUT);
 
 	// •\¦ó‹µ‚ğ•Ô‚·
 	return bDisp;

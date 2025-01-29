@@ -321,9 +321,11 @@ HRESULT CPlayerManager::CreateLeftPlayer(int i, const LoadInfo& info)
 	
 	// インデックス反映
 	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+	pPlayer->SetMyPlayerIdxFace(info.nControllIdx);
 
 	// ドレスアップ反映
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
+	pPlayer->BindDressUpFace(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
 }
@@ -374,9 +376,11 @@ HRESULT CPlayerManager::CreateRightPlayer(int i, const LoadInfo& info)
 
 	// インデックス反映
 	pPlayer->SetMyPlayerIdx(info.nControllIdx);
+	pPlayer->SetMyPlayerIdxFace(info.nControllIdx);
 
 	// ドレスアップ反映
 	pPlayer->BindDressUp(info.nHair, info.nAccessory, info.nFace);
+	pPlayer->BindDressUpFace(info.nHair, info.nAccessory, info.nFace);
 
 	return S_OK;
 }
@@ -1079,6 +1083,9 @@ void CPlayerManager::CautionInAll(const CGameManager::ETeamSide team)
 
 		// 通常モーション
 		pObj->SetMotion(CPlayer::EMotion::MOTION_DEF);
+
+		// ジャンプ強制終了
+		pObj->SetEnableJump(false);
 
 		// 操作不可
 		//pObj->SetEnableAction(false);

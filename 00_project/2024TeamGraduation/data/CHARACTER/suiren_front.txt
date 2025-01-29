@@ -1,0 +1,15 @@
+#==============================================================================
+#
+#	フリスクのセットアップ [frisk.txt]
+#	Author : 藤田 勇一
+#
+#==============================================================================
+#------------------------------------------------------------------------------
+#	モーション情報
+#------------------------------------------------------------------------------
+MOTIONPASS = data\MOTION\SUIREN\idol_up.txt		# 上待機モーション
+MOTIONPASS = data\MOTION\SUIREN\idol_down.txt	# 下待機モーション
+MOTIONPASS = data\MOTION\SUIREN\jump_up.txt		# 上ジャンプモーション
+MOTIONPASS = data\MOTION\SUIREN\jump_down.txt	# 下ジャンプモーション
+MOTIONPASS = data\MOTION\SUIREN\move_left.txt	# 左移動モーション
+MOTIONPASS = data\MOTION\SUIREN\move_right.txt	# 右移動モーション

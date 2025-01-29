@@ -5,9 +5,11 @@
 // 
 //==========================================================================
 #include "audienceLowPoly.h"
+#include "gameManager.h"
 #include "manager.h"
 #include "renderer.h"
 #include "objectX.h"
+#include "model.h"
 #include "dressup.h"
 
 //==========================================================================
@@ -18,7 +20,7 @@ namespace
 	const char* SETUP_TXT = "data\\TEXT\\character\\audience\\Mii\\setup_player.txt";	// プレイヤーセットアップテキスト
 	const char* LIGHT_PATH = "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
 	const int PRIORITY = mylib_const::PRIORITY_DEFAULT;		// 優先順位
-	const int ID_HAIR = 9;	// 髪のID
+	const int ID_HAIR = 5;	// 髪のID
 	const int ID_FACE = 2;	// 顔のID
 
 	namespace Side
@@ -65,7 +67,9 @@ CAudienceLowPoly::CAudienceLowPoly(EObjType type, CGameManager::ETeamSide team) 
 	m_pLight		(nullptr),	// ペンライト情報
 	m_pLightBlur	(nullptr),	// ペンライトのブラー
 	m_pDressUp_Hair	(nullptr),	// ドレスアップ(髪)
-	m_pDressUp_Face	(nullptr)	// ドレスアップ(顔)
+	m_pDressUp_Face	(nullptr),	// ドレスアップ(顔)
+	m_nIdxLightHand	(UtilFunc::Transformation::Random(3, 4))	// ライト持つ手のインデックス
+
 {
 }
 
@@ -136,14 +140,14 @@ HRESULT CAudienceLowPoly::Init()
 
 	// ドレスアップ(髪)
 	m_pDressUp_Hair = CDressup::Create(
-		CDressup::EType::TYPE_HAIR_MII,		// 着せ替えの種類
+		CDressup::EType::TYPE_HAIR_MII,	// 着せ替えの種類
 		m_pChara,						// 変更するプレイヤー
 		ID_HAIR);						// 変更箇所のインデックス
 	m_pDressUp_Hair->RandSet();
 
 	// ドレスアップ(顔)
 	m_pDressUp_Face = CDressup::Create(
-		CDressup::EType::TYPE_FACE_MII,		// 着せ替えの種類
+		CDressup::EType::TYPE_FACE_MII,	// 着せ替えの種類
 		m_pChara,						// 変更するプレイヤー
 		ID_FACE);						// 変更箇所のインデックス
 	m_pDressUp_Face->RandSet();
@@ -209,8 +213,29 @@ void CAudienceLowPoly::UpdatePenlight(const float fDeltaTime, const float fDelta
 	if (m_pChara == nullptr) return;
 	if (m_pLight == nullptr) return;
 
-	// ライトの位置を頭の上にする
-	m_pLight->SetPosition(GetPosition() + MyLib::Vector3(0.0f, 230.0f, 0.0f));	// TODO：後で振ったりさせる
+	// 判定するパーツ取得
+	CModel* pModel = m_pChara->GetModel(m_nIdxLightHand);
+
+	// 判定するパーツのマトリックス取得
+	MyLib::Matrix mtxModel = pModel->GetWorldMtx();
+
+	// マトリックス更新しない
+	m_pLight->SetEnableUpdateMtx(false);
+
+	// ペンライトのマトリックス計算
+	MyLib::Vector3 pos = m_pLight->GetPosition();
+	MyLib::Vector3 rot = m_pLight->GetRotation();
+	MyLib::Matrix mtxTrans;	// 計算用マトリックス宣言
+
+	// オフセットを反映する
+	mtxTrans.Translation(MyLib::Vector3((m_nIdxLightHand == 3) ? -40.0f : 40.0f, m_pLight->GetVtxMax().y, 0.0f));
+	mtxModel.Multiply(mtxTrans, mtxModel);
+
+	// 縦スケール縮小
+	m_pLight->SetWorldMtx(mtxModel);
+
+	// ライトの位置設定
+	m_pLight->SetPosition(mtxModel.GetWorldPosition());	// TODO：後で振ったりさせる
 	m_pLightBlur->SetPosition(m_pLight->GetPosition());
 }
 
@@ -364,8 +389,59 @@ void CAudienceLowPoly::SetMotion(const int nMotion)
 	if (nAnimMotion != nMotion)
 	{ // 現在のモーションが再生中のモーションと一致しない場合
 
-		// 現在のモーションの設定
-		pMotion->Set(nMotion);
+		switch (nMotion)
+		{
+		case EMotion::MOTION_SPAWN:
+		case EMotion::MOTION_JUMP:
+		case EMotion::MOTION_DESPAWN:
+		case EMotion::MOTION_SPECIAL:
+		{
+			// 設定するモーションの情報取得
+			const CMotionManager::Info& info = pMotion->GetInfo(nMotion);
+
+			// 開始キー
+			int nStartKey = 0;
+			if (rand() % 2 == 0)
+			{
+				nStartKey = info.nNumKey / 2;
+			}
+
+			// 開始フレーム
+			float fFrame = (float)(rand() % info.aKey[nStartKey].nFrame);
+
+			// 現在のモーションの設定
+			pMotion->Set(nMotion, nStartKey, true, fFrame);
+		}
+		break;
+
+		case EMotion::MOTION_DEF:
+		{
+			// ニブイチで逆
+			int nSetMotion = nMotion;
+			if (rand() % 2 == 0)
+			{
+				nSetMotion = EMotion::MOTION_DEF_INV;
+			}
+
+			// 設定するモーションの情報取得
+			const CMotionManager::Info& info = pMotion->GetInfo(nSetMotion);
+
+			// 開始キー
+			int nStartKey = rand() % info.nNumKey;
+
+			// 開始フレーム
+			float fFrame = (float)(rand() % info.aKey[nStartKey].nFrame);
+
+			// 現在のモーションの設定
+			pMotion->Set(nSetMotion, nStartKey, true, fFrame);
+		}
+			break;
+
+		default:
+			// 現在のモーションの設定
+			pMotion->Set(nMotion);
+			break;
+		}
 	}
 }
 

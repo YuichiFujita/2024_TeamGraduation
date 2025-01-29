@@ -29,6 +29,9 @@ public:
 	HRESULT Init() override;	// ‰Šú‰»
 	void Uninit() override;		// I—¹
 
+	// Ã“Iƒƒ“ƒoŠÖ”
+	static CDressup_Hair_Mii* Create(CDressup::EType type);	// ¶¬ˆ—
+
 private:
 
 };

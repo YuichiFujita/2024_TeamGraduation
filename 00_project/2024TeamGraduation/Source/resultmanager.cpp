@@ -404,20 +404,6 @@ void CResultManager::StatePreludeReady(const float fDeltaTime, const float fDelt
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::READY && m_bStateTrans)
 	{
-		// リザルトプレイヤー全員確認
-		CListManager<CPlayerResult> list = CPlayerResult::GetList();
-		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
-		while (list.ListLoop(itr))
-		{
-			// 勝敗チェック(前座)
-			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
-			pPlayer->CheckVictoryPrelude();
-		}
-
-		// 勝ったチーム
-		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
-		m_pReferee->SetWinTeam(m_teamPreludeWin);
-
 		// 前座勝敗状態
 		SetState(EState::STATE_PRELUDE);
 	}
@@ -448,19 +434,7 @@ void CResultManager::StatePrelude(const float fDeltaTime, const float fDeltaRate
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::PRELUDE && m_bStateTrans)
 	{
-		// リザルトプレイヤー全員確認
-		CListManager<CPlayerResult> list = CPlayerResult::GetList();
-		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
-		while (list.ListLoop(itr))
-		{
-			// 状態NONEへ
-			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
-			pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
-		}
-
-		// 喋らせる
-		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
-
+		// 状態設定
 		SetState(EState::STATE_CONTEST_READY);
 	}
 }
@@ -494,20 +468,7 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 	// 指定時間を過ぎたら
 	if (m_fStateTime >= StateTime::READY && m_bStateTrans)
 	{
-		// リザルトプレイヤー全員確認
-		CListManager<CPlayerResult> list = CPlayerResult::GetList();
-		std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
-		while (list.ListLoop(itr))
-		{
-			// 勝敗チェック(モテ)
-			CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
-			pPlayer->CheckVictoryContest();
-		}
-
-		// 勝ったチーム
-		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
-		m_pReferee->SetWinTeam(m_teamContestWin);
-
+		// 状態設定
 		SetState(EState::STATE_CONTEST);
 	}
 }
@@ -567,6 +528,19 @@ void CResultManager::StateStartPreludeReady()
 	pCamera->SetPositionRDest(Ready::POSR_CAMERA);
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
+
+	// リザルトプレイヤー全員確認
+	CListManager<CPlayerResult> list = CPlayerResult::GetList();
+	std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+	while (list.ListLoop(itr))
+	{
+		// 状態NONEへ
+		CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+		pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
+	}
+
+	// 喋らせる
+	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
 }
 
 //==========================================================================
@@ -585,6 +559,10 @@ void CResultManager::StateStartPrelude()
 	SAFE_KILL(m_pWinTeam);
 	m_pWinTeam = CWinTeamResult::Create(m_teamPreludeWin);
 
+	// 勝ったチーム
+	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
+	m_pReferee->SetWinTeam(m_teamPreludeWin);
+
 	// カメラ設定
 	CCamera* pCamera = GET_MANAGER->GetCamera();
 
@@ -597,6 +575,16 @@ void CResultManager::StateStartPrelude()
 	pCamera->SetPositionRDest(Prelude::POSR_CAMERA.at(m_teamPreludeWin));
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
+
+	// リザルトプレイヤー全員確認
+	CListManager<CPlayerResult> list = CPlayerResult::GetList();
+	std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+	while (list.ListLoop(itr))
+	{
+		// 勝敗チェック(前座)
+		CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+		pPlayer->CheckVictoryPrelude();
+	}
 }
 
 //==========================================================================
@@ -612,6 +600,7 @@ void CResultManager::StateStartCharmContestReady()
 
 	// 勝利チーム
 	m_pWinTeam->SetState(CWinTeamResult::EState::STATE_FADEOUT);
+	m_pWinTeam = nullptr;
 
 	// ポリゴン生成
 	CreatePolygon(EState::STATE_CONTEST_READY);
@@ -628,6 +617,16 @@ void CResultManager::StateStartCharmContestReady()
 	pCamera->SetPositionRDest(Ready::POSR_CAMERA);
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
+
+	// リザルトプレイヤー全員確認
+	CListManager<CPlayerResult> list = CPlayerResult::GetList();
+	std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+	while (list.ListLoop(itr))
+	{
+		// 状態NONEへ
+		CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+		pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
+	}
 }
 
 //==========================================================================
@@ -648,6 +647,7 @@ void CResultManager::StateStartCharmContest()
 	CreateCrown(m_teamContestWin);
 
 	// 勝利チーム
+	SAFE_KILL(m_pWinTeam);
 	m_pWinTeam = CWinTeamResult::Create(m_teamContestWin);
 
 	// エフェクシア生成
@@ -665,6 +665,20 @@ void CResultManager::StateStartCharmContest()
 	pCamera->SetPositionRDest(Contest::POSR_CAMERA.at(m_teamContestWin));
 
 	pCamera->SetState(CCamera::STATE::STATE_FOLLOW);
+
+	// リザルトプレイヤー全員確認
+	CListManager<CPlayerResult> list = CPlayerResult::GetList();
+	std::list<CPlayerResult*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+	while (list.ListLoop(itr))
+	{
+		// 勝敗チェック(モテ)
+		CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
+		pPlayer->CheckVictoryContest();
+	}
+
+	// 勝ったチーム
+	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
+	m_pReferee->SetWinTeam(m_teamContestWin);
 }
 
 //==========================================================================
