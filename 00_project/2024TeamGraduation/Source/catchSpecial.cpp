@@ -7,6 +7,7 @@
 #include "catchSpecial.h"
 #include "player.h"
 #include "manager.h"
+#include "sound.h"
 #include "camera.h"
 
 //==========================================================================
@@ -152,6 +153,12 @@ HRESULT CCatchSpecial::Init()
 
 	// スペシャルキャッチカメラ情報設定
 	GET_MANAGER->GetCamera()->SetSpecialCatchInfo(m_pPlayer, MyLib::Vector3(0.0f, 80.0f, 0.0f), moveTime, waitTime);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCH);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCHMOMMENT);
 	return S_OK;
 }
 
@@ -292,6 +299,9 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 		GET_MANAGER->SetSlowRate(1.0f);
 
 		SetMomentumState(EMomentumState::MOMENTUM_SLIDE);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_SLIDE);
 	}
 }
 
@@ -329,6 +339,12 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 	{// 終了or画面端判定
 
 		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_BRAKE);
+
+		// サウンド停止
+		CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_SP_SLIDE);
 	}
 
 	// 位置設定
@@ -347,6 +363,9 @@ void CCatchSpecial::MomentumStateBrake(const float fDeltaTime, const float fDelt
 	if (motion->IsFinish())
 	{// 終了
 
+		// サウンド停止
+		CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_SP_CATCH);
+		CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_SP_BRAKE);
 		SetMomentumState(EMomentumState::MOMENTUM_RESULT);
 	}
 }
@@ -470,6 +489,9 @@ void CCatchSpecial::Success()
 
 	// 敵陣
 	pGameMgr->SubCharmValue(rivalTeam, CCharmValueManager::ETypeSub::SUB_SPECIAL_CATCH);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCHMOMMENT);
 }
 
 //==========================================================================
@@ -482,6 +504,9 @@ void CCatchSpecial::Failure()
 		m_state != CPlayer::EState::STATE_OUTCOURT_RETURN)
 	{
 		m_pPlayer->OutCourtSetting();
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCHMOMMENT);
 	}
 }
 

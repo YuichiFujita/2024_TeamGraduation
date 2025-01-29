@@ -807,8 +807,7 @@ void CBall::Toss(CPlayer* pPlayer)
 void CBall::SpecialEndSetting()
 {
 	// 削除
-	if (m_typeAtk != EAttack::ATK_SPECIAL &&
-		m_pSPBallet != nullptr)
+	if (m_pSPBallet != nullptr)
 	{// スペシャル状態解除 && インスタンスがある
 		m_pSPBallet->SetTrigger(0);
 		m_pSPBallet->SetEnableAutoDeath(true);

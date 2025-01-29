@@ -65,6 +65,11 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/SP_land.wav",0},				// スペシャル着地
 	{ TYPE_SE,"data/SE/SP_audience01.wav",0},		// スペシャル観客01
 	{ TYPE_SE,"data/SE/SP_audience02.wav",0},		// スペシャル観客02
+	{ TYPE_SE,"data/SE/SP_catch.wav",-1},			// スペシャルキャッチ
+	{ TYPE_SE,"data/SE/SP_catchMomment.wav", 0},	// スペシャルキャッチ時
+	{ TYPE_SE,"data/SE/SP_slide.wav", -1},			// スペシャルずざざ
+	{ TYPE_SE,"data/SE/SP_brake.wav", -1},			// スペシャル耐え
+	{ TYPE_SE,"data/SE/SP_catchSucc.wav",0},		// スペシャルキャッチ成功
 
 	// かめはめ波
 	{ TYPE_SE,"data/SE/KMHM_junbi.wav",0},			// かめはめ準備

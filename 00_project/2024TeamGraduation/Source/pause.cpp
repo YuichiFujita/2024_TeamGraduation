@@ -242,8 +242,8 @@ void CPause::UpdateSelect()
 		// パターンNo.を更新
 		m_nSelect = (m_nSelect + (MENU_MAX - 1)) % MENU_MAX;
 
-		// サウンド再生
-
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pKey->GetTrigger(DIK_S) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, 0) ||
@@ -253,8 +253,8 @@ void CPause::UpdateSelect()
 		// パターンNo.を更新
 		m_nSelect = (m_nSelect + 1) % MENU_MAX;
 
-		// サウンド再生
-
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 
 

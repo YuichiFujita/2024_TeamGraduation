@@ -66,6 +66,11 @@ public:
 		LABEL_SE_SP_LAND,		// スペシャル着地
 		LABEL_SE_SP_AUDIENCE01,	// スペシャル観客01
 		LABEL_SE_SP_AUDIENCE02,	// スペシャル観客02
+		LABEL_SE_SP_CATCH,		// スペシャルキャッチ
+		LABEL_SE_SP_CATCHMOMMENT,		// スペシャルキャッチ時
+		LABEL_SE_SP_SLIDE,		// スペシャルずざざ
+		LABEL_SE_SP_BRAKE,		// スペシャル耐え
+		LABEL_SE_SP_SUCC,		// スペシャルキャッチ成功
 		LABEL_SE_KMHM_JUNBI,	// かめはめ準備
 		LABEL_SE_KMHM_START,	// かめはめ開始
 		LABEL_SE_KMHM_CHARGE,	// かめはめチャージ
