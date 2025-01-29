@@ -54,6 +54,8 @@ public:
 		STATE_PRELUDE_READY,		// 前座勝敗準備
 		STATE_PRELUDE,				// 前座勝敗
 		STATE_CONTEST_READY,		// モテ勝敗準備
+		STATE_CONTEST_DRUMROLL,		// モテ勝敗ドラムロール
+		STATE_CONTEST_PRESENTS,		// モテ勝敗発表
 		STATE_CONTEST,				// モテ勝敗
 		STATE_MAX
 	};
@@ -107,13 +109,19 @@ private:
 	void StatePreludeReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 前座勝敗準備
 	void StatePrelude(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);				// 前座勝敗
 	void StateCharmContestReady(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// モテ勝敗準備
+	void StateCharmContestDrumroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// モテ勝敗ドラムロール
+	void StateCharmContestPresents(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// モテ勝敗発表
 	void StateCharmContest(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// モテ勝敗
 	
-	void StateStartPreludeReady();		// [開始]前座勝敗準備
-	void StateStartPrelude();			// [開始]前座勝敗
-	void StateStartCharmContestReady();	// [開始]モテ勝敗準備
-	void StateStartCharmContest();		// [開始]モテ勝敗
+	// 開始
+	void StateStartPreludeReady();			// [開始]前座勝敗準備
+	void StateStartPrelude();				// [開始]前座勝敗
+	void StateStartCharmContestReady();		// [開始]モテ勝敗準備
+	void StateStartCharmContestDrumroll();	// [開始]モテ勝敗ドラムロール
+	void StateStartCharmContestPresents();	// [開始]モテ勝敗発表
+	void StateStartCharmContest();			// [開始]モテ勝敗
 
+	// 終了
 	void StateEndPrelude();				// [終了]前座勝敗
 	void StateEndCharmContest();		// [終了]モテ勝敗
 
@@ -140,9 +148,15 @@ private:
 	float m_fCharmValue[CGameManager::ETeamSide::SIDE_MAX];		// モテ値
 	CObject3D* m_pText;											// 勝利チーム用3Dポリゴン
 	CResultCrown* m_pCrown;										// 王冠モデル
-	CEffekseerObj* m_pEfkConfetti;								// 紙吹雪エフェクシア
 	CPlayerReferee_Result* m_pReferee;							// 審判
 	CWinTeamResult* m_pWinTeam;									// 勝利チーム
+	float m_fSpotLightTime;										// スポットライトのタイマー
+
+	//-----------------------------
+	// エフェクト
+	//-----------------------------
+	CEffekseerObj* m_pEfkConfetti;									// 紙吹雪エフェクシア
+	CEffekseerObj* m_pEfkLight[CGameManager::ETeamSide::SIDE_MAX];	// スポットエフェクシア
 
 	//-----------------------------
 	// 状態

@@ -40,9 +40,7 @@ namespace
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team),
-	m_teamNTR(CGameManager::ETeamSide::SIDE_NONE)		// NTR後のチーム
-
+CAudienceAnimResult::CAudienceAnimResult(EObjType type, CGameManager::ETeamSide team) : CAudienceAnim(type, team)
 {
 
 }
@@ -62,6 +60,9 @@ HRESULT CAudienceAnimResult::Init()
 {
 	// 親クラスの初期化
 	CAudienceAnim::Init();
+
+	// 観戦満了
+	SetTimeStateByTimeStateMax();
 
 	return S_OK;
 }
@@ -98,12 +99,6 @@ void CAudienceAnimResult::Draw()
 //==========================================================================
 bool CAudienceAnimResult::SetNTR(CGameManager::ETeamSide team)
 {
-	// もう設定していたらはじく
-	//if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
-
-	// NTR
-	m_teamNTR = team;
-
 	// 親クラスの設定
 	CAudienceAnim::SetNTR(team);
 
@@ -117,11 +112,6 @@ void CAudienceAnimResult::CalcWatchPositionFar()
 {
 	// チーム取得
 	int nIdxTeam = GetTeam();
-
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
 
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
@@ -146,11 +136,6 @@ void CAudienceAnimResult::CalcWatchPositionUp()
 	// チーム取得
 	int nIdxTeam = GetTeam();
 
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
-
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Up::LEFT_LINE[nIdxTeam], Up::RIGHT_LINE[nIdxTeam]);
@@ -170,11 +155,6 @@ void CAudienceAnimResult::CalcWatchPositionNear()
 {
 	// チーム取得
 	int nIdxTeam = GetTeam();
-
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
 
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;

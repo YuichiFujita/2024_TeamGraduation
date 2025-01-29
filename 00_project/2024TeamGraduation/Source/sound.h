@@ -38,6 +38,7 @@ public:
 		LABEL_BGM_GAME,			// ゲーム
 		LABEL_BGM_SPAWN,		// 登場時
 		LABEL_BGM_RESULT,		// リザルト
+		LABEL_BGM_RESULT_AF,	// リザルト後
 		LABEL_BGM_TUTORIAL,		// チュートリアル
 		LABEL_BGM_RANKING,		// ランキング
 		LABEL_SE_SPAWNEND,		// 登場時演出終了時
@@ -65,6 +66,7 @@ public:
 		LABEL_SE_SP_LAND,		// スペシャル着地
 		LABEL_SE_SP_AUDIENCE01,	// スペシャル観客01
 		LABEL_SE_SP_AUDIENCE02,	// スペシャル観客02
+		LABEL_SE_KMHM_JUNBI,	// かめはめ準備
 		LABEL_SE_KMHM_START,	// かめはめ開始
 		LABEL_SE_KMHM_CHARGE,	// かめはめチャージ
 		LABEL_SE_KMHM_LOOP,		// かめはめループ
@@ -82,6 +84,8 @@ public:
 		LABEL_SE_OPTION_BACK,	// オプション戻る
 		LABEL_SE_JOIN,			// 参加
 		LABEL_SE_CONTROERMOVE,	// コントローラー移動
+		LABEL_SE_DRUMROLL,		// ドラムロール
+		LABEL_SE_DRUMROLL_END,	// ドラムロール終了
 		LABEL_MAX
 	};
 

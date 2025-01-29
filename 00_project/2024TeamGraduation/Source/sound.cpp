@@ -19,6 +19,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_BGM,"data/BGM/game01.wav", -1 },			// ゲーム
 	{ TYPE_BGM,"data/BGM/spawn.wav", -1 },			// 登場時
 	{ TYPE_BGM,"data/BGM/result.wav", -1 },			// リザルト
+	{ TYPE_BGM,"data/BGM/result_AF.wav", -1 },		// リザルト後
 	{ TYPE_BGM,"data/BGM/tutorial.wav", -1 },		// チュートリアル
 	{ TYPE_BGM,"data/BGM/ranking.wav", -1 },		// ランキング
 
@@ -66,6 +67,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/SP_audience02.wav",0},		// スペシャル観客02
 
 	// かめはめ波
+	{ TYPE_SE,"data/SE/KMHM_junbi.wav",0},			// かめはめ準備
 	{ TYPE_SE,"data/SE/KMHM_start.wav",0},			// かめはめ開始
 	{ TYPE_SE,"data/SE/KMHM_charge.wav",0},			// かめはめチャージ
 	{ TYPE_SE,"data/SE/KMHM_loop.wav",-1},			// かめはめチャージ
@@ -88,6 +90,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/join.wav",0},			// 参加
 	{ TYPE_SE,"data/SE/outgame/controllerMove.wav",0},	// コントローラー移動
 
+	// リザルト
+	{ TYPE_SE,"data/SE/outgame/drumroll.wav",-1},		// ドラムロール
+	{ TYPE_SE,"data/SE/outgame/drumroll_end.wav",0},	// ドラムロール終了
 
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ

@@ -51,7 +51,7 @@ CPlayerAIControlAction::CPlayerAIControlAction()
 void CPlayerAIControlAction::Catch(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (player->GetBall() != nullptr) return;
-	//if (!m_sFlag.bCatch) return;
+	if (!m_sFlag.bCatch) return;
 
 	// TODO：全自動キャッチ機構
 	CBall* pBall = CGameManager::GetInstance()->GetBall();

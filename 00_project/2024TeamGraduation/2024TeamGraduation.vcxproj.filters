@@ -893,6 +893,9 @@
     <ClCompile Include="Source\dressup_hair_MiiLow.cpp">
       <Filter>character\dressup</Filter>
     </ClCompile>
+    <ClCompile Include="Source\cameratrigger_KMHM.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
     <ClCompile Include="Source\playerFaceIcon.cpp">
       <Filter>player</Filter>
     </ClCompile>
@@ -1644,6 +1647,9 @@
     </ClInclude>
     <ClInclude Include="Source\dressup_hair_MiiLow.h">
       <Filter>character\dressup</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cameratrigger_KMHM.h">
+      <Filter>camera</Filter>
     </ClInclude>
     <ClInclude Include="Source\playerFaceIcon.h">
       <Filter>player</Filter>

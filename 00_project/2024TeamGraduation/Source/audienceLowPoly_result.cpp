@@ -13,7 +13,7 @@ namespace
 {
 	namespace Side
 	{// 横
-		const int RANGE = 325;	// 左右のライン幅
+		const int RANGE = 80;	// 左右のライン幅
 		const int MID_LEFT_LINE[]	= { 0.0f, RANGE };													// チームサイドごとの中央(左)ライン
 		const int MID_RIGHT_LINE[]	= { RANGE, 0.0f };													// チームサイドごとの中央(右)ライン
 		const int LEFT_LINE[]	= { (int)CAudience::MAX_LEFT_LINE, (int)CAudience::MAX_RIGHT_LINE - RANGE };	// チームサイドごとの左ライン
@@ -37,14 +37,19 @@ namespace
 		const int NEAR_LINE		= -1300;	// 手前の生成位置上限
 		const int FAR_LINE		= -1100;	// 奥の生成位置上限
 	}
+
+	const MyLib::Vector3 POS_COURT[CGameManager::ETeamSide::SIDE_MAX] =	// コート中央位置
+	{
+		MyLib::Vector3(-900.0f, 0.0f, 0.0f),	// 左
+		MyLib::Vector3(+900.0f, 0.0f, 0.0f),	// 右
+	};
 }
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
 CAudienceLowPolyResult::CAudienceLowPolyResult(EObjType type, CGameManager::ETeamSide team) : CAudienceLowPoly(type, team),
-	m_side(EAreaSide::SIDE_NONE),					// 観戦サイド
-	m_teamNTR(CGameManager::ETeamSide::SIDE_NONE)	// NTR後のチーム
+	m_side(EAreaSide::SIDE_NONE)					// 観戦サイド
 {
 
 }
@@ -65,6 +70,8 @@ HRESULT CAudienceLowPolyResult::Init()
 	// 親クラスの初期化
 	CAudienceLowPoly::Init();
 
+	// 観戦満了
+	SetTimeStateByTimeStateMax();
 	return S_OK;
 }
 
@@ -104,7 +111,6 @@ bool CAudienceLowPolyResult::SetNTR(CGameManager::ETeamSide team)
 	//if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE) return false;
 
 	// NTR
-	m_teamNTR = team;
 
 	// 親クラスの設定
 	CAudienceLowPoly::SetNTR(team);
@@ -119,11 +125,6 @@ void CAudienceLowPolyResult::CalcWatchPositionFar()
 {
 	// チーム取得
 	int nIdxTeam = GetTeam();
-
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
 
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
@@ -143,11 +144,6 @@ void CAudienceLowPolyResult::CalcWatchPositionSide()
 
 	// チーム取得
 	int nIdxTeam = GetTeam();
-
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
 
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
@@ -174,11 +170,6 @@ void CAudienceLowPolyResult::CalcWatchPositionNear()
 	// チーム取得
 	int nIdxTeam = GetTeam();
 
-	if (m_teamNTR != CGameManager::ETeamSide::SIDE_NONE)
-	{// 設定されていたら
-		nIdxTeam = m_teamNTR;
-	}
-
 	// ランダムに観戦位置を設定
 	MyLib::Vector3 posWatch;
 	posWatch.x = (float)UtilFunc::Transformation::Random(Down::LEFT_LINE[nIdxTeam], Down::RIGHT_LINE[nIdxTeam]);
@@ -195,16 +186,9 @@ void CAudienceLowPolyResult::EndSettingSpawn()
 	// 親クラス
 	CAudienceLowPoly::EndSettingSpawn();
 
-	// サイドが逆なら逆向きに
-	if (GetArea() == EArea::AREA_SIDE &&
-		m_side == EAreaSide::SIDE_REVERSE)
-	{
-		MyLib::Vector3 rot = GetRotation();
-
-		rot.y += D3DX_PI;
-		UtilFunc::Transformation::RotNormalize(rot);
-
-		// 向きを横に向ける
-		SetRotation(rot);
-	}
+	// 向き設定
+	MyLib::Vector3 rot;
+	rot.y = GetPosition().AngleXZ(POS_COURT[GetTeam()]);
+	rot.y += UtilFunc::Transformation::Random(-50, 50) * 0.001f;
+	SetRotation(rot);
 }

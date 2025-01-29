@@ -192,6 +192,7 @@
     <ClCompile Include="Source\bindKeyRight.cpp" />
     <ClCompile Include="Source\blackframe.cpp" />
     <ClCompile Include="Source\camera.cpp" />
+    <ClCompile Include="Source\cameratrigger_KMHM.cpp" />
     <ClCompile Include="Source\cameratrigger_pass.cpp" />
     <ClCompile Include="Source\camera_debug.cpp" />
     <ClCompile Include="Source\camera_motion.cpp" />
@@ -445,6 +446,7 @@
     <ClInclude Include="Source\blackframe.h" />
     <ClInclude Include="Source\calculation.h" />
     <ClInclude Include="Source\camera.h" />
+    <ClInclude Include="Source\cameratrigger_KMHM.h" />
     <ClInclude Include="Source\cameratrigger_pass.h" />
     <ClInclude Include="Source\camera_debug.h" />
     <ClInclude Include="Source\camera_motion.h" />

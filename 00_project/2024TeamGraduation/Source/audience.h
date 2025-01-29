@@ -88,10 +88,11 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void SetEnableJump(const bool bJump);							// 盛り上がり設定
+	virtual void SetEnableJump(const bool bJump);					// 盛り上がり設定
 	void SetSpecial();												// スペシャル設定
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE);			// 退場設定
-	virtual bool SetNTR(CGameManager::ETeamSide team) { m_state = STATE_SPAWN; return true; }	// NTR設定
+	virtual bool SetNTR(CGameManager::ETeamSide team);				// NTR設定
+	void SetState(EState state) { m_state = state; }				// 状態設定
 
 	//=============================
 	// 静的メンバ関数
@@ -133,11 +134,13 @@ protected:
 	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }		// 観戦位置取得
 	inline void SetDespawnPosition(const MyLib::Vector3& rPos)	{ m_posDespawn = rPos;}		// 退場位置設定
 	inline MyLib::Vector3 GetDespawnPosition() const			{ return m_posDespawn; }	// 退場位置取得
-	inline void SetArea(const int nArea)			{ m_nArea = nArea; }	// 観戦エリア設定
-	inline int GetArea() const						{ return m_nArea; }		// 観戦エリア取得
-	inline void SetLandY(const float fLandY)		{ m_fLandY = fLandY; }	// 着地Y座標設定
-	inline float GetLandY() const					{ return m_fLandY; }	// 着地Y座標取得
-	inline CGameManager::ETeamSide GetTeam() const	{ return m_team; }		// 応援チーム取得
+	inline void SetArea(const int nArea)			{ m_nArea = nArea; }		// 観戦エリア設定
+	inline int GetArea() const						{ return m_nArea; }			// 観戦エリア取得
+	inline void SetLandY(const float fLandY)		{ m_fLandY = fLandY; }		// 着地Y座標設定
+	inline float GetLandY() const					{ return m_fLandY; }		// 着地Y座標取得
+	inline CGameManager::ETeamSide GetTeam() const	{ return m_team; }			// 応援チーム取得
+	inline void SetTimeState(float time)			{ m_fTimeState = time; }	// 状態管理時間
+	void SetTimeStateByTimeStateMax();											// 状態管理時間の最大値設定処理
 
 protected:
 	//=============================
@@ -168,7 +171,7 @@ private:
 	//=============================
 	// メンバ変数
 	//=============================
-	const CGameManager::ETeamSide m_team;	// 応援チーム
+	CGameManager::ETeamSide m_team;	// 応援チーム
 	const EObjType m_type;		// オブジェクト種類
 	const float m_fJumpLevel;	// ジャンプ量
 	CShadow* m_pShadow;			// 影情報
