@@ -1549,13 +1549,6 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 	MyLib::Vector3 pos = GetPosition();
 	pos.y += 130.0f;
 
-	//演出
-	CEffect3D::Create(
-		pos,
-		MyLib::Vector3(0.0f, 0.0f, 0.0f),
-		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-		80.0f, 4.0f / 60.0f, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
-
 	switch (atkBall)
 	{
 	case CBall::ATK_NORMAL:
