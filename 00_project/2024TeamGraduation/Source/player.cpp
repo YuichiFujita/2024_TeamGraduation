@@ -212,7 +212,7 @@ CPlayer::CPlayer(const CGameManager::ETeamSide typeTeam, const EFieldArea typeAr
 {
 	// 値のクリア
 	m_state = EState::STATE_NONE;		// 状態
-	m_Oldstate = EState::STATE_NONE;	// 前回の状態
+	m_stateOld = EState::STATE_NONE;	// 前回の状態
 	m_fStateTime = 0.0f;				// 状態時間
 
 	// オブジェクトのパラメータ
@@ -413,7 +413,7 @@ HRESULT CPlayer::Init()
 	m_sDamageInfo.fReceiveTime = 0.0f;
 
 	m_state = EState::STATE_NONE;	// 状態
-	m_Oldstate = m_state;
+	m_stateOld = m_state;
 	m_sMotionFrag.bMove = true;
 	m_bPossibleMove = true;
 
@@ -842,6 +842,46 @@ void CPlayer::SetMoveMotion(bool bNowDrop)
 }
 
 //==========================================================================
+// ダメージモーション更新
+//==========================================================================
+void CPlayer::DamageUpdate()
+{
+	if (m_state != EState::STATE_INVINCIBLE)return;
+
+	MyLib::Vector3 pos = GetPosition();
+	CMotion* pMotion = GetMotion();
+	float maxAll = pMotion->GetMaxAllCount();
+	float frameCnt = pMotion->GetAllCount();
+
+	if (pMotion->IsFinish())
+	{// ダメージモーション終了
+
+		// 移動可
+		SetEnableMove(true);
+		SetMotion(MOTION_DEF);
+		return;
+	}
+
+	// ノックバック
+	float time = frameCnt / maxAll;
+	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sDamageKB.posStart, m_sDamageKB.posEnd, Knockback::HEIGHT, time);
+	SetPosition(pos);
+
+	// 移動不可
+	SetEnableMove(false);
+}
+
+//==========================================================================
+// [モーション終了] ダメージ
+//==========================================================================
+void CPlayer::EndMotionDamage()
+{
+	// 移動可能
+	SetEnableMove(true);
+}
+
+//==========================================================================
 // デフォルトモーションの設定
 //==========================================================================
 void CPlayer::DefaultMotionSet(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -1053,6 +1093,15 @@ void CPlayer::UpdateByMotion(const float fDeltaTime, const float fDeltaRate, con
 		{
 			m_pSpecialEffect->Update(fDeltaTime, fDeltaRate, fSlowRate);
 		}
+		break;
+
+	case EMotion::MOTION_DAMAGE:		// 前
+	case EMotion::MOTION_DAMAGE_LEFT:	// 左
+	case EMotion::MOTION_DAMAGE_RIGHT:	// 右
+	case EMotion::MOTION_DAMAGE_BACK:	// 後ろ
+		
+		// 更新処理
+		DamageUpdate();
 		break;
 
 	default:
@@ -1678,9 +1727,6 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 //==========================================================================
 void CPlayer::DamageSetting(CBall* pBall)
 {
-	// ダメージ状態にする
-	SetState(EState::STATE_DMG);
-
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 	float knockback = pBall->GetKnockback();
@@ -1690,6 +1736,13 @@ void CPlayer::DamageSetting(CBall* pBall)
 	posE.z += vecBall.z * knockback;
 	m_sDamageKB.posStart = posS;
 	m_sDamageKB.posEnd = posE;
+
+	// ダメージ状態にする
+	if (m_state != EState::STATE_INVINCIBLE)
+	{
+		SetState(EState::STATE_DMG);
+		m_sDamageKB.posEnd.y = 0.0f;
+	}
 
 	// ダメージ受付時間を設定
 	m_sDamageInfo.fReceiveTime = StateTime::DAMAGE;
@@ -1987,11 +2040,11 @@ void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const 
 {
 	MyLib::Vector3 pos = GetPosition();
 	CMotion* pMotion = GetMotion();
-	
+
 	// ノックバック
 	float time = m_fStateTime / StateTime::DAMAGE;
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
-	pos = UtilFunc::Calculation::GetParabola3D(m_sDamageKB.posStart, m_sDamageKB.posEnd, Knockback::HEIGHT,time);
+	pos = UtilFunc::Calculation::GetParabola3D(m_sDamageKB.posStart, m_sDamageKB.posEnd, Knockback::HEIGHT, time);
 	SetPosition(pos);
 
 	if (m_fStateTime >= StateTime::DAMAGE)
@@ -2001,8 +2054,8 @@ void CPlayer::StateDamage(const float fDeltaTime, const float fDeltaRate, const 
 
 		pMotion->ToggleFinish(true);
 
-		if (m_Oldstate == STATE_INVADE_TOSS || 
-			m_Oldstate == STATE_INVADE_RETURN)
+		if (m_stateOld == STATE_INVADE_TOSS || 
+			m_stateOld == STATE_INVADE_RETURN)
 		{// 侵入時なら
 			if (m_pBall != nullptr)
 			{
@@ -2398,6 +2451,7 @@ void CPlayer::StateEndInvincible()
 	m_mMatcol.a = 1.0f;
 	m_sDamageInfo.fReceiveTime = 0.0f;
 	m_sDamageInfo.bReceived = true;
+	SetEnableMove(true);
 }
 
 //==========================================================================
@@ -2553,7 +2607,7 @@ void CPlayer::SetState(EState state)
 		(this->*(m_StateEndFunc[m_state]))();
 	}
 
-	m_Oldstate = m_state;
+	m_stateOld = m_state;
 	m_state = state;
 	m_fStateTime = 0.0f;
 }
@@ -2986,7 +3040,7 @@ void CPlayer::Debug()
 		CPlayer::EAction action = m_pActionPattern->GetAction();
 		CPlayer::EDashAngle angle = m_pBase->GetPlayerControlMove()->GetInputAngle();
 
-#if 1
+#if 0
 		ImGui::Text("pos : [X : %.2f, Y : %.2f, Z : %.2f]", pos.x, pos.y, pos.z);
 		ImGui::Text("posOrigin : [X : %.2f, Y : %.2f, Z : %.2f]", posOrigin.x, posOrigin.y, posOrigin.z);
 		ImGui::Text("rot : [X : %.2f, Y : %.2f, Z : %.2f]", rot.x, rot.y, rot.z);
@@ -3018,9 +3072,10 @@ void CPlayer::Debug()
 		}
 #else
 		ImGui::Text("Motion : [%s]", magic_enum::enum_name(motionType));
-		ImGui::Text("Action : [%s]", magic_enum::enum_name(action));
 		ImGui::Text("State : [%s]", magic_enum::enum_name(m_state));
 		ImGui::Text("StateTime : [%.2f]", m_fStateTime);
+		ImGui::Text("MotionCount : [%.2f]", motion->GetAllCount());
+		ImGui::Text("MotionCountMax : [%.2f]", motion->GetMaxAllCount());
 #endif
 
 #if 0

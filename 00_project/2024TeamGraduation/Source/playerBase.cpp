@@ -140,7 +140,7 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 	if (state == CPlayer::EState::STATE_INVINCIBLE)
 	{
 		// ダメージモーション
-		m_pPlayer->SetMotion(CPlayer::MOTION_DAMAGE);
+		m_pPlayer->DamageSetting(pBall);
 
 		hitInfo.bHit = true;
 		return hitInfo;
