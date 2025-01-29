@@ -9,6 +9,7 @@
 
 // 派生先
 #include "cameratrigger_pass.h"
+#include "cameratrigger_KMHM.h"
 
 //==========================================================================
 // 関数リスト
@@ -16,9 +17,9 @@
 std::vector<CCameraMotion_Trigger::CREATE_FUNC>CCameraMotion_Trigger::m_CreateFunc =
 {
 	[]() { return DEBUG_NEW CCameraTrigger_Pass(); },	// パス
-	[]() { return nullptr; },	// 登場演出
-	[]() { return nullptr; },	// スペシャル盛り上げ
-	[]() { return nullptr; },	// かめはめ波
+	[]() { return nullptr; },							// 登場演出
+	[]() { return nullptr; },							// スペシャル盛り上げ
+	[]() { return DEBUG_NEW CCameraTrigger_KMHM(); },	// かめはめ波
 };
 
 //==========================================================================

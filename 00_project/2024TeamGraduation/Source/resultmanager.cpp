@@ -6,6 +6,7 @@
 //=============================================================================
 #include "resultmanager.h"
 #include "result.h"
+#include "lightManager.h"
 
 #include "playerResult.h"
 #include "playerManager.h"
@@ -55,6 +56,8 @@ namespace StateTime
 {
 	const float NONE(3.0f);		// なし
 	const float READY(3.0f);	// 準備
+	const float DRUMROLL(3.0f);	// ドラムロール
+	const float PRESENTS(2.0f);	// 発表
 	const float PRELUDE(5.0f);	// 前座
 }
 
@@ -73,12 +76,18 @@ namespace Draw
 
 namespace Ready
 {
-	const MyLib::Vector3 POSR_CAMERA = MyLib::Vector3(0.0f, POSR_HEIGHT, 0.0f);
-	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, -0.36f);
+	const MyLib::Vector3 POSR_CAMERA = MyLib::Vector3(0.0f, 140.0f, 0.0f);
+	const MyLib::Vector3 ROT_CAMERA = MyLib::Vector3(0.0f, 0.0f, 0.02f);
 
-	const float DISTANCE_CAMERA = 1500.0f;
+	const float DISTANCE_CAMERA = 600.0f;
 
 	const float POSY_WORD = 250.0f;	// セリフの高さ
+}
+
+namespace DrumRoll
+{
+	const float WIDTH = 900.0f;		// 横幅
+	const float HEIGHT = 450.0f;	// 縦幅
 }
 
 namespace Prelude
@@ -97,7 +106,7 @@ namespace Prelude
 		{CGameManager::ETeamSide::SIDE_RIGHT,	MyLib::Vector3(0.0f, +0.95f, -0.36f)},		// 右コート
 	};
 
-	const float DISTANCE_CAMERA = 1500.0f;
+	const float DISTANCE_CAMERA = 800.0f;
 
 	const float POSY_CROWN = 200.0f;	// 王冠の高さ
 }
@@ -132,30 +141,36 @@ namespace CameraTime
 		0.3f,		// 前座勝敗準備
 		1.0f,		// 前座勝敗
 		0.3f,		// モテ勝敗準備
-		1.0f,		// モテ勝敗
+		0.5f,		// モテ勝敗ドラムロール
+		0.3f,		// モテ勝敗発表
+		0.7f,		// モテ勝敗
 	};
 }
 
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =				// 状態関数
+CResultManager::STATE_FUNC CResultManager::m_StateFunc[] =		// 状態関数
 {
-	& CResultManager::StateNone,				// なし
-	& CResultManager::StatePreludeReady,		// 前座勝敗準備
-	& CResultManager::StatePrelude,				// 前座勝敗
-	& CResultManager::StateCharmContestReady,	// モテ勝敗準備
-	& CResultManager::StateCharmContest,		// モテ勝敗
+	&CResultManager::StateNone,					// なし
+	&CResultManager::StatePreludeReady,			// 前座勝敗準備
+	&CResultManager::StatePrelude,				// 前座勝敗
+	&CResultManager::StateCharmContestReady,	// モテ勝敗準備
+	&CResultManager::StateCharmContestDrumroll,	// モテ勝敗ドラムロール
+	&CResultManager::StateCharmContestPresents,	// モテ勝敗発表
+	&CResultManager::StateCharmContest,			// モテ勝敗
 };
 
 CResultManager::STATE_START_FUNC CResultManager::m_StateStartFunc[] =	// 状態開始
 {
-	nullptr,										// なし
-	& CResultManager::StateStartPreludeReady,		// 前座勝敗準備
-	& CResultManager::StateStartPrelude,			// 前座勝敗
-	& CResultManager::StateStartCharmContestReady,	// モテ勝敗準備
-	& CResultManager::StateStartCharmContest,		// モテ勝敗
-};
+	nullptr,											// なし
+	& CResultManager::StateStartPreludeReady,			// 前座勝敗準備
+	& CResultManager::StateStartPrelude,				// 前座勝敗
+	& CResultManager::StateStartCharmContestReady,		// モテ勝敗準備
+	& CResultManager::StateStartCharmContestDrumroll,	// モテ勝敗ドラムロール
+	& CResultManager::StateStartCharmContestPresents,	// モテ勝敗発表
+	& CResultManager::StateStartCharmContest,			// モテ勝敗
+}; 
 
 CResultManager::STATE_END_FUNC CResultManager::m_StateEndFunc[] =		// 状態終了
 {
@@ -163,6 +178,8 @@ CResultManager::STATE_END_FUNC CResultManager::m_StateEndFunc[] =		// 状態終了
 	nullptr,									// 前座勝敗準備
 	& CResultManager::StateEndPrelude,			// 前座勝敗
 	nullptr,									// モテ勝敗準備
+	nullptr,									// モテ勝敗ドラムロール
+	nullptr,									// モテ勝敗発表
 	& CResultManager::StateEndCharmContest,		// モテ勝敗
 };
 
@@ -369,9 +386,6 @@ void CResultManager::StateNone(const float fDeltaTime, const float fDeltaRate, c
 	if (m_fStateTime >= StateTime::NONE && m_bStateTrans)
 	{
 		SetState(EState::STATE_PRELUDE_READY);
-
-		// 審判喋らせる
-		m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
 	}
 }
 
@@ -469,6 +483,85 @@ void CResultManager::StateCharmContestReady(const float fDeltaTime, const float 
 	if (m_fStateTime >= StateTime::READY && m_bStateTrans)
 	{
 		// 状態設定
+		SetState(EState::STATE_CONTEST_DRUMROLL);
+	}
+}
+
+//==========================================================================
+// モテ勝敗ドラムロール
+//==========================================================================
+void CResultManager::StateCharmContestDrumroll(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	MyLib::Vector3 pos;
+
+	// πの割合計算
+	float piRate = D3DX_PI * (m_fStateTime / 0.5f);
+	pos.x = DrumRoll::WIDTH * sinf(piRate);
+	pos.z = DrumRoll::HEIGHT * sinf(2.0f * piRate) / 2;
+
+	// スポットエフェクトの生成
+	MyLib::Vector3 setpos = pos;
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		setpos = pos;
+		if (i == CGameManager::ETeamSide::SIDE_LEFT)
+		{
+			setpos *= -1;
+		}
+		m_pEfkLight[i]->SetPosition(setpos);
+	}
+
+	// カメラ時間
+	float START = 0.0f;
+	float END = CameraTime::END_TIME[m_state];
+
+	// カメラ補正
+	CCamera* pCamera = GET_MANAGER->GetCamera();
+	if (pCamera->GetState() == CCamera::STATE::STATE_FOLLOW)
+	{
+		// 距離・位置補正
+		float fDistance = UtilFunc::Correction::EasingLinear(pCamera->GetDistanceOrigin(), DISTANCE_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 rot = UtilFunc::Correction::EasingLinear(pCamera->GetOriginRotation(), ROT_CAMERA, START, END, m_fStateTime);
+		MyLib::Vector3 posR = UtilFunc::Correction::EasingLinear(pCamera->GetPositionROrigin(), MyLib::Vector3(0.0f, POSR_HEIGHT, 0.0f), START, END, m_fStateTime);
+		pCamera->SetDistance(fDistance);
+		pCamera->SetRotation(rot);
+		pCamera->SetPositionR(posR);
+	}
+
+	// 指定時間を過ぎたら
+	if (m_fStateTime >= StateTime::DRUMROLL && m_bStateTrans)
+	{
+		// 状態設定
+		SetState(EState::STATE_CONTEST_PRESENTS);
+	}
+}
+
+//==========================================================================
+// モテ勝敗発表
+//==========================================================================
+void CResultManager::StateCharmContestPresents(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	if (m_fStateTime >= StateTime::PRESENTS * 0.5f &&
+		m_pEfkLight[m_teamContestWin] == nullptr)
+	{
+		// スポットエフェクトの生成
+		m_pEfkLight[m_teamContestWin] = CEffekseerObj::Create
+		( // 引数
+			CMyEffekseer::EEfkLabel::EFKLABEL_SPOTLIGHT,
+			POS_COURT[m_teamContestWin],
+			VEC3_ZERO,
+			VEC3_ZERO,
+			19.0f
+		);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DRUMROLL_END);
+	}
+
+	// 指定時間を過ぎたら
+	if (m_fStateTime >= StateTime::PRESENTS && m_bStateTrans)
+	{
+		// 状態設定
 		SetState(EState::STATE_CONTEST);
 	}
 }
@@ -497,9 +590,6 @@ void CResultManager::StateCharmContest(const float fDeltaTime, const float fDelt
 
 	// シーン遷移可能フラグ
 	m_bSceneTrans = true;
-
-	// 紙吹雪
-
 }
 
 //==========================================================================
@@ -558,6 +648,9 @@ void CResultManager::StateStartPrelude()
 	// 勝利チーム
 	SAFE_KILL(m_pWinTeam);
 	m_pWinTeam = CWinTeamResult::Create(m_teamPreludeWin);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
 
 	// 勝ったチーム
 	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
@@ -627,6 +720,56 @@ void CResultManager::StateStartCharmContestReady()
 		CPlayerResult* pPlayer = (*itr);	// プレイヤー情報
 		pPlayer->SetState(CPlayerResult::EState::STATE_NONE);
 	}
+
+	// 審判喋らせる
+	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_TALK);
+}
+
+//==========================================================================
+// [開始]モテ勝敗ドラムロール
+//==========================================================================
+void CResultManager::StateStartCharmContestDrumroll()
+{
+	// 部屋を暗くする
+	GET_MANAGER->GetLight()->SetEnableBright(false);
+
+	// サウンド停止
+	CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_BGM_RESULT);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_DRUMROLL);
+
+	// スポットエフェクトの生成
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		m_pEfkLight[i] = CEffekseerObj::Create
+		( // 引数
+			CMyEffekseer::EEfkLabel::EFKLABEL_SPOTLIGHT,
+			VEC3_ZERO,
+			VEC3_ZERO,
+			VEC3_ZERO,
+			19.0f
+		);
+	}
+
+	// スポットライトのタイマー
+	m_fSpotLightTime = 0.0f;
+}
+
+//==========================================================================
+// [開始]モテ勝敗発表
+//==========================================================================
+void CResultManager::StateStartCharmContestPresents()
+{
+	// サウンド停止
+	CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_DRUMROLL);
+
+	// スポットエフェクトの削除
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		// 敗者は消す
+		SAFE_UNINIT(m_pEfkLight[i]);
+	}
 }
 
 //==========================================================================
@@ -634,7 +777,30 @@ void CResultManager::StateStartCharmContestReady()
 //==========================================================================
 void CResultManager::StateStartCharmContest()
 {
-	//TAKADA: モテ値出す？
+	// [開始]モテ勝敗発表
+	StateStartCharmContestPresents();
+
+	// スポットエフェクト消す
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		SAFE_UNINIT(m_pEfkLight[i]);
+	}
+
+	if (m_pEfkLight[m_teamContestWin] != nullptr)
+	{
+		// スポットエフェクトの削除
+		m_pEfkLight[m_teamContestWin]->Uninit();
+	}
+
+	// 部屋を明るくする
+	GET_MANAGER->GetLight()->SetEnableBright(true);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE01);
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_BGM_RESULT_AF);
 
 	// 観客NTR
 	CAudience::SetNTRAll(m_teamContestWin);
@@ -716,6 +882,11 @@ void CResultManager::SkipState()
 	if (nextState >= CResultManager::EState::STATE_MAX)	return;
 
 	SetState(static_cast<CResultManager::EState>(nextState));
+
+	if (nextState == EState::STATE_CONTEST_PRESENTS)
+	{// 発表の場合は次へ
+		m_fStateTime = StateTime::PRESENTS * 0.5f;
+	}
 }
 
 //==========================================================================
@@ -730,6 +901,10 @@ void CResultManager::CreateAudience()
 
 		// 観客数を設定
 		CAudience::SetNumWatch(nNumAudience, static_cast<CGameManager::ETeamSide>(i));
+
+		// 観客盛り下げ
+		CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_LEFT);
+		CAudience::SetEnableJumpAll(false, CGameManager::ETeamSide::SIDE_RIGHT);
 	}
 }
 

@@ -68,7 +68,6 @@ private:
 	// メンバ変数
 	//=============================
 	EAreaSide m_side;		// 観戦サイド
-	CGameManager::ETeamSide m_teamNTR;		// NTR後のチーム
 };
 
 #endif

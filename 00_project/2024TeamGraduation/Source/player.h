@@ -359,11 +359,15 @@ public:
 	SHitInfo Hit(CBall* pBall);											// ヒット処理
 	void SetSpecialAttack();											// スペシャル攻撃設定
 	void SetState(EState state);										// 状態設定
+	void SetStateOld(EState state) { m_stateOld = state; }				// 状態設定
+	void SetStateTime(float time) { m_fStateTime = time; }					// 状態設定
 	void ChangeBase(EBaseType type);									// ベース変更
 	EBaseType GetBaseType() const;										// ベース取得
 	EFieldArea GetAreaType() const { return m_typeArea; }				// ポジション取得
 	CGameManager::ETeamSide GetTeam() const { return m_typeTeam; }		// チームサイド取得
 	EState GetState() { return m_state; }								// 状態取得
+	EState GetStateOld() { return m_stateOld; }							// 前回状態取得
+	float GetStateTime() { return m_fStateTime; }						// 状態時間取得
 	EBody GetBodyType() const { return m_BodyType; }					// 体型取得
 	EHandedness GetHandedness() const { return m_Handedness; }			// 利き手取得
 	void SetMyPlayerIdx(int idx) { m_nMyPlayerIdx = idx; }				// 自分のインデックス設定
@@ -540,6 +544,9 @@ private:
 	//void CatchSettingFlyJust(CBall::EAttack atkBall);		// キャッチ時処理(空中・ジャスト)
 
 	void SetMoveMotion(bool bNowDrop);	// 移動モーション設定
+
+	void DamageUpdate();	// ダメージモーション更新
+	void EndMotionDamage();	// ダメージモーション終了
 	
 	//-----------------------------
 	// ドレスアップ
@@ -557,7 +564,7 @@ private:
 	//-----------------------------
 	// 状態
 	//-----------------------------
-	EState m_Oldstate;	// 前回の状態
+	EState m_stateOld;	// 前回の状態
 	EState m_state;		// 状態
 	float m_fStateTime;	// 状態時間
 
@@ -571,7 +578,7 @@ private:
 	//-----------------------------
 	// 行動フラグ
 	//-----------------------------
-	bool m_bPossibleMove;		// 行動可能フラグ
+	bool m_bPossibleMove;		// 行動可能フラグ(t:可能/f:不可)
 	bool m_bPossibleAction;		// アクション可能フラグ
 	bool m_bAutoMotionSet;		// オートモーション設定
 	bool m_bJump;				// ジャンプ中かどうか

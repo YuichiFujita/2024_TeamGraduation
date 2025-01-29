@@ -92,7 +92,7 @@ void CPlayerAIControlRightAttack::Update(const float fDeltaTime, const float fDe
 //==========================================================================
 // çUåÇèÄîıÅFó£ÇÍÇÈ
 //==========================================================================
-void CPlayerAIControlRightAttack::PreparationLeave()
+void CPlayerAIControlRightAttack::PreparationLeave(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ï‡Ç≠
 	SetMoveFlag(CPlayerAIControlMode::EMoveFlag::MOVEFLAG_WALK);

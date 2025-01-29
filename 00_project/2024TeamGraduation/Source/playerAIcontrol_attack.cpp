@@ -64,7 +64,12 @@ CPlayerAIControlAttack::THROWFLAG_FUNC CPlayerAIControlAttack::m_ThrowFlagFunc[]
 //==========================================================================
 namespace
 {
+	// 距離
+	const float DISTANSE_LINE = 400.0f;
+	const float DISTANSE_TARGET = 100.0f;
 
+	// 終了半径
+	const float END_RADIUS = 30.0f;
 };
 
 //==========================================================================
@@ -125,8 +130,6 @@ HRESULT CPlayerAIControlAttack::Init()
 	CPlayerAIControlMode::Init();
 
 	// 値のクリア
-	m_nLevel = 0;
-	m_bSet = false;
 	m_pTarget = nullptr;
 
 	ZeroMemory(&m_sTimig, sizeof(m_sTimig));
@@ -168,11 +171,8 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 			SeeTarget(m_pTarget->GetPosition());
 		}
 
-		// タイマー更新
-		UpdateAttackTimer(fDeltaTime, fDeltaRate, fSlowRate);
-
 		// 投げ種類の更新
-		(this->*(m_AttackModeFunc[m_eAttackMode]))();
+		(this->*(m_AttackModeFunc[m_eAttackMode]))(fDeltaTime, fDeltaRate, fSlowRate);
 	}
 
 	// 親クラスの更新（最後尾に設置）
@@ -182,7 +182,7 @@ void CPlayerAIControlAttack::Update(const float fDeltaTime, const float fDeltaRa
 //================================================================================
 // 攻撃モード：準備
 //================================================================================
-void CPlayerAIControlAttack::AttackModePreparation()
+void CPlayerAIControlAttack::AttackModePreparation(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_ePreparation == EAttackPrepatarion::ATTACKPREPATARION_NONE)
 	{// 準備状態が設定されていない場合
@@ -190,32 +190,41 @@ void CPlayerAIControlAttack::AttackModePreparation()
 		// 自分とターゲットとの距離を算出
 		float fDistance = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-		if (fDistance < 100.0f)
+		/*if (fDistance < 100.0f)
 		{
 			m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_LEAVE;
 		}
-		else
+		else*/
 		{
 			m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_GO;
 		}
+
+		//m_ePreparation = EAttackPrepatarion::ATTACKPREPATARION_WAIT;
 	}
 
 	// 準備の更新
-	(this->*(m_PreparationFunc[m_ePreparation]))();
+	(this->*(m_PreparationFunc[m_ePreparation]))(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //================================================================================
 // 準備：待つ
 //================================================================================
-void CPlayerAIControlAttack::PreparationWait()
+void CPlayerAIControlAttack::PreparationWait(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	SetAttackTimer(1, 5);
+	// タイマーセット
+	SetAttackTimer(1, 2);
+
+	// タイマー更新
+	if (IsUpdateAttackTimer(fDeltaTime, fDeltaRate, fSlowRate))
+	{// タイマーが終わったら投げる
+		m_eAttackMode = EAttackMode::ATTACKMODE_ATTACK;
+	}
 }
 
 //================================================================================
 // 準備：直ぐ
 //================================================================================
-void CPlayerAIControlAttack::PreparationGo()
+void CPlayerAIControlAttack::PreparationGo(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_eAttackMode = EAttackMode::ATTACKMODE_ATTACK;
 }
@@ -233,16 +242,16 @@ void CPlayerAIControlAttack::PreparationLeave()
 //================================================================================
 // 攻撃モード：攻撃
 //================================================================================
-void CPlayerAIControlAttack::AttackModeAttack()
+void CPlayerAIControlAttack::AttackModeAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 攻撃更新
-	UpdateAttack();
+	UpdateAttack(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //================================================================================
 // 攻撃更新
 //================================================================================
-void CPlayerAIControlAttack::UpdateAttack()
+void CPlayerAIControlAttack::UpdateAttack(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// AIの取得
 	CPlayer* pAI = GetPlayer();
@@ -279,21 +288,23 @@ void CPlayerAIControlAttack::UpdateAttack()
 			//else
 			{
 				m_eThrowType = (EThrowType)UtilFunc::Transformation::Random(EThrowType::THROWTYPE_NORMAL, EThrowType::THROWTYPE_JUMP);
+
+				//m_eThrowType = EThrowType::THROWTYPE_JUMP;
 			}
 		}
 	}
 
 	// 投げの更新
-	UpdateThrow();
+	UpdateThrow(fDeltaTime, fDeltaRate, fSlowRate);
 }
 
 //================================================================================
 // 投げ更新
 //================================================================================
-void CPlayerAIControlAttack::UpdateThrow()
+void CPlayerAIControlAttack::UpdateThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 投げ種類の更新
-	(this->*(m_ThrowTypeFunc[m_eThrowType]))();
+	(this->*(m_ThrowTypeFunc[m_eThrowType]))(fDeltaTime, fDeltaRate, fSlowRate);
 
 	// 投げ更新
 	(this->*(m_ThrowFlagFunc[m_eThrowFlag]))();
@@ -302,7 +313,7 @@ void CPlayerAIControlAttack::UpdateThrow()
 //--------------------------------------------------------------------------
 // 通常投げ
 //--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeNormal()
+void CPlayerAIControlAttack::ThrowTypeNormal(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ターゲットとの距離を取得
 	float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
@@ -319,16 +330,16 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 		if (distanse > 400.0f)
 		{
 			// 走り投げ
-			AttackDash(m_pTarget, 100.0f, 400.0f);
+			AttackDash(m_pTarget, DISTANSE_TARGET, DISTANSE_LINE);
 			return;
 		}
 		// 通常投げ
-		AttackNormal(m_pTarget);
+		AttackNormal(m_pTarget, fDeltaTime, fDeltaRate, fSlowRate);
 		break;
 
 	case EAttackNormal::ATTACK_DASH:	// ジャンプ
 		// 走り投げ
-		AttackDash(m_pTarget, 100.0f, 400.0f);
+		AttackDash(m_pTarget, DISTANSE_TARGET, DISTANSE_LINE);
 		break;
 
 	default:
@@ -340,7 +351,7 @@ void CPlayerAIControlAttack::ThrowTypeNormal()
 //--------------------------------------------------------------------------
 // ジャンプ投げ
 //--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeJump()
+void CPlayerAIControlAttack::ThrowTypeJump(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// ターゲットとの距離を取得
 	CPlayer* pAI = GetPlayer();
@@ -350,34 +361,34 @@ void CPlayerAIControlAttack::ThrowTypeJump()
 	float distanse = pAI->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 	float distanseLine = pAI->GetPosition().DistanceXZ({ 0.0f, 0.0f, pos.z });
 
-	if (distanseLine < 200.0f )
-	{
-		if (distanse > 750.0f)
-		{
-			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-			return;
-		}
+	//if (distanseLine < 200.0f )
+	//{
+	//	if (distanse > 750.0f)
+	//	{
+	//		m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+	//		return;
+	//	}
 
-		// ジャンプ投げ
-		AttackJump(m_pTarget);
-	}
-	else
-	{
-		if (distanse > 750.0f)
-		{
-			m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-			return;
-		}
+	//	// ジャンプ投げ
+	//	AttackJump(m_pTarget);
+	//}
+	//else
+	//{
+	//	if (distanse > 750.0f)
+	//	{
+	//		m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+	//		return;
+	//	}
 
 		// 走りジャンプ投げ
-		AttackDashJump(m_pTarget, 500.0f, 300.0f);
-	}
+		AttackDashJump(m_pTarget, DISTANSE_TARGET, DISTANSE_LINE, false);
+	//}
 }
 
 //--------------------------------------------------------------------------
 // スペシャル
 //--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypeSpecial()
+void CPlayerAIControlAttack::ThrowTypeSpecial(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_eThrowFlag = EThrowFlag::THROW_SPECIAL;
 }
@@ -385,7 +396,7 @@ void CPlayerAIControlAttack::ThrowTypeSpecial()
 //--------------------------------------------------------------------------
 // パス
 //--------------------------------------------------------------------------
-void CPlayerAIControlAttack::ThrowTypePass()
+void CPlayerAIControlAttack::ThrowTypePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	m_eThrowFlag = EThrowFlag::THROW_PASS;
 }
@@ -479,10 +490,16 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 //================================================================================
 // ノーマル投げ
 //================================================================================
-void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget)
+void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 攻撃までの時間を設定
-	SetAttackTimer(0, 2);
+	SetAttackTimer(0, 1);
+
+	// タイマー更新
+	if (IsUpdateAttackTimer(fDeltaTime, fDeltaRate, fSlowRate))
+	{// タイマーが終わったら投げる
+		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+	}
 }
 
 //================================================================================
@@ -501,12 +518,17 @@ void CPlayerAIControlAttack::AttackJump(CPlayer* pTarget)
 	// 行動：止まる
 	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 
-	// ジャンプ割合の取得
-	float rate = GetJumpRate();
-
-	if (rate >= 0.0f)
+	CMotion* pMotion = pMy->GetMotion();
+	int nType = pMotion->GetType();
+	if (nType == CPlayer::EMotion::MOTION_JUMP_BALL)
 	{
-		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+		// ジャンプ割合の取得
+		float rate = GetJumpRate();
+
+		if (rate >= 0.0f)
+		{
+			m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+		}
 	}
 }
 
@@ -540,7 +562,7 @@ void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget, float fTargetDis, floa
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
-		if (Approatch(pos, distanceLine))
+		if (Approatch(pos, END_RADIUS))
 		{// 範囲内の場合
 			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);		// 行動：止まる
 		}
@@ -554,7 +576,7 @@ void CPlayerAIControlAttack::AttackDash(CPlayer* pTarget, float fTargetDis, floa
 //================================================================================
 // ダッシュジャンプ投げ
 //================================================================================
-void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse)
+void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDistanse, float LineDistanse, bool bOver)
 {
 	// ターゲットの取得
 	if (!pTarget) return;
@@ -568,15 +590,11 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDista
 	// ラインの位置
 	MyLib::Vector3 linePos = { 0.0f, posMy.y, posMy.z };
 
-	// ラインとの距離
-	float distanceLine = 0.0f;
-	float distanceTarget = 0.0f;
-
 	// ターゲットのエリアの取得
 	CGameManager::ETeamSide side = pMy->GetTeam();
 
-	distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
-	distanceLine = posMy.DistanceXZ(linePos);	// 自分と中心線との距離
+	float distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
+	float distanceLine = posMy.DistanceXZ(linePos);						// 自分と中心線との距離
 	
 	if (distanceTarget > fTargetDistanse &&		// ターゲットとの距離
 		distanceLine > LineDistanse)			// 線との距離
@@ -585,27 +603,32 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDista
 		SetMoveFlag(EMoveFlag::MOVEFLAG_DASH);
 
 		// 相手の位置に近づく
-		if (Approatch(posTarget, 30.0f))
+		if (Approatch(posTarget, END_RADIUS))
 		{// 範囲内の場合
-			// 止まる
-			SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+
+			//if (!bOver)
+			//{
+			//	// 止まる
+			//	SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
+			//}
 		}
 
 		return;
 	}
 
-	if (distanceTarget > fTargetDistanse &&
-		distanceLine > LineDistanse)
-	{
-		SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
-	}
+	SetActionFlag(EActionFlag::ACTION_JUMP);	// アクション：跳ぶ
 
-	// ジャンプ割合の取得
-	float rate = GetJumpRate();
-
-	if (rate >= 0.0f)
+	CMotion* pMotion = pMy->GetMotion();
+	int nType = pMotion->GetType();
+	if (nType == CPlayer::EMotion::MOTION_JUMP_BALL)
 	{
-		m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+		// ジャンプ割合の取得
+		float rate = GetJumpRate();
+
+		if (rate >= 0.0f)
+		{
+			m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+		}
 	}
 }
 
@@ -868,7 +891,7 @@ bool CPlayerAIControlAttack::IsStop()
 //==========================================================================
 // 更新：アクションタイマー
 //==========================================================================
-void CPlayerAIControlAttack::UpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+bool CPlayerAIControlAttack::IsUpdateAttackTimer(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	if (m_sTimig.bSet)
 	{
@@ -882,8 +905,12 @@ void CPlayerAIControlAttack::UpdateAttackTimer(const float fDeltaTime, const flo
 
 			// 投げる
 			m_eThrowFlag = EThrowFlag::THROW_NORMAL;
+
+			return true;
 		}
 	}
+
+	return false;
 }
 
 //==========================================================================
