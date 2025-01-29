@@ -20,7 +20,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
+	const std::string TEXTFILE	= "data\\TEXT\\entry\\team_setting.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
 	const int PRIORITY = 5;	// 優先順位
@@ -103,7 +103,7 @@ CEntry_SetUpTeam::CEntry_SetUpTeam() : CEntryScene(),
 		m_vecAddIdx[i].clear();			// 追加されたインデックス
 		m_apNumInTeam[i] = nullptr;		// チーム人数情報
 		m_nMaxChangeIdx[i] = -1;		// 最大数変更するインデックス
-		m_nPlayerNum[i] = 1;			// プレイヤーの数
+		m_nPlayerNum[i] = 0;			// プレイヤーの数
 		m_fTimeNumInTeam[i] = 0.0f;		// チーム人数のタイマー
 	}
 
@@ -136,10 +136,6 @@ CEntry_SetUpTeam::~CEntry_SetUpTeam()
 //==========================================================================
 HRESULT CEntry_SetUpTeam::Init()
 {
-	// 前回のセットアップ読込 // TODO：初期情報の書き出しをCManager破棄時に呼び出し（このままだと前回の誰かの設定がそのままになる）
-	Load();
-
-
 	// 背景の生成
 	if (FAILED(CreateBG()))
 	{ // 生成に失敗した場合
@@ -174,6 +170,9 @@ HRESULT CEntry_SetUpTeam::Init()
 
 		return E_FAIL;
 	}
+
+	// 前回のセットアップ読込
+	Load();
 
 	// 追加されたインデックスリセット // TODO：毎回リセットしちゃうから要検討
 	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
@@ -754,7 +753,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 		//--------------------------
 		// エントリー操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i)) \
 		{ // エントリー操作が行われた場合
 
 			for (int j = 0; j < mylib_const::MAX_PLAYER; j++)
@@ -992,6 +991,9 @@ void CEntry_SetUpTeam::TransDressUp(const bool bAllReady)
 		// UIの削除
 		KillUI();
 
+		// セーブ
+		Save();
+
 		// 着せ替えシーンへ遷移
 		CEntry::GetInstance()->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_DRESSUP);
 	}
@@ -1089,70 +1091,48 @@ std::vector<int> CEntry_SetUpTeam::GetEntryPlayerIdx()
 void CEntry_SetUpTeam::Save()
 {
 	// ファイルを開く
-	std::ofstream File(TEXTFILE);
-	if (!File.is_open()) {
-		return;
+	std::ofstream file(TEXTFILE);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "チーム設定の書き出しに失敗！", "警告！", MB_ICONWARNING);
 	}
 
-	// テキストファイル名目次
-	File << TOP_LINE			<< std::endl;
-	File << "# チーム等設定"	<< std::endl;
-	File << TOP_LINE			<< std::endl;
+	// 見出しの書き出し
+	file << "#==============================================================================" << std::endl;
+	file << "#" << std::endl;
+	file << "#	チーム設定テキスト [team_setting.txt]" << std::endl;
+	file << "#	Author : 藤田 勇一" << std::endl;
+	file << "#" << std::endl;
+	file << "#==============================================================================" << std::endl;
 
+	// チーム人数の書き出し
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "#	チーム人数情報" << std::endl;
+	file << "#------------------------------------------------------------------------------" << std::endl;
+	file << "TEAMIDX" << std::endl;
 
-	// サイド毎の人数
-	File << TEXT_LINE			<< std::endl;
-	File << "# プレイヤー数"	<< std::endl;
-	File << TEXT_LINE			<< std::endl;
-	File << "PLAYERNUM = "	<< 
-		m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] << 
-		" " <<
-		m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT] << std::endl;
-	
-	File << "" << std::endl;
-
-
-	// プレイヤーインデックス
-	File << TEXT_LINE << std::endl;
-	File << "# プレイヤーインデックス" << std::endl;
-	File << TEXT_LINE << std::endl;
-	
-	// 左
-	File << "LEFT_ID = ";
-	for (int i = 0; i < CGameManager::MAX_SIDEPLAYER; i++)
+	// 左チームの書き出し
+	file << "	LEFT  = ";
+	for (const int nPadIdx : m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT])
 	{
-		if (static_cast<int>(m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT].size()) - 1 >= i)
-		{// サイズ内
-			File << m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT][i];
-		}
-		else
-		{
-			File << -1;
-		}
-		File << " ";
-
+		file << nPadIdx << " ";
 	}
-	File << std::endl;
+	file << "END" << std::endl;
 
-	// 右
-	File << "RIGHT_ID = ";
-	for (int i = 0; i < CGameManager::MAX_SIDEPLAYER; i++)
+	// 右チームの書き出し
+	file << "	RIGHT = ";
+	for (const int nPadIdx : m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT])
 	{
-		if (static_cast<int>(m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT].size()) - 1 >= i)
-		{// サイズ内
-			File << m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT][i];
-		}
-		else
-		{
-			File << -1;
-		}
-		File << " ";
+		file << nPadIdx << " ";
 	}
-	File << std::endl;
+	file << "END" << std::endl;
 
+	file << "END_TEAMIDX" << std::endl;
 
 	// ファイルを閉じる
-	File.close();
+	file.close();
 }
 
 //==========================================================================
@@ -1161,89 +1141,90 @@ void CEntry_SetUpTeam::Save()
 void CEntry_SetUpTeam::Load()
 {
 	// ファイルを開く
-	std::ifstream File(TEXTFILE);
-	if (!File.is_open()) {
-		return;
+	std::ifstream file(TEXTFILE);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "チーム設定の読み込みに失敗！", "警告！", MB_ICONWARNING);
 	}
 
-	// コメント用
-	std::string hoge;
+	// ファイルを読込
+	std::string str;	// 読込文字列
+	while (file >> str)
+	{ // ファイルの終端ではない場合ループ
 
-	// データ読み込み
-	std::string line;
-	while (std::getline(File, line))
-	{
-		// コメントはスキップ
-		if (line.empty() ||
-			line[0] == '#')
+		if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+		else if (str == "TEAMIDX")
 		{
-			continue;
-		}
+			do { // END_TEAMIDXを読み込むまでループ
 
-		if (line.find("PLAYERNUM") != std::string::npos)
-		{// PLAYERNUMでチーム毎のプレイヤー数読み込み
+				// 文字列を読み込む
+				file >> str;
 
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				m_nPlayerNum[CGameManager::ETeamSide::SIDE_LEFT] >>
-				m_nPlayerNum[CGameManager::ETeamSide::SIDE_RIGHT];	// プレイヤー数
-		}
-
-		if (line.find("LEFT_ID") != std::string::npos)
-		{// LEFT_IDで左側チームのインデックス
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 破棄
-			m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT].clear();
-
-			// リサイズ
-			m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT].resize(CGameManager::MAX_SIDEPLAYER);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT][0] >>
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT][1] >>
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_LEFT][2];	// プレイヤー数
-		}
-
-		if (line.find("RIGHT_ID") != std::string::npos)
-		{// RIGHT_IDで右側チームのインデックス
-
-			// ストリーム作成
-			std::istringstream lineStream(line);
-
-			// 破棄
-			m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT].clear();
-
-			// リサイズ
-			m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT].resize(CGameManager::MAX_SIDEPLAYER);
-
-			// 情報渡す
-			lineStream >>
-				hoge >>
-				hoge >>		// ＝
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT][0] >>
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT][1] >>
-				m_vecAddIdx[CGameManager::ETeamSide::SIDE_RIGHT][2];	// プレイヤー数
-		}
-
-		if (line.find("END_SCRIPT") != std::string::npos)
-		{
-			break;
+				if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+				else if (str == "LEFT")
+				{
+					// ロードインデックス
+					LoadIdx(&file, CGameManager::ETeamSide::SIDE_LEFT);
+				}
+				else if (str == "RIGHT")
+				{
+					// ロードインデックス
+					LoadIdx(&file, CGameManager::ETeamSide::SIDE_RIGHT);
+				}
+			} while (str != "END_TEAMIDX");	// END_TEAMIDXを読み込むまでループ
 		}
 	}
 
 	// ファイルを閉じる
-	File.close();
+	file.close();
+}
+
+//==========================================================================
+// ロードインデックス
+//==========================================================================
+void CEntry_SetUpTeam::LoadIdx(std::ifstream* pFile, const CGameManager::ETeamSide team)
+{
+	// ファイルストリームが未設定の場合抜ける
+	if (pFile == nullptr) { assert(false); return; }
+
+	std::string str;	// 読込文字列
+	*pFile >> str;		// ＝を読込
+	while (1)
+	{ // ENDを読み込むまでループ
+
+		// 文字列を読み込む
+		*pFile >> str;
+
+		if (str == "END")
+		{
+			break;
+		}
+		else
+		{
+			int nPadIdx = std::stoi(str);
+			m_nPlayerNum[team]++;
+			if (nPadIdx <= -1) { continue; }
+
+			for (int j = 0; j < mylib_const::MAX_PLAYER; j++)
+			{ // パッド認識の最大数分繰り返す
+
+				// 既にエントリーされている場合次へ
+				if (m_nEntryIdx[j] >= 0 && m_nEntryIdx[j] != nPadIdx) { continue; }
+
+				// 今回のプレイヤーインデックスを追加
+				m_nEntryIdx[j] = nPadIdx;
+
+				// コントローラーUIの自動描画をONにする
+				m_apPadUI[nPadIdx]->SetEnableDisp(true);
+				break;
+			}
+
+			// 選択チーム設定
+			m_TeamSide[nPadIdx].team = team;
+		}
+	}
 }
 
 //==========================================================================
@@ -1383,7 +1364,7 @@ int CEntry_SetUpTeam::PadIdxToEntryIdx(int nPadIdx)
 //==========================================================================
 int CEntry_SetUpTeam::PlayerIdxToPadIdx(int nPlayerIdx)
 {
-	if (nPlayerIdx >= CGameManager::MAX_PLAYER || nPlayerIdx <= -1) return -1;
+	if (nPlayerIdx >= CGameManager::MAX_PLAYER || nPlayerIdx <= -1) return 9999999;
 	return m_TeamSide[nPlayerIdx].nPadIdx;
 }
 
