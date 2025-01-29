@@ -68,12 +68,10 @@ public:
 
 protected:
 	// メンバ関数
+	bool IsAutoBallCatch(CBall* pBall) const;	// 自動ボールキャッチ可能かの確認
 	CPlayer* GetPlayer() { return m_pPlayer; }	// プレイヤー情報取得
 
 private:
-	// メンバ関数
-	bool IsAutoBallCatch(CBall* pBall) const;	// 自動ボールキャッチ可能かの確認
-
 	// メンバ変数
 	const CPlayer::EBaseType m_curTypeBase;	// 現在のベースタイプ
 	CPlayer::EBaseType m_newTypeBase;		// 新しいベースタイプ
