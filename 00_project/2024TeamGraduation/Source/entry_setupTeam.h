@@ -133,6 +133,7 @@ private:
 	//-----------------------------
 	void Save();	// セーブ
 	void Load();	// ロード
+	void LoadIdx(std::ifstream* pFile, const CGameManager::ETeamSide team);	// ロードインデックス
 
 	//=============================
 	// メンバ変数

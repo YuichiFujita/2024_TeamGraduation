@@ -424,6 +424,9 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 		// 決定の更新
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 		{
+			// 着せ替え保存
+			pDressup->Save();
+
 			// チーム設定シーンへ遷移
 			pEntry->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
 		}

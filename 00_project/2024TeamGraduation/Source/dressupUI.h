@@ -17,6 +17,7 @@
 #include "player.h"
 #include "gamemanager.h"
 #include "arrowUI.h"
+#include "playerManager.h"
 
 //************************************************************
 // 前方宣言
@@ -54,7 +55,7 @@ public:
 	};
 
 	// コンストラクタ
-	CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx);
+	CDressupUI(CEntry_Dressup* pParent, const CPlayer::EFieldArea typeArea, const int nPlayerIdx, const CPlayerManager::LoadInfo& info);
 
 	// デストラクタ
 	~CDressupUI() override;
@@ -72,10 +73,11 @@ public:
 	// 静的メンバ関数
 	static CDressupUI* Create	// 生成
 	( // 引数
-		CEntry_Dressup* pParent,			// 親クラス情報
-		const CPlayer::EFieldArea typeArea,	// プレイヤーポジション
-		const int nPlayerIdx,				// プレイヤーインデックス
-		const MyLib::Vector3& rPos			// 原点位置
+		CEntry_Dressup* pParent,				// 親クラス情報
+		const CPlayer::EFieldArea typeArea,		// プレイヤーポジション
+		const int nPlayerIdx,					// プレイヤーインデックス
+		const MyLib::Vector3& rPos,				// 原点位置
+		const CPlayerManager::LoadInfo& info	// 着せ替え情報
 	);
 
 	// メンバ関数
@@ -141,6 +143,7 @@ private:
 	EChangeType m_typeChange;			// 変更する種類
 	const int m_nPlayerIdx;				// プレイヤーインデックス
 	const CPlayer::EFieldArea m_typeArea;	// プレイヤーポジション
+	const CPlayerManager::LoadInfo m_info;	// 着せ替え情報
 };
 
 #endif	// _DRESSUP_UI_H_

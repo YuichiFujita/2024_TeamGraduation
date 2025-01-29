@@ -24,7 +24,7 @@
 //==========================================================================
 namespace
 {
-	const std::string TEXTFILE	= "data\\TEXT\\entry\\setupTeam.txt";
+	const std::string TEXTFILE	= "data\\TEXT\\playerManager\\playerInfo.txt";
 	const std::string TOP_LINE	= "#==============================================================================";	// テキストのライン
 	const std::string TEXT_LINE	= "#------------------------------------------------------------------------------";	// テキストのライン
 	const D3DXCOLOR DEF_COL = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);	// デフォルト色
@@ -116,13 +116,15 @@ HRESULT CEntry_Dressup::Init()
 {
 	CTexture* pTexture = CTexture::GetInstance();
 
-	// 前回の着せ替え読込
-	Load();
-
 	// チームセットアップ情報の取得
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
+	// 前回の着せ替え読込
+	SLoad load = Load();
+	int nNumAI = 0;
+
+#if 1
 	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
@@ -260,7 +262,9 @@ HRESULT CEntry_Dressup::Init()
 
 	// 色を設定
 	m_apTransUI[TRANS_NEXT]->SetColor(DEF_COL);
+#endif
 
+	// 左内野の生成
 	int nCurLeft = 0;	// 現在の左プレイヤー数
 	int nMaxLeft = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_LEFT);	// 左プレイヤー総数
 	for (int nPlayerIdx = 0; nPlayerIdx < CGameManager::MAX_PLAYER; nPlayerIdx++)
@@ -277,8 +281,27 @@ HRESULT CEntry_Dressup::Init()
 		// チームメンバー数を加算
 		nCurLeft++;
 
+		// 着せ替え情報を取得
+		CPlayerManager::LoadInfo info;
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス	// TODO/FUJITA：こっちはプレイヤーインデックスからチーム取ってる
+		if (nPadIdx > -1)
+		{ // プレイヤーの場合
+
+			info = load.aInUser[nPadIdx];
+		}
+		else
+		{ // 外野の場合
+
+			if (nNumAI < (int)load.vecInAI.size())
+			{ // AIの読込分の場合
+
+				info = load.vecInAI[nNumAI];
+				nNumAI++;
+			}
+		}
+
 		// 着せ替えUIの生成
-		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI);
+		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI, info);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
@@ -288,7 +311,6 @@ HRESULT CEntry_Dressup::Init()
 		// 着せ替えUIの追加
 		m_vecDressInfo.push_back(pDressup);
 
-		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス
 		if (nPadIdx > -1)
 		{ // プレイヤーの場合
 
@@ -312,6 +334,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 	}
 
+	// 右内野の生成
 	int nCurRight = 0;	// 現在の右プレイヤー数
 	int nMaxRight = pSetupTeam->GetPlayerNum(CGameManager::ETeamSide::SIDE_RIGHT);	// 右プレイヤー総数
 	for (int nPlayerIdx = 0; nPlayerIdx < CGameManager::MAX_PLAYER; nPlayerIdx++)
@@ -328,8 +351,27 @@ HRESULT CEntry_Dressup::Init()
 		// チームメンバー数を加算
 		nCurRight++;
 
+		// 着せ替え情報を取得
+		CPlayerManager::LoadInfo info;
+		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス
+		if (nPadIdx > -1)
+		{ // プレイヤーの場合
+
+			info = load.aInUser[nPadIdx];
+		}
+		else
+		{ // 外野の場合
+
+			if (nNumAI < (int)load.vecInAI.size())
+			{ // AIの読込分の場合
+
+				info = load.vecInAI[nNumAI];
+				nNumAI++;
+			}
+		}
+
 		// 着せ替えUIの生成
-		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI);
+		CDressupUI* pDressup = CDressupUI::Create(this, CPlayer::FIELD_IN, nPlayerIdx, posUI, info);
 		if (pDressup == nullptr)
 		{ // 生成に失敗した場合
 
@@ -339,7 +381,6 @@ HRESULT CEntry_Dressup::Init()
 		// 着せ替えUIの追加
 		m_vecDressInfo.push_back(pDressup);
 
-		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(nPlayerIdx);	// 操作権インデックス
 		if (nPadIdx > -1)
 		{ // プレイヤーの場合
 
@@ -363,6 +404,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 	}
 
+	// 外野の生成
 	for (int nPlayerIdx = 0; nPlayerIdx < CPlayerManager::OUT_MAX; nPlayerIdx++)
 	{ // 外野人数分繰り返す
 
@@ -381,8 +423,18 @@ HRESULT CEntry_Dressup::Init()
 			posUI.x = ui::right::POS.x - (ui::right::OFFSET_X * (float)(nMaxTeam - 1)) * 0.5f + (ui::right::OFFSET_X * (float)(nPlayerIdx - nMaxTeam));
 		}
 
+		// 着せ替え情報を取得
+		CPlayerManager::LoadInfo info;
+		int nTeam = nPlayerIdx / nMaxTeam;
+		int nOffset = nMaxTeam * nTeam;
+		int nPlayer = nPlayerIdx - nOffset;
+		if (nPlayer < (int)load.aVecOut[nTeam].size())
+		{
+			info = load.aVecOut[nTeam][nPlayer];
+		}
+
 		// 着せ替えUIの生成
-		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI);
+		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI, info);
 		if (m_apDressInfo[nPlayerIdx] == nullptr)
 		{ // 生成に失敗した場合
 
@@ -1038,8 +1090,12 @@ bool CEntry_Dressup::IsAreaChangeOK(const CGameManager::ETeamSide team) const
 		// 既に自分以外のユーザーが選択中の場合選択不可
 		if (select.y != CSelectUI::SELECT_DRESSUP) { continue; }
 
+#if 0
 		// 選択範囲が引数チームじゃない場合次へ
 		if (!(select.x >= nOffset && select.x < nMaxDressUI + nOffset)) { continue; }
+#else
+		if (GetPtrDressUI(select.x)->GetTeam() != team) { continue; }
+#endif
 
 		// 操作していない場合次へ
 		if (rSelect->IsSelect()) { continue; }
@@ -1210,52 +1266,104 @@ void CEntry_Dressup::Save()
 	);
 
 	// ゲーム設定の保存
-	assert(m_pRuleManager != nullptr);
-	CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
-	CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
+	if (m_pRuleManager != nullptr)
+	{
+		CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
+		CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
+	}
 }
 
 //==========================================================================
 // ロード
 //==========================================================================
-void CEntry_Dressup::Load()
+CEntry_Dressup::SLoad CEntry_Dressup::Load()
 {
 	// ファイルを開く
-	std::ifstream File(TEXTFILE);
-	if (!File.is_open()) {
-		return;
+	std::ifstream file(TEXTFILE);	// ファイルストリーム
+	if (file.fail())
+	{ // ファイルが開けなかった場合
+
+		// エラーメッセージボックス
+		MessageBox(nullptr, "着せ替えの読み込みに失敗！", "警告！", MB_ICONWARNING);
+		return {};
 	}
 
-	// コメント用
-	std::string hoge;
+	// ファイルを読込
+	std::string str;	// 読込文字列
+	SLoad load;			// 読込情報
+	int nTeam = 0;		// チームインデックス
+	while (file >> str)
+	{ // ファイルの終端ではない場合ループ
 
-	// データ読み込み
-	std::string line;
-	while (std::getline(File, line))
-	{
-		// コメントはスキップ
-		if (line.empty() ||
-			line[0] == '#')
+		if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+		else if (str == "SETTEAM")
 		{
-			continue;
-		}
+			do { // END_SETTEAMを読み込むまでループ
 
-		if (line.find("PLAYERNUM") != std::string::npos)
-		{// PLAYERNUMでチーム毎のプレイヤー数読み込み
+				// 文字列を読み込む
+				file >> str;
 
-			// ストリーム作成
-			std::istringstream lineStream(line);
-			
-		}
+				if (str.front() == '#') { std::getline(file, str); }	// コメントアウト
+				else if (str == "SETIN")
+				{
+					// ロードプレイヤー
+					std::vector<CPlayerManager::LoadInfo> vecLoad = LoadPlayer(&file, nTeam, "END_SETIN");
+					for (const auto& rLoad : vecLoad)
+					{
+						if (rLoad.nControllIdx <= -1)
+						{
+							load.vecInAI.push_back(rLoad);
+						}
+						else
+						{
+							if (rLoad.nControllIdx >= mylib_const::MAX_PLAYER) { assert(false); }
+							load.aInUser[rLoad.nControllIdx] = rLoad;
+						}
+					}
+				}
+				else if (str == "SETOUT")
+				{
+					// ロードプレイヤー
+					load.aVecOut[nTeam] = LoadPlayer(&file, nTeam, "END_SETOUT");
+				}
+			} while (str != "END_SETTEAM");	// END_SETTEAMを読み込むまでループ
 
-		if (line.find("END_SCRIPT") != std::string::npos)
-		{
-			break;
+			// チームインデックスを進める
+			nTeam++;
 		}
 	}
 
 	// ファイルを閉じる
-	File.close();
+	file.close();
+
+	return load;
+}
+
+//==========================================================================
+// ロードプレイヤー
+//==========================================================================
+std::vector<CPlayerManager::LoadInfo> CEntry_Dressup::LoadPlayer(std::ifstream* pFile, const int nTeam, const char* pEndKey)
+{
+	// ファイルストリームが未設定の場合抜ける
+	if (pFile == nullptr) { assert(false); return {}; }
+
+	std::vector<CPlayerManager::LoadInfo> vecLoad;
+	std::string str;	// 読込文字列
+	int nNumPlayer = 0;	// プレイヤー数
+	do { // 終了キーを読み込むまでループ
+
+		// 文字列を読み込む
+		*pFile >> str;
+
+		if (str.front() == '#') { std::getline(*pFile, str); }	// コメントアウト
+		else if (str == "SETPLAYER")
+		{
+			CPlayerManager::LoadPlayerInfo(pFile, nTeam, nNumPlayer, &vecLoad);
+			nNumPlayer++;
+		}
+	} while (str != pEndKey);	// 終了キーを読み込むまでループ
+
+	return vecLoad;
 }
 
 //==========================================================================

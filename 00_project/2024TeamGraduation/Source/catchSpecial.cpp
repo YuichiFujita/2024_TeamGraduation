@@ -342,7 +342,7 @@ void CCatchSpecial::MomentumStateResult(const float fDeltaTime, const float fDel
 	}
 	else
 	{// Ž¸”s
-		m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL);
+		//m_pPlayer->SetMotion(CPlayer::EMotion::MOTION_CATCHSPECIAL_FAIL);
 	}
 
 	if (motion->IsFinish())
