@@ -20,10 +20,12 @@ namespace Charm
 
 namespace Special
 {
-	const float VALUE_MAX = 100.0f;												// 最大値
-	const float VALUE_FRAMERATE = 100.0f;										// 値の伸びる速度
-	const MyLib::Vector2 GAUGE_SIZE = MyLib::Vector2(250.0f, 30.0f);			// ゲージサイズ
-	const MyLib::Vector3 GAUGE_POS = MyLib::Vector3(30.0f, 50.0f, 0.0f);		// ゲージ位置
+	const float VALUE_MAX = 100.0f;			// 最大値
+	const float VALUE_FRAMERATE = 100.0f;	// 値の伸びる速度
+	const MyLib::Vector2 GAUGE_SIZE = MyLib::Vector2(250.0f, 14.0f);		// ゲージサイズ
+	const MyLib::Vector3 GAUGE_POS = MyLib::Vector3(-2.0f, 34.0f, 0.0f);	// ゲージ位置
+	const float FRAME_WIDTH = GAUGE_SIZE.x + 13.0f;	// フレーム横幅
+	const float ASSIST_WIDTH = 48.0f;				// アシスト横幅
 }
 
 //==========================================================================
@@ -137,7 +139,40 @@ void CTeamStatus::TeamSetting(const CGameManager::ETeamSide team)
 	m_sSpecialInfo.pGauge->SetTeam(team);
 	m_sSpecialInfo.pGauge->SetAnchorType(anchor);
 	m_sSpecialInfo.pGauge->SetPosition(pos);
-	m_sSpecialInfo.pGauge->GetBar()->SetTexUV(uv);
+	m_sSpecialInfo.pGauge->SetTexUV(uv);
+
+	const MyLib::Vector3 OFFSET_FRAME[] =
+	{
+		MyLib::Vector3(-13.0f, -13.0f, 0.0f),
+		MyLib::Vector3(12.5f, -13.0f, 0.0f),
+	};
+	m_sSpecialInfo.pGauge->SetOffsetFrame(OFFSET_FRAME[team]);
+
+	const MyLib::Vector3 OFFSET_ASSIST[] =
+	{
+		MyLib::Vector3(375.0f, -31.0f, 0.0f),
+		MyLib::Vector3(-375.0f, -31.0f, 0.0f),
+	};
+	m_sSpecialInfo.pGauge->SetOffsetAssist(OFFSET_ASSIST[team]);
+
+	const MyLib::Vector3 OFFSET_NAME[] =
+	{
+		MyLib::Vector3(12.0f, -32.0f, 0.0f),
+		MyLib::Vector3(-12.0f, -32.0f, 0.0f),
+	};
+	m_sSpecialInfo.pGauge->SetOffsetTeamName(OFFSET_NAME[team]);
+
+	const EAlignX ALIGN_X[] =
+	{
+		XALIGN_LEFT,
+		XALIGN_RIGHT,
+	};
+	m_sSpecialInfo.pGauge->SetAlignX(ALIGN_X[team]);
+
+	// 外部ファイルから設定されたチーム名を読込
+	std::string sTeamName;	// チーム名
+	CEntryRuleManager::LoadName(&sTeamName, m_typeTeam);	// チーム名読込
+	m_sSpecialInfo.pGauge->SetString(sTeamName);
 }
 
 //==========================================================================
@@ -201,10 +236,40 @@ void CTeamStatus::InitSpecialInfo()
 		m_sSpecialInfo.pGauge = nullptr;
 	}
 
-	//ゲージ生成
-	m_sSpecialInfo.pGauge = CGauge2D::Create(Special::VALUE_MAX, 10.1f, Special::GAUGE_POS, Special::GAUGE_SIZE);
-	m_sSpecialInfo.pGauge->SetColorFront(MyLib::color::White());
-	m_sSpecialInfo.pGauge->SetColorBack(MyLib::color::Black());
+	// ゲージの生成
+	CTexture* pTexture = CTexture::GetInstance();
+	m_sSpecialInfo.pGauge = CGauge2D::Create
+	( // 引数
+		Special::VALUE_MAX,		// 最大表示値
+		10.1f,					// 表示値変動フレーム
+		"",						// チーム名
+		Special::GAUGE_POS,		// 位置
+		VEC3_ZERO,				// フレームオフセット
+		VEC3_ZERO,				// アシストオフセット
+		VEC3_ZERO,				// チーム名オフセット
+		Special::GAUGE_SIZE,	// ゲージ大きさ
+		VEC2_ZERO,				// フレーム大きさ
+		VEC2_ZERO,				// アシスト大きさ
+		MyLib::color::Blue()	// ゲージ色
+	);
+
+	// フレームテクスチャ割当
+	const int nTexFrameID = pTexture->Regist("data\\TEXTURE\\gaugeframe000.png");
+	m_sSpecialInfo.pGauge->BindTextureFrame(nTexFrameID);
+
+	// フレーム横幅を元にサイズを設定
+	MyLib::Vector2 sizeFrame = pTexture->GetImageSize(nTexFrameID);
+	sizeFrame = UtilFunc::Transformation::AdjustSizeByWidth(sizeFrame, Special::FRAME_WIDTH);
+	m_sSpecialInfo.pGauge->SetSizeFrame(sizeFrame);
+
+	// アシストテクスチャ割当
+	const int nTexAssistID = pTexture->Regist("data\\TEXTURE\\xbox_lb.png");
+	m_sSpecialInfo.pGauge->BindTextureAssist(nTexAssistID);
+
+	// アシスト横幅を元にサイズを設定
+	MyLib::Vector2 sizeAssist = pTexture->GetImageSize(nTexAssistID);
+	sizeAssist = UtilFunc::Transformation::AdjustSizeByWidth(sizeAssist, Special::ASSIST_WIDTH);
+	m_sSpecialInfo.pGauge->SetSizeAssist(sizeAssist);
 
 	// 上限設定
 	m_sSpecialInfo.fValueMax = Special::VALUE_MAX;
