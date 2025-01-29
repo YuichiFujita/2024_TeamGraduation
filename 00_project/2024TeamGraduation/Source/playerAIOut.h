@@ -27,6 +27,18 @@ class CPlayerAIOut : public CPlayerOut
 {
 public:
 
+	enum EAIOutRange
+	{
+		RANGE_NONE = 0,
+		RANGE_UP,
+		RANGE_DOWN,
+		RANGE_LEFT,
+		RANGE_RIGHT,
+		RANGE_MAX
+	};
+
+public:
+
 	//=============================
 	// コンストラクタ/デストラクタ
 	//=============================
@@ -41,12 +53,15 @@ public:
 	virtual CPlayer::SHitInfo Hit(CBall* pBall) override;	// ヒット
 	virtual void Debug() override;	// デバッグ
 	virtual CPlayerAIOut* GetPlayerAIOut() override { return this; }	// AI外野プレイヤー取得
+	virtual bool IsCrab() override;					// カニ歩き判定
+
 
 private:
 	//=============================
 	// メンバ変数
 	//=============================
 	CPlayerAIOutControl* m_pAIOutControl;	// AIコントロール(外野)
+	EAIOutRange m_eAIRange;
 };
 
 #endif
