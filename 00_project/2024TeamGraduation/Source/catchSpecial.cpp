@@ -7,6 +7,7 @@
 #include "catchSpecial.h"
 #include "player.h"
 #include "manager.h"
+#include "camera.h"
 
 //==========================================================================
 // 定数定義
@@ -135,7 +136,22 @@ CCatchSpecial *CCatchSpecial::Create(CPlayer* pPlayer, EState state)
 //==========================================================================
 HRESULT CCatchSpecial::Init()
 {
+	// 時間
+	float moveTime = Kamehameha::MOMENTUM_TIME[EMomentumState::MOMENTUM_NONE] * 2.0f;
 
+	// モーション設定
+	CMotion* motion = m_pPlayer->GetMotion();
+	motion->Set(CPlayer::EMotion::MOTION_CATCHSPECIAL_BRAKE);
+	float brakeTime = motion->GetMaxAllCount();	// 耐え時間
+
+	motion->Set(CPlayer::EMotion::MOTION_CATCHSPECIAL_CAPTURE);
+	float NoneTime = motion->GetMaxAllCount();	// 捕獲時間
+
+	// 待機時間(耐え + 捕獲)
+	float waitTime = (NoneTime + brakeTime * 0.5f) / 60.0f;
+
+	// スペシャルキャッチカメラ情報設定
+	GET_MANAGER->GetCamera()->SetSpecialCatchInfo(m_pPlayer, MyLib::Vector3(0.0f, 80.0f, 0.0f), moveTime, waitTime);
 	return S_OK;
 }
 
@@ -254,7 +270,7 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 	float fFrameMax = m_pPlayer->GetMotion()->GetMaxAllCount();	// 目標
 
 	const float fSlowStart = 1.0f;	// 麓
-	const float fSlowEnd = 0.5f;	// 山
+	const float fSlowEnd = 0.3f;	// 山
 
 	if (fFrame <= fFrameMax * 0.5f)
 	{
@@ -301,6 +317,13 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 	move.y = 0.0f;
 
 	pos += move;
+
+	// エフェクト生成
+	CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_WALK,
+		pos,
+		MyLib::Vector3(),	// 向き
+		MyLib::Vector3(),
+		30.0f, true);
 
 	if (CGameManager::GetInstance()->SetPosLimit(pos))
 	{// 終了or画面端判定
@@ -416,6 +439,9 @@ void CCatchSpecial::MomentumStartSlide()
 
 	// 設定
 	m_pPlayer->SetKnockBackInfo(knockback);
+
+	// カメラ揺れ
+	GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(6.0f, 2.0f, 0.03f));
 }
 
 //==========================================================================
