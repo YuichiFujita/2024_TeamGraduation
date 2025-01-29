@@ -1563,6 +1563,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1570,6 +1573,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f));
 		break;
 
 	default:
@@ -1607,6 +1613,9 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1614,6 +1623,9 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	default:
@@ -1760,6 +1772,9 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(8.0f, 2.0f, 0.65f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1767,6 +1782,9 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(15.0f, 2.0f, 0.4f));
 		break;
 
 	case CBall::ATK_SPECIAL:
@@ -1774,6 +1792,12 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT_SP, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(15.0f, 2.0f, 0.4f));
+
+		// エフェクト再削除
+		pBall->SpecialEndSetting();
 		break;
 
 	default:
