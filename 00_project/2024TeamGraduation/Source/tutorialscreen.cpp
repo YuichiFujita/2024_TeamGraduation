@@ -9,6 +9,7 @@
 //==========================================================================
 #include "tutorialscreen.h"
 #include "manager.h"
+#include "fade.h"
 #include "input.h"
 
 //==========================================================================
@@ -53,6 +54,7 @@ namespace
 	namespace StateTime
 	{
 		const float SPAWN = 0.3f;	// 登場
+		const float FADEOUT = 0.3f;	// フェードアウト
 	}
 }
 
@@ -63,6 +65,8 @@ CTutorialScreen::STATE_FUNC CTutorialScreen::m_StateFunc[] =
 {
 	&CTutorialScreen::StateNone,	// なにもなし
 	&CTutorialScreen::StateSpawn,	// 登場
+	&CTutorialScreen::StateFadeIn,	// フェードイン
+	&CTutorialScreen::StateFadeOut,	// フェードアウト
 };
 
 //==========================================================================
@@ -141,8 +145,8 @@ HRESULT CTutorialScreen::Init()
 	}
 
 	// 状態設定
-	SetState(EState::STATE_SPAWN);
-	StateSpawn(0.0f, 0.0f, 1.0f);
+	SetState(EState::STATE_FADEIN);
+	StateFadeIn(0.0f, 0.0f, 1.0f);
 
 	return S_OK;
 }
@@ -340,6 +344,47 @@ void CTutorialScreen::StateSpawn(const float fDeltaTime, const float fDeltaRate,
 }
 
 //==========================================================================
+// フェードイン
+//==========================================================================
+void CTutorialScreen::StateFadeIn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 不透明度割り出し
+	float alpha = UtilFunc::Correction::EasingEaseOut(0.0f, 1.0f, 0.0f, StateTime::FADEOUT, m_fStateTime);
+
+	// 不透明度設定
+	SetAlpha(alpha);
+	m_pFade->SetAlpha(alpha);		// フェードの情報
+	m_pManual->SetAlpha(alpha);		// 説明の情報
+	m_pManualText->SetAlpha(alpha);	// 説明テキストの情報
+
+	if (m_fStateTime >= StateTime::FADEOUT)
+	{
+		SetState(EState::STATE_NONE);
+	}
+}
+
+//==========================================================================
+// フェードアウト
+//==========================================================================
+void CTutorialScreen::StateFadeOut(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 不透明度割り出し
+	float alpha = UtilFunc::Correction::EasingEaseOut(1.0f, 0.0f, 0.0f, StateTime::FADEOUT, m_fStateTime);
+
+	// 不透明度設定
+	SetAlpha(alpha);
+	m_pFade->SetAlpha(alpha);		// フェードの情報
+	m_pManual->SetAlpha(alpha);		// 説明の情報
+	m_pManualText->SetAlpha(alpha);	// 説明テキストの情報
+
+	if (m_fStateTime >= StateTime::FADEOUT)
+	{
+		// 削除
+		Kill();
+	}
+}
+
+//==========================================================================
 // 背景更新
 //==========================================================================
 void CTutorialScreen::UpdateBG(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
@@ -363,7 +408,7 @@ void CTutorialScreen::ChangeManual()
 	bool bChange = false;	// 変更フラグ
 	EManualType oldType = m_ManualType;	// 前回の種類
 
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT))
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput)
 	{// 次ページへ
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType + 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
@@ -371,7 +416,7 @@ void CTutorialScreen::ChangeManual()
 		// 右スクロール
 		m_scrollDir = EScrollDir::SCROLL_R;
 	}
-	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT))
+	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput)
 	{// 前ページへ
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType - 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
@@ -389,6 +434,14 @@ void CTutorialScreen::ChangeManual()
 
 		// 元の位置
 		m_pManualText->SetOriginPosition(m_pManualText->GetPosition());
+	}
+
+	if (m_state != EState::STATE_FADEIN &&
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput)
+	{// ウィンドウ閉じる
+
+		// 遷移
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
 	}
 }
 

@@ -1009,7 +1009,7 @@ void CEntryRuleManager::Select()
 
 	if (pKey->GetTrigger(DIK_W)
 	||  pKey->GetTrigger(DIK_UP)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_UP))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_UP).bInput)
 	{ // 上移動の操作が行われた場合
 
 		// 上に選択をずらす
@@ -1063,7 +1063,7 @@ void CEntryRuleManager::Select()
 
 	if (pKey->GetTrigger(DIK_S)
 	||  pKey->GetTrigger(DIK_DOWN)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_DOWN))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_DOWN).bInput)
 	{ // 下移動の操作が行われた場合
 
 		// サウンドの再生
@@ -1139,7 +1139,7 @@ void CEntryRuleManager::Decide()
 	CInputKeyboard* pKey = GET_INPUTKEY;	// キーボード
 	CInputGamepad* pPad = GET_INPUTPAD;		// パッド
 	if (pKey->GetTrigger(DIK_RETURN)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_A))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput)
 	{ // 決定の操作が行われた場合
 
 		switch (m_nSelect)
@@ -1164,7 +1164,7 @@ void CEntryRuleManager::Decide()
 	}
 
 	if (pKey->GetTrigger(DIK_SPACE)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_B))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_B).bInput)
 	{ // 戻る操作が行われた場合
 
 		// フェードアウト状態にする
@@ -1186,7 +1186,7 @@ void CEntryRuleManager::ChangeRule()
 
 	if (pKey->GetTrigger(DIK_A)
 	||  pKey->GetTrigger(DIK_LEFT)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT).bInput)
 	{ // 左移動の操作が行われた場合
 
 		// 選択時移動状態へ遷移
@@ -1220,7 +1220,7 @@ void CEntryRuleManager::ChangeRule()
 	}
 	if (pKey->GetTrigger(DIK_D)
 	||  pKey->GetTrigger(DIK_RIGHT)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT))
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT).bInput)
 	{ // 右移動の操作が行われた場合
 
 		// 選択時移動状態へ遷移

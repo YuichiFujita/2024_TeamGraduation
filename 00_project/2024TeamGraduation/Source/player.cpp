@@ -108,6 +108,7 @@ namespace Knockback
 	const float HEIGHT = 50.0f;					// 最大高度
 	const float HEIGHT_OUTCOURT = 50.0f;		// 最大高度(コート越え)
 	const float DEAD = 1.5f;					// 死亡(通常への倍率)
+	const float OUTCOURT = 400.0f;				// コート外への距離
 }
 
 // TODO：ボールステータスに移行
@@ -130,7 +131,7 @@ namespace StateTime
 	const float DEAD = 2.0f;		// 死亡
 	const float INVINCIBLE = 3.0f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
-	const float COURT_RETURN = 2.0f;		// コートに戻ってくる
+	const float COURT_RETURN = 1.0f;	// コートに戻ってくる
 	const float INVADE_TOSS = 0.3f;		// 侵入後トス
 }
 
@@ -149,6 +150,7 @@ namespace EffectOffset
 namespace Court	// 移動制限
 {
 	const float VELOCITY_INVADE = 2.0f;	// 戻る速度
+	const float OUTCOUT_RETURN_RAD = 0.9f;	// 戻るコートの割合 x値(コート外から戻ってくるとき)
 }
 
 //==========================================================================
@@ -1950,8 +1952,8 @@ void CPlayer::OutCourtSetting()
 	UtilFunc::Transformation::RotNormalize(rot.y);
 	MyLib::Vector3 posS = GetPosition();	//始点
 	MyLib::Vector3 posE = posS;				//終点
-	posE.x += sinf(rot.y) * Knockback::DEAD;
-	posE.z += cosf(rot.y) * Knockback::DEAD;
+	posE.x += sinf(rot.y) * Knockback::OUTCOURT;
+	posE.z += cosf(rot.y) * Knockback::OUTCOURT;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
@@ -2240,7 +2242,6 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 	time = UtilFunc::Transformation::Clamp(time, 0.0f, 1.0f);
 
 	pos = UtilFunc::Calculation::GetParabola3D(m_sKnockback.posStart, m_sKnockback.posEnd, Knockback::HEIGHT_OUTCOURT, time);
-
 	SetPosition(pos);
 
 	// モーションのキャンセルで管理
@@ -2250,8 +2251,12 @@ void CPlayer::StateOutCourt(const float fDeltaTime, const float fDeltaRate, cons
 	if (pMotion->IsFinish())
 	{// キャンセル可能
 
+		// 自陣規定ラインまで
 		m_sKnockback.posStart = pos;
-		m_sKnockback.posEnd = CGameManager::GetInstance()->GetCourtMiddle(GetTeam());
+		MyLib::Vector3 vec = CGameManager::GetInstance()->GetCourtMiddle(GetTeam());
+		vec.z = pos.z;
+		vec.x *= 2 * Court::OUTCOUT_RETURN_RAD;
+		m_sKnockback.posEnd = vec;
 
 		SetState(EState::STATE_OUTCOURT_RETURN);
 	}
