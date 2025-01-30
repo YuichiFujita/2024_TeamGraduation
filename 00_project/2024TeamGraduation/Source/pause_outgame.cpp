@@ -57,9 +57,12 @@ void CPause_OutGame::Update(const float fDeltaTime, const float fDeltaRate, cons
 	if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE)
 	{
 		if (pKey->GetTrigger(DIK_P) ||
-			pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
+			pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_START).bInput)
 		{// ポーズ
 			m_bPause = !m_bPause;
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 		}
 	}
 #endif // _DEBUG

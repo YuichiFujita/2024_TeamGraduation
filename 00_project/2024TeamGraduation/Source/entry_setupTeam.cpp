@@ -809,6 +809,16 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// エントリーを解除
 				DeleteEntry(&m_nEntryIdx[i]);
+
+				auto func = [](int n1, int n2)
+				{
+					if (n1 == -1) return false;
+					if (n2 == -1) return true;
+
+					return n1 < n2;
+				};
+
+				std::sort(&m_nEntryIdx[0], &m_nEntryIdx[0] + mylib_const::MAX_PLAYER, func);
 				break;
 			}
 		}
@@ -823,26 +833,32 @@ bool CEntry_SetUpTeam::SelectTeam()
 		{ // 最大数変更の操作権を持っていない場合
 
 			if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx)
-			&&  m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_LEFT)
-			{ // 左端じゃない時に左移動操作が行われた場合
+			||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT))
+			{
+				if (m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_LEFT)
+				{ // 左端じゃない時に左移動操作が行われた場合
 
-				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+					// サウンドの再生
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
 
-				// 左に移動
-				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
-				m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
+					// 左に移動
+					m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_LEFT : CGameManager::ETeamSide::SIDE_NONE;
+					m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_L);
+				}
 			}
 			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
-				 &&  m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_RIGHT)
-			{ // 右端じゃない時に右移動操作が行われた場合
+				 ||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT))
+			{
+				if (m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_RIGHT)
+				{ // 右端じゃない時に右移動操作が行われた場合
 
-				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+					// サウンドの再生
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
 
-				// 右に移動
-				m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
-				m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_R);
+					// 右に移動
+					m_TeamSide[nUserIdx].team = (m_TeamSide[nUserIdx].team == CGameManager::ETeamSide::SIDE_NONE) ? CGameManager::ETeamSide::SIDE_RIGHT : CGameManager::ETeamSide::SIDE_NONE;
+					m_apPadUI[nUserIdx]->SetAction(CArrowUI::EDirection::DIRECTION_R);
+				}
 			}
 		}
 
@@ -853,26 +869,30 @@ bool CEntry_SetUpTeam::SelectTeam()
 		// チーム内人数変え
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nUserIdx)
-		&&  IsUserTeamSelect(nUserIdx))	// チーム選択中
+		||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
 		{ // 上移動操作が行われた場合
 
-			assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
-			if (m_nMaxChangeIdx[nSide] <= -1)
-			{ // 最大数変更の操作権を誰も持っていない
+			if (IsUserTeamSelect(nUserIdx))
+			{ // チーム選択中
 
-				// 自分のサイドを変更する用インデックス保持
-				m_nMaxChangeIdx[nSide] = nUserIdx;
+				assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
+				if (m_nMaxChangeIdx[nSide] <= -1)
+				{ // 最大数変更の操作権を誰も持っていない
 
-				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+					// 自分のサイドを変更する用インデックス保持
+					m_nMaxChangeIdx[nSide] = nUserIdx;
 
-				// 矢印を数字用にする
-				CArrowUI* pArrow = nullptr;
-				for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
-				{
-					pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
-					pArrow->SetOffset(pad::ARROWSPACE_NUMBER);
-					pArrow->SetSizeByWidth(pad::ARROWWIDTH_NUMBER);
+						// サウンドの再生
+						PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+
+						// 矢印を数字用にする
+						CArrowUI* pArrow = nullptr;
+					for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+					{
+						pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
+						pArrow->SetOffset(pad::ARROWSPACE_NUMBER);
+						pArrow->SetSizeByWidth(pad::ARROWWIDTH_NUMBER);
+					}
 				}
 			}
 		}
@@ -922,7 +942,8 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 		//--------------------------
 		// 最大数変更操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx)
+		||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 		{ // 減算操作が行われた場合
 
 			// チーム人数を減算
@@ -941,7 +962,8 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 				PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
 			}
 		}
-		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx))
+		else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
+			 ||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
 		{ // 加算操作が行われた場合
 
 			// チーム人数を加算
@@ -967,7 +989,8 @@ void CEntry_SetUpTeam::ChangeMaxPlayer()
 		//--------------------------
 		// 最大数変更解除
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nUserIdx))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nUserIdx)
+		||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
 		{ // 下移動操作が行われた場合
 
 			// サウンドの再生

@@ -174,8 +174,10 @@ public:
 	//--------------------------
 	// スティック系
 	//--------------------------
-	bool GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);	// Lスティックのトリガー判定
-	bool GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);	// Rスティックのトリガー判定
+	bool GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);		// Lスティックのトリガー判定
+	bool GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);		// Rスティックのトリガー判定
+	bool GetAllLStickTrigger(STICK_CROSS_AXIS closs);		// Lスティックのトリガー判定
+	bool GetAllRStickTrigger(STICK_CROSS_AXIS closs);		// Rスティックのトリガー判定
 	bool GetLStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Lスティックのトリガー判定
 	bool GetRStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Rスティックのトリガー判定
 	MyLib::Vector3 GetStickMoveL(int nCntPlayer);			// Lスティックの移動量取得

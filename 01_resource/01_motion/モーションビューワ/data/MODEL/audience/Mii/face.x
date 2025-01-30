@@ -731,7 +731,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\Mii\\outUV15.png";
+    "data\\TEXTURE\\Mii\\outUV13.png";
    }
   }
  }

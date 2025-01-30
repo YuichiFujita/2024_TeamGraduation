@@ -15,8 +15,8 @@
 //==========================================================================
 namespace
 {
-	const char* TEXTURE_FILE	= "data\\TEXTURE\\loading000.tga";	// ロード画面テクスチャ
-	const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(12, 4);			// テクスチャ分割数
+	const char* TEXTURE_FILE	= "data\\TEXTURE\\loading000.png";	// ロード画面テクスチャ
+	const MyLib::PosGrid2 PTRN	= MyLib::PosGrid2(2, 2);			// テクスチャ分割数
 	const int	PRIORITY	= 7;		// ローディングの優先順位
 	const int	ANIM_WAIT	= 2;		// アニメーションの変更フレーム
 	const float	FADE_LEVEL	= 0.05f;	// フェードのα値の加減量
@@ -72,7 +72,7 @@ HRESULT CLoadScreen::Init()
 		VEC3_SCREEN_CENT,	// 位置
 		PTRN.x,	// テクスチャ横分割数
 		PTRN.y,	// テクスチャ縦分割数
-		0.03f,	// 待機時間
+		1.0f,	// 待機時間
 		false,	// 自動破棄
 		6		// 優先順位
 	);

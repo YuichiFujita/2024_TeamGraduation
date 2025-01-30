@@ -61,6 +61,11 @@ public:
 		LABEL_SE_BOUND_REPEAT,	// バウンド(繰り返し)
 		LABEL_SE_HIT_NORMAL,	// ヒット(通常)
 		LABEL_SE_HIT_JUMP,		// ヒット(ジャンプ)
+		LABEL_SE_DOOR_OPEN,		// ドア開け
+		LABEL_SE_WALK_SPAWN,	// 歩き
+		LABEL_SE_WALK_LOOP_00,	// 歩きループ
+		LABEL_SE_WALK_LOOP_01,	// 歩きループ
+		LABEL_SE_DASH_LOOP,		// 走りループ
 		LABEL_SE_SP,			// スペシャル
 		LABEL_SE_SP_JUMP,		// スペシャルジャンプ
 		LABEL_SE_SP_LAND,		// スペシャル着地

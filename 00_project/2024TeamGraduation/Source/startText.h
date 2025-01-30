@@ -33,7 +33,7 @@ public:
 		STATE_MAX
 	};
 
-	CStartText(int nPriority = 7);
+	CStartText(int nPriority = 6);
 	~CStartText();
 
 	//=============================

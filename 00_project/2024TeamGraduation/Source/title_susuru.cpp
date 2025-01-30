@@ -189,7 +189,7 @@ void CTitle_SUSURU::Update(const float fDeltaTime, const float fDeltaRate, const
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput ||
 		pKey->GetTrigger(DIK_RETURN))
 	{
 		// ƒV[ƒ“Ø‚è‘Ö‚¦

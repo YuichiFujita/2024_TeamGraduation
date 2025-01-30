@@ -19,11 +19,13 @@ namespace
 	{
 		"data\\CHARACTER\\suiren_front.txt",	// スイレンテキスト
 		"data\\CHARACTER\\twintail_front.txt",	// ツインテテキスト
+		"data\\CHARACTER\\otyako_front.txt",	// おちゃこテキスト
 	};
 	const char*	SETUP_BACK_TXT[] =	// 裏面プレイヤーセットアップテキスト
 	{
 		"data\\CHARACTER\\suiren_back.txt",		// スイレンテキスト
 		"data\\CHARACTER\\twintail_back.txt",	// ツインテテキスト
+		"data\\CHARACTER\\otyako_back.txt",		// おちゃこテキスト
 	};
 
 	const char*	LIGHT_PATH	= "data\\MODEL\\penlight.x";		// ペンライトのモデルパス
