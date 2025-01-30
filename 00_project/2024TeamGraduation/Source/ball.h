@@ -47,6 +47,7 @@ public:
 		STATE_SPECIAL_THROW,	// スペシャル投げ状態
 		STATE_HOM_PASS,			// パスホーミング状態
 		STATE_PASS,				// パス状態
+		STATE_CENTER_RETURN,	// 中央投げ状態
 		STATE_REBOUND,			// リバウンド状態 (ぶつかった時の落下)
 		STATE_FREE,				// フリー状態 (触れただけで取れる)
 		STATE_LAND,				// 着地状態 (地面に転がっている)
@@ -89,15 +90,16 @@ public:
 	//=============================
 	// メンバ関数
 	//=============================
-	void CatchAttack(CPlayer* pPlayer);	// 攻撃キャッチ
-	void CatchLand(CPlayer* pPlayer);	// 着地キャッチ
-	void Spawn(CPlayer* pPlayer);		// スポーン
-	void ThrowNormal(CPlayer* pPlayer);	// 通常投げ
-	void ThrowJump(CPlayer* pPlayer);	// ジャンプ投げ
-	void Special(CPlayer* pPlayer);		// スペシャル発動
-	bool Pass(CPlayer* pPlayer);		// パス
-	void Toss(CPlayer* pPlayer);		// トス
-	void SpecialEndSetting();			// スペシャル終了
+	void CatchAttack(CPlayer* pPlayer);			// 攻撃キャッチ
+	void CatchLand(CPlayer* pPlayer);			// 着地キャッチ
+	void Spawn(CPlayer* pPlayer);				// スポーン
+	void ThrowNormal(CPlayer* pPlayer);			// 通常投げ
+	void ThrowJump(CPlayer* pPlayer);			// ジャンプ投げ
+	void Special(CPlayer* pPlayer);				// スペシャル発動
+	bool Pass(CPlayer* pPlayer);				// パス
+	void CenterReturn(CPlayer* pPlayer);		// 中央投げ
+	void Toss(CPlayer* pPlayer);				// トス
+	void SpecialEndSetting();					// スペシャル終了
 	MyLib::Vector3 GetPosPassStart() const		{ return m_posPassStart; }	// パス開始位置取得
 	MyLib::Vector3 GetPosPassEnd() const		{ return m_posPassEnd; }	// パス終了位置取得
 	CGameManager::ETeamSide GetTypeTeam() const	{ return m_typeTeam; }		// チームサイド取得
@@ -174,6 +176,7 @@ private:
 	void UpdateSpecialThrow(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// スペシャル投げ状態の更新
 	void UpdateHomingPass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// パスホーミング状態の更新
 	void UpdatePass(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// パス状態の更新
+	void UpdateCenterReturn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 中央投げ状態の更新
 	void UpdateReBound(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// リバウンド状態の更新
 	void UpdateFree(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// フリー状態の更新
 	void UpdateLand(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 着地状態の更新

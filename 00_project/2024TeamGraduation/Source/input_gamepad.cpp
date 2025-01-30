@@ -863,27 +863,43 @@ float CInputGamepad::GetStickRotR(int nCntPlayer)
 //==========================================================================
 bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
 {
-#if 0
 	// プレイヤーインデックスが範囲外の場合抜ける
 	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
 
-	// 軸入力がない場合抜ける
-	STICK_AXIS XY = (closs == STICK_CROSS_UP || closs == STICK_CROSS_DOWN) ? STICK_Y : STICK_X;
-	if (m_bLStickTrigger[nCntPlayer][XY]) return false;
+	switch (closs)
+	{ // 十字軸ごとの処理
+	case STICK_CROSS_LEFT:
+	case STICK_CROSS_RIGHT:
+	{ // X軸の場合
 
-	// スティック傾きベクトル取得
-	MyLib::Vector3 vec = GetStickPositionRatioL(nCntPlayer);
-	if (closs == STICK_CROSS_UP)
-	{
+		// X軸入力がない場合抜ける
+		if (!m_bLStickTrigger[nCntPlayer][STICK_X]) return false;
+
+		// スティック傾きベクトル取得
+		MyLib::Vector3 vec = GetStickPositionRatioL(nCntPlayer);
+		if		(closs == STICK_CROSS_LEFT)	 return (vec.x <= 0.0f);
+		else if	(closs == STICK_CROSS_RIGHT) return (vec.x >= 0.0f);
+		break;
 	}
-	else if (closs == STICK_CROSS_DOWN))
-	{
+	case STICK_CROSS_UP:
+	case STICK_CROSS_DOWN:
+	{ // Y軸の場合
 
+		// Y軸入力がない場合抜ける
+		if (!m_bLStickTrigger[nCntPlayer][STICK_Y]) return false;
+
+		// スティック傾きベクトル取得
+		MyLib::Vector3 vec = GetStickPositionRatioL(nCntPlayer);
+		if		(closs == STICK_CROSS_UP) 	return (vec.y >= 0.0f);
+		else if	(closs == STICK_CROSS_DOWN)	return (vec.y <= 0.0f);
+		break;
+	}
+	default:
+		assert(false);
+		break;
 	}
 
 	assert(false);
-	return false;
-#endif
 	return false;
 }
 
@@ -892,6 +908,43 @@ bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
 //==========================================================================
 bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
 {
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
+	switch (closs)
+	{ // 十字軸ごとの処理
+	case STICK_CROSS_LEFT:
+	case STICK_CROSS_RIGHT:
+	{ // X軸の場合
+
+		// X軸入力がない場合抜ける
+		if (!m_bRStickTrigger[nCntPlayer][STICK_X]) return false;
+
+		// スティック傾きベクトル取得
+		MyLib::Vector3 vec = GetStickPositionRatioR(nCntPlayer);
+		if		(closs == STICK_CROSS_LEFT)	 return (vec.x <= 0.0f);
+		else if (closs == STICK_CROSS_RIGHT) return (vec.x >= 0.0f);
+		break;
+	}
+	case STICK_CROSS_UP:
+	case STICK_CROSS_DOWN:
+	{ // Y軸の場合
+
+		// Y軸入力がない場合抜ける
+		if (!m_bRStickTrigger[nCntPlayer][STICK_Y]) return false;
+
+		// スティック傾きベクトル取得
+		MyLib::Vector3 vec = GetStickPositionRatioR(nCntPlayer);
+		if		(closs == STICK_CROSS_UP) 	return (vec.y >= 0.0f);
+		else if (closs == STICK_CROSS_DOWN)	return (vec.y <= 0.0f);
+		break;
+	}
+	default:
+		assert(false);
+		break;
+	}
+
+	assert(false);
 	return false;
 }
 
