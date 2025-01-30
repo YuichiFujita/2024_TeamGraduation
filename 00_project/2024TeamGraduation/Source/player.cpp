@@ -635,6 +635,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pPosAdj->UpdateAdjuster(this);
 	}
 
+	// 体力表示のインデックス設定
+	m_pStatus->SetMyPlayerIdx(m_nMyPlayerIdx);
+
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 

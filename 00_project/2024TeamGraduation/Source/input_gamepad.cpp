@@ -859,12 +859,49 @@ float CInputGamepad::GetStickRotR(int nCntPlayer)
 }
 
 //==========================================================================
+// Lスティックのトリガー判定
+//==========================================================================
+bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
+{
+#if 0
+	// プレイヤーインデックスが範囲外の場合抜ける
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+
+	// 軸入力がない場合抜ける
+	STICK_AXIS XY = (closs == STICK_CROSS_UP || closs == STICK_CROSS_DOWN) ? STICK_Y : STICK_X;
+	if (m_bLStickTrigger[nCntPlayer][XY]) return false;
+
+	// スティック傾きベクトル取得
+	MyLib::Vector3 vec = GetStickPositionRatioL(nCntPlayer);
+	if (closs == STICK_CROSS_UP)
+	{
+	}
+	else if (closs == STICK_CROSS_DOWN))
+	{
+
+	}
+
+	assert(false);
+	return false;
+#endif
+	return false;
+}
+
+//==========================================================================
+// Rスティックのトリガー判定
+//==========================================================================
+bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
+{
+	return false;
+}
+
+//==========================================================================
 // スティックのトリガー判定
 //==========================================================================
 bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_AXIS XY)
 {
 	// プレイヤーインデックスが範囲外の場合抜ける
-	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return {};
 
 	return m_bLStickTrigger[nCntPlayer][XY];
 }
@@ -875,7 +912,7 @@ bool CInputGamepad::GetLStickTrigger(int nCntPlayer, STICK_AXIS XY)
 bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_AXIS XY)
 {
 	// プレイヤーインデックスが範囲外の場合抜ける
-	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return false;
+	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return {};
 
 	return m_bRStickTrigger[nCntPlayer][XY];
 }
