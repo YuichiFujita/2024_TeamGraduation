@@ -220,16 +220,14 @@ bool CPlayerAIControlRightDefense::IsLineOverPlayer()
 //==========================================================================
 bool CPlayerAIControlRightDefense::IsLineOverBall()
 {
-	bool bOver = false;	// ’´‚¦‚½”»’è—p
-
 	// ƒ{[ƒ‹î•ñŽæ“¾
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) { return bOver; }
+	if (!pBall) { return false; }
 
 	if (pBall->GetPosition().x <= 0.0f)
 	{
-		bOver = true;
+		return true;
 	}
 
-	return bOver;
+	return false;
 }

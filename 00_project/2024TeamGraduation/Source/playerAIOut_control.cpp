@@ -141,16 +141,14 @@ void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate,
 	// モード管理
 	ModeManager();
 
-	//MoveRetrieve(fDeltaTime, fDeltaRate, fSlowRate);
-
-	//CBall* pBall = CGameManager::GetInstance()->GetBall();
-	//if (!pBall) return;
-	//
-	//if (IsPass() &&							// パス
-	//	pBall->GetTarget() == m_pAIOut)		// ターゲットが自分
-	//{
-	//	return;
-	//}
+	CBall* pBall = CGameManager::GetInstance()->GetBall();
+	if (!pBall) return;
+	
+	if (IsPass() &&							// パス
+		pBall->GetTarget() == m_pAIOut)		// ターゲットが自分
+	{
+		return;
+	}
 
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -308,7 +306,7 @@ void CPlayerAIOutControl::AreaCheck()
 
 	if (team == CGameManager::ETeamSide::SIDE_LEFT)
 	{// 左チーム
-		if (ballPos.x < 0)
+		if (ballPos.x < 10)
 		{
 			m_eMove = EMove::MOVE_NONE;
 			return;
@@ -316,7 +314,7 @@ void CPlayerAIOutControl::AreaCheck()
 	}
 	else if (team == CGameManager::ETeamSide::SIDE_RIGHT)
 	{// 右チーム
-		if (ballPos.x > 0)
+		if (ballPos.x > 10)
 		{
 			m_eMove = EMove::MOVE_NONE;
 			return;
