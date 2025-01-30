@@ -289,7 +289,7 @@ HRESULT CSound::Init(HWND hWnd)
 		SetVolume.dwFlags = DSBCAPS_CTRLVOLUME;		//音量調整のフラグ
 
 		m_fMasterVolume = 1.0f;
-		m_aVolume[CSound::EType::TYPE_BGM] = 0.0f;	// TODO：1.0fに直す
+		m_aVolume[CSound::EType::TYPE_BGM] = 1.0f;
 		m_aVolume[CSound::EType::TYPE_SE] = 1.0f;
 
 		//音量をセットする

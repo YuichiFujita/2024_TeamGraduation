@@ -257,5 +257,6 @@ void CPlayerStatus::BindDressUp(int nHair, int nAccessory, int nFace)
 //==========================================================================
 void CPlayerStatus::SetMyPlayerIdx(int nIdx)
 {
+	if (m_pFaceUI != nullptr)
 	m_pFaceUI->SetMyPlayerIdx(nIdx);
 }

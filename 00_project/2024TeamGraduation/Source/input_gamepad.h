@@ -54,6 +54,16 @@ public:
 		STICK_MAX
 	};
 
+	// スティック十字軸
+	enum STICK_CROSS_AXIS
+	{
+		STICK_CROSS_LEFT = 0,
+		STICK_CROSS_RIGHT,
+		STICK_CROSS_UP,
+		STICK_CROSS_DOWN,
+		STICK_CROSS_MAX
+	};
+
 	// バイブレーション
 	enum EVibType
 	{
@@ -80,7 +90,6 @@ public:
 		EaseInOutExpo,
 		MAX
 	};
-
 
 	//=============================
 	// 構造体定義
@@ -165,6 +174,8 @@ public:
 	//--------------------------
 	// スティック系
 	//--------------------------
+	bool GetLStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);	// Lスティックのトリガー判定
+	bool GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs);	// Rスティックのトリガー判定
 	bool GetLStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Lスティックのトリガー判定
 	bool GetRStickTrigger(int nCntPlayer, STICK_AXIS XY);	// Rスティックのトリガー判定
 	MyLib::Vector3 GetStickMoveL(int nCntPlayer);			// Lスティックの移動量取得
