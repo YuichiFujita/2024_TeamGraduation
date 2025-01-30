@@ -462,9 +462,13 @@ void CTutorialScreen::ChangeManual()
 		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput)
 	{// ウィンドウ閉じる
 
+		if (!GET_MANAGER->GetFade()->IsFade())
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+		}
+
 		// 遷移
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 
