@@ -1180,7 +1180,7 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 		SetPadIdx(-1);
 
 		// サウンドの再生
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_JOIN);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_01);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
 	{
@@ -1410,14 +1410,32 @@ void CDressupUI::ChangeEditType(int nPadIdx)
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nPadIdx))
 	{// 変更する箇所の種類変更へ変更
 
+		EEditType old = m_typeEdit;
 		m_typeEdit = EEditType::EDIT_PROCESS;
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+
+		if (m_typeEdit != old)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx))
 	{// 実際の変更画面へ
 
+		EEditType old = m_typeEdit;
 		m_typeEdit = EEditType::EDIT_CHANGETYPE;
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+
+		if (m_typeEdit != old)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
 }
 

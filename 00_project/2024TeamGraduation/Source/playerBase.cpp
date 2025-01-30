@@ -153,6 +153,17 @@ CPlayer::SHitInfo CPlayerBase::Hit(CBall* pBall)
 		return hitInfo;
 	}
 
+#if _DEBUG && 0
+	// 回避デバッグ
+	if (m_pPlayer->GetMotionFrag().bJump)
+	{ // ジャンプ中
+		
+		// アクション設定
+		m_pPlayer->GetActionPattern()->SetAction(CPlayer::EAction::ACTION_DODGE);
+		return hitInfo;
+	}
+#endif
+
 	// ダメージを受ける場合はフラグをONにする
 	hitInfo.bHit = true;
 

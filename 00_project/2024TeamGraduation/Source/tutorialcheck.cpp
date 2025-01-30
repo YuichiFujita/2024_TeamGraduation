@@ -269,10 +269,14 @@ void CTutorialCheck::StateNone(const float fDeltaTime, const float fDeltaRate, c
 
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nControllIdx))
 	{// 決定
-		Decide();
 
-		// サウンドの再生
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+		if (!GET_MANAGER->GetFade()->IsFade())
+		{
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+		}
+
+		Decide();
 	}
 }
 

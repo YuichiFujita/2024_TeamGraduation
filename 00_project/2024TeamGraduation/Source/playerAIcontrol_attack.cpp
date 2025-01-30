@@ -91,7 +91,11 @@ CPlayerAIControlAttack* CPlayerAIControlAttack::Create(CPlayer* player)
 	if (!player) {
 		assert(("プレイヤー情報が無いよ", false));
 	}
-	switch (player->GetTeam())
+
+	CGameManager::ETeamSide team = player->GetTeam();
+	CGameManager::GetInstance()->AssertCheckTeam(team);
+
+	switch (team)
 	{// チーム別
 	case CGameManager::ETeamSide::SIDE_LEFT:
 		pObj = DEBUG_NEW CPlayerAIControlLeftAttack;
@@ -592,6 +596,7 @@ void CPlayerAIControlAttack::AttackDashJump(CPlayer* pTarget, float fTargetDista
 
 	// ターゲットのエリアの取得
 	CGameManager::ETeamSide side = pMy->GetTeam();
+	CGameManager::GetInstance()->AssertCheckTeam(side);
 
 	float distanceTarget = posMy.DistanceXZ(pTarget->GetPosition());	// 自分と相手の距離
 	float distanceLine = posMy.DistanceXZ(linePos);						// 自分と中心線との距離

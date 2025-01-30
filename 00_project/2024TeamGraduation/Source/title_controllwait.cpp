@@ -746,9 +746,8 @@ void CTitle_ControllWait::StateTutorialCheck(const float fDeltaTime, const float
 		{
 			m_pTutorialCheck->SetState(CTutorialCheck::EState::STATE_FADEOUT);
 			m_pTutorialCheck = nullptr;
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		}
-
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 
@@ -768,12 +767,11 @@ void CTitle_ControllWait::StateTutorial(const float fDeltaTime, const float fDel
 		{
 			m_pTutorialScreen->SetState(CTutorialScreen::EState::STATE_FADEOUT);
 			m_pTutorialScreen = nullptr;
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		}
 
 		// ë“ã@Ç÷ê›íË
 		SetState(EState::STATE_WAIT);
-
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 

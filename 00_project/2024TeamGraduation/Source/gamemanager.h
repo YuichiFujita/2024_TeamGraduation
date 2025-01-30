@@ -125,6 +125,7 @@ public:
 	void AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAdd charmType);		// スペシャル加算
 	
 	ETeamSide RivalTeam(ETeamSide team);	// 敵チームを取得
+	void AssertCheckTeam(ETeamSide team);	// 問題ないチームか
 
 	//-----------------------------
 	// モード毎の設定処理
