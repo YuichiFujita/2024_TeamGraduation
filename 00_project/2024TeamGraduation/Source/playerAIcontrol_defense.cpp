@@ -41,10 +41,10 @@ namespace
 	const int COOLDOWN_MAX_RANDOM = 5;			// ランダム行動(最大値)
 
 	// キャッチ精度
-	const int CATCH_MAX = 100;				// キャッチ精度(最大値)
+	const int CATCH_MAX = 100;					// キャッチ精度(最大値)
 	const int CATCH_MIN = 0;					// キャッチ精度(最小値)
 	const int CATCH_JUST_RATE = 90;				// 
-	const int CATCH_NORMAL_RATE = 10;			// 
+	const int CATCH_NORMAL_RATE = 15;			// 
 	const int CATCH_MISS_RATE = 20;				// 
 
 	const float CATCH_RADIUS_JUST = 200.0f;		// ジャストキャッチ(120～250 確定！！)
@@ -233,6 +233,9 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 			if (IsTargetDistanse())
 			{// ターゲットとの距離が近い場合
 				m_eAction = EAction::LEAVE;					// 離れる状態
+				m_eActionStatus = EActionStatus::ACTIONSTATUS_ACTION;	// アクション状態：アクション
+
+
 				ZeroMemory(&m_sAction, sizeof(m_sAction));	// 行動の構造体初期化
 				return;
 			}
@@ -392,8 +395,16 @@ void CPlayerAIControlDefense::StatusCooldown(const float fDeltaTime, const float
 
 	{// ターゲットを見る
 		CPlayer* pTarget = GetTarget();
-		if (!pTarget) return;
-		SeeTarget(pTarget->GetPosition());
+		CPlayer* pBall = GetBallOwner();
+
+		if (pBall)
+		{
+			SeeTarget(pBall->GetPosition());
+		}
+		else if (pTarget)
+		{
+			SeeTarget(pTarget->GetPosition());
+		}
 	}
 }
 
