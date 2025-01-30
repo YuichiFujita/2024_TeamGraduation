@@ -1722,6 +1722,12 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
 
+	// ボール離す
+	if (m_pBall != nullptr)
+	{
+		m_pBall->CenterReturn(this);
+	}
+
 	// 死んだ
 	if (result != nullptr)
 	{
@@ -1988,8 +1994,15 @@ void CPlayer::OutCourtSetting()
 		//MyLib::Vector3 vecBall = pBall->GetMove().Normal();
 		// 終活
 		DeadSetting(nullptr, m_pBall);
-		m_pBall->SetKnockback(0.0f);
 		return;
+	}
+	else
+	{
+		// ボール離す
+		if (m_pBall != nullptr)
+		{
+			m_pBall->CenterReturn(this);
+		}
 	}
 
 	// ノックバックの位置設定
@@ -2001,9 +2014,6 @@ void CPlayer::OutCourtSetting()
 	posE.z += cosf(rot.y) * Knockback::OUTCOURT;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
-
-	// TODO: ボール離す
-
 
 	SetState(EState::STATE_OUTCOURT);
 

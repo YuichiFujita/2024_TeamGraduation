@@ -732,8 +732,7 @@ void CBall::CenterReturn(CPlayer* pPlayer)
 	m_posPassStart = GetPosition();
 
 	// パス終了位置を設定
-	m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
-	m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
+	m_posPassEnd = VEC3_ZERO;	// Y座標は地面固定
 
 	// 移動量を設定
 	m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * center::MOVE_RATE;
