@@ -107,7 +107,3 @@ void CPlayerAIControlRightAttack::PreparationLeave(const float fDeltaTime, const
 		SetAttackMode(EAttackMode::ATTACKMODE_ATTACK);
 	}
 }
-
-void CPlayerAIControlRightAttack::Preparation()
-{
-}

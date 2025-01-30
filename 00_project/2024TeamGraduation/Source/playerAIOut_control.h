@@ -120,7 +120,7 @@ private:
 	// ƒƒ“ƒo•Ï”
 	//=============================
 	CPlayer* m_pAIOut;			// ©•ª©g
-
+	CPlayer* m_pTarget;
 	EMode m_eMode;
 	EThrow m_eThrow;
 	EMove m_eMove;
