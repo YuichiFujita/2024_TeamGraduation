@@ -105,6 +105,7 @@ public:
 		LABEL_SE_BACK,			// チュートリアル前遷移
 		LABEL_SE_DRUMROLL,		// ドラムロール
 		LABEL_SE_DRUMROLL_END,	// ドラムロール終了
+		LABEL_SE_DRAW,			// 引き分け
 		LABEL_SE_AUDIENCE01_LOOP,	// 観客01
 		LABEL_SE_AUDIENCE02_LOOP,	// 観客02
 		LABEL_MAX

@@ -224,7 +224,8 @@ void CPlayerReferee_Result::StateTalk(const float fDeltaTime, const float fDelta
 //==========================================================================
 void CPlayerReferee_Result::StateWin(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (m_pWin == nullptr)
+	if (m_pWin == nullptr &&
+		m_winTeam != CGameManager::ETeamSide::SIDE_NONE)
 	{
 		// 勝利エフェクト生成
 		m_pWin = CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_WINREFEREE,

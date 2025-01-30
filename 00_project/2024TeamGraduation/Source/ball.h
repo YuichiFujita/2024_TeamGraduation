@@ -117,6 +117,7 @@ public:
 	bool IsAttack() const;			// 攻撃フラグ取得
 	bool IsPass() const;			// パスフラグ取得
 	bool IsSpecial() const;			// スペシャルフラグ取得
+	CEffekseerObj* GetEfkSPBallet() { return m_pSPBallet; }		// スペシャルの弾エフェクト取得
 
 	//=============================
 	// 静的メンバ関数

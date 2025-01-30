@@ -779,8 +779,8 @@ void CBall::SpecialEndSetting()
 	// 削除
 	if (m_pSPBallet != nullptr)
 	{// スペシャル状態解除 && インスタンスがある
-		m_pSPBallet->SetTrigger(0);
-		m_pSPBallet->SetEnableAutoDeath(true);
+		//m_pSPBallet->SetTrigger(0);
+		m_pSPBallet->DeleteLater(0.01f);
 		m_pSPBallet = nullptr;
 	}
 }

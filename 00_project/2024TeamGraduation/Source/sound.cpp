@@ -112,6 +112,7 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	// リザルト
 	{ TYPE_SE,"data/SE/outgame/drumroll.wav",-1},		// ドラムロール
 	{ TYPE_SE,"data/SE/outgame/drumroll_end.wav",0},	// ドラムロール終了
+	{ TYPE_SE,"data/SE/outgame/draw.wav",0 },			// 引き分け
 
 	// 観客
 	{ TYPE_SE,"data/SE/kansei_loop01.wav", -1},			// 観客01

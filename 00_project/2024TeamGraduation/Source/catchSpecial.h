@@ -145,6 +145,8 @@ private:
 	float m_fMomentumStateTime;		// 状態内状態時間
 	CPlayer* m_pPlayer;				// プレイヤー
 	bool m_bSuccess;				// 成功フラグ
+	bool m_bSmollScaling;			// 小さくするフラグ
+	float m_fScalingTime;			// スケール時間
 };
 
 #endif
