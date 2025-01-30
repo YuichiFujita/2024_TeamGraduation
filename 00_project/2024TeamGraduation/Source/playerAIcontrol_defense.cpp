@@ -193,6 +193,8 @@ void CPlayerAIControlDefense::PlayerBall(const float fDeltaTime, const float fDe
 	// チーム
 	CGameManager::ETeamSide sideBall = pPlayer->GetTeam();			// ボール持ち主のチーム取得
 	CGameManager::ETeamSide sideMy = GetPlayer()->GetTeam();		// 自分のチーム取得
+	CGameManager::GetInstance()->AssertCheckTeam(sideBall);	// チェック
+	CGameManager::GetInstance()->AssertCheckTeam(sideMy);	// チェック
 
 	switch (pPlayer->GetAreaType())
 	{// エリア別
@@ -1145,6 +1147,7 @@ float CPlayerAIControlDefense::GetDistanceEnemy()
 	// 自分情報
 	MyLib::Vector3 posMy = pAI->GetPosition();		// 位置情報の取得
 	CGameManager::ETeamSide TeamMy = pAI->GetTeam();	// 所属チーム
+	CGameManager::GetInstance()->AssertCheckTeam(TeamMy);	// チェック
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -1192,6 +1195,7 @@ CPlayer* CPlayerAIControlDefense::GetTarget()
 	if (!pAI) return pTarget;
 	MyLib::Vector3 Mypos = pAI->GetPosition();			// 位置情報の取得
 	CGameManager::ETeamSide teamSide = pAI->GetTeam();	// チームサイドの取得
+	CGameManager::GetInstance()->AssertCheckTeam(teamSide);	// チェック
 
 	CListManager<CPlayer> list = CPlayer::GetList();	// プレイヤーリスト
 	std::list<CPlayer*>::iterator itr = list.GetEnd();	// 最後尾イテレーター
@@ -1270,6 +1274,7 @@ bool CPlayerAIControlDefense::IsPicksUpBall()
 	// 自分の情報取得
 	CGameManager::ETeamSide typeTeam = pAI->GetTeam();	// チームタイプ
 	MyLib::Vector3 Mypos = pAI->GetPosition();	// 位置情報
+	CGameManager::GetInstance()->AssertCheckTeam(typeTeam);	// チェック
 
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
