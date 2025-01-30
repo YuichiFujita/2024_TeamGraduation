@@ -91,7 +91,9 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 		pPlayer->SetEnableJump(false);
 	}
 
-	if (!pPlayer->IsJump() && !flagMotion.bDead)
+	if (!pPlayer->IsJump() &&
+		!flagMotion.bDead &&
+		pPlayer->GetActionPattern()->GetAction() != CPlayer::EAction::ACTION_SPECIAL)
 	{ // 相手コートに侵入したときはコート内に補正
 
 #if 1

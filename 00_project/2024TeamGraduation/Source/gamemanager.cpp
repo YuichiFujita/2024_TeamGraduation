@@ -1076,7 +1076,7 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	}
 
 	// ƒ‚ƒe•¶š¶¬
-	//CCharmText::Create(side);
+	CCharmText::Create(side);
 
 	// À‹µÒ
 	CListManager<CReporter> list = CReporter::GetList(side);
