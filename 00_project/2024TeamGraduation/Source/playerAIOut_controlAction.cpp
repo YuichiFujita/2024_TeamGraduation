@@ -55,7 +55,7 @@ void CPlayerAIOutControlAction::Catch(CPlayer* player, const float fDeltaTime, c
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (!pBall->IsAttack() || pBall->GetTypeTeam() == player->GetTeam()) return;
 
-	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 100.0f))
+	if (UtilFunc::Collision::CircleRange3D(pBall->GetPosition(), player->GetPosition(), pBall->GetRadius(), 300.0f))
 	{
 		// アクションパターン変更
 		SetPattern(player, CPlayer::EMotion::MOTION_CATCH_STANCE, CPlayer::EAction::ACTION_CATCH);

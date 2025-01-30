@@ -84,6 +84,7 @@ CPlayerAIOutControl::CPlayerAIOutControl()
 	m_eThrow = EThrow::THROW_NONE;
 	m_eMove = EMove::MOVE_NONE;
 	m_pAIOut = nullptr;
+	m_pTarget = nullptr;
 	m_bStart = false;
 	m_bEnd = false;
 }
@@ -135,9 +136,6 @@ void CPlayerAIOutControl::Uninit()
 //==========================================================================
 void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	// ボールを見る
-	LookBall();
-
 	// モード管理
 	ModeManager();
 
@@ -149,6 +147,8 @@ void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate,
 	{
 		return;
 	}
+
+	ImGui::Text("ROT %f", m_pAIOut->GetRotDest());
 
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -190,7 +190,6 @@ void CPlayerAIOutControl::ModeThrowManager(const float fDeltaTime, const float f
 	if (m_eThrow == EThrow::THROW_NONE)
 	{// タイプ無の場合
 		int n = rand() % 10;
-		////int n = 1;
 
 		if (n < 3)
 		{
@@ -267,11 +266,22 @@ void CPlayerAIOutControl::Throw()
 	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
 	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
 
+	if (!m_pTarget)
+	{
+		m_pTarget = GetThrowTarget();
+	}
+	if (!m_pTarget) return;
+
+	MyLib::Vector3 posMy = m_pAIOut->GetPosition();
+	float angle = posMy.AngleXZ(m_pTarget->GetPosition());
+
 	// ターゲット設定
-	m_pAIOut->SetRotDest(m_pAIOut->GetPosition().AngleXZ(GetThrowTarget()->GetPosition()));
+	m_pAIOut->SetRotDest(angle);
 
 	// 投げる
 	pControlAIOutAction->SetIsThrow(true);
+
+	m_pTarget = nullptr;
 }
 
 //==========================================================================
@@ -331,20 +341,6 @@ void CPlayerAIOutControl::ModeMoveManager(const float fDeltaTime, const float fD
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
-	//CPlayer* pPlayer = pBall->GetPlayer();
-	//if (pPlayer != nullptr)
-	//{// 誰かがボールを持っている場合
-
-	//	//if (pPlayer->GetTeam() == m_pAIOut->GetTeam())
-	//	//{// 同じチームの場合
-	//	//	m_eMove = EMove::MOVE_MEETING;
-	//	//}
-	//	//else
-	//	{
-	//		m_eMove = EMove::MOVE_NONE;
-	//	}
-	//}
-	//else if (pBall->GetPlayer() == nullptr)
 	{// 誰もボールを持っていない場合
 
 		// ボールを取りに行く
@@ -379,6 +375,9 @@ void CPlayerAIOutControl::MoveNone(const float fDeltaTime, const float fDeltaRat
 //==========================================================================
 void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// ボールを見る
+	LookBall();
+
 	// AIコントロール情報(外野)の取得
 	CPlayerControlAction* pControlAction = m_pAIOut->GetBase()->GetPlayerControlAction();
 	CPlayerAIOutControlAction* pControlAIOutAction = pControlAction->GetAIOut();
@@ -387,15 +386,6 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
-
-	//if (pBall == nullptr || pBall->GetPlayer() != nullptr)
-	//{// ボールがnullptr||プレイヤーがボールを取っている||エリア外の場合
-
-	//	// 歩きオフ！
-	//	pControlAIOutMove->SetIsWalk(false);
-
-	//	return;
-	//}
 
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
@@ -407,14 +397,6 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 	float fRot = 0.0f;			// ポジションごとの固定向き
 	float fRotClab = 0.0f;		// カニ歩き向き
 
-	float range[] =
-	{
-		-1.57f,		// 左
-		1.57f,		// 右
-		D3DX_PI,	// 上
-		0.0f,		// 下
-	};
-
 	if ((eOutPos == CPlayerManager::EOutPos::OUT_LEFT_FAR) ||
 		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_FAR))
 	{// ポジションが奥
@@ -425,11 +407,11 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 		if (fAngle > -D3DX_PI &&
 			fAngle < 0.0f)
 		{// 左
-			fRotClab = range[0];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_LEFT];
 		}
 		else
 		{// 右
-			fRotClab = range[1];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_RIGHT];
 		}
 	}
 	else if (
@@ -445,11 +427,11 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 		if (fAngle < D3DX_PI &&
 			fAngle > 0.0f)
 		{// 右
-			fRotClab = range[1];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_RIGHT];
 		}
 		else
 		{// 左
-			fRotClab = range[0];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_LEFT];
 		}
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
@@ -464,11 +446,11 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 		if (fAngle > D3DX_PI * 0.5f ||
 			fAngle < -D3DX_PI * 0.5f)
 		{// 左(上)
-			fRotClab = range[2];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_UP];
 		}
 		else
 		{// 右(下)
-			fRotClab = range[3];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_DOWN];
 		}
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
@@ -483,11 +465,11 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 		if (fAngle > D3DX_PI * 0.5f ||
 			fAngle < -D3DX_PI * 0.5f)
 		{// 左(下)
-			fRotClab = range[2];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_UP];
 		}
 		else
 		{// 右(上)
-			fRotClab = range[3];
+			fRotClab = AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_DOWN];
 		}
 	}
 
@@ -613,16 +595,17 @@ CPlayer* CPlayerAIOutControl::GetThrowTarget()
 	{ // リスト内の要素数分繰り返す
 
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
-		MyLib::Vector3 posPlayer = pPlayer->GetCenterPosition();	// プレイヤー位置
+		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
 		// 味方チーム||外野の場合
-		if ((typeTeam == pPlayer->GetTeam()) ||
-			(pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT))
+		if (typeTeam == pPlayer->GetTeam() ||
+			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT ||
+			pPlayer->GetMotionFrag().bDead)
 		{
 			continue;
 		}
 
-		// 味方との距離を求める
+		// 距離を求める
 		float fLength = Mypos.DistanceXZ(posPlayer);
 
 		if (fLength < fMinDis)
@@ -633,9 +616,6 @@ CPlayer* CPlayerAIOutControl::GetThrowTarget()
 
 			// ターゲットを更新
 			pTarget = pPlayer;
-
-			// 方向設定(そっちを向く)
-			m_pAIOut->SetRotDest(Mypos.AngleXZ(pTarget->GetPosition()));
 		}
 	}
 

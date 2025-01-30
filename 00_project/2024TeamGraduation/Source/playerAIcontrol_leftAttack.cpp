@@ -107,28 +107,3 @@ void CPlayerAIControlLeftAttack::PreparationLeave(const float fDeltaTime, const 
 		SetAttackMode(EAttackMode::ATTACKMODE_ATTACK);
 	}
 }
-
-//==========================================================================
-// 攻撃準備
-//==========================================================================
-void CPlayerAIControlLeftAttack::Preparation()
-{
-	CPlayer* pPlayer = GetPlayer();
-	if (!pPlayer) return;
-
-	// モーション情報の取得
-	CMotion* pMotion = pPlayer->GetMotion();
-	int nType = pMotion->GetType();
-
-	if (nType == CPlayer::EMotion::MOTION_JUMP_BALL)
-	{// ジャンプ状態(ボール所持)
-
-		// 位置の取得
-		MyLib::Vector3 posMy = pPlayer->GetPosition();
-
-		if (posMy.x > 0.0f)
-		{
-
-		}
-	}
-}

@@ -35,7 +35,6 @@ CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeT
 
 	// AIコントロール(外野)の生成
 	m_pAIOutControl = CPlayerAIOutControl::Create(pPlayer);
-	m_eAIRange = RANGE_NONE;
 }
 
 //==========================================================================
@@ -99,15 +98,6 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 	// 進行方向の取得
 	float fDirection = pControlAIOutMove->GetClabDirection();
 
-	// 角度
-	float range[] =
-	{
-		-1.57f,		// 左
-		1.57f,		// 右
-		D3DX_PI,	// 上
-		0.0f,		// 下
-	};
-
 	if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT ||
 		eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
 	{
@@ -123,11 +113,11 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 		}
 		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
 		{// 左向き
-			if (fDirection == range[2])
+			if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_UP])
 			{
 				playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
 			}
-			else if (fDirection == range[3])
+			else if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_DOWN])
 			{
 				playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
 			}
@@ -135,11 +125,11 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 		}
 		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
 		{// 右向き
-			if (fDirection == range[2])
+			if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_UP])
 			{
 				playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
 			}
-			else if (fDirection == range[3])
+			else if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_DOWN])
 			{
 				playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
 			}
@@ -177,21 +167,20 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 			MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
 		}
 	}
-
 	
-	if (fDirection == range[0])
+	if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_LEFT])
 	{
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 	}
-	else if (fDirection == range[1])
+	else if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_RIGHT])
 	{
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
 	}
-	else if (fDirection == range[2])
+	else if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_UP])
 	{
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
 	}
-	else if (fDirection == range[3])
+	else if (fDirection == AIOutRange::range[CPlayerAIOut::EAIOutRange::RANGE_DOWN])
 	{
 		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 	}

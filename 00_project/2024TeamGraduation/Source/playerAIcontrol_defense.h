@@ -24,13 +24,6 @@ class CPlayer;
 class CPlayerAIControlDefense : public CPlayerAIControlMode
 {
 public: 
-	enum EFlow				// 流れ
-	{
-		FLOW_START = 0,
-		FLOW_GAME,
-		FLOW_MAX
-	};
-
 	enum EActionStatus		// アクション状態
 	{
 		ACTIONSTATUS_IDLE = 0,
@@ -49,20 +42,21 @@ public:
 		MAX
 	};
 
-	enum ECatch
-	{
-		CATCH_NORMAL = 0,
-		CATCH_JUST,
-		CATCH_LOSS,
-		CATCH_MAX
-	};
-
 	struct SAction {
 		MyLib::Vector3 pos;			// 位置
 		float fTimer;				// タイマー
 		bool bSet;					// 設定フラグ
 		bool bCooldown;				// クールダウン
 		bool bCancel;				// キャンセル
+	};
+
+private:
+
+	struct SAccuracy
+	{
+		int nAccuracy;				// 精度
+		int nRate;					// 割合
+		bool bSet;					// 設定したかどうか
 	};
 
 public:
@@ -90,20 +84,19 @@ protected:
 	//=============================
 	virtual bool IsLineOverBall() { return false; }				// 線超え判定(ボール)
 	virtual bool IsLineOverPlayer() { return false; };			// 線越え判定(プレイヤー)
-	virtual void BallSteal()/* = 0*/;							// ボールを奪う
-	virtual void BallChaseRebound()/* = 0*/;					// ボールを追う(リバウンド)
 
 	//=============================
 	// メンバ関数
 	//=============================
 	bool Leave(MyLib::Vector3 targetPos, float distance);		// 離れる
 	bool Approatch(MyLib::Vector3 targetPos, float distance);	// 近づく
-	void MoveUp();			// 上移動
-	void MoveDown();		// 下移動
-	void MoveLeft();		// 左移動
-	void MoveRight();		// 右移動
-
-	void UpdateSee();						// 更新
+	void MoveUp();							// 上移動
+	void MoveDown();						// 下移動
+	void MoveLeft();						// 左移動
+	void MoveRight();						// 右移動
+	void BallSteal();						// ボールを奪う
+	void BallChaseRebound();				// ボールを追う(リバウンド)
+	void UpdateSee();						// 更新見る
 	void SeeTarget(MyLib::Vector3 pos);		// ターゲットをみる
 	void SeeBall();							// ボールを見る
 
@@ -112,12 +105,11 @@ protected:
 	//-----------------------------
 	// 設定関数
 	//-----------------------------
-	CPlayer* GetBallOwner();				// ボール持ち主
-	float GetDistance() { return m_fDistanse; }
-
-	float GetDistanceBall();				// ボールとの距離
-	float GetDistanceEnemy();				// 敵との距離
-	bool IsGetDistanceBallowner(float* dis);			// ボール持ち主との距離
+	CPlayer* GetBallOwner();						// ボール持ち主
+	float GetDistance() { return m_fDistanse; }		// 距離
+	float GetDistanceBall();						// ボールとの距離
+	float GetDistanceEnemy();						// 敵との距離
+	bool IsGetDistanceBallowner(float* dis);		// ボール持ち主との距離
 
 private:
 
@@ -176,15 +168,14 @@ private:
 	//-----------------------------
 	// 列挙型
 	//-----------------------------
-	EFlow m_eFlow;					// 流れ
 	EAction m_eAction;				// アクション
 	EActionStatus m_eActionStatus;	// アクション状態
-	ECatch m_eCatch;
 
 	//-----------------------------
 	// 構造体
 	//-----------------------------
 	SAction m_sAction;				// アクション
+	SAccuracy m_sAccuracy;
 };
 
 #endif
