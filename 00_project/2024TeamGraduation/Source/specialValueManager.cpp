@@ -94,6 +94,8 @@ void CSpecialValueManager::Uninit()
 //==========================================================================
 float CSpecialValueManager::GetAddValue(ETypeAdd type)
 {
+	assert(!(type >= ETypeAdd::ADD_MAX || type <= -1));
+
 	// �͈͊O
 	if (ETypeAdd::ADD_MAX <= type) return 0.0f;
 

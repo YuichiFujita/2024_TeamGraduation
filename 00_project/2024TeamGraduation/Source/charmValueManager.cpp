@@ -117,6 +117,8 @@ void CCharmValueManager::Uninit()
 //==========================================================================
 float CCharmValueManager::GetAddValue(ETypeAdd type)
 {
+	assert(!(type <= -1 || type >= ETypeAdd::ADD_MAX));
+
 	// �͈͊O
 	if (ETypeAdd::ADD_MAX <= type) return 0.0f;
 
@@ -128,6 +130,8 @@ float CCharmValueManager::GetAddValue(ETypeAdd type)
 //==========================================================================
 float CCharmValueManager::GetSubValue(ETypeSub type)
 {
+	assert(!(type <= -1 || type >= ETypeSub::SUB_MAX));
+
 	// �͈͊O
 	if (ETypeSub::SUB_MAX <= type) return 0.0f;
 

@@ -1063,7 +1063,12 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
-	m_pTeamStatus[(int)side]->AddCharmValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->AddCharmValue(value);
+	}
 
 	assert(m_pCharmManager != nullptr);
 	if (m_pCharmManager->GetPrisetHypeTime(charmType) > m_pCharmManager->GetHypeTime(side))
@@ -1095,7 +1100,12 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
-	m_pTeamStatus[(int)side]->SubCharmValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->SubCharmValue(value);
+	}
 
 	// 盛り上がり時間の初期化
 	assert(m_pCharmManager != nullptr);
@@ -1111,7 +1121,12 @@ void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAd
 
 	// チームステータス
 	float value = CSpecialValueManager::GetInstance()->GetAddValue(ValueType);
-	m_pTeamStatus[(int)side]->AddSpecialValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->AddSpecialValue(value);
+	}
 }
 
 //==========================================================================

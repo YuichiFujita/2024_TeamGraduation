@@ -201,7 +201,7 @@ void CObject2D::Draw()
 #if _DEBUG
 	
 	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
-		(!GetType() == CObject::TYPE::TYPE_UI || !GetType() == CObject::TYPE::TYPE_NONE))
+		(GetType() != CObject::TYPE::TYPE_UI || GetType() != CObject::TYPE::TYPE_NONE))
 	{
 		return;
 	}

@@ -1355,7 +1355,7 @@ void CEntryRuleManager::AddTime(const float fAddTime)
 			fCurTime = 0.0f;
 
 			// ‘Œ¸¬Œ÷ƒTƒEƒ“ƒh‚ÌÄ¶
-			PLAY_SOUND(CSound::LABEL_SE_GRIP01);
+			PLAY_SOUND(CSound::LABEL_SE_ARROW);
 		}
 		else if (fCurTime < time::MIN_TIME)
 		{ // Å¬ŠÔ‚ğ‰º‰ñ‚Á‚½ê‡
