@@ -20,7 +20,6 @@
 #include "specialManager.h"
 #include "playerManager.h"
 
-#include "debugproc.h"
 #include "3D_Effect.h"
 
 // TODO：AI/User切り替え
@@ -373,32 +372,6 @@ void CBall::Update(const float fDeltaTime, const float fDeltaRate, const float f
 
 	// 親クラスの更新
 	CObjectX::Update(fDeltaTime, fDeltaRate, fSlowRate);
-
-	// カメラ情報のテキスト描画
-	GET_MANAGER->GetDebugProc()->Print
-	(
-		"\n---------------- ボール情報 ----------------\n"
-		"【ボール状態】%s\n"
-		"【チーム方向】%s\n"
-		"【 攻撃状態 】%s\n"
-		"【スペシャル】%s\n"
-		"【着地フラグ】%s\n"
-		"【 ダメージ 】[%d]\n"
-		"【カバー回復】[%d]\n"
-		"【 所有対象 】[%s]\n"
-		"【ターゲット】[%s]\n"
-		"【カバー対象】[%s]\n",
-		DEBUG_STATE_PRINT[m_state],
-		DEBUG_TEAM_PRINT[m_typeTeam + 1],
-		DEBUG_ATK_PRINT[m_typeAtk],
-		DEBUG_SPECIAL_PRINT[m_typeSpecial],
-		DEBUG_BOOL_PRINT[(int)m_bLanding],
-		m_nDamage,
-		m_nCoverHeal,
-		(m_pPlayer == nullptr) ? "nullptr" : "player",
-		(m_pTarget == nullptr) ? "nullptr" : "player",
-		(m_pCover  == nullptr) ? "nullptr" : "player"
-	);
 
 #if _DEBUG
 	// デバッグ出力

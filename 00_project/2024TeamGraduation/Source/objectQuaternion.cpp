@@ -7,9 +7,7 @@
 #include "objectQuaternion.h"
 #include "calculation.h"
 #include "manager.h"
-#include "debugproc.h"
 #include "input.h"
-
 
 //==========================================================================
 // ’è”’è‹`

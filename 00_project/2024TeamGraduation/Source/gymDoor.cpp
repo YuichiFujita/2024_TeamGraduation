@@ -7,7 +7,6 @@
 #include "gymDoor.h"
 #include "manager.h"
 #include "objectX.h"
-#include "debugproc.h"
 
 //==========================================================================
 // ’è”’è‹`

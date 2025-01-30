@@ -35,7 +35,6 @@ class CCamera;
 class CInput;
 class CSound;
 class CTexture;
-class CDebugProc;
 class CPlayer;
 class CMap;
 class CXLoad;
@@ -79,7 +78,6 @@ public:
 	static CManager *GetInstance();	// インスタンス取得
 
 	CRenderer *GetRenderer();
-	CDebugProc *GetDebugProc();
 	CLightManager *GetLight();
 	CCamera *GetCamera();
 	CEdit *GetEdit();
@@ -152,7 +150,6 @@ private:
 	CRenderer *m_pRenderer;				// レンダラー
 	CInput*m_pInput;					// 入力機器
 	CSound* m_pSound;					// サウンド
-	CDebugProc *m_pDebugProc;			// デバッグ表示
 	CLightManager *m_pLight;			// ライト
 	CCamera *m_pCamera;					// カメラ
 	CTexture *m_pTexture;				// テクスチャ

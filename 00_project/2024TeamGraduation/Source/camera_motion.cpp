@@ -7,7 +7,6 @@
 //=============================================================================
 #include "camera_motion.h"
 #include "camera.h"
-#include "debugproc.h"
 #include "manager.h"
 #include "game.h"
 #include "input.h"

@@ -208,7 +208,6 @@
     <ClCompile Include="Source\charmValueManager.cpp" />
     <ClCompile Include="Source\collisionLine_Box.cpp" />
     <ClCompile Include="Source\cutin.cpp" />
-    <ClCompile Include="Source\debugproc.cpp" />
     <ClCompile Include="Source\dressup.cpp" />
     <ClCompile Include="Source\dressupUI.cpp" />
     <ClCompile Include="Source\dressup_accessory.cpp" />
@@ -465,7 +464,6 @@
     <ClInclude Include="Source\constans.h" />
     <ClInclude Include="Source\controlkeydisp.h" />
     <ClInclude Include="Source\cutin.h" />
-    <ClInclude Include="Source\debugproc.h" />
     <ClInclude Include="Source\dressup.h" />
     <ClInclude Include="Source\dressupUI.h" />
     <ClInclude Include="Source\dressup_accessory.h" />

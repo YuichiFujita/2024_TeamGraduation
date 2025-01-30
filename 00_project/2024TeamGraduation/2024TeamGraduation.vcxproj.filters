@@ -320,9 +320,6 @@
     <ClCompile Include="Source\listmanager.cpp">
       <Filter>system</Filter>
     </ClCompile>
-    <ClCompile Include="Source\debugproc.cpp">
-      <Filter>system</Filter>
-    </ClCompile>
     <ClCompile Include="Source\impactwave.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
@@ -1061,9 +1058,6 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Source\listmanager.h">
-      <Filter>system</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\debugproc.h">
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Source\impactwave.h">

@@ -6,7 +6,6 @@
 //=============================================================================
 #include "gamemanager.h"
 #include "game.h"
-#include "debugproc.h"
 #include "manager.h"
 #include "renderer.h"
 #include "player.h"
@@ -743,20 +742,6 @@ void CGameManager::SkipSpawn()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
-#if 1
-	GET_MANAGER->GetDebugProc()->Print("\n----------------- ŠÏ‹qî•ñ -----------------\n");
-	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
-	{
-		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// ƒ‚ƒeî•ñ
-		float fMoteRate = info.fValue / info.fValueMax;				// ƒ‚ƒeŠ„‡
-		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// Œ»İ‚ÌŠÏ‹q”
-
-		// ŠÏ‹q”‚ğİ’è
-		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i));
-		GET_MANAGER->GetDebugProc()->Print("yƒ`[ƒ€0%dŠÏ‹qz[%d]\n", i, nNumAudience);
-	}
-#endif	// ŠÏ‹q‚ğo‚³‚È‚¢
-
 	// º‰‡‚ÌXV
 	UpdateAudienceCheer();
 }
