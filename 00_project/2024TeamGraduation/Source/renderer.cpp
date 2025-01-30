@@ -74,6 +74,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	d3dpp.EnableAutoDepthStencil = TRUE;						// デプスバッファとステンシルバッファを作成
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;				// 深度バッファ：24bit, ステンシルバッファ：8bitを使用
 	d3dpp.Windowed = bWindow;									// ウィンドウモード
+	d3dpp.Windowed = bWindow;									// ウィンドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;	// リフレッシュレート
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
 
