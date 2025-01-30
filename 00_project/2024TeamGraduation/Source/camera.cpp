@@ -5,7 +5,6 @@
 // Adder  : 藤田勇一
 // 
 //=============================================================================
-#include "debugproc.h"
 #include "manager.h"
 #include "renderer.h"
 #include "game.h"
@@ -354,33 +353,6 @@ void CCamera::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// カメラモーションの更新
 		m_pCameraMotion->Update(fDeltaTime, fDeltaRate, fSlowRate);
 	}
-
-#ifdef _DEBUG
-	// カメラ交差点の取得
-	MyLib::Vector3 posScreen = UtilFunc::Transformation::CalcScreenToXZ
-	(
-		CInputMouse::GetInstance()->GetPosition(),	// マウス座標
-		D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),	// スクリーンサイズ
-		m_mtxView,		// ビューマトリックス
-		m_mtxProjection	// プロジェクションマトリックス
-	);
-
-	// カメラ情報のテキスト描画
-	GET_MANAGER->GetDebugProc()->Print
-	(
-		"\n---------------- カメラ情報 ----------------\n"
-		"【向き】[X：%f Y：%f Z：%f]\n"
-		"【距離】[%f]\n"
-		"【視点】[X：%f Y：%f Z：%f]\n"
-		"【注視点】[X：%f Y：%f Z：%f]\n"
-		"【交差点】[X：%f Y：%f Z：%f]\n",
-		m_rot.x, m_rot.y, m_rot.z,
-		m_fDistance,
-		m_posV.x, m_posV.y, m_posV.z,
-		m_posR.x, m_posR.y, m_posR.z,
-		posScreen.x, posScreen.y, posScreen.z
-	);
-#endif
 }
 
 //==========================================================================

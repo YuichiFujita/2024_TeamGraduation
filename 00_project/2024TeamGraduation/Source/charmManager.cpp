@@ -10,7 +10,6 @@
 #include "player.h"
 
 // デバッグ用
-#include "debugproc.h"
 #include "collisionLine_Box.h"
 
 //==========================================================================
@@ -136,16 +135,6 @@ void CCharmManager::Update(const float fDeltaTime, const float fDeltaRate, const
 			if (m_fHypeTime[i] < 0.0f) { m_fHypeTime[i] = 0.0f; }	// 盛り上がり時間補正
 		}
 	}
-
-	// カメラ情報のテキスト描画
-	GET_MANAGER->GetDebugProc()->Print
-	(
-		"\n---------------- 盛り上がり情報 ----------------\n"
-		"【盛り上がり時間：左】[%f]\n"
-		"【盛り上がり時間：右】[%f]\n",
-		m_fHypeTime[CGameManager::ETeamSide::SIDE_LEFT],
-		m_fHypeTime[CGameManager::ETeamSide::SIDE_RIGHT]
-	);
 }
 
 //==========================================================================

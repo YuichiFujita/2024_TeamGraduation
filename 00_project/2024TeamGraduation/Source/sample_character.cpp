@@ -7,7 +7,6 @@
 #include "sample_character.h"
 #include "camera.h"
 #include "manager.h"
-#include "debugproc.h"
 #include "calculation.h"
 #include "shadow.h"
 #include "game.h"

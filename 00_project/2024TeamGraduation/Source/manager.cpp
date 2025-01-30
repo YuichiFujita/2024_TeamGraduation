@@ -7,7 +7,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "input.h"
-#include "debugproc.h"
 #include "object2D.h"
 #include "object3D.h"
 #include "objectBillboard.h"
@@ -72,7 +71,6 @@ CManager::CManager()
 	m_pRenderer = nullptr;			// レンダラー
 	m_pInput = nullptr;				// 入力
 	m_pSound = nullptr;				// サウンド
-	m_pDebugProc = nullptr;			// デバッグ表示
 	m_pLight = nullptr;				// ライト
 	m_pCamera = nullptr;			// カメラ
 	m_pTexture = nullptr;			// テクスチャ
@@ -201,30 +199,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	{
 		return E_FAIL;
 	}
-
-
-	//**********************************
-	// デバッグ表示
-	//**********************************
-	if (m_pDebugProc != nullptr)
-	{// 確保されていたら
-		return E_FAIL;
-	}
-
-	// メモリ確保
-	m_pDebugProc = DEBUG_NEW CDebugProc;
-
-	if (m_pDebugProc != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 初期化処理
-		hr = m_pDebugProc->Init(hInstance, hWnd);
-		if (FAILED(hr))
-		{// 初期化処理が失敗した場合
-			return E_FAIL;
-		}
-	}
-
 
 	//**********************************
 	// ライト
@@ -650,18 +624,6 @@ void CManager::Uninit()
 		m_pSound = nullptr;
 	}
 
-	// デバッグ表示の破棄
-	if (m_pDebugProc != nullptr)
-	{// メモリの確保が出来ていたら
-
-		// 終了処理
-		m_pDebugProc->Uninit();
-
-		// メモリの開放
-		delete m_pDebugProc;
-		m_pDebugProc = nullptr;
-	}
-
 	// エディットの破棄
 	if (m_pEdit != nullptr)
 	{// メモリの確保が出来ていたら
@@ -827,9 +789,6 @@ void CManager::Update()
 
 	// カメラの更新処理
 	m_pCamera->Update(m_fDeltaTime, m_fDeltaRate, m_fSlowRate);
-
-	// デバッグ表示の更新処理
-	m_pDebugProc->Update();
 }
 
 //==========================================================================
@@ -1132,14 +1091,6 @@ void CManager::ChangePauseMode(CScene::MODE mode)
 CRenderer *CManager::GetRenderer()
 {
 	return m_pRenderer;
-}
-
-//==========================================================================
-// デバッグ表示の取得
-//==========================================================================
-CDebugProc *CManager::GetDebugProc()
-{
-	return m_pDebugProc;
 }
 
 //==========================================================================

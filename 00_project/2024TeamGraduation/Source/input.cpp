@@ -5,7 +5,6 @@
 //
 //=============================================================================
 #include "input.h"
-#include "debugproc.h"
 #include "manager.h"
 #include "calculation.h"
 
