@@ -148,6 +148,7 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	//‰ñ”ð”»’è
 	CBall* pObj = CGameManager::GetInstance()->GetBall();
 	CGameManager::ETeamSide teamPlayer = m_pPlayer->GetTeam();
+	CGameManager::GetInstance()->AssertCheckTeam(teamPlayer);
 
 	// UŒ‚ó‘Ô‚Å‚È‚¢orŽ©w
 	if (!pObj->IsAttack() || pObj->GetTypeTeam() == teamPlayer) return;
@@ -307,6 +308,7 @@ void CPlayerAction::StartThrowJump(const float fDeltaTime, const float fDeltaRat
 void CPlayerAction::StartDodge(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	CGameManager::ETeamSide teamPlayer = m_pPlayer->GetTeam();
+	CGameManager::GetInstance()->AssertCheckTeam(teamPlayer);
 
 	//ƒ_ƒ[ƒWŽó•t‚µ‚È‚¢ŽžŠÔÝ’è
 	CPlayer::SDamageInfo DmgInfo = m_pPlayer->GetDamageInfo();

@@ -29,11 +29,10 @@ public:
 
 	enum EAIOutRange
 	{
-		RANGE_NONE = 0,
+		RANGE_LEFT = 0,
+		RANGE_RIGHT,
 		RANGE_UP,
 		RANGE_DOWN,
-		RANGE_LEFT,
-		RANGE_RIGHT,
 		RANGE_MAX
 	};
 
@@ -61,7 +60,18 @@ private:
 	// メンバ変数
 	//=============================
 	CPlayerAIOutControl* m_pAIOutControl;	// AIコントロール(外野)
-	EAIOutRange m_eAIRange;
 };
+
+namespace AIOutRange
+{
+	// 角度
+	const float range[CPlayerAIOut::EAIOutRange::RANGE_MAX] =
+	{
+		-1.57f,		// 左
+		1.57f,		// 右
+		D3DX_PI,	// 上
+		0.0f,		// 下
+	};
+}
 
 #endif

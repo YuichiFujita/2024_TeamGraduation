@@ -44,6 +44,7 @@ public:
 
 	void SetClabDirection(float clabDirection) { m_fClabDirection = clabDirection; }
 	float GetClabDirection() { return m_fClabDirection; }	// カニ進行方向の取得
+	virtual void CrabSetting(CPlayer* player) override;				// カニ歩き状態
 
 	//=============================
 	// メンバ変数

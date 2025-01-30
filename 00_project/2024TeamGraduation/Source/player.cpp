@@ -1723,7 +1723,10 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	m_sKnockback.posEnd = posE;
 
 	// 死んだ
-	result->isdeath = true;
+	if (result != nullptr)
+	{
+		result->isdeath = true;
+	}
 
 	// 振動
 	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_DEAD, GetMyPlayerIdx());
@@ -1971,8 +1974,23 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 void CPlayer::OutCourtSetting()
 {
 	//ダメージ
-	m_pStatus->LifeDamage(10);
+	float damage = 0;
+	if (m_pCatchSpecial != nullptr)
+	{
+		damage = m_pCatchSpecial->GetDamage();
+		m_pBall->SetKnockback(m_pCatchSpecial->GetKnockback());
+	}
+	m_pStatus->LifeDamage(damage);
 	SetMotion(EMotion::MOTION_DAMAGE);
+
+	if (GetLife() <= 0)
+	{
+		//MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+		// 終活
+		DeadSetting(nullptr, m_pBall);
+		m_pBall->SetKnockback(0.0f);
+		return;
+	}
 
 	// ノックバックの位置設定
 	MyLib::Vector3 rot = GetRotation();
@@ -1983,6 +2001,9 @@ void CPlayer::OutCourtSetting()
 	posE.z += cosf(rot.y) * Knockback::OUTCOURT;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
+
+	// TODO: ボール離す
+
 
 	SetState(EState::STATE_OUTCOURT);
 

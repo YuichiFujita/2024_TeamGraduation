@@ -102,6 +102,17 @@ namespace
 		const float BOUND_SPEED = 3.0f;	// トスバウンド速度
 	}
 
+	namespace center
+	{
+		const float MOVE_RATE = 0.02f;			// 移動速度の距離割合
+		const float HOMING_TIMERATE = 0.65f;	// Y座標のホーミングを行う時間割合
+		const float TARGET_PULSY = 50.0f;		// ターゲット対象のY座標加算量
+		const float TIME_NORAML = 1.2f;			// 通常パスの経過時間
+		const float TIME_HOMING = 1.0f;			// ホーミングパスの経過時間
+		const float MAX_HEIGHT = 250.0f;		// ホーミングの最高到達点
+		const float BOUND_SPEED = 12.0f;		// パスバウンド速度
+	}
+
 	namespace pass
 	{
 		const float MOVE_RATE = 0.02f;			// 移動速度の距離割合
@@ -119,45 +130,6 @@ namespace
 		const float THROW_MOVE = 3.5f;	// スポーン移動速度
 		const float BOUND_SPEED = 6.0f;	// スポーンバウンド速度
 	}
-
-	const char* DEBUG_STATE_PRINT[] =	// デバッグ表示用状態
-	{
-		"[SPAWN]    生成状態 (フリーボール)",
-		"[CATCH]    キャッチ状態 (プレイヤー所持)",
-		"[HOM_NOR]  通常ホーミング状態 (攻撃判定ON)",
-		"[HOM_JUMP] ジャンプホーミング状態 (攻撃判定ON)",
-		"[MOVE]     移動状態 (攻撃判定ON)",
-		"[S_STAG]   スペシャル演出状態 (開始前演出)",
-		"[S_THROW]  スペシャル投げ状態 (攻撃判定ON)",
-		"[HOM_PASS] ホーミングパス状態 (内野→外野)",
-		"[PASS]     パス状態 (外野→内野)",
-		"[REBOUND]  リバウンド状態 (ぶつかった時の落下)",
-		"[FREE]     フリー状態 (敵のみとれる)",
-		"[LAND]     着地状態 (地面落下)",
-	};
-	const char* DEBUG_TEAM_PRINT[] =	// デバッグ表示用チーム
-	{
-		"[NONE]    (コート指定なし)",
-		"[LEFT]    (左コート)",
-		"[RIGHT]   (右コート)",
-	};
-	const char* DEBUG_ATK_PRINT[] =		// デバッグ表示用攻撃
-	{
-		"[NONE]    (攻撃判定無し)",
-		"[NORMAL]  (通常攻撃)",
-		"[JUMP]    (ジャンプ攻撃)",
-		"[SPECIAL] (スペシャリスト攻撃)",
-	};
-	const char* DEBUG_SPECIAL_PRINT[] =	// デバッグ表示用スペシャル
-	{
-		"[NONE]    (指定なし)",
-		"[かめはめ波]",
-	};
-	const char* DEBUG_BOOL_PRINT[] =	// デバッグ表示用フラグ
-	{
-		"[FALSE]",
-		"[TRUE]",
-	};
 }
 
 //==========================================================================
@@ -175,6 +147,7 @@ CBall::STATE_FUNC CBall::m_StateFuncList[] =
 	&CBall::UpdateSpecialThrow,	// スペシャル投げ状態の更新
 	&CBall::UpdateHomingPass,	// パスホーミング状態の更新
 	&CBall::UpdatePass,			// パス状態の更新
+	&CBall::UpdateCenterReturn,	// 中央投げ状態の更新
 	&CBall::UpdateReBound,		// リバウンド状態の更新
 	&CBall::UpdateFree,			// フリー状態の更新
 	&CBall::UpdateLand,			// 着地状態の更新
@@ -226,10 +199,6 @@ CBall::CBall(int nPriority) : CObjectX(nPriority),
 	// スタティックアサート
 	static_assert(NUM_ARRAY(m_StateFuncList)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
 	static_assert(NUM_ARRAY(m_SpecialFuncList) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
-
-	static_assert(NUM_ARRAY(DEBUG_STATE_PRINT)   == CBall::STATE_MAX,   "ERROR : State Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_ATK_PRINT)     == CBall::ATK_MAX,     "ERROR : Attack Count Mismatch");
-	static_assert(NUM_ARRAY(DEBUG_SPECIAL_PRINT) == CBall::SPECIAL_MAX, "ERROR : Special Count Mismatch");
 }
 
 //==========================================================================
@@ -749,6 +718,34 @@ bool CBall::Pass(CPlayer* pPlayer)
 }
 
 //==========================================================================
+// 中央投げ処理
+//==========================================================================
+void CBall::CenterReturn(CPlayer* pPlayer)
+{
+	// 投げ処理
+	Throw(pPlayer);
+
+	// 中央投げ状態にする
+	SetState(STATE_CENTER_RETURN);
+
+	// 現在のボール位置をパス開始位置にする
+	m_posPassStart = GetPosition();
+
+	// パス終了位置を設定
+	m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
+	m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
+
+	// 移動量を設定
+	m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * center::MOVE_RATE;
+
+	// 跳力を設定
+	m_fBouncy = center::BOUND_SPEED;
+
+	// サウンド再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_THROW_NORMAL);
+}
+
+//==========================================================================
 // トス処理
 //==========================================================================
 void CBall::Toss(CPlayer* pPlayer)
@@ -1234,6 +1231,51 @@ void CBall::UpdatePass(const float fDeltaTime, const float fDeltaRate, const flo
 
 		// 放物線上に位置を補正
 		pos = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, pass::MAX_HEIGHT, fTimeRate);
+	}
+	else
+	{
+		// 重力の加速
+		UpdateGravity(fDeltaRate, fSlowRate);
+
+		// 位置に重力反映
+		UpdateGravityPosition(&pos, &vecMove, fDeltaRate, fSlowRate);
+	}
+
+	// 地面の着地
+	if (UpdateLanding(&pos, &vecMove, fDeltaRate, fSlowRate))
+	{ // 着地した場合
+
+		// 着地遷移
+		Landing();
+	}
+
+	// プレイヤーとの当たり判定
+	CollisionPlayer(&pos);
+
+	// 情報を反映
+	SetPosition(pos);	// 位置
+	SetMove(vecMove);	// 移動量
+}
+
+//==========================================================================
+// 中央投げ状態の更新処理
+//==========================================================================
+void CBall::UpdateCenterReturn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// 情報を取得
+	MyLib::Vector3 pos = GetPosition();	// ボール位置
+	MyLib::Vector3 vecMove = GetMove();	// 移動量
+
+	// 経過時間を加算
+	m_fStateTime += fDeltaTime * fSlowRate;
+	if (m_fStateTime <= center::TIME_NORAML)
+	{
+		// 経過時間の割合を計算
+		float fTimeRate = m_fStateTime / center::TIME_NORAML;
+		fTimeRate = UtilFunc::Transformation::Clamp(fTimeRate, 0.0f, 1.0f);	// 割合を補正
+
+		// 放物線上に位置を補正
+		pos = UtilFunc::Calculation::GetParabola3D(m_posPassStart, m_posPassEnd, center::MAX_HEIGHT, fTimeRate);
 	}
 	else
 	{
@@ -1822,6 +1864,12 @@ void CBall::ThrowSpecial()
 	// 目標向き/向きをボール方向にする
 	m_pPlayer->SetRotDest(fAngleY);
 	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+	// ダメージを設定
+	m_nDamage = m_pPlayer->GetBallParameter().nDamageSpecial;
+
+	// ノックバック設定
+	m_fKnockback = m_pPlayer->GetBallParameter().fKnockbackSpecial;
 
 	// 投げ処理
 	Throw(m_pPlayer);
