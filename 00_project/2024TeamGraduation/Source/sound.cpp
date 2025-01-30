@@ -99,6 +99,11 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/drumroll.wav",-1},		// ドラムロール
 	{ TYPE_SE,"data/SE/outgame/drumroll_end.wav",0},	// ドラムロール終了
 
+	// 観客
+	{ TYPE_SE,"data/SE/kansei_loop01.wav", -1},			// 観客01
+	{ TYPE_SE,"data/SE/kansei_loop02.wav", -1},			// 観客02
+
+
 };	// サウンドの情報
 CSound* CSound::m_pThisPtr = nullptr;	// 自身のポインタ
 

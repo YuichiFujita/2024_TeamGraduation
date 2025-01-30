@@ -91,6 +91,8 @@ public:
 		LABEL_SE_CONTROERMOVE,	// コントローラー移動
 		LABEL_SE_DRUMROLL,		// ドラムロール
 		LABEL_SE_DRUMROLL_END,	// ドラムロール終了
+		LABEL_SE_AUDIENCE01_LOOP,	// 観客01
+		LABEL_SE_AUDIENCE02_LOOP,	// 観客02
 		LABEL_MAX
 	};
 

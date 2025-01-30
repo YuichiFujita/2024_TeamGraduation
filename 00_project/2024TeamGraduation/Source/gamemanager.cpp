@@ -76,6 +76,12 @@ namespace
 		const char* TEXTURE_BG = "data\\TEXTURE\\timer\\bg.png";		// 背景テクスチャパス
 		const float HEIGHT_BG = 64.0f;									// 背景縦幅
 	}
+
+	namespace Cheer	// 声援
+	{
+		const float SPAWNRATE = 0.3f;	// 発生開始割合
+		const float VOLUMERATE_MIN = 0.1f;	// 声援音量割合の最小値
+	}
 }
 
 //==========================================================================
@@ -723,6 +729,13 @@ void CGameManager::SkipSpawn()
 	CSound* pSound = CSound::GetInstance();
 	pSound->StopSound();
 	pSound->PlaySound(CSound::ELabel::LABEL_BGM_GAME);
+
+	// 歓声再生
+	pSound->PlaySound(CSound::ELabel::LABEL_SE_AUDIENCE01_LOOP);
+	pSound->PlaySound(CSound::ELabel::LABEL_SE_AUDIENCE02_LOOP);
+
+	// 声援の更新
+	UpdateAudienceCheer();
 }
 
 //==========================================================================
@@ -743,6 +756,44 @@ void CGameManager::UpdateAudience()
 		GET_MANAGER->GetDebugProc()->Print("【チーム0%d観客】[%d]\n", i, nNumAudience);
 	}
 #endif	// 観客を出さない
+
+	// 声援の更新
+	UpdateAudienceCheer();
+}
+
+//==========================================================================
+// 観客の声援更新
+//==========================================================================
+void CGameManager::UpdateAudienceCheer()
+{
+	float value = 0.0f, valueMax = 0.0f;
+	for (const auto& status : m_pTeamStatus)
+	{
+		if (status == nullptr) continue;
+
+		// モテ情報取得
+		const CTeamStatus::SCharmInfo& charmInfo = status->GetCharmInfo();
+
+		// モテ値加算
+		value += charmInfo.fValue;
+		valueMax += charmInfo.fValueMax;
+	}
+
+	// モテ割合
+	float charmRate = value / valueMax;
+
+	// 音量割合
+	float volumeRate = charmRate;
+	//float volumeRate = Cheer::SPAWNRATE + (1.0f - Cheer::SPAWNRATE) * charmRate;
+	if (volumeRate <= Cheer::VOLUMERATE_MIN)
+	{
+		volumeRate = 0.0f;
+	}
+
+	// 音量変更
+	CSound* pSound = CSound::GetInstance();
+	pSound->VolumeChange(CSound::ELabel::LABEL_SE_AUDIENCE01_LOOP, volumeRate);
+	pSound->VolumeChange(CSound::ELabel::LABEL_SE_AUDIENCE02_LOOP, volumeRate);
 }
 
 //==========================================================================
