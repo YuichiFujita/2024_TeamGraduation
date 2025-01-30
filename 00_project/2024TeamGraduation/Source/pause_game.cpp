@@ -7,6 +7,7 @@
 #include "pause_game.h"
 #include "manager.h"
 #include "fade.h"
+#include "gamemanager.h"
 
 //==========================================================================
 // 定数定義
@@ -58,12 +59,16 @@ void CPause_Game::Update(const float fDeltaTime, const float fDeltaRate, const f
 	// ゲームパッド情報取得
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE)
+	if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE
+	&&  CGameManager::GetInstance()->GetType() == CGameManager::ESceneType::SCENE_MAIN)
 	{
 		if (pKey->GetTrigger(DIK_P) ||
-			pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_START, 0))
+			pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_START).bInput)
 		{// ポーズ
 			m_bPause = !m_bPause;
+
+			// サウンドの再生
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 		}
 	}
 

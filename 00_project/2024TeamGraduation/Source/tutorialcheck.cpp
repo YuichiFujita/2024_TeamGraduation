@@ -256,7 +256,9 @@ void CTutorialCheck::StateNone(const float fDeltaTime, const float fDeltaRate, c
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx) ||
+		pPad->GetLStickTrigger(m_nControllIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT) ||
+		pPad->GetLStickTrigger(m_nControllIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// •ÏX
 
 		// Œ»İ‚Ì‘I‘ğˆ‚Ì‹t‚É‚·‚é

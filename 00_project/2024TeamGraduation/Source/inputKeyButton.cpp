@@ -399,7 +399,7 @@ void CInputKeyButton::ControlSelect()
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
 	bool bMove = false;
-	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx) || pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_LEFT))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -411,7 +411,7 @@ void CInputKeyButton::ControlSelect()
 
 		bMove = true;
 	}
-	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx) || pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_RIGHT))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -423,7 +423,7 @@ void CInputKeyButton::ControlSelect()
 
 		bMove = true;
 	}
-	if (pKey->GetTrigger(DIK_UP) || pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_UP) || pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx) || pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_UP))
 	{
 		do { // 選択先がない場合さらに動かす
 
@@ -452,7 +452,7 @@ void CInputKeyButton::ControlSelect()
 
 		bMove = true;
 	}
-	if (pKey->GetTrigger(DIK_DOWN) || pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
+	if (pKey->GetTrigger(DIK_DOWN) || pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx) || pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_DOWN))
 	{
 		do { // 選択先がない場合さらに動かす
 

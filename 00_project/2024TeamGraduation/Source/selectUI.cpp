@@ -529,7 +529,8 @@ void CSelectUI::UpdateSelect()
 
 	// 選択の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
 	{
 		// 着せ替えシーンの取得
 		CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
@@ -557,7 +558,8 @@ void CSelectUI::UpdateSelect()
 
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
 	{
 		// これ以上下に行けない場合抜ける
 		if (m_select.y >= SELECT_MAX - 1) { return; }
@@ -654,7 +656,8 @@ void CSelectUI::UpdateSelectPlayer()
 
 	// 選択の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_LEFT))
 	{
 		const int nNumPlayer = pDressup->GetNumDressUI();	// プレイヤー数
 		int nLoop = 0;	// ループ回数
@@ -670,7 +673,8 @@ void CSelectUI::UpdateSelectPlayer()
 
 		PLAY_SOUND(CSound::LABEL_SE_ARROW);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_RIGHT))
 	{
 		const int nNumPlayer = pDressup->GetNumDressUI();	// プレイヤー数
 		int nLoop = 0;	// ループ回数
@@ -900,7 +904,8 @@ void CSelectUI::UpdateSelectX(const int nSelectY)
 {
 	// 選択の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_LEFT))
 	{
 		// 左に選択をずらす
 		const int nCurNumX = GetNumSelectX(nSelectY);	// 現在のX選択数
@@ -908,7 +913,8 @@ void CSelectUI::UpdateSelectX(const int nSelectY)
 
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_RIGHT))
 	{
 		// 右に選択をずらす
 		const int nCurNumX = GetNumSelectX(nSelectY);	// 現在のX選択数

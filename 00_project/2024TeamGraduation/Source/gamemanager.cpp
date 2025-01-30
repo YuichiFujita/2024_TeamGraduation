@@ -565,10 +565,10 @@ void CGameManager::SceneSpawn()
 
 	bool bInput = pKey->GetTrigger(DIK_RETURN)
 			   || pKey->GetTrigger(DIK_SPACE)
-			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0)
-			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, 0)
-			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, 0)
-			   || pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, 0);
+			   || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput
+			   || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput
+			   || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X).bInput
+			   || pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_Y).bInput;
 
 	if (bInput)
 	{ // Œˆ’è‚Ì‘€ì‚ªs‚í‚ê‚½ê‡
@@ -1076,7 +1076,7 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	}
 
 	// ƒ‚ƒe•¶š¶¬
-	//CCharmText::Create(side);
+	CCharmText::Create(side);
 
 	// À‹µÒ
 	CListManager<CReporter> list = CReporter::GetList(side);
