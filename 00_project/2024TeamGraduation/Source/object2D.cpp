@@ -197,6 +197,7 @@ void CObject2D::Draw()
 	// マネージャのインスタンス取得
 	CManager* pMgr = CManager::GetInstance();
 
+#if 0
 #if _DEBUG
 	
 	if ((pMgr->GetPause()->IsPause() || pMgr->Is2DDisp()) &&
@@ -204,6 +205,7 @@ void CObject2D::Draw()
 	{
 		return;
 	}
+#endif
 #endif
 
 	// デバイスの取得

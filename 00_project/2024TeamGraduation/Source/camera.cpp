@@ -110,6 +110,12 @@ namespace
 		const float DIS = 360.0f;	// カメラの距離
 	}
 
+	namespace spCatch
+	{
+		const MyLib::Vector3 ROT = follow::INIT_ROT;	// カメラの向き
+		const float DIS = 600.0f;	// カメラの距離
+	}
+
 	namespace Reset
 	{
 		const MyLib::Vector3 POSITION[CScene::MODE::MODE_MAX] = // 位置
@@ -157,6 +163,7 @@ CCamera::STATE_FUNC CCamera::m_StateFuncList[] =
 	&CCamera::UpdateFollowState,	// 追従カメラ更新
 	&CCamera::UpdateOutFieldState,	// 外野カメラ更新
 	&CCamera::UpdateGameEndState,	// ゲーム終了カメラ更新
+	&CCamera::UpdateSpecialCatchState,	// スペシャルキャッチ更新
 };
 
 // リセット関数
@@ -166,6 +173,7 @@ CCamera::RESET_FUNC CCamera::m_ResetFuncList[] =
 	&CCamera::ResetFollowState,		// 追従カメラリセット
 	&CCamera::ResetOutFieldState,	// 外野カメラリセット
 	nullptr,						// ゲーム終了カメラリセット
+	nullptr,						// スペシャルキャッチリセット
 };
 
 //==========================================================================
@@ -1009,6 +1017,93 @@ void CCamera::UpdateGameEndState(const float fDeltaTime, const float fDeltaRate,
 }
 
 //==========================================================================
+// スペシャルキャッチ状態の更新
+//==========================================================================
+void CCamera::UpdateSpecialCatchState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
+{
+	// ゲームモード以外では使用できない
+	if (GET_MANAGER->GetMode() != CScene::MODE_GAME) { return; }
+
+	// 経過時間を加算 (スローはあえて考慮しない)
+	m_SPCatchInfo.fCurTime += fDeltaTime * fSlowRate;
+
+	const float waitStartTime = m_SPCatchInfo.fMoveTime * 0.5f;	// 待機開始時間
+	float calCurTime = m_SPCatchInfo.fCurTime;					// 計算用経過時間
+
+	if (m_SPCatchInfo.fCurTime >= waitStartTime)
+	{// 待機開始時間を越えた, 待機する
+
+		// 待機開始時間固定
+		calCurTime = waitStartTime;
+
+		if (m_SPCatchInfo.fCurTime >= m_SPCatchInfo.fWaitTime + waitStartTime)
+		{// 待機満了
+
+			// 待機開始時間 + 経過時間
+			calCurTime = m_SPCatchInfo.fCurTime - m_SPCatchInfo.fWaitTime;
+		}
+	}
+	
+	if (m_SPCatchInfo.fCurTime >= m_SPCatchInfo.fMoveTime + m_SPCatchInfo.fWaitTime)
+	{ // 経過終了した場合
+
+		// 経過時間の補正
+		m_SPCatchInfo.fCurTime = m_SPCatchInfo.fMoveTime;
+
+		// 終了状態にする
+		m_SPCatchInfo.bEnd = true;
+
+		// 状態設定
+		SetState(STATE::STATE_FOLLOW, true);
+		return;
+	}
+
+	if (calCurTime <= m_SPCatchInfo.fMoveTime * 0.5f)
+	{// 寄る
+
+		// 終了時間
+		const float endTime = m_SPCatchInfo.fMoveTime * 0.5f;
+
+		// 注視点を設定
+		m_posRDest = m_SPCatchInfo.pLook->GetPosition() + m_SPCatchInfo.offset;
+		m_posR = UtilFunc::Correction::EasingCubicInOut(m_SPCatchInfo.start.posR, m_posRDest, 0.0f, endTime, calCurTime);
+
+		// 距離を設定
+		m_fDestDistance = spCatch::DIS;
+		m_fDistance = UtilFunc::Correction::EasingCubicInOut(m_SPCatchInfo.start.fDistance, m_fDestDistance, 0.0f, endTime, calCurTime);
+
+		// 向きを設定
+		m_rotDest = spCatch::ROT;
+		m_rot = UtilFunc::Correction::EasingCubicInOut(m_SPCatchInfo.start.rot, m_rotDest, 0.0f, endTime, calCurTime);
+	}
+	else
+	{// 引く
+
+		// 終了時間
+		const float startTime = m_SPCatchInfo.fMoveTime * 0.5f;
+		const float endTime = m_SPCatchInfo.fMoveTime;
+
+		// 本来の追従ポイント取得
+		SCameraPoint point = CameraPoint(STATE::STATE_FOLLOW);
+
+		// 注視点を設定
+		m_posRDest = m_SPCatchInfo.pLook->GetPosition() + m_SPCatchInfo.offset;
+		m_posR = UtilFunc::Correction::EasingCubicIn(m_posRDest, point.posR, startTime, endTime, calCurTime);
+
+		// 距離を設定
+		m_fDestDistance = spCatch::DIS;
+		m_fDistance = UtilFunc::Correction::EasingCubicIn(m_fDestDistance, point.fDistance, startTime, endTime, calCurTime);
+
+		// 向きを設定
+		m_rotDest = spCatch::ROT;
+		m_rot = UtilFunc::Correction::EasingCubicIn(m_rotDest, point.rot, startTime, endTime, calCurTime);
+	}
+
+	// 球面座標変換による相対位置の取得
+	m_posV = m_posVDest = CalcSpherePosition(m_posR, m_rot, -m_fDistance);	// 目標視点に設定
+}
+
+//==========================================================================
 // 通常状態のリセット
 //==========================================================================
 void CCamera::ResetNoneState()
@@ -1508,6 +1603,35 @@ void CCamera::SetGameEndInfo(CObject* pLook, MyLib::Vector3 offset, const float 
 	m_gameEndInfo.start.posV = m_posV;	// 視点
 	m_gameEndInfo.start.rot  = m_rot;	// 向き
 	m_gameEndInfo.start.fDistance = m_fDistance;	// 距離
+}
+
+//==========================================================================
+// スペシャルキャッチカメラ情報設定
+//==========================================================================
+void CCamera::SetSpecialCatchInfo(CObject* pLook, MyLib::Vector3 offset, const float fMoveTime, const float fWaitTime)
+{
+	// スペシャルキャッチ状態設定
+	SetState(STATE::STATE_SPCATCH, false);
+
+	// 視認対象の設定
+	m_SPCatchInfo.pLook = pLook;
+
+	// 視認対象位置オフセットの設定
+	m_SPCatchInfo.offset = offset;
+
+	// 移動時間の設定
+	m_SPCatchInfo.fWaitTime = fWaitTime;
+	m_SPCatchInfo.fMoveTime = fMoveTime;
+	m_SPCatchInfo.fCurTime = 0.0f;
+
+	// 終了状態を解除
+	m_SPCatchInfo.bEnd = false;
+
+	// 現在のカメラポイントを保存
+	m_SPCatchInfo.start.posR = m_posR;	// 注視点
+	m_SPCatchInfo.start.posV = m_posV;	// 視点
+	m_SPCatchInfo.start.rot = m_rot;	// 向き
+	m_SPCatchInfo.start.fDistance = m_fDistance;	// 距離
 }
 
 //==========================================================================

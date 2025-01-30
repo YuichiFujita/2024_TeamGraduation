@@ -141,14 +141,16 @@ void CPlayerAIOutControl::Update(const float fDeltaTime, const float fDeltaRate,
 	// モード管理
 	ModeManager();
 
-	CBall* pBall = CGameManager::GetInstance()->GetBall();
-	if (!pBall) return;
-	
-	if (/*IsPass() &&*/							// パス
-		pBall->GetTarget() == m_pAIOut)		// ターゲットが自分
-	{
-		return;
-	}
+	//MoveRetrieve(fDeltaTime, fDeltaRate, fSlowRate);
+
+	//CBall* pBall = CGameManager::GetInstance()->GetBall();
+	//if (!pBall) return;
+	//
+	//if (IsPass() &&							// パス
+	//	pBall->GetTarget() == m_pAIOut)		// ターゲットが自分
+	//{
+	//	return;
+	//}
 
 	// 状態更新
 	(this->*(m_ModeFunc[m_eMode]))(fDeltaTime, fDeltaRate, fSlowRate);
@@ -189,14 +191,14 @@ void CPlayerAIOutControl::ModeThrowManager(const float fDeltaTime, const float f
 
 	if (m_eThrow == EThrow::THROW_NONE)
 	{// タイプ無の場合
-		//int n = rand() % 10;
+		int n = rand() % 10;
 		////int n = 1;
 
-		//if (n < 3)
-		//{
-		//	m_eThrow = EThrow::THROW_NORMAL;
-		//}
-		//else
+		if (n < 3)
+		{
+			m_eThrow = EThrow::THROW_NORMAL;
+		}
+		else
 		{
 			m_eThrow = EThrow::THROW_PASS;
 		}
@@ -219,7 +221,7 @@ void CPlayerAIOutControl::ThrowNormal(const float fDeltaTime, const float fDelta
 	{// フラグがオフの時
 		m_eThrow = EThrow::THROW_NONE;
 	}
-
+	
 	// 投げる
 	Throw();
 }
@@ -331,11 +333,20 @@ void CPlayerAIOutControl::ModeMoveManager(const float fDeltaTime, const float fD
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 	if (pBall == nullptr) return;
 
-	if (pBall->GetPlayer() != nullptr)
-	{// 誰かがボールを持っている場合
-		m_eMove = EMove::MOVE_NONE;
-	}
-	else if (pBall->GetPlayer() == nullptr)
+	//CPlayer* pPlayer = pBall->GetPlayer();
+	//if (pPlayer != nullptr)
+	//{// 誰かがボールを持っている場合
+
+	//	//if (pPlayer->GetTeam() == m_pAIOut->GetTeam())
+	//	//{// 同じチームの場合
+	//	//	m_eMove = EMove::MOVE_MEETING;
+	//	//}
+	//	//else
+	//	{
+	//		m_eMove = EMove::MOVE_NONE;
+	//	}
+	//}
+	//else if (pBall->GetPlayer() == nullptr)
 	{// 誰もボールを持っていない場合
 
 		// ボールを取りに行く
@@ -379,14 +390,14 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 	// ボールの取得
 	CBall* pBall = CGameManager::GetInstance()->GetBall();
 
-	if (pBall == nullptr || pBall->GetPlayer() != nullptr)
-	{// ボールがnullptr||プレイヤーがボールを取っている||エリア外の場合
+	//if (pBall == nullptr || pBall->GetPlayer() != nullptr)
+	//{// ボールがnullptr||プレイヤーがボールを取っている||エリア外の場合
 
-		// 歩きオフ！
-		pControlAIOutMove->SetIsWalk(false);
+	//	// 歩きオフ！
+	//	pControlAIOutMove->SetIsWalk(false);
 
-		return;
-	}
+	//	return;
+	//}
 
 	// 角度を求める(playerからみたボール)
 	float fAngle = m_pAIOut->GetPosition().AngleXZ(pBall->GetPosition());
@@ -394,20 +405,54 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 	// 外野ポジションの取得
 	CPlayerManager::EOutPos eOutPos = CPlayerManager::GetInstance()->GetOutPosition(m_pAIOut);
 
-	float fDest = fAngle;
+	float fDest = fAngle;		// 方向
+	float fRot = 0.0f;			// ポジションごとの固定向き
+	float fRotClab = 0.0f;		// カニ歩き向き
+
+	float range[] =
+	{
+		-1.57f,		// 左
+		1.57f,		// 右
+		D3DX_PI,	// 上
+		0.0f,		// 下
+	};
 
 	if ((eOutPos == CPlayerManager::EOutPos::OUT_LEFT_FAR) ||
 		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_FAR))
 	{// ポジションが奥
 		// 向きの設定
 		// なし
+
+		// カニ歩き方向の設定
+		if (fAngle > -D3DX_PI &&
+			fAngle < 0.0f)
+		{// 左
+			fRotClab = range[0];
+		}
+		else
+		{// 右
+			fRotClab = range[1];
+		}
 	}
 	else if (
 		(eOutPos == CPlayerManager::EOutPos::OUT_LEFT_NEAR) ||
 		(eOutPos == CPlayerManager::EOutPos::OUT_RIGHT_NEAR))
 	{// ポジションが手前
+
 		// 向きの設定
-		fDest *= -1.0f;
+		fDest *= 1.0f;
+		fRot = D3DX_PI;
+
+		// カニ歩き方向の設定
+		if (fAngle < D3DX_PI &&
+			fAngle > 0.0f)
+		{// 右
+			fRotClab = range[1];
+		}
+		else
+		{// 左
+			fRotClab = range[0];
+		}
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT)
 	{// 左
@@ -415,23 +460,56 @@ void CPlayerAIOutControl::MoveRetrieve(const float fDeltaTime, const float fDelt
 		{// 向きの設定
 			fDest *= -1.0f;
 		}
+		fRot = D3DX_PI * 0.5f;
+
+		// カニ歩き方向の設定
+		if (fAngle > D3DX_PI * 0.5f ||
+			fAngle < -D3DX_PI * 0.5f)
+		{// 左(上)
+			fRotClab = range[2];
+		}
+		else
+		{// 右(下)
+			fRotClab = range[3];
+		}
 	}
 	else if (eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
 	{// 右
 		if (fAngle < D3DX_PI * 0.5f)
 		{// 向きの設定
 			fDest *= -1.0f;
+			fRot = D3DX_PI * 0.5f;
+		}
+
+		// カニ歩き方向の設定
+		if (fAngle > D3DX_PI * 0.5f ||
+			fAngle < -D3DX_PI * 0.5f)
+		{// 左(下)
+			fRotClab = range[2];
+		}
+		else
+		{// 右(上)
+			fRotClab = range[3];
 		}
 	}
 
-	// 向きの設定
-	pControlAIOutMove->SetVecRot(fDest);
+	if (UtilFunc::Calculation::IsNearlyTarget(fAngle, fRot, 0.1f))
+	{// 向きの範囲内の場合
+		// 歩きオフ!
+		pControlAIOutMove->SetIsWalk(false);
+	}
+	else
+	{// 向きの範囲外の場合
 
-	// 歩きオン!
-	pControlAIOutMove->SetIsWalk(true);
+		// 歩きオン!
+		pControlAIOutMove->SetIsWalk(true);
+	}
+
+	// カニ歩きの方向設定
+	pControlAIOutMove->SetClabDirection(fRotClab);
 
 	// 方向設定
-	m_pAIOut->SetRotDest(fAngle);
+	//m_pAIOut->SetRotDest(fDest);
 }
 
 //==========================================================================
@@ -497,9 +575,6 @@ void CPlayerAIOutControl::MoveMeeting(const float fDeltaTime, const float fDelta
 
 	// 歩きオン!
 	pControlAIOutMove->SetIsWalk(true);
-
-	// 向きの設定
-	pControlAIOutMove->SetVecRot(fDest);
 
 	// 方向設定
 	m_pAIOut->SetRotDest(fAngle);
