@@ -50,6 +50,7 @@ public:
 		EFKLABEL_CAMEHAME_FLASH,		// ‚©‚ß‚Í‚ß”g(ƒtƒ‰ƒbƒVƒ…)
 		EFKLABEL_CAMEHAME_BALLAST,		// ‚©‚ß‚Í‚ß”g(‹óŠÔ‚ª‚ê‚«)
 		EFKLABEL_CAMEHAME_BALLET,		// ‚©‚ß‚Í‚ß”g(’e)
+		EFKLABEL_CAMEHAME_HIT,			// ‚©‚ß‚Í‚ß”g(ƒqƒbƒg)
 		EFKLABEL_HIT,					// ƒqƒbƒg
 		EFKLABEL_BOUND,					// ƒoƒEƒ“ƒh
 		EFKLABEL_SWEAT,					// Š¾

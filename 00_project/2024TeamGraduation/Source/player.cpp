@@ -1811,6 +1811,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// エフェクト再削除
 		pBall->SpecialEndSetting();
+
+
 		break;
 
 	default:

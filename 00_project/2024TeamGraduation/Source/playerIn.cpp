@@ -101,6 +101,12 @@ CPlayer::SHitInfo CPlayerIn::Hit(CBall* pBall)
 			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),
 			MyLib::Vector3(),
 			20.0f, true);
+
+		CEffekseerObj::Create(CMyEffekseer::EEfkLabel::EFKLABEL_CAMEHAME_HIT,
+			pBall->GetPosition(),
+			MyLib::Vector3(0.0f, pBall->GetMove().AngleXZ(0.0f), 0.0f),	// Œü‚«
+			MyLib::Vector3(),
+			18.0f, true);
 		break;
 
 	default:
