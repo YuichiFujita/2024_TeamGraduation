@@ -38,6 +38,13 @@ namespace Kamehameha
 		STATE_RESULT,			// 結果(成功)(失敗)
 		STATE_MAX
 	};
+
+	namespace ScaleBullet
+	{
+		const float SCALE_START = 15.0f;	// スケール初期値
+		const float SCALE_END = 4.0f;		// スケール最終値
+		const float TIME = 0.4f;			// 時間
+	}
 }
 
 //==========================================================================
@@ -100,6 +107,9 @@ CCatchSpecial::CCatchSpecial(CPlayer* pPlayer, EState state) :
 	m_momentumState = EMomentumState::MOMENTUM_NONE;	// 状態内状態
 	m_fMomentumStateTime = 0.0f;					// 状態内状態時間
 	m_bSuccess = false;								// 成功フラグ
+	m_bSmollScaling = false;						// 小さくするフラグ
+	m_fScalingTime = 0.0f;							// スケール時間
+	m_fDamage = 0.0f;								// ダメージ保持
 }
 
 //==========================================================================
@@ -154,6 +164,11 @@ HRESULT CCatchSpecial::Init()
 	// スペシャルキャッチカメラ情報設定
 	GET_MANAGER->GetCamera()->SetSpecialCatchInfo(m_pPlayer, MyLib::Vector3(0.0f, 80.0f, 0.0f), moveTime, waitTime);
 
+	// ダメージ保持
+	CBall* pBall = m_pPlayer->GetBall();
+	m_fDamage = pBall->GetDamage();
+	m_fKnockBack = pBall->GetKnockback();
+
 	// サウンドの再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCH);
 
@@ -181,6 +196,28 @@ void CCatchSpecial::Update(const float fDeltaTime, const float fDeltaRate, const
 	m_pPlayer->SetEnableMove(false);
 	m_pPlayer->SetEnableAction(false);
 
+	if (m_bSmollScaling)
+	{
+		// スケール時間加算
+		m_fScalingTime += fDeltaTime * fSlowRate;
+
+		// 縮小
+		float scale = UtilFunc::Correction::EasingEaseOut(
+			Kamehameha::ScaleBullet::SCALE_START,
+			Kamehameha::ScaleBullet::SCALE_END,
+			0.0f,
+			Kamehameha::ScaleBullet::TIME,
+			m_fScalingTime);
+
+		// ボールエフェクトの拡縮
+		CEffekseerObj* pEfk = m_pPlayer->GetBall()->GetEfkSPBallet();
+		if (pEfk != nullptr)
+		{
+			pEfk->SetScale(scale);
+		}
+	}
+
+	// 状態タイマー加算
 	m_fStateTime += fDeltaTime * fSlowRate;
 	m_fMomentumStateTime += fDeltaTime * fSlowRate;
 
@@ -311,6 +348,9 @@ void CCatchSpecial::MomentumStateNone(const float fDeltaTime, const float fDelta
 void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// モーションはそのまま
+
+	// これから小さくする
+	m_bSmollScaling = true;
 
 	// ズザザでコート奥まで行く
 	MyLib::Vector3 pos = m_pPlayer->GetPosition();
@@ -505,6 +545,17 @@ void CCatchSpecial::Failure()
 	if (m_state != CPlayer::EState::STATE_OUTCOURT &&
 		m_state != CPlayer::EState::STATE_OUTCOURT_RETURN)
 	{
+		CGameManager* pGameMgr = CGameManager::GetInstance();
+		CGameManager::ETeamSide team = m_pPlayer->GetTeam();			// 受けるプレイヤーのチーム
+		CGameManager::ETeamSide rivalTeam = pGameMgr->RivalTeam(team);	// 打った方のチーム
+
+		// 自分たちのモテを下げる
+		pGameMgr->SubCharmValue(team, CCharmValueManager::ETypeSub::SUB_SPECIAL_CATCH);
+
+		// 打った方のモテ上げる
+		pGameMgr->AddCharmValue(rivalTeam, CCharmValueManager::ETypeAdd::ADD_SPECIAL);
+
+		// コート越え
 		m_pPlayer->OutCourtSetting();
 
 		// サウンドの再生

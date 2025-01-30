@@ -334,7 +334,7 @@ void CSelectUI::UpdateName(const float fDeltaTime, const float fDeltaRate, const
 		CString2D* pName = pDressup->GetNameString2D(m_team);	// 名前文字列
 		CInputKeyButton::Create(m_nPadIdx, pName->GetStr(), pName);
 
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_05);
 	}
 }
 
@@ -433,6 +433,7 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 
 			// チーム設定シーンへ遷移
 			pEntry->ChangeEntryScene(CEntry::ESceneType::SCENETYPE_SETUPTEAM);
+			PLAY_SOUND(CSound::LABEL_SE_CANCEL);
 		}
 		break;
 	}
@@ -442,7 +443,16 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 		{
 			// ゲーム設定遷移
-			pDressup->TransSetting();
+			if (pDressup->TransSetting())
+			{ // 遷移できた場合
+
+				PLAY_SOUND(CSound::LABEL_SE_DECIDE_00);
+			}
+			else
+			{ // 遷移できない場合
+
+				PLAY_SOUND(CSound::LABEL_SE_DECIDE_02);
+			}
 		}
 		break;
 	}
@@ -595,7 +605,7 @@ void CSelectUI::UpdateDecideDressup()
 		// 選択操作を停止
 		m_bSelect = false;
 
-		PLAY_SOUND(CSound::LABEL_SE_DECIDE_00);
+		PLAY_SOUND(CSound::LABEL_SE_DECIDE_05);
 	}
 }
 
@@ -895,11 +905,15 @@ void CSelectUI::UpdateSelectX(const int nSelectY)
 		// 左に選択をずらす
 		const int nCurNumX = GetNumSelectX(nSelectY);	// 現在のX選択数
 		m_select.x = (m_select.x + (nCurNumX - 1)) % nCurNumX;
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
 		// 右に選択をずらす
 		const int nCurNumX = GetNumSelectX(nSelectY);	// 現在のX選択数
 		m_select.x = (m_select.x + 1) % nCurNumX;
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 }

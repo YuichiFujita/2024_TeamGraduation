@@ -1178,6 +1178,9 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 
 		// 操作権の初期化
 		SetPadIdx(-1);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_01);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
 	{
@@ -1308,17 +1311,25 @@ void CDressupUI::UpdateUI()
 	}
 
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
 	{// ループ
 
 		// 右移動
 		SetAction(CArrowUI::EDirection::DIRECTION_R);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// 逆ループ
 
 		// 左移動
 		SetAction(CArrowUI::EDirection::DIRECTION_L);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 }
 
@@ -1397,15 +1408,37 @@ void CDressupUI::ChangeEditType(int nPadIdx)
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
 	{// 変更する箇所の種類変更へ変更
 
+		EEditType old = m_typeEdit;
 		m_typeEdit = EEditType::EDIT_PROCESS;
+
+		if (m_typeEdit != old)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
 	{// 実際の変更画面へ
 
+		EEditType old = m_typeEdit;
 		m_typeEdit = EEditType::EDIT_CHANGETYPE;
+
+		if (m_typeEdit != old)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
 }
 
@@ -1418,7 +1451,8 @@ void CDressupUI::ChangeChangeType(int nPadIdx)
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
 	{// ループ
 
 		// 次へ変更
@@ -1428,7 +1462,8 @@ void CDressupUI::ChangeChangeType(int nPadIdx)
 		// プレイヤーUIの更新
 		UpdatePlayerUI();
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// 逆ループ
 
 		// 前へ変更
@@ -1453,14 +1488,16 @@ void CDressupUI::ChangeBodyType(int nPadIdx)
 	CPlayer::EBody body = m_pPlayer->GetBodyType();
 	CPlayer::EBody oldBody = body;
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
 	{// ループ
 
 		// 次へ変更
 		int afterBody = (body + 1) % CPlayer::EBody::BODY_MAX;
 		body = static_cast<CPlayer::EBody>(afterBody);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// 逆ループ
 
 		// 前へ変更
@@ -1489,14 +1526,16 @@ void CDressupUI::ChangeHandedness(int nPadIdx)
 	CPlayer::EHandedness handedness = m_pPlayer->GetHandedness();
 	CPlayer::EHandedness oldHandedness = handedness;
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nPadIdx)
+	||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
 	{// ループ
 
 		// 次へ変更
 		int afterHandedness = (handedness + 1) % CPlayer::EHandedness::HAND_MAX;
 		handedness = static_cast<CPlayer::EHandedness>(afterHandedness);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nPadIdx)
+		 ||  pPad->GetLStickTrigger(m_nPadIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// 逆ループ
 
 		// 前へ変更

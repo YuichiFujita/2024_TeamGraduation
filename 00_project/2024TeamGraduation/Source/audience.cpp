@@ -475,6 +475,17 @@ void CAudience::SetNTRAll(CGameManager::ETeamSide team)
 }
 
 //==========================================================================
+// 観戦中の人数リセット
+//==========================================================================
+void CAudience::ReSetNumWatchAll()
+{
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		m_aNumWatchAll[i] = 0;
+	}
+}
+
+//==========================================================================
 // 入場状態の更新処理
 //==========================================================================
 int CAudience::UpdateSpawn(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)

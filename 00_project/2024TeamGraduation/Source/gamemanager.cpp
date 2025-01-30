@@ -1064,7 +1064,7 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 	}
 
 	// モテ文字生成
-	CCharmText::Create(side);
+	//CCharmText::Create(side);
 
 	// 実況者
 	CListManager<CReporter> list = CReporter::GetList(side);
@@ -1133,6 +1133,14 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 		return SIDE_NONE;
 		break;
 	}
+}
+
+//==========================================================================
+// チームチェック
+//==========================================================================
+void CGameManager::AssertCheckTeam(ETeamSide team)
+{
+	MyAssert::TrueAssert(team <= ETeamSide::SIDE_NONE || team >= ETeamSide::SIDE_MAX, "チーム大丈夫そう？");
 }
 
 //==========================================================================

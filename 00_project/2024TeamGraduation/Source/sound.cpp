@@ -94,19 +94,25 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/optionBack.wav",0},		// オプション戻る
 	{ TYPE_SE,"data/SE/outgame/join.wav",0},			// 参加
 	{ TYPE_SE,"data/SE/outgame/controllerMove.wav",0},	// コントローラー移動
-	{ TYPE_SE,"data/SE/outgame/select000.wav",0},		// 選択音00
-	{ TYPE_SE,"data/SE/outgame/select001.wav",0},		// 選択音01
-	{ TYPE_SE,"data/SE/outgame/select002.wav",0},		// 選択音02
-	{ TYPE_SE,"data/SE/outgame/decision000.wav",0},		// 決定音00
-	{ TYPE_SE,"data/SE/outgame/decision001.wav",0},		// 決定音01
-	{ TYPE_SE,"data/SE/outgame/decision002.wav",0},		// 決定音02
-	{ TYPE_SE,"data/SE/outgame/decision003.wav",0},		// 決定音03
+	{ TYPE_SE,"data/SE/outgame/select000.wav",0},		// 選択音
+	{ TYPE_SE,"data/SE/outgame/select001.wav",0},		// 選択音
+	{ TYPE_SE,"data/SE/outgame/select002.wav",0},		// 選択音
+	{ TYPE_SE,"data/SE/outgame/select003.wav",0},		// 選択音
+	{ TYPE_SE,"data/SE/outgame/decision000.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision001.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision002.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision003.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision004.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision005.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision006.wav",0},		// 決定音
+	{ TYPE_SE,"data/SE/outgame/decision007.wav",0},		// 決定音
 	{ TYPE_SE,"data/SE/outgame/next.wav",0},			// チュートリアル次遷移
 	{ TYPE_SE,"data/SE/outgame/back.wav",0},			// チュートリアル前遷移
 
 	// リザルト
 	{ TYPE_SE,"data/SE/outgame/drumroll.wav",-1},		// ドラムロール
 	{ TYPE_SE,"data/SE/outgame/drumroll_end.wav",0},	// ドラムロール終了
+	{ TYPE_SE,"data/SE/outgame/draw.wav",0 },			// 引き分け
 
 	// 観客
 	{ TYPE_SE,"data/SE/kansei_loop01.wav", -1},			// 観客01

@@ -92,14 +92,20 @@ public:
 		LABEL_SE_SELECT_00,		// 選択
 		LABEL_SE_SELECT_01,		// 選択
 		LABEL_SE_SELECT_02,		// 選択
+		LABEL_SE_SELECT_03,		// 選択
 		LABEL_SE_DECIDE_00,		// 決定
 		LABEL_SE_DECIDE_01,		// 決定
 		LABEL_SE_DECIDE_02,		// 決定
 		LABEL_SE_DECIDE_03,		// 決定
+		LABEL_SE_DECIDE_04,		// 決定
+		LABEL_SE_DECIDE_05,		// 決定
+		LABEL_SE_DECIDE_06,		// 決定
+		LABEL_SE_DECIDE_07,		// 決定
 		LABEL_SE_NEXT,			// チュートリアル次遷移
 		LABEL_SE_BACK,			// チュートリアル前遷移
 		LABEL_SE_DRUMROLL,		// ドラムロール
 		LABEL_SE_DRUMROLL_END,	// ドラムロール終了
+		LABEL_SE_DRAW,			// 引き分け
 		LABEL_SE_AUDIENCE01_LOOP,	// 観客01
 		LABEL_SE_AUDIENCE02_LOOP,	// 観客02
 		LABEL_MAX

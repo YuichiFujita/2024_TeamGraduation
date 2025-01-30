@@ -19,6 +19,7 @@
 #include "edit_map.h"
 #include "blackframe.h"
 #include "resultmanager.h"
+#include "audience.h"
 
 // ‘JˆÚæ
 #include "game.h"
@@ -163,6 +164,9 @@ HRESULT CScene::Init()
 
 	// ƒXƒ[”{—¦‚ğ‰Šú‰»
 	pManager->SetSlowRate(1.0f);
+
+	// ŠÏ‹qÁ‚·
+	CAudience::ReSetNumWatchAll();
 
 	return S_OK;
 }

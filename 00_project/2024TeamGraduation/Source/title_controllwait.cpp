@@ -725,6 +725,7 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 		pCamera->ResetByMode(CScene::MODE::MODE_TITLE);
 
 		// オプションメニュー選択肢リセット
+		m_pOptionBBS->GetOptionMenu()->SetState(COptionMenu::EState::STATE_NONE);
 		m_pOptionBBS->GetOptionMenu()->SetSelect(COptionMenu::ESelect::SELECT_MASTERVOLUME);
 	}
 }
@@ -745,9 +746,8 @@ void CTitle_ControllWait::StateTutorialCheck(const float fDeltaTime, const float
 		{
 			m_pTutorialCheck->SetState(CTutorialCheck::EState::STATE_FADEOUT);
 			m_pTutorialCheck = nullptr;
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		}
-
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 
@@ -767,12 +767,11 @@ void CTitle_ControllWait::StateTutorial(const float fDeltaTime, const float fDel
 		{
 			m_pTutorialScreen->SetState(CTutorialScreen::EState::STATE_FADEOUT);
 			m_pTutorialScreen = nullptr;
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		}
 
 		// 待機へ設定
 		SetState(EState::STATE_WAIT);
-
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 

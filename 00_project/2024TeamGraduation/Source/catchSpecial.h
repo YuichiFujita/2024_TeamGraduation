@@ -70,6 +70,11 @@ public:
 	void SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }		// プレイヤー設定
 	CPlayer* GetPlayer() { return m_pPlayer; }						// プレイヤー取得
 
+	void SetDamage(float damage) { m_fDamage = damage; }				// ダメージ設定
+	float GetDamage() { return m_fDamage; }								// ダメージ取得
+	void SetKnockback(float knockback) { m_fKnockBack = knockback; }	// ノックバック設定
+	float GetKnockback() { return m_fKnockBack; }						// ノックバック取得
+
 	void Debug();		// 成功フラグ取得
 
 	//-----------------------------
@@ -145,6 +150,10 @@ private:
 	float m_fMomentumStateTime;		// 状態内状態時間
 	CPlayer* m_pPlayer;				// プレイヤー
 	bool m_bSuccess;				// 成功フラグ
+	bool m_bSmollScaling;			// 小さくするフラグ
+	float m_fScalingTime;			// スケール時間
+	float m_fDamage;				// 失敗時用ダメージ保持
+	float m_fKnockBack;				// 失敗時用ノックバック保持
 };
 
 #endif

@@ -635,6 +635,9 @@ void CPlayer::Update(const float fDeltaTime, const float fDeltaRate, const float
 		m_pPosAdj->UpdateAdjuster(this);
 	}
 
+	// 体力表示のインデックス設定
+	m_pStatus->SetMyPlayerIdx(m_nMyPlayerIdx);
+
 	// 位置取得
 	MyLib::Vector3 pos = GetPosition();
 
@@ -1565,7 +1568,7 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 
 		// カメラ揺れ
-		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f * 1.8f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1575,7 +1578,7 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 
 		// カメラ揺れ
-		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f));
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f * 1.8f));
 		break;
 
 	default:
@@ -1720,7 +1723,10 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	m_sKnockback.posEnd = posE;
 
 	// 死んだ
-	result->isdeath = true;
+	if (result != nullptr)
+	{
+		result->isdeath = true;
+	}
 
 	// 振動
 	CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_DEAD, GetMyPlayerIdx());
@@ -1968,8 +1974,23 @@ void CPlayer::CoverCatchSetting(CBall* pBall)
 void CPlayer::OutCourtSetting()
 {
 	//ダメージ
-	m_pStatus->LifeDamage(10);
+	float damage = 0;
+	if (m_pCatchSpecial != nullptr)
+	{
+		damage = m_pCatchSpecial->GetDamage();
+		m_pBall->SetKnockback(m_pCatchSpecial->GetKnockback());
+	}
+	m_pStatus->LifeDamage(damage);
 	SetMotion(EMotion::MOTION_DAMAGE);
+
+	if (GetLife() <= 0)
+	{
+		//MyLib::Vector3 vecBall = pBall->GetMove().Normal();
+		// 終活
+		DeadSetting(nullptr, m_pBall);
+		m_pBall->SetKnockback(0.0f);
+		return;
+	}
 
 	// ノックバックの位置設定
 	MyLib::Vector3 rot = GetRotation();
@@ -1980,6 +2001,9 @@ void CPlayer::OutCourtSetting()
 	posE.z += cosf(rot.y) * Knockback::OUTCOURT;
 	m_sKnockback.posStart = posS;
 	m_sKnockback.posEnd = posE;
+
+	// TODO: ボール離す
+
 
 	SetState(EState::STATE_OUTCOURT);
 
