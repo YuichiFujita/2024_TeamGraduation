@@ -650,7 +650,14 @@ void CResultManager::StateStartPrelude()
 	m_pWinTeam = CWinTeamResult::Create(m_teamPreludeWin);
 
 	// サウンドの再生
-	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+	if (m_teamPreludeWin != CGameManager::ETeamSide::SIDE_NONE)
+	{// どっちか買ってる
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+	}
+	else
+	{// 引き分け
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DRAW);
+	}
 
 	// 勝ったチーム
 	m_pReferee->SetState(CPlayerReferee_Result::EState::STATE_WIN);
@@ -796,8 +803,15 @@ void CResultManager::StateStartCharmContest()
 	GET_MANAGER->GetLight()->SetEnableBright(true);
 
 	// サウンドの再生
-	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE01);
-	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+	if (m_teamPreludeWin != CGameManager::ETeamSide::SIDE_NONE)
+	{// どっちか買ってる
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE01);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_AUDIENCE02);
+	}
+	else
+	{// 引き分け
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DRAW);
+	}
 
 	// サウンドの再生
 	PLAY_SOUND(CSound::ELabel::LABEL_BGM_RESULT_AF);
