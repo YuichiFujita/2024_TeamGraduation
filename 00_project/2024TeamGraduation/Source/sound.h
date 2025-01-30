@@ -84,6 +84,15 @@ public:
 		LABEL_SE_OPTION_BACK,	// オプション戻る
 		LABEL_SE_JOIN,			// 参加
 		LABEL_SE_CONTROERMOVE,	// コントローラー移動
+		LABEL_SE_SELECT_00,		// 選択
+		LABEL_SE_SELECT_01,		// 選択
+		LABEL_SE_SELECT_02,		// 選択
+		LABEL_SE_DECIDE_00,		// 決定
+		LABEL_SE_DECIDE_01,		// 決定
+		LABEL_SE_DECIDE_02,		// 決定
+		LABEL_SE_DECIDE_03,		// 決定
+		LABEL_SE_NEXT,			// チュートリアル次遷移
+		LABEL_SE_BACK,			// チュートリアル前遷移
 		LABEL_SE_DRUMROLL,		// ドラムロール
 		LABEL_SE_DRUMROLL_END,	// ドラムロール終了
 		LABEL_MAX

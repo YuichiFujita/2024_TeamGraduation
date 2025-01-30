@@ -410,19 +410,41 @@ void CTutorialScreen::ChangeManual()
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput)
 	{// 次ページへ
+
+		EManualType old = m_ManualType;
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType + 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
 
 		// 右スクロール
 		m_scrollDir = EScrollDir::SCROLL_R;
+
+		if (old != m_ManualType)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_NEXT);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput)
 	{// 前ページへ
+
+		EManualType old = m_ManualType;
 		m_ManualType = (EManualType)UtilFunc::Transformation::Clamp(m_ManualType - 1, 0, EManualType::TYPE_MAX - 1);
 		bChange = true;
 
 		// 左スクロール
 		m_scrollDir = EScrollDir::SCROLL_L;
+
+		if (old != m_ManualType)
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BACK);
+		}
+		else
+		{
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_BOUND_HIGH);
+		}
 	}
 
 	// 変更されていたら状態設定
@@ -442,6 +464,7 @@ void CTutorialScreen::ChangeManual()
 
 		// 遷移
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_ENTRY);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 

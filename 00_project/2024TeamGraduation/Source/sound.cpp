@@ -89,6 +89,15 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/outgame/optionBack.wav",0},		// オプション戻る
 	{ TYPE_SE,"data/SE/outgame/join.wav",0},			// 参加
 	{ TYPE_SE,"data/SE/outgame/controllerMove.wav",0},	// コントローラー移動
+	{ TYPE_SE,"data/SE/outgame/select000.wav",0},		// 選択音00
+	{ TYPE_SE,"data/SE/outgame/select001.wav",0},		// 選択音01
+	{ TYPE_SE,"data/SE/outgame/select002.wav",0},		// 選択音02
+	{ TYPE_SE,"data/SE/outgame/decision000.wav",0},		// 決定音00
+	{ TYPE_SE,"data/SE/outgame/decision001.wav",0},		// 決定音01
+	{ TYPE_SE,"data/SE/outgame/decision002.wav",0},		// 決定音02
+	{ TYPE_SE,"data/SE/outgame/decision003.wav",0},		// 決定音03
+	{ TYPE_SE,"data/SE/outgame/next.wav",0},			// チュートリアル次遷移
+	{ TYPE_SE,"data/SE/outgame/back.wav",0},			// チュートリアル前遷移
 
 	// リザルト
 	{ TYPE_SE,"data/SE/outgame/drumroll.wav",-1},		// ドラムロール
