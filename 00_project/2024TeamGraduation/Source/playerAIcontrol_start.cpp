@@ -115,8 +115,9 @@ void CPlayerAIControlStart::Gooooo()
 		return;
 	}
 
-	if (IsPicksUpBall())
-	{// 自分より近いプレイヤーがいた場合
+	if (IsPicksUpBall() ||									// 自分より近いプレイヤーがいた
+		pBall->GetState() != CBall::EState::STATE_SPAWN)	// ボールが生成状態ではない場合
+	{
 		SetMoveFlag(EMoveFlag::MOVEFLAG_IDLE);
 		SetActionFlag(EActionFlag::ACTION_NONE);
 		SetMode(EMode::MODE_IDLE);

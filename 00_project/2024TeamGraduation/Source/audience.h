@@ -104,6 +104,7 @@ public:
 	static void SetSpecialAll(CGameManager::ETeamSide team);								// 全スペシャル設定
 	static void SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespawn = -1);	// 全退場設定
 	static void SetNTRAll(CGameManager::ETeamSide team);									// 全NTR設定
+	static void ReSetNumWatchAll();															// 観戦中の人数リセット
 
 protected:
 

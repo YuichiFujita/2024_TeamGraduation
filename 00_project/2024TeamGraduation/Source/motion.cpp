@@ -142,7 +142,15 @@ void CMotion::SetModel(CModel** pModel, int nNumModel)
 	{
 		return;
 	}
+
+#if 1
+	for (int i = 0; i < m_nNumModel; i++)
+	{
+		m_pPartsOld[i] = CMotionManager::Parts();
+	}
+#else
 	memset(m_pPartsOld, 0, sizeof(CMotionManager::Parts) * m_nNumModel);
+#endif
 }
 
 //==========================================================================
@@ -711,14 +719,20 @@ void CMotion::Set(int nType, int nStartKey, bool bBlend, float fCntFrame)
 
 	// 現在の情報
 	CMotionManager::Info& nowInfo = m_vecInfo[m_nType];
+	if (nStartKey >= nowInfo.nNumKey)
+	{
+		MyAssert::CustomAssert(false, "範囲外のキー");
+	}
 
 	for (int nCntKey = 0; nCntKey < nStartKey; nCntKey++)
 	{
+		if (nowInfo.nNumKey <= nCntKey) break;
 		m_fAllFrame += nowInfo.aKey[nCntKey].nFrame;	// 全てのカウント
 	}
 
 	for (int nCntKey = 0; nCntKey < nowInfo.nNumKey; nCntKey++)
 	{
+		if (nowInfo.nNumKey <= nCntKey) break;
 		m_fMaxAllFrame += nowInfo.aKey[nCntKey].nFrame;	// 全てのカウントの最大値
 	}
 

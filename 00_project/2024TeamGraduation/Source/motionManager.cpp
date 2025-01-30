@@ -112,6 +112,7 @@ CMotionManager::SLoadInfo CMotionManager::Load(const std::string& setupfile)
 	std::ifstream File(setupfile);
 	if (!File.is_open())
 	{//ファイルが開けなかった場合
+		MyAssert::CustomAssert(false, "ファイル開けてないよ！");
 		return SLoadInfo();
 	}
 
@@ -206,6 +207,7 @@ CMotionManager::Info CMotionManager::LoadMotion(const std::string& file, int nId
 	std::ifstream File(file);
 	if (!File.is_open())
 	{//ファイルが開けなかった場合
+		MyAssert::CustomAssert(false, "ファイル開けてないよ！");
 		return Info();
 	}
 
