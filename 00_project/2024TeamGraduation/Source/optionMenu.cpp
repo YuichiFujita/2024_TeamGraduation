@@ -957,6 +957,12 @@ void COptionMenu::UpdateColor(const float fDeltaTime, const float fDeltaRate, co
 	float color = UtilFunc::Correction::EasingLinear(COLOR_NOTSELECT.r, 1.0f, 0.0f, MARKERTIME, m_fMarkerTime);
 	D3DXCOLOR selectColor = D3DXCOLOR(color, color, color, 1.0f);
 
+	if (m_state == EState::STATE_EDIT)
+	{// 編集中は色変え
+		selectColor = MyLib::color::Yellow(1.0f) * color;
+		selectColor.a = 1.0f;
+	}
+
 	// 選択肢のUI
 	for (const auto& select : m_pSelectUI)
 	{
@@ -1301,4 +1307,8 @@ void COptionMenu::SetSelect(ESelect select)
 {
 	m_oldSelect = m_select;
 	m_select = select;
+
+	// 色更新
+	UpdateSelect(0.0f, 0.0f, 1.0f);
+	UpdateColor(0.0f, 0.0f, 1.0f);
 }

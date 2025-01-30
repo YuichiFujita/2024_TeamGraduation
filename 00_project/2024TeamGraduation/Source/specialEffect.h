@@ -36,6 +36,9 @@ public:
 		TYPE_MAX
 	};
 
+	//=============================
+	// コンストラクタ, デストラクタ
+	//=============================
 	CSpecialEffect();
 	virtual ~CSpecialEffect();
 	

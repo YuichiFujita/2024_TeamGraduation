@@ -467,9 +467,9 @@ void CPlayerAIControlDefense::MoveChaseBall()
 
 		if (!IsPicksUpBall())
 		{// 自分がボールに一番近い
-
-			if (stateBall == CBall::EState::STATE_PASS ||		// パス
-				stateBall == CBall::EState::STATE_HOM_PASS)		// ホーミングパス
+			CPlayer* pAI = GetPlayer();
+			if (stateBall == CBall::EState::STATE_PASS ||						// パス
+				stateBall == CBall::EState::STATE_HOM_PASS)						// ホーミングパス
 			{// ボールを奪う
 				BallSteal();
 				return;
@@ -764,7 +764,7 @@ bool CPlayerAIControlDefense::IsCancel()
 	if (pBall == nullptr) return false;	// ボールねぇぞ
 	CBall::EState stateBall = pBall->GetState();	// ボール状態取得
 
-	if (IsLineOverBall() &&							// 線を超えている
+	if (!IsLineOverBall() &&						// 線を超えていない
 		!IsPicksUpBall() &&							// 自分より近いプレイヤーがいない
 		stateBall == CBall::EState::STATE_LAND)		// 床にころがっている
 	{

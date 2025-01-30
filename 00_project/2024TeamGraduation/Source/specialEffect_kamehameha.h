@@ -21,8 +21,11 @@ class CSpecialEffect_Kamehame : public CSpecialEffect
 {
 public:
 
+	//=============================
+	// コンストラクタ, デストラクタ
+	//=============================
 	CSpecialEffect_Kamehame();
-	~CSpecialEffect_Kamehame();
+	~CSpecialEffect_Kamehame() override;
 	
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate) override;	// 更新
 

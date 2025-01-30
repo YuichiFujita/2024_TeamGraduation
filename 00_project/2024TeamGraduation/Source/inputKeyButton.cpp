@@ -398,6 +398,7 @@ void CInputKeyButton::ControlSelect()
 {
 	CInputKeyboard*	pKey = GET_INPUTKEY;	// キーボード情報
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
+	bool bMove = false;
 	if (pKey->GetTrigger(DIK_LEFT) || pPad->GetTrigger(CInputGamepad::BUTTON_LEFT, m_nPadIdx))
 	{
 		do { // 選択先がない場合さらに動かす
@@ -407,6 +408,8 @@ void CInputKeyButton::ControlSelect()
 			m_curSelect.x = (m_curSelect.x + (nMaxWidth - 1)) % nMaxWidth;
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
+
+		bMove = true;
 	}
 	if (pKey->GetTrigger(DIK_RIGHT) || pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
@@ -417,6 +420,8 @@ void CInputKeyButton::ControlSelect()
 			m_curSelect.x = (m_curSelect.x + 1) % nMaxWidth;
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
+
+		bMove = true;
 	}
 	if (pKey->GetTrigger(DIK_UP) || pPad->GetTrigger(CInputGamepad::BUTTON_UP, m_nPadIdx))
 	{
@@ -444,6 +449,8 @@ void CInputKeyButton::ControlSelect()
 			}
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
+
+		bMove = true;
 	}
 	if (pKey->GetTrigger(DIK_DOWN) || pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
 	{
@@ -471,6 +478,13 @@ void CInputKeyButton::ControlSelect()
 			}
 
 		} while (m_vecSelect[m_curSelect.y][m_curSelect.x] == nullptr);
+
+		bMove = true;
+	}
+
+	if (bMove)
+	{
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 }
 
@@ -503,7 +517,7 @@ void CInputKeyButton::UpdateDecide()
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
 	if (pKey->GetTrigger(DIK_RETURN)
 	||  pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
-	||  pPad->GetTrigger(CInputGamepad::BUTTON_Y, m_nPadIdx))
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 	{
 		// 選択肢に応じて操作を変更
 		std::wstring wsName = m_pName->GetWideStr();	// 名前の文字列
@@ -522,6 +536,8 @@ void CInputKeyButton::UpdateDecide()
 
 				// 文字列を再設定
 				m_pName->SetString(wsName);
+
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_05);
 			}
 			break;
 
@@ -533,6 +549,8 @@ void CInputKeyButton::UpdateDecide()
 				// 選択中の文字に変更
 				ChangeChar((ETypeChar)m_curSelect.x);
 			}
+
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_05);
 			break;
 
 		case YSELECT_CHAR_DECIDE:	// 文字決定
@@ -543,6 +561,8 @@ void CInputKeyButton::UpdateDecide()
 
 				// 自身の終了
 				Uninit();
+
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 				break;
 
 			case XSELECT_CENTER:	// 削除
@@ -555,6 +575,8 @@ void CInputKeyButton::UpdateDecide()
 
 					// 文字列を再設定
 					m_pName->SetString(wsName);
+
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 				}
 				break;
 
@@ -568,6 +590,13 @@ void CInputKeyButton::UpdateDecide()
 
 					// 自身の終了
 					Uninit();
+
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_01);
+				}
+				else
+				{ // 文字が設定されていない場合
+
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_02);
 				}
 				break;
 
@@ -589,7 +618,7 @@ void CInputKeyButton::UpdateChancel()
 	CInputGamepad*	pPad = GET_INPUTPAD;	// パッド情報
 	if (pKey->GetTrigger(DIK_SPACE)
 	||  pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx)
-	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_Y, m_nPadIdx))
 	{
 		// 選択肢に応じて操作を変更
 		std::wstring wsName = m_pName->GetWideStr();	// 名前の文字列
@@ -601,6 +630,8 @@ void CInputKeyButton::UpdateChancel()
 
 			// 文字列を再設定
 			m_pName->SetString(wsName);
+
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		}
 	}
 }

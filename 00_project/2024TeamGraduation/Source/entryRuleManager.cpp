@@ -1091,9 +1091,6 @@ void CEntryRuleManager::Select()
 				m_apArrow[i]->SetEnableDisp(false);
 			}
 		}
-
-		// サウンドの再生
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 
 	if (pKey->GetTrigger(DIK_S)
@@ -1149,9 +1146,6 @@ void CEntryRuleManager::Select()
 				m_apArrow[i]->SetEnableDisp(false);
 			}
 		}
-
-		// サウンドの再生
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 
 	// 前回の選択要素の色を黒に設定
@@ -1228,7 +1222,8 @@ void CEntryRuleManager::ChangeRule()
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT).bInput)
 	{ // 左移動の操作が行われた場合
 
-		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_L] != nullptr, "配列オーバー");
+		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_L] == nullptr, "配列オーバー");
+
 		// 選択時移動状態へ遷移
 		m_apArrow[CArrowUI::EDirection::DIRECTION_L]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 
@@ -1263,7 +1258,8 @@ void CEntryRuleManager::ChangeRule()
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT).bInput)
 	{ // 右移動の操作が行われた場合
 
-		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_R] != nullptr, "配列オーバー");
+		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_R] == nullptr, "配列オーバー");
+
 		// 選択時移動状態へ遷移
 		m_apArrow[CArrowUI::EDirection::DIRECTION_R]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 
