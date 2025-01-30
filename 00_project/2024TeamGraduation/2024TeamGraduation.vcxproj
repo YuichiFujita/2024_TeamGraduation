@@ -100,6 +100,7 @@
       <AdditionalIncludeDirectories>.\Source;.\Libraries\Effekseer\Include\Effekseer;.\Libraries\Effekseer\Include\EffekseerRendererCommon;.\Libraries\Effekseer\Include\EffekseerRendererDX9;.\Libraries\json\nlohmann;.\Libraries\Imgui;.\Libraries\VLC\include;.\Libraries\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

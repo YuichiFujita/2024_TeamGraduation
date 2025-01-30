@@ -100,7 +100,7 @@ private:
 	void SetPositionRelative();	// 相対位置設定
 
 	// メンバ変数
-	CChar2D** m_ppChar;		// 文字ポリゴンの情報
+	std::vector<CChar2D*> m_vecChar;	// 文字ポリゴンの情報
 	CFontChar* m_pFontChar;	// フォント文字
 	std::wstring m_wsStr;	// 指定文字列
 	D3DXCOLOR m_col;		// 色
