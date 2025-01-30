@@ -1566,7 +1566,7 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
 
 		// カメラ揺れ
-		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f * 1.8f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1576,7 +1576,7 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
 
 		// カメラ揺れ
-		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f));
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f * 1.8f));
 		break;
 
 	default:

@@ -724,6 +724,7 @@ void CTitle_ControllWait::StateTansitionBack(const float fDeltaTime, const float
 		pCamera->ResetByMode(CScene::MODE::MODE_TITLE);
 
 		// オプションメニュー選択肢リセット
+		m_pOptionBBS->GetOptionMenu()->SetState(COptionMenu::EState::STATE_NONE);
 		m_pOptionBBS->GetOptionMenu()->SetSelect(COptionMenu::ESelect::SELECT_MASTERVOLUME);
 	}
 }

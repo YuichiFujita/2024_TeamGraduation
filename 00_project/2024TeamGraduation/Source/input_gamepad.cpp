@@ -426,7 +426,13 @@ void CInputGamepad::SetVibration(EVibType vibType, int nCntPlayer)
 	if (nCntPlayer <= -1 || nCntPlayer >= mylib_const::MAX_PLAYER) return;
 
 	// バイブ使用しないときはやめる
-	if (!m_bVibrationUse) return;
+	if (!m_bVibrationUse)
+	{
+		// 振動のパラメータ設定
+		m_aVibInfo[nCntPlayer] = Vib::SETINFO[EVibType::VIBTYPE_NONE];
+		SetVibrationParam(nCntPlayer);
+		return;
+	}
 
 	// バイブの種類
 	m_aVibType[nCntPlayer] = vibType;

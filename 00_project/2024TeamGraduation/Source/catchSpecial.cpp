@@ -503,6 +503,17 @@ void CCatchSpecial::Failure()
 	if (m_state != CPlayer::EState::STATE_OUTCOURT &&
 		m_state != CPlayer::EState::STATE_OUTCOURT_RETURN)
 	{
+		CGameManager* pGameMgr = CGameManager::GetInstance();
+		CGameManager::ETeamSide team = m_pPlayer->GetTeam();			// 受けるプレイヤーのチーム
+		CGameManager::ETeamSide rivalTeam = pGameMgr->RivalTeam(team);	// 打った方のチーム
+
+		// 自分たちのモテを下げる
+		pGameMgr->SubCharmValue(team, CCharmValueManager::ETypeSub::SUB_SPECIAL_CATCH);
+
+		// 打った方のモテ上げる
+		pGameMgr->AddCharmValue(rivalTeam, CCharmValueManager::ETypeAdd::ADD_SPECIAL);
+
+		// コート越え
 		m_pPlayer->OutCourtSetting();
 
 		// サウンドの再生
