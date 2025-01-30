@@ -1019,6 +1019,27 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
 }
 
 //==========================================================================
+// コート移動制限(x軸)
+//==========================================================================
+bool CGameManager::SetPosLimitX(MyLib::Vector3& pos, const float fPlusRadius)
+{
+	bool bHit = false;
+
+	if (pos.x > m_courtSize.x + fPlusRadius)
+	{
+		pos.x = m_courtSize.x + fPlusRadius;
+		bHit = true;
+	}
+	else if (pos.x < -m_courtSize.x - fPlusRadius)
+	{
+		pos.x = -m_courtSize.x - fPlusRadius;
+		bHit = true;
+	}
+
+	return bHit;
+}
+
+//==========================================================================
 // モテ加算
 //==========================================================================
 void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType)
