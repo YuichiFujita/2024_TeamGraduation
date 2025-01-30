@@ -280,6 +280,39 @@ HRESULT CResultManager::Init()
 
 	// 審判生成
 	m_pReferee = CPlayerReferee_Result::Create();
+	MyLib::Vector3 refereePos = m_pReferee->GetPosition();	// 審判の位置
+
+	// 審判確認
+	CListManager<CAudience> list = CAudience::GetList();
+	std::list<CAudience*>::iterator itr = list.GetEnd();	// 左チームの最後尾イテレーター
+	MyLib::Vector3 audiencePos;								// 観客の位置
+	while (list.ListLoop(itr))
+	{
+		// 審判と円押し出し
+		CAudience* pAudience = (*itr);	// プレイヤー情報
+		audiencePos = pAudience->GetPosition();
+
+		if (UtilFunc::Collision::CircleRange3D(refereePos, audiencePos, 10.0f, 400.0f))
+		{// 円の判定
+
+			MyLib::Vector3 setpos = refereePos;
+
+			float len = 400.0f + UtilFunc::Transformation::Random(-10, 10) * 10.0f;
+
+			// 相対向き
+			float rotY = refereePos.AngleXZ(audiencePos);
+
+			setpos.x += sinf(rotY) * len;
+			setpos.z += cosf(rotY) * len;
+			pAudience->SetPosition(setpos);
+
+			pAudience->SetSpawnPosition(setpos);	// 生成位置
+			pAudience->SetWatchPosition(setpos);	// 退場位置
+
+			// 観戦満了
+			pAudience->SetTimeStateByTimeStateMax();
+		}
+	}
 
 	return S_OK;
 }

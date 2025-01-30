@@ -101,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 	{// ƒƒ‚ƒŠ‚ÌŠm•Û‚ªo—ˆ‚Ä‚¢‚½‚ç
 
 		// ‰Šú‰»ˆ—
-		if (FAILED(pManager->Init(g_hInstance, hWnd, TRUE)))
+		if (FAILED(pManager->Init(g_hInstance, hWnd, FALSE)))
 		{// ‰Šú‰»ˆ—‚ª¸”s‚µ‚½ê‡
 
 			return -1;
