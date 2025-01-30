@@ -59,6 +59,13 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[ELabel::LABEL_MAX] =
 	{ TYPE_SE,"data/SE/hit00.wav",0},				// 通常投げ
 	{ TYPE_SE,"data/SE/hit01.wav",0},				// ジャンプ投げ
 
+	// 登場演出
+	{ TYPE_SE,"data/SE/door_open.wav",0},			// ドア開け
+	{ TYPE_SE,"data/SE/walk_spawn.wav",0},			// 歩き
+	{ TYPE_SE,"data/SE/walk_loop.wav",0},			// 歩きループ
+	{ TYPE_SE,"data/SE/walk_loop01.wav",0},			// 歩きループ
+	{ TYPE_SE,"data/SE/dash_loop.wav",0},			// 走りループ
+
 	// スペシャル
 	{ TYPE_SE,"data/SE/SP.wav",0},					// スペシャル
 	{ TYPE_SE,"data/SE/SP_jump.wav",0},				// スペシャルジャンプ

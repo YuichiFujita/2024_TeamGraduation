@@ -165,11 +165,17 @@ void CPlayerSpawnManager::Update(const float fDeltaTime, const float fDeltaRate,
 	{
 		// 登場演出UIの生成
 		CSpawnUI::Create(CGameManager::ETeamSide::SIDE_RIGHT);
+
+		// 歩行ループ音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK_LOOP_00);
 	}
-	if (pCameraMotion->IsImpactFrame(2))
+	else if (pCameraMotion->IsImpactFrame(2))
 	{
 		// 登場演出UIの生成
 		CSpawnUI::Create(CGameManager::ETeamSide::SIDE_LEFT);
+
+		// 歩行ループ音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK_LOOP_01);
 	}
 }
 
@@ -268,9 +274,6 @@ void CPlayerSpawnManager::DeletePlayer(CPlayer* pPlayer)
 //============================================================
 CPlayerSpawnManager* CPlayerSpawnManager::GetInstance()
 {
-	// インスタンス未生成
-	assert(m_pInstance != nullptr);
-
 	// 自身のインスタンスを返す
 	return m_pInstance;
 }
@@ -294,6 +297,9 @@ void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDe
 		// ドアを開放する
 		CGameManager* pManager = CGameManager::GetInstance();	// ゲームマネージャー
 		pManager->SetEnableOpen(true, 0.2f);
+
+		// ドア開け音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DOOR_OPEN);
 	}
 
 	// 経過時間を加算
@@ -306,6 +312,9 @@ void CPlayerSpawnManager::UpdateOpenDoor(const float fDeltaTime, const float fDe
 
 		// Z軸移動状態にする
 		m_state = EState::STATE_WALK_Z;
+
+		// 歩行音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_WALK_SPAWN);
 
 		// 歩かせる
 		m_listLeft.GetData(0)->SetMotion(CPlayer::EMotion::MOTION_WALK_SPAWN);
@@ -442,6 +451,8 @@ void CPlayerSpawnManager::UpdateRotate(const float fDeltaTime, const float fDelt
 		// X軸移動状態にする
 		m_state = EState::STATE_WALK_X;
 
+		// 走るループ音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DASH_LOOP);
 
 		//-----------------------------
 		// 全員まあまあ走る
@@ -599,6 +610,12 @@ void CPlayerSpawnManager::UpdateBow(const float fDeltaTime, const float fDeltaRa
 	// 先頭取得
 	CPlayer* pFirstPlayer = m_listRight.GetData(0);
 	CMotion* pMotion = pFirstPlayer->GetMotion();
+
+	if (pMotion->IsImpactFrame(0))
+	{
+		// 風切り音の再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_BACK);
+	}
 
 	if (pMotion->GetType() == CPlayer::EMotion::MOTION_BOW &&
 		pMotion->IsFinish())
