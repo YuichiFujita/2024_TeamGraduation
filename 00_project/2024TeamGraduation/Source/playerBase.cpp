@@ -328,8 +328,11 @@ bool CPlayerBase::IsAutoBallCatch(CBall* pBall) const
 	// ボールが開始演出中の場合キャッチ可能
 	if (stateBall == CBall::EState::STATE_SPAWN) { return true; }
 
+	// ボールが中央投げ中の場合キャッチ可能
+	if (stateBall == CBall::EState::STATE_CENTER_RETURN) { return true; }
+
 	// ボールが着地している場合キャッチ可能
-	if (stateBall == CBall::STATE_LAND) { return true; }
+	if (stateBall == CBall::EState::STATE_LAND) { return true; }
 
 	// フリーボール且つ、自チームのボールじゃない場合キャッチ可能
 	if (stateBall == CBall::STATE_FREE && pBall->GetTypeTeam() != m_pPlayer->GetTeam()) { return true; }

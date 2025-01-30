@@ -111,7 +111,8 @@ public:
 	CPlayer* GetCover() const		{ return m_pCover; }		// カバー対象プレイヤー取得
 	int GetDamage() const			{ return m_nDamage; }		// ダメージ取得
 	int GetCoverHeal() const		{ return m_nCoverHeal; }	// カバー回復取得
-	float GetKnockback() const		{ return m_fKnockback; }	// ノックバック取得
+	float GetKnockback() const { return m_fKnockback; }	// ノックバック取得
+	void SetKnockback(float knockback) 		{ m_fKnockback = knockback; }	// ノックバック設定
 	bool IsLanding() const			{ return m_bLanding; }		// 着地フラグ取得
 	float GetRadius() const;		// 半径取得
 	bool IsAttack() const;			// 攻撃フラグ取得

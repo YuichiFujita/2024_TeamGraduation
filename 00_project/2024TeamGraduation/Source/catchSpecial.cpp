@@ -109,6 +109,8 @@ CCatchSpecial::CCatchSpecial(CPlayer* pPlayer, EState state) :
 	m_bSuccess = false;								// 成功フラグ
 	m_bSmollScaling = false;						// 小さくするフラグ
 	m_fScalingTime = 0.0f;							// スケール時間
+	m_fDamage = 0.0f;								// ダメージ保持
+	m_fKnockBack = 0.0f;							// ノックバック保持
 }
 
 //==========================================================================
@@ -162,6 +164,11 @@ HRESULT CCatchSpecial::Init()
 
 	// スペシャルキャッチカメラ情報設定
 	GET_MANAGER->GetCamera()->SetSpecialCatchInfo(m_pPlayer, MyLib::Vector3(0.0f, 80.0f, 0.0f), moveTime, waitTime);
+
+	// ダメージ保持
+	CBall* pBall = m_pPlayer->GetBall();
+	m_fDamage = pBall->GetDamage();
+	m_fKnockBack = pBall->GetKnockback();
 
 	// サウンドの再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCH);

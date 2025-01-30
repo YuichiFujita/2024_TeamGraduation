@@ -281,20 +281,8 @@ void CPlayerAIControlAttack::UpdateAttack(const float fDeltaTime, const float fD
 			// ターゲットとの距離を取得
 			float distanse = GetPlayer()->GetPosition().DistanceXZ(m_pTarget->GetPosition());
 
-			//if (distanse < 200.0f)
-			//{
-			//	m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-			//}
-			//else if (distanse > 500.0f)
-			//{
-			//	m_eThrowType = EThrowType::THROWTYPE_JUMP;
-			//}
-			//else
-			{
-				m_eThrowType = (EThrowType)UtilFunc::Transformation::Random(EThrowType::THROWTYPE_NORMAL, EThrowType::THROWTYPE_JUMP);
-
-				//m_eThrowType = EThrowType::THROWTYPE_JUMP;
-			}
+			// 投げタイプの設定
+			m_eThrowType = (EThrowType)UtilFunc::Transformation::Random(EThrowType::THROWTYPE_NORMAL, EThrowType::THROWTYPE_JUMP);
 		}
 	}
 
@@ -363,30 +351,15 @@ void CPlayerAIControlAttack::ThrowTypeJump(const float fDeltaTime, const float f
 	MyLib::Vector3 pos = pAI->GetPosition();
 
 	float distanse = pAI->GetPosition().DistanceXZ(m_pTarget->GetPosition());
-	float distanseLine = pAI->GetPosition().DistanceXZ({ 0.0f, 0.0f, pos.z });
 
-	//if (distanseLine < 200.0f )
-	//{
-	//	if (distanse > 750.0f)
-	//	{
-	//		m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-	//		return;
-	//	}
+	if (distanse > 600.0f)
+	{
+		m_eThrowType = EThrowType::THROWTYPE_NORMAL;
+		return;
+	}
 
-	//	// ジャンプ投げ
-	//	AttackJump(m_pTarget);
-	//}
-	//else
-	//{
-	//	if (distanse > 750.0f)
-	//	{
-	//		m_eThrowType = EThrowType::THROWTYPE_NORMAL;
-	//		return;
-	//	}
-
-		// 走りジャンプ投げ
-		AttackDashJump(m_pTarget, DISTANSE_TARGET, DISTANSE_LINE, false);
-	//}
+	// 走りジャンプ投げ
+	AttackDashJump(m_pTarget, DISTANSE_TARGET, DISTANSE_LINE, false);
 }
 
 //--------------------------------------------------------------------------
@@ -497,7 +470,7 @@ bool CPlayerAIControlAttack::IsCancelJumpAttack()
 void CPlayerAIControlAttack::AttackNormal(CPlayer* pTarget, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
 	// 攻撃までの時間を設定
-	SetAttackTimer(0, 1);
+	SetAttackTimer(0, 2);
 
 	// タイマー更新
 	if (IsUpdateAttackTimer(fDeltaTime, fDeltaRate, fSlowRate))
@@ -813,7 +786,6 @@ CPlayer* CPlayerAIControlAttack::GetThrowTarget()
 		CPlayer* pPlayer = (*itr);	// プレイヤー情報
 		MyLib::Vector3 posPlayer = pPlayer->GetPosition();	// プレイヤー位置
 
-
 		if (typeTeam == pPlayer->GetTeam() ||
 			pPlayer->GetAreaType() == CPlayer::EFieldArea::FIELD_OUT||
 			pPlayer->GetMotionFrag().bDead)
@@ -824,6 +796,7 @@ CPlayer* CPlayerAIControlAttack::GetThrowTarget()
 		// 敵との距離を求める
 		float fLength = Mypos.DistanceXZ(posPlayer);
 
+		// 体力
 		int nLife = pPlayer->GetLife();
 
 		if (nLife < nMinLife)

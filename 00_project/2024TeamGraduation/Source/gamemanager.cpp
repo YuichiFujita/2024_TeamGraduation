@@ -742,6 +742,18 @@ void CGameManager::SkipSpawn()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
+#if 1
+	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
+	{
+		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// モテ情報
+		float fMoteRate = info.fValue / info.fValueMax;				// モテ割合
+		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// 現在の観客数
+
+		// 観客数を設定
+		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i));
+	}
+#endif	// 観客を出さない
+
 	// 声援の更新
 	UpdateAudienceCheer();
 }

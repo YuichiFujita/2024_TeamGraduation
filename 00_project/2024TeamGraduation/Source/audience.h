@@ -93,6 +93,13 @@ public:
 	virtual bool SetDespawn(EObjType type = OBJTYPE_NONE);			// 退場設定
 	virtual bool SetNTR(CGameManager::ETeamSide team);				// NTR設定
 	void SetState(EState state) { m_state = state; }				// 状態設定
+	void SetTimeStateByTimeStateMax();								// 状態管理時間の最大値設定処理
+
+	// ゲッター/セッター
+	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	 { m_posSpawn = rPos; }		// 入場位置設定
+	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }		// 入場位置取得
+	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}		// 観戦位置設定
+	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }		// 観戦位置取得
 
 	//=============================
 	// 静的メンバ関数
@@ -105,6 +112,7 @@ public:
 	static void SetDespawnAll(CGameManager::ETeamSide team, const int nNumDespawn = -1);	// 全退場設定
 	static void SetNTRAll(CGameManager::ETeamSide team);									// 全NTR設定
 	static void ReSetNumWatchAll();															// 観戦中の人数リセット
+	static CListManager<CAudience> GetList() { return m_list; };	// リスト
 
 protected:
 
@@ -129,10 +137,6 @@ protected:
 	// メンバ関数
 	//=============================
 	// ゲッター/セッター
-	inline void SetSpawnPosition(const MyLib::Vector3& rPos)	{ m_posSpawn = rPos;}		// 入場位置設定
-	inline MyLib::Vector3 GetSpawnPosition() const				{ return m_posSpawn; }		// 入場位置取得
-	inline void SetWatchPosition(const MyLib::Vector3& rPos)	{ m_posWatch = rPos;}		// 観戦位置設定
-	inline MyLib::Vector3 GetWatchPosition() const				{ return m_posWatch; }		// 観戦位置取得
 	inline void SetDespawnPosition(const MyLib::Vector3& rPos)	{ m_posDespawn = rPos;}		// 退場位置設定
 	inline MyLib::Vector3 GetDespawnPosition() const			{ return m_posDespawn; }	// 退場位置取得
 	inline void SetArea(const int nArea)			{ m_nArea = nArea; }		// 観戦エリア設定
@@ -141,7 +145,6 @@ protected:
 	inline float GetLandY() const					{ return m_fLandY; }		// 着地Y座標取得
 	inline CGameManager::ETeamSide GetTeam() const	{ return m_team; }			// 応援チーム取得
 	inline void SetTimeState(float time)			{ m_fTimeState = time; }	// 状態管理時間
-	void SetTimeStateByTimeStateMax();											// 状態管理時間の最大値設定処理
 
 protected:
 	//=============================

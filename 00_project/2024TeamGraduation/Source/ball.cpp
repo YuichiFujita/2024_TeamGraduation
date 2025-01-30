@@ -732,8 +732,7 @@ void CBall::CenterReturn(CPlayer* pPlayer)
 	m_posPassStart = GetPosition();
 
 	// パス終了位置を設定
-	m_posPassEnd = m_pTarget->GetPosition();	// 現在のターゲット位置
-	m_posPassEnd.y = CGameManager::FIELD_LIMIT;	// Y座標は地面固定
+	m_posPassEnd = VEC3_ZERO;	// Y座標は地面固定
 
 	// 移動量を設定
 	m_fMoveSpeed = m_posPassStart.Distance(m_posPassEnd) * center::MOVE_RATE;
@@ -1864,6 +1863,12 @@ void CBall::ThrowSpecial()
 	// 目標向き/向きをボール方向にする
 	m_pPlayer->SetRotDest(fAngleY);
 	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
+
+	// ダメージを設定
+	m_nDamage = m_pPlayer->GetBallParameter().nDamageSpecial;
+
+	// ノックバック設定
+	m_fKnockback = m_pPlayer->GetBallParameter().fKnockbackSpecial;
 
 	// 投げ処理
 	Throw(m_pPlayer);

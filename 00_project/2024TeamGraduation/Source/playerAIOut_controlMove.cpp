@@ -237,3 +237,11 @@ CPlayer::SDashInfo CPlayerAIOutControlMove::Trigger(CPlayer* player, CPlayer::ED
 
 	return info;
 }
+
+//==========================================================================
+// ƒJƒj•à‚«
+//==========================================================================
+void CPlayerAIOutControlMove::CrabSetting(CPlayer* player)
+{
+	return;
+}
