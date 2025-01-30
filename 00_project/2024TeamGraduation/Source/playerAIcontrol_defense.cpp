@@ -466,8 +466,7 @@ void CPlayerAIControlDefense::MoveChaseBall()
 		if (!IsPicksUpBall())
 		{// 自分がボールに一番近い
 			CPlayer* pAI = GetPlayer();
-			if (pBall->GetTarget()->GetTeam() != pAI->GetTeam() &&		// 違うチーム
-				stateBall == CBall::EState::STATE_PASS ||						// パス
+			if (stateBall == CBall::EState::STATE_PASS ||						// パス
 				stateBall == CBall::EState::STATE_HOM_PASS)						// ホーミングパス
 			{// ボールを奪う
 				BallSteal();
