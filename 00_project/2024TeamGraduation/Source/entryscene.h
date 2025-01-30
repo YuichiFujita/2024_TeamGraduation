@@ -35,7 +35,6 @@ public:
 	virtual void Uninit() = 0;		// I—¹
 	virtual void Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// XV
 
-
 	//--------------------------
 	// ‚»‚Ì‘¼
 	//--------------------------

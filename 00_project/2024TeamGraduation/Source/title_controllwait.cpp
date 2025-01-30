@@ -422,6 +422,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	{
 		// åàíËéûèàóù
 		Decide(trigger.nID);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 
@@ -745,6 +746,8 @@ void CTitle_ControllWait::StateTutorialCheck(const float fDeltaTime, const float
 			m_pTutorialCheck->SetState(CTutorialCheck::EState::STATE_FADEOUT);
 			m_pTutorialCheck = nullptr;
 		}
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 
@@ -768,6 +771,8 @@ void CTitle_ControllWait::StateTutorial(const float fDeltaTime, const float fDel
 
 		// ë“ã@Ç÷ê›íË
 		SetState(EState::STATE_WAIT);
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 	}
 }
 

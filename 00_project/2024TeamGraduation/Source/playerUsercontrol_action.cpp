@@ -15,7 +15,6 @@
 #include "teamStatus.h"
 #include "playerStatus.h"
 #include "playerManager.h"
-#include "debugproc.h"
 
 //==========================================================================
 // ’è”’è‹`

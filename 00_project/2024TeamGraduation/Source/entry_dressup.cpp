@@ -128,6 +128,7 @@ HRESULT CEntry_Dressup::Init()
 	for (int i = 0; i < CGameManager::SIDE_MAX; i++)
 	{ // チーム数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apAreaUI), "配列オーバー");
 		// ポジション変更UIの生成
 		m_apAreaUI[i] = CObject2D_Anim::Create
 		( // 引数
@@ -163,6 +164,7 @@ HRESULT CEntry_Dressup::Init()
 		m_apAreaUI[i]->SetColor(DEF_COL);
 
 		// チーム名背景情報
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apNameBG), "配列オーバー");
 		m_apNameBG[i] = CObject2D::Create(PRIORITY);
 		if (m_apNameBG[i] == nullptr)
 		{ // 生成に失敗した場合
@@ -192,6 +194,7 @@ HRESULT CEntry_Dressup::Init()
 		CEntryRuleManager::LoadName(&sTeamName, (CGameManager::ETeamSide)i);	// チーム名読込
 
 		// チーム名の生成
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apTeamName), "配列オーバー");
 		m_apTeamName[i] = CString2D::Create
 		( // 引数
 			ui::name::FONT,		// フォントパス
@@ -215,6 +218,7 @@ HRESULT CEntry_Dressup::Init()
 	}
 
 	// 戻るボタンの生成
+	MyAssert::TrueAssert(TRANS_BACK < 0 || TRANS_BACK >= sizeof(m_apTransUI), "配列オーバー");
 	m_apTransUI[TRANS_BACK] = CObject2D::Create(PRIORITY);
 	if (m_apTransUI[TRANS_BACK] == nullptr)
 	{ // 生成に失敗した場合
@@ -435,6 +439,7 @@ HRESULT CEntry_Dressup::Init()
 		}
 
 		// 着せ替えUIの生成
+		MyAssert::TrueAssert(nPlayerIdx < 0 || nPlayerIdx >= sizeof(m_apDressInfo), "配列オーバー");
 		m_apDressInfo[nPlayerIdx] = CDressupUI::Create(this, CPlayer::FIELD_OUT, nPlayerIdx, posUI, info);
 		if (m_apDressInfo[nPlayerIdx] == nullptr)
 		{ // 生成に失敗した場合
@@ -696,6 +701,7 @@ MyLib::Vector3 CEntry_Dressup::GetDressUIPosition(const int nPlayerIdx) const
 MyLib::Vector3 CEntry_Dressup::GetNameUIPosition(const CGameManager::ETeamSide team)
 {
 	// 文字列の位置を返す
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apTeamName), "配列オーバー");
 	return m_apTeamName[team]->GetPosition();
 }
 
@@ -705,6 +711,7 @@ MyLib::Vector3 CEntry_Dressup::GetNameUIPosition(const CGameManager::ETeamSide t
 MyLib::Vector2 CEntry_Dressup::GetNameUISize(const CGameManager::ETeamSide team)
 {
 	// 文字列の大きさを返す
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apTeamName), "配列オーバー");
 	return MyLib::Vector2(m_apTeamName[team]->GetStrWidth(), ui::name::HEIGHT);
 }
 
@@ -714,6 +721,7 @@ MyLib::Vector2 CEntry_Dressup::GetNameUISize(const CGameManager::ETeamSide team)
 MyLib::Vector3 CEntry_Dressup::GetNameBGPosition(const CGameManager::ETeamSide team)
 {
 	// 名前BGの位置を返す
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apNameBG), "配列オーバー");
 	return m_apNameBG[team]->GetPosition();
 }
 
@@ -723,6 +731,7 @@ MyLib::Vector3 CEntry_Dressup::GetNameBGPosition(const CGameManager::ETeamSide t
 MyLib::Vector2 CEntry_Dressup::GetNameBGSize(const CGameManager::ETeamSide team)
 {
 	// 名前BGの大きさを返す
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apNameBG), "配列オーバー");
 	return m_apNameBG[team]->GetSize();
 }
 
@@ -732,6 +741,7 @@ MyLib::Vector2 CEntry_Dressup::GetNameBGSize(const CGameManager::ETeamSide team)
 MyLib::Vector3 CEntry_Dressup::GetAreaUIPosition(const CPlayer::EFieldArea area)
 {
 	// ポリゴンの位置を返す
+	MyAssert::TrueAssert(area < 0 || area >= sizeof(m_apAreaUI), "配列オーバー");
 	return m_apAreaUI[area]->GetPosition();
 }
 
@@ -741,6 +751,7 @@ MyLib::Vector3 CEntry_Dressup::GetAreaUIPosition(const CPlayer::EFieldArea area)
 MyLib::Vector2 CEntry_Dressup::GetAreaUISize(const CPlayer::EFieldArea area)
 {
 	// ポリゴンの大きさを返す
+	MyAssert::TrueAssert(area < 0 || area >= sizeof(m_apAreaUI), "配列オーバー");
 	return m_apAreaUI[area]->GetSize();
 }
 
@@ -750,6 +761,7 @@ MyLib::Vector2 CEntry_Dressup::GetAreaUISize(const CPlayer::EFieldArea area)
 MyLib::Vector3 CEntry_Dressup::GetTransUIPosition(const ETrans trans)
 {
 	// ポリゴンの位置を返す
+	MyAssert::TrueAssert(trans < 0 || trans >= sizeof(m_apTransUI), "配列オーバー");
 	return m_apTransUI[trans]->GetPosition();
 }
 
@@ -759,6 +771,7 @@ MyLib::Vector3 CEntry_Dressup::GetTransUIPosition(const ETrans trans)
 MyLib::Vector2 CEntry_Dressup::GetTransUISize(const ETrans trans)
 {
 	// ポリゴンの大きさを返す
+	MyAssert::TrueAssert(trans < 0 || trans >= sizeof(m_apTransUI), "配列オーバー");
 	return m_apTransUI[trans]->GetSize();
 }
 
@@ -782,6 +795,9 @@ int CEntry_Dressup::GetNumDressUI() const
 //==========================================================================
 int CEntry_Dressup::GetNumDressUI(const CGameManager::ETeamSide team) const
 {
+	MyAssert::TrueAssert(m_apAreaUI[team] == nullptr, "ヌルやん");
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apAreaUI), "配列オーバー");
+
 	int nNumDressUI = 0;	// 着せ替えUI数
 	switch (m_apAreaUI[team]->GetPatternAnim())
 	{ // 現在パターンごとの処理
@@ -833,6 +849,8 @@ void CEntry_Dressup::ChangeDressUIArea(const CGameManager::ETeamSide team)
 		}
 	}
 
+	MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apAreaUI), "配列オーバー");
+
 	// パターンを進める
 	m_apAreaUI[team]->AddPatternAnim();
 
@@ -845,6 +863,7 @@ void CEntry_Dressup::ChangeDressUIArea(const CGameManager::ETeamSide team)
 		for (int nPlayerIdx = nOffset; nPlayerIdx < nSideMax + nOffset; nPlayerIdx++)
 		{ // 外野人数分繰り返す
 
+			MyAssert::TrueAssert(nPlayerIdx < 0 || nPlayerIdx >= sizeof(m_apDressInfo), "配列オーバー");
 			// 外野着せ替えUIの非表示
 			m_apDressInfo[nPlayerIdx]->SetEnableDisp(false);
 
@@ -870,6 +889,7 @@ void CEntry_Dressup::ChangeDressUIArea(const CGameManager::ETeamSide team)
 		for (int nPlayerIdx = nOffset; nPlayerIdx < nSideMax + nOffset; nPlayerIdx++)
 		{ // 外野人数分繰り返す
 
+			MyAssert::TrueAssert(nPlayerIdx < 0 || nPlayerIdx >= sizeof(m_apDressInfo), "配列オーバー");
 			// 外野着せ替えUIの表示
 			m_apDressInfo[nPlayerIdx]->SetEnableDisp(true);
 		}
@@ -1040,6 +1060,7 @@ bool CEntry_Dressup::IsTeamReady(const CPlayer::EFieldArea area, const CGameMana
 		for (int nPlayerIdx = nOffset; nPlayerIdx < nSideMax + nOffset; nPlayerIdx++)
 		{ // 外野人数分繰り返す
 
+			MyAssert::TrueAssert(nPlayerIdx < 0 || nPlayerIdx >= sizeof(m_apDressInfo), "配列オーバー");
 			// 準備が終わっている場合次へ
 			if (m_apDressInfo[nPlayerIdx]->IsReady()) { continue; }
 
@@ -1130,6 +1151,8 @@ CDressupUI* CEntry_Dressup::GetPtrDressUI(const int nIdx) const
 	for (int team = 0; team < CGameManager::SIDE_MAX; team++)
 	{ // チーム数分繰り返す
 
+		MyAssert::TrueAssert(team < 0 || team >= sizeof(m_apAreaUI), "配列オーバー");
+	
 		switch (m_apAreaUI[team]->GetPatternAnim())
 		{ // 現在パターンごとの処理
 		case CPlayer::FIELD_IN:
@@ -1155,6 +1178,7 @@ CDressupUI* CEntry_Dressup::GetPtrDressUI(const int nIdx) const
 			for (int nPlayerIdx = nOffset; nPlayerIdx < nSideMax + nOffset; nPlayerIdx++)
 			{ // 外野人数分繰り返す
 
+				MyAssert::TrueAssert(nPlayerIdx < 0 || nPlayerIdx >= sizeof(m_apDressInfo), "配列オーバー");
 				// 引数インデックスと一致した場合現在の着せ替えUIを返す
 				if (nNumDressUI == nIdx) { return m_apDressInfo[nPlayerIdx]; }
 
@@ -1224,6 +1248,8 @@ void CEntry_Dressup::Save()
 	int size = static_cast<int>(m_vecDressInfo.size());
 	for (int i = 0; i < size; i++)
 	{
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_vecDressInfo), "配列オーバー");
+		
 		// 自身の操作するインデックス番号取得
 		int nPadIdx = m_vecDressInfo[i]->GetMyPlayerIdx();
 		CGameManager::ETeamSide side = m_vecDressInfo[i]->GetTeam();
@@ -1242,6 +1268,8 @@ void CEntry_Dressup::Save()
 	for (int i = 0; i < CPlayerManager::OUT_MAX; i++)
 	{ // 外野人数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apDressInfo), "配列オーバー");
+		
 		// 自身の操作するインデックス番号取得
 		int nPadIdx = m_apDressInfo[i]->GetMyPlayerIdx();
 		CGameManager::ETeamSide side = m_apDressInfo[i]->GetTeam();
@@ -1269,6 +1297,7 @@ void CEntry_Dressup::Save()
 	// ゲーム設定の保存
 	if (m_pRuleManager != nullptr)
 	{
+		MyAssert::TrueAssert(m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT] == nullptr || m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT] == nullptr, "配列なし");
 		CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
 		CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
 	}

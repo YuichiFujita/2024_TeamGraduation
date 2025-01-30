@@ -7,7 +7,6 @@
 //=============================================================================
 #include "camera_motion.h"
 #include "camera.h"
-#include "debugproc.h"
 #include "manager.h"
 #include "game.h"
 #include "input.h"
@@ -231,7 +230,7 @@ void CCameraMotion::SaveMotion(const std::string& filename, const MotionInfo& in
 	File.write(reinterpret_cast<const char*>(&vecSize), sizeof(vecSize));
 
 	// コンテナ内の要素をセーブ
-	File.write(reinterpret_cast<const char*>(info.Key.data()), vecSize * sizeof(MotionKey));
+	File.write(reinterpret_cast<const char*>(info.Key.data()), static_cast<std::int64_t>(vecSize) * sizeof(MotionKey));
 
 
 #if 1
@@ -244,7 +243,7 @@ void CCameraMotion::SaveMotion(const std::string& filename, const MotionInfo& in
 		File.write(reinterpret_cast<const char*>(&vecSize), sizeof(vecSize));
 
 		// コンテナ内の要素をセーブ
-		File.write(reinterpret_cast<const char*>(info.trigger.data()), vecSize * sizeof(float));
+		File.write(reinterpret_cast<const char*>(info.trigger.data()), static_cast<std::int64_t>(vecSize) * sizeof(float));
 	}
 #endif
 
@@ -277,7 +276,7 @@ void CCameraMotion::LoadMotion(const std::string& filename)
 	loadData.Key.resize(size);
 
 	// キーデータロード
-	File.read(reinterpret_cast<char*>(loadData.Key.data()), size * sizeof(MotionKey));
+	File.read(reinterpret_cast<char*>(loadData.Key.data()), static_cast<std::int64_t>(size) * sizeof(MotionKey));
 
 	// トリガーのロード
 	{
@@ -288,7 +287,7 @@ void CCameraMotion::LoadMotion(const std::string& filename)
 		loadData.trigger.resize(size);
 
 		// キーデータロード
-		File.read(reinterpret_cast<char*>(loadData.trigger.data()), size * sizeof(float));
+		File.read(reinterpret_cast<char*>(loadData.trigger.data()), static_cast<std::int64_t>(size) * sizeof(float));
 	}
 
 	// ファイルを閉じる

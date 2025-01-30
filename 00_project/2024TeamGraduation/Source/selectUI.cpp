@@ -333,6 +333,8 @@ void CSelectUI::UpdateName(const float fDeltaTime, const float fDeltaRate, const
 		// 名前変更クラスの生成
 		CString2D* pName = pDressup->GetNameString2D(m_team);	// 名前文字列
 		CInputKeyButton::Create(m_nPadIdx, pName->GetStr(), pName);
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 
@@ -394,6 +396,8 @@ void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const
 	{
 		// 着せ替えUIのポジション変更
 		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 
@@ -540,6 +544,8 @@ void CSelectUI::UpdateSelect()
 
 		// 上に移動
 		m_select.y--;
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, m_nPadIdx))
 	{
@@ -555,6 +561,8 @@ void CSelectUI::UpdateSelect()
 
 		// 下に移動
 		m_select.y++;
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 }
 
@@ -586,6 +594,8 @@ void CSelectUI::UpdateDecideDressup()
 
 		// 選択操作を停止
 		m_bSelect = false;
+
+		PLAY_SOUND(CSound::LABEL_SE_DECIDE_00);
 	}
 }
 
@@ -614,6 +624,8 @@ void CSelectUI::UpdateCancelDressup()
 
 		// 選択操作を再開
 		m_bSelect = true;
+
+		PLAY_SOUND(CSound::LABEL_SE_CANCEL);
 	}
 }
 
@@ -645,6 +657,8 @@ void CSelectUI::UpdateSelectPlayer()
 			if (nLoop >= nNumPlayer) { break; }
 
 		} while (!pDressup->IsDressSelectOK(m_nPadIdx, m_select.x));
+
+		PLAY_SOUND(CSound::LABEL_SE_ARROW);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON_RIGHT, m_nPadIdx))
 	{
@@ -659,6 +673,8 @@ void CSelectUI::UpdateSelectPlayer()
 			if (nLoop >= nNumPlayer) { break; }
 
 		} while (!pDressup->IsDressSelectOK(m_nPadIdx, m_select.x));
+
+		PLAY_SOUND(CSound::LABEL_SE_ARROW);
 	}
 }
 

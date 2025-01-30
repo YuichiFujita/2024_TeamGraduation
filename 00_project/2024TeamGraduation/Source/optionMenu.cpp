@@ -752,6 +752,8 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 			// マーカータイマーリセット
 			m_fMarkerTime = 0.0f;
 		}
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SELECT_00);
 	}
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, 0) ||
 		pKey->GetTrigger(DIK_D))
@@ -768,6 +770,8 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 			// マーカータイマーリセット
 			m_fMarkerTime = 0.0f;
 		}
+
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_SELECT_00);
 	}
 
 	// マーカー
@@ -792,18 +796,21 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 
 			// 編集状態設定
 			SetState(EState::STATE_EDIT);
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 			break;
 
 		case COptionMenu::SELECT_BACK:
 
 			// サウンドの再生
+			//SetState(STATE_NONE);	// SEIGA/TODO：ここで状態初期化しないと音二重になる
 			PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_BACK);
 			break;
 
 		case COptionMenu::SELECT_RESET:
 
 			// リセット
-			Reset();		
+			Reset();
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_03);
 			break;
 
 		default:
@@ -1073,6 +1080,7 @@ void COptionMenu::StateEdit(const float fDeltaTime, const float fDeltaRate, cons
 
 		// 編集状態設定
 		SetState(EState::STATE_SELECT);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CANCEL);
 		return;
 	}
 

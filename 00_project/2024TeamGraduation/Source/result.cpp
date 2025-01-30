@@ -9,7 +9,6 @@
 #include "fade.h"
 #include "renderer.h"
 #include "calculation.h"
-#include "debugproc.h"
 #include "player.h"
 #include "sound.h"
 #include "game.h"

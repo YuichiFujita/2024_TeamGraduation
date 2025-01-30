@@ -9,7 +9,6 @@
 #include "fade.h"
 #include "renderer.h"
 #include "calculation.h"
-#include "debugproc.h"
 
 //=============================================================================
 // ’è”’è‹`

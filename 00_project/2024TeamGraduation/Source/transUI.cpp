@@ -259,6 +259,8 @@ void CTransUI::SetEnableDispUI(const bool bDisp)
 
 			// ï\é¶äJénèÛë‘Ç…Ç∑ÇÈ
 			m_state = STATE_SPAWN_BG;
+
+			PLAY_SOUND(CSound::ELabel::LABEL_SE_NEXT);
 		}
 	}
 	else

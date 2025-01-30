@@ -335,7 +335,7 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 		MyLib::Vector3(),
 		30.0f, true);
 
-	if (CGameManager::GetInstance()->SetPosLimit(pos))
+	if (CGameManager::GetInstance()->SetPosLimitX(pos))
 	{// 終了or画面端判定
 
 		SetMomentumState(EMomentumState::MOMENTUM_BRAKE);
@@ -346,6 +346,8 @@ void CCatchSpecial::MomentumStateSlide(const float fDeltaTime, const float fDelt
 		// サウンド停止
 		CSound::GetInstance()->StopSound(CSound::ELabel::LABEL_SE_SP_SLIDE);
 	}
+
+	CGameManager::GetInstance()->SetPosLimit(pos);
 
 	// 位置設定
 	m_pPlayer->SetPosition(pos);
