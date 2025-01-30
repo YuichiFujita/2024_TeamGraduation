@@ -153,6 +153,9 @@ void CPlayerAction::ActionBlink(const float fDeltaTime, const float fDeltaRate, 
 	// UŒ‚ó‘Ô‚Å‚È‚¢orŽ©w
 	if (!pObj->IsAttack() || pObj->GetTypeTeam() == teamPlayer) return;
 
+	// ƒXƒyƒVƒƒƒ‹UŒ‚
+	if (pObj->GetTypeAtk() == CBall::EAttack::ATK_SPECIAL) return;
+
 	// UŒ‚ƒtƒŒ[ƒ€(‰ñ”ð—P—\)‚¶‚á‚È‚¢‚È‚ç‚Í‚¶‚­
 	if (!pMotion->IsAttacking()) return;
 
