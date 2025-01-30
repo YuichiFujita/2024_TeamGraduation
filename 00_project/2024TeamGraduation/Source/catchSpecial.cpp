@@ -110,6 +110,7 @@ CCatchSpecial::CCatchSpecial(CPlayer* pPlayer, EState state) :
 	m_bSmollScaling = false;						// 小さくするフラグ
 	m_fScalingTime = 0.0f;							// スケール時間
 	m_fDamage = 0.0f;								// ダメージ保持
+	m_fKnockBack = 0.0f;							// ノックバック保持
 }
 
 //==========================================================================
