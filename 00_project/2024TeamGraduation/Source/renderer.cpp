@@ -7,7 +7,6 @@
 #include "renderer.h"
 #include "object.h"
 #include "manager.h"
-#include "debugproc.h"
 #include "camera.h"
 #include "fade.h"
 #include "instantfade.h"
@@ -229,12 +228,6 @@ void CRenderer::Draw()
 			// スクリーン描画ポリゴンの描画
 			assert(m_pDrawScreen != nullptr);
 			m_pDrawScreen->Draw();
-
-			// デバッグ表示の描画処理
-			CManager::GetInstance()->GetDebugProc()->Draw();
-
-			// テキストの設定
-			CDebugProc::SetText();
 		}
 		else
 		{ // ロード中の場合

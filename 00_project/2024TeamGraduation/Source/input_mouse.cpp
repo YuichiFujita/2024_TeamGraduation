@@ -5,7 +5,6 @@
 //
 //=============================================================================
 #include "input_mouse.h"
-#include "debugproc.h"
 #include "calculation.h"
 #include "manager.h"
 #include "camera.h"
@@ -175,17 +174,10 @@ void CInputMouse::Update(const float fDeltaTime, const float fDeltaRate, const f
 	// 過去の位置保存
 	m_posOld = m_pos;
 
-
 	int x = m_pos.x, y = m_pos.y;
 	UtilFunc::Transformation::ValueNormalize(x, 1280, 0);
 	UtilFunc::Transformation::ValueNormalize(y, 720, 0);
 	m_pos.x = x, m_pos.y = y;
-
-	// テキストの描画
-	CManager::GetInstance()->GetDebugProc()->Print(
-		"---------------- マウス情報 ----------------\n"
-		"【位置】[X：%d Y：%d]\n",
-		m_pos.x, m_pos.y);
 
 	// 位置設定
 	m_OldWorldPos = m_WorldPos;

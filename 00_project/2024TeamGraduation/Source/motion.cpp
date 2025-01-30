@@ -10,7 +10,6 @@
 #include "calculation.h"
 #include "model.h"
 #include "objectChara.h"
-#include "debugproc.h"
 
 //==========================================================================
 // ’è”’è‹`

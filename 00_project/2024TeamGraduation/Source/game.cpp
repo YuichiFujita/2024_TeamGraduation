@@ -8,7 +8,6 @@
 #include "game.h"
 #include "renderer.h"
 #include "calculation.h"
-#include "debugproc.h"
 #include "fade.h"
 #include "camera.h"
 #include "lightManager.h"

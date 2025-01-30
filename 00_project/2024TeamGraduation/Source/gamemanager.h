@@ -115,6 +115,7 @@ public:
 	float GetCourtPosPercentage(const ETeamSide team, MyLib::Vector3 pos);	// コートの何パー位置か取得(チーム)
 	float GetHalfCourtDiagonal();											// チームコートの対角線取得
 	bool SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius = 0.0f);	// コート移動制限
+	bool SetPosLimitX(MyLib::Vector3& pos, const float fPlusRadius = 0.0f);	// コート移動制限(x軸)
 
 	void Debug();			// デバッグ
 	CBall* GetBall();		// ボール取得

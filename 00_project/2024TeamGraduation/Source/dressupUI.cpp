@@ -237,6 +237,7 @@ void CDressupUI::Uninit()
 	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
 	{
 		// 矢印の終了
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
 		SAFE_UNINIT(m_apArrow[i]);
 	}
 
@@ -777,6 +778,7 @@ HRESULT CDressupUI::CreateArrowUI()
 	for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
 	{
 		// 矢印の生成
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
 		m_apArrow[i] = CArrowUI::Create
 		( // 引数
 			(CArrowUI::EDirection)i,	// 方向
@@ -1082,6 +1084,8 @@ void CDressupUI::SetPositionRelative()
 	{
 		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
 		{
+			MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+			MyAssert::TrueAssert(m_apArrow[i] == nullptr, "ヌルやん");
 			// 矢印の生成
 			m_apArrow[i]->SetPosition(m_pPlayerFrame->GetPosition());
 			m_apArrow[i]->SetOriginPosition(m_pPlayerFrame->GetPosition());
@@ -1095,6 +1099,8 @@ void CDressupUI::SetPositionRelative()
 	{
 		for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
 		{
+			MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+			MyAssert::TrueAssert(m_apArrow[i] == nullptr, "ヌルやん");
 			// 矢印の生成
 			m_apArrow[i]->SetPosition(m_pChangeIcon->GetPosition());
 			m_apArrow[i]->SetOriginPosition(m_pChangeIcon->GetPosition());
@@ -1377,6 +1383,8 @@ void CDressupUI::UpdatePlayerUI()
 void CDressupUI::SetAction(CArrowUI::EDirection dir)
 {
 	// 選択時移動
+	MyAssert::TrueAssert(dir < 0 || dir >= sizeof(m_apArrow), "配列オーバー");
+	MyAssert::TrueAssert(m_apArrow[dir] == nullptr, "ヌルやん");
 	m_apArrow[dir]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 }
 
@@ -1516,8 +1524,8 @@ HRESULT CDressupUI::ReCreatePlayer(CPlayer::EHandedness handedness, CPlayer::EBo
 	// 元のチームを保存
 	CGameManager::ETeamSide side = m_pPlayer->GetTeam();
 
-	// ボールを投げる
-	m_pBall->Toss(m_pPlayer);
+	// ボールを捨てる
+	m_pBall->Drop(m_pPlayer);
 
 	// プレイヤーの削除
 	SAFE_KILL(m_pPlayer);

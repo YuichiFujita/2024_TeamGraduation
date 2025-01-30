@@ -13,7 +13,6 @@
 #include "objectchara.h"
 #include "calculation.h"
 #include "particle.h"
-#include "debugproc.h"
 #include "impactwave.h"
 
 //==========================================================================

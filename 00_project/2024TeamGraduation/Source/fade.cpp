@@ -8,7 +8,6 @@
 #include "manager.h"
 #include "renderer.h"
 #include "object2D.h"
-#include "debugproc.h"
 
 //==========================================================================
 // ƒ}ƒNƒ’è‹`

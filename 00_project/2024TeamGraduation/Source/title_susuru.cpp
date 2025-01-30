@@ -91,7 +91,7 @@ HRESULT CTitle_SUSURU::Init()
 	m_nIdxScroll = -1;
 
 	// BGMÄ¶
-	//CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_TITLE_SUSURU);
+	CSound::GetInstance()->PlaySound(CSound::ELabel::LABEL_BGM_TITLE_SUSURU);
 
 	return S_OK;
 }

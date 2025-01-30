@@ -769,7 +769,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 				m_apPadUI[i]->SetEnableDisp(true);
 
 				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_JOIN);
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 				break;
 			}
 		}
@@ -850,23 +850,27 @@ bool CEntry_SetUpTeam::SelectTeam()
 		// チーム内人数変え
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, nUserIdx)
-		&&  IsUserTeamSelect(nUserIdx)		// チーム選択中
-		&&  m_nMaxChangeIdx[nSide] <= -1)	// 最大数変更の操作権を誰も持っていない
+		&&  IsUserTeamSelect(nUserIdx))	// チーム選択中
 		{ // 上移動操作が行われた場合
 
-			// 自分のサイドを変更する用インデックス保持
-			m_nMaxChangeIdx[nSide] = nUserIdx;
+			assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
+			if (m_nMaxChangeIdx[nSide] <= -1)
+			{ // 最大数変更の操作権を誰も持っていない
 
-			// サウンドの再生
-			PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+				// 自分のサイドを変更する用インデックス保持
+				m_nMaxChangeIdx[nSide] = nUserIdx;
 
-			// 矢印を数字用にする
-			CArrowUI* pArrow = nullptr;
-			for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
-			{
-				pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
-				pArrow->SetOffset(pad::ARROWSPACE_NUMBER);
-				pArrow->SetSizeByWidth(pad::ARROWWIDTH_NUMBER);
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_CONTROERMOVE);
+
+				// 矢印を数字用にする
+				CArrowUI* pArrow = nullptr;
+				for (int i = 0; i < CArrowUI::EDirection::DIRECTION_MAX; i++)
+				{
+					pArrow = m_apPadUI[nUserIdx]->GetArrowUI(i);
+					pArrow->SetOffset(pad::ARROWSPACE_NUMBER);
+					pArrow->SetSizeByWidth(pad::ARROWWIDTH_NUMBER);
+				}
 			}
 		}
 
@@ -878,6 +882,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 		&&  !IsUserMaxChange(nUserIdx))	// 最大数変更を自分がしていない
 		{ // 準備完了操作が行われた場合
 
+			assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
 			const int nCurInTeam = static_cast<int>(m_vecAddIdx[nSide].size());	// 現在のチーム人数
 			if (!IsUserReady(nUserIdx) && m_nPlayerNum[nSide] > nCurInTeam)
 			{ // 準備未完了且つ、最大チーム人数未満の場合

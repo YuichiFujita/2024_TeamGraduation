@@ -77,6 +77,7 @@ HRESULT CTimeUI::Init(void)
 	{ // 数字の数分繰り返す
 
 		// 数字の生成
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		m_apValue[nCntValue] = CNumber::Create(CMultiNumber::EObjType::OBJTYPE_2D, PRIORITY);
 		if (m_apValue[nCntValue] == nullptr)
 		{ // 生成に失敗した場合
@@ -97,6 +98,7 @@ HRESULT CTimeUI::Init(void)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの生成
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		m_apPart[nCntPart] = CObject2D::Create(PRIORITY);
 		if (m_apPart[nCntPart] == nullptr)
 		{ // 生成に失敗した場合
@@ -122,6 +124,7 @@ void CTimeUI::Uninit(void)
 	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
 	{ // 数字の数分繰り返す
 
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		// 数字の終了
 		SAFE_UNINIT(m_apValue[nCntValue]);
 	}
@@ -129,6 +132,7 @@ void CTimeUI::Uninit(void)
 	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
 	{ // 区切りの数分繰り返す
 
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		// 区切りの終了
 		SAFE_UNINIT(m_apPart[nCntPart]);
 	}
@@ -145,6 +149,7 @@ void CTimeUI::Kill()
 	for (int nCntValue = 0; nCntValue < timeUI::MAX_DIGIT; nCntValue++)
 	{ // 数字の数分繰り返す
 
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		// 数字の終了
 		SAFE_UNINIT(m_apValue[nCntValue]);
 	}
@@ -152,6 +157,7 @@ void CTimeUI::Kill()
 	for (int nCntPart = 0; nCntPart < timeUI::MAX_PART; nCntPart++)
 	{ // 区切りの数分繰り返す
 
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		// 区切りの終了
 		SAFE_UNINIT(m_apPart[nCntPart]);
 	}
@@ -192,6 +198,7 @@ void CTimeUI::SetEnableDisp(const bool bDisp)
 	{ // 数字の数分繰り返す
 
 		// 数字の描画状況を設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->SetEnableDisp(bDisp);
 	}
@@ -200,6 +207,7 @@ void CTimeUI::SetEnableDisp(const bool bDisp)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの描画状況を設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetEnableDisp(bDisp);
 	}
@@ -229,6 +237,7 @@ void CTimeUI::SetRotation(const MyLib::Vector3& rot)
 	{ // 数字の数分繰り返す
 
 		// 数字の向きを設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->SetRotation(rot);
 	}
@@ -237,6 +246,7 @@ void CTimeUI::SetRotation(const MyLib::Vector3& rot)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの向きを設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetRotation(rot);
 	}
@@ -337,6 +347,7 @@ void CTimeUI::BindTextureValue(const int nTexIdx)
 	{ // 数字の数分繰り返す
 
 		// 数字のテクスチャインデックスを設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->BindTexture(nTexIdx);
 	}
@@ -351,6 +362,7 @@ void CTimeUI::BindTexturePart(const int nTexIdx)
 	{ // 区切りの数分繰り返す
 
 		// 区切りのテクスチャインデックスを設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->BindTexture(nTexIdx);
 	}
@@ -374,6 +386,7 @@ void CTimeUI::SetSizeValue(const float fHeight)
 	{ // 数字の数分繰り返す
 
 		// 数字の大きさを設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->SetSize(size);
 	}
@@ -399,6 +412,7 @@ void CTimeUI::SetSizePart(const float fHeight)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの大きさを設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetSize(size);
 	}
@@ -419,6 +433,7 @@ void CTimeUI::SetSizeValue(const D3DXVECTOR2& rSize)
 	{ // 数字の数分繰り返す
 
 		// 数字の大きさを設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->SetSize(rSize);
 	}
@@ -439,6 +454,7 @@ void CTimeUI::SetSizePart(const D3DXVECTOR2& rSize)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの大きさを設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetSize(rSize);
 	}
@@ -483,6 +499,7 @@ void CTimeUI::SetColor(const D3DXCOLOR& rCol)
 	{ // 数字の数分繰り返す
 
 		// 数字の色を設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		assert(m_apValue[nCntValue] != nullptr);
 		m_apValue[nCntValue]->SetColor(rCol);
 	}
@@ -491,6 +508,7 @@ void CTimeUI::SetColor(const D3DXCOLOR& rCol)
 	{ // 区切りの数分繰り返す
 
 		// 区切りの色を設定
+		MyAssert::TrueAssert(nCntPart < 0 || nCntPart >= sizeof(m_apPart), "配列オーバー");
 		assert(m_apPart[nCntPart] != nullptr);
 		m_apPart[nCntPart]->SetColor(rCol);
 	}
@@ -550,6 +568,7 @@ float CTimeUI::GetTimeWidth(void) const
 	fTimeWidth += m_apValue[0]->GetSize().x * 0.5f;
 
 	// 終端数字の横幅を加算
+	MyAssert::TrueAssert(nEndNumID < 0 || nEndNumID >= sizeof(m_apValue), "配列オーバー");
 	assert(m_apValue[nEndNumID] != nullptr);
 	fTimeWidth += m_apValue[nEndNumID]->GetSize().x * 0.5f;
 
@@ -574,6 +593,7 @@ float CTimeUI::GetTimeHeight(void) const
 	fTimeHeight += m_apValue[0]->GetSize().y * 0.5f;
 
 	// 終端数字の縦幅を加算
+	MyAssert::TrueAssert(nEndNumID < 0 || nEndNumID >= sizeof(m_apValue), "配列オーバー");
 	assert(m_apValue[nEndNumID] != nullptr);
 	fTimeHeight += m_apValue[nEndNumID]->GetSize().y * 0.5f;
 
@@ -601,6 +621,7 @@ void CTimeUI::SetPositionRelative(void)
 	D3DXVECTOR2 spaceValue = m_spaceValue * 0.5f;	// 数字の空白
 	D3DXVECTOR2 spacePart = m_spacePart * 0.5f;		// 区切りの空白
 	D3DXVECTOR2 sizeTime = GetTimeSize() * 0.5f;	// タイム全体の大きさ
+	MyAssert::TrueAssert(m_apValue[0] == nullptr, "配列オーバー");
 	D3DXVECTOR2 sizeHead = m_apValue[0]->GetSize() * 0.5f;	// 先頭数字の大きさ
 	D3DXVECTOR3 rotStart = D3DXVECTOR3(rotThis.z + HALF_PI, rotThis.z, 0.0f);	// 文字の開始向き
 
@@ -618,6 +639,7 @@ void CTimeUI::SetPositionRelative(void)
 		if (nCntTimer == timeUI::MAX_MIN || nCntTimer == timeUI::MAX_MIN + timeUI::MAX_SEC + 1)
 		{ // 区切りタイミングの場合
 
+			MyAssert::TrueAssert(nValueID < 0 || nValueID >= sizeof(m_apPart), "配列オーバー");
 			assert(m_apPart[nValueID] != nullptr);
 
 			// ポリゴン生成位置をずらす
@@ -637,6 +659,7 @@ void CTimeUI::SetPositionRelative(void)
 		else
 		{ // 数字タイミングの場合
 
+			MyAssert::TrueAssert(nPartID < 0 || nPartID >= sizeof(m_apValue), "配列オーバー");
 			assert(m_apValue[nPartID] != nullptr);
 
 			// ポリゴン生成位置をずらす
@@ -676,6 +699,7 @@ void CTimeUI::SetTexNum(void)
 	{ // 数字の数分繰り返す
 
 		// 数字の設定
+		MyAssert::TrueAssert(nCntValue < 0 || nCntValue >= sizeof(m_apValue), "配列オーバー");
 		m_apValue[nCntValue]->SetNum(aNumDivide[nCntValue]);
 	}
 }

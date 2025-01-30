@@ -6,7 +6,6 @@
 //=============================================================================
 #include "gamemanager.h"
 #include "game.h"
-#include "debugproc.h"
 #include "manager.h"
 #include "renderer.h"
 #include "player.h"
@@ -743,20 +742,6 @@ void CGameManager::SkipSpawn()
 //==========================================================================
 void CGameManager::UpdateAudience()
 {
-#if 1
-	GET_MANAGER->GetDebugProc()->Print("\n----------------- 観客情報 -----------------\n");
-	for (int i = 0; i < CGameManager::ETeamSide::SIDE_MAX; i++)
-	{
-		CTeamStatus::SCharmInfo info = m_pTeamStatus[i]->GetCharmInfo();	// モテ情報
-		float fMoteRate = info.fValue / info.fValueMax;				// モテ割合
-		int nNumAudience = (int)(CAudience::MAX_WATCH * fMoteRate);	// 現在の観客数
-
-		// 観客数を設定
-		CAudience::SetNumWatch(nNumAudience, (CGameManager::ETeamSide)(i));
-		GET_MANAGER->GetDebugProc()->Print("【チーム0%d観客】[%d]\n", i, nNumAudience);
-	}
-#endif	// 観客を出さない
-
 	// 声援の更新
 	UpdateAudienceCheer();
 }
@@ -1034,6 +1019,27 @@ bool CGameManager::SetPosLimit(MyLib::Vector3& pos, const float fPlusRadius)
 }
 
 //==========================================================================
+// コート移動制限(x軸)
+//==========================================================================
+bool CGameManager::SetPosLimitX(MyLib::Vector3& pos, const float fPlusRadius)
+{
+	bool bHit = false;
+
+	if (pos.x > m_courtSize.x + fPlusRadius)
+	{
+		pos.x = m_courtSize.x + fPlusRadius;
+		bHit = true;
+	}
+	else if (pos.x < -m_courtSize.x - fPlusRadius)
+	{
+		pos.x = -m_courtSize.x - fPlusRadius;
+		bHit = true;
+	}
+
+	return bHit;
+}
+
+//==========================================================================
 // モテ加算
 //==========================================================================
 void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd charmType)
@@ -1042,7 +1048,12 @@ void CGameManager::AddCharmValue(ETeamSide side, CCharmValueManager::ETypeAdd ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetAddValue(charmType);
-	m_pTeamStatus[(int)side]->AddCharmValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->AddCharmValue(value);
+	}
 
 	assert(m_pCharmManager != nullptr);
 	if (m_pCharmManager->GetPrisetHypeTime(charmType) > m_pCharmManager->GetHypeTime(side))
@@ -1074,7 +1085,12 @@ void CGameManager::SubCharmValue(ETeamSide side, CCharmValueManager::ETypeSub ch
 
 	// チームステータス
 	float value = CCharmValueManager::GetInstance()->GetSubValue(charmType);
-	m_pTeamStatus[(int)side]->SubCharmValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->SubCharmValue(value);
+	}
 
 	// 盛り上がり時間の初期化
 	assert(m_pCharmManager != nullptr);
@@ -1090,7 +1106,12 @@ void CGameManager::AddSpecialValue(ETeamSide side, CSpecialValueManager::ETypeAd
 
 	// チームステータス
 	float value = CSpecialValueManager::GetInstance()->GetAddValue(ValueType);
-	m_pTeamStatus[(int)side]->AddSpecialValue(value);
+	if (side > CGameManager::ETeamSide::SIDE_NONE
+	&&  side < CGameManager::ETeamSide::SIDE_MAX)
+	{
+		int nSide = (int)side;
+		m_pTeamStatus[nSide]->AddSpecialValue(value);
+	}
 }
 
 //==========================================================================

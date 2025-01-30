@@ -5,7 +5,6 @@
 //
 //=============================================================================
 #include "input_keyboard.h"
-#include "debugproc.h"
 #include "calculation.h"
 
 CInputKeyboard* CInputKeyboard::m_pThisPtr = nullptr;	// 自身のポインタ

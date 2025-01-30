@@ -196,7 +196,8 @@ void CPlayerAction::ActionDodge(const float fDeltaTime, const float fDeltaRate, 
 	UtilFunc::Transformation::ValueNormalize(fRate, 1.0f, 0.0f);
 	GET_MANAGER->SetSlowRate(fRate);
 
-	if (m_pPlayer->GetMotion()->IsFinish())
+	CMotion* pMotion = m_pPlayer->GetMotion();
+	if (pMotion->IsFinish() || pMotion->GetType() != CPlayer::EMotion::MOTION_DODGE)
 	{// èIóπ
 
 		SetAction(CPlayer::EAction::ACTION_NONE);

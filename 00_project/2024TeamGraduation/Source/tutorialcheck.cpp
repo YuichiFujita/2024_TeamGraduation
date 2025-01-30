@@ -261,11 +261,18 @@ void CTutorialCheck::StateNone(const float fDeltaTime, const float fDeltaRate, c
 
 		// 現在の選択肢の逆にする
 		m_select = (m_select == ESelect::SELECT_YES) ? ESelect::SELECT_NO : ESelect::SELECT_YES;
+
+		// サウンドの再生
+		int soundLabel = UtilFunc::Transformation::Random(CSound::ELabel::LABEL_SE_WRITE01, CSound::ELabel::LABEL_SE_WRITE02);
+		PLAY_SOUND((CSound::ELabel)soundLabel);
 	}
 
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nControllIdx))
 	{// 決定
 		Decide();
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
 

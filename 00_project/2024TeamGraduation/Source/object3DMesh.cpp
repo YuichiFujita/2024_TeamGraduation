@@ -7,7 +7,6 @@
 #include "object3DMesh.h"
 #include "calculation.h"
 #include "manager.h"
-#include "debugproc.h"
 #include "input.h"
 
 //==========================================================================
@@ -582,12 +581,6 @@ void CObject3DMesh::UPVtxField(MyLib::Vector3 pos)
 	{
 		return;
 	}
-
-	// デバッグ表示
-	CManager::GetInstance()->GetDebugProc()->Print(
-		"\n"
-		"頂点上げ下げ：[5, 6]\n"
-		"幅拡縮：[7, 8] 【%f, %f】\n", m_fWidthLen, m_fHeightLen);
 
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CInputKeyboard::GetInstance();

@@ -272,6 +272,7 @@ HRESULT CEffect3D::Init(const MyLib::Vector3& pos, const MyLib::Vector3& move, c
 	SetType(CObject::TYPE::TYPE_OBJECT3D);
 
 	// テクスチャの割り当て
+	assert(!(m_nType <= -1 || m_nType >= TYPE_MAX));
 	if (m_nTexIdx[m_nType] == 0)
 	{
 		m_nTexIdx[m_nType] = CTexture::GetInstance()->Regist(m_apTextureFile[m_nType]);

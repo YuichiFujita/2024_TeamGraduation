@@ -126,6 +126,12 @@ public:
 	static CBall *Create(const MyLib::Vector3& rPos);
 	static CListManager<CBall> GetListObj() { return m_list; }	// リスト取得
 
+protected:
+	//=============================
+	// メンバ関数
+	//=============================
+	void Throw(CPlayer* pPlayer);	// 投げ
+
 private:
 
 	//=============================
@@ -193,7 +199,6 @@ private:
 	float GetCollRadius();				// 判定半径取得
 	void SetState(const EState state);	// 状態設定
 	void Catch(CPlayer* pPlayer);		// キャッチ
-	void Throw(CPlayer* pPlayer);		// 投げ
 	void ThrowSpecial();				// スペシャル投げ
 	void Landing();						// 着地
 	void UpdateTypeTeam();				// チームサイド更新

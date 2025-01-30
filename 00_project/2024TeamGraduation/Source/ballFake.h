@@ -41,6 +41,10 @@ public:
 	//=============================
 	static CBallFake *Create();
 
+	//=============================
+	// メンバ関数
+	//=============================
+	inline void Drop(CPlayer* pPlayer) { Throw(pPlayer); }
 };
 
 #endif
