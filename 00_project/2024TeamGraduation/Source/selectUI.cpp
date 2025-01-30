@@ -443,8 +443,16 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
 		{
 			// ƒQ[ƒ€İ’è‘JˆÚ
-			pDressup->TransSetting();
-			PLAY_SOUND(CSound::LABEL_SE_DECIDE_00);
+			if (pDressup->TransSetting())
+			{ // ‘JˆÚ‚Å‚«‚½ê‡
+
+				PLAY_SOUND(CSound::LABEL_SE_DECIDE_00);
+			}
+			else
+			{ // ‘JˆÚ‚Å‚«‚È‚¢ê‡
+
+				PLAY_SOUND(CSound::LABEL_SE_DECIDE_02);
+			}
 		}
 		break;
 	}

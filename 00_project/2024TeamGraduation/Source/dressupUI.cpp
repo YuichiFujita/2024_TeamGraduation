@@ -1180,7 +1180,7 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 		SetPadIdx(-1);
 
 		// ƒTƒEƒ“ƒh‚ÌÄ¶
-		PLAY_SOUND(CSound::ELabel::LABEL_SE_JOIN);
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_05);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
 	{
