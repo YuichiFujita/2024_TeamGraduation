@@ -117,6 +117,7 @@ void CPlayerAIControl::ModeStart()
 	MyLib::Vector3 posBall = pBall->GetPosition();
 
 	CGameManager::ETeamSide typeTeam = m_pAI->GetTeam();
+	CGameManager::GetInstance()->AssertCheckTeam(typeTeam);
 	MyLib::Vector3 myPos = m_pAI->GetPosition();
 
 	float fMyLength = myPos.DistanceXZ(posBall);

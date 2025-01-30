@@ -1823,6 +1823,12 @@ void CBall::ThrowSpecial()
 	m_pPlayer->SetRotDest(fAngleY);
 	m_pPlayer->SetRotation(MyLib::Vector3(0.0f, fAngleY, 0.0f));
 
+	// ダメージを設定
+	m_nDamage = m_pPlayer->GetBallParameter().nDamageSpecial;
+
+	// ノックバック設定
+	m_fKnockback = m_pPlayer->GetBallParameter().fKnockbackSpecial;
+
 	// 投げ処理
 	Throw(m_pPlayer);
 

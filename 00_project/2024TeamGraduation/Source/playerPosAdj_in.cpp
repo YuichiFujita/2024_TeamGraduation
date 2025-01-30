@@ -46,6 +46,8 @@ void CPlayerPosAdjIn::UpdateAdjuster(CPlayer* pPlayer)
 
 	if (state != CPlayer::EState::STATE_OUTCOURT &&
 		state != CPlayer::EState::STATE_OUTCOURT_RETURN &&
+		state != CPlayer::EState::STATE_DEAD &&
+		state != CPlayer::EState::STATE_DEAD_AFTER &&
 		state != CPlayer::EState::STATE_DEAD_CARRY
 		)
 	{ // コート越え状態以外はコート内に補正

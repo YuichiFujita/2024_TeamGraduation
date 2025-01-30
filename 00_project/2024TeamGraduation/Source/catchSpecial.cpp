@@ -100,6 +100,7 @@ CCatchSpecial::CCatchSpecial(CPlayer* pPlayer, EState state) :
 	m_momentumState = EMomentumState::MOMENTUM_NONE;	// 状態内状態
 	m_fMomentumStateTime = 0.0f;					// 状態内状態時間
 	m_bSuccess = false;								// 成功フラグ
+	m_fDamage = 0.0f;								// ダメージ保持
 }
 
 //==========================================================================
@@ -153,6 +154,11 @@ HRESULT CCatchSpecial::Init()
 
 	// スペシャルキャッチカメラ情報設定
 	GET_MANAGER->GetCamera()->SetSpecialCatchInfo(m_pPlayer, MyLib::Vector3(0.0f, 80.0f, 0.0f), moveTime, waitTime);
+
+	// ダメージ保持
+	CBall* pBall = m_pPlayer->GetBall();
+	m_fDamage = pBall->GetDamage();
+	m_fKnockBack = pBall->GetKnockback();
 
 	// サウンドの再生
 	PLAY_SOUND(CSound::ELabel::LABEL_SE_SP_CATCH);
