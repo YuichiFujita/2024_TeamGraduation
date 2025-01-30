@@ -1136,6 +1136,14 @@ CGameManager::ETeamSide CGameManager::RivalTeam(ETeamSide team)
 }
 
 //==========================================================================
+// チームチェック
+//==========================================================================
+void CGameManager::AssertCheckTeam(ETeamSide team)
+{
+	MyAssert::TrueAssert(team <= ETeamSide::SIDE_NONE || team >= ETeamSide::SIDE_MAX, "チーム大丈夫そう？");
+}
+
+//==========================================================================
 // チームステータス生成
 //==========================================================================
 void CGameManager::CreateTeamStatus()
