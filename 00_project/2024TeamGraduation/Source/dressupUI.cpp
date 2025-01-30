@@ -1178,6 +1178,9 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 
 		// 操作権の初期化
 		SetPadIdx(-1);
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_JOIN);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
 	{
@@ -1242,6 +1245,13 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 	default:
 		assert(false);
 		break;
+	}
+
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nPadIdx))
+	{
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW);
 	}
 }
 
@@ -1401,11 +1411,13 @@ void CDressupUI::ChangeEditType(int nPadIdx)
 	{// 変更する箇所の種類変更へ変更
 
 		m_typeEdit = EEditType::EDIT_PROCESS;
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_DOWN, nPadIdx))
 	{// 実際の変更画面へ
 
 		m_typeEdit = EEditType::EDIT_CHANGETYPE;
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 }
 

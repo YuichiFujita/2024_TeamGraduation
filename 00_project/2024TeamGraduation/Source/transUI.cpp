@@ -222,6 +222,9 @@ bool CTransUI::UpdateDecide(const bool bAutoUninit)
 	// 表示されていない場合抜ける
 	if (m_state == STATE_DISP_OFF) { return false; }
 
+	// サウンドの再生
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_01);
+
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // パッド数分繰り返す
 

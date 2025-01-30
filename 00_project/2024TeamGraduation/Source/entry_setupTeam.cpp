@@ -753,14 +753,17 @@ bool CEntry_SetUpTeam::SelectTeam()
 		//--------------------------
 		// エントリー操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i)) \
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i))
 		{ // エントリー操作が行われた場合
 
 			for (int j = 0; j < mylib_const::MAX_PLAYER; j++)
 			{ // パッド認識の最大数分繰り返す
 
+				// 既にエントリーされている場合抜ける
+				if (m_nEntryIdx[j] == i) { break; }
+
 				// 既にエントリーされている場合次へ
-				if (m_nEntryIdx[j] >= 0 && m_nEntryIdx[j] != i) { continue; }
+				if (m_nEntryIdx[j] != -1) { continue; }
 
 				// 今回のプレイヤーインデックスを追加
 				m_nEntryIdx[j] = i;
@@ -769,7 +772,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 				m_apPadUI[i]->SetEnableDisp(true);
 
 				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_05);
 				break;
 			}
 		}
@@ -892,6 +895,9 @@ bool CEntry_SetUpTeam::SelectTeam()
 
 				// 決定
 				m_apPadUI[nUserIdx]->Decide();
+
+				// サウンドの再生
+				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 			}
 		}
 	}
