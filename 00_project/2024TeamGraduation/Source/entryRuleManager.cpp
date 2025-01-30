@@ -250,6 +250,8 @@ HRESULT CEntryRuleManager::Init()
 		for (int i = 0; i < RULE_MAX; i++)
 		{ // ルールの総数分繰り返す
 
+			MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apRuleTitle), "配列オーバー");
+
 			// ルールタイトルの生成
 			m_apRuleTitle[i] = CObject2D_Anim::Create
 			( // 引数
@@ -291,6 +293,8 @@ HRESULT CEntryRuleManager::Init()
 	{
 		for (int i = 0; i < MAX_RULE_ARROW; i++)
 		{ // 矢印の総数分繰り返す
+
+			MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
 
 			// 矢印の生成
 			m_apArrow[i] = CArrowUI::Create
@@ -933,6 +937,8 @@ void CEntryRuleManager::UpdateArrow()
 	for (int i = 0; i < MAX_RULE_ARROW; i++)
 	{ // 矢印の総数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+	
 		float fAlphaArrow = m_apArrow[i]->GetAlpha();	// 矢印透明度
 		if (fAlphaArrow < arrow::MIN_COL.a)
 		{ // 透明度が最低限より低い場合
@@ -1031,6 +1037,8 @@ void CEntryRuleManager::Select()
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
+				MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+				
 				// 矢印の位置を変更
 				MyLib::Vector3 setpos = posSelect;
 				m_apArrow[i]->SetPosition(posSelect);
@@ -1052,6 +1060,8 @@ void CEntryRuleManager::Select()
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
+				MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+			
 				// 自動描画をOFFにする
 				m_apArrow[i]->SetEnableDisp(false);
 			}
@@ -1085,6 +1095,8 @@ void CEntryRuleManager::Select()
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
+				MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+			
 				// 矢印の位置を変更
 				MyLib::Vector3 setpos = posSelect;
 				m_apArrow[i]->SetPosition(posSelect);
@@ -1106,6 +1118,8 @@ void CEntryRuleManager::Select()
 			for (int i = 0; i < MAX_RULE_ARROW; i++)
 			{ // 矢印の総数分繰り返す
 
+				MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+			
 				// 自動描画をOFFにする
 				m_apArrow[i]->SetEnableDisp(false);
 			}
@@ -1189,6 +1203,7 @@ void CEntryRuleManager::ChangeRule()
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT).bInput)
 	{ // 左移動の操作が行われた場合
 
+		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_L] != nullptr, "配列オーバー");
 		// 選択時移動状態へ遷移
 		m_apArrow[CArrowUI::EDirection::DIRECTION_L]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 
@@ -1223,6 +1238,7 @@ void CEntryRuleManager::ChangeRule()
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT).bInput)
 	{ // 右移動の操作が行われた場合
 
+		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_R] != nullptr, "配列オーバー");
 		// 選択時移動状態へ遷移
 		m_apArrow[CArrowUI::EDirection::DIRECTION_R]->SetState(CArrowUI::EState::STATE_SELECTMOVE);
 
@@ -1348,6 +1364,8 @@ void CEntryRuleManager::SetEnableDispUI(const bool bDisp)
 	for (int i = 0; i < RULE_MAX; i++)
 	{ // ルールの総数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apRuleTitle), "配列オーバー");
+
 		// ルールタイトルの描画を設定
 		m_apRuleTitle[i]->SetEnableDisp(bDisp);
 	}
@@ -1355,6 +1373,8 @@ void CEntryRuleManager::SetEnableDispUI(const bool bDisp)
 	for (int i = 0; i < MAX_RULE_ARROW; i++)
 	{ // 矢印の総数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+	
 		// 矢印の描画を設定
 		m_apArrow[i]->SetEnableDisp(bDisp);
 	}
@@ -1383,6 +1403,8 @@ void CEntryRuleManager::SetAlphaUI(const float fAlpha, const bool bFadeOut)
 	for (int i = 0; i < RULE_MAX; i++)
 	{ // ルールの総数分繰り返す
 
+		MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apRuleTitle), "配列オーバー");
+
 		// ルールタイトルの透明度を設定
 		m_apRuleTitle[i]->SetAlpha(fAlpha);
 	}
@@ -1403,6 +1425,8 @@ void CEntryRuleManager::SetAlphaUI(const float fAlpha, const bool bFadeOut)
 		for (int i = 0; i < MAX_RULE_ARROW; i++)
 		{ // 矢印の総数分繰り返す
 
+			MyAssert::TrueAssert(i < 0 || i >= sizeof(m_apArrow), "配列オーバー");
+	
 			// 透明度情報を設定
 			float fMaxAlpha = m_apArrow[i]->GetAlpha();	// 最大透明度
 			float fSetAlpha = fAlpha;	// 設定透明度
