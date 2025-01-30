@@ -1041,7 +1041,7 @@ void CEntryRuleManager::Select()
 	if (pKey->GetTrigger(DIK_W)
 	||  pKey->GetTrigger(DIK_UP)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_UP).bInput
-	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
+	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP).bInput)
 	{ // 上移動の操作が行われた場合
 
 		// 上に選択をずらす
@@ -1097,7 +1097,7 @@ void CEntryRuleManager::Select()
 	if (pKey->GetTrigger(DIK_S)
 	||  pKey->GetTrigger(DIK_DOWN)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_DOWN).bInput
-	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
+	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN).bInput)
 	{ // 下移動の操作が行われた場合
 
 		// サウンドの再生
@@ -1174,7 +1174,8 @@ void CEntryRuleManager::Decide()
 	CInputKeyboard* pKey = GET_INPUTKEY;	// キーボード
 	CInputGamepad* pPad = GET_INPUTPAD;		// パッド
 	if (pKey->GetTrigger(DIK_RETURN)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput)
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_X).bInput)
 	{ // 決定の操作が行われた場合
 
 		switch (m_nSelect)
@@ -1199,7 +1200,8 @@ void CEntryRuleManager::Decide()
 	}
 
 	if (pKey->GetTrigger(DIK_SPACE)
-	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_B).bInput)
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_B).bInput
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_Y).bInput)
 	{ // 戻る操作が行われた場合
 
 		// フェードアウト状態にする
@@ -1222,7 +1224,7 @@ void CEntryRuleManager::ChangeRule()
 	if (pKey->GetTrigger(DIK_A)
 	||  pKey->GetTrigger(DIK_LEFT)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_LEFT).bInput
-	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT))
+	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT).bInput)
 	{ // 左移動の操作が行われた場合
 
 		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_L] == nullptr, "配列オーバー");
@@ -1259,7 +1261,7 @@ void CEntryRuleManager::ChangeRule()
 	if (pKey->GetTrigger(DIK_D)
 	||  pKey->GetTrigger(DIK_RIGHT)
 	||  pPad->GetAllTrigger(CInputGamepad::BUTTON_RIGHT).bInput
-	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT))
+	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT).bInput)
 	{ // 右移動の操作が行われた場合
 
 		MyAssert::TrueAssert(m_apArrow[CArrowUI::EDirection::DIRECTION_R] == nullptr, "配列オーバー");

@@ -106,7 +106,8 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 	CInputGamepad *pPad = CInputGamepad::GetInstance();
 
 	if (m_pResultManager->IsSceneTrans() && 
-		(pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+		(pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A).bInput ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X).bInput ||
 		pKey->GetTrigger(DIK_RETURN)))
 	{ // ‘JˆÚ‰Â”\‚©‚Âƒ{ƒ^ƒ“‰Ÿ‚³‚ê‚½‚ç
 

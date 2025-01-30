@@ -208,7 +208,7 @@ bool CTransUI::UpdateDecide(const bool bAutoUninit)
 	for (const auto& rIdx : vecIdx)
 	{
 		// ƒpƒbƒh“ü—ÍŒ‹‰Ê‚ð•Û‘¶
-		bInput = (bInput || pPad->GetTrigger(CInputGamepad::BUTTON_A, rIdx));
+		bInput = (bInput || pPad->GetTrigger(CInputGamepad::BUTTON_A, rIdx) || pPad->GetTrigger(CInputGamepad::BUTTON_X, rIdx));
 	}
 	
 #ifdef _DEBUG

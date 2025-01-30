@@ -237,7 +237,7 @@ void CPause::UpdateSelect()
 
 	if (pKey->GetTrigger(DIK_W) ||
 		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_UP).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP).bInput)
 	{// 上系が押された
 
 		// パターンNo.を更新
@@ -248,7 +248,7 @@ void CPause::UpdateSelect()
 	}
 	else if (pKey->GetTrigger(DIK_S) ||
 			 pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_DOWN).bInput ||
-			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
+			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN).bInput)
 	{// 下系が押された
 
 		// パターンNo.を更新
@@ -260,7 +260,8 @@ void CPause::UpdateSelect()
 
 
 	if (pKey->GetTrigger(DIK_RETURN) || 
-		pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput)
+		pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON_X).bInput)
 	{// 決定が押された
 
 		Decide();

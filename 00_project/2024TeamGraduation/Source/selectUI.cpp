@@ -328,7 +328,8 @@ void CSelectUI::UpdateName(const float fDeltaTime, const float fDeltaRate, const
 
 	// 決定の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 	{
 		// 名前変更クラスの生成
 		CString2D* pName = pDressup->GetNameString2D(m_team);	// 名前文字列
@@ -392,7 +393,8 @@ void CSelectUI::UpdateArea(const float fDeltaTime, const float fDeltaRate, const
 
 	// 決定の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 	{
 		// 着せ替えUIのポジション変更
 		pDressup->ChangeDressUIArea((CGameManager::ETeamSide)m_select.x);
@@ -426,7 +428,8 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 	case CEntry_Dressup::TRANS_BACK:	// 戻る選択
 	{
 		// 決定の更新
-		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
+		||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 		{
 			// 着せ替え保存
 			pDressup->Save();
@@ -440,7 +443,8 @@ void CSelectUI::UpdateTrans(const float fDeltaTime, const float fDeltaRate, cons
 	case CEntry_Dressup::TRANS_NEXT:	// 進む選択
 	{
 		// 決定の更新
-		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
+		||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 		{
 			// ゲーム設定遷移
 			if (pDressup->TransSetting())
@@ -593,7 +597,8 @@ void CSelectUI::UpdateDecideDressup()
 
 	// 決定の更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_A, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_X, m_nPadIdx))
 	{
 		// 入力情報の初期化
 		pPad->InitTrigger(m_nPadIdx);
@@ -629,7 +634,8 @@ void CSelectUI::UpdateCancelDressup()
 
 	// キャンセルの更新
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON_B, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON_Y, m_nPadIdx))
 	{
 		// 着せ替えUI操作権の初期化
 		pDressup->SetDressUIControl(-1, m_select.x);

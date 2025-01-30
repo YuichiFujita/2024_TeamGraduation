@@ -711,7 +711,7 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_UP).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP).bInput ||
 		pKey->GetTrigger(DIK_W))
 	{// 上(逆ループ)
 		int nSelect = (m_select + (ESelect::SELECT_BACK - 1)) % ESelect::SELECT_BACK;
@@ -725,7 +725,7 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		WriteSound();
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_DOWN).bInput ||
-			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN) ||
+			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN).bInput ||
 			 pKey->GetTrigger(DIK_S))
 	{// 下(ループ)
 		int nSelect = (m_select + 1) % ESelect::SELECT_BACK;
@@ -740,7 +740,7 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 	}
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT).bInput ||
 		pKey->GetTrigger(DIK_A))
 	{// 左
 
@@ -759,7 +759,7 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_SELECT_00);
 	}
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT).bInput ||
 		pKey->GetTrigger(DIK_D))
 	{// 右
 
@@ -784,7 +784,12 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 	// 戻るフラグリセット
 	m_bBack = false;
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0) ||
+	CInputGamepad::SAllTrigger trigger[2];
+	trigger[0] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A);
+	trigger[1] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X);
+
+	if (trigger[0].bInput ||
+		trigger[1].bInput ||
 		pKey->GetTrigger(DIK_RETURN))
 	{// 決定
 
@@ -806,11 +811,17 @@ void COptionMenu::UpdateSelect(const float fDeltaTime, const float fDeltaRate, c
 		case COptionMenu::SELECT_BACK:
 
 			// サウンドの再生
-			//SetState(STATE_NONE);	// SEIGA/TODO：ここで状態初期化しないと音二重になる
 			PLAY_SOUND(CSound::ELabel::LABEL_SE_OPTION_BACK);
 			break;
 
 		case COptionMenu::SELECT_RESET:
+
+			for (int i = 0; i < 2; i++)
+			{
+				// バイブON
+				pPad->SetEnableVibration(true);
+				pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, trigger[i].nID);
+			}
 
 			// リセット
 			Reset();
@@ -876,7 +887,7 @@ void COptionMenu::UpdateSound(const float fDeltaTime, const float fDeltaRate, co
 	int num = pMultiNum->GetNum();
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT).bInput ||
 		pKey->GetTrigger(DIK_A))
 	{// 左, 減少
 
@@ -887,7 +898,7 @@ void COptionMenu::UpdateSound(const float fDeltaTime, const float fDeltaRate, co
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_ARROW_DOWN);
 	}
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT).bInput ||
 		pKey->GetTrigger(DIK_D))
 	{// 右, 増加
 
@@ -927,10 +938,16 @@ void COptionMenu::UpdateVib(const float fDeltaTime, const float fDeltaRate, cons
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT) ||
-		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT) ||
+	CInputGamepad::SAllTrigger trigger[4];
+	trigger[0] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT);
+	trigger[1] = pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT);
+	trigger[2] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT);
+	trigger[3] = pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT);
+
+	if (trigger[0].bInput ||
+		trigger[1].bInput ||
+		trigger[2].bInput ||
+		trigger[3].bInput ||
 		pKey->GetTrigger(DIK_A) ||
 		pKey->GetTrigger(DIK_D))
 	{// 左右, 切り替え
@@ -944,7 +961,10 @@ void COptionMenu::UpdateVib(const float fDeltaTime, const float fDeltaRate, cons
 		// 振動させる
 		if (!bVib)
 		{
-			pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, 0);
+			for (int i = 0; i < 4; i++)
+			{
+				pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, trigger[i].nID);
+			}
 		}
 
 		// サウンドの再生
@@ -1088,7 +1108,8 @@ void COptionMenu::StateEdit(const float fDeltaTime, const float fDeltaRate, cons
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, 0) ||
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput ||
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_Y).bInput ||
 		pKey->GetTrigger(DIK_BACKSPACE))
 	{// キャンセル
 
@@ -1138,10 +1159,6 @@ void COptionMenu::Reset()
 {
 	// 入力情報取得
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
-
-	// バイブON
-	pPad->SetEnableVibration(true);
-	pPad->SetVibration(CInputGamepad::EVibType::VIBTYPE_THROW_FAST, 0);
 
 	// 表示切替
 	CTexture* pTexture = CTexture::GetInstance();

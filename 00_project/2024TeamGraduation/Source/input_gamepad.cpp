@@ -951,39 +951,41 @@ bool CInputGamepad::GetRStickTrigger(int nCntPlayer, STICK_CROSS_AXIS closs)
 //==========================================================================
 // Lスティックのトリガー判定
 //==========================================================================
-bool CInputGamepad::GetAllLStickTrigger(STICK_CROSS_AXIS closs)
+CInputGamepad::SAllTrigger CInputGamepad::GetAllLStickTrigger(STICK_CROSS_AXIS closs)
 {
+	SAllTrigger info;
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // プレイヤーの総数分繰り返す
 
 		if (GetLStickTrigger(i, closs))
 		{
 			// 入力情報ありを返す
-			return true;
+			return SAllTrigger(true, i);
 		}
 	}
 
 	// 入力情報無しを返す
-	return false;
+	return info;
 }
 
 //==========================================================================
 // Rスティックのトリガー判定
 //==========================================================================
-bool CInputGamepad::GetAllRStickTrigger(STICK_CROSS_AXIS closs)
+CInputGamepad::SAllTrigger CInputGamepad::GetAllRStickTrigger(STICK_CROSS_AXIS closs)
 {
+	SAllTrigger info;
 	for (int i = 0; i < mylib_const::MAX_PLAYER; i++)
 	{ // プレイヤーの総数分繰り返す
 
 		if (GetRStickTrigger(i, closs))
 		{
 			// 入力情報ありを返す
-			return true;
+			return SAllTrigger(true, i);
 		}
 	}
 
 	// 入力情報無しを返す
-	return false;
+	return info;
 }
 
 //==========================================================================

@@ -409,7 +409,7 @@ void CTutorialScreen::ChangeManual()
 	EManualType oldType = m_ManualType;	// 前回の種類
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput
-	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT))
+	||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT).bInput)
 	{// 次ページへ
 
 		EManualType old = m_ManualType;
@@ -429,7 +429,7 @@ void CTutorialScreen::ChangeManual()
 		}
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput
-		 ||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
+		 ||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT).bInput)
 	{// 前ページへ
 
 		EManualType old = m_ManualType;

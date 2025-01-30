@@ -753,7 +753,8 @@ bool CEntry_SetUpTeam::SelectTeam()
 		//--------------------------
 		// エントリー操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, i)
+		||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, i))
 		{ // エントリー操作が行われた場合
 
 			for (int j = 0; j < mylib_const::MAX_PLAYER; j++)
@@ -787,7 +788,8 @@ bool CEntry_SetUpTeam::SelectTeam()
 		//--------------------------
 		// 離脱操作
 		//--------------------------
-		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nUserIdx))
+		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, nUserIdx)
+		||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, nUserIdx))
 		{ // 離脱操作が行われた場合
 
 			// サウンドの再生
@@ -833,7 +835,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 		{ // 最大数変更の操作権を持っていない場合
 
 			if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, nUserIdx)
-			||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_LEFT))
+			||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_LEFT))
 			{
 				if (m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_LEFT)
 				{ // 左端じゃない時に左移動操作が行われた場合
@@ -847,7 +849,7 @@ bool CEntry_SetUpTeam::SelectTeam()
 				}
 			}
 			else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, nUserIdx)
-				 ||  pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_RIGHT))
+				 ||  pPad->GetLStickTrigger(nUserIdx, CInputGamepad::STICK_CROSS_RIGHT))
 			{
 				if (m_TeamSide[nUserIdx].team != CGameManager::ETeamSide::SIDE_RIGHT)
 				{ // 右端じゃない時に右移動操作が行われた場合
@@ -901,23 +903,27 @@ bool CEntry_SetUpTeam::SelectTeam()
 		// 準備完了操作
 		//--------------------------
 		if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, nUserIdx)
-		&&  IsUserTeamSelect(nUserIdx)	// チーム選択中
-		&&  !IsUserMaxChange(nUserIdx))	// 最大数変更を自分がしていない
+		||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, nUserIdx))
 		{ // 準備完了操作が行われた場合
 
-			assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
-			const int nCurInTeam = static_cast<int>(m_vecAddIdx[nSide].size());	// 現在のチーム人数
-			if (!IsUserReady(nUserIdx) && m_nPlayerNum[nSide] > nCurInTeam)
-			{ // 準備未完了且つ、最大チーム人数未満の場合
+			if (IsUserTeamSelect(nUserIdx)
+			&&  !IsUserMaxChange(nUserIdx))
+			{ // チーム選択中且つ、最大数変更を自分がしていない場合
 
-				// 準備完了配列に追加
-				m_vecAddIdx[nSide].push_back(nUserIdx);
+				assert(!(nSide <= CGameManager::ETeamSide::SIDE_NONE || nSide >= CGameManager::ETeamSide::SIDE_MAX));
+				const int nCurInTeam = static_cast<int>(m_vecAddIdx[nSide].size());	// 現在のチーム人数
+				if (!IsUserReady(nUserIdx) && m_nPlayerNum[nSide] > nCurInTeam)
+				{ // 準備未完了且つ、最大チーム人数未満の場合
 
-				// 決定
-				m_apPadUI[nUserIdx]->Decide();
+					// 準備完了配列に追加
+					m_vecAddIdx[nSide].push_back(nUserIdx);
 
-				// サウンドの再生
-				PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+					// 決定
+					m_apPadUI[nUserIdx]->Decide();
+
+					// サウンドの再生
+					PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
+				}
 			}
 		}
 	}

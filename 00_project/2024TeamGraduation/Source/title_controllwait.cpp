@@ -381,7 +381,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
-		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT) ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT).bInput ||
 		pKey->GetTrigger(DIK_A))
 	{// 左(逆ループ)
 
@@ -399,7 +399,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
-			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT) ||
+			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT).bInput ||
 			 pKey->GetTrigger(DIK_D))
 	{// 右(ループ)
 
@@ -418,12 +418,25 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	}
 
 	// 遷移
-	CInputGamepad::SAllTrigger trigger = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A);
-	if (trigger.bInput ||
-		pKey->GetTrigger(DIK_RETURN))
+	CInputGamepad::SAllTrigger trigger[2];
+	trigger[0] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_A);
+	trigger[1] = pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_X);
+	if (trigger[0].bInput
+	||  trigger[1].bInput)
 	{
+		int nID = -1;
+		for (int i = 0; i < 2; i++)
+		{
+			if (trigger[i].nID != -1)
+			{
+				nID = trigger[i].nID;
+				break;
+			}
+		}
+
 		// 決定時処理
-		Decide(trigger.nID);
+		assert(nID != -1);
+		Decide(nID);
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 }
@@ -740,7 +753,8 @@ void CTitle_ControllWait::StateTutorialCheck(const float fDeltaTime, const float
 	// インプット情報取得
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
 
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput)
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_Y).bInput)
 	{// ウィンドウ閉じる
 		
 		// チュートリアル確認をフェードアウト
@@ -761,7 +775,8 @@ void CTitle_ControllWait::StateTutorial(const float fDeltaTime, const float fDel
 	// インプット情報取得
 	CInputGamepad* pPad = CInputGamepad::GetInstance();		// パッド情報
 
-	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput)
+	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_B).bInput
+	||  pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_Y).bInput)
 	{// ウィンドウ閉じる
 
 		// チュートリアルをフェードアウト

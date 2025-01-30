@@ -810,51 +810,6 @@ HRESULT CDressupUI::CreateSetup()
 	CEntry_SetUpTeam* pSetupTeam = CEntry::GetInstance()->GetSetupTeam();
 	if (pSetupTeam == nullptr) { return E_FAIL; }
 
-#if 0
-	CGameManager::ETeamSide side;	// チーム
-	switch (m_typeArea)
-	{ // ポジションごとの処理
-	case CPlayer::FIELD_IN:
-	{
-		// エントリーインデックスを取得
-		const int nPadIdx = pSetupTeam->PlayerIdxToPadIdx(m_nPlayerIdx);
-		if (nPadIdx > -1)
-		{ // ユーザーの場合
-
-			// エントリーインデックスからチームサイドを取得
-			side = pSetupTeam->GetTeamSide(m_nPlayerIdx);	// TODO/FUJITA：こっちはパッドインデックスからチーム取ってる
-		}
-		else
-		{ // AIの場合
-
-			// 自身のAI生成順を保存
-			m_nOrdinalAI = m_nNumAI;
-
-			// AI生成順からチームサイドを取得
-			side = pSetupTeam->GetTeamSideAI(m_nOrdinalAI);
-
-			// 準備完了済みにする
-			m_bReady = true;
-
-			// AI生成数を加算
-			m_nNumAI++;
-		}
-		break;
-	}
-	case CPlayer::FIELD_OUT:
-	{
-		// 外野のチームを指定
-		side = (CGameManager::ETeamSide)(m_nPlayerIdx / (CPlayerManager::OUT_MAX / 2));
-
-		// 準備完了済みにする
-		m_bReady = true;
-		break;
-	}
-	default:
-		assert(false);
-		break;
-	}
-#else
 	CGameManager::ETeamSide side = pSetupTeam->GetTeamSide(m_nPlayerIdx);	// チーム	// TODO/FUJITA：こっちはパッドインデックスからチーム取ってる
 	switch (m_typeArea)
 	{ // ポジションごとの処理
@@ -889,7 +844,6 @@ HRESULT CDressupUI::CreateSetup()
 		assert(false);
 		break;
 	}
-#endif
 
 	// プレイヤー生成
 	m_pPlayer = CPlayer::Create
@@ -1151,7 +1105,8 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 	if (m_nPadIdx <= -1 || m_nPadIdx >= mylib_const::MAX_PLAYER) { return; }
 
 	CInputGamepad* pPad = CInputGamepad::GetInstance();	// パッド情報
-	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nPadIdx))
+	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nPadIdx)
+	||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_X, m_nPadIdx))
 	{
 		// 着せ替えシーンの取得
 		CEntry* pEntry = CEntry::GetInstance();						// エントリーモード情報
@@ -1182,7 +1137,8 @@ void CDressupUI::UpdateControl(const float fDeltaTime, const float fDeltaRate, c
 		// サウンドの再生
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_01);
 	}
-	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx))
+	else if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_B, m_nPadIdx)
+		 ||  pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_Y, m_nPadIdx))
 	{
 		// 準備未完了状態にする
 		SetReady(false);
