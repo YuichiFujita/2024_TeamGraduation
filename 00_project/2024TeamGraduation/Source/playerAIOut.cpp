@@ -12,7 +12,9 @@
 // 使用クラス
 #include "playerAIOut_controlMove.h"
 #include "playerAIOut_controlAction.h"
+#include "playerAction.h"
 #include "playerAIOut_control.h"
+#include "playerManager.h"
 
 //==========================================================================
 // 定数定義
@@ -33,6 +35,7 @@ CPlayerAIOut::CPlayerAIOut(CPlayer* pPlayer, const CGameManager::ETeamSide typeT
 
 	// AIコントロール(外野)の生成
 	m_pAIOutControl = CPlayerAIOutControl::Create(pPlayer);
+	m_eAIRange = RANGE_NONE;
 }
 
 //==========================================================================
@@ -80,70 +83,117 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 	// プレイヤー方向
 	//--------------------------------
 	bool bRot = false;
-	D3DXCOLOR col = D3DXCOLOR();
 	float fRotY = D3DX_PI * 1.0f + rot.y;
 	UtilFunc::Transformation::RotNormalize(fRotY);
 
 	float fRangeZero = Crab::RANGE_MIN_MAX[0];
 	UtilFunc::Transformation::RotNormalize(fRangeZero);
-	if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
-	{// 下向き
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
-	{// 上向き
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
-	{// 左向き
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
-		bRot = true;
-		col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
-	{// 右向き
-		playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
-		bRot = true;
-		col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else
-	{// 抜けちゃった
-		MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
-	}
 
-	//--------------------------------
-	// 方向
-	//--------------------------------
+	// 外野ポジションの取得
+	CPlayerManager::EOutPos eOutPos = CPlayerManager::GetInstance()->GetOutPosition(GetPlayer());
+
 	// AIコントロール情報の取得
 	CPlayerControlMove* pControlMove = GetPlayerControlMove();
 	CPlayerAIOutControlMove* pControlAIOutMove = pControlMove->GetAIOut();
 
 	// 進行方向の取得
-	float fDirection = pControlAIOutMove->GetClabDirection() + D3DX_PI;
+	float fDirection = pControlAIOutMove->GetClabDirection();
 
-	if (!UtilFunc::Collision::CollisionRangeAngle(fDirection, fRangeZero, Crab::RANGE_MIN_MAX[1]))
-	{// 下向き
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
-	{// 上向き
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
-	{// 左向き
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
-	}
-	else if (UtilFunc::Collision::CollisionRangeAngle(fDirection, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
-	{// 右向き
-		inputDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;;
+	// 角度
+	float range[] =
+	{
+		-1.57f,		// 左
+		1.57f,		// 右
+		D3DX_PI,	// 上
+		0.0f,		// 下
+	};
+
+	if (eOutPos == CPlayerManager::EOutPos::OUT_LEFT ||
+		eOutPos == CPlayerManager::EOutPos::OUT_RIGHT)
+	{
+		if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+		{// 下向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+		{// 上向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+		{// 左向き
+			if (fDirection == range[2])
+			{
+				playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+			}
+			else if (fDirection == range[3])
+			{
+				playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+			}
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+		{// 右向き
+			if (fDirection == range[2])
+			{
+				playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+			}
+			else if (fDirection == range[3])
+			{
+				playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+			}
+			bRot = true;
+		}
+		else
+		{// 抜けちゃった
+			MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
+		}
 	}
 	else
-	{// 抜けちゃった
-		MyAssert::CustomAssert(false, "カニ歩き：どこ向いてんねん");
+	{
+		if (!UtilFunc::Collision::CollisionRangeAngle(fRotY, fRangeZero, Crab::RANGE_MIN_MAX[1]))
+		{// 下向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_DOWN;
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[2], Crab::RANGE_MIN_MAX[3]))
+		{// 上向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_UP;
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[4], Crab::RANGE_MIN_MAX[5]))
+		{// 左向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+			bRot = true;
+		}
+		else if (UtilFunc::Collision::CollisionRangeAngle(fRotY, Crab::RANGE_MIN_MAX[6], Crab::RANGE_MIN_MAX[7]))
+		{// 右向き
+			playerDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+			bRot = true;
+		}
+		else
+		{// 抜けちゃった
+			MyAssert::CustomAssert(false, "カニ歩き：どこ見てんねん");
+		}
+	}
+
+	
+	if (fDirection == range[0])
+	{
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
+	}
+	else if (fDirection == range[1])
+	{
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+	}
+	else if (fDirection == range[2])
+	{
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_RIGHT;
+	}
+	else if (fDirection == range[3])
+	{
+		inputDir = CPlayer::CRAB_DIRECTION::CRAB_LEFT;
 	}
 
 	if (playerDir == CPlayer::CRAB_DIRECTION::CRAB_NONE ||
@@ -156,6 +206,21 @@ void CPlayerAIOut::MotionCrab(int nStartKey)
 	GetPlayer()->SetMotion(Crab::MOTION_WALK[playerDir][inputDir], nStartKey);
 }
 
+//==========================================================================
+// カニ
+//==========================================================================
+bool CPlayerAIOut::IsCrab()
+{
+	// プレイヤー情報の取得
+	CPlayer* pPlayer = GetPlayer();
+	if (!pPlayer) return false;
+
+	// 世界にボールがあるか
+	CBall* pBall = CGameManager::GetInstance()->GetBall();	// ボール情報
+	if (pBall == nullptr) { return false; }
+
+	return true;
+}
 
 //==========================================================================
 // ヒット

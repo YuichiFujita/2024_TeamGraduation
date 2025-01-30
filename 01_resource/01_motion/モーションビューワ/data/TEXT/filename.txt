@@ -11,11 +11,11 @@ SCRIPT			# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI
 #------------------------------------------------------------------------------
 1MOTION_FILENAME = data/TEXT/character/enemy/practice/setup_practice.txt
 1MOTION_FILENAME = data/TEXT/character/audience/setup_player.txt
-1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player.txt
+MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_fat.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_player_gari.txt
 1MOTION_FILENAME = data/TEXT/character/audience/Mii/setup_player.txt
-MOTION_FILENAME = data/TEXT/character/audience/Mii_Anim/setup_player.txt
+1MOTION_FILENAME = data/TEXT/character/audience/Mii_Anim/setup_player.txt
 1MOTION_FILENAME = data/TEXT/character/audience/Mii/setup_nurs.txt
 1MOTION_FILENAME = data/TEXT/character/player/main_01/setup_reporter.txt
 1MOTION_FILENAME = data/TEXT/character/reporter/setup_player.txt

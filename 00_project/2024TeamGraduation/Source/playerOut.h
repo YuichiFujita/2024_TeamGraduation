@@ -47,6 +47,7 @@ public:
 	MyLib::Vector3 GetPosRight() { return m_posRight; }	// ˆÚ“®‰Â”\‚È‰EˆÊ’u‚ÌŽæ“¾
 
 	void SetIsClab(bool clab) { m_bClab = clab; }
+	bool GetIsClab() { return m_bClab; }
 
 private:
 

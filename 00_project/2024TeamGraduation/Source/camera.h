@@ -36,6 +36,7 @@ public:
 		STATE_FOLLOW,	// 追従
 		STATE_OUTFIELD,	// 外野
 		STATE_GAME_END,	// ゲーム終了
+		STATE_SPCATCH,	// スペシャルキャッチ
 		STATE_MAX
 	};
 
@@ -140,6 +141,32 @@ public:
 		SCameraPoint start;		// カメラ遷移開始ポイント情報
 		CObject* pLook;			// 注視点対象オブジェクト
 		MyLib::Vector3 offset;	// オブジェクトオフセット
+		float fMoveTime;		// カメラ遷移到達時間
+		float fCurTime;			// カメラ遷移タイマー
+		bool bEnd;				// 遷移終了フラグ
+	};
+
+	// スペシャルキャッチ情報
+	struct SSPCatch
+	{
+		// デフォルトコンストラクタ
+		SSPCatch() :
+			start({}),			// カメラ遷移開始ポイント情報
+			pLook(nullptr),		// 注視点対象オブジェクト
+			offset(VEC3_ZERO),	// オブジェクトオフセット
+			fWaitTime(0.0f),			// 半分到達後待機時間
+			fMoveTime(0.0f),			// カメラ遷移到達時間
+			fCurTime(0.0f)			// カメラ遷移タイマー
+		{}
+
+		// デストラクタ
+		~SSPCatch() {}
+
+		// メンバ変数
+		SCameraPoint start;		// カメラ遷移開始ポイント情報
+		CObject* pLook;			// 注視点対象オブジェクト
+		MyLib::Vector3 offset;	// オブジェクトオフセット
+		float fWaitTime;		// 半分到達後待機時間
 		float fMoveTime;		// カメラ遷移到達時間
 		float fCurTime;			// カメラ遷移タイマー
 		bool bEnd;				// 遷移終了フラグ
@@ -263,6 +290,11 @@ public:
 	SCameraPoint FollowPoint();		// 現在の追従ポイント取得
 	SCameraPoint OutFieldPoint();	// 現在の外野ポイント取得
 
+	//-----------------------------
+	// スペシャルキャッチ
+	//-----------------------------
+	void SetSpecialCatchInfo(CObject* pLook, MyLib::Vector3 offset, const float fMoveTime, const float fWaitTime);		// スペシャルキャッチカメラ情報設定
+
 protected:
 	//-----------------------------
 	// メンバ関数
@@ -286,10 +318,11 @@ private:
 	// メンバ関数
 	//-----------------------------
 	// 状態関数
-	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 通常状態の更新
-	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 追従状態の更新
-	void UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);	// 外野状態の更新
-	void UpdateGameEndState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// ゲーム終了状態の更新
+	void UpdateNoneState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 通常状態の更新
+	void UpdateFollowState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// 追従状態の更新
+	void UpdateOutFieldState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// 外野状態の更新
+	void UpdateGameEndState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);			// ゲーム終了状態の更新
+	void UpdateSpecialCatchState(const float fDeltaTime, const float fDeltaRate, const float fSlowRate);		// スペシャルキャッチ状態の更新
 
 	// リセット関数
 	void ResetNoneState();		// 通常状態リセット
@@ -346,6 +379,7 @@ private:
 	bool b;
 	SCameraPoint m_transStartPoint;		// ゲームカメラ状態遷移の開始ポイント
 	SGameEnd m_gameEndInfo;				// ゲーム終了カメラ情報
+	SSPCatch m_SPCatchInfo;				// スペシャルキャッチカメラ情報
 };
 
 #endif

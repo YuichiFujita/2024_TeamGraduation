@@ -87,6 +87,7 @@ private:
 	// ƒƒ“ƒo•Ï”
 	//=============================
 	float fThrowTime = 0.0f;
+	float m_fJumpTimer;
 	SFlag m_sFlag;
 
 };

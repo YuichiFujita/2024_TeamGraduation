@@ -80,6 +80,11 @@ public:
 	virtual inline CEntry_SetUpTeam* GetSetupTeam() { return this; }	// チーム等の設定取得
 	virtual void Debug() override;
 
+	//=============================
+	// 静的メンバ関数
+	//=============================
+	static void SaveInit();	// セーブ初期化
+
 private:
 
 	//=============================
@@ -131,9 +136,9 @@ private:
 	//-----------------------------
 	// 外部ファイル操作
 	//-----------------------------
-	void Save();	// セーブ
-	void Load();	// ロード
-	void LoadIdx(std::ifstream* pFile, const CGameManager::ETeamSide team);	// ロードインデックス
+	static void Save(std::vector<int>& rVecLeft, std::vector<int>& rVecRight);	// セーブ
+	void Load();																// ロード
+	void LoadIdx(std::ifstream* pFile, const CGameManager::ETeamSide team);		// ロードインデックス
 
 	//=============================
 	// メンバ変数

@@ -132,6 +132,7 @@ namespace StateTime
 	const float INVINCIBLE = 3.0f;	// 無敵
 	const float CATCH = 0.5f;		// キャッチ
 	const float COURT_RETURN = 1.0f;	// コートに戻ってくる
+	const float OUTCOURT_RETURN = 0.7f;	// コートに戻ってくる
 	const float INVADE_TOSS = 0.3f;		// 侵入後トス
 }
 
@@ -1563,6 +1564,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1570,6 +1574,9 @@ void CPlayer::CatchSettingLandNormal(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(5.5f, 2.3f, 0.09f));
 		break;
 
 	default:
@@ -1607,6 +1614,9 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_NORMAL, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1614,6 +1624,9 @@ void CPlayer::CatchSettingLandJust(CBall::EAttack atkBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_CATCH_FAST, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(4.5f, 2.3f, 0.12f));
 		break;
 
 	default:
@@ -1760,6 +1773,9 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(8.0f, 2.0f, 0.65f));
 		break;
 
 	case CBall::ATK_JUMP:
@@ -1767,6 +1783,9 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(15.0f, 2.0f, 0.4f));
 		break;
 
 	case CBall::ATK_SPECIAL:
@@ -1774,6 +1793,12 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// 振動
 		CInputGamepad::GetInstance()->SetVibration(CInputGamepad::EVibType::VIBTYPE_HIT_SP, GetMyPlayerIdx());
+
+		// カメラ揺れ
+		GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(15.0f, 2.0f, 0.4f));
+
+		// エフェクト再削除
+		pBall->SpecialEndSetting();
 		break;
 
 	default:
@@ -1958,6 +1983,9 @@ void CPlayer::OutCourtSetting()
 	m_sKnockback.posEnd = posE;
 
 	SetState(EState::STATE_OUTCOURT);
+
+	// カメラ揺れ
+	GET_MANAGER->GetCamera()->SetSwing(CCamera::SSwing(75.0f, 1.8f, 2.09f));
 }
 
 //==========================================================================
@@ -2270,7 +2298,7 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 	MyLib::Vector3 pos = GetPosition();
 
 	//コート内に戻る
-	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::COURT_RETURN, m_fStateTime);
+	pos = UtilFunc::Correction::EasingLinear(m_sKnockback.posStart, m_sKnockback.posEnd, 0.0f, StateTime::OUTCOURT_RETURN, m_fStateTime);
 	SetPosition(pos);
 
 	// 移動不可
@@ -2286,7 +2314,7 @@ void CPlayer::StateOutCourt_Return(const float fDeltaTime, const float fDeltaRat
 		SetMotion(MOTION_WALK);
 	}
 
-	if (m_fStateTime >= StateTime::COURT_RETURN)
+	if (m_fStateTime >= StateTime::OUTCOURT_RETURN)
 	{// キャンセル可能
 		SetState(EState::STATE_NONE);
 	}
@@ -2960,6 +2988,7 @@ void CPlayer::Debug()
 	if (ImGui::Button("Grip"))
 	{
 		PlaySoundCrabGrip();
+		GET_MANAGER->GetCamera()->SetSpecialCatchInfo(this, MyLib::Vector3(0.0f, 80.0f, 0.0f), 1.0f, 1.0f);		// スペシャルキャッチカメラ情報設定
 	}
 
 	//-----------------------------

@@ -161,6 +161,7 @@ private:
 	// その他
 	void UpdateLimitTimer();	// 制限時間更新
 	void UpdateAudience();		// 観客更新
+	void UpdateAudienceCheer();	// 観客の声援更新
 	void UpdateSpecial();		// スペシャル演出更新
 	void UpdateTeamStatus();	// チームステータス更新
 	void CreateTeamStatus();	// チームステータス生成

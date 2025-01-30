@@ -40,6 +40,13 @@ namespace
 	const float	JUMP_OFFSET_TEAM = 150.0f;	// 攻撃プレイヤーチームメンバーのジャンプオフセット
 	const MyLib::Vector3 JUMP_POS_TEAM[] = { MyLib::Vector3(-300.0f, 0.0f, 400.0f), MyLib::Vector3(300.0f, 0.0f, 400.0f) };	// 攻撃プレイヤーチームメンバーのジャンプ位置
 
+	const float OFFSET_Y[] =	// 体型Y座標オフセット
+	{
+		0.0f,	// 普通
+		-2.0f,	// デブ
+		14.0f	// ガリ
+	};
+
 	namespace hype
 	{
 		namespace trans
@@ -560,7 +567,7 @@ MyLib::Vector3 CSpecialManager::GetDestAttackPosition() const
 {
 	bool bInverse = (m_pAttackPlayer->GetTeam() == CGameManager::ETeamSide::SIDE_LEFT) ? false : true;	// カメラモーションの反転フラグ
 	float fOffset = (bInverse) ? 1.0f : -1.0f;	// オフセット方向
-	return MyLib::Vector3(800.0f * fOffset, 0.0f, 0.0f);
+	return MyLib::Vector3(800.0f * fOffset, OFFSET_Y[m_pAttackPlayer->GetBodyType()], 0.0f);
 }
 
 //============================================================

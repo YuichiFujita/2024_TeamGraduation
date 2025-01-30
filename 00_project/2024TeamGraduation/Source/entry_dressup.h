@@ -105,6 +105,11 @@ public:
 	inline CString2D* GetNameString2D(const CGameManager::ETeamSide team) { return m_apTeamName[team]; }	// 名前文字列ポインタ取得
 	void Save();	// セーブ
 
+	//=============================
+	// 静的メンバ関数
+	//=============================
+	static void SaveInit();	// セーブ初期化
+
 private:
 
 	// 読込情報構造体

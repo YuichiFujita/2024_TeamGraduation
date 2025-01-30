@@ -99,6 +99,7 @@ public:
 	// 静的メンバ関数
 	static CEntryRuleManager* Create(CEntry_Dressup* pParent);		// 生成
 	static void Release(CEntryRuleManager*& prEntryRuleManager);	// 破棄
+	static HRESULT SaveInit();										// ゲーム設定初期化保存
 	static HRESULT SaveSetting(const SRule& rRule, const std::string& rNameLeft, const std::string& rNameRight);	// ゲーム設定保存
 	static HRESULT LoadRule(SRule* pRule);										// ゲーム設定読込
 	static HRESULT LoadName(std::string* pName, CGameManager::ETeamSide team);	// チーム名読込

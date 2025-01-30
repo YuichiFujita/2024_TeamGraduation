@@ -8,6 +8,6 @@
 #	ƒ`[ƒ€l”î•ñ
 #------------------------------------------------------------------------------
 TEAMIDX
-	LEFT  = 1 -1 END
-	RIGHT = 0 2 -1 END
+	LEFT  = END
+	RIGHT = END
 END_TEAMIDX

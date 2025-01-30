@@ -38,7 +38,6 @@ CPlayerAIOutControlMove::CPlayerAIOutControlMove()
 	m_bBlink = false;
 	m_bDash = false;
 	m_bWalk = false;
-	m_fRot = 0.0f;
 }
 
 //==========================================================================
@@ -54,128 +53,53 @@ CPlayerAIOutControlMove::~CPlayerAIOutControlMove()
 //==========================================================================
 void CPlayerAIOutControlMove::Blink(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-		// コントロール系の取得
-	CPlayer::EDashAngle holdDashAngle = GetHoldDashAngle();	// ダッシュ方向
-	float fInputInterval = GetInputInterval();	// 入力の受け付け猶予
-	int* pCntTrigger = GetCntTrigger();			// トリガーカウント
+	// 入力フラグ
+	bool bInput = false;
+	// ダッシュフラグ取得
+	bool bBlink = IsBlink();
 
-	//----------------------------------------------------------------------
-	//	第一入力の受付
-	//----------------------------------------------------------------------
-	if (fInputInterval <= 0.0f)
-	{ // 猶予受け付けが終了中の場合
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
 
-		bool bInput = false;
-		if (false)
-		{ // 左移動キーが押された場合
-
-			// 割り当てられたキーの方向を取得
-			//holdDashAngle = m_pLeftKey->GetAngle();
-			bInput = true;
-		}
-		else if (false)
-		{ // 右移動キーが押された場合
-
-			// 割り当てられたキーの方向を取得
-			//holdDashAngle = m_pRightKey->GetAngle();
-			bInput = true;
-		}
-
-		if (bInput)
-		{ // 移動入力が検知された場合
-
-			// 入力のインターバルを設定
-			fInputInterval = INTERVAL_INPUT;
-		}
-	}
-
-	// ダッシュ方向の反映
-	SetHoldDashAngle(holdDashAngle);
-
-	//----------------------------------------------------------------------
-	//	受付猶予時間の経過
-	//----------------------------------------------------------------------
-	CPlayer::SDashInfo infoDash;		// ダッシュ情報
-	float fOldTime = fInputInterval;	// 過去の受付猶予時間 
-
-	// 受け付け猶予の減算
-	fInputInterval -= fDeltaTime * fSlowRate;
-	fInputInterval = UtilFunc::Transformation::Clamp(fInputInterval, 0.0f, INTERVAL_INPUT);
-
-	// 入力受け付け猶予の反映
-	SetInputInterval(fInputInterval);
-
-	if (fOldTime > 0.0f && fInputInterval <= 0.0f)
-	{ // 前回がまだ猶予中且つ、現在は経過終了している場合
-
-		// ブリンクかの判定
-		infoDash = Trigger(player, holdDashAngle);	// ダッシュ情報の取得
-	}
-
-	//----------------------------------------------------------------------
-	//	ブリンクの発動
-	//----------------------------------------------------------------------
-	if (infoDash.bDash && !IsBlink())
-	{ // ブリンクを開始できる場合
-
-		const float fDivision = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+	// ダッシュする
+	if (!bBlink && m_bBlink)
+	{
+		float division = (D3DX_PI * 2.0f) / CPlayer::EDashAngle::ANGLE_MAX;	// 向き
+		MyLib::Vector3 rot = player->GetRotation();
 		if (player->GetBall() == nullptr)
-		{ // ボール所持では使用不可
+		{//ボール所持では使用不可
 
-			MyLib::Vector3 move = player->GetMove();	// 移動量
-			const float fVeloBlink = player->GetParameter().fVelocityBlink;	// ブリンク速度
+			// 移動量取得
+			MyLib::Vector3 move = player->GetMove();
+			float velocityBlink = player->GetParameter().fVelocityBlink;
 
-			// 移動量の更新
-			move.x += sinf(fDivision * infoDash.eAngle) * fVeloBlink;
-			move.z += cosf(fDivision * infoDash.eAngle) * fVeloBlink;
+			// 移動量更新
+			move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * velocityBlink;
+			move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * velocityBlink;
 
 			if (player->IsJump())
-			{ // ジャンプ中の場合
-
-				// 移動量を補正
+			{//ジャンプ時補正
 				move.x *= BLINK_JUMP_COR;
 				move.z *= BLINK_JUMP_COR;
 			}
 
-			// 移動量の反映
+			// 移動量設定
 			player->SetMove(move);
 
-			// ブリンクモーションを再生
+			// モーション設定
 			player->SetMotion(CPlayer::EMotion::MOTION_BLINK);
 		}
 
-		// 目標向きの設定
-		player->SetRotDest(infoDash.eAngle * fDivision + D3DX_PI);
+		// 向き設定
+		player->SetRotDest(rot.y + /*D3DX_PI +*/ Camerarot.y);
 
-		// トリガーカウントのリセット
-		memset(pCntTrigger, 0, sizeof(pCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
-
-		// トリガーカウントの設定
-		SetCntTrigger(pCntTrigger);
-
-		// ダッシュしている状態にする
-		SetBlink(true);
+		// ダッシュフラグ
+		bBlink = true;
 	}
 
-	//----------------------------------------------------------------------
-	//	トリガーインターバルの経過
-	//----------------------------------------------------------------------
-	float fTriggerInterval = GetTriggerInterval();	// トリガーインターバル
-
-	// トリガーインターバルの減算
-	fTriggerInterval -= fDeltaTime * fSlowRate;
-	if (fTriggerInterval <= 0.0f)
-	{ // トリガーインターバルが終了した場合
-
-		// トリガーカウントのリセット
-		memset(pCntTrigger, 0, sizeof(pCntTrigger) * CPlayer::EDashAngle::ANGLE_MAX);
-
-		// トリガーカウントの設定
-		SetCntTrigger(pCntTrigger);
-	}
-
-	// トリガーインターバルの反映
-	SetTriggerInterval(fTriggerInterval);
+	// コントロール系
+	SetBlink(bBlink);	// 走るフラグ設定
 }
 
 //==========================================================================
@@ -183,30 +107,42 @@ void CPlayerAIOutControlMove::Blink(CPlayer* player, const float fDeltaTime, con
 //==========================================================================
 void CPlayerAIOutControlMove::Dash(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
-	bool bDash = IsBlink();	// ダッシュフラグ
-	if (!bDash) { return; }	// ダッシュしていない場合抜ける
+	bool bBlink = IsBlink();	//走るフラグ取得
+	if (!bBlink)
+	{
+		return;
+	}
 
-	bool bKeyInput = false;	// キー入力検知
-	if (!bKeyInput)
-	{ // 移動入力が検知されなかった場合
+	// モーションフラグ取得
+	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-		// ダッシュを解除する
-		bDash = false;
+	if (!m_bDash)
+	{// ダッシュ解除
+		bBlink = false;
+
+		// 前グリップ
+		int motionType = player->GetMotion()->GetType();
+		if (motionType == CPlayer::EMotion::MOTION_RUN ||
+			motionType == CPlayer::EMotion::MOTION_RUN_BALL)
+		{// ダッシュからは派生
+			player->SetMotion(CPlayer::EMotion::MOTION_GRIP_FRONT);
+		}
+
+		// 走るフラグ設定
+		player->SetEnableDash(false);
 	}
 	else
-	{ // 移動入力が検知された場合
-
-		// ダッシュを継続する
-		flagMotion.bMove = true;
+	{
+		// ダッシュ継続
+		motionFrag.bMove = true;
 		player->SetEnableDash(true);
 	}
 
-	// モーションフラグ反映
-	player->SetMotionFrag(flagMotion);
-	
-	// ダッシュフラグ反映
-	SetBlink(bDash);
+	// モーションフラグ設定
+	player->SetMotionFrag(motionFrag);
+
+	//走るフラグ設定
+	SetBlink(bBlink);
 }
 
 //==========================================================================
@@ -214,74 +150,56 @@ void CPlayerAIOutControlMove::Dash(CPlayer* player, const float fDeltaTime, cons
 //==========================================================================
 void CPlayerAIOutControlMove::Walk(CPlayer* player, const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	if (!m_bWalk) return;
+	// モーションフラグ取得
+	CPlayer::SMotionFrag motionFrag = player->GetMotionFrag();
 
-	CPlayerBase* pBase = player->GetBase();						// プレイヤーベース情報
-	CPlayerOut* pPlayerOut = pBase->GetPlayerOut();				// プレイヤー外野情報
-	MyLib::Vector3 posLeft = pPlayerOut->GetPosLeft();			// 移動可能な左位置
-	MyLib::Vector3 posRight = pPlayerOut->GetPosRight();		// 移動可能な右位置
-	MyLib::Vector3 playerMove = player->GetMove();				// プレイヤー移動ベクトル
-	CPlayer::SMotionFrag flagMotion = player->GetMotionFrag();	// モーションフラグ
-
-	if (!flagMotion.bMove)
-	{ // 移動してない且つ、入力を検知した場合
-
-		// 左右フラグ反転
-		player->InverseFootLR();
-	}
-
-	// 移動方向ベクトルの作成
-	MyLib::Vector3 vecMove = posRight - posLeft;	// ベクトルの作成
-	vecMove = vecMove.Normal();						// ベクトルの正規化
-
-	// 移動量の作成
-	CCharacterStatus::CharParameter param = player->GetParameter();					// プレイヤーパラメータ
-	float fMoveValue = (IsBlink()) ? param.fVelocityDash : param.fVelocityNormal;	// 移動量
-	fMoveValue *= fDeltaRate * fSlowRate;	// 経過時間乗算
-
-	// 移動操作
-	if (m_fRot > 0)
-	{ // 左移動が検知された場合
-
-		// ベクトル逆方向に移動量を与える
-		playerMove += -vecMove * fMoveValue;
-	}
-	else if (m_fRot < 0)
-	{ // 右移動が検知された場合
-
-		// ベクトル方向に移動量を与える
-		playerMove += vecMove * fMoveValue;
-	}
-	else
-	{ // 操作が検知された場合
-
-		// 移動しない状態にする
-		flagMotion.bMove = false;
-
-		// モーションフラグ反映
-		player->SetMotionFrag(flagMotion);
+	if (!m_bWalk) {// 歩くがオフの時モーションもオフ
+		motionFrag.bMove = false;
 		return;
 	}
-	
+
+	// カメラ情報取得
+	CCamera* pCamera = CManager::GetInstance()->GetCamera();
+	MyLib::Vector3 Camerarot = pCamera->GetRotation();
+
+	motionFrag.bMove = true;	// モーションフラグ(歩く)
+
+	bool bDash = IsBlink();	//走るフラグ
+
+	// 移動量取得
+	float fMove = player->GetParameter().fVelocityNormal;
+	if (bDash)
+	{// ダッシュは変更
+		fMove = player->GetParameter().fVelocityDash;
+	}
+	fMove *= fDeltaRate;
+	fMove *= fSlowRate;
+
+	// 移動量更新
+	MyLib::Vector3 move = {};
+	move = player->GetMove();
+
+	// 向き取得
+	MyLib::Vector3 rot = player->GetRotation();
+
+	// TODO : 方向に応じてカニ歩き
+
 	if (player->GetBase()->IsCrab())
 	{// カニ歩き
-		m_fClabDirection = playerMove.y;
-
-		playerMove.x += sinf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMoveValue;
-		playerMove.z += cosf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMoveValue;
+		move.x += sinf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;
+		move.z += cosf(m_fClabDirection + (D3DX_PI * 1.0f)) * fMove;
+	}
+	else
+	{
+		move.x += sinf(rot.y + (D3DX_PI * 1.0f)) * fMove;
+		move.z += cosf(rot.y + (D3DX_PI * 1.0f)) * fMove;
 	}
 
-	// 移動中にする
-	flagMotion.bMove = true;
+	// 移動量設定
+	player->SetMove(move);
 
-	// モーションフラグ反映
-	player->SetMotionFrag(flagMotion);
-
-	// 移動量反映
-	player->SetMove(playerMove);
-
-	// 目標向き設定
-	player->SetRotDest(posLeft.AngleXZ(posRight) + D3DX_PI * 0.5f);
+	// モーションフラグ設定
+	player->SetMotionFrag(motionFrag);
 }
 
 //==========================================================================

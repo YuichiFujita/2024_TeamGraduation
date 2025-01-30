@@ -24,7 +24,7 @@ namespace
 	const char* TEXTURE[] =	// テクスチャファイル
 	{
 		"",
-		"data\\TEXTURE\\pause\\window.png",
+		"",
 		"data\\TEXTURE\\pause\\resume.png",
 		"data\\TEXTURE\\pause\\retry.png",
 		"data\\TEXTURE\\pause\\end.png",
@@ -105,7 +105,6 @@ HRESULT CPause::Init()
 		{// 失敗していたら
 			return E_FAIL;
 		}
-		m_aObject2D[nCntVtx]->SetType(CObject::TYPE::TYPE_NONE);
 
 		// テクスチャの割り当て
 		int nTexIdx = CTexture::GetInstance()->Regist(TEXTURE[nCntVtx]);
@@ -123,7 +122,7 @@ HRESULT CPause::Init()
 		{// ウィンドウの時
 			m_aObject2D[nCntVtx]->SetSize(D3DXVECTOR2(640.0f, 360.0f));					// サイズ
 			m_aObject2D[nCntVtx]->SetPosition(MyLib::Vector3(640.0f, 360.0f, 0.0f));	// 位置
-			m_aObject2D[nCntVtx]->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));			// 色設定
+			m_aObject2D[nCntVtx]->SetColor(MyLib::color::Black(0.4f));			// 色設定
 		}
 		else
 		{// 選択肢
@@ -144,15 +143,7 @@ HRESULT CPause::Init()
 //==========================================================================
 void CPause::Uninit()
 {
-	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
-	{
-		if (m_aObject2D[nCntVtx] == nullptr) continue;
-
-		// 終了処理
-		m_aObject2D[nCntVtx]->Uninit();
-		delete m_aObject2D[nCntVtx];
-		m_aObject2D[nCntVtx] = nullptr;
-	}
+	
 }
 
 //==========================================================================
@@ -160,14 +151,7 @@ void CPause::Uninit()
 //==========================================================================
 void CPause::Kill()
 {
-	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
-	{
-		if (m_aObject2D[nCntVtx] == nullptr) continue;
-
-		// 終了処理
-		m_aObject2D[nCntVtx]->Uninit();
-		m_aObject2D[nCntVtx] = nullptr;
-	}
+	
 }
 
 //==========================================================================
@@ -175,8 +159,17 @@ void CPause::Kill()
 //==========================================================================
 void CPause::Update(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
+	// 描画設定
+	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
+	{
+		if (m_aObject2D[nCntVtx] == nullptr) continue;
+
+		m_aObject2D[nCntVtx]->SetEnableDisp(m_bPause);
+	}
+
 	if (!m_bPause)
 	{// ポーズ中じゃなかったら
+		m_nSelect = MENU::MENU_RETURNGAME;
 		return;
 	}
 
@@ -194,6 +187,7 @@ void CPause::Update(const float fDeltaTime, const float fDeltaRate, const float 
 	// 選択肢更新
 	UpdateSelect();
 
+	// ポーズ中なので例外的に更新
 	// 更新処理
 	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
 	{
@@ -217,8 +211,8 @@ void CPause::UpdateColor()
 	{
 		D3DXCOLOR col = m_aObject2D[i]->GetColor();
 		if (m_nSelect + VTX_CONTINUE == i)
-		{// チカチカ
-			col = UtilFunc::Transformation::HSVtoRGB(0.0f, 0.0f, 0.7f + fabsf(sinf(D3DX_PI * (m_fFlashTime / 1.0f)) * 0.3f));
+		{// 白く
+			col = MyLib::color::White();
 		}
 		else
 		{
@@ -248,8 +242,8 @@ void CPause::UpdateSelect()
 		// パターンNo.を更新
 		m_nSelect = (m_nSelect + (MENU_MAX - 1)) % MENU_MAX;
 
-		// サウンド再生
-
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pKey->GetTrigger(DIK_S) ||
 		pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, 0) ||
@@ -259,8 +253,8 @@ void CPause::UpdateSelect()
 		// パターンNo.を更新
 		m_nSelect = (m_nSelect + 1) % MENU_MAX;
 
-		// サウンド再生
-
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 
 
@@ -305,19 +299,6 @@ void CPause::Decide()
 //==========================================================================
 void CPause::Draw()
 {
-	if (!m_bPause)
-	{// ポーズ中じゃなかったら
-		return;
-	}
-
-	// 描画処理
-	for (int nCntVtx = 0; nCntVtx < VTX_MAX; nCntVtx++)
-	{
-		if (m_aObject2D[nCntVtx] != nullptr)
-		{
-			// 描画処理
-			m_aObject2D[nCntVtx]->Draw();
-		}
-	}
+	
 }
 

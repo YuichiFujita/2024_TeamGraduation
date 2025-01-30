@@ -187,12 +187,16 @@ HRESULT CEntry_Dressup::Init()
 		// 色を設定
 		m_apNameBG[i]->SetColor(DEF_COL);
 
+		// 外部ファイルから設定されたチーム名を読込
+		std::string sTeamName;	// チーム名
+		CEntryRuleManager::LoadName(&sTeamName, (CGameManager::ETeamSide)i);	// チーム名読込
+
 		// チーム名の生成
 		m_apTeamName[i] = CString2D::Create
 		( // 引数
 			ui::name::FONT,		// フォントパス
 			ui::name::ITALIC,	// イタリック
-			L"",				// 指定文字列
+			sTeamName,			// 指定文字列
 			ui::name::POS[i],	// 原点位置
 			ui::name::HEIGHT,	// 文字縦幅
 			ui::name::ALIGN_X,	// 横配置
@@ -205,9 +209,6 @@ HRESULT CEntry_Dressup::Init()
 			assert(false);
 			return E_FAIL;
 		}
-
-		// テキストを割当
-		loadtext::BindString(m_apTeamName[i], loadtext::LoadText("data\\TEXT\\entry\\nameTeam.txt", UtilFunc::Transformation::Random(0, 9)));
 
 		// 色を設定
 		m_apTeamName[i]->SetColor(DEF_COL);
@@ -1271,6 +1272,18 @@ void CEntry_Dressup::Save()
 		CEntryRuleManager::SRule rule = m_pRuleManager->GetRule();	// ルール
 		CEntryRuleManager::SaveSetting(rule, m_apTeamName[CGameManager::ETeamSide::SIDE_LEFT]->GetStr(), m_apTeamName[CGameManager::ETeamSide::SIDE_RIGHT]->GetStr());
 	}
+}
+
+//==========================================================================
+// セーブ初期化
+//==========================================================================
+void CEntry_Dressup::SaveInit()
+{
+	// プレイヤーマネージャ取得
+	CPlayerManager* pPlayerMgr = CPlayerManager::GetInstance();
+
+	// セーブ処理
+	pPlayerMgr->Save({}, {}, {}, {});
 }
 
 //==========================================================================
