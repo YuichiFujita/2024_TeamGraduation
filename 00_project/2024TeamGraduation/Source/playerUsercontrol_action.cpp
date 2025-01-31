@@ -16,6 +16,10 @@
 #include "playerStatus.h"
 #include "playerManager.h"
 
+#if 1
+#define INVERSE_PASS
+#endif
+
 //==========================================================================
 // 定数定義
 //==========================================================================
@@ -98,13 +102,23 @@ void CPlayerUserControlAction::Throw(CPlayer* player, const float fDeltaTime, co
 	if (pKey->GetTrigger(DIK_K) ||
 		tapInfo.bInput)
 	{// タップ範囲はパス
+
+#ifndef INVERSE_PASS
 		PassSetting(player);
+#else
+		ThrowSetting(player);
+#endif
 	}
 
 	if (pKey->GetTrigger(DIK_RETURN) ||
 		tapInfo.bComplete)
 	{// タップ範囲を超えていた場合は投げ
+
+#ifdef INVERSE_PASS
+		PassSetting(player);
+#else
 		ThrowSetting(player);
+#endif
 	}
 }
 
