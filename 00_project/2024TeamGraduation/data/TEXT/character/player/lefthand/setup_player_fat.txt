@@ -44,9 +44,9 @@ CHARACTERSET
 
 	SCALE = 1.177		# キャラスケール
 
-	VELOCITY_NORMAL = 1.6	# 通常移動量
-	VELOCITY_RUN = 2.67		# ダッシュ移動量
-	VELOCITY_BLINK = 29.61	# ブリンク移動量
+	VELOCITY_NORMAL = 1.3	# 通常移動量
+	VELOCITY_RUN = 2.27		# ダッシュ移動量
+	VELOCITY_BLINK = 25.61	# ブリンク移動量
 	
 	VELOCITY = 1.00	# ブリンク移動量
 	
@@ -59,13 +59,13 @@ CHARACTERSET
 	LIFE = 50			# 体力
 	
 	BALLSTATUSSET
-		THROW_NORMAL = 22.50		#投げ速度(通常)
-		THROW_JUMP = 27.00			#投げ速度(ジャンプ)
+		THROW_NORMAL = 25.50		#投げ速度(通常)
+		THROW_JUMP = 30.00			#投げ速度(ジャンプ)
 		THROW_SPECIAL = 0.00		#投げ速度(スペシャル)
 		CATCH_RANGE = 160			#キャッチ範囲(度数法)
-		DAMAGE_NORMAL = 10			#ダメージ(通常)
-		DAMAGE_JUMP = 15			#ダメージ(ジャンプ)
-		DAMAGE_SPECIAL = 30			#ダメージ(スペシャル)
+		DAMAGE_NORMAL = 12			#ダメージ(通常)
+		DAMAGE_JUMP = 18			#ダメージ(ジャンプ)
+		DAMAGE_SPECIAL = 50			#ダメージ(スペシャル)
 		KNOCKBACK_NORMAL = 80		#ノックバック(通常)
 		KNOCKBACK_JUMP = 100		#ノックバック(ジャンプ)
 		KNOCKBACK_SPECIAL = 150		#ノックバック(スペシャル)

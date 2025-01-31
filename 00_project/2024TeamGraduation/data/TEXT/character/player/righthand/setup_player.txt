@@ -60,7 +60,7 @@ CHARACTERSET
 		CATCH_RANGE = 160			#キャッチ範囲(度数法)
 		DAMAGE_NORMAL = 10			#ダメージ(通常)
 		DAMAGE_JUMP = 15			#ダメージ(ジャンプ)
-		DAMAGE_SPECIAL = 30			#ダメージ(スペシャル)
+		DAMAGE_SPECIAL = 50			#ダメージ(スペシャル)
 		KNOCKBACK_NORMAL = 80		#ノックバック(通常)
 		KNOCKBACK_JUMP = 100		#ノックバック(ジャンプ)
 		KNOCKBACK_SPECIAL = 150		#ノックバック(スペシャル)
