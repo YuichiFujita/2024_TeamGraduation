@@ -273,7 +273,6 @@ HRESULT CCamera::Init()
 		return E_FAIL;
 	}
 
-#if _DEBUG
 	// デバッグ専用の生成
 	m_pDebugControll = DEBUG_NEW CCamera_Debug(this);
 	if (m_pDebugControll == nullptr)
@@ -281,7 +280,7 @@ HRESULT CCamera::Init()
 
 		return E_FAIL;
 	}
-#endif
+
 
 	return S_OK;
 }
