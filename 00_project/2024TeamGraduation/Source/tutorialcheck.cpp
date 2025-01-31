@@ -253,10 +253,13 @@ void CTutorialCheck::UpdateState(const float fDeltaTime, const float fDeltaRate,
 //==========================================================================
 void CTutorialCheck::StateNone(const float fDeltaTime, const float fDeltaRate, const float fSlowRate)
 {
-	CInputGamepad* pPad = CInputGamepad::GetInstance();
+	if (GET_MANAGER->GetFade()->IsFade()) { return; }
 
+	CInputGamepad* pPad = CInputGamepad::GetInstance();
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT, m_nControllIdx) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx))
+		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_LEFT, m_nControllIdx) ||
+		pPad->GetLStickTrigger(m_nControllIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT) ||
+		pPad->GetLStickTrigger(m_nControllIdx, CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT))
 	{// 変更
 
 		// 現在の選択肢の逆にする
@@ -270,11 +273,8 @@ void CTutorialCheck::StateNone(const float fDeltaTime, const float fDeltaRate, c
 	if (pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, m_nControllIdx))
 	{// 決定
 
-		if (!GET_MANAGER->GetFade()->IsFade())
-		{
-			// サウンドの再生
-			PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
-		}
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 
 		Decide();
 	}

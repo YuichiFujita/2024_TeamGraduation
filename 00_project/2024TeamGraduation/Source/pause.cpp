@@ -30,6 +30,7 @@ namespace
 		"data\\TEXTURE\\pause\\end.png",
 	};
 	const float DIS_POSY = 130.0f;	// 選択肢の間隔
+	const float POSY = VEC3_SCREEN_CENT.y;
 }
 
 //==========================================================================
@@ -131,7 +132,7 @@ HRESULT CPause::Init()
 			D3DXVECTOR2 size = CTexture::GetInstance()->GetImageSize(nTexIdx);
 			size = UtilFunc::Transformation::AdjustSizeByWidth(size, 240.0f);
 			m_aObject2D[nCntVtx]->SetSize(size);	// サイズ
-			m_aObject2D[nCntVtx]->SetPosition(MyLib::Vector3(640.0f, 430.0f + ((nCntVtx - VTX_RETRY) * DIS_POSY), 0.0f));	// 位置
+			m_aObject2D[nCntVtx]->SetPosition(MyLib::Vector3(640.0f, POSY + ((nCntVtx - VTX_RETRY) * DIS_POSY), 0.0f));	// 位置
 		}
 	}
 
@@ -235,8 +236,8 @@ void CPause::UpdateSelect()
 	CInputGamepad* pPad = CInputGamepad::GetInstance();
 
 	if (pKey->GetTrigger(DIK_W) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_UP, 0) ||
-		(pPad->GetLStickTrigger(0, CInputGamepad::STICK_AXIS::STICK_Y) && pPad->GetStickMoveL(0).y > 0))
+		pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_UP).bInput ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_UP))
 	{// 上系が押された
 
 		// パターンNo.を更新
@@ -246,8 +247,8 @@ void CPause::UpdateSelect()
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pKey->GetTrigger(DIK_S) ||
-		pPad->GetTrigger(CInputGamepad::BUTTON_DOWN, 0) ||
-		(pPad->GetLStickTrigger(0, CInputGamepad::STICK_AXIS::STICK_Y) && pPad->GetStickMoveL(0).y < 0))
+			 pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_DOWN).bInput ||
+			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_DOWN))
 	{// 下系が押された
 
 		// パターンNo.を更新
@@ -259,10 +260,13 @@ void CPause::UpdateSelect()
 
 
 	if (pKey->GetTrigger(DIK_RETURN) || 
-		pPad->GetTrigger(CInputGamepad::BUTTON_A, 0))
+		pPad->GetAllTrigger(CInputGamepad::BUTTON_A).bInput)
 	{// 決定が押された
 
 		Decide();
+
+		// サウンドの再生
+		PLAY_SOUND(CSound::ELabel::LABEL_SE_DECIDE_00);
 	}
 	
 }

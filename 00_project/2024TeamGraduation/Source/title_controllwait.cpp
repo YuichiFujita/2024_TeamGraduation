@@ -381,6 +381,7 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 	CInputKeyboard* pKey = CInputKeyboard::GetInstance();	// キーボード情報
 
 	if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_LEFT).bInput ||
+		pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_LEFT) ||
 		pKey->GetTrigger(DIK_A))
 	{// 左(逆ループ)
 
@@ -398,7 +399,8 @@ void CTitle_ControllWait::UpdateSelect(const float fDeltaTime, const float fDelt
 		PLAY_SOUND(CSound::ELabel::LABEL_SE_CURSOR);
 	}
 	else if (pPad->GetAllTrigger(CInputGamepad::BUTTON::BUTTON_RIGHT).bInput ||
-		pKey->GetTrigger(DIK_D))
+			 pPad->GetAllLStickTrigger(CInputGamepad::STICK_CROSS_AXIS::STICK_CROSS_RIGHT) ||
+			 pKey->GetTrigger(DIK_D))
 	{// 右(ループ)
 
 		int nSelect = (m_select + 1) % ESelect::SELECT_MAX;

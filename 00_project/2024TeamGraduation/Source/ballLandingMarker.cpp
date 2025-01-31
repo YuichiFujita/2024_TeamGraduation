@@ -126,7 +126,7 @@ void CBallLandingMarker::Update(const float fDeltaTime, const float fDeltaRate, 
 
 	// パス終了地点に位置を設定
 	MyLib::Vector3 pos = m_pBall->GetPosPassEnd();
-	pos.y += 0.01f;
+	pos.y += 0.1f;
 
 	// 位置の反映
 	SetPosition(pos);

@@ -1711,6 +1711,7 @@ void CPlayer::DeadSetting(MyLib::HitResult_Character* result, CBall* pBall)
 	SetState(STATE_DEAD);
 	SetMotion(MOTION_DEAD);
 	m_sMotionFrag.bDead = true;
+	PLAY_SOUND(CSound::ELabel::LABEL_SE_HIT_JUMP);
 
 	// ノックバックの位置設定
 	MyLib::Vector3 vecBall = pBall->GetMove().Normal();
@@ -1810,6 +1811,8 @@ void CPlayer::DamageSetting(CBall* pBall)
 
 		// エフェクト再削除
 		pBall->SpecialEndSetting();
+
+
 		break;
 
 	default:
