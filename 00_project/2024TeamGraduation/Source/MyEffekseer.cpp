@@ -40,6 +40,7 @@ std::string CMyEffekseer::m_EffectName[CMyEffekseer::EFKLABEL_MAX] =	// エフェク
 	"data/Effekseer/kamehame_Flash.efkefc",				// かめはめ波(フラッシュ)
 	"data/Effekseer/kamehame_ballast.efkefc",			// かめはめ波(空間がれき)
 	"data/Effekseer/kamehame_ballet.efkefc",			// かめはめ波(弾)
+	"data/Effekseer/kamehame_hit.efkefc",				// かめはめ波(ヒット)
 	"data/Effekseer/hit.efkefc",						// ヒット
 	"data/Effekseer/bound.efkefc",						// バウンド
 	"data/Effekseer/sweat.efkefc",						// 汗
