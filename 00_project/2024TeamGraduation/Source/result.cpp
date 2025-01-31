@@ -113,6 +113,13 @@ void CResult::Update(const float fDeltaTime, const float fDeltaRate, const float
 		// ëJà⁄
 		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_TITLE);
 	}
+
+#if 0
+	if (m_pResultManager->IsSceneTrans())
+	{
+		GET_MANAGER->GetFade()->SetFade(CScene::MODE::MODE_RESULT);
+	}
+#endif// ÉãÅ[Év
 }
 
 //==========================================================================

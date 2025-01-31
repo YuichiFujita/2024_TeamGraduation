@@ -402,6 +402,10 @@ void CResultManager::UpdateState(const float fDeltaTime, const float fDeltaRate,
 		|| pKey->GetTrigger(DIK_SPACE)
 		|| pPad->GetTrigger(CInputGamepad::BUTTON::BUTTON_A, 0);
 
+#if 0
+	bInput = true;
+#endif// ƒ‹[ƒv
+
 	if (bInput)
 	{ // Œˆ’è‚Ì‘€ì‚ªs‚í‚ê‚½ê‡
 
